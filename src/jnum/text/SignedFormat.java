@@ -1,0 +1,89 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * All rights reserved. 
+ * 
+ * This file is part of jnum.
+ * 
+ *     kovacs.util is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     kovacs.util is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
+ ******************************************************************************/
+package jnum.text;
+
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SignedFormat.
+ */
+public class SignedFormat extends NumberFormat {
+
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = -6900977697243233653L;
+
+	/** The nf. */
+	private NumberFormat nf;
+	
+	/**
+	 * Instantiates a new signed format.
+	 *
+	 * @param nf the nf
+	 */
+	public SignedFormat(NumberFormat nf) {
+		this.nf = nf;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.text.NumberFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
+	 */
+	@Override
+	public StringBuffer format(double number, StringBuffer toAppendTo,
+			FieldPosition pos) {
+		
+		int from = toAppendTo.length();
+		if(number >= 0.0) toAppendTo.append(" ");
+		nf.format(number, toAppendTo, pos);
+		pos.setBeginIndex(from);
+		
+		return toAppendTo;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.text.NumberFormat#format(long, java.lang.StringBuffer, java.text.FieldPosition)
+	 */
+	@Override
+	public StringBuffer format(long number, StringBuffer toAppendTo,
+			FieldPosition pos) {
+		
+		int from = toAppendTo.length();
+		if(number >= 0.0) toAppendTo.append(" ");
+		nf.format(number, toAppendTo, pos);
+		pos.setBeginIndex(from);
+		
+		return toAppendTo;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.text.NumberFormat#parse(java.lang.String, java.text.ParsePosition)
+	 */
+	@Override
+	public Number parse(String source, ParsePosition parsePosition) {
+		return nf.parse(source, parsePosition);
+	}
+	
+
+}

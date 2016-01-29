@@ -1,0 +1,134 @@
+/*******************************************************************************
+ * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * All rights reserved. 
+ * 
+ * This file is part of jnum.
+ * 
+ *     kovacs.util is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     kovacs.util is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
+ ******************************************************************************/
+
+
+package jnum.math;
+
+import jnum.data.ArrayUtil;
+
+
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ComplexVector.
+ */
+public class ComplexVector extends GenericVector<Complex> implements ComplexScaling, ComplexConjugate, ComplexMultiplication<ComplexVector> {
+
+	/**
+	 * Instantiates a new complex vector.
+	 */
+	public ComplexVector() { super(Complex.class); }
+	
+		
+	/**
+	 * Instantiates a new complex vector.
+	 *
+	 * @param size the size
+	 */
+	public ComplexVector(int size) {
+		super(Complex.class, size);
+	}
+	
+	/**
+	 * Instantiates a new complex vector.
+	 *
+	 * @param data the data
+	 */
+	public ComplexVector(double[] data) {
+		super(ArrayUtil.asComplex(data));
+	}
+	
+	/**
+	 * Instantiates a new complex vector.
+	 *
+	 * @param data the data
+	 */
+	public ComplexVector(float[] data) {
+		super(ArrayUtil.asComplex(data));
+	}
+	
+	/**
+	 * Instantiates a new complex vector.
+	 *
+	 * @param data the data
+	 */
+	public ComplexVector(Real[] data) {
+		super(ArrayUtil.asComplex(data));
+	}
+	
+	/**
+	 * Instantiates a new complex vector.
+	 *
+	 * @param data the data
+	 */
+	public ComplexVector(Complex[] data) {
+		super(data);
+	}
+	
+	/* (non-Javadoc)
+	 * @see kovacs.math.GenericVector#getType()
+	 */
+	@Override
+	public Class<Complex> getType() { return Complex.class; }
+	
+	/* (non-Javadoc)
+	 * @see kovacs.math.ComplexConjugate#conjugate()
+	 */
+	@Override
+	public void conjugate() {
+		for(int i=component.length; --i >= 0; ) component[i].conjugate();
+	}
+
+	/* (non-Javadoc)
+	 * @see kovacs.math.ComplexScaling#scale(kovacs.math.Complex)
+	 */
+	@Override
+	public void scale(Complex factor) {
+		for(int i=component.length; --i >= 0; ) component[i].scale(factor);
+	}
+
+	/* (non-Javadoc)
+	 * @see kovacs.math.Multiplication#multiplyBy(java.lang.Object)
+	 */
+	@Override
+	public void multiplyBy(Complex o) {
+		for(int i=component.length; --i >= 0; ) component[i].multiplyBy(o);
+	}
+
+	/* (non-Javadoc)
+	 * @see kovacs.math.Product#setProduct(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public void setProduct(Complex a, ComplexVector v) {
+		for(int i=component.length; --i >= 0; ) component[i].setProduct(a, v.getComponent(i));
+	}
+
+	/* (non-Javadoc)
+	 * @see kovacs.math.ComplexMultiplication#multiplyByI()
+	 */
+	@Override
+	public void multiplyByI() {
+		for(int i=component.length; --i >= 0; ) component[i].multiplyByI();
+	}
+
+}
