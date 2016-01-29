@@ -28,7 +28,7 @@ package jnum.math;
 
 import java.text.NumberFormat;
 
-import jnum.util.ExtraMath;
+import jnum.ExtraMath;
 
 
 // TODO: Auto-generated Javadoc

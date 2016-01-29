@@ -28,15 +28,15 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.StringTokenizer;
 
+import jnum.Constant;
+import jnum.ExtraMath;
+import jnum.Unit;
+import jnum.Util;
 import jnum.astro.CoordinateEpoch;
 import jnum.astro.Precessing;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
-import jnum.util.Constant;
 import jnum.util.DataTable;
-import jnum.util.ExtraMath;
-import jnum.util.Unit;
-import jnum.util.Util;
 
 
 

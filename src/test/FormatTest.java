@@ -24,8 +24,8 @@ package test;
 
 import java.text.NumberFormat;
 
+import jnum.Util;
 import jnum.text.SignedFormat;
-import jnum.util.Util;
 
 // TODO: Auto-generated Javadoc
 /**

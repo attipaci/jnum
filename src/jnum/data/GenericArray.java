@@ -22,7 +22,7 @@
  ******************************************************************************/
 package jnum.data;
 
-import jnum.math.Function;
+import jnum.Function;
 import jnum.text.Parser;
 
 

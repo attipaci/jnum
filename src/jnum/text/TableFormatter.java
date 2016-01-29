@@ -25,7 +25,7 @@ package jnum.text;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
-import jnum.util.Util;
+import jnum.Util;
 
 
 // TODO: Auto-generated Javadoc

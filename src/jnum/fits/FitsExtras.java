@@ -24,7 +24,7 @@ package jnum.fits;
 
 import java.util.StringTokenizer;
 
-import jnum.util.Unit;
+import jnum.Unit;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;

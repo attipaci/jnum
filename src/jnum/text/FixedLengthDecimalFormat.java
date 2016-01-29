@@ -28,7 +28,7 @@ import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
 
-import jnum.util.Util;
+import jnum.Util;
 
 // Chose a decimal format that keeps the most significant figures for the given length
 

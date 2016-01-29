@@ -28,7 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import jnum.util.Util;
+import jnum.Util;
 
 // TODO: Auto-generated Javadoc
 // Reads Little-Endian from stream...

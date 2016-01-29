@@ -24,8 +24,8 @@
 
 package jnum.data;
 
+import jnum.Copiable;
 import jnum.math.Vector2D;
-import jnum.util.Copiable;
 
 // TODO: Auto-generated Javadoc
 /**

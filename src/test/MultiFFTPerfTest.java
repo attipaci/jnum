@@ -22,9 +22,9 @@
  ******************************************************************************/
 package test;
 
+import jnum.ExtraMath;
+import jnum.Util;
 import jnum.fft.MultiFFT;
-import jnum.util.ExtraMath;
-import jnum.util.Util;
 
 // TODO: Auto-generated Javadoc
 /**

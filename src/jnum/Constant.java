@@ -22,7 +22,7 @@
  ******************************************************************************/
 // Copyright (c) 2007 Attila Kovacs 
 
-package jnum.util;
+package jnum;
 
 // TODO: Auto-generated Javadoc
 // TODO Convert to Enum?

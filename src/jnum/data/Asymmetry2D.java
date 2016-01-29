@@ -22,7 +22,7 @@
  ******************************************************************************/
 package jnum.data;
 
-import jnum.util.Unit;
+import jnum.Unit;
 
 
 // TODO: Auto-generated Javadoc

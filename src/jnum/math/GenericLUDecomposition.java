@@ -25,7 +25,7 @@ package jnum.math;
 
 import java.lang.reflect.Array;
 
-import jnum.util.Copiable;
+import jnum.Copiable;
 
 // TODO: Auto-generated Javadoc
 /**

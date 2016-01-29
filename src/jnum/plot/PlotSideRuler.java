@@ -26,9 +26,9 @@ import java.awt.Graphics;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import jnum.Unit;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
-import jnum.util.Unit;
 
 
 // TODO: Auto-generated Javadoc

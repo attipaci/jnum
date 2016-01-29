@@ -29,11 +29,11 @@ import java.text.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import jnum.CopiableContent;
 import jnum.data.ArrayUtil;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
-import jnum.util.CopiableContent;
 
 // TODO: Auto-generated Javadoc
 /**

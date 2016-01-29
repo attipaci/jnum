@@ -21,7 +21,7 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.util;
+package jnum;
 
 
 public final class SafeMath {
@@ -56,8 +56,8 @@ public final class SafeMath {
 		return Math.sqrt(value);
 	}
 	
-	final static double epsilon = 1e-5;			// The maximum tolerated rounding error assuming float precision.
-	final static double onePlus = 1.0 + epsilon;
-	final static double minusOnePlus = -onePlus;
+	private final static double epsilon = 1e-5;			// The maximum tolerated rounding error assuming float precision.
+	private final static double onePlus = 1.0 + epsilon;
+	private final static double minusOnePlus = -onePlus;
 
 }

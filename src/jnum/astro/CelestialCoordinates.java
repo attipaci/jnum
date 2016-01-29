@@ -24,8 +24,8 @@
 
 package jnum.astro;
 
+import jnum.Constant;
 import jnum.math.SphericalCoordinates;
-import jnum.util.Constant;
 
 // TODO: Auto-generated Javadoc
 // This is an abstract class for coordinate systems that are fixed (except perhaps a precession)

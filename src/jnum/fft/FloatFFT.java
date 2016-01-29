@@ -25,8 +25,8 @@ package jnum.fft;
 
 import java.util.Arrays;
 
-import jnum.util.Constant;
-import jnum.util.ExtraMath;
+import jnum.Constant;
+import jnum.ExtraMath;
 
 // TODO: Auto-generated Javadoc
 /**

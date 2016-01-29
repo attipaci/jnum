@@ -28,10 +28,10 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 
-import jnum.util.Constant;
-import jnum.util.Symbol;
-import jnum.util.Unit;
-import jnum.util.Util;
+import jnum.Constant;
+import jnum.Symbol;
+import jnum.Unit;
+import jnum.Util;
 
 
 // TODO: Auto-generated Javadoc

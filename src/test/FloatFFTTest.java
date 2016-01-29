@@ -22,10 +22,10 @@
  ******************************************************************************/
 package test;
 
+import jnum.Constant;
+import jnum.Util;
 import jnum.fft.FFT;
 import jnum.fft.FloatFFT;
-import jnum.util.Constant;
-import jnum.util.Util;
 
 // TODO: Auto-generated Javadoc
 /**

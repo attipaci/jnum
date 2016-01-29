@@ -24,15 +24,15 @@ package jnum.fft;
 
 import java.lang.reflect.Array;
 
+import jnum.Copiable;
+import jnum.CopiableContent;
+import jnum.ExtraMath;
 import jnum.data.FauxComplexArray;
 import jnum.data.WindowFunction;
 import jnum.math.Additive;
 import jnum.math.Complex;
 import jnum.math.ComplexMultiplication;
 import jnum.math.Scalable;
-import jnum.util.Copiable;
-import jnum.util.CopiableContent;
-import jnum.util.ExtraMath;
 
 // TODO: Auto-generated Javadoc
 /**

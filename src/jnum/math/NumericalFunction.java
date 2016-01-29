@@ -22,6 +22,8 @@
  ******************************************************************************/
 package jnum.math;
 
+import jnum.Function;
+
 // TODO: Auto-generated Javadoc
 /**
  * Numerical functions with tunable precision.

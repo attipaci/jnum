@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,22 +20,29 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.util;
+
+
+package jnum;
 
 // TODO: Auto-generated Javadoc
+// Functions that do not create a new object at every evaluation. 
+// If such behaviour is desired, the ConsiderateFunctionAdapter class
+// can be used to wrap this into a regular Function.
+
 /**
- * The Interface CopiableContent.
+ * The Interface ConsiderateFunction.
  *
- * @param <Type> the generic type
+ * @param <ArgType> the generic type
+ * @param <ReturnType> the generic type
  */
-public interface CopiableContent<Type> extends Copiable<Type> {
+public interface ConsiderateFunction<ArgType, ReturnType> {
 
 	/**
-	 * Copy.
+	 * Evaluate.
 	 *
-	 * @param withContent the with content
-	 * @return the type
+	 * @param parms the parms
+	 * @param toValue the to value
 	 */
-	public Type copy(boolean withContent);
+	public void evaluate(ArgType parms, ReturnType toValue);
 	
 }

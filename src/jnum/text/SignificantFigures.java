@@ -28,7 +28,7 @@ import java.text.NumberFormat;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
 
-import jnum.util.Util;
+import jnum.Util;
 
 
 

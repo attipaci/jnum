@@ -23,8 +23,8 @@
 
 package jnum.math;
 
+import jnum.Copiable;
 import jnum.data.ArrayUtil;
-import jnum.util.Copiable;
 
 
 

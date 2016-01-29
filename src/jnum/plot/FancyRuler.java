@@ -38,9 +38,9 @@ import java.util.Comparator;
 
 import javax.swing.JComponent;
 
+import jnum.Constant;
+import jnum.Util;
 import jnum.math.Scale;
-import jnum.util.Constant;
-import jnum.util.Util;
 
 
 // TODO: Auto-generated Javadoc

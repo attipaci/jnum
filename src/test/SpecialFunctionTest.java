@@ -22,11 +22,11 @@
  ******************************************************************************/
 package test;
 
+import jnum.ExtraMath;
 import jnum.math.Complex;
 import jnum.math.specialfunctions.CumulativeNormalDistribution;
 import jnum.math.specialfunctions.GammaFunction;
 import jnum.math.specialfunctions.ZetaFunction;
-import jnum.util.ExtraMath;
 
 // TODO: Auto-generated Javadoc
 /**

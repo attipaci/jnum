@@ -26,14 +26,14 @@ package jnum.math;
 
 import java.text.*;
 
+import jnum.Copiable;
+import jnum.CopyCat;
+import jnum.ExtraMath;
+import jnum.Util;
 import jnum.data.BlankingValue;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
-import jnum.util.Copiable;
-import jnum.util.CopyCat;
-import jnum.util.ExtraMath;
-import jnum.util.Util;
 
 import java.lang.reflect.*;
 

@@ -26,11 +26,11 @@ package test;
 
 import java.util.Random;
 
+import jnum.Util;
 import jnum.math.LUDecomposition;
 import jnum.math.Matrix;
 import jnum.math.SVD;
 import jnum.math.SquareMatrix;
-import jnum.util.Util;
 
 
 

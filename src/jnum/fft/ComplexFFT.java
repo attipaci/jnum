@@ -23,8 +23,8 @@
 package jnum.fft;
 
 
+import jnum.ExtraMath;
 import jnum.math.Complex;
-import jnum.util.ExtraMath;
 
 
 // TODO: Auto-generated Javadoc

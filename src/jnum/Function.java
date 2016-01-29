@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,18 +20,23 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-// (C)2007 Attila Kovacs <attila@submm.caltech.edu>
-
-package jnum.data;
+package jnum;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface Slimming.
+ * A generic function interface for all things that take an argument (ArgType) from which it calculates
+ * a return value (ReturnType).
+ *
+ * @param <ArgType> the generic type of the arguments
+ * @param <ReturnType> the generic type of the return value.
  */
-public interface Slimming {
-
+public interface Function<ArgType, ReturnType> {	
+	// throw IllegalArgumentException if the dimension of the arguments is incorrect...
 	/**
-	 * Slim.
+	 * Evaluates the function at the given set of parameters.
+	 *
+	 * @param parms the function parameters
+	 * @return the return value
 	 */
-	public void slim();
+	public ReturnType valueAt(ArgType parms);	
 }

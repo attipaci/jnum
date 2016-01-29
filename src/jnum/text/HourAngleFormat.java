@@ -27,7 +27,7 @@ package jnum.text;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
 
-import jnum.util.Unit;
+import jnum.Unit;
 
 
 // TODO: Auto-generated Javadoc

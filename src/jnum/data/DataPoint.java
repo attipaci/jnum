@@ -24,8 +24,8 @@
 
 package jnum.data;
 
-import jnum.util.Unit;
-import jnum.util.Util;
+import jnum.Unit;
+import jnum.Util;
 
 // TODO: Auto-generated Javadoc
 /**

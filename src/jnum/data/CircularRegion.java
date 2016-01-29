@@ -29,6 +29,10 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
+import jnum.Constant;
+import jnum.ExtraMath;
+import jnum.Unit;
+import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
@@ -37,10 +41,6 @@ import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.text.AngleFormat;
 import jnum.text.TableFormatter;
-import jnum.util.Constant;
-import jnum.util.ExtraMath;
-import jnum.util.Unit;
-import jnum.util.Util;
 
 // TODO: Auto-generated Javadoc
 /**

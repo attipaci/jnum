@@ -27,10 +27,10 @@ import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
+import jnum.ExtraMath;
+import jnum.Unit;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
-import jnum.util.ExtraMath;
-import jnum.util.Unit;
 
 // TODO: Auto-generated Javadoc
 /**

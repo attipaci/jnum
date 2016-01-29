@@ -24,10 +24,10 @@
 
 package jnum.astro;
 
+import jnum.Unit;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
-import jnum.util.Unit;
 
 
 // TODO: Auto-generated Javadoc

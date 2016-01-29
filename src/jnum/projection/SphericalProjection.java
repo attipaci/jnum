@@ -26,11 +26,11 @@ package jnum.projection;
 
 import java.util.Hashtable;
 
+import jnum.Constant;
+import jnum.Unit;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
-import jnum.util.Constant;
-import jnum.util.Unit;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;

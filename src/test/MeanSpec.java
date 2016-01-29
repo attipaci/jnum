@@ -29,7 +29,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-import jnum.util.Util;
+import jnum.Util;
 
 
 // TODO: Auto-generated Javadoc

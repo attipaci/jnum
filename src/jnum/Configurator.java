@@ -22,7 +22,7 @@
  ******************************************************************************/
 // Copyright (c) 2009 Attila Kovacs 
 
-package jnum.util;
+package jnum;
 
 import java.io.BufferedReader;
 import java.io.File;

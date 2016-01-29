@@ -27,13 +27,13 @@ package jnum.astro;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
+import jnum.SafeMath;
+import jnum.Unit;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.text.GreekLetter;
-import jnum.util.SafeMath;
-import jnum.util.Unit;
 
 // TODO: Auto-generated Javadoc
 /**

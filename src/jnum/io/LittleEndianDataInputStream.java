@@ -23,7 +23,7 @@
 package jnum.io;
 import java.io.*;
 
-import jnum.util.Util;
+import jnum.Util;
 
 public class LittleEndianDataInputStream extends InputStream implements DataInput {
 	private InputStream stream;

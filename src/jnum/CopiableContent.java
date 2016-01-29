@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,37 +20,22 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-
-
-package jnum.util;
+package jnum;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface ViewableAsDoubles.
+ * The Interface CopiableContent.
+ *
+ * @param <Type> the generic type
  */
-public interface ViewableAsDoubles {
+public interface CopiableContent<Type> extends Copiable<Type> {
 
 	/**
-	 * View as doubles.
+	 * Copy.
 	 *
-	 * @return the object
+	 * @param withContent the with content
+	 * @return the type
 	 */
-	public Object viewAsDoubles();
-	
-	/**
-	 * View as doubles.
-	 *
-	 * @param view the view
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public void viewAsDoubles(Object view) throws IllegalArgumentException;
-	
-	/**
-	 * Creates the from doubles.
-	 *
-	 * @param array the array
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public void createFromDoubles(Object array) throws IllegalArgumentException;
+	public Type copy(boolean withContent);
 	
 }
