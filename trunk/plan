@@ -1,0 +1,117 @@
+0.02+
+
+	- Generic interfaces
+
+0.03
+
+	> Minimizer to work with List<Parameter>
+	  (this way it is easy to change what parameters are fitted)
+
+		minimize(List<Parameter) parameters)
+
+	> ArrayUtil migration and review
+	
+		+ PowerArray<Type>
+			Class<? extends Type> type;
+			Object data;
+			int[] dims;
+
+0.04
+
+	> Matrices
+
+		> inversion, SVD etc.
+
+	> Polynomials, PowerSeries (generic terms and coeffs)
+
+		+ use Hashtable<int order, T coeff> of terms.
+	
+
+	> Random Generators	
+
+
+0.05+	
+
+	+ Sparse Matrices (Hashtable<int index, SparseRow> rows)
+			+ SparseRow (Hashtable<int index, T value> elements) 
+			
+	+ Matric solve (eigenvalues, eigenvectors)
+	
+
+	+ Numerical Integration
+
+
+	+ MathExpression
+		+ dynamic evaluation
+		+ functions (operation, list of subexpression arguments)
+		+ variables (also from configurator!)
+		...
+
+
+0.1	* Approaching a useful set of numerical tools
+	  Features:
+		> Complex numbers
+		> Measurements
+		> Constants and Units
+		> 2D data.
+		> Spherical coordinates/projections
+		> FFT
+		> Special Functions
+		> LinearAlgebra (SVD etc)
+		> Optimization (non-linear)
+		> Numerical Integrals
+		> Random numbers
+		> Symbolic parser engine
+
+
+0.2+	* Optimization and testing of 0.1 tools
+	* Additional tools:
+
+		> Visualizations (static and live)
+			- 1D: charts
+			   + points & lines
+			   + error bars or lines
+			   + shaded ranges (alpha compose)
+			   + bars
+			- 2D: images
+			- 2D+: (multi-valued) 
+			   + color (1D-3D values),
+			   + dot size (1D) + color (1D-3D)
+			   + vectors width (1D) + length (1D) + color (1D-3D)
+			? 3D+: (projected to 2D, with D-2 rotations)
+				(and perspective?)
+			   + alpha composition
+			   + dots
+			   + volume elements
+		
+		> Gadgets
+			Gauges (old-style and others)
+			Switches, buttons, knobs, dials, sliders
+			Status lights
+
+		> Root finding
+		> CLEAN and MEM deconvolution
+		> PCA
+		> Statistical Estimators (trimean etc).
+		> Histogram tool
+		> statistical testing (KS test etc).
+		> Characteristic probability functions
+		  (basic distributions plus compose capability)
+		> Cosmology calculator
+		> SED models? (kovacs.sed)
+		> SuperMix-like n-port & circuits?
+		...
+	
+0.9	* Compose robust toolset
+	  (exclude anything half-baked)
+	* Finalize API (as much as possible), debug only.
+	* Complete documentation
+	
+	
+
+1.0	* Initial release of a robust set of tools.
+
+
+1.0+	* Gradual addition of APIs, with documentation
+	  (APIs under developmet -> <xxx>.devel)
+

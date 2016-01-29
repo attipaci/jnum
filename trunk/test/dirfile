@@ -1,0 +1,15 @@
+#!/bin/bash
+
+NAME=$0
+
+if [ -L $NAME ]; then
+        NAME=`readlink -f $NAME`
+fi
+
+CRUSH=`dirname $NAME`
+
+source $CRUSH/wrapper.sh
+
+#CLASSPATH="$CRUSH/src:$CRUSH/fits.jar:$CRUSH/bin"
+
+$JAVA $JAVAOPTS -classpath $CLASSPATH util.dirfile.DirFile $* 

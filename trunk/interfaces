@@ -1,0 +1,74 @@
+Composite<T>
+	add(T), add(T, weight), clear()
+
+Copiable<T>
+	T copy()
+
+Defaults
+	setDefaults()
+
+Initializing
+	initialize()
+
+Locking
+	lock(), unlock(), boolean isLocked()
+
+Updating()
+	update()
+
+Validating
+	validate()
+
+ViewableAsDoubles()
+	...
+
+:: math
+
+AbsoluteValue
+	abs(), norm()
+
+AbstractAlgebra<T> (Multiplicative<T>, Product<T>, IndetityValue, InverseValue<T>)
+
+Additive<T>
+	add(T)
+
+ComplexMath
+	conjugate(), scale(Complex)
+
+Differenciable
+	differenciate();
+
+IdentityValue
+	setIdentity();
+
+Integrable<T>
+	integrate(T);
+
+InverseValue<T>
+	T getInverse(), inverse()
+
+Invertible
+	invert()
+
+LinearAlgerbra<T>
+	addMultipleOf(T, factor), isNull(), setNull()
+
+MatrixAlgebra<T>
+	T dot(T), transpose(), getRank(), gauss(), gaussJordan()
+
+Metric<T>
+	distanceTo<T>
+
+Multiplicative<T>
+	multiplyBy(T)
+
+Normalizable
+	normalize()
+
+Product<T>
+	setProduct(T, T)
+
+Scalable
+	scale(factor)
+
+

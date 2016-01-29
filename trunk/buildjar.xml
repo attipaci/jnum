@@ -1,0 +1,21 @@
+<project name="jnum" default="createjar">    
+  <property name="projectHome" location="." />
+  <target name="createjar">
+    <jar 
+	destfile="${projectHome}/jnum.jar" 
+	basedir="${projectHome}/bin"
+	includes="**/*.class" 
+	excludes="**/test/*,**/devel/*,**/TODO*,**/*~,**/.*" 
+	index="true"
+	level="9" 
+    />
+    <jar 
+	destfile="${projectHome}/jnum-src.jar" 
+	basedir="${projectHome}/src"
+	includes="**/*.java" 
+	excludes="**/test/*,**/devel/*,**/TODO*,**/*~,**/.*" 
+	index="true"
+	level="9" 
+    />
+  </target>    
+</project>
