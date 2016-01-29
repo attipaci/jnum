@@ -1,7 +1,7 @@
 package test;
 
+import jnum.Unit;
 import jnum.data.GaussianPSF;
-import jnum.util.Unit;
 
 public class PSFTest {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,22 +20,62 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-// (C)2007 Attila Kovacs <attila@submm.caltech.edu>
-
-package jnum.util;
+package jnum;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface CopyCat.
- *
- * @param <T> the generic type
+ * The Interface Flagging.
  */
-public interface CopyCat<T> {
+public interface Flagging {
+
+	/**
+	 * Checks if is flagged.
+	 *
+	 * @param pattern the pattern
+	 * @return true, if is flagged
+	 */
+	public boolean isFlagged(int pattern);
 	
 	/**
-	 * Copy.
+	 * Checks if is unflagged.
 	 *
-	 * @param template the template
+	 * @param pattern the pattern
+	 * @return true, if is unflagged
 	 */
-	public void copy(T template); 
+	public boolean isUnflagged(int pattern);
+
+	/**
+	 * Checks if is flagged.
+	 *
+	 * @return true, if is flagged
+	 */
+	public boolean isFlagged();
+	
+	/**
+	 * Checks if is unflagged.
+	 *
+	 * @return true, if is unflagged
+	 */
+	public boolean isUnflagged();
+	
+	/**
+	 * Flag.
+	 *
+	 * @param pattern the pattern
+	 */
+	public void flag(int pattern);
+	
+	/**
+	 * Unflag.
+	 *
+	 * @param pattern the pattern
+	 */
+	public void unflag(int pattern);
+	
+	/**
+	 * Unflag.
+	 */
+	public void unflag();
+	
 }
+

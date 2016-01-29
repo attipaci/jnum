@@ -28,6 +28,7 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import jnum.Unit;
 import jnum.data.GridMap2D;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
@@ -37,7 +38,6 @@ import jnum.plot.GridImageLayer;
 import jnum.plot.ImageArea;
 import jnum.plot.SimpleLabel;
 import jnum.plot.colorscheme.*;
-import jnum.util.Unit;
 
 
 // TODO: Auto-generated Javadoc

@@ -27,11 +27,11 @@ package jnum.data;
 import java.io.Serializable;
 import java.text.NumberFormat;
 
+import jnum.Copiable;
 import jnum.math.Division;
 import jnum.math.LinearAlgebra;
 import jnum.math.Multiplicative;
 import jnum.math.Ratio;
-import jnum.util.Copiable;
 import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc

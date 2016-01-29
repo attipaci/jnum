@@ -23,8 +23,8 @@
 
 package jnum.parallel;
 
+import jnum.Parallel;
 import jnum.data.WeightedPoint;
-import jnum.util.Parallel;
 
 public class Averaging<ReturnType extends WeightedPoint> extends ParallelReduction<ReturnType> {
 

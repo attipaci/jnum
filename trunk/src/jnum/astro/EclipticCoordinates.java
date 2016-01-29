@@ -27,12 +27,12 @@ package jnum.astro;
 
 import java.text.NumberFormat;
 
+import jnum.Constant;
+import jnum.Unit;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
-import jnum.util.Constant;
-import jnum.util.Unit;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;

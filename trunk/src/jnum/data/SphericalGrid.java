@@ -22,9 +22,9 @@
  ******************************************************************************/
 package jnum.data;
 
+import jnum.Unit;
 import jnum.math.SphericalCoordinates;
 import jnum.projection.SphericalProjection;
-import jnum.util.Unit;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 

@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
-import jnum.util.Copiable;
+import jnum.Copiable;
 import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc

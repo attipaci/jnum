@@ -24,13 +24,13 @@ package jnum.data;
 
 import java.io.IOException;
 
+import jnum.ExtraMath;
+import jnum.Unit;
+import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import jnum.text.TableFormatter;
-import jnum.util.ExtraMath;
 import jnum.util.HashCode;
-import jnum.util.Unit;
-import jnum.util.Util;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;

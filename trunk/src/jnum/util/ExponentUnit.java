@@ -24,6 +24,7 @@ package jnum.util;
 
 import java.util.Hashtable;
 
+import jnum.Unit;
 import jnum.math.InverseValue;
 
 // TODO: Auto-generated Javadoc

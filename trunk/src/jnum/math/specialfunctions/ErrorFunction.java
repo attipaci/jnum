@@ -22,7 +22,7 @@
  ******************************************************************************/
 package jnum.math.specialfunctions;
 
-import jnum.util.Constant;
+import jnum.Constant;
 
 // TODO: Auto-generated Javadoc
 // Error function is defined s.t.

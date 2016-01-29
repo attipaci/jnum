@@ -26,7 +26,7 @@ import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Vector;
 
-import jnum.util.Util;
+import jnum.Util;
 
 
 // TODO: Auto-generated Javadoc

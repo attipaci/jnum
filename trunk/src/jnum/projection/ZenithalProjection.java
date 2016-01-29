@@ -24,9 +24,9 @@
 
 package jnum.projection;
 
+import jnum.ExtraMath;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
-import jnum.util.ExtraMath;
 
 
 // TODO: Auto-generated Javadoc

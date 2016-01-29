@@ -26,7 +26,7 @@ package jnum.astro;
 
 import java.text.NumberFormat;
 
-import jnum.util.Util;
+import jnum.Util;
 
 
 // TODO: Auto-generated Javadoc

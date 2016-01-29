@@ -26,7 +26,7 @@ package jnum.math;
 
 import java.awt.geom.Point2D;
 
-import jnum.util.ExtraMath;
+import jnum.ExtraMath;
 
 // TODO: Auto-generated Javadoc
 //Add parsing

@@ -25,6 +25,7 @@ package jnum.util;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import jnum.Unit;
 import jnum.math.Division;
 import jnum.math.Multiplicative;
 

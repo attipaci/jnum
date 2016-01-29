@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,21 +20,22 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.util;
+// (C)2007 Attila Kovacs <attila@submm.caltech.edu>
+
+package jnum;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface Copiable.
+ * The Interface CopyCat.
  *
- * @param <Type> the generic type
+ * @param <T> the generic type
  */
-public interface Copiable<Type> {
-
+public interface CopyCat<T> {
+	
 	/**
 	 * Copy.
 	 *
-	 * @return the type
+	 * @param template the template
 	 */
-	public Type copy();
-	
+	public void copy(T template); 
 }

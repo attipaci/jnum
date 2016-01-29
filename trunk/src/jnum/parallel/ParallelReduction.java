@@ -23,7 +23,7 @@
 
 package jnum.parallel;
 
-import jnum.util.Parallel;
+import jnum.Parallel;
 
 public abstract class ParallelReduction<ReturnType> {
 	private Parallel<ReturnType> task;

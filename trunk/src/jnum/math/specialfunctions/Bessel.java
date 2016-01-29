@@ -22,7 +22,7 @@
  ******************************************************************************/
 package jnum.math.specialfunctions;
 
-import jnum.math.Function;
+import jnum.Function;
 
 // TODO: Auto-generated Javadoc
 /**

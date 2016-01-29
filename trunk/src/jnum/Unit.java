@@ -22,11 +22,13 @@
  ******************************************************************************/
 
 
-package jnum.util;
+package jnum;
 
 import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+
+import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
 // TODO Convert to Enum?

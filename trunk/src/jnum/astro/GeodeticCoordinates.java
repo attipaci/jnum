@@ -27,8 +27,8 @@ package jnum.astro;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
+import jnum.Unit;
 import jnum.math.SphericalCoordinates;
-import jnum.util.Unit;
 
 // TODO: Auto-generated Javadoc
 // TODO Needs updating

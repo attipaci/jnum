@@ -22,8 +22,8 @@
  ******************************************************************************/
 package jnum.text;
 
+import jnum.Util;
 import jnum.math.Complex;
-import jnum.util.Util;
 
 
 // TODO: Auto-generated Javadoc

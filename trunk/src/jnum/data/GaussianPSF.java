@@ -24,6 +24,12 @@ package jnum.data;
 
 import java.text.NumberFormat;
 
+import jnum.Constant;
+import jnum.Copiable;
+import jnum.ExtraMath;
+import jnum.SafeMath;
+import jnum.Unit;
+import jnum.Util;
 import jnum.math.Division;
 import jnum.math.Multiplication;
 import jnum.math.Product;
@@ -31,13 +37,7 @@ import jnum.math.Ratio;
 import jnum.math.Scalable;
 import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
-import jnum.util.Constant;
-import jnum.util.Copiable;
-import jnum.util.ExtraMath;
 import jnum.util.HashCode;
-import jnum.util.SafeMath;
-import jnum.util.Unit;
-import jnum.util.Util;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;

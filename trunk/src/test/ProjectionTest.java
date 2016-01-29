@@ -1,5 +1,6 @@
 package test;
 
+import jnum.Unit;
 import jnum.math.*;
 import jnum.projection.*;
 import jnum.util.*;

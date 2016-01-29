@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.util;
+package jnum;
 
 import jnum.math.specialfunctions.ErrorFunction;
 

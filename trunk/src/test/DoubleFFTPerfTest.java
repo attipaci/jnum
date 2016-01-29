@@ -22,8 +22,8 @@
  ******************************************************************************/
 package test;
 
+import jnum.Util;
 import jnum.fft.DoubleFFT;
-import jnum.util.Util;
 
 // TODO: Auto-generated Javadoc
 /**

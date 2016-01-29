@@ -31,8 +31,8 @@ import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 
+import jnum.Unit;
 import jnum.text.TimeFormat;
-import jnum.util.Unit;
 
 
 

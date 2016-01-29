@@ -27,7 +27,7 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import jnum.util.ExtraMath;
+import jnum.ExtraMath;
 
 
 // TODO: Auto-generated Javadoc

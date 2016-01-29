@@ -24,6 +24,10 @@ package jnum.data;
 
 import java.io.IOException;
 
+import jnum.Constant;
+import jnum.ExtraMath;
+import jnum.Unit;
+import jnum.Util;
 import jnum.astro.EquatorialCoordinates;
 import jnum.fft.MultiFFT;
 import jnum.fits.FitsExtras;
@@ -33,11 +37,7 @@ import jnum.math.Vector2D;
 import jnum.math.specialfunctions.CumulativeNormalDistribution;
 import jnum.projection.Projection2D;
 import jnum.text.TableFormatter;
-import jnum.util.Constant;
-import jnum.util.ExtraMath;
 import jnum.util.HashCode;
-import jnum.util.Unit;
-import jnum.util.Util;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;

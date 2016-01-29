@@ -22,9 +22,9 @@
  ******************************************************************************/
 package test;
 
+import jnum.Util;
 import jnum.fft.ComplexFFT;
 import jnum.math.Complex;
-import jnum.util.Util;
 
 // TODO: Auto-generated Javadoc
 /**

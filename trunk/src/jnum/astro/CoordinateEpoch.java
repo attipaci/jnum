@@ -26,7 +26,7 @@ package jnum.astro;
 
 import java.io.Serializable;
 
-import jnum.util.Copiable;
+import jnum.Copiable;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;

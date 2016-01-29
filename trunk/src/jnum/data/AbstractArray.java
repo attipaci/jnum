@@ -27,9 +27,9 @@ package jnum.data;
 
 import java.util.*;
 
-import jnum.math.Function;
+import jnum.Copiable;
+import jnum.Function;
 import jnum.text.ParseType;
-import jnum.util.Copiable;
 
 // TODO: Auto-generated Javadoc
 /**

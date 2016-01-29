@@ -42,10 +42,10 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 
+import jnum.Unit;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateSystem;
 import jnum.math.Vector2D;
-import jnum.util.Unit;
 
 
 

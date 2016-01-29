@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import jnum.util.Constant;
+import jnum.Constant;
 
 
 // TODO: Auto-generated Javadoc

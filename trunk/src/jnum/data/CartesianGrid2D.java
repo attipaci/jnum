@@ -22,11 +22,11 @@
  ******************************************************************************/
 package jnum.data;
 
+import jnum.Unit;
 import jnum.math.Cartesian;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateSystem;
 import jnum.projection.DefaultProjection2D;
-import jnum.util.Unit;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;

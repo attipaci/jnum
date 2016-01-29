@@ -22,11 +22,11 @@
  ******************************************************************************/
 package test;
 
+import jnum.Constant;
+import jnum.Util;
 import jnum.fft.ComplexFFT;
 import jnum.fft.FFT;
 import jnum.math.Complex;
-import jnum.util.Constant;
-import jnum.util.Util;
 
 // TODO: Auto-generated Javadoc
 /**

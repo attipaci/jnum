@@ -22,8 +22,8 @@
  ******************************************************************************/
 package jnum.math.specialfunctions;
 
+import jnum.Constant;
 import jnum.math.NumericalFunction;
-import jnum.util.Constant;
 
 // TODO: Auto-generated Javadoc
 /**

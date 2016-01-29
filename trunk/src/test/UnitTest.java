@@ -22,11 +22,11 @@
  ******************************************************************************/
 package test;
 
+import jnum.Symbol;
+import jnum.Unit;
+import jnum.Unit.Multiplier;
 import jnum.util.CompoundUnit;
 import jnum.util.ExponentUnit;
-import jnum.util.Symbol;
-import jnum.util.Unit;
-import jnum.util.Unit.Multiplier;
 
 // TODO: Auto-generated Javadoc
 /**

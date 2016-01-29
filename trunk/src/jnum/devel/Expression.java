@@ -25,6 +25,8 @@ package jnum.devel;
 
 import java.util.*;
 
+import jnum.ExtraMath;
+import jnum.Util;
 import jnum.math.*;
 import jnum.util.*;
 

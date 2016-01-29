@@ -42,6 +42,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import jnum.Constant;
+import jnum.Copiable;
+import jnum.Util;
+import jnum.ViewableAsDoubles;
 import jnum.math.AbsoluteValue;
 import jnum.math.Additive;
 import jnum.math.Complex;
@@ -53,10 +57,6 @@ import jnum.text.BracketedListTokenizer;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
-import jnum.util.Constant;
-import jnum.util.Copiable;
-import jnum.util.Util;
-import jnum.util.ViewableAsDoubles;
 
 // TODO: Auto-generated Javadoc
 // TODO Eliminate calls to getRank(), getClass(), and getDimension() inside recursive methods. 

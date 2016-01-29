@@ -22,27 +22,35 @@
  ******************************************************************************/
 
 
-package jnum.math;
+package jnum;
 
 // TODO: Auto-generated Javadoc
-// Functions that do not create a new object at every evaluation. 
-// If such behaviour is desired, the ConsiderateFunctionAdapter class
-// can be used to wrap this into a regular Function.
-
 /**
- * The Interface ConsiderateFunction.
- *
- * @param <ArgType> the generic type
- * @param <ReturnType> the generic type
+ * The Interface ViewableAsDoubles.
  */
-public interface ConsiderateFunction<ArgType, ReturnType> {
+public interface ViewableAsDoubles {
 
 	/**
-	 * Evaluate.
+	 * View as doubles.
 	 *
-	 * @param parms the parms
-	 * @param toValue the to value
+	 * @return the object
 	 */
-	public void evaluate(ArgType parms, ReturnType toValue);
+	public Object viewAsDoubles();
+	
+	/**
+	 * View as doubles.
+	 *
+	 * @param view the view
+	 * @throws IllegalArgumentException the illegal argument exception
+	 */
+	public void viewAsDoubles(Object view) throws IllegalArgumentException;
+	
+	/**
+	 * Creates the from doubles.
+	 *
+	 * @param array the array
+	 * @throws IllegalArgumentException the illegal argument exception
+	 */
+	public void createFromDoubles(Object array) throws IllegalArgumentException;
 	
 }

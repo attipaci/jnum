@@ -23,6 +23,9 @@
 
 package jnum.math;
 
+import jnum.ConsiderateFunction;
+import jnum.Function;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class ConsiderateFunctionAdapter.

@@ -24,12 +24,12 @@ package jnum.data;
 
 import java.io.Serializable;
 
+import jnum.CopiableContent;
+import jnum.ExtraMath;
 import jnum.fft.DoubleFFT;
 import jnum.fft.FFT;
 import jnum.fft.FloatFFT;
 import jnum.math.Complex;
-import jnum.util.CopiableContent;
-import jnum.util.ExtraMath;
 
 // TODO: Auto-generated Javadoc
 /**

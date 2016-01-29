@@ -20,62 +20,21 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.util;
+package jnum;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface Flagging.
+ * The Interface Copiable.
+ *
+ * @param <Type> the generic type
  */
-public interface Flagging {
+public interface Copiable<Type> {
 
 	/**
-	 * Checks if is flagged.
+	 * Copy.
 	 *
-	 * @param pattern the pattern
-	 * @return true, if is flagged
+	 * @return the type
 	 */
-	public boolean isFlagged(int pattern);
-	
-	/**
-	 * Checks if is unflagged.
-	 *
-	 * @param pattern the pattern
-	 * @return true, if is unflagged
-	 */
-	public boolean isUnflagged(int pattern);
-
-	/**
-	 * Checks if is flagged.
-	 *
-	 * @return true, if is flagged
-	 */
-	public boolean isFlagged();
-	
-	/**
-	 * Checks if is unflagged.
-	 *
-	 * @return true, if is unflagged
-	 */
-	public boolean isUnflagged();
-	
-	/**
-	 * Flag.
-	 *
-	 * @param pattern the pattern
-	 */
-	public void flag(int pattern);
-	
-	/**
-	 * Unflag.
-	 *
-	 * @param pattern the pattern
-	 */
-	public void unflag(int pattern);
-	
-	/**
-	 * Unflag.
-	 */
-	public void unflag();
+	public Type copy();
 	
 }
-

@@ -28,12 +28,12 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
+import jnum.Constant;
+import jnum.SafeMath;
+import jnum.Unit;
+import jnum.Util;
 import jnum.projection.SphericalProjection;
 import jnum.text.AngleFormat;
-import jnum.util.Constant;
-import jnum.util.SafeMath;
-import jnum.util.Unit;
-import jnum.util.Util;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;

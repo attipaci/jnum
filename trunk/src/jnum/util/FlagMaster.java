@@ -25,6 +25,8 @@ package jnum.util;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import jnum.Flagging;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class FlagMaster.

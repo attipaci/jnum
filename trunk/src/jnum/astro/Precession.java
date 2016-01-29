@@ -26,9 +26,9 @@
 
 package jnum.astro;
 
-import jnum.util.ExtraMath;
+import jnum.ExtraMath;
+import jnum.Unit;
 import jnum.util.SimpleMatrix;
-import jnum.util.Unit;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -45,9 +45,9 @@
 
 package jnum.parallel;
 
+import jnum.Parallel;
 import jnum.data.WeightedPoint;
 import jnum.math.Additive;
-import jnum.util.Parallel;
 
 public class Summation<ReturnType extends Additive<ReturnType>> extends ParallelReduction<ReturnType> {
 

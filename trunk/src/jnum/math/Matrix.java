@@ -27,9 +27,9 @@ package jnum.math;
 
 import java.util.*;
 
+import jnum.ExtraMath;
 import jnum.data.ArrayUtil;
 import jnum.util.ConvergenceException;
-import jnum.util.ExtraMath;
 
 import java.text.*;
 
