@@ -102,6 +102,26 @@ public class EllipticalSource<CoordinateType extends Coordinate2D> extends Gauss
 		// TODO Auto-generated constructor stub
 	}
 	
+	@Override
+	public int hashCode() { 
+		int hash = super.hashCode();
+		if(angle != null) hash ^= angle.hashCode();
+		if(elongation != null) hash ^= elongation.hashCode();
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof EllipticalSource)) return false;
+		if(!super.equals(o)) return false;
+		EllipticalSource<?> e = (EllipticalSource<?>) o;
+		if(!Util.equals(angle, e.angle)) return false;
+		if(!Util.equals(elongation, e.elongation)) return false;
+		return true;
+	}
+	
+	
 	/**
 	 * Gets the elongation.
 	 *

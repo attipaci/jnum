@@ -24,6 +24,7 @@
 package jnum.astro;
 
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,6 +34,7 @@ import java.util.TimeZone;
 
 import jnum.Unit;
 import jnum.text.TimeFormat;
+import jnum.util.HashCode;
 
 
 
@@ -43,8 +45,13 @@ import jnum.text.TimeFormat;
 /**
  * The Class AstroTime.
  */
-public class AstroTime {
+public class AstroTime implements Serializable, Comparable<AstroTime> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 890383504654665623L;
+
 	/** The mjd. */
 	private double MJD = Double.NaN; // Assuming that MJD goes with TT
 	
@@ -52,6 +59,23 @@ public class AstroTime {
 	 * Instantiates a new astro time.
 	 */
 	public AstroTime() {}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ HashCode.get(MJD);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof AstroTime)) return false;
+		return MJD == ((AstroTime) o).MJD;
+	}
+	
+	@Override
+	public int compareTo(AstroTime time) {
+		return Double.compare(MJD, time.MJD);
+	}
 	
 	/**
 	 * Instantiates a new astro time.

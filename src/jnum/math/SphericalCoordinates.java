@@ -140,19 +140,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 */
 	public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
 	
-
-	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object o) {
-		if(o.getClass().equals(getClass())) return false;
-		SphericalCoordinates coords = (SphericalCoordinates) o;
-		if(!equalAngles(coords.x(), x())) return false;
-		if(!equalAngles(coords.y(), y())) return false;
-		return true;		
-	}
-	
 	/* (non-Javadoc)
 	 * @see kovacs.util.Coordinate2D#copy(kovacs.util.Coordinate2D)
 	 */

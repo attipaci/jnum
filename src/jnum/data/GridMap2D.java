@@ -23,6 +23,7 @@
 package jnum.data;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import jnum.ExtraMath;
 import jnum.Unit;
@@ -63,9 +64,6 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	/** The clipping s2 n. */
 	private double clippingS2N = Double.NaN;
 	
-	/** The reuse offset. */
-	private Vector2D reuseOffset = new Vector2D();
-	
 	/**
 	 * Instantiates a new grid map.
 	 */
@@ -82,6 +80,20 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 		if(weight != null) HashCode.sampleFrom(weight);
 		if(count != null) HashCode.sampleFrom(count);
 		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof GridMap2D)) return false;
+		if(!super.equals(o)) return false;
+		GridMap2D<?> map = (GridMap2D<?>) o;
+		if(Double.compare(clippingS2N, map.clippingS2N) != 0) return false;
+		if(Double.compare(filterBlanking, map.filterBlanking) != 0) return false;
+		if(Double.compare(weightFactor, map.weightFactor) != 0) return false;
+		if(!Arrays.equals(count, map.count)) return false;
+		if(!Arrays.equals(weight, map.weight)) return false;
+		return true;
 	}
 	
 	/**
@@ -118,15 +130,6 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	 */
 	public double getS2NClipLevel() { return clippingS2N; }
 	
-	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#clone()
-	 */
-	@Override
-	public Object clone() {
-		GridMap2D<?> clone = (GridMap2D<?>) super.clone();
-		clone.reuseOffset = new Vector2D();
-		return clone;
-	}
 	
 	/* (non-Javadoc)
 	 * @see kovacs.util.data.Data2D#copy(kovacs.util.data.Data2D, int)
@@ -237,26 +240,24 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	 * @param w the w
 	 * @param time the time
 	 */
-	public final void addPointAt(Vector2D mapOffset, final double value, final double g, final double w, final double time) {
-		offsetToIndex(mapOffset, reuseOffset);
-		addPointAt((int)Math.round(reuseOffset.x()), (int)Math.round(reuseOffset.y()), value, g, w, time);
+	public final synchronized void addPointAt(final Vector2D index, final double value, final double g, final double w, final double time) {
+		addPointAt((int)Math.round(index.x()), (int)Math.round(index.y()), value, g, w, time);
 	}
 	
 	/**
 	 * Adds the point at.
 	 *
-	 * @param coords the coords
+	 * @param mapOffset the map offset
 	 * @param value the value
 	 * @param g the g
 	 * @param w the w
 	 * @param time the time
 	 */
-	public final void addPointAt(CoordinateType coords, final double value, final double g, final double w, final double time) {
-		getProjection().project(coords, reuseOffset);
-		toIndex(reuseOffset);
-		addPointAt((int)Math.round(reuseOffset.x()), (int)Math.round(reuseOffset.y()), value, g, w, time);
+	public final synchronized void addPointAt(final Index2D index, final double value, final double g, final double w, final double time) {
+		addPointAt(index.i(), index.j(), value, g, w, time);
 	}
-
+	
+	
 	/**
 	 * Adds the point at.
 	 *
@@ -883,22 +884,12 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 		return fits;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#read(nom.tam.fits.Fits)
-	 */
-	@Override
-	public void read(Fits fits) throws Exception {
-		// Get the coordinate system information
-		BasicHDU<?>[] HDU = fits.read();
-		parseHeader(HDU[0].getHeader());	
-		readData(HDU);
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see kovacs.util.data.GridImage#parseHeader(nom.tam.fits.Header)
 	 */
 	@Override
-	public void parseHeader(Header header, String alt) throws Exception {			
+	protected void parseHeader(Header header, String alt) throws Exception {			
 		super.parseHeader(header, alt);
 		
 		weightFactor =  header.getDoubleValue("XWEIGHT", 1.0);

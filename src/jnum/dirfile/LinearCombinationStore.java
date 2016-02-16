@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import jnum.math.Vector2D;
+import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -35,6 +36,11 @@ import jnum.math.Vector2D;
  */
 public class LinearCombinationStore extends DataStore<Double> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2557496368888356380L;
+
 	/** The terms. */
 	private ArrayList<DataStore<?>> terms = new ArrayList<DataStore<?>>();
 	
@@ -51,6 +57,33 @@ public class LinearCombinationStore extends DataStore<Double> {
 	 */
 	public LinearCombinationStore(String name) {
 		super(name);
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		for(DataStore<?> term : terms) hash ^= term.hashCode();
+		for(Vector2D coeff : coeffs) hash ^= coeff.hashCode();
+		for(Double x : indexScale) hash ^= HashCode.get(x);
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof LinearCombinationStore)) return false;
+		if(!super.equals(o)) return false;
+		LinearCombinationStore store = (LinearCombinationStore) o;
+		
+		if(terms.size() != store.terms.size()) return false;
+		if(coeffs.size() != store.coeffs.size()) return false;
+		if(indexScale.size() != store.indexScale.size()) return false;
+
+		for(int i=terms.size(); --i >= 0; ) if(!terms.get(i).equals(store.terms.get(i))) return false;
+		for(int i=coeffs.size(); --i >= 0; ) if(coeffs.get(i) != store.coeffs.get(i)) return false;
+		for(int i=indexScale.size(); --i >= 0; ) if(indexScale.get(i) != store.indexScale.get(i)) return false;
+		
+		return true;
 	}
 	
 	/**

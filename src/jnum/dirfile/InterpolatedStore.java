@@ -25,12 +25,18 @@
 package jnum.dirfile;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class InterpolatedStore.
  */
-public class InterpolatedStore {
+public class InterpolatedStore extends DataStore<Double> implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5872387045878806688L;
 	
 	/** The values. */
 	DataStore<?> values;
@@ -40,8 +46,20 @@ public class InterpolatedStore {
 	 *
 	 * @param values the values
 	 */
-	public InterpolatedStore(DataStore<?> values) {
+	public InterpolatedStore(String name, DataStore<?> values) {
+		super(name);
 		this.values = values;
+	}
+	
+	@Override
+	public int hashCode() { return super.hashCode() ^ values.hashCode(); }
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof InterpolatedStore)) return false;
+		if(!super.equals(o)) return false;
+		return values.equals(((InterpolatedStore) o).values);
 	}
 	
 	/**
@@ -66,8 +84,19 @@ public class InterpolatedStore {
 	 * @return the long
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
+	@Override
 	public long length() throws IOException {
 		return values.length();
+	}
+
+	@Override
+	public Double get(long n) throws IOException {
+		return values.get(n).doubleValue();
+	}
+
+	@Override
+	public int getSamples() {
+		return values.getSamples();
 	}
 
 }

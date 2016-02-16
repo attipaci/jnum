@@ -25,6 +25,7 @@
 package jnum.dirfile;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -32,7 +33,12 @@ import java.io.IOException;
  *
  * @param <Type> the generic type
  */
-public abstract class DataStore<Type extends Number> {
+public abstract class DataStore<Type extends Number> implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8960142666704305939L;
 	
 	/** The name. */
 	String name;
@@ -44,6 +50,19 @@ public abstract class DataStore<Type extends Number> {
 	 */
 	public DataStore(String name) {
 		this.name = name; 
+	}
+	
+	@Override
+	public int hashCode() { return super.hashCode() ^ name.hashCode(); }
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof DataStore)) return false;
+		if(!super.equals(o)) return false;
+		DataStore<?> store = (DataStore<?>) o;
+		if(name.equals(store.name)) return true;
+		return false;
 	}
 	
 	/**

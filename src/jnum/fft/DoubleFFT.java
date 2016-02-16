@@ -39,6 +39,12 @@ import jnum.ExtraMath;
 
 public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1904464241037659389L;
+
+
 	/* (non-Javadoc)
 	 * @see kovacs.fft.FFT#getTwiddleMask()
 	 */
@@ -632,6 +638,11 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
 	
 	public static class NyquistUnrolledRealFT extends DoubleFFT {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -896227818374947414L;
+
 		/* (non-Javadoc)
 		 * @see kovacs.util.fft.FFT#addressSizeOf(java.lang.Object)
 		 */

@@ -78,13 +78,14 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if(o instanceof Range) {
-			Range range = (Range) o;
-			if(Double.compare(range.min, min) != 0) return false;
-			if(Double.compare(range.max, max) != 0) return false;
-			return true;
-		}
-		return false;
+		if(o == this) return true;
+		if(!(o instanceof Range)) return false;
+		if(!super.equals(o)) return false;
+
+		Range range = (Range) o;
+		if(Double.compare(range.min, min) != 0) return false;
+		if(Double.compare(range.max, max) != 0) return false;
+		return true;
 	}
 	
 	/* (non-Javadoc)
@@ -92,7 +93,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 */
 	@Override
 	public int hashCode() {
-		return HashCode.get(min) ^ HashCode.get(max);
+		return super.hashCode() ^ HashCode.get(min) ^ HashCode.get(max);
 	}
 	
 	public void flip() {

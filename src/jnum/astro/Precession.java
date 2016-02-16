@@ -26,16 +26,24 @@
 
 package jnum.astro;
 
+import java.io.Serializable;
+
 import jnum.ExtraMath;
 import jnum.Unit;
+import jnum.Util;
 import jnum.util.SimpleMatrix;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Precession.
  */
-public class Precession {
+public class Precession implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5730425237393070503L;
+
 	/** The to epoch. */
 	private CoordinateEpoch fromEpoch, toEpoch;
 	
@@ -71,6 +79,27 @@ public class Precession {
 		else calcMatrix();
 	}
 
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		if(fromEpoch != null) hash ^= fromEpoch.hashCode();
+		if(toEpoch != null) hash ^= toEpoch.hashCode();
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof Precession)) return false;
+		if(!super.equals(o)) return false;
+		Precession p = (Precession) o;
+		
+		if(!Util.equals(fromEpoch, p.fromEpoch)) return false;
+		if(!Util.equals(toEpoch, p.toEpoch)) return false;
+		
+		return true;
+	}
+	
 	//  Precession from Lederle & Schwan, Astronomy and Astrophysics, 134, 1-6 (1984)
 	/**
 	 * Calculates the matrix.

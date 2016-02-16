@@ -26,6 +26,8 @@ package jnum.dirfile;
 
 import java.io.IOException;
 
+import jnum.util.HashCode;
+
 
 // TODO: Auto-generated Javadoc
 /**
@@ -33,8 +35,13 @@ import java.io.IOException;
  */
 public class Constant extends DataStore<Number> {
 	
-	/** The floating. */
-	boolean floating = true;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8499362540214314258L;
+
+	/** The isFloating. */
+	boolean isFloating = true;
 	
 	/** The i value. */
 	long iValue;
@@ -63,7 +70,22 @@ public class Constant extends DataStore<Number> {
 		default : throw new IllegalArgumentException("No constant type for " + type);
 		}
 		
-		floating = !Double.isNaN(fValue);
+		isFloating = !Double.isNaN(fValue);
+	}
+	
+	@Override
+	public int hashCode() { return super.hashCode() ^ HashCode.get(iValue) ^ HashCode.get(fValue) ^ (isFloating ? 1 : 0); }
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof Constant)) return false;
+		if(!super.equals(o)) return false;
+		Constant c = (Constant) o;
+		if(isFloating != c.isFloating) return false;
+		if(iValue != c.iValue) return false;
+		if(fValue != c.fValue) return false;
+		return true;
 	}
 	
 	/* (non-Javadoc)
@@ -71,7 +93,7 @@ public class Constant extends DataStore<Number> {
 	 */
 	@Override
 	public Number get(long n) throws IOException {
-		return floating ? fValue : iValue;
+		return isFloating ? fValue : iValue;
 	}
 	
 	/* (non-Javadoc)

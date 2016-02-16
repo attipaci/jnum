@@ -24,6 +24,7 @@
 
 package jnum.astro;
 
+
 import jnum.Unit;
 
 // TODO: Auto-generated Javadoc
@@ -31,14 +32,13 @@ import jnum.Unit;
  * The Class CurrentTime.
  */
 public final class CurrentTime {
-	
+
 	/** The DU t1. */
 	private static double DUT1 = 0.0;
 	//public static double errorUT1 = 1.0 * Unit.s;
 	
 	/** The time. */
 	private static AstroTime time = new AstroTime();
-	
 	
 	/**
 	 * Gets the dU t1.

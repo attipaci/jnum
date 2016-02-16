@@ -22,6 +22,8 @@
  ******************************************************************************/
 package jnum.projection;
 
+import java.io.Serializable;
+
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 
@@ -32,8 +34,13 @@ import jnum.math.Vector2D;
  *
  * @param <CoordinateType> the generic type
  */
-public class Projector2D<CoordinateType extends Coordinate2D> {
+public class Projector2D<CoordinateType extends Coordinate2D> implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1473954926270300168L;
+
 	/** The offset. */
 	public Vector2D offset = new Vector2D();
 	

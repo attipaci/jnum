@@ -22,6 +22,8 @@
  ******************************************************************************/
 package jnum.data;
 
+import java.io.Serializable;
+
 import jnum.math.Metric;
 
 
@@ -29,8 +31,12 @@ import jnum.math.Metric;
 /**
  * The Class LocalizedData.
  */
-public abstract class LocalizedData implements Comparable<LocalizedData>, Metric<LocalizedData> {
+public abstract class LocalizedData implements Serializable, Comparable<LocalizedData>, Metric<LocalizedData> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2776764506885561864L;
 	/** The measurements. */
 	public int measurements = 1;
 	

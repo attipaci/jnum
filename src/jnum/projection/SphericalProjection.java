@@ -28,6 +28,7 @@ import java.util.Hashtable;
 
 import jnum.Constant;
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
@@ -96,12 +97,15 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if(!o.getClass().equals(getClass())) return false;
+		if(o == this) return true;
+		if(!(o instanceof SphericalProjection)) return false;
+		if(!super.equals(o)) return false;
 		SphericalProjection projection = (SphericalProjection) o;
 		
 		if(projection.userPole != userPole) return false;
-		if(!projection.nativeReference.equals(nativeReference)) return false;
-		if(!projection.nativePole.equals(nativePole)) return false;
+		if(!Util.equals(projection.nativeReference, nativeReference)) return false;
+		if(!Util.equals(projection.nativePole, nativePole)) return false;
+		if(isRightAnglePole()) if(!Util.equals(projection.celestialPole, celestialPole)) return false;
 		return super.equals(o);		
 	}
 	
@@ -110,7 +114,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	 */
 	@Override
 	public int hashCode() {
-		int hash = super.hashCode();
+		int hash = super.hashCode() ^ (userPole ? 1 : 0);
 		if(nativeReference != null) hash ^= nativeReference.hashCode();
 		if(!isRightAnglePole()) if(celestialPole != null) hash ^= celestialPole.hashCode();
 		if(nativePole != null) hash ^= nativePole.hashCode();

@@ -39,6 +39,11 @@ import jnum.math.Complex;
 public class ComplexFFT extends FFT1D<Complex[]> {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9178097963072050931L;
+
+	/**
 	 * Bit reverse.
 	 *
 	 * @param data the data

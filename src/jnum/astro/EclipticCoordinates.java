@@ -29,6 +29,7 @@ import java.text.NumberFormat;
 
 import jnum.Constant;
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
@@ -120,6 +121,23 @@ public class EclipticCoordinates extends CelestialCoordinates implements Precess
 	 * @param from the from
 	 */
 	public EclipticCoordinates(CelestialCoordinates from) { super(from); }
+	
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		if(epoch != null) hash ^= epoch.hashCode();
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof EclipticCoordinates)) return false;
+		if(!super.equals(o)) return false;
+		EclipticCoordinates e = (EclipticCoordinates) o;
+		if(!Util.equals(epoch, e.epoch)) return false;
+		return true;
+	}
 	
 	
 	@Override

@@ -22,6 +22,7 @@
  ******************************************************************************/
 package jnum.data;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 
 import jnum.Constant;
@@ -47,8 +48,13 @@ import nom.tam.util.Cursor;
 /**
  * The Class GaussianPSF.
  */
-public class GaussianPSF implements Cloneable, Copiable<GaussianPSF>, Scalable, Multiplication<GaussianPSF>, Division<GaussianPSF>, Product<GaussianPSF, GaussianPSF>, Ratio<GaussianPSF, GaussianPSF> {
+public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPSF>, Scalable, Multiplication<GaussianPSF>, Division<GaussianPSF>, Product<GaussianPSF, GaussianPSF>, Ratio<GaussianPSF, GaussianPSF> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1182818146658831916L;
+
 	/** The position angle. */
 	private double majorFWHM, minorFWHM, positionAngle;
 	
@@ -125,7 +131,7 @@ public class GaussianPSF implements Cloneable, Copiable<GaussianPSF>, Scalable, 
 	 */
 	@Override
 	public int hashCode() {
-		return HashCode.get(majorFWHM) ^ HashCode.get(-minorFWHM) ^ HashCode.get(positionAngle);
+		return super.hashCode() ^ HashCode.get(majorFWHM) ^ HashCode.get(minorFWHM) ^ HashCode.get(positionAngle);
 	}
 	
 	/* (non-Javadoc)
@@ -133,7 +139,9 @@ public class GaussianPSF implements Cloneable, Copiable<GaussianPSF>, Scalable, 
 	 */
 	@Override
 	public boolean equals(Object other) {
+		if(other == this) return true;
 		if(!(other instanceof GaussianPSF)) return false;
+		if(!super.equals(other)) return false;
 		GaussianPSF psf = (GaussianPSF) other;
 		if(psf.majorFWHM != majorFWHM) return false;
 		if(psf.minorFWHM != minorFWHM) return false;

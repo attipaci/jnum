@@ -33,6 +33,11 @@ import java.io.IOException;
 public class FloatStore extends Raw<Float> {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5365409325445573181L;
+
+	/**
 	 * Instantiates a new float store.
 	 *
 	 * @param path the path

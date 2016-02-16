@@ -29,6 +29,10 @@ package jnum.math;
  */
 public class RealVector extends AbstractVector<Double> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1042626482476049050L;
 	/** The component. */
 	public double[] component;
 	

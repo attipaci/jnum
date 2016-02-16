@@ -66,6 +66,7 @@ public abstract class LocalAverage<DataType extends LocalizedData> extends Array
 		return i;
 	}
 	
+	
 	/**
 	 * Gets the relative weight.
 	 *

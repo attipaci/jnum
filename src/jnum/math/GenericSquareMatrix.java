@@ -41,6 +41,11 @@ import jnum.data.ArrayUtil;
 public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue & Copiable<? super T>> extends GenericMatrix<T> implements SquareMatrixAlgebra<T> {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 276116236966727928L;
+
+	/**
 	 * Instantiates a new generic square matrix.
 	 *
 	 * @param type the type

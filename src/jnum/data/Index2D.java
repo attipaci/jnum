@@ -24,6 +24,8 @@
 
 package jnum.data;
 
+import java.io.Serializable;
+
 import jnum.Copiable;
 import jnum.math.Vector2D;
 
@@ -31,7 +33,12 @@ import jnum.math.Vector2D;
 /**
  * The Class Index2D.
  */
-public class Index2D implements Cloneable, Copiable<Index2D> {
+public class Index2D implements Serializable, Cloneable, Copiable<Index2D> {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -364862939591997831L;
 	
 	/** The j. */
 	private int i,j;
@@ -80,7 +87,7 @@ public class Index2D implements Cloneable, Copiable<Index2D> {
 	 */
 	@Override
 	public int hashCode() {
-		return i ^ ~j;
+		return super.hashCode() ^ i ^ ~j;
 	}
 	
 	/* (non-Javadoc)
@@ -88,7 +95,9 @@ public class Index2D implements Cloneable, Copiable<Index2D> {
 	 */
 	@Override
 	public boolean equals(Object o) {
+		if(o == this) return true;
 		if(!(o instanceof Index2D)) return false;
+		if(!super.equals(o)) return false;
 		Index2D index = (Index2D) o;
 		if(index.i != i) return false;
 		if(index.j != j) return false;

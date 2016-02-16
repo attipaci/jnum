@@ -22,6 +22,7 @@
  ******************************************************************************/
 package jnum.util;
 
+import java.util.List;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -77,7 +78,7 @@ public final class HashCode {
 	 */
 	public static int get(boolean[] values, int from, int to) {
 		int shift = 0;
-		int hash = 0;
+		int hash = from ^ to;
 		int current = 0;
 		for(int i=from; i<to; i++, shift++) {
 			if(shift == 32) {
@@ -107,7 +108,7 @@ public final class HashCode {
 	 */
 	public static int get(byte[] values, int from, int to) {
 		int shift = 0;
-		int hash = 0;
+		int hash = from ^ to;
 		int current = 0;
 		for(int i=from; i<to; i++, shift+=8) {
 			if(shift == 32) {
@@ -138,7 +139,7 @@ public final class HashCode {
 	 */
 	public static int get(short[] values, int from, int to) {
 		int shift = 0;
-		int hash = 0;
+		int hash = from ^ to;
 		int current = 0;
 		for(int i=from; i<to; i++, shift+=16) {
 			if(shift == 32) {
@@ -168,7 +169,7 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int get(int[] values, int from, int to) {
-		int hash = 0;
+		int hash = from ^ to;
 		for(int i=from; i<to; i++) hash ^= values[i] + i; 
 		return hash;
 	}
@@ -191,7 +192,7 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int get(long[] values, int from, int to) {
-		int hash = 0;
+		int hash = from ^ to;
 		for(int i=from; i<to; i++) hash ^= get(values[i]) + i; 
 		return hash;
 	}
@@ -214,7 +215,7 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int get(float[] values, int from, int to) {
-		int hash = 0;
+		int hash = from ^ to;
 		for(int i=from; i<to; i++) hash ^= get(values[i]) + i; 
 		return hash;		
 	}
@@ -236,7 +237,7 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int get(double[] values, int from, int to) {
-		int hash = 0;
+		int hash = from ^ to;
 		for(int i=from; i<to; i++) hash ^= get(values[i]) + i; 
 		return hash;		
 	}
@@ -258,7 +259,7 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int get(Object[] values, int from, int to) {
-		int hash = 0;
+		int hash = from ^ to;
 		for(int i=from; i<to; i++) {
 			Object entry = values[i];
 			if(entry instanceof Object[]) hash ^= get((Object[]) entry);
@@ -274,7 +275,27 @@ public final class HashCode {
 		return hash;		
 	}
 	
-	// Get the first 32, the last 32, and 32 scattered
+	public static int get(List<?> values) { return get(values, 0, values.size()); }
+	
+	public static int get(List<?> values, int from, int to) {
+		int hash = from ^ to;
+		for(int i=from; i<to; i++) {
+			Object entry = values.get(i);
+			if(entry instanceof Object[]) hash ^= get((Object[]) entry);
+			else if(entry instanceof boolean[]) hash ^= get((boolean[]) entry);
+			else if(entry instanceof byte[]) hash ^= get((byte[]) entry);
+			else if(entry instanceof short[]) hash ^= get((short[]) entry);
+			else if(entry instanceof int[]) hash ^= get((int[]) entry);
+			else if(entry instanceof float[]) hash ^= get((float[]) entry);
+			else if(entry instanceof long[]) hash ^= get((long[]) entry);
+			else if(entry instanceof double[]) hash ^= get((double[]) entry);
+			else hash ^= entry.hashCode() + i; 
+		}
+		return hash;		
+	}
+	
+	
+	// Get the first 8, the last 8, and 16 scattered
 	/**
 	 * Sample from.
 	 *
@@ -282,15 +303,15 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(boolean[] values) {
-		if(values.length < 128) return get(values, 0, values.length);
-		int hash = get(values, 0, 32) ^ get(values, values.length-32, values.length);
-		int step = (values.length - 64) >> 5;
+		if(values.length < 32) return get(values, 0, values.length);
+		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		int step = (values.length - 16) >> 4;
 		int samples = 0;
-		for(int i=0, j=32; i<32; i++, j+=step) if(values[j]) samples |= 1 << i;
+		for(int i=0, j=8; i<16; i++, j+=step) if(values[j]) samples |= 1 << i;
 		return hash ^ samples;
 	}
 	
-	// Get the first 16, last 16 and 16 scattered
+	// Get the first 8, last 8 and 16 scattered
 	/**
 	 * Sample from.
 	 *
@@ -298,13 +319,13 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(byte[] values) {
-		if(values.length < 64) return get(values, 0, values.length);
-		int hash = get(values, 0, 16) ^ get(values, values.length-16, values.length);
-		int step = (values.length - 32) >> 4;
+		if(values.length < 32) return get(values, 0, values.length);
+		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		int step = (values.length - 16) >> 4;
 		int samples = 0;
-		for(int i=0, j=16, shift=0; i<16; i++, j+=step, shift+=8) {
+		for(int i=0, j=8, shift=0; i<16; i++, j+=step, shift+=8) {
 			if(shift == 32) {
-				hash ^= samples + (1<<i);
+				hash ^= samples;
 				shift = samples = 0;
 			}
 			samples |= values[j] << shift;
@@ -312,7 +333,7 @@ public final class HashCode {
 		return hash ^ samples;
 	}
 	
-	// Get the first 16, last 16 and 16 scattered
+	// Get the first 8, last 8 and 16 scattered
 	/**
 	 * Sample from.
 	 *
@@ -320,13 +341,13 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(short[] values) {
-		if(values.length < 64) return get(values, 0, values.length);
-		int hash = get(values, 0, 16) ^ get(values, values.length-16, values.length);
-		int step = (values.length - 32) >> 4;
+		if(values.length < 32) return get(values, 0, values.length);
+		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		int step = (values.length - 16) >> 4;
 		int samples = 0;
-		for(int i=0, j=16, shift=0; i<16; i++, j+=step, shift+=16) {
+		for(int i=0, j=8, shift=0; i<16; i++, j+=step, shift+=16) {
 			if(shift == 32) {
-				hash ^= samples + (1<<i);
+				hash ^= samples;
 				shift = samples = 0;
 			}
 			samples |= values[j] << shift;
@@ -334,7 +355,7 @@ public final class HashCode {
 		return hash ^ samples;
 	}
 	
-	// Get the first 16, last 16 and 16 scattered
+	// Get the first 8, last 8 and 16 scattered
 	/**
 	 * Sample from.
 	 *
@@ -342,13 +363,14 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(int[] values) {
-		if(values.length < 64) return get(values, 0, values.length);
-		int hash = get(values, 0, 16) ^ get(values, values.length-16, values.length);
-		for(int i=0; i<16; i++) hash ^= values[i] + (1<<i);
+		if(values.length < 32) return get(values, 0, values.length);
+		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		int step = (values.length - 16) >> 4;
+		for(int i=0, j=8; i<16; i++, j+=step) hash ^= values[j];
 		return hash;
 	}
 	
-	// Get the first 16, last 16 and 16 scattered
+	// Get the first 8, last 8 and 16 scattered
 	/**
 	 * Sample from.
 	 *
@@ -356,13 +378,14 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(long[] values) {
-		if(values.length < 64) return get(values, 0, values.length);
-		int hash = get(values, 0, 16) ^ get(values, values.length-16, values.length);
-		for(int i=0; i<16; i++) hash ^= get(values[i]) + (1<<i);
+		if(values.length < 32) return get(values, 0, values.length);
+		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		int step = (values.length - 16) >> 4;
+		for(int i=0, j=8; i<16; i++, j+=step) hash ^= get(values[j]);
 		return hash;
 	}
 	
-	// Get the first 16, last 16 and 16 scattered
+	// Get the first 8, last 8 and 16 scattered
 	/**
 	 * Sample from.
 	 *
@@ -370,13 +393,14 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(float[] values) {
-		if(values.length < 64) return get(values, 0, values.length);
-		int hash = get(values, 0, 16) ^ get(values, values.length-16, values.length);
-		for(int i=0; i<16; i++) hash ^= get(values[i]) + (1<<i);
+		if(values.length < 32) return get(values, 0, values.length);
+		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		int step = (values.length - 16) >> 4;
+		for(int i=0, j=8; i<16; i++, j+=step) hash ^= get(values[j]);
 		return hash;
 	}
 	
-	// Get the first 16, last 16 and 16 scattered
+	// Get the first 8, last 8 and 16 scattered
 	/**
 	 * Sample from.
 	 *
@@ -384,13 +408,14 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(double[] values) {
-		if(values.length < 64) return get(values, 0, values.length);
-		int hash = get(values, 0, 16) ^ get(values, values.length-16, values.length);
-		for(int i=0; i<16; i++) hash ^= get(values[i]) + (1<<i);
+		if(values.length < 32) return get(values, 0, values.length);
+		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		int step = (values.length - 16) >> 4;
+		for(int i=0, j=8; i<16; i++, j+=step) hash ^= get(values[j]);
 		return hash;
 	}
 	
-	// Get the first 16, last 16 and 16 scattered
+	// Get the first 8, last 8 and 16 scattered
 	/**
 	 * Sample from.
 	 *
@@ -398,10 +423,11 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(Object[] values) {
-		if(values.length < 64) return get(values, 0, values.length);
-		int hash = get(values, 0, 16) ^ get(values, values.length-16, values.length);
-		for(int i=0; i<16; i++) {
-			Object entry = values[i];
+		if(values.length < 32) return get(values, 0, values.length);
+		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		int step = (values.length - 16) >> 4;
+		for(int i=0, j=8; i<16; i++, j+=step) {
+			Object entry = values[j];
 			if(entry instanceof Object[]) hash ^= sampleFrom((Object[]) entry);
 			else if(entry instanceof boolean[]) hash ^= sampleFrom((boolean[]) entry);
 			else if(entry instanceof byte[]) hash ^= sampleFrom((byte[]) entry);
@@ -410,7 +436,26 @@ public final class HashCode {
 			else if(entry instanceof float[]) hash ^= sampleFrom((float[]) entry);
 			else if(entry instanceof long[]) hash ^= sampleFrom((long[]) entry);
 			else if(entry instanceof double[]) hash ^= sampleFrom((double[]) entry);
-			else hash ^= entry.hashCode() + (1<<i);
+			else hash ^= entry.hashCode();
+		}
+		return hash;
+	}
+	
+	public static int sampleFrom(List<?> values) {
+		if(values.size() < 32) return get(values, 0, values.size());
+		int hash = get(values, 0, 8) ^ get(values, values.size()-8, values.size());
+		int step = (values.size() - 16) >> 4;
+		for(int i=0, j=8; i<16; i++, j+=step) {
+			Object entry = values.get(j);
+			if(entry instanceof Object[]) hash ^= sampleFrom((Object[]) entry);
+			else if(entry instanceof boolean[]) hash ^= sampleFrom((boolean[]) entry);
+			else if(entry instanceof byte[]) hash ^= sampleFrom((byte[]) entry);
+			else if(entry instanceof short[]) hash ^= sampleFrom((short[]) entry);
+			else if(entry instanceof int[]) hash ^= sampleFrom((int[]) entry);
+			else if(entry instanceof float[]) hash ^= sampleFrom((float[]) entry);
+			else if(entry instanceof long[]) hash ^= sampleFrom((long[]) entry);
+			else if(entry instanceof double[]) hash ^= sampleFrom((double[]) entry);
+			else hash ^= entry.hashCode();
 		}
 		return hash;
 	}

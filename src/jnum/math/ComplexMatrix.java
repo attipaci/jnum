@@ -36,6 +36,11 @@ import jnum.data.ArrayUtil;
 public class ComplexMatrix extends GenericMatrix<Complex> implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8842229635231169797L;
+
+	/**
 	 * Instantiates a new complex matrix.
 	 */
 	public ComplexMatrix() { super(Complex.class); }

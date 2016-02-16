@@ -41,7 +41,7 @@ public class IndexBounds2D implements Serializable {
 	 */
 	@Override
 	public int hashCode() {
-		return fromi ^ toi ^ fromj ^ toj;
+		return super.hashCode() ^ fromi ^ toi ^ fromj ^ toj;
 	}
 	
 	/* (non-Javadoc)
@@ -49,6 +49,8 @@ public class IndexBounds2D implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof IndexBounds2D)) return false;
 		if(!super.equals(o)) return false;
 		final IndexBounds2D b = (IndexBounds2D) o;
 		if(b.fromi != fromi) return false;

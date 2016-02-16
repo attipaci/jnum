@@ -27,6 +27,7 @@ package jnum.astro;
 import java.io.Serializable;
 
 import jnum.Copiable;
+import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -92,8 +93,11 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if(!(o instanceof CoordinateEpoch)) return false;
-		return compareTo((CoordinateEpoch) o) == 0;
+		if(o == this) return true;
+		if(o == null) return false;
+		if(!o.getClass().equals(getClass())) return false;
+		if(!super.equals(o)) return false;
+		return year == ((CoordinateEpoch) o).year;
 	}
 	
 	/* (non-Javadoc)
@@ -101,7 +105,7 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 	 */
 	@Override
 	public int hashCode() {
-		return (int) (year/precision);
+		return super.hashCode() ^ HashCode.get(year);
 	}
 	
 	/* (non-Javadoc)

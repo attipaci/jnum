@@ -76,11 +76,13 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	@Override
 	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof WeightedPoint)) return false;
 		if(!super.equals(o)) return false;
 		WeightedPoint p = (WeightedPoint) o;
 		if(p.value != value) return false;
 		if(isExact()) if(!p.isExact()) return false;
-		return value == p.value;
+		return weight == p.weight;
 	}
 	
 	/* (non-Javadoc)
@@ -88,7 +90,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	@Override
 	public int hashCode() {
-		return HashCode.get(value) ^ HashCode.get(weight);
+		return super.hashCode() ^ HashCode.get(value) ^ HashCode.get(weight);
 	}
 	
 	/* (non-Javadoc)

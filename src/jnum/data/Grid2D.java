@@ -89,10 +89,7 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	@Override
-	public boolean equals(Object o) {
-		return equals(o, 1e-8);
-	}
+	
 	
 	/**
 	 * Equals.
@@ -101,17 +98,20 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	 * @param precision the precision
 	 * @return true, if successful
 	 */
-	public boolean equals(Object o, double precision) {
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
 		if(!(o instanceof Grid2D)) return false;
+		if(!super.equals(o)) return false;
 		Grid2D<?> grid = (Grid2D<?>) o;
 		
-		if(!grid.projection.equals(projection)) return false;
-		if(!grid.refIndex.equals(refIndex, precision)) return false;
+		if(!Util.equals(grid.projection, projection)) return false;
+		if(!Util.equals(grid.refIndex, refIndex)) return false;
 		
-		if(!Util.equals(m11, grid.m11, precision)) return false;
-		if(!Util.equals(m12, grid.m12, precision)) return false;
-		if(!Util.equals(m21, grid.m21, precision)) return false;
-		if(!Util.equals(m22, grid.m22, precision)) return false;
+		if(m11 != grid.m11) return false;
+		if(m12 != grid.m12) return false;
+		if(m21 != grid.m21) return false;
+		if(m22 != grid.m22) return false;
 		
 		return true;
 	}
@@ -121,9 +121,10 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	 */
 	@Override
 	public int hashCode() {
-		return projection.hashCode() ^ 
-			~HashCode.get(m11) ^ HashCode.get(m22) ^ HashCode.get(m12) ^ ~HashCode.get(m21) ^
-			refIndex.hashCode();
+		int hash = super.hashCode() ^ HashCode.get(m11) ^ HashCode.get(m22) ^ HashCode.get(m12) ^ HashCode.get(m21);		
+		if(projection != null) hash ^= projection.hashCode();
+		if(refIndex != null) hash ^= refIndex.hashCode();
+		return hash;
 	}
 		
 	/* (non-Javadoc)

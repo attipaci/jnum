@@ -33,6 +33,11 @@ import java.io.IOException;
 public class UByteStore extends Raw<Short> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3209183933186574490L;
+
+	/**
 	 * Instantiates a new u byte store.
 	 *
 	 * @param path the path

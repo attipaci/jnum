@@ -23,6 +23,7 @@
 package jnum.data;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import jnum.CopiableContent;
 import jnum.ExtraMath;
@@ -30,6 +31,7 @@ import jnum.fft.DoubleFFT;
 import jnum.fft.FFT;
 import jnum.fft.FloatFFT;
 import jnum.math.Complex;
+import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -379,6 +381,19 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 			this.data = data;
 		}
 		
+		@Override
+		public int hashCode() {
+			return super.hashCode() ^ HashCode.sampleFrom(data);
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if(o == this) return true;
+			if(!super.equals(o)) return false;
+			return Arrays.equals(data, ((FauxComplexArray.Float) o).data);
+		}
+		
+		
 		/* (non-Javadoc)
 		 * @see kovacs.data.FauxComplexArray#copy(boolean)
 		 */
@@ -455,6 +470,18 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 			super(data.length >> 1);
 			if((data.length & 1) != 0) throw new IllegalArgumentException("Cannot create complex array from odd-sized double[].");
 			this.data = data;
+		}
+		
+		@Override
+		public int hashCode() {
+			return super.hashCode() ^ HashCode.sampleFrom(data);
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if(o == this) return true;
+			if(!super.equals(o)) return false;
+			return Arrays.equals(data, ((FauxComplexArray.Double) o).data);
 		}
 		
 		/* (non-Javadoc)

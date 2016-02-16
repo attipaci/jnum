@@ -34,6 +34,11 @@ import jnum.data.WindowFunction;
 public abstract class FFT1D<Type> extends FFT<Type> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1722639496940144592L;
+
+	/**
 	 * Average power.
 	 *
 	 * @param data the data

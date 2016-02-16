@@ -48,7 +48,7 @@ import jnum.text.TimeFormat;
 public final class Util {
 	
 	/** The Constant version. */
-	public final static String version = "0.08-2";
+	public final static String version = "0.08-3";
 	
 	/** The Constant revision. */
 	public final static String revision = "devel.1";
@@ -796,7 +796,11 @@ public final class Util {
 		
 	}
 		
-	
+	public static boolean equals(Object a, Object b) {
+		if(a == null) return b == null;
+		if(b == null) return a == null;	
+		return a.equals(b);
+	}
 	
 	/** The Constant f0. */
 	public final static DecimalFormat f0 = new DecimalFormat("0");

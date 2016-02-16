@@ -26,12 +26,19 @@ package jnum.dirfile;
 
 import java.io.IOException;
 
+import jnum.util.HashCode;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class SBitStore.
  */
 public class SBitStore extends DataStore<Long> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4809906475956120084L;
+
 	/** The container. */
 	DataStore<? extends Number> container;
 	
@@ -53,6 +60,24 @@ public class SBitStore extends DataStore<Long> {
 		this.container = bits;
 		shift = position;
 		cmask = 1; 
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ container.hashCode() ^ HashCode.get(mask) ^ HashCode.get(cmask) ^ shift;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof SBitStore)) return false;
+		if(!super.equals(o)) return false;
+		SBitStore store = (SBitStore) o;
+		if(shift != store.shift) return false;
+		if(mask != store.mask) return false;
+		if(cmask != store.cmask) return false;
+		if(!container.equals(store.container)) return false;
+		return true;
 	}
 	
 	/**

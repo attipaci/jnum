@@ -26,12 +26,19 @@ package jnum.dirfile;
 
 import java.io.IOException;
 
+import jnum.util.HashCode;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class BitStore.
  */
 public class BitStore extends DataStore<Long> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6409444230976963190L;
+
 	/** The container. */
 	DataStore<? extends Number> container;
 	
@@ -53,6 +60,21 @@ public class BitStore extends DataStore<Long> {
 		this.container = bits;
 		mask = 1 << position; 
 		shift = position;
+	}
+	
+	@Override
+	public int hashCode() { return super.hashCode() ^ container.hashCode() ^ shift ^ HashCode.get(mask); }
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof BitStore)) return false;
+		if(!super.equals(o)) return false;
+		BitStore store = (BitStore) o;
+		if(!container.equals(store.container)) return false;
+		if(mask != store.mask) return false;
+		if(shift != store.shift) return false;
+		return true;
 	}
 	
 	/**
