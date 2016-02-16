@@ -22,13 +22,20 @@
  ******************************************************************************/
 package jnum.math;
 
+import java.io.Serializable;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class Coordinate3D.
  */
-public class Coordinate3D {
+public class Coordinate3D implements Serializable {
 	
-	/** The z. */
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4670218761839380720L;
+	
+	/** The coordinate components. */
 	private double x, y, z;
 	
 	/**

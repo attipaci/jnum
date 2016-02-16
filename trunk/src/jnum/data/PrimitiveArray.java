@@ -38,6 +38,11 @@ import jnum.math.Multiplicative;
 public abstract class PrimitiveArray<T extends Number> extends AbstractArray<T> implements LinearAlgebra<PrimitiveArray<?>>, Multiplicative<Number> {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8401121783922804093L;
+
+	/**
 	 * Instantiates a new primitive array.
 	 *
 	 * @param type the type

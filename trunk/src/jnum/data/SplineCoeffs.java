@@ -22,14 +22,22 @@
  ******************************************************************************/
 package jnum.data;
 
+import java.io.Serializable;
 import java.util.Arrays;
+
+import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class SplineCoeffs.
  */
-public class SplineCoeffs {
+public class SplineCoeffs implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5533149637827653369L;
+
 	/** The center index. */
 	private double centerIndex;
 	
@@ -42,6 +50,22 @@ public class SplineCoeffs {
 	/** The coeffs. */
 	public double[] coeffs = new double[4];
 
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ HashCode.get(coeffs) ^ HashCode.get(centerIndex);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof SplineCoeffs)) return false;
+		if(!super.equals(o)) return false;
+		SplineCoeffs spline = (SplineCoeffs) o;
+		if(centerIndex != spline.centerIndex) return false;
+		return Arrays.equals(coeffs, spline.coeffs);
+	}
+	
 	/**
 	 * Clear.
 	 */

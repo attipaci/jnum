@@ -22,6 +22,7 @@
  ******************************************************************************/
 package jnum.fft;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.concurrent.Executors;
@@ -36,8 +37,13 @@ import jnum.ExtraMath;
  *
  * @param <Type> the data type for the FFT.
  */
-public abstract class FFT<Type> {
+public abstract class FFT<Type> implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3614284894169045332L;
+
 	/** The parallel processing pool used by this FFT. All parallel calls will be submitted to this queue. */
 	protected ThreadPoolExecutor pool;
 	

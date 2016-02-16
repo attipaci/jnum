@@ -25,6 +25,7 @@
 package jnum.data;
 
 
+import java.io.Serializable;
 import java.util.*;
 
 import jnum.Copiable;
@@ -37,8 +38,13 @@ import jnum.text.ParseType;
  *
  * @param <T> the generic type
  */
-public abstract class AbstractArray<T> implements Cloneable, Copiable<AbstractArray<T>>, Iterable<T> {
+public abstract class AbstractArray<T> implements Serializable, Cloneable, Copiable<AbstractArray<T>>, Iterable<T> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1935368290016760524L;
+
 	/** The data. */
 	protected Object data;
 	

@@ -33,6 +33,11 @@ import java.io.IOException;
 public class ShortStore extends Raw<Short> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1778998721254246537L;
+
+	/**
 	 * Instantiates a new short store.
 	 *
 	 * @param path the path

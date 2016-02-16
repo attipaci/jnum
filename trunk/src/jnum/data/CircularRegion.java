@@ -42,6 +42,7 @@ import jnum.math.Vector2D;
 import jnum.text.AngleFormat;
 import jnum.text.TableFormatter;
 
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class CircularRegion.
@@ -64,6 +65,25 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	 */
 	public CircularRegion() {}
 
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		if(coords != null) hash ^= coords.hashCode();
+		if(radius != null) hash ^= radius.hashCode();
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof CircularRegion)) return false;
+		if(!super.equals(o)) return false;
+		CircularRegion<?> r = (CircularRegion<?>) o;
+		if(!Util.equals(coords, r.coords)) return false;
+		if(!Util.equals(radius, r.radius)) return false;
+		return true;
+	}
+	
 	/**
 	 * Instantiates a new circular region.
 	 *
@@ -103,7 +123,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	
 	/* (non-Javadoc)
 	 * @see kovacs.util.data.Region#clone()
-	 */
+	 */ 
 	@Override
 	public Object clone() {
 		CircularRegion<?> clone = (CircularRegion<?>) super.clone();

@@ -39,6 +39,11 @@ import jnum.Util;
  */
 public abstract class Raw<Type extends Number> extends DataStore<Type> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 684293239178895163L;
+
 	/** The file. */
 	RandomAccessFile file;
 	
@@ -65,6 +70,24 @@ public abstract class Raw<Type extends Number> extends DataStore<Type> {
 		super(name);
 		this.path = path;
 		samples = arraySize;
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ file.hashCode() ^ bytes ^ samples ^ (isBigEndian ? 1 : 0);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof Raw)) return false;
+		if(!super.equals(o)) return false;
+		Raw<?> store = (Raw<?>) o;
+		if(bytes != store.bytes) return false;
+		if(samples != store.samples) return false;
+		if(isBigEndian != store.isBigEndian) return false;
+		if(!file.equals(store.file)) return false;
+		return true;
 	}
 	
 	/**

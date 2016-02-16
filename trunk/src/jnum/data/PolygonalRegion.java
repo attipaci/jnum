@@ -24,6 +24,7 @@ package jnum.data;
 
 import java.util.*;
 
+import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import jnum.projection.Projection2D;
@@ -48,6 +49,21 @@ public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region
 	
 	public PolygonalRegion(String fileName, int format, GridImage2D<CoordinateType> forImage) throws ParseException {
 		parse(fileName, format, forImage); 
+	}
+	
+	@Override
+	public int hashCode() { return super.hashCode() ^ points.hashCode() ^ (isClosed ? 1 : 0); }
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof PolygonalRegion)) return false;
+		if(!super.equals(o)) return false;
+		PolygonalRegion<?> p = (PolygonalRegion<?>) o;
+		if(isClosed != p.isClosed) return false;
+		if(points.size() != p.points.size()) return false;
+		for(int i=points.size(); --i >= 0; ) if(!Util.equals(points.get(i), p.points.get(i))) return false;
+		return true;
 	}
 	
 	@Override

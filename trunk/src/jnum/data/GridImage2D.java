@@ -28,7 +28,6 @@ import jnum.Constant;
 import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
-import jnum.astro.EquatorialCoordinates;
 import jnum.fft.MultiFFT;
 import jnum.fits.FitsExtras;
 import jnum.math.Coordinate2D;
@@ -74,7 +73,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	private Unit beamArea = new BeamArea();
 	
 	/** The pixel area. */
-	private Unit pixelArea = new PixelArea();
+	private Unit pixelAreaUnit = new PixelAreaUnit();
 	
 	private Unit preferredGridUnit;
 	
@@ -148,29 +147,18 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 */
 	@Override
 	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof GridImage2D)) return false;
 		if(!super.equals(o)) return false;
 		GridImage2D<?> i = (GridImage2D<?>) o;
 		
-		if(!i.grid.equals(grid)) return false;
-		
-		if(underlyingBeam == null) if(i.underlyingBeam != null) return false;
-		if(!underlyingBeam.equals(i.underlyingBeam)) return false;
-		
-		if(smoothing == null) if(i.smoothing != null) return false;
-		if(!smoothing.equals(i.smoothing)) return false;
-		
-		if(Double.isNaN(extFilterFWHM)) {
-			if(!Double.isNaN(i.extFilterFWHM)) return false;
-		}
-		else if(i.extFilterFWHM != extFilterFWHM) return false;
-
-		if(Double.isNaN(correctingFWHM)) {
-			if(!Double.isNaN(i.correctingFWHM)) return false;
-		}
-		else if(i.correctingFWHM != correctingFWHM) return false;
+		if(!Util.equals(grid, i.grid)) return false;
+		if(!Util.equals(underlyingBeam, i.underlyingBeam)) return false;
+		if(!Util.equals(smoothing, i.smoothing)) return false;
+		if(Double.compare(extFilterFWHM, i.extFilterFWHM) != 0) return false;
+		if(Double.compare(correctingFWHM, i.correctingFWHM) != 0) return false;
 		
 		return true;
-		
 	}
 	
 	/* (non-Javadoc)
@@ -178,7 +166,8 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 */
 	@Override
 	public int hashCode() {
-		int hash = super.hashCode() ^ underlyingBeam.hashCode() ^ smoothing.hashCode() ^ HashCode.get(extFilterFWHM) ^ HashCode.get(correctingFWHM);
+		int hash = super.hashCode() ^ underlyingBeam.hashCode() ^ smoothing.hashCode() 
+				^ HashCode.get(extFilterFWHM) ^ HashCode.get(correctingFWHM);
 		if(grid != null) hash ^= grid.hashCode();
 		return hash;
 	} 
@@ -197,7 +186,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		if(underlyingBeam != null) copy.underlyingBeam = underlyingBeam.copy();
 		if(smoothing != null) copy.smoothing = smoothing.copy();
 		if(beamArea != null) copy.beamArea = (BeamArea) beamArea.copy();
-		if(pixelArea != null) copy.pixelArea = (PixelArea) pixelArea.copy();
+		if(pixelAreaUnit != null) copy.pixelAreaUnit = (PixelAreaUnit) pixelAreaUnit.copy();
 		return copy;
 	}
 	
@@ -245,7 +234,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 *
 	 * @return the pixel area unit
 	 */
-	public Unit getPixelAreaUnit() { return pixelArea; }
+	public Unit getPixelAreaUnit() { return pixelAreaUnit; }
 	
 	/**
 	 * Sets the resolution.
@@ -935,7 +924,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		// Check if it is an identical grid...
 		// Add directly if it is...
 
-		if(toGrid.equals(getGrid(), 1e-10)) {
+		if(toGrid.equals(getGrid())) {
 			if(isVerbose()) System.err.println(" Matching grids.");
 			return this;
 		}
@@ -1264,17 +1253,20 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	
 
 	@Override
-	public final void parseHeader(Header header) throws Exception {
+	protected final void parseHeader(Header header) throws Exception {
 		parseHeader(header, "");
 	}
 
+	private void parseGrid(Header header, String alt) throws HeaderCardException, InstantiationException, IllegalAccessException {
+		setGrid((Grid2D<CoordinateType>) Grid2D.fromHeader(header, alt));
+	}
 
 	// TODO elliptical filter and correcting beams...
-	public void parseHeader(Header header, String alt) throws Exception {
-		setGrid((Grid2D<CoordinateType>) Grid2D.fromHeader(header, alt));
-		
+	protected void parseHeader(Header header, String alt) throws Exception {		
 		super.parseHeader(header);
 				
+		parseGrid(header, alt);
+		
 		double defaultUnit = getPreferredGridUnit().value();
 		
 		// TODO parse header via the PSF objects...
@@ -1383,7 +1375,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	public void addBaseUnits() {
 		super.addBaseUnits();
 		addBaseUnit(beamArea, "beam, BEAM, bm, BM");
-		addBaseUnit(pixelArea, "pixel, pixels, PIXEL, PIXELS, plx");
+		addBaseUnit(pixelAreaUnit, "pixel, pixels, PIXEL, PIXELS, plx");
 	}
 	
 	/**
@@ -1461,7 +1453,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	/**
 	 * The Class PixelArea.
 	 */
-	private class PixelArea extends Unit {
+	private class PixelAreaUnit extends Unit {
 		
 		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -2483542207572304222L;
@@ -1469,7 +1461,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		/**
 		 * Instantiates a new pixel area.
 		 */
-		private PixelArea() { super("pixel", Double.NaN); }
+		private PixelAreaUnit() { super("pixel", Double.NaN); }
 		
 		/* (non-Javadoc)
 		 * @see kovacs.util.Unit#value()

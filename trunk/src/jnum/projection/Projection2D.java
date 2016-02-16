@@ -24,6 +24,7 @@ package jnum.projection;
 
 import java.io.Serializable;
 
+import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import nom.tam.fits.Header;
@@ -60,10 +61,10 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if(!o.getClass().equals(getClass())) return false;
+		if(o == this) return true;
+		if(!(o instanceof Projection2D)) return false;
 		Projection2D<?> projection = (Projection2D<?>) o;
-		if(!projection.getClass().equals(getClass())) return false;
-		if(!projection.reference.equals(reference)) return false;
+		if(!Util.equals(projection.reference, reference)) return false;
 		return true;		
 	}
 	
@@ -72,7 +73,7 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	 */
 	@Override
 	public int hashCode() {
-		int hash = 0;
+		int hash = super.hashCode();
 		if(reference != null) hash ^= reference.hashCode();
 		return hash;
 	}

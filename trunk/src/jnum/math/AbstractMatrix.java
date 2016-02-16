@@ -26,6 +26,7 @@ package jnum.math;
 
 
 import java.text.*;
+import java.io.Serializable;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -41,8 +42,14 @@ import jnum.text.Parser;
  *
  * @param <T> the generic type
  */
-public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<? extends T>>, Cloneable, CopiableContent<AbstractMatrix<T>>, Iterable<T>, NumberFormating, DecimalFormating, Parser {
+public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<? extends T>>, Serializable, Cloneable, CopiableContent<AbstractMatrix<T>>, Iterable<T>, NumberFormating, DecimalFormating, Parser {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8165960625207147822L;
+
+
 	/**
 	 * Instantiates a new abstract matrix.
 	 */

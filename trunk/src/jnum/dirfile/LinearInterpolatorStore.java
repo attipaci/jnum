@@ -35,6 +35,11 @@ import jnum.data.SimpleInterpolator;
  */
 public class LinearInterpolatorStore extends DataStore<Double> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1972465553588256489L;
+
 	/** The raw. */
 	protected DataStore<?> raw;
 	
@@ -57,6 +62,22 @@ public class LinearInterpolatorStore extends DataStore<Double> {
 		raw = value;
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ raw.hashCode() ^ fileName.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof LinearInterpolatorStore)) return false;
+		if(!super.equals(o)) return false;
+		LinearInterpolatorStore store = (LinearInterpolatorStore) o;
+		if(!fileName.equals(store.fileName)) return false;
+		if(!raw.equals(store.raw)) return false;
+		return true;
+	}
+	
 	// Load interpolation table only upon request...
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#get(long)

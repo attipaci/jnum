@@ -26,12 +26,19 @@ package jnum.dirfile;
 
 import java.io.IOException;
 
+import jnum.util.HashCode;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class ProductStore.
  */
 public class ProductStore extends DataStore<Double> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5702369503063112685L;
+
 	/** The b. */
 	DataStore<?> a,b;
 	
@@ -50,6 +57,23 @@ public class ProductStore extends DataStore<Double> {
 		this.a = a;
 		this.b = b;
 		indexScale = b.getSamples() / a.getSamples();
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ a.hashCode() ^ b.hashCode() ^ HashCode.get(indexScale);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof ProductStore)) return false;
+		if(!super.equals(o)) return false;
+		ProductStore store = (ProductStore) o;
+		if(indexScale != store.indexScale) return false;
+		if(!a.equals(store.a)) return false;
+		if(!b.equals(store.b)) return false;
+		return true;
 	}
 	
 	/* (non-Javadoc)

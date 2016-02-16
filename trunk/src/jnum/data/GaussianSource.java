@@ -96,7 +96,22 @@ public class GaussianSource<CoordinateType extends Coordinate2D> extends Circula
 		super(coords, r);
 	}
 	
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode() ^ (isCorrected ? 1 : 0);
+		if(peak != null) hash ^= peak.hashCode();
+		return hash;
+	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!super.equals(o)) return false;
+		GaussianSource<?> s = (GaussianSource<?>) o;
+		if(isCorrected != s.isCorrected) return false;
+		if(!Util.equals(peak, s.peak)) return false;
+		return true;
+	}
 	
 	/**
 	 * Gets the peak.

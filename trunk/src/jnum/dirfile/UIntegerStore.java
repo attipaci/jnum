@@ -33,6 +33,11 @@ import java.io.IOException;
 public class UIntegerStore extends Raw<Long> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2886396848639213765L;
+
+	/**
 	 * Instantiates a new u integer store.
 	 *
 	 * @param path the path

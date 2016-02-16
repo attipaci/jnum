@@ -30,6 +30,7 @@ import java.util.*;
 import jnum.ExtraMath;
 import jnum.data.ArrayUtil;
 import jnum.util.ConvergenceException;
+import jnum.util.HashCode;
 
 import java.text.*;
 
@@ -42,6 +43,10 @@ import java.text.*;
  */
 public class Matrix extends AbstractMatrix<Double> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1648081664701964671L;
 	/** The entry. */
 	public double[][] entry; 
 
@@ -74,6 +79,19 @@ public class Matrix extends AbstractMatrix<Double> {
 		entry = new double[rows][cols];
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ HashCode.sampleFrom(entry);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof Matrix)) return false;
+		if(!super.equals(o)) return false;
+		return Arrays.equals(entry, ((Matrix) o).entry);
+	}
+	
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractMatrix#getType()
 	 */

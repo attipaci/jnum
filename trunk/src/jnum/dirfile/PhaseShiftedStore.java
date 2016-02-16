@@ -26,6 +26,8 @@ package jnum.dirfile;
 
 import java.io.IOException;
 
+import jnum.util.HashCode;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class PhaseShiftedStore.
@@ -34,6 +36,11 @@ import java.io.IOException;
  */
 public class PhaseShiftedStore<Type extends Number> extends DataStore<Type> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5398091531703755110L;
+
 	/** The data. */
 	DataStore<Type> data;
 	
@@ -53,6 +60,22 @@ public class PhaseShiftedStore<Type extends Number> extends DataStore<Type> {
 		this.shift = shift;
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ data.hashCode() ^ HashCode.get(shift);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof PhaseShiftedStore)) return false;
+		if(!super.equals(o)) return false;
+		PhaseShiftedStore<?> store = (PhaseShiftedStore<?>) o;
+		if(!data.equals(store.data)) return false;
+		if(shift != store.shift) return false;
+		return true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#get(long)
 	 */

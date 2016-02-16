@@ -34,6 +34,11 @@ import jnum.data.ArrayUtil;
 public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5786886148000000230L;
+
+	/**
 	 * Instantiates a new square matrix.
 	 */
 	public SquareMatrix() {

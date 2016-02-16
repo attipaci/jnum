@@ -95,7 +95,7 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 	 */
 	@Override
 	public boolean equals(Object o) {
-		return equals(o, 1e-10);
+		return equals(o, 0.0);
 	}
 	
 	/**
@@ -106,18 +106,14 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 	 * @return true, if successful
 	 */
 	public boolean equals(Object o, double precision) {
+		if(o == this) return true;
 		if(!(o instanceof Coordinate2D)) return false;
-		final Coordinate2D coord = (Coordinate2D) o;
-			
-		if(x == 0.0) {
-			if(Math.abs(coord.x) > precision) return false;
-		}
-		else if(Math.abs(coord.x / x - 1.0) > precision) return false;
+		if(!super.equals(o)) return false;
 		
-		if(y == 0.0) {
-			if(Math.abs(coord.y) > precision) return false;
-		}
-		else if(Math.abs(coord.y / y - 1.0) > precision) return false;
+		final Coordinate2D coord = (Coordinate2D) o;
+	
+		if(Math.abs(x - coord.x) > precision) return false;
+		if(Math.abs(y - coord.y) > precision) return false;
 		
 		return true;
 	}

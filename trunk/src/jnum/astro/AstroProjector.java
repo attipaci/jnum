@@ -22,6 +22,7 @@
  ******************************************************************************/
 package jnum.astro;
 
+import jnum.Util;
 import jnum.math.SphericalCoordinates;
 import jnum.projection.Projection2D;
 import jnum.projection.Projector2D;
@@ -33,6 +34,11 @@ import jnum.projection.Projector2D;
  */
 public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6883179727775205645L;
+
 	/** The equatorial. */
 	private EquatorialCoordinates equatorial;
 	
@@ -60,6 +66,25 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 			equatorial = new EquatorialCoordinates();
 		}
 
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		if(celestial != null) hash ^= celestial.hashCode();
+		if(equatorial != null) if(equatorial != celestial) hash ^= equatorial.hashCode();
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof AstroProjector)) return false;
+		if(!super.equals(o)) return false;
+		AstroProjector p = (AstroProjector) o;
+		if(!Util.equals(celestial, p.celestial)) return false;
+		if(!Util.equals(equatorial, p.equatorial)) return false;
+		return true;
 	}
 	
 	/**

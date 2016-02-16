@@ -172,6 +172,26 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		return hashcode;
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof Data2D)) return false;
+		if(!super.equals(o)) return false;
+		
+		Data2D other = (Data2D) o;
+		
+		if(sizeX() != other.sizeX()) return false;
+		if(sizeY() != other.sizeY()) return false;
+		if(interpolationType != other.interpolationType) return false;
+		if(contentType != other.contentType) return false;
+		if(!Util.equals(name, other.name)) return false;
+		if(!Util.equals(unit, other.unit)) return false;
+		if(!Arrays.equals(data, other.data)) return false;
+		if(!Arrays.equals(flag, other.flag)) return false;
+		
+		return true;
+	}
+	
 	public void setExecutor(ExecutorService executor) {
 		this.executor = executor;
 	}
@@ -2109,7 +2129,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @param header the header
 	 * @throws Exception the exception
 	 */
-	public void parseHeader(Header header) throws Exception {
+	protected void parseHeader(Header header) throws Exception {
 		this.header = header;
 		
 		creator = header.getStringValue("CREATOR");

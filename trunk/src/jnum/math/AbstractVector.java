@@ -23,6 +23,8 @@
 
 package jnum.math;
 
+import java.io.Serializable;
+
 import jnum.Copiable;
 import jnum.data.ArrayUtil;
 
@@ -34,7 +36,13 @@ import jnum.data.ArrayUtil;
  *
  * @param <T> the generic type
  */
-public abstract class AbstractVector<T> implements LinearAlgebra<AbstractVector<? extends T>>, Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Copiable<AbstractVector<T>> {
+public abstract class AbstractVector<T> implements LinearAlgebra<AbstractVector<? extends T>>, Serializable, 
+Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Copiable<AbstractVector<T>> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 785522803183758105L;
 
 	/**
 	 * Instantiates a new abstract vector.

@@ -139,6 +139,24 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		System.err.println("DirFile> " + size() + " fields parsed.");
 	}
 	
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ (isBigEndian ? 1 : 0) ^ path.hashCode() ^ strings.hashCode() ^ pending.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof DirFile)) return false;
+		if(!super.equals(o)) return false;
+		DirFile file = (DirFile) o;
+		if(isBigEndian != file.isBigEndian) return false;
+		if(path != file.path) return false;
+		if(!strings.equals(file.strings)) return false;
+		if(!pending.equals(file.pending)) return false;
+		return true;
+	}
+	
 	/**
 	 * Include.
 	 *

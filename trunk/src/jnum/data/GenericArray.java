@@ -35,6 +35,11 @@ import jnum.text.Parser;
 public class GenericArray<T> extends AbstractArray<T> {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 86938797450633242L;
+
+	/**
 	 * Instantiates a new generic array.
 	 *
 	 * @param type the type

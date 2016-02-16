@@ -146,6 +146,24 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	public EquatorialCoordinates(CelestialCoordinates from) { super(from); }
 	
 	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		if(epoch != null) hash ^= epoch.hashCode();
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof EquatorialCoordinates)) return false;
+		if(!super.equals(o)) return false;
+		EquatorialCoordinates e = (EquatorialCoordinates) o;
+		if(!Util.equals(epoch, e.epoch)) return false;
+		return true;
+	}
+	
+	
+	@Override
 	public String getFITSLongitudeStem() { return "RA--"; }
 	
 	@Override
@@ -179,18 +197,6 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 		EquatorialCoordinates copy = (EquatorialCoordinates) super.copy();
 		if(epoch != null) copy.epoch = epoch.copy();
 		return copy;
-	}
-	
-
-	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalCoordinates#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if(!super.equals(o)) return false;
-		EquatorialCoordinates coords = (EquatorialCoordinates) o;
-		if(!coords.epoch.equals(epoch)) return false;
-		return true;		
 	}
 	
 	/**

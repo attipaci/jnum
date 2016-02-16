@@ -92,7 +92,9 @@ public class Unit implements Serializable, Cloneable, Copiable<Unit> {
 	 */
 	@Override
 	public boolean equals(Object o) {
+		if(o == this) return true;
 		if(!(o instanceof Unit)) return false;
+		if(!super.equals(o)) return false;
 		Unit u = (Unit) o;
 		if(!u.name().equals(name())) return false;
 		if(u.value() != value()) return false;
@@ -105,7 +107,7 @@ public class Unit implements Serializable, Cloneable, Copiable<Unit> {
 	 */
 	@Override
 	public int hashCode() {
-		return name.hashCode() ^ ~HashCode.get(value) ^ multiplier.hashCode();
+		return super.hashCode() ^ name.hashCode() ^ HashCode.get(value) ^ multiplier.hashCode();
 	}
 	
 	/**

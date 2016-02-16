@@ -22,11 +22,16 @@
  ******************************************************************************/
 package jnum.util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 
 
-public class CircularBuffer<Type> implements Iterable<Type> {
+public class CircularBuffer<Type> implements Iterable<Type>, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3827954748223288982L;
 	private Type[] data;
 	private int lastIndex = -1;
 	private boolean isFilled = false;

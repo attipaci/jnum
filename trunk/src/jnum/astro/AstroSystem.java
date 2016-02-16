@@ -52,6 +52,8 @@ public class AstroSystem implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof AstroSystem)) return false;
 		if(!super.equals(o)) return false;
 		AstroSystem a = (AstroSystem) o;
 		if(a.system == null) return false;
@@ -63,8 +65,9 @@ public class AstroSystem implements Serializable {
 	 */
 	@Override
 	public int hashCode() {
-		if(system == null) return 0;
-		return system.hashCode();
+		int hash = super.hashCode();
+		if(system != null) hash ^= system.hashCode();
+		return hash;
 	}
 	
 	/**

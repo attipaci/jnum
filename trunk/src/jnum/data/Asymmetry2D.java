@@ -22,17 +22,38 @@
  ******************************************************************************/
 package jnum.data;
 
+import java.io.Serializable;
+
 import jnum.Unit;
+import jnum.Util;
 
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Asymmetry2D.
  */
-public class Asymmetry2D {
+public class Asymmetry2D implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -62094580369071840L;
 	
 	/** The y. */
 	DataPoint x, y;
+	
+	@Override
+	public int hashCode() { return super.hashCode() ^ x.hashCode() ^ y.hashCode(); }
+
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof Asymmetry2D)) return false;
+		if(!super.equals(o)) return false;
+		Asymmetry2D asym = (Asymmetry2D) o;
+		if(!Util.equals(x, asym.x)) return false;
+		if(!Util.equals(y, asym.y)) return false;
+		return true;
+	}
 	
 	/**
 	 * Gets the x.

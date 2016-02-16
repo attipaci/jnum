@@ -40,6 +40,10 @@ import jnum.math.Scalable;
  */
 public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3679294695088014282L;
 	/** The child. */
 	private FFT<?> lastChild;
 	private Class<?> lastType;

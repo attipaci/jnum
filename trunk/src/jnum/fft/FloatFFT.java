@@ -41,6 +41,12 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3189956387053186573L;
+
+
+	/**
 	 * Bit reverse.
 	 *
 	 * @param data the data
@@ -610,6 +616,11 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
 	
 	public static class NyquistUnrolledRealFT extends FloatFFT {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3073121404450602358L;
+
 		/* (non-Javadoc)
 		 * @see kovacs.util.fft.FFT#addressSizeOf(java.lang.Object)
 		 */

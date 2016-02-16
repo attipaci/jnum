@@ -25,6 +25,7 @@ package jnum.data;
 import java.io.Serializable;
 import java.text.ParseException;
 
+import jnum.Util;
 import jnum.math.Coordinate2D;
 
 
@@ -62,6 +63,25 @@ public abstract class Region<CoordinateType extends Coordinate2D> implements Ser
 	 * @throws ParseException the parse exception
 	 */
 	public Region(String line, int format, GridImage2D<CoordinateType> forImage) throws ParseException { parse(line, format, forImage); }
+	
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		if(comment != null) hash ^= comment.hashCode();
+		if(id != null) hash ^= id.hashCode();
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(!(o instanceof Region)) return false;
+		if(!super.equals(o)) return false;
+		Region<?> r = (Region<?>) o;
+		if(!Util.equals(comment, r.comment)) return false;
+		if(!Util.equals(id, r.id)) return false;
+		return true;
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
