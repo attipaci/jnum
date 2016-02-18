@@ -38,6 +38,7 @@ public class FixedLengthDecimalFormat extends DecimalFormat {
 	 * 
 	 */
 	private static final long serialVersionUID = 6113058377335474979L;
+	
 	int length;
 	String error = new String();
 	boolean toLeft;

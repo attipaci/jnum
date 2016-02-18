@@ -67,22 +67,20 @@ public class Configurator implements Serializable, Cloneable {
 	/** The is enabled. */
 	public boolean isEnabled = false;
 	
+	public boolean isLocked = false;
+	
 	/** The was used. */
 	public boolean wasUsed = false;
 	
 	/** The index. */
-	public int index;
+	public int serialNo;
 	
 	/** The branches. */
 	public Hashtable<String, Configurator> branches = new Hashtable<String, Configurator>();
 	
 	/** The conditionals. */
 	public Hashtable<String, Vector<String>> conditionals = new Hashtable<String, Vector<String>>();
-	
-	/** The blacklist. */
-	public Vector<String> blacklist = new Vector<String>();
-	//public Vector<Class<?>> users = new Vector<Class<?>>(); // Not yet used...
-	
+		
 	/** The counter. */
 	private static int counter = 0;	
 	
@@ -123,7 +121,6 @@ public class Configurator implements Serializable, Cloneable {
 	public Configurator copy() {
 		Configurator copy = (Configurator) clone();
 		copy.branches = new Hashtable<String, Configurator>();
-		copy.blacklist = (Vector<String>) blacklist.clone();
 		copy.conditionals = new Hashtable<String, Vector<String>>();
 		for(String key : branches.keySet()) copy.branches.put(key, branches.get(key).copy());
 		for(String key : conditionals.keySet()) copy.conditionals.put(key, (Vector<String>) conditionals.get(key).clone());
@@ -162,8 +159,20 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @param lines the lines
 	 */
-	public void parse(Vector<String> lines) {
-		for(String line : lines) parse(line);		
+	public List<String> parseAll(Vector<String> lines) {
+		ArrayList<String> exceptions = new ArrayList<String>();
+		
+		for(String line : lines) {
+			try { parse(line); }
+			catch(LockedException e) { exceptions.add(e.getMessage()); }
+		}
+		
+		return exceptions.isEmpty() ? null : exceptions;
+	}
+	
+	public void parseSilent(String line) {
+		try { parse(line); }
+		catch(LockedException e) {}
 	}
 	
 	/**
@@ -171,9 +180,12 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @param line the line
 	 */
-	public void parse(String line) {
+	public void parse(String line) throws LockedException {
 		Entry entry = new Entry(line);
-		if(entry != null) process(entry.key, entry.value);
+		if(entry != null) {
+			try { process(entry.key, entry.value); }
+			catch(LockedException e) {}
+		}
 	}
 	
 	
@@ -338,13 +350,18 @@ public class Configurator implements Serializable, Cloneable {
 		return containsKey(name) ? get(name).getValue() : null;		
 	}
 	
+	public void processSilent(String key, String argument) {
+		try { process(key, argument); }
+		catch(LockedException e) {}
+	}
+	
 	/**
 	 * Process.
 	 *
 	 * @param key the key
 	 * @param argument the argument
 	 */
-	public void process(String key, String argument) {	
+	public void process(String key, String argument) throws LockedException {	
 		String substitute = unalias(key);
 	
 		if(!key.equals(substitute)) {
@@ -396,7 +413,10 @@ public class Configurator implements Serializable, Cloneable {
 				String setting = key.substring(condition.length() + 2).trim() + " " + argument;
 				addCondition(condition, setting);
 			}
-			else if(!blacklist.contains(key)) set(branchName, key, argument);
+			else if(branchName.equals("lock")) lock(argument);
+			else if(branchName.equals("lock")) relock(argument);
+			else if(branchName.equals("unlock")) unlock();
+			else set(branchName, key, argument);
 		}
 	}
 
@@ -407,14 +427,15 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param key the key
 	 * @param argument the argument
 	 */
-	private void set(String branchName, String key, String argument) {
+	private void set(String branchName, String key, String argument) throws LockedException {
 		setCondition(key, argument);
 		Configurator branch = branches.containsKey(branchName) ? branches.get(branchName) : new Configurator(root);
 		if(key.length() == branchName.length()) {
+			if(branch.isLocked) throw new LockedException("Cannot change option '" + key + "'");
 			if(details) System.err.println("<=> " + argument);
 			branch.value = argument;
 			branch.isEnabled = true;
-			branch.index = counter++; // Update the serial index for the given key...
+			branch.serialNo = counter++; // Update the serial index for the given key...
 		}
 		else branch.process(getRemainder(key, branchName.length() + 1), argument);
 		branches.put(branchName, branch);		
@@ -429,7 +450,8 @@ public class Configurator implements Serializable, Cloneable {
 	private void addCondition(String condition, String setting) {
 		//System.err.println("@@@ " + condition + " : " + setting);
 		
-		if(isSatisfied(condition)) parse(setting);
+		if(isSatisfied(condition)) parseSilent(setting); 
+		
 		else {
 			Vector<String> list = conditionals.containsKey(condition) ? conditionals.get(condition) : new Vector<String>();
 			list.add(setting);
@@ -519,8 +541,13 @@ public class Configurator implements Serializable, Cloneable {
 		if(!conditionals.containsKey(expression)) return;
 		else {
 			if(details) System.err.println("[c] " + expression + " > " + conditionals.get(expression));
-			parse(conditionals.get(expression));
+			parseAll(conditionals.get(expression));
 		}
+	}
+	
+	public void forgetSilent(String arg) {
+		try { forget(arg); }
+		catch(LockedException e) {}
 	}
 	
 	/**
@@ -528,13 +555,14 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @param arg the arg
 	 */
-	public void forget(String arg) {
-		
+	public void forget(String arg) throws LockedException {
+	
 		if(arg.equals("blacklist")) {
-			blacklist.clear();
-			for(String name : branches.keySet()) branches.get(name).forget(arg);
+			List<String> blacklist = getBlacklist();
+			for(String key : blacklist) whitelist(key);
 			return;
 		}
+		
 		else if(arg.equals("conditions")) {
 			conditionals.clear();
 			for(String name : branches.keySet()) branches.get(name).forget(arg);
@@ -552,7 +580,10 @@ public class Configurator implements Serializable, Cloneable {
 			else if(branches.containsKey(key)) { 
 				Configurator branch = branches.get(key);
 				if(arg.length() != branchName.length()) branch.forget(getRemainder(arg, branchName.length() + 1));
-				else branch.isEnabled = false;
+				else {
+					if(branch.isLocked) throw new LockedException("Cannot forget option '" + branch + "'");
+					branch.isEnabled = false;
+				}
 			}
 		}
 	}
@@ -562,7 +593,7 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @param arg the arg
 	 */
-	public void recall(String arg) {
+	public void recall(String arg) throws LockedException {
 		String branchName = getBranchName(arg);
 		
 		if(branchName.equals("*")) {
@@ -574,10 +605,11 @@ public class Configurator implements Serializable, Cloneable {
 			else if(branches.containsKey(key)) { 
 				Configurator branch = branches.get(key);
 				if(arg.length() != branchName.length()) branch.forget(getRemainder(arg, branchName.length() + 1));
-				else if(!blacklist.contains(key)) {
+				else {
 					Configurator option = branches.get(key);
+					if(option.isLocked) throw new LockedException("Cannot recall option '" + key + "'");
 					option.isEnabled = true;
-					option.index = counter++;
+					option.serialNo = counter++;
 					setCondition(arg, option.value);
 				}
 			}
@@ -589,7 +621,7 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @param arg the arg
 	 */
-	public void remove(String arg) {
+	public void remove(String arg) throws LockedException {
 		String branchName = getBranchName(arg);
 		
 		if(branchName.equals("*")) {
@@ -608,6 +640,7 @@ public class Configurator implements Serializable, Cloneable {
 				// Do not remove the removed key itself...
 				else if(key.equals("removed")) return;
 				else {
+					if(branch.isLocked) throw new LockedException("Cannot remove branch '" + key + "'");
 					if(details) System.err.println("<rm> " + key); 
 					getRemoved().branches.put(key, branches.remove(key));
 				}
@@ -685,19 +718,24 @@ public class Configurator implements Serializable, Cloneable {
 					
 					if(removedBranches.isEmpty()) branches.remove("removed");
 					
-					// Disable the branch root if it is on the blacklist...
-					if(blacklist.contains(key)) removedBranch.isEnabled = false;
+					if(branch.isBlacklisted()) {
+						try { removedBranch.blacklist(); }
+						catch(LockedException e) { 
+							// TODO 
+						} 
+					}
 				}
 			}
 		}
 	}
+	
 	
 	/**
 	 * Blacklist.
 	 *
 	 * @param arg the arg
 	 */
-	public void blacklist(String arg) {		
+	public void blacklist(String arg) throws LockedException {		
 		String branchName = getBranchName(arg);
 		String key = unaliasedKey(branchName);
 		
@@ -708,8 +746,7 @@ public class Configurator implements Serializable, Cloneable {
 			if(arg.length() != branchName.length()) branch.blacklist(getRemainder(arg, branchName.length() + 1));
 			else {
 				if(details) System.err.println("<b> " + key);
-				branch.isEnabled = false;
-				blacklist.add(key);
+				branch.blacklist();
 			}
 		}
 	}	
@@ -719,13 +756,16 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @param arg the arg
 	 */
-	public void whitelist(String arg) {
+	public void whitelist(String arg) throws LockedException {
 		String branchName = getBranchName(arg);
 			
-		if(branchName.equals("*")) {
-			if(arg.length() == 1) for(String key : blacklist) whitelist(key);
-			else for(String branch : branches.keySet()) whitelist(branch + getRemainder(arg, 1));
-		}
+		if(branchName.equals("*")) 
+			for(String branch : branches.keySet()) {
+				try { whitelist(branch + getRemainder(arg, 1)); }
+				catch(LockedException e) {
+					// TODO
+				}
+			}
 		else {
 			String key = unaliasedKey(branchName);
 			if(key.contains(".")) whitelist(key + getRemainder(arg, branchName.length()));
@@ -733,12 +773,44 @@ public class Configurator implements Serializable, Cloneable {
 				Configurator branch = branches.get(key);
 				if(arg.length() != branchName.length()) branch.whitelist(getRemainder(arg, branchName.length() + 1));
 				else {
-					if(!blacklist.contains(key)) return;	
 					if(details) System.err.println("<w> " + key);
-					blacklist.remove(key);
+					branch.whitelist();
 				}
 			}
 		}
+	}
+	
+	public boolean isBlacklisted() {
+		return isLocked & !isEnabled;
+	}
+	
+	public void blacklist() throws LockedException {
+		if(isLocked) if(!isBlacklisted()) throw new LockedException("Cannot blacklist locked option.");
+		isEnabled = false;
+		isLocked = true;
+	}
+	
+	public void whitelist() throws LockedException {
+		if(isLocked) if(!isBlacklisted()) throw new LockedException("Cannot whitelist locked option.");
+		isLocked = false;
+	}
+	
+	public void relock(String argument) {
+		if(!isBlacklisted()) {
+			value = argument;
+			isLocked = true;
+		}
+	}
+	
+	public void lock(String argument) {
+		if(!isBlacklisted()) {
+			if(!argument.isEmpty()) if(!isLocked) value = argument;
+			isLocked = true;
+		}
+	}
+	
+	public void unlock() {
+		if(!isBlacklisted()) isLocked = false;
 	}
 	
 	/**
@@ -754,9 +826,9 @@ public class Configurator implements Serializable, Cloneable {
 		else if(branches.containsKey(key)) { 
 			Configurator branch = branches.get(key);
 			if(arg.length() != branchName.length()) return branch.isBlacklisted(getRemainder(arg, branchName.length() + 1));
-			else return blacklist.contains(key);
+			else return branch.isBlacklisted();
 		}
-		else return blacklist.contains(key);
+		else return false;
 	}
 	
 	// Looks for first period outside of square brackets (used for conditions)...
@@ -864,10 +936,19 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @param branchName the branch name
 	 */
-	public void mapValueTo(String branchName) {
+	public void mapValueTo(String branchName) throws LockedException {
 		if(value != null) if(value.length() > 0) {
-			if(containsKey(branchName)) get(branchName).value = value;
-			else process(branchName, value);
+			if(containsKey(branchName)) {
+				Configurator branch = get(branchName);
+				if(branch.isLocked) {
+					value = null;	// clear the value...
+					throw new LockedException("Cannot map value to '" + branchName + "'");
+				}
+				branch.value = value;
+			}
+			else processSilent(branchName, value);
+			
+			value = null;	// clear the value...
 		}
 		value = "";
 	}
@@ -903,7 +984,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param options the options
 	 */
 	public void intersect(Configurator options) {
-		for(String key : getKeys()) {
+		for(String key : getKeys(false)) {
 			if(!options.containsKey(key)) purge(key);
 			else {
 				Configurator option = get(key);
@@ -924,14 +1005,14 @@ public class Configurator implements Serializable, Cloneable {
 	public Configurator difference(Configurator options) {
 		Configurator difference = new Configurator(root);
 
-		for(String key : getKeys()) {
-			if(!options.containsKey(key)) difference.parse(key + " " + get(key).value);
+		for(String key : getKeys(false)) {
+			if(!options.containsKey(key)) difference.parseSilent(key + " " + get(key).value);
 			else {
 				Configurator option = get(key);
 				Configurator other = options.get(key);
 			
-				if(option.isEnabled && !other.isEnabled) difference.parse(key + " " + get(key).value);
-				else if(!option.value.equals(other.value)) difference.parse(key + " " + get(key).value);
+				if(option.isEnabled && !other.isEnabled) difference.parseSilent(key + " " + get(key).value);
+				else if(!option.value.equals(other.value)) difference.parseSilent(key + " " + get(key).value);
 			}
 		}
 		return difference;
@@ -948,17 +1029,17 @@ public class Configurator implements Serializable, Cloneable {
 		Hashtable<String, Vector<String>> settings = branches.get("iteration").conditionals;
 
 		// Parse explicit iteration settings
-		if(settings.containsKey(i + "")) parse(settings.get(i + ""));		
+		if(settings.containsKey(i + "")) parseAll(settings.get(i + ""));		
 
 		// Parse relative iteration settings
 		for(String spec : settings.keySet()) if(spec.endsWith("%")) {
 			int k = (int) Math.round(rounds * 0.01 * Double.parseDouble(spec.substring(0, spec.length()-1)));
-			if(i == k) parse(settings.get(spec));
+			if(i == k) parseAll(settings.get(spec));
 		}
 
 		// Parse end-based settings
 		String spec = "last" + (i==rounds ? "" : "-" + (rounds-i));
-		if(settings.containsKey(spec)) parse(settings.get(spec));
+		if(settings.containsKey(spec)) parseAll(settings.get(spec));
 	}
 	
 	/**
@@ -1154,12 +1235,13 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @return the keys
 	 */
-	public List<String> getKeys() {
+	public List<String> getKeys(boolean includeBlacklisted) {
 		ArrayList<String> keys = new ArrayList<String>();
 		for(String branchName : branches.keySet()) {
 			Configurator option = branches.get(branchName);	
 			if(option.isEnabled) keys.add(branchName);
-			for(String key : option.getKeys()) keys.add(branchName + "." + key);			
+			else if(includeBlacklisted) if(option.isBlacklisted()) keys.add(branchName);
+			for(String key : option.getKeys(includeBlacklisted)) keys.add(branchName + "." + key);			
 		}	
 		return keys;
 	}
@@ -1186,14 +1268,59 @@ public class Configurator implements Serializable, Cloneable {
 	 */
 	public List<String> getBlacklist() {
 		ArrayList<String> keys = new ArrayList<String>();
-		keys.addAll(blacklist);
-		
 		for(String branchName : branches.keySet()) {
-			Configurator option = branches.get(branchName);
-			for(String key : option.getBlacklist()) keys.add(branchName + "." + key);		
-		}		
-		return keys;		
+			Configurator option = branches.get(branchName);	
+			if(option.isBlacklisted()) keys.add(branchName);
+			for(String key : option.getBlacklist()) keys.add(branchName + "." + key);
+		}	
+		return keys;
 	}
+	
+	
+	public List<String> getConditionalListFor(String keyPattern) {
+		
+		if(keyPattern != null) {
+			if(keyPattern.isEmpty()) keyPattern = null;
+			else keyPattern = keyPattern.toLowerCase();
+		}
+		
+		Hashtable<String, Vector<String>> conditions = getConditions(true);
+		ArrayList<String> forKey = new ArrayList<String>();
+		
+		for(String condition : conditions.keySet()) {
+			Vector<String> settings = conditions.get(condition);
+			StringBuffer selection = new StringBuffer();
+			
+			for(int i=0; i<settings.size(); i++) {
+				String setting = settings.get(i).trim();
+				
+				if(keyPattern == null) {
+					selection.append((selection.length() > 0 ? "; " : "") + setting);
+					continue;
+				}
+				
+				if(setting.startsWith(keyPattern)) selection.append((selection.length() > 0 ? "; " : "") + setting);
+				else if(setting.contains(keyPattern)) {
+					Entry entry = new Entry(setting);
+					if(entry.isCommand()) {
+						StringTokenizer tokens = new StringTokenizer(entry.value, " \t,;=:");
+						while(tokens.hasMoreTokens()) {
+							String token = tokens.nextToken();
+							if(token.startsWith(keyPattern)) selection.append((selection.length() > 0 ? "; " : "") + entry.key + " " + token);
+						}
+					}
+				}
+			}
+			
+			if(selection.length() > 0) forKey.add(condition + " " + selection);
+		}
+		
+		Collections.sort(forKey);
+		
+		return forKey;
+	}
+	
+	
 	
 	
 	/**
@@ -1224,13 +1351,13 @@ public class Configurator implements Serializable, Cloneable {
 	 * @return the time ordered keys
 	 */
 	public List<String> getTimeOrderedKeys() {		
-		List<String> keys = getKeys();	
+		List<String> keys = getKeys(false);	
 		Collections.sort(keys,
 			new Comparator<String>() {
 				@Override
 				public int compare(String key1, String key2) {
-					int i1 = get(key1).index;
-					int i2 = get(key2).index;
+					int i1 = get(key1).serialNo;
+					int i2 = get(key2).serialNo;
 					if(i1 == i2) return 0;
 					return i1 > i2 ? 1 : -1;
 				}
@@ -1243,8 +1370,8 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @return the alphabetical keys
 	 */
-	public List<String> getAlphabeticalKeys() {
-		List<String> keys = getKeys();
+	public List<String> getAlphabeticalKeys(boolean includeBlacklisted) {
+		List<String> keys = getKeys(includeBlacklisted);
 		Collections.sort(keys);
 		return keys;
 	}
@@ -1286,20 +1413,40 @@ public class Configurator implements Serializable, Cloneable {
 		out.println();
 		
 		if(pattern == null) out.println(prefix + " Current configuration is: ");
-		else System.out.println(prefix + " Currently set keys starting with '" + pattern + "': ");
+		else out.println(prefix + " Currently set keys starting with '" + pattern + "': ");
 
 		out.println(prefix + " --------------------------------------------------------------------");
 		
-		for(String key : getAlphabeticalKeys()) {
+		for(String key : getAlphabeticalKeys(true)) {
 			if(pattern != null) if(!key.startsWith(pattern)) continue;
 			
-			out.print("   " + key);
 			Configurator option = get(key);
-			String value = option.getValue();
-			if(value.length() > 0) out.print(" = " + value);
-			out.println();
+			if(option.isBlacklisted()) {
+				out.println("  [" + key + "] --- (blacklisted)");
+			}
+			else {
+				out.print("   " + key);
+				String value = option.getValue();
+				if(value.length() > 0) out.print(" = " + value);
+				if(option.isLocked) out.print(" (locked)");
+				out.println();
+			}
 		}
 		
+		
+		if(pattern != null) {
+			List<String> conditions = getConditionalListFor(pattern);
+			
+			if(!conditions.isEmpty()) {
+				out.println();
+				out.println(prefix + " Conditional settings for '" + pattern + "': ");
+				out.println(prefix + " --------------------------------------------------------------------");
+
+				for(String condition : conditions) out.println("   " + condition);
+			}
+		}
+		
+
 		out.println(prefix + " --------------------------------------------------------------------");
 	}
 	
@@ -1449,10 +1596,8 @@ public class Configurator implements Serializable, Cloneable {
 			
 			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(configFile)));
 			String line = null;
-			while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') parse(line);
+			while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') parseSilent(line);
 			in.close();
-			
-			
 		}
 		else throw new FileNotFoundException(fileName);
 	}
@@ -1466,7 +1611,7 @@ public class Configurator implements Serializable, Cloneable {
 	 */
 	public void editHeader(Cursor<String, HeaderCard> cursor) throws HeaderCardException {
 		// Add all active configuration keys...
-		for(String key : getAlphabeticalKeys()) {
+		for(String key : getAlphabeticalKeys(false)) {
 			Configurator option = get(key);
 			if(option.isEnabled) FitsExtras.addLongHierarchKey(cursor, key, option.value);
 		}
@@ -1484,16 +1629,20 @@ public class Configurator implements Serializable, Cloneable {
 			}
 			FitsExtras.addLongHierarchKey(cursor, condition, new String(values));
 		}
-		
-		// Write the blacklist....
-		StringBuilder keys = new StringBuilder();
-		for(String key : blacklist) {
-			if(keys.length() > 0) keys.append(',');
-			keys.append(key);
-		}
-		
-		if(!blacklist.isEmpty()) FitsExtras.addLongHierarchKey(cursor, "blacklist", new String(keys));
 	}	
+	
+	
+	class Locator {
+		String fileName;
+		int locationIndex;
+		long lastModified;
+	}
+	
+	class Setting {
+		String value;
+		Locator locator;
+	}
+
 
 	/**
 	 * The Class Entry.
@@ -1504,7 +1653,7 @@ public class Configurator implements Serializable, Cloneable {
 		String key;
 		
 		/** The value. */
-		String value;
+		String value;		// TODO change to Setting...
 		
 		/**
 		 * Instantiates a new entry.
@@ -1531,6 +1680,20 @@ public class Configurator implements Serializable, Cloneable {
 		public Entry (String line) {
 			this();
 			parse(line);
+		}
+		
+		public boolean isCommand() {
+			key = key.toLowerCase();
+			if(key.endsWith("forget")) return true;
+			if(key.endsWith("recall")) return true;
+			if(key.endsWith("remove")) return true;
+			if(key.endsWith("restore")) return true;
+			if(key.endsWith("replace")) return true;
+			if(key.endsWith("blacklist")) return true;
+			if(key.endsWith("whitelist")) return true;
+			if(key.endsWith("lock")) return true;
+			if(key.endsWith("unlock")) return true;
+			return false;
 		}
 		
 		/**
@@ -1599,7 +1762,10 @@ public class Configurator implements Serializable, Cloneable {
 		}
 		
 	}
-
+	
+	
+	
+	
 }
 
 

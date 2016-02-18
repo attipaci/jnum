@@ -264,11 +264,11 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		String type = tokens.nextToken().toLowerCase();
 		
 		if(type.equals("raw")) {
-			Raw<?> data = Raw.forSpec(path, name, tokens.nextToken(), Integer.parseInt(tokens.nextToken()));
+			RawStore<?> data = RawStore.forSpec(path, name, tokens.nextToken(), Integer.parseInt(tokens.nextToken()));
 			data.isBigEndian = isBigEndian;
 			return data;
 		}
-		else if(type.equals("const")) return new Constant(name, type, tokens.nextToken());
+		else if(type.equals("const")) return new ConstantStore(name, type, tokens.nextToken());
 		else if(type.equals("bit")) return new BitStore(
 				name,
 				get(tokens.nextToken()), 
@@ -320,8 +320,8 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 	 */
 	public void close() {
 		for(DataStore<?> store : values()) {
-			if(store instanceof Raw<?>) {
-				try { ((Raw<?>) store).close(); }
+			if(store instanceof RawStore<?>) {
+				try { ((RawStore<?>) store).close(); }
 				catch(IOException e) {}
 			}			
 		}

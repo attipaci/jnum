@@ -40,7 +40,7 @@ import jnum.Util;
 /**
  * The Class SignificantFigures.
  */
-public class SignificantFigures extends NumberFormat {
+public class SignificantFiguresFormat extends NumberFormat {
 	
 	/** The digits. */
 	int digits;
@@ -56,7 +56,7 @@ public class SignificantFigures extends NumberFormat {
 	 *
 	 * @param n the n
 	 */
-	public SignificantFigures(int n) {
+	public SignificantFiguresFormat(int n) {
 		this(n, true);
 	}
 	
@@ -66,7 +66,7 @@ public class SignificantFigures extends NumberFormat {
 	 * @param n the n
 	 * @param trailingZeroes the trailing zeroes
 	 */
-	public SignificantFigures(int n, boolean trailingZeroes) {
+	public SignificantFiguresFormat(int n, boolean trailingZeroes) {
 		digits = n;
 		this.trailingZeroes = trailingZeroes;
 	}

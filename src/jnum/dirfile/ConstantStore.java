@@ -33,7 +33,7 @@ import jnum.util.HashCode;
 /**
  * The Class Constant.
  */
-public class Constant extends DataStore<Number> {
+public class ConstantStore extends DataStore<Number> {
 	
 	/**
 	 * 
@@ -56,7 +56,7 @@ public class Constant extends DataStore<Number> {
 	 * @param type the type
 	 * @param value the value
 	 */
-	public Constant(String name, String type, String value) {	
+	public ConstantStore(String name, String type, String value) {	
 		super(name);
 		
 		type = type.toLowerCase();
@@ -79,9 +79,9 @@ public class Constant extends DataStore<Number> {
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
-		if(!(o instanceof Constant)) return false;
+		if(!(o instanceof ConstantStore)) return false;
 		if(!super.equals(o)) return false;
-		Constant c = (Constant) o;
+		ConstantStore c = (ConstantStore) o;
 		if(isFloating != c.isFloating) return false;
 		if(iValue != c.iValue) return false;
 		if(fValue != c.fValue) return false;
