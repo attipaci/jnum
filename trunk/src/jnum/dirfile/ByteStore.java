@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * The Class ByteStore.
  */
-public class ByteStore extends Raw<Byte> {
+public class ByteStore extends RawStore<Byte> {
 
 	/**
 	 * 

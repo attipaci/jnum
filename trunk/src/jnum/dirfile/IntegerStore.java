@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * The Class IntegerStore.
  */
-public class IntegerStore extends Raw<Integer> {
+public class IntegerStore extends RawStore<Integer> {
 
 	/**
 	 * 

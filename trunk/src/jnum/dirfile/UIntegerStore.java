@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * The Class UIntegerStore.
  */
-public class UIntegerStore extends Raw<Long> {
+public class UIntegerStore extends RawStore<Long> {
 
 	/**
 	 * 

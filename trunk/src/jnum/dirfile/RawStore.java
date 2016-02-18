@@ -37,7 +37,7 @@ import jnum.Util;
  *
  * @param <Type> the generic type
  */
-public abstract class Raw<Type extends Number> extends DataStore<Type> {
+public abstract class RawStore<Type extends Number> extends DataStore<Type> {
 	
 	/**
 	 * 
@@ -66,7 +66,7 @@ public abstract class Raw<Type extends Number> extends DataStore<Type> {
 	 * @param name the name
 	 * @param arraySize the array size
 	 */
-	public Raw(String path, String name, int arraySize) {
+	public RawStore(String path, String name, int arraySize) {
 		super(name);
 		this.path = path;
 		samples = arraySize;
@@ -80,9 +80,9 @@ public abstract class Raw<Type extends Number> extends DataStore<Type> {
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
-		if(!(o instanceof Raw)) return false;
+		if(!(o instanceof RawStore)) return false;
 		if(!super.equals(o)) return false;
-		Raw<?> store = (Raw<?>) o;
+		RawStore<?> store = (RawStore<?>) o;
 		if(bytes != store.bytes) return false;
 		if(samples != store.samples) return false;
 		if(isBigEndian != store.isBigEndian) return false;
@@ -276,7 +276,7 @@ public abstract class Raw<Type extends Number> extends DataStore<Type> {
 	 * @param elements the elements
 	 * @return the raw
 	 */
-	public static Raw<?> forSpec(String path, String name, String type, int elements) {
+	public static RawStore<?> forSpec(String path, String name, String type, int elements) {
 			
 		if(type.length() == 1) switch(type.charAt(0)) {
 		case 'u' : return new UShortStore(path, name, elements); 

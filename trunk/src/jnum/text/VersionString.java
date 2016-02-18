@@ -22,14 +22,19 @@
  ******************************************************************************/
 package jnum.text;
 
+import java.io.Serializable;
 import java.util.StringTokenizer;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class VersionString.
  */
-public class VersionString implements Comparable<VersionString> {
-	
+public class VersionString implements Serializable, Comparable<VersionString> {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3580136873936732038L;
+
 	/** The type. */
 	int major, minor, update, type;
 

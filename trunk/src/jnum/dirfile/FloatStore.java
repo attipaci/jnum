@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * The Class FloatStore.
  */
-public class FloatStore extends Raw<Float> {
+public class FloatStore extends RawStore<Float> {
 	
 	/**
 	 * 

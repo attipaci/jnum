@@ -37,7 +37,7 @@ import java.util.StringTokenizer;
 
 import jnum.text.AngleFormat;
 import jnum.text.HourAngleFormat;
-import jnum.text.SignificantFigures;
+import jnum.text.SignificantFiguresFormat;
 import jnum.text.TimeFormat;
 
 
@@ -48,10 +48,10 @@ import jnum.text.TimeFormat;
 public final class Util {
 	
 	/** The Constant version. */
-	public final static String version = "0.08-3";
+	public final static String version = "0.08-2";
 	
 	/** The Constant revision. */
-	public final static String revision = "devel.1";
+	public final static String revision = "devel.3";
 	
 	/**
 	 * Gets the decimal format.
@@ -1004,78 +1004,78 @@ public final class Util {
 	
 	
 	/** The Constant s1. */
-	public final static SignificantFigures s1 = new SignificantFigures(1);
+	public final static SignificantFiguresFormat s1 = new SignificantFiguresFormat(1);
 	
 	/** The Constant s2. */
-	public final static SignificantFigures s2 = new SignificantFigures(2);
+	public final static SignificantFiguresFormat s2 = new SignificantFiguresFormat(2);
 	
 	/** The Constant s3. */
-	public final static SignificantFigures s3 = new SignificantFigures(3);
+	public final static SignificantFiguresFormat s3 = new SignificantFiguresFormat(3);
 	
 	/** The Constant s4. */
-	public final static SignificantFigures s4 = new SignificantFigures(4);
+	public final static SignificantFiguresFormat s4 = new SignificantFiguresFormat(4);
 	
 	/** The Constant s5. */
-	public final static SignificantFigures s5 = new SignificantFigures(5);
+	public final static SignificantFiguresFormat s5 = new SignificantFiguresFormat(5);
 	
 	/** The Constant s6. */
-	public final static SignificantFigures s6 = new SignificantFigures(6);
+	public final static SignificantFiguresFormat s6 = new SignificantFiguresFormat(6);
 	
 	/** The Constant s7. */
-	public final static SignificantFigures s7 = new SignificantFigures(7);
+	public final static SignificantFiguresFormat s7 = new SignificantFiguresFormat(7);
 	
 	/** The Constant s8. */
-	public final static SignificantFigures s8 = new SignificantFigures(8);
+	public final static SignificantFiguresFormat s8 = new SignificantFiguresFormat(8);
 	
 	/** The Constant s9. */
-	public final static SignificantFigures s9 = new SignificantFigures(9);
+	public final static SignificantFiguresFormat s9 = new SignificantFiguresFormat(9);
 	
 	/** The Constant s10. */
-	public final static SignificantFigures s10 = new SignificantFigures(10);
+	public final static SignificantFiguresFormat s10 = new SignificantFiguresFormat(10);
 	
 	/** The Constant s11. */
-	public final static SignificantFigures s11 = new SignificantFigures(11);
+	public final static SignificantFiguresFormat s11 = new SignificantFiguresFormat(11);
 	
 	/** The Constant s12. */
-	public final static SignificantFigures s12 = new SignificantFigures(12);
+	public final static SignificantFiguresFormat s12 = new SignificantFiguresFormat(12);
 	
 	
 	
 	/** The Constant S1. */
-	public final static SignificantFigures S1 = new SignificantFigures(1, false);
+	public final static SignificantFiguresFormat S1 = new SignificantFiguresFormat(1, false);
 	
 	/** The Constant S2. */
-	public final static SignificantFigures S2 = new SignificantFigures(2, false);
+	public final static SignificantFiguresFormat S2 = new SignificantFiguresFormat(2, false);
 	
 	/** The Constant S3. */
-	public final static SignificantFigures S3 = new SignificantFigures(3, false);
+	public final static SignificantFiguresFormat S3 = new SignificantFiguresFormat(3, false);
 	
 	/** The Constant S4. */
-	public final static SignificantFigures S4 = new SignificantFigures(4, false);
+	public final static SignificantFiguresFormat S4 = new SignificantFiguresFormat(4, false);
 	
 	/** The Constant S5. */
-	public final static SignificantFigures S5 = new SignificantFigures(5, false);
+	public final static SignificantFiguresFormat S5 = new SignificantFiguresFormat(5, false);
 	
 	/** The Constant S6. */
-	public final static SignificantFigures S6 = new SignificantFigures(6, false);
+	public final static SignificantFiguresFormat S6 = new SignificantFiguresFormat(6, false);
 	
 	/** The Constant S7. */
-	public final static SignificantFigures S7 = new SignificantFigures(7, false);
+	public final static SignificantFiguresFormat S7 = new SignificantFiguresFormat(7, false);
 	
 	/** The Constant S8. */
-	public final static SignificantFigures S8 = new SignificantFigures(8, false);
+	public final static SignificantFiguresFormat S8 = new SignificantFiguresFormat(8, false);
 	
 	/** The Constant S9. */
-	public final static SignificantFigures S9 = new SignificantFigures(9, false);
+	public final static SignificantFiguresFormat S9 = new SignificantFiguresFormat(9, false);
 	
 	/** The Constant S10. */
-	public final static SignificantFigures S10 = new SignificantFigures(10, false);
+	public final static SignificantFiguresFormat S10 = new SignificantFiguresFormat(10, false);
 	
 	/** The Constant S11  */
-	public final static SignificantFigures S11 = new SignificantFigures(11, false);
+	public final static SignificantFiguresFormat S11 = new SignificantFiguresFormat(11, false);
 	
 	/** The Constant S12. */
-	public final static SignificantFigures S12 = new SignificantFigures(12, false);
+	public final static SignificantFiguresFormat S12 = new SignificantFiguresFormat(12, false);
 	
 
 	
@@ -1214,7 +1214,7 @@ public final class Util {
 		F = { F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12 },
 		d = { null, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12 };
 	
-	public final static SignificantFigures[] 
+	public final static SignificantFiguresFormat[] 
 		s = { null, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12 },
 		S = { null, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12 }
 	;
