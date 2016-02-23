@@ -234,7 +234,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param key the key
 	 * @return the string
 	 */
-	protected String unalias(String key) {
+	private String unalias(String key) {
 		String branchName = getBranchName(key);
 		String unaliased = branchName;
 		
@@ -258,7 +258,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param key the key
 	 * @return the string
 	 */
-	protected String unaliasedKey(String key) {
+	private String unaliasedKey(String key) {
 		key = unalias(key.toLowerCase());
 		int pos = 0;
 		for(; pos<key.length(); pos++) {
@@ -280,7 +280,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param endmarker the endmarker
 	 * @return the string
 	 */
-	protected String resolve(String argument, String marker, String endmarker) {
+	private String resolve(String argument, String marker, String endmarker) {
 		int index = 0;
 		
 		// If these is nothing to resolve, just return the argument as is...
@@ -324,7 +324,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param marker the marker
 	 * @return the property
 	 */
-	protected String getProperty(String name, String marker) {
+	private String getProperty(String name, String marker) {
 		if(marker.charAt(0) != '{') return null;
 		char c = marker.charAt(1);
 		
@@ -492,7 +492,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param condition the condition
 	 * @return true, if is satisfied
 	 */
-	public boolean isSatisfied(String condition) {
+	private boolean isSatisfied(String condition) {
 		// If the conditional key is already defined, then simply parse the argument of the condition
 		if(condition.contains("?")) {
 			StringTokenizer pair = new StringTokenizer(condition, "?");
@@ -838,7 +838,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param key the key
 	 * @return the branch name
 	 */
-	public String getBranchName(String key) {
+	private String getBranchName(String key) {
 		int i=0;
 		int open = 0;
 		for(; i<key.length(); i++) {
@@ -859,7 +859,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param from the from
 	 * @return the remainder
 	 */
-	public String getRemainder(String key, int from) {
+	private String getRemainder(String key, int from) {
 		if(key.length() <= from) return "";
 		else return key.substring(from);	
 	}
@@ -1018,29 +1018,7 @@ public class Configurator implements Serializable, Cloneable {
 		return difference;
 	}
 	
-	/**
-	 * Sets the iteration.
-	 *
-	 * @param i the i
-	 * @param rounds the rounds
-	 */
-	public void setIteration(int i, int rounds) {	
-		if(!branches.containsKey("iteration")) return;
-		Hashtable<String, Vector<String>> settings = branches.get("iteration").conditionals;
 
-		// Parse explicit iteration settings
-		if(settings.containsKey(i + "")) parseAll(settings.get(i + ""));		
-
-		// Parse relative iteration settings
-		for(String spec : settings.keySet()) if(spec.endsWith("%")) {
-			int k = (int) Math.round(rounds * 0.01 * Double.parseDouble(spec.substring(0, spec.length()-1)));
-			if(i == k) parseAll(settings.get(spec));
-		}
-
-		// Parse end-based settings
-		String spec = "last" + (i==rounds ? "" : "-" + (rounds-i));
-		if(settings.containsKey(spec)) parseAll(settings.get(spec));
-	}
 	
 	/**
 	 * Gets the value.
