@@ -22,81 +22,78 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
 import java.io.Serializable;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class InterpolatedStore.
+ * The Class DataStore.
+ *
+ * @param <Type> the generic type
  */
-public class InterpolatedStore extends DataStore<Double> implements Serializable {
+public abstract class DataStore<Type extends Number> implements Serializable {
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5872387045878806688L;
+	private static final long serialVersionUID = -8960142666704305939L;
 	
-	/** The values. */
-	DataStore<?> values;
+	/** The name. */
+	String name;
 	
 	/**
-	 * Instantiates a new interpolated store.
+	 * Instantiates a new data store.
 	 *
-	 * @param values the values
+	 * @param name the name
 	 */
-	public InterpolatedStore(String name, DataStore<?> values) {
-		super(name);
-		this.values = values;
+	public DataStore(String name) {
+		this.name = name; 
 	}
 	
 	@Override
-	public int hashCode() { return super.hashCode() ^ values.hashCode(); }
+	public int hashCode() { return super.hashCode() ^ name.hashCode(); }
 	
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
-		if(!(o instanceof InterpolatedStore)) return false;
+		if(!(o instanceof DataStore)) return false;
 		if(!super.equals(o)) return false;
-		return values.equals(((InterpolatedStore) o).values);
+		DataStore<?> store = (DataStore<?>) o;
+		if(name.equals(store.name)) return true;
+		return false;
 	}
+	
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
+	public String getName() { return name; }
 	
 	/**
 	 * Gets the.
 	 *
 	 * @param n the n
-	 * @return the double
+	 * @return the type
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public Double get(double n) throws IOException {
-		long k = (long) n;
-		double f = n - k;
-		
-		if(f == 0.0) return values.get(k).doubleValue();
-		
-		return (1.0 - f) * values.get(k).doubleValue() + f * values.get(k+1).doubleValue();	
-	}
+	public abstract Type get(long n) throws IOException;
 
+	/**
+	 * Gets the samples.
+	 *
+	 * @return the samples
+	 */
+	public abstract int getSamples();
+	
 	/**
 	 * Length.
 	 *
 	 * @return the long
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	@Override
-	public long length() throws IOException {
-		return values.length();
-	}
-
-	@Override
-	public Double get(long n) throws IOException {
-		return values.get(n).doubleValue();
-	}
-
-	@Override
-	public int getSamples() {
-		return values.getSamples();
-	}
-
+	public abstract long length() throws IOException;
+	
 }

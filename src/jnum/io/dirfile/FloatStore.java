@@ -22,39 +22,39 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class ULongStore.
+ * The Class FloatStore.
  */
-public class ULongStore extends RawStore<Long> {
-
+public class FloatStore extends RawStore<Float> {
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6575300149925224418L;
+	private static final long serialVersionUID = 5365409325445573181L;
 
 	/**
-	 * Instantiates a new u long store.
+	 * Instantiates a new float store.
 	 *
 	 * @param path the path
 	 * @param name the name
 	 * @param arraySize the array size
 	 */
-	public ULongStore(String path, String name, int arraySize) {
+	public FloatStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
-		bytes = 8;
+		bytes = 4;
 	}
 
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#get(long)
 	 */
 	@Override
-	public Long get(long n) throws IOException {
-		return getUnsignedLong(n);
+	public Float get(long n) throws IOException {
+		return getFloat(n);
 	}
 
 }

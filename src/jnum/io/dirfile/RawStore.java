@@ -22,7 +22,7 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.File;
 import java.io.IOException;

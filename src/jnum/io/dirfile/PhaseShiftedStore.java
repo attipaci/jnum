@@ -22,95 +22,82 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
-
+package jnum.io.dirfile;
 
 import java.io.IOException;
 
-import jnum.data.SimpleInterpolator;
+import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class LinearInterpolatorStore.
+ * The Class PhaseShiftedStore.
+ *
+ * @param <Type> the generic type
  */
-public class LinearInterpolatorStore extends DataStore<Double> {
+public class PhaseShiftedStore<Type extends Number> extends DataStore<Type> {
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1972465553588256489L;
+	private static final long serialVersionUID = -5398091531703755110L;
 
-	/** The raw. */
-	protected DataStore<?> raw;
+	/** The data. */
+	DataStore<Type> data;
 	
-	/** The file name. */
-	protected String fileName;
-	
-	/** The table. */
-	protected SimpleInterpolator table;
+	/** The shift. */
+	long shift;
 	
 	/**
-	 * Instantiates a new linear interpolator store.
+	 * Instantiates a new phase shifted store.
 	 *
 	 * @param name the name
-	 * @param value the value
-	 * @param fileName the file name
+	 * @param data the data
+	 * @param shift the shift
 	 */
-	public LinearInterpolatorStore(String name, DataStore<?> value, String fileName) {
+	public PhaseShiftedStore(String name, DataStore<Type> data, long shift) {
 		super(name);
-		this.fileName = fileName;
-		raw = value;
+		this.data = data;
+		this.shift = shift;
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ raw.hashCode() ^ fileName.hashCode();
+		return super.hashCode() ^ data.hashCode() ^ HashCode.get(shift);
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
-		if(!(o instanceof LinearInterpolatorStore)) return false;
+		if(!(o instanceof PhaseShiftedStore)) return false;
 		if(!super.equals(o)) return false;
-		LinearInterpolatorStore store = (LinearInterpolatorStore) o;
-		if(!fileName.equals(store.fileName)) return false;
-		if(!raw.equals(store.raw)) return false;
+		PhaseShiftedStore<?> store = (PhaseShiftedStore<?>) o;
+		if(!data.equals(store.data)) return false;
+		if(shift != store.shift) return false;
 		return true;
 	}
 	
-	// Load interpolation table only upon request...
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#get(long)
 	 */
 	@Override
-	public Double get(long n) throws IOException {
-		if(table == null) load();
-		return table.getValue(raw.get(n).doubleValue());
+	public Type get(long n) throws IOException {
+		return data.get(n + shift);
 	}
-	
-	/**
-	 * Load.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	public void load() throws IOException {
-		table = new SimpleInterpolator(fileName);
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#getSamples()
 	 */
 	@Override
 	public int getSamples() {
-		return raw.getSamples();
+		return data.getSamples();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#length()
 	 */
 	@Override
 	public long length() throws IOException {
-		return raw.length();
+		return data.length();
 	}
- 	
+
 }

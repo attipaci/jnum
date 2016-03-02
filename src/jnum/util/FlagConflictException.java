@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,41 +20,34 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.util;
 
-import java.io.IOException;
+public class FlagConflictException extends IllegalArgumentException {
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LongStore.
- */
-public class LongStore extends RawStore<Long> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4609638284132864489L;
+    public FlagConflictException() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * Instantiates a new long store.
-	 *
-	 * @param path the path
-	 * @param name the name
-	 * @param arraySize the array size
-	 */
-	public LongStore(String path, String name, int arraySize) {
-		super(path, name, arraySize);
-		bytes = 8;
-	}
+    public FlagConflictException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+        // TODO Auto-generated constructor stub
+    }
 
-	/* (non-Javadoc)
-	 * @see kovacs.util.dirfile.DataStore#get(long)
-	 */
-	@Override
-	public Long get(long n) throws IOException {
-		return getLong(n);
-	}
+    public FlagConflictException(String s) {
+        super(s);
+        // TODO Auto-generated constructor stub
+    }
+
+    public FlagConflictException(Throwable cause) {
+        super(cause);
+        // TODO Auto-generated constructor stub
+    }
 
 }

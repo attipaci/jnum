@@ -22,39 +22,39 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class ShortStore.
+ * The Class ULongStore.
  */
-public class ShortStore extends RawStore<Short> {
+public class ULongStore extends RawStore<Long> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1778998721254246537L;
+	private static final long serialVersionUID = 6575300149925224418L;
 
 	/**
-	 * Instantiates a new short store.
+	 * Instantiates a new u long store.
 	 *
 	 * @param path the path
 	 * @param name the name
 	 * @param arraySize the array size
 	 */
-	public ShortStore(String path, String name, int arraySize) {
+	public ULongStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
-		bytes = 2;
+		bytes = 8;
 	}
 
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#get(long)
 	 */
 	@Override
-	public Short get(long n) throws IOException {
-		return getShort(n);
+	public Long get(long n) throws IOException {
+		return getUnsignedLong(n);
 	}
 
 }

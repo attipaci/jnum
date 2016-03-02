@@ -768,7 +768,8 @@ public final class Util {
 	}
 	
 	
-	public static BufferedReader getReader(String fileName) throws IOException {
+	@SuppressWarnings("resource")
+    public static BufferedReader getReader(String fileName) throws IOException {
 		BufferedReader in = null;
 		
 		try { in = getFileReader(fileName); }

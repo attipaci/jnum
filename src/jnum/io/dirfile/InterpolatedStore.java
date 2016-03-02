@@ -22,82 +22,81 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
-
-import jnum.util.HashCode;
+import java.io.Serializable;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class ProductStore.
+ * The Class InterpolatedStore.
  */
-public class ProductStore extends DataStore<Double> {
+public class InterpolatedStore extends DataStore<Double> implements Serializable {
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 5702369503063112685L;
-
-	/** The b. */
-	DataStore<?> a,b;
+	private static final long serialVersionUID = -5872387045878806688L;
 	
-	/** The index scale. */
-	double indexScale;
+	/** The values. */
+	DataStore<?> values;
 	
 	/**
-	 * Instantiates a new product store.
+	 * Instantiates a new interpolated store.
 	 *
-	 * @param name the name
-	 * @param a the a
-	 * @param b the b
+	 * @param values the values
 	 */
-	public ProductStore(String name, DataStore<?> a, DataStore<?> b) {
+	public InterpolatedStore(String name, DataStore<?> values) {
 		super(name);
-		this.a = a;
-		this.b = b;
-		indexScale = b.getSamples() / a.getSamples();
+		this.values = values;
 	}
 	
 	@Override
-	public int hashCode() {
-		return super.hashCode() ^ a.hashCode() ^ b.hashCode() ^ HashCode.get(indexScale);
-	}
+	public int hashCode() { return super.hashCode() ^ values.hashCode(); }
 	
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
-		if(!(o instanceof ProductStore)) return false;
+		if(!(o instanceof InterpolatedStore)) return false;
 		if(!super.equals(o)) return false;
-		ProductStore store = (ProductStore) o;
-		if(indexScale != store.indexScale) return false;
-		if(!a.equals(store.a)) return false;
-		if(!b.equals(store.b)) return false;
-		return true;
+		return values.equals(((InterpolatedStore) o).values);
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.util.dirfile.DataStore#get(long)
+	/**
+	 * Gets the.
+	 *
+	 * @param n the n
+	 * @return the double
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	@Override
-	public Double get(long n) throws IOException {
-		return a.get(n).doubleValue() * b.get(Math.round(indexScale * n)).doubleValue();
+	public Double get(double n) throws IOException {
+		long k = (long) n;
+		double f = n - k;
+		
+		if(f == 0.0) return values.get(k).doubleValue();
+		
+		return (1.0 - f) * values.get(k).doubleValue() + f * values.get(k+1).doubleValue();	
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.util.dirfile.DataStore#getSamples()
-	 */
-	@Override
-	public int getSamples() {
-		return a.getSamples();
-	}
-
-	/* (non-Javadoc)
-	 * @see kovacs.util.dirfile.DataStore#length()
+	/**
+	 * Length.
+	 *
+	 * @return the long
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	@Override
 	public long length() throws IOException {
-		return a.length();
+		return values.length();
+	}
+
+	@Override
+	public Double get(long n) throws IOException {
+		return values.get(n).doubleValue();
+	}
+
+	@Override
+	public int getSamples() {
+		return values.getSamples();
 	}
 
 }

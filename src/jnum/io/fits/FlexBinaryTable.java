@@ -20,9 +20,8 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.fits;
+package jnum.io.fits;
 
-import java.io.FileOutputStream;
 import java.util.Vector;
 
 import nom.tam.fits.BasicHDU;
@@ -33,7 +32,6 @@ import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.BufferedDataOutputStream;
 import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
@@ -71,8 +69,7 @@ public class FlexBinaryTable {
 			}
 			fits.close();
 			
-			BufferedDataOutputStream file = new BufferedDataOutputStream(new FileOutputStream("test.fits"));
-			out.write(file);
+			FitsExtras.write(out, "test.fits");
 			out.close();
 		}
 		catch(Exception e) { e.printStackTrace(); }

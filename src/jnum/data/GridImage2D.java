@@ -29,7 +29,7 @@ import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.fft.MultiFFT;
-import jnum.fits.FitsExtras;
+import jnum.io.fits.FitsExtras;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;

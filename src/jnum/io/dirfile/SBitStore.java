@@ -22,7 +22,7 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
 
@@ -30,66 +30,70 @@ import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class BitStore.
+ * The Class SBitStore.
  */
-public class BitStore extends DataStore<Long> {
+public class SBitStore extends DataStore<Long> {
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6409444230976963190L;
+	private static final long serialVersionUID = 4809906475956120084L;
 
 	/** The container. */
 	DataStore<? extends Number> container;
 	
-	/** The mask. */
-	long mask = 0;
+	/** The cmask. */
+	long mask = 0, cmask;
 	
 	/** The shift. */
 	int shift;
 	
 	/**
-	 * Instantiates a new bit store.
+	 * Instantiates a new s bit store.
 	 *
 	 * @param name the name
 	 * @param bits the bits
 	 * @param position the position
 	 */
-	public BitStore(String name, DataStore<? extends Number> bits, int position) {
+	public SBitStore(String name, DataStore<? extends Number> bits, int position) {
 		super(name);
 		this.container = bits;
-		mask = 1 << position; 
 		shift = position;
+		cmask = 1; 
 	}
 	
 	@Override
-	public int hashCode() { return super.hashCode() ^ container.hashCode() ^ shift ^ HashCode.get(mask); }
+	public int hashCode() {
+		return super.hashCode() ^ container.hashCode() ^ HashCode.get(mask) ^ HashCode.get(cmask) ^ shift;
+	}
 	
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
-		if(!(o instanceof BitStore)) return false;
+		if(!(o instanceof SBitStore)) return false;
 		if(!super.equals(o)) return false;
-		BitStore store = (BitStore) o;
-		if(!container.equals(store.container)) return false;
-		if(mask != store.mask) return false;
+		SBitStore store = (SBitStore) o;
 		if(shift != store.shift) return false;
+		if(mask != store.mask) return false;
+		if(cmask != store.cmask) return false;
+		if(!container.equals(store.container)) return false;
 		return true;
 	}
 	
 	/**
-	 * Instantiates a new bit store.
+	 * Instantiates a new s bit store.
 	 *
 	 * @param name the name
 	 * @param bits the bits
 	 * @param from the from
 	 * @param n the n
 	 */
-	public BitStore(String name, DataStore<? extends Number> bits, int from, int n) {
+	public SBitStore(String name, DataStore<? extends Number> bits, int from, int n) {
 		super(name);
 		this.container = bits;
 		shift = from;
-		for(int i=0; i<n; i++, from++) mask |= 1 << from;
+		for(int i=0; i<n-1; i++) mask |= 1 << i;
+		cmask = 1 << (n-1);
 	}
 	
 	/* (non-Javadoc)
@@ -97,7 +101,8 @@ public class BitStore extends DataStore<Long> {
 	 */
 	@Override
 	public Long get(long n) throws IOException {
-		return (container.get(n).longValue() & mask) >> shift;
+		long value = container.get(n).longValue() >> shift;
+		return (value & mask) - (value & cmask);
 	}
 
 	/* (non-Javadoc)
@@ -115,6 +120,6 @@ public class BitStore extends DataStore<Long> {
 	public long length() throws IOException {
 		return container.length();
 	}
-
+	
 
 }

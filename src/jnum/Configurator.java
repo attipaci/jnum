@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import jnum.fits.FitsExtras;
+import jnum.io.fits.FitsExtras;
 import jnum.math.Range;
 import jnum.math.Vector2D;
 import nom.tam.fits.FitsException;

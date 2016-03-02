@@ -22,78 +22,39 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class DataStore.
- *
- * @param <Type> the generic type
+ * The Class UIntegerStore.
  */
-public abstract class DataStore<Type extends Number> implements Serializable {
-	
+public class UIntegerStore extends RawStore<Long> {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8960142666704305939L;
-	
-	/** The name. */
-	String name;
-	
-	/**
-	 * Instantiates a new data store.
-	 *
-	 * @param name the name
-	 */
-	public DataStore(String name) {
-		this.name = name; 
-	}
-	
-	@Override
-	public int hashCode() { return super.hashCode() ^ name.hashCode(); }
-	
-	@Override
-	public boolean equals(Object o) {
-		if(o == this) return true;
-		if(!(o instanceof DataStore)) return false;
-		if(!super.equals(o)) return false;
-		DataStore<?> store = (DataStore<?>) o;
-		if(name.equals(store.name)) return true;
-		return false;
-	}
-	
-	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
-	public String getName() { return name; }
-	
-	/**
-	 * Gets the.
-	 *
-	 * @param n the n
-	 * @return the type
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	public abstract Type get(long n) throws IOException;
+	private static final long serialVersionUID = -2886396848639213765L;
 
 	/**
-	 * Gets the samples.
+	 * Instantiates a new u integer store.
 	 *
-	 * @return the samples
+	 * @param path the path
+	 * @param name the name
+	 * @param arraySize the array size
 	 */
-	public abstract int getSamples();
-	
-	/**
-	 * Length.
-	 *
-	 * @return the long
-	 * @throws IOException Signals that an I/O exception has occurred.
+	public UIntegerStore(String path, String name, int arraySize) {
+		super(path, name, arraySize);
+		bytes = 4;
+	}
+
+	/* (non-Javadoc)
+	 * @see kovacs.util.dirfile.DataStore#get(long)
 	 */
-	public abstract long length() throws IOException;
-	
+	@Override
+	public Long get(long n) throws IOException {
+		return getUnsignedInt(n);
+	}
+
 }
