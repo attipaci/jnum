@@ -43,6 +43,9 @@ public class CartesianGrid2D extends Grid2D<Coordinate2D> {
 	private static final long serialVersionUID = -3604375577514529903L;
 
 
+	/* (non-Javadoc)
+	 * @see jnum.data.Grid2D#defaults()
+	 */
 	@Override
 	public void defaults() {
 		super.defaults();

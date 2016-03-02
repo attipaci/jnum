@@ -39,9 +39,7 @@ import jnum.ExtraMath;
 
 public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1904464241037659389L;
 
 
@@ -320,6 +318,7 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 	 * Load real.
 	 *
 	 * @param data the data
+	 * @param addressBits the address bits
 	 * @param from the from
 	 * @param to the to
 	 * @param isForward the is forward
@@ -384,6 +383,13 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 		realTransform(data, getAddressBits(data), isForward);
 	}
 	
+	/**
+	 * Real transform.
+	 *
+	 * @param data the data
+	 * @param addressBits the address bits
+	 * @param isForward the is forward
+	 */
 	void realTransform(final double data[], final int addressBits, final boolean isForward) {
 		updateThreads(data);
 		
@@ -402,6 +408,14 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 		realTransform(data, getAddressBits(data), isForward, chunks);
 	}
 	
+	/**
+	 * Real transform.
+	 *
+	 * @param data the data
+	 * @param addressBits the address bits
+	 * @param isForward the is forward
+	 * @param chunks the chunks
+	 */
 	void realTransform(final double[] data, final int addressBits, final boolean isForward, int chunks) {	
 		if(isForward) complexTransform(data, addressBits, FORWARD, chunks);
 
@@ -448,6 +462,13 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 	}
 	
 	
+	/**
+	 * Sequential real transform.
+	 *
+	 * @param data the data
+	 * @param addressBits the address bits
+	 * @param isForward the is forward
+	 */
 	void sequentialRealTransform(final double[] data, final int addressBits, final boolean isForward) {
 		if(isForward) sequentialComplexTransform(data, addressBits, FORWARD); 
 
@@ -471,6 +492,7 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 	 * Scale.
 	 *
 	 * @param data the data
+	 * @param length the length
 	 * @param value the value
 	 * @param threads the threads
 	 */
@@ -515,6 +537,12 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 		scale(data, getFFTLength(addressBits), 2.0 / (2<<addressBits), getChunks());
 	}
 	
+	/**
+	 * Gets the FFT length.
+	 *
+	 * @param addressBits the address bits
+	 * @return the FFT length
+	 */
 	protected int getFFTLength(final int addressBits) {
 		return 2<<addressBits;
 	}
@@ -631,16 +659,21 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 		return 53;	
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.fft.FFT1D#sizeOf(java.lang.Object)
+	 */
 	@Override
 	public int sizeOf(double[] data) {
 		return data.length;
 	}
 
 	
+	/**
+	 * The Class NyquistUnrolledRealFT.
+	 */
 	public static class NyquistUnrolledRealFT extends DoubleFFT {
-		/**
-		 * 
-		 */
+		
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -896227818374947414L;
 
 		/* (non-Javadoc)
@@ -651,6 +684,9 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 		int addressSizeOf(final double[] data) { return super.addressSizeOf(data) & ~1; }
 			
 		
+		/* (non-Javadoc)
+		 * @see jnum.fft.DoubleFFT#realTransform(double[], int, boolean, int)
+		 */
 		@Override
 		void realTransform(final double[] data, final int addressBits, final boolean isForward, int chunks) {
 			final int n = 2<<addressBits;
@@ -668,6 +704,9 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 			}
 		}
 		
+		/* (non-Javadoc)
+		 * @see jnum.fft.DoubleFFT#sequentialRealTransform(double[], int, boolean)
+		 */
 		@Override
 		void sequentialRealTransform(final double[] data, final int addressBits, final boolean isForward) {
 			final int n = 2<<addressBits;
@@ -685,6 +724,9 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see jnum.fft.DoubleFFT#getFFTLength(int)
+		 */
 		@Override
 		protected int getFFTLength(final int addressBits) {
 			return super.getFFTLength(addressBits) + 2;

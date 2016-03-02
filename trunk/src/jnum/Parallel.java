@@ -44,17 +44,27 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 	
 	/** The is interrupted. */
 	private boolean isAlive = false;
+	
+	/** The is complete. */
 	private boolean isComplete = false;
+	
+	/** The is interrupted. */
 	private boolean isInterrupted = false;
 	
 	/** The parallel. */
 	private Processor parallelProcessor;
 	
+	/** The reduction. */
 	private ParallelReduction<ReturnType> reduction;
 	
 	/** The exception. */
 	private Exception exception = null;
 	
+	/**
+	 * Sets the reduction.
+	 *
+	 * @param reduction the new reduction
+	 */
 	public void setReduction(ParallelReduction<ReturnType> reduction) {
 		this.reduction = reduction;
 		reduction.setParallel(this);
@@ -76,6 +86,12 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
+	/**
+	 * Start.
+	 *
+	 * @param threadCount the thread count
+	 * @return the processor
+	 */
 	// TODO to make it public add safety check to avoid multiple overlapping calls...
 	private Processor start(int threadCount) {
 		parallelProcessor = new Processor(this);
@@ -83,6 +99,13 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 		return parallelProcessor;
 	}
 	
+	/**
+	 * Submit.
+	 *
+	 * @param chunks the chunks
+	 * @param executor the executor
+	 * @return the processor
+	 */
 	private Processor submit(int chunks, ExecutorService executor) {
 		if(executor == null) return start(chunks);
 			
@@ -108,6 +131,13 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 		postProcess();
 	}
 	
+	/**
+	 * Process.
+	 *
+	 * @param chunks the chunks
+	 * @param executor the executor
+	 * @throws Exception the exception
+	 */
 	public synchronized void process(int chunks, ExecutorService executor) throws Exception {
 		Processor processor = submit(chunks, executor);
 		processor.waitComplete();
@@ -115,10 +145,19 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 		postProcess();
 	}
 	
+	/**
+	 * Process.
+	 *
+	 * @param pool the pool
+	 * @throws Exception the exception
+	 */
 	public void process(ThreadPoolExecutor pool) throws Exception {
 		process(pool.getCorePoolSize(), pool);
 	}
 	
+	/**
+	 * Post process.
+	 */
 	protected void postProcess() {}
 	
 	/**
@@ -240,10 +279,21 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 		wrapup();
 	}
 
+	/**
+	 * Checks if is alive.
+	 *
+	 * @return true, if is alive
+	 */
 	private boolean isAlive() { return isAlive; }
 
+	/**
+	 * Cleanup.
+	 */
 	protected void cleanup() {}
 	
+	/**
+	 * Wrapup.
+	 */
 	private synchronized void wrapup() {
 		isAlive = false;
 		isComplete = true;
@@ -251,6 +301,11 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 		cleanup();
 	}
 		
+	/**
+	 * Wait complete.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	private synchronized void waitComplete() throws InterruptedException {
 		while(!isComplete) wait();
 	}
@@ -295,11 +350,22 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 		 */
 		private int getThreadCount() { return threadCount; }
 		
+		/**
+		 * Start.
+		 *
+		 * @param threadCount the thread count
+		 */
 		private synchronized void start(int threadCount) {
 			createProcesses(threadCount);			
 			for(Parallel<?> task : processes) task.start();
 		}
 		
+		/**
+		 * Submit.
+		 *
+		 * @param chunks the chunks
+		 * @param executor the executor
+		 */
 		private synchronized void submit(int chunks, ExecutorService executor) {
 			createProcesses(chunks);	
 			// Use only copies of the task for calculation, leaving the template
@@ -307,6 +373,11 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 			for(int i=0; i < threadCount; i++) executor.submit(processes.get(i));
 		}
 		
+		/**
+		 * Creates the processes.
+		 *
+		 * @param count the count
+		 */
 		private synchronized void createProcesses(int count) {
 			this.threadCount = count;
 			
@@ -323,6 +394,9 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 			}
 		}
 		
+		/**
+		 * Wait complete.
+		 */
 		public synchronized void waitComplete() {
 			for(Parallel<?> task : processes) {
 				try { task.waitComplete(); }

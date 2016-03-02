@@ -105,7 +105,7 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.get(year);
+		return super.hashCode() ^ HashCode.from(year);
 	}
 	
 	/* (non-Javadoc)

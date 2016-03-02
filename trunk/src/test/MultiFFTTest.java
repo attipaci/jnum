@@ -81,6 +81,11 @@ public class MultiFFTTest {
 	}
 
 	
+	/**
+	 * Prints the.
+	 *
+	 * @param data the data
+	 */
 	public static void print(double[] data) {
 		System.out.println();
 		for(int i=0; i<data.length; i++) 

@@ -93,9 +93,12 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.get(min) ^ HashCode.get(max);
+		return super.hashCode() ^ HashCode.from(min) ^ HashCode.from(max);
 	}
 	
+	/**
+	 * Flip.
+	 */
 	public void flip() {
 		final double temp = min;
 		min = max;
@@ -296,6 +299,11 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		return max - min;
 	}
 	
+	/**
+	 * Abs span.
+	 *
+	 * @return the double
+	 */
 	public double absSpan() {
 		return Math.abs(span());
 	}

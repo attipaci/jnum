@@ -42,6 +42,9 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	 */
 	public SphericalGrid() { }
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Grid2D#defaults()
+	 */
 	@Override
 	protected void defaults() {
 		super.defaults();
@@ -81,6 +84,9 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	public boolean isReverseY() { return getReference().isReverseLatitude(); }
 	
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Grid2D#getDefaultFITSAxisUnit()
+	 */
 	@Override
 	public Unit getDefaultFITSAxisUnit() { return SphericalCoordinates.degree; }
 	

@@ -82,6 +82,13 @@ public class Unit implements Serializable, Cloneable, Copiable<Unit> {
 		this.name = name; 
 	}
 	
+	/**
+	 * Instantiates a new unit.
+	 *
+	 * @param name the name
+	 * @param value the value
+	 * @param register the register
+	 */
 	public Unit(String name, double value, boolean register) {
 		this(name, value);
 		if(register) register();		
@@ -107,7 +114,7 @@ public class Unit implements Serializable, Cloneable, Copiable<Unit> {
 	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ name.hashCode() ^ HashCode.get(value) ^ multiplier.hashCode();
+		return super.hashCode() ^ name.hashCode() ^ HashCode.from(value) ^ multiplier.hashCode();
 	}
 	
 	/**
@@ -117,6 +124,11 @@ public class Unit implements Serializable, Cloneable, Copiable<Unit> {
 	 */
 	public String name() { return multiplier.getLetterCode() + name; }
 	
+	/**
+	 * Sets the name.
+	 *
+	 * @param value the new name
+	 */
 	public void setName(String value) { name = value; }	
 	/**
 	 * Value.
@@ -125,6 +137,11 @@ public class Unit implements Serializable, Cloneable, Copiable<Unit> {
 	 */
 	public double value() { return multiplier.value * value; }
 		
+	/**
+	 * Sets the value.
+	 *
+	 * @param x the new value
+	 */
 	public void setValue(double x) { value = x; }
 	
 	/**
@@ -1114,6 +1131,7 @@ public class Unit implements Serializable, Cloneable, Copiable<Unit> {
 	/** The Constant mi. */
 	public final static double mi = mile;
 	
+	/** The Constant nmi. */
 	public final static double nmi = 1852.0 * m;
 	
 	/** The Constant pt. */
@@ -1356,9 +1374,14 @@ public class Unit implements Serializable, Cloneable, Copiable<Unit> {
 	/** The Constant kJy. */
 	public final static double kJy = kilo * jansky;
 
+	/** The Constant mph. */
 	// Speed
 	public final static double mph = mile / hour;
+	
+	/** The Constant kmh. */
 	public final static double kmh = kilo * meter / hour;
+	
+	/** The Constant kn. */
 	public final static double kn = nmi / hour;
 
 	

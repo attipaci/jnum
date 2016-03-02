@@ -76,6 +76,7 @@ public final class LeapSeconds {
 	/** The Constant firstLeapMillis. */
 	private final static long firstLeapMillis = millis1900 + 1000L * 2272060800L;	// 1 January 1972
 	
+	/** The is verbose. */
 	private static boolean isVerbose = true;
 	
 	/**
@@ -85,6 +86,11 @@ public final class LeapSeconds {
 	 */
 	public static int getCurrentLeap() { return currentLeap; }
 	
+	/**
+	 * Sets the verbose.
+	 *
+	 * @param value the new verbose
+	 */
 	public static void setVerbose(boolean value) { isVerbose = value; }
 	
 	/**

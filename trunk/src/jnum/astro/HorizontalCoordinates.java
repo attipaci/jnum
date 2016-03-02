@@ -88,9 +88,15 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 	 */
 	public HorizontalCoordinates(double az, double el) { super(az, el); }
 
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
+	 */
 	@Override
 	public String getFITSLongitudeStem() { return "ALON"; }
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+	 */
 	@Override
 	public String getFITSLatitudeStem() { return "ALAT"; }
 	

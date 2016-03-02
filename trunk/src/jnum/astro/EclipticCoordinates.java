@@ -122,6 +122,9 @@ public class EclipticCoordinates extends CelestialCoordinates implements Precess
 	 */
 	public EclipticCoordinates(CelestialCoordinates from) { super(from); }
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.Coordinate2D#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -129,6 +132,9 @@ public class EclipticCoordinates extends CelestialCoordinates implements Precess
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.Coordinate2D#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -140,9 +146,15 @@ public class EclipticCoordinates extends CelestialCoordinates implements Precess
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
+	 */
 	@Override
 	public String getFITSLongitudeStem() { return "ELON"; }
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+	 */
 	@Override
 	public String getFITSLatitudeStem() { return "ELAT"; }
 	
@@ -216,6 +228,9 @@ public class EclipticCoordinates extends CelestialCoordinates implements Precess
 		return super.toString() + " (" + (epoch == null ? "unknown" : epoch.toString()) + ")";	
 	}
     
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#toString(int)
+     */
     @Override
 	public String toString(int decimals) {
 		return super.toString(decimals) + " (" + (epoch == null ? "unknown" : epoch.toString()) + ")";

@@ -99,6 +99,12 @@ public class LUDecomposition {
 		return inverse;
 	}
 	
+	/**
+	 * Gets the inverse to.
+	 *
+	 * @param inverse the inverse
+	 * @return the inverse to
+	 */
 	public void getInverseTo(SquareMatrix inverse) {
 		final int n = LU.size();
 		

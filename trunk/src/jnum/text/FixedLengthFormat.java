@@ -29,29 +29,62 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FixedLengthFormat.
+ */
 public class FixedLengthFormat extends NumberFormat {
-	/**
-	 * 
-	 */
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7874756229468621371L;
 	
+	/** The length. */
 	int length;
+	
+	/** The nf. */
 	NumberFormat nf;
+	
+	/** The to left. */
 	boolean toLeft = false;
 	
+	/**
+	 * Instantiates a new fixed length format.
+	 *
+	 * @param baseFormat the base format
+	 * @param n the n
+	 */
 	public FixedLengthFormat(NumberFormat baseFormat, int n) {
 		nf = baseFormat;
 		length = n;
 	}
 	
+	/**
+	 * Left.
+	 */
 	public void left() { toLeft = true; }
 	
+	/**
+	 * Right.
+	 */
 	public void right() { toLeft = false; }
 	
+	/**
+	 * Checks if is left.
+	 *
+	 * @return true, if is left
+	 */
 	public boolean isLeft() { return toLeft; }
 	
+	/**
+	 * Checks if is right.
+	 *
+	 * @return true, if is right
+	 */
 	public boolean isRight() { return !toLeft; }
 	
+	/* (non-Javadoc)
+	 * @see java.text.NumberFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
+	 */
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo,
 			FieldPosition pos) {
@@ -80,6 +113,9 @@ public class FixedLengthFormat extends NumberFormat {
 		return toAppendTo;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.text.NumberFormat#format(long, java.lang.StringBuffer, java.text.FieldPosition)
+	 */
 	@Override
 	public StringBuffer format(long number, StringBuffer toAppendTo,
 			FieldPosition pos) {
@@ -108,6 +144,9 @@ public class FixedLengthFormat extends NumberFormat {
 		return toAppendTo;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.text.NumberFormat#parse(java.lang.String, java.text.ParsePosition)
+	 */
 	@Override
 	public Number parse(String source, ParsePosition parsePosition) {
 		return nf.parse(source.trim(), parsePosition);

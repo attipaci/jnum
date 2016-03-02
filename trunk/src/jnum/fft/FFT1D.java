@@ -33,9 +33,7 @@ import jnum.data.WindowFunction;
  */
 public abstract class FFT1D<Type> extends FFT<Type> {
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1722639496940144592L;
 
 	/**
@@ -60,6 +58,12 @@ public abstract class FFT1D<Type> extends FFT<Type> {
 		return averagePower(data, WindowFunction.getHamming(windowSize));			
 	}
 	
+	/**
+	 * Size of.
+	 *
+	 * @param data the data
+	 * @return the int
+	 */
 	public abstract int sizeOf(Type data);
 
 	/**
@@ -71,6 +75,13 @@ public abstract class FFT1D<Type> extends FFT<Type> {
 	 */
 	public abstract Type getPadded(Type data, int n);
 
+	/**
+	 * Image2bin.
+	 *
+	 * @param imageIndex the image index
+	 * @param addressBits the address bits
+	 * @return the int
+	 */
 	public static int image2bin(final int imageIndex, final int addressBits) {
 		final int nyquist = 1 << (addressBits-1);
 		
@@ -83,6 +94,13 @@ public abstract class FFT1D<Type> extends FFT<Type> {
 		return imageIndex;
 	}
 	
+	/**
+	 * Bin2 image.
+	 *
+	 * @param bin the bin
+	 * @param addressBits the address bits
+	 * @return the int
+	 */
 	public static int bin2Image(int bin, final int addressBits) {
 		final int n = 1 << addressBits;
 		

@@ -289,6 +289,11 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 		center.add(area);
 	}
 	
+	/**
+	 * Sets the rulers.
+	 *
+	 * @param value the new rulers
+	 */
 	public void setRulers(boolean value) {
 		top.setRuler(value);
 		bottom.setRuler(value);

@@ -34,9 +34,7 @@ import jnum.projection.Projector2D;
  */
 public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6883179727775205645L;
 
 	/** The equatorial. */
@@ -68,6 +66,9 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -76,6 +77,9 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

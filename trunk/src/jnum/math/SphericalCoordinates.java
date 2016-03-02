@@ -56,6 +56,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	/** The default local coordinate system. */
 	static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 	
+	/** The af. */
 	protected static AngleFormat af = new AngleFormat(2);
 	
 	static {
@@ -80,12 +81,32 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 	
 
+	/**
+	 * Sets the default decimals.
+	 *
+	 * @param decimals the new default decimals
+	 */
 	public static void setDefaultDecimals(int decimals) { af.setDecimals(decimals); }
 	
+	/**
+	 * Gets the default decimals.
+	 *
+	 * @return the default decimals
+	 */
 	public static int getDefaultDecimals() { return af.getDecimals(); }
 	
+	/**
+	 * Gets the FITS longitude stem.
+	 *
+	 * @return the FITS longitude stem
+	 */
 	public String getFITSLongitudeStem() { return "LON-"; }
 	
+	/**
+	 * Gets the FITS latitude stem.
+	 *
+	 * @return the FITS latitude stem
+	 */
 	public String getFITSLatitudeStem() { return "LAT-"; }
 	
 	/**
@@ -430,6 +451,12 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		return coords.get(0).format(x()) + " " + coords.get(1).format(y());
 	}
 	
+	/**
+	 * To string.
+	 *
+	 * @param decimals the decimals
+	 * @return the string
+	 */
 	public String toString(int decimals) {
 		return Util.af[decimals].format(longitude()) + " " + Util.af[decimals].format(latitude());	
 	}
@@ -596,8 +623,13 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 	
 
+	/** The Constant degree. */
 	public final static Unit degree = Unit.get("deg");
+	
+	/** The Constant arcmin. */
 	public final static Unit arcmin = Unit.get("arcmin");
+	
+	/** The Constant arcsec. */
 	public final static Unit arcsec = Unit.get("arcsec");
 	
 }

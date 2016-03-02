@@ -30,9 +30,8 @@ import java.util.StringTokenizer;
  * The Class VersionString.
  */
 public class VersionString implements Serializable, Comparable<VersionString> {	
-	/**
-	 * 
-	 */
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3580136873936732038L;
 
 	/** The type. */

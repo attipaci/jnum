@@ -35,9 +35,7 @@ import java.lang.reflect.*;
 @SuppressWarnings("unchecked")
 public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVector<T> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4341703980593410457L;
 
 	/** The component. */

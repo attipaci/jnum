@@ -33,9 +33,7 @@ import java.io.Serializable;
  */
 public class InterpolatedStore extends DataStore<Double> implements Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5872387045878806688L;
 	
 	/** The values. */
@@ -44,6 +42,7 @@ public class InterpolatedStore extends DataStore<Double> implements Serializable
 	/**
 	 * Instantiates a new interpolated store.
 	 *
+	 * @param name the name
 	 * @param values the values
 	 */
 	public InterpolatedStore(String name, DataStore<?> values) {
@@ -51,9 +50,15 @@ public class InterpolatedStore extends DataStore<Double> implements Serializable
 		this.values = values;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#hashCode()
+	 */
 	@Override
 	public int hashCode() { return super.hashCode() ^ values.hashCode(); }
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -89,11 +94,17 @@ public class InterpolatedStore extends DataStore<Double> implements Serializable
 		return values.length();
 	}
 
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#get(long)
+	 */
 	@Override
 	public Double get(long n) throws IOException {
 		return values.get(n).doubleValue();
 	}
 
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#getSamples()
+	 */
 	@Override
 	public int getSamples() {
 		return values.getSamples();

@@ -406,6 +406,9 @@ public abstract class AmoebaMinimizer extends Minimizer implements Cloneable {
 		return evaluate(parameter);
 	}
 	
+	/**
+	 * Post fit.
+	 */
 	public void postFit() {}
 	
 	/**

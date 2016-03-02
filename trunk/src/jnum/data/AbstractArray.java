@@ -40,9 +40,7 @@ import jnum.text.ParseType;
  */
 public abstract class AbstractArray<T> implements Serializable, Cloneable, Copiable<AbstractArray<T>>, Iterable<T> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1935368290016760524L;
 
 	/** The data. */

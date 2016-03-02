@@ -102,6 +102,9 @@ public class EllipticalSource<CoordinateType extends Coordinate2D> extends Gauss
 		// TODO Auto-generated constructor stub
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.GaussianSource#hashCode()
+	 */
 	@Override
 	public int hashCode() { 
 		int hash = super.hashCode();
@@ -110,6 +113,9 @@ public class EllipticalSource<CoordinateType extends Coordinate2D> extends Gauss
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.GaussianSource#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

@@ -71,6 +71,11 @@ public class SignificantFiguresFormat extends NumberFormat {
 		this.trailingZeroes = trailingZeroes;
 	}
 	
+	/**
+	 * Checks for trailing zeroes.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasTrailingZeroes() { return trailingZeroes; }
  	
 	/* (non-Javadoc)

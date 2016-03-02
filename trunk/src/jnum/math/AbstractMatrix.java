@@ -44,9 +44,7 @@ import jnum.text.Parser;
  */
 public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<? extends T>>, Serializable, Cloneable, CopiableContent<AbstractMatrix<T>>, Iterable<T>, NumberFormating, DecimalFormating, Parser {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8165960625207147822L;
 
 

@@ -50,6 +50,11 @@ public abstract class ContentLayer extends PlotLayer {
 	 */
 	public Vector2D getUserOffset() { return userOffset; }
 	
+	/**
+	 * Gets the reference coordinate.
+	 *
+	 * @return the reference coordinate
+	 */
 	public Coordinate2D getReferenceCoordinate() {
 		Rectangle2D bounds = getCoordinateBounds();
 		Vector2D offset = getUserOffset();

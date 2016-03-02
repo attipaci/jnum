@@ -33,9 +33,7 @@ import jnum.util.HashCode;
  */
 public class SplineCoeffs implements Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5533149637827653369L;
 
 	/** The center index. */
@@ -51,11 +49,17 @@ public class SplineCoeffs implements Serializable {
 	public double[] coeffs = new double[4];
 
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.get(coeffs) ^ HashCode.get(centerIndex);
+		return super.hashCode() ^ HashCode.from(coeffs) ^ HashCode.from(centerIndex);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

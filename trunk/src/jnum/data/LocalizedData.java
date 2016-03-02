@@ -33,9 +33,7 @@ import jnum.math.Metric;
  */
 public abstract class LocalizedData implements Serializable, Comparable<LocalizedData>, Metric<LocalizedData> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2776764506885561864L;
 	/** The measurements. */
 	public int measurements = 1;

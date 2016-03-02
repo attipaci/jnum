@@ -3,8 +3,17 @@ package test;
 import jnum.Unit;
 import jnum.data.GaussianPSF;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PSFTest.
+ */
 public class PSFTest {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		GaussianPSF p1 = new GaussianPSF(4.0, 3.0, -55.0 * Unit.deg);
 		GaussianPSF p2 = new GaussianPSF(9.0, 2.0, 22.0 * Unit.deg);

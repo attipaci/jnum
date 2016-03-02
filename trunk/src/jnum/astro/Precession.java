@@ -39,9 +39,7 @@ import jnum.util.SimpleMatrix;
  */
 public class Precession implements Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5730425237393070503L;
 
 	/** The to epoch. */
@@ -79,6 +77,9 @@ public class Precession implements Serializable {
 		else calcMatrix();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -87,6 +88,9 @@ public class Precession implements Serializable {
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

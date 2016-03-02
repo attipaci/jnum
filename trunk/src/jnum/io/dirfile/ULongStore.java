@@ -32,9 +32,7 @@ import java.io.IOException;
  */
 public class ULongStore extends RawStore<Long> {
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6575300149925224418L;
 
 	/**

@@ -205,7 +205,7 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 	 */
 	@Override
 	public int hashCode() {
-		return HashCode.get(x) ^ ~HashCode.get(y);
+		return HashCode.from(x) ^ ~HashCode.from(y);
 	}
 
 	/* (non-Javadoc)
@@ -359,6 +359,11 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 		}
 	}
 	
+	/**
+	 * Parses the.
+	 *
+	 * @param tokens the tokens
+	 */
 	public void parse(StringTokenizer tokens) {
 		set(Double.parseDouble(tokens.nextToken()), Double.parseDouble(tokens.nextToken())); 
 	}

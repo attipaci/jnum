@@ -262,7 +262,7 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	/**
 	 * To string.
 	 *
-	 * @param df the df
+	 * @param nf the nf
 	 * @return the string
 	 */
 	@Override

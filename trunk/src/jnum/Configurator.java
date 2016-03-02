@@ -67,6 +67,7 @@ public class Configurator implements Serializable, Cloneable {
 	/** The is enabled. */
 	public boolean isEnabled = false;
 	
+	/** The is locked. */
 	public boolean isLocked = false;
 	
 	/** The was used. */
@@ -84,10 +85,13 @@ public class Configurator implements Serializable, Cloneable {
 	/** The counter. */
 	private static int counter = 0;	
 	
+	/** The silent. */
 	public static boolean silent = false;
 	
+	/** The verbose. */
 	public static boolean verbose = false;
 	
+	/** The details. */
 	public static boolean details = false;
 	
 	
@@ -158,6 +162,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * Parses the.
 	 *
 	 * @param lines the lines
+	 * @return the list
 	 */
 	public List<String> parseAll(Vector<String> lines) {
 		ArrayList<String> exceptions = new ArrayList<String>();
@@ -170,6 +175,11 @@ public class Configurator implements Serializable, Cloneable {
 		return exceptions.isEmpty() ? null : exceptions;
 	}
 	
+	/**
+	 * Parses the silent.
+	 *
+	 * @param line the line
+	 */
 	public void parseSilent(String line) {
 		try { parse(line); }
 		catch(LockedException e) {}
@@ -179,6 +189,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * Parses the.
 	 *
 	 * @param line the line
+	 * @throws LockedException the locked exception
 	 */
 	public void parse(String line) throws LockedException {
 		Entry entry = new Entry(line);
@@ -350,6 +361,12 @@ public class Configurator implements Serializable, Cloneable {
 		return containsKey(name) ? get(name).getValue() : null;		
 	}
 	
+	/**
+	 * Process silent.
+	 *
+	 * @param key the key
+	 * @param argument the argument
+	 */
 	public void processSilent(String key, String argument) {
 		try { process(key, argument); }
 		catch(LockedException e) {}
@@ -360,6 +377,7 @@ public class Configurator implements Serializable, Cloneable {
 	 *
 	 * @param key the key
 	 * @param argument the argument
+	 * @throws LockedException the locked exception
 	 */
 	public void process(String key, String argument) throws LockedException {	
 		String substitute = unalias(key);
@@ -426,6 +444,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * @param branchName the branch name
 	 * @param key the key
 	 * @param argument the argument
+	 * @throws LockedException the locked exception
 	 */
 	private void set(String branchName, String key, String argument) throws LockedException {
 		setCondition(key, argument);
@@ -545,6 +564,11 @@ public class Configurator implements Serializable, Cloneable {
 		}
 	}
 	
+	/**
+	 * Forget silent.
+	 *
+	 * @param arg the arg
+	 */
 	public void forgetSilent(String arg) {
 		try { forget(arg); }
 		catch(LockedException e) {}
@@ -554,6 +578,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * Forget.
 	 *
 	 * @param arg the arg
+	 * @throws LockedException the locked exception
 	 */
 	public void forget(String arg) throws LockedException {
 	
@@ -592,6 +617,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * Recall.
 	 *
 	 * @param arg the arg
+	 * @throws LockedException the locked exception
 	 */
 	public void recall(String arg) throws LockedException {
 		String branchName = getBranchName(arg);
@@ -620,6 +646,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * Removes the.
 	 *
 	 * @param arg the arg
+	 * @throws LockedException the locked exception
 	 */
 	public void remove(String arg) throws LockedException {
 		String branchName = getBranchName(arg);
@@ -734,6 +761,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * Blacklist.
 	 *
 	 * @param arg the arg
+	 * @throws LockedException the locked exception
 	 */
 	public void blacklist(String arg) throws LockedException {		
 		String branchName = getBranchName(arg);
@@ -755,6 +783,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * Whitelist.
 	 *
 	 * @param arg the arg
+	 * @throws LockedException the locked exception
 	 */
 	public void whitelist(String arg) throws LockedException {
 		String branchName = getBranchName(arg);
@@ -780,21 +809,41 @@ public class Configurator implements Serializable, Cloneable {
 		}
 	}
 	
+	/**
+	 * Checks if is blacklisted.
+	 *
+	 * @return true, if is blacklisted
+	 */
 	public boolean isBlacklisted() {
 		return isLocked & !isEnabled;
 	}
 	
+	/**
+	 * Blacklist.
+	 *
+	 * @throws LockedException the locked exception
+	 */
 	public void blacklist() throws LockedException {
 		if(isLocked) if(!isBlacklisted()) throw new LockedException("Cannot blacklist locked option.");
 		isEnabled = false;
 		isLocked = true;
 	}
 	
+	/**
+	 * Whitelist.
+	 *
+	 * @throws LockedException the locked exception
+	 */
 	public void whitelist() throws LockedException {
 		if(isLocked) if(!isBlacklisted()) throw new LockedException("Cannot whitelist locked option.");
 		isLocked = false;
 	}
 	
+	/**
+	 * Relock.
+	 *
+	 * @param argument the argument
+	 */
 	public void relock(String argument) {
 		if(!isBlacklisted()) {
 			value = argument;
@@ -802,6 +851,11 @@ public class Configurator implements Serializable, Cloneable {
 		}
 	}
 	
+	/**
+	 * Lock.
+	 *
+	 * @param argument the argument
+	 */
 	public void lock(String argument) {
 		if(!isBlacklisted()) {
 			if(!argument.isEmpty()) if(!isLocked) value = argument;
@@ -809,6 +863,9 @@ public class Configurator implements Serializable, Cloneable {
 		}
 	}
 	
+	/**
+	 * Unlock.
+	 */
 	public void unlock() {
 		if(!isBlacklisted()) isLocked = false;
 	}
@@ -935,6 +992,7 @@ public class Configurator implements Serializable, Cloneable {
 	 * Map value to.
 	 *
 	 * @param branchName the branch name
+	 * @throws LockedException the locked exception
 	 */
 	public void mapValueTo(String branchName) throws LockedException {
 		if(value != null) if(value.length() > 0) {
@@ -1211,6 +1269,7 @@ public class Configurator implements Serializable, Cloneable {
 	/**
 	 * Gets the keys.
 	 *
+	 * @param includeBlacklisted the include blacklisted
 	 * @return the keys
 	 */
 	public List<String> getKeys(boolean includeBlacklisted) {
@@ -1255,6 +1314,12 @@ public class Configurator implements Serializable, Cloneable {
 	}
 	
 	
+	/**
+	 * Gets the conditional list for.
+	 *
+	 * @param keyPattern the key pattern
+	 * @return the conditional list for
+	 */
 	public List<String> getConditionalListFor(String keyPattern) {
 		
 		if(keyPattern != null) {
@@ -1346,6 +1411,7 @@ public class Configurator implements Serializable, Cloneable {
 	/**
 	 * Gets the alphabetical keys.
 	 *
+	 * @param includeBlacklisted the include blacklisted
 	 * @return the alphabetical keys
 	 */
 	public List<String> getAlphabeticalKeys(boolean includeBlacklisted) {
@@ -1584,7 +1650,6 @@ public class Configurator implements Serializable, Cloneable {
 	 * Edits the header.
 	 *
 	 * @param cursor the cursor
-	 * @throws FitsException the fits exception
 	 * @throws HeaderCardException the header card exception
 	 */
 	public void editHeader(Cursor<String, HeaderCard> cursor) throws HeaderCardException {
@@ -1610,14 +1675,30 @@ public class Configurator implements Serializable, Cloneable {
 	}	
 	
 	
+	/**
+	 * The Class Locator.
+	 */
 	class Locator {
+		
+		/** The file name. */
 		String fileName;
+		
+		/** The location index. */
 		int locationIndex;
+		
+		/** The last modified. */
 		long lastModified;
 	}
 	
+	/**
+	 * The Class Setting.
+	 */
 	class Setting {
+		
+		/** The value. */
 		String value;
+		
+		/** The locator. */
 		Locator locator;
 	}
 
@@ -1660,6 +1741,11 @@ public class Configurator implements Serializable, Cloneable {
 			parse(line);
 		}
 		
+		/**
+		 * Checks if is command.
+		 *
+		 * @return true, if is command
+		 */
 		public boolean isCommand() {
 			key = key.toLowerCase();
 			if(key.endsWith("forget")) return true;

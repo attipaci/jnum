@@ -50,9 +50,7 @@ import nom.tam.util.Cursor;
  */
 public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPSF>, Scalable, Multiplication<GaussianPSF>, Division<GaussianPSF>, Product<GaussianPSF, GaussianPSF>, Ratio<GaussianPSF, GaussianPSF> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1182818146658831916L;
 
 	/** The position angle. */
@@ -64,6 +62,7 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 	/** The type. */
 	private String name = null;
 	
+	/** The size unit. */
 	private Unit sizeUnit = SphericalCoordinates.degree;
 	
 	
@@ -79,11 +78,22 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 	 */
 	public GaussianPSF(double FWHM) { this(); setFWHM(FWHM); }
 	
+	/**
+	 * Instantiates a new gaussian psf.
+	 *
+	 * @param fitsPrefix the fits prefix
+	 */
 	public GaussianPSF(String fitsPrefix) {
 		this();
 		setFitsID(fitsPrefix);
 	}
 	
+	/**
+	 * Instantiates a new gaussian psf.
+	 *
+	 * @param fitsPrefix the fits prefix
+	 * @param type the type
+	 */
 	public GaussianPSF(String fitsPrefix, String type) {
 		this();
 		setFitsID(fitsPrefix);
@@ -131,7 +141,7 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.get(majorFWHM) ^ HashCode.get(minorFWHM) ^ HashCode.get(positionAngle);
+		return super.hashCode() ^ HashCode.from(majorFWHM) ^ HashCode.from(minorFWHM) ^ HashCode.from(positionAngle);
 	}
 	
 	/* (non-Javadoc)
@@ -169,8 +179,18 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 		return copy;
 	}
 	
+	/**
+	 * Gets the size unit.
+	 *
+	 * @return the size unit
+	 */
 	public final Unit getSizeUnit() { return sizeUnit; }
 	
+	/**
+	 * Sets the size unit.
+	 *
+	 * @param u the new size unit
+	 */
 	public void setSizeUnit(Unit u) { this.sizeUnit = u; }
 
 	/**
@@ -206,6 +226,11 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 	public String getName() { return name; }
 	
 	
+	/**
+	 * Sets the.
+	 *
+	 * @param FWHM the fwhm
+	 */
 	public final void set(double FWHM) {
 		set(FWHM, FWHM, 0.0);
 	}
@@ -230,17 +255,32 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 		}
 	}
 	
+	/**
+	 * Sets the.
+	 *
+	 * @param psf the psf
+	 */
 	public final void set(GaussianPSF psf) {
 		majorFWHM = psf.majorFWHM;
 		minorFWHM = psf.minorFWHM;
 		positionAngle = psf.positionAngle;
 	}
 	
+	/**
+	 * Encompass.
+	 *
+	 * @param FWHM the fwhm
+	 */
 	public void encompass(double FWHM) {
 		if(majorFWHM < FWHM) majorFWHM = FWHM;
 		if(minorFWHM < FWHM) minorFWHM = FWHM;
 	}
 	
+	/**
+	 * Encompass.
+	 *
+	 * @param psf the psf
+	 */
 	public void encompass(GaussianPSF psf) {		
 		double da = psf.positionAngle - this.positionAngle;
 		
@@ -255,6 +295,12 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 		
 	}
 	
+	/**
+	 * Checks if is encompassing.
+	 *
+	 * @param psf the psf
+	 * @return true, if is encompassing
+	 */
 	public boolean isEncompassing(GaussianPSF psf) {
 		double da = psf.positionAngle - this.positionAngle;
 		
@@ -270,6 +316,12 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 		return true;
 	}
 	
+	/**
+	 * Checks if is encompassing.
+	 *
+	 * @param FWHM the fwhm
+	 * @return true, if is encompassing
+	 */
 	public boolean isEncompassing(double FWHM) {
 		if(majorFWHM < FWHM) return false;
 		if(minorFWHM < FWHM) return false;
@@ -326,14 +378,34 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 	 */
 	public final double getMinorFWHM() { return minorFWHM; }
 	
+	/**
+	 * Gets the circular equivalent fwhm.
+	 *
+	 * @return the circular equivalent fwhm
+	 */
 	public final double getCircularEquivalentFWHM() {
 		return Math.sqrt(majorFWHM * minorFWHM);
 	}
 	
+	/**
+	 * Gets the axis product.
+	 *
+	 * @return the axis product
+	 */
 	public final double getAxisProduct() { return majorFWHM * getMinorFWHM(); }
 	
+	/**
+	 * Extent in x.
+	 *
+	 * @return the double
+	 */
 	public final double extentInX() { return ExtraMath.hypot(Math.cos(positionAngle) * majorFWHM, Math.sin(positionAngle) * minorFWHM); }
 
+	/**
+	 * Extent in y.
+	 *
+	 * @return the double
+	 */
 	public final double extentInY() { return ExtraMath.hypot(Math.cos(positionAngle) * minorFWHM, Math.sin(positionAngle) * majorFWHM); }
 
 	
@@ -526,6 +598,7 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 	/**
 	 * Edits the FITS header.
 	 *
+	 * @param header the header
 	 * @param cursor the cursor where the FITS keys will be inserted into the header.
 	 * @throws HeaderCardException the header card exception
 	 */
@@ -544,15 +617,34 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 		return toString(Util.s4);
 	}
 	
+	/**
+	 * To string.
+	 *
+	 * @param nf the nf
+	 * @return the string
+	 */
 	public String toString(NumberFormat nf) {
 		if(isCircular()) return nf.format(majorFWHM);
 		return nf.format(majorFWHM) + "x" + nf.format(minorFWHM) + " @ " + Util.f1.format(positionAngle / Unit.deg) + " deg.";
 	}
 	
+	/**
+	 * To string.
+	 *
+	 * @param u the u
+	 * @return the string
+	 */
 	public String toString(Unit u) {
 		return toString(u, Util.s4);
 	}
 	
+	/**
+	 * To string.
+	 *
+	 * @param u the u
+	 * @param nf the nf
+	 * @return the string
+	 */
 	public String toString(Unit u, NumberFormat nf) {	
 		if(isCircular()) return nf.format(majorFWHM / u.value()) + " " + u.name();
 		return nf.format(majorFWHM / u.value()) + "x" + nf.format(minorFWHM / u.value()) + " " + u.name() + " @ " + Util.f1.format(positionAngle / Unit.deg) + " deg.";

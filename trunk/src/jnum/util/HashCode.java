@@ -36,7 +36,7 @@ public final class HashCode {
 	 * @param value the value
 	 * @return the int
 	 */
-	public static int get(long value) {
+	public static int from(long value) {
 		return (int)(value & 0xFFFF) ^ (int)((value >> 32) & 0xFFFF);
 	}
 	
@@ -46,7 +46,7 @@ public final class HashCode {
 	 * @param value the value
 	 * @return the int
 	 */
-	public static int get(float value) {
+	public static int from(float value) {
 		return Float.floatToIntBits(value);
 	}
 	
@@ -56,8 +56,8 @@ public final class HashCode {
 	 * @param value the value
 	 * @return the int
 	 */
-	public static int get(double value) {
-		return get(Double.doubleToLongBits(value));
+	public static int from(double value) {
+		return from(Double.doubleToLongBits(value));
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public final class HashCode {
 	 * @param values the values
 	 * @return the int
 	 */
-	public static int get(boolean[] values) { return get(values, 0, values.length); }
+	public static int from(boolean[] values) { return from(values, 0, values.length); }
 	
 	/**
 	 * Gets the.
@@ -76,7 +76,7 @@ public final class HashCode {
 	 * @param to the to
 	 * @return the int
 	 */
-	public static int get(boolean[] values, int from, int to) {
+	public static int from(boolean[] values, int from, int to) {
 		int shift = 0;
 		int hash = from ^ to;
 		int current = 0;
@@ -96,7 +96,7 @@ public final class HashCode {
 	 * @param values the values
 	 * @return the int
 	 */
-	public static int get(byte[] values) { return get(values, 0, values.length); }
+	public static int from(byte[] values) { return from(values, 0, values.length); }
 	
 	/**
 	 * Gets the.
@@ -106,7 +106,7 @@ public final class HashCode {
 	 * @param to the to
 	 * @return the int
 	 */
-	public static int get(byte[] values, int from, int to) {
+	public static int from(byte[] values, int from, int to) {
 		int shift = 0;
 		int hash = from ^ to;
 		int current = 0;
@@ -127,7 +127,7 @@ public final class HashCode {
 	 * @param values the values
 	 * @return the int
 	 */
-	public static int get(short[] values) { return get(values, 0, values.length); }
+	public static int from(short[] values) { return from(values, 0, values.length); }
 	
 	/**
 	 * Gets the.
@@ -137,7 +137,7 @@ public final class HashCode {
 	 * @param to the to
 	 * @return the int
 	 */
-	public static int get(short[] values, int from, int to) {
+	public static int from(short[] values, int from, int to) {
 		int shift = 0;
 		int hash = from ^ to;
 		int current = 0;
@@ -158,7 +158,7 @@ public final class HashCode {
 	 * @param values the values
 	 * @return the int
 	 */
-	public static int get(int[] values) { return get(values, 0, values.length); }
+	public static int from(int[] values) { return from(values, 0, values.length); }
 	
 	/**
 	 * Gets the.
@@ -168,7 +168,7 @@ public final class HashCode {
 	 * @param to the to
 	 * @return the int
 	 */
-	public static int get(int[] values, int from, int to) {
+	public static int from(int[] values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) hash ^= values[i] + i; 
 		return hash;
@@ -181,7 +181,7 @@ public final class HashCode {
 	 * @param values the values
 	 * @return the int
 	 */
-	public static int get(long[] values) { return get(values, 0, values.length); }
+	public static int from(long[] values) { return from(values, 0, values.length); }
 	
 	/**
 	 * Gets the.
@@ -191,9 +191,9 @@ public final class HashCode {
 	 * @param to the to
 	 * @return the int
 	 */
-	public static int get(long[] values, int from, int to) {
+	public static int from(long[] values, int from, int to) {
 		int hash = from ^ to;
-		for(int i=from; i<to; i++) hash ^= get(values[i]) + i; 
+		for(int i=from; i<to; i++) hash ^= from(values[i]) + i; 
 		return hash;
 	}
 	
@@ -204,7 +204,7 @@ public final class HashCode {
 	 * @param values the values
 	 * @return the int
 	 */
-	public static int get(float[] values) { return get(values, 0, values.length); }
+	public static int from(float[] values) { return from(values, 0, values.length); }
 	
 	/**
 	 * Gets the.
@@ -214,9 +214,9 @@ public final class HashCode {
 	 * @param to the to
 	 * @return the int
 	 */
-	public static int get(float[] values, int from, int to) {
+	public static int from(float[] values, int from, int to) {
 		int hash = from ^ to;
-		for(int i=from; i<to; i++) hash ^= get(values[i]) + i; 
+		for(int i=from; i<to; i++) hash ^= from(values[i]) + i; 
 		return hash;		
 	}
 	
@@ -226,7 +226,7 @@ public final class HashCode {
 	 * @param values the values
 	 * @return the int
 	 */
-	public static int get(double[] values) { return get(values, 0, values.length); }
+	public static int from(double[] values) { return from(values, 0, values.length); }
 	
 	/**
 	 * Gets the.
@@ -236,9 +236,9 @@ public final class HashCode {
 	 * @param to the to
 	 * @return the int
 	 */
-	public static int get(double[] values, int from, int to) {
+	public static int from(double[] values, int from, int to) {
 		int hash = from ^ to;
-		for(int i=from; i<to; i++) hash ^= get(values[i]) + i; 
+		for(int i=from; i<to; i++) hash ^= from(values[i]) + i; 
 		return hash;		
 	}
 	
@@ -248,7 +248,7 @@ public final class HashCode {
 	 * @param values the values
 	 * @return the int
 	 */
-	public static int get(Object[] values) { return get(values, 0, values.length); }
+	public static int from(Object[] values) { return from(values, 0, values.length); }
 	
 	/**
 	 * Gets the.
@@ -258,37 +258,51 @@ public final class HashCode {
 	 * @param to the to
 	 * @return the int
 	 */
-	public static int get(Object[] values, int from, int to) {
+	public static int from(Object[] values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) {
 			Object entry = values[i];
-			if(entry instanceof Object[]) hash ^= get((Object[]) entry);
-			else if(entry instanceof boolean[]) hash ^= get((boolean[]) entry);
-			else if(entry instanceof byte[]) hash ^= get((byte[]) entry);
-			else if(entry instanceof short[]) hash ^= get((short[]) entry);
-			else if(entry instanceof int[]) hash ^= get((int[]) entry);
-			else if(entry instanceof float[]) hash ^= get((float[]) entry);
-			else if(entry instanceof long[]) hash ^= get((long[]) entry);
-			else if(entry instanceof double[]) hash ^= get((double[]) entry);
+			if(entry instanceof Object[]) hash ^= from((Object[]) entry);
+			else if(entry instanceof boolean[]) hash ^= from((boolean[]) entry);
+			else if(entry instanceof byte[]) hash ^= from((byte[]) entry);
+			else if(entry instanceof short[]) hash ^= from((short[]) entry);
+			else if(entry instanceof int[]) hash ^= from((int[]) entry);
+			else if(entry instanceof float[]) hash ^= from((float[]) entry);
+			else if(entry instanceof long[]) hash ^= from((long[]) entry);
+			else if(entry instanceof double[]) hash ^= from((double[]) entry);
 			else hash ^= entry.hashCode() + i; 
 		}
 		return hash;		
 	}
 	
-	public static int get(List<?> values) { return get(values, 0, values.size()); }
+	/**
+	 * From.
+	 *
+	 * @param values the values
+	 * @return the int
+	 */
+	public static int from(List<?> values) { return get(values, 0, values.size()); }
 	
+	/**
+	 * Gets the.
+	 *
+	 * @param values the values
+	 * @param from the from
+	 * @param to the to
+	 * @return the int
+	 */
 	public static int get(List<?> values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) {
 			Object entry = values.get(i);
-			if(entry instanceof Object[]) hash ^= get((Object[]) entry);
-			else if(entry instanceof boolean[]) hash ^= get((boolean[]) entry);
-			else if(entry instanceof byte[]) hash ^= get((byte[]) entry);
-			else if(entry instanceof short[]) hash ^= get((short[]) entry);
-			else if(entry instanceof int[]) hash ^= get((int[]) entry);
-			else if(entry instanceof float[]) hash ^= get((float[]) entry);
-			else if(entry instanceof long[]) hash ^= get((long[]) entry);
-			else if(entry instanceof double[]) hash ^= get((double[]) entry);
+			if(entry instanceof Object[]) hash ^= from((Object[]) entry);
+			else if(entry instanceof boolean[]) hash ^= from((boolean[]) entry);
+			else if(entry instanceof byte[]) hash ^= from((byte[]) entry);
+			else if(entry instanceof short[]) hash ^= from((short[]) entry);
+			else if(entry instanceof int[]) hash ^= from((int[]) entry);
+			else if(entry instanceof float[]) hash ^= from((float[]) entry);
+			else if(entry instanceof long[]) hash ^= from((long[]) entry);
+			else if(entry instanceof double[]) hash ^= from((double[]) entry);
 			else hash ^= entry.hashCode() + i; 
 		}
 		return hash;		
@@ -303,8 +317,8 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(boolean[] values) {
-		if(values.length < 32) return get(values, 0, values.length);
-		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		if(values.length < 32) return from(values, 0, values.length);
+		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
 		int step = (values.length - 16) >> 4;
 		int samples = 0;
 		for(int i=0, j=8; i<16; i++, j+=step) if(values[j]) samples |= 1 << i;
@@ -319,8 +333,8 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(byte[] values) {
-		if(values.length < 32) return get(values, 0, values.length);
-		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		if(values.length < 32) return from(values, 0, values.length);
+		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
 		int step = (values.length - 16) >> 4;
 		int samples = 0;
 		for(int i=0, j=8, shift=0; i<16; i++, j+=step, shift+=8) {
@@ -341,8 +355,8 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(short[] values) {
-		if(values.length < 32) return get(values, 0, values.length);
-		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		if(values.length < 32) return from(values, 0, values.length);
+		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
 		int step = (values.length - 16) >> 4;
 		int samples = 0;
 		for(int i=0, j=8, shift=0; i<16; i++, j+=step, shift+=16) {
@@ -363,8 +377,8 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(int[] values) {
-		if(values.length < 32) return get(values, 0, values.length);
-		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		if(values.length < 32) return from(values, 0, values.length);
+		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
 		int step = (values.length - 16) >> 4;
 		for(int i=0, j=8; i<16; i++, j+=step) hash ^= values[j];
 		return hash;
@@ -378,10 +392,10 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(long[] values) {
-		if(values.length < 32) return get(values, 0, values.length);
-		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		if(values.length < 32) return from(values, 0, values.length);
+		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
 		int step = (values.length - 16) >> 4;
-		for(int i=0, j=8; i<16; i++, j+=step) hash ^= get(values[j]);
+		for(int i=0, j=8; i<16; i++, j+=step) hash ^= from(values[j]);
 		return hash;
 	}
 	
@@ -393,10 +407,10 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(float[] values) {
-		if(values.length < 32) return get(values, 0, values.length);
-		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		if(values.length < 32) return from(values, 0, values.length);
+		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
 		int step = (values.length - 16) >> 4;
-		for(int i=0, j=8; i<16; i++, j+=step) hash ^= get(values[j]);
+		for(int i=0, j=8; i<16; i++, j+=step) hash ^= from(values[j]);
 		return hash;
 	}
 	
@@ -408,10 +422,10 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(double[] values) {
-		if(values.length < 32) return get(values, 0, values.length);
-		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		if(values.length < 32) return from(values, 0, values.length);
+		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
 		int step = (values.length - 16) >> 4;
-		for(int i=0, j=8; i<16; i++, j+=step) hash ^= get(values[j]);
+		for(int i=0, j=8; i<16; i++, j+=step) hash ^= from(values[j]);
 		return hash;
 	}
 	
@@ -423,8 +437,8 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(Object[] values) {
-		if(values.length < 32) return get(values, 0, values.length);
-		int hash = get(values, 0, 8) ^ get(values, values.length-8, values.length);
+		if(values.length < 32) return from(values, 0, values.length);
+		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
 		int step = (values.length - 16) >> 4;
 		for(int i=0, j=8; i<16; i++, j+=step) {
 			Object entry = values[j];
@@ -441,6 +455,12 @@ public final class HashCode {
 		return hash;
 	}
 	
+	/**
+	 * Sample from.
+	 *
+	 * @param values the values
+	 * @return the int
+	 */
 	public static int sampleFrom(List<?> values) {
 		if(values.size() < 32) return get(values, 0, values.size());
 		int hash = get(values, 0, 8) ^ get(values, values.size()-8, values.size());

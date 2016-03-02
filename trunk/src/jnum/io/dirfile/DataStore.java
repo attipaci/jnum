@@ -35,9 +35,7 @@ import java.io.Serializable;
  */
 public abstract class DataStore<Type extends Number> implements Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8960142666704305939L;
 	
 	/** The name. */
@@ -52,9 +50,15 @@ public abstract class DataStore<Type extends Number> implements Serializable {
 		this.name = name; 
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() { return super.hashCode() ^ name.hashCode(); }
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

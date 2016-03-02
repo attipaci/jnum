@@ -139,11 +139,17 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		System.err.println("DirFile> " + size() + " fields parsed.");
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Hashtable#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ (isBigEndian ? 1 : 0) ^ path.hashCode() ^ strings.hashCode() ^ pending.hashCode();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Hashtable#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

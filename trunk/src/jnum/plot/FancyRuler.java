@@ -195,6 +195,9 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see java.awt.Container#validate()
+	 */
 	@Override
 	public void validate() {
 		arrange();
@@ -301,6 +304,9 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.awt.Container#validate()
+		 */
 		@Override
 		public void validate() {
 			setPreferredSize();
@@ -548,6 +554,9 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 		}
 		
 		
+		/* (non-Javadoc)
+		 * @see java.awt.Container#validate()
+		 */
 		@Override
 		public void validate() {
 			setPreferredSize();

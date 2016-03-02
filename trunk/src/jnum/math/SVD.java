@@ -141,6 +141,12 @@ public class SVD {
 	}
 	
 	
+	/**
+	 * Gets the matrix to.
+	 *
+	 * @param M the m
+	 * @return the matrix to
+	 */
 	public void getMatrixTo(Matrix M) {
 		final int n = w.length;
 		SquareMatrix wvT = new SquareMatrix(n);
@@ -162,6 +168,12 @@ public class SVD {
 	}
 	
 	
+	/**
+	 * Gets the inverse to.
+	 *
+	 * @param inverse the inverse
+	 * @return the inverse to
+	 */
 	public void getInverseTo(SquareMatrix inverse) {	
 		final int n = w.length;
 		if(u.rows() != n) throw new IllegalStateException("Cannot invert non-square matrix.");

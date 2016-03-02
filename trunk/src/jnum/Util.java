@@ -51,7 +51,7 @@ public final class Util {
 	public final static String version = "0.08-2";
 	
 	/** The Constant revision. */
-	public final static String revision = "devel.4";
+	public final static String revision = "devel.5";
 	
 	/**
 	 * Gets the decimal format.
@@ -768,6 +768,13 @@ public final class Util {
 	}
 	
 	
+	/**
+	 * Gets the reader.
+	 *
+	 * @param fileName the file name
+	 * @return the reader
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@SuppressWarnings("resource")
     public static BufferedReader getReader(String fileName) throws IOException {
 		BufferedReader in = null;
@@ -782,10 +789,24 @@ public final class Util {
 		return in;
 	}
 	
+	/**
+	 * Gets the file reader.
+	 *
+	 * @param fileName the file name
+	 * @return the file reader
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static BufferedReader getFileReader(String fileName) throws IOException {
 		return new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
 	}
 	
+	/**
+	 * Gets the URL reader.
+	 *
+	 * @param address the address
+	 * @return the URL reader
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static BufferedReader getURLReader(String address) throws IOException {
 		URL versionURL = new URL(address);
 		URLConnection connection = versionURL.openConnection();
@@ -797,6 +818,13 @@ public final class Util {
 		
 	}
 		
+	/**
+	 * Equals.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return true, if successful
+	 */
 	public static boolean equals(Object a, Object b) {
 		if(a == null) return b == null;
 		if(b == null) return a == null;	
@@ -1072,7 +1100,7 @@ public final class Util {
 	/** The Constant S10. */
 	public final static SignificantFiguresFormat S10 = new SignificantFiguresFormat(10, false);
 	
-	/** The Constant S11  */
+	/**  The Constant S11. */
 	public final static SignificantFiguresFormat S11 = new SignificantFiguresFormat(11, false);
 	
 	/** The Constant S12. */
@@ -1208,6 +1236,7 @@ public final class Util {
 	public final static TimeFormat tf12 = new TimeFormat(12);
 	
 	
+	/** The Constant d. */
 	public final static DecimalFormat[] 
 		e = { e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12 },
 		E = { E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12 },
@@ -1215,13 +1244,19 @@ public final class Util {
 		F = { F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12 },
 		d = { null, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12 };
 	
+	/** The Constant S. */
 	public final static SignificantFiguresFormat[] 
 		s = { null, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12 },
 		S = { null, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12 }
 	;
 	
+	/** The Constant hf. */
 	public final static HourAngleFormat[] hf = { hf0, hf1, hf2, hf3, hf4, hf5, hf6, hf7, hf8, hf9, hf10, hf11, hf12 };
+	
+	/** The Constant af. */
 	public final static AngleFormat[] af = { af0, af1, af2, af3, af4, af5, af6, af7, af8, af9, af10, af11, af12 };
+	
+	/** The Constant tf. */
 	public final static TimeFormat[] tf = { tf0, tf1, tf2, tf3, tf4, tf5, tf6, tf7, tf8, tf9, tf10, tf11, tf12 };
 
 	

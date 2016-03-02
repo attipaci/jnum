@@ -65,7 +65,7 @@ public class ColorBar extends JComponent implements PlotSide {
 	/**
 	 * Instantiates a new color bar.
 	 *
-	 * @param imager the imager
+	 * @param image the image
 	 */
 	public ColorBar(ImageLayer image) { 
 		this.image = image;
@@ -137,6 +137,9 @@ public class ColorBar extends JComponent implements PlotSide {
 		revalidate();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.awt.Container#validate()
+	 */
 	@Override
 	public void validate() {
 		arrange();
@@ -210,12 +213,18 @@ public class ColorBar extends JComponent implements PlotSide {
 			}	
 		}
 		
+		/**
+		 * Sets the preferred size.
+		 */
 		public void setPreferredSize() {
 			if(isVertical()) setPreferredSize(new Dimension(width, 2));
 			else if(isHorizontal()) setPreferredSize( new Dimension(2, width));
 		}
 		
 
+		/* (non-Javadoc)
+		 * @see java.awt.Container#validate()
+		 */
 		@Override
 		public void validate() {
 			setPreferredSize();

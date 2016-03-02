@@ -82,9 +82,15 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
 	 */
 	public FocalPlaneCoordinates(double x, double y) { super(x, y); }
 
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
+	 */
 	@Override
 	public String getFITSLongitudeStem() { return "FLON"; }
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+	 */
 	@Override
 	public String getFITSLatitudeStem() { return "FLAT"; }
 	

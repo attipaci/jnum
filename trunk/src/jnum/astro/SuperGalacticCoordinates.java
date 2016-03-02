@@ -93,9 +93,15 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
     public SuperGalacticCoordinates(CelestialCoordinates from) { super(from); }
     
     
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
+     */
     @Override
 	public String getFITSLongitudeStem() { return "SLON"; }
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+	 */
 	@Override
 	public String getFITSLatitudeStem() { return "SLAT"; }
     

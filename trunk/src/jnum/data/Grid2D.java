@@ -77,10 +77,16 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	public Unit xUnit, yUnit;
 	
 	
+	/**
+	 * Instantiates a new grid2 d.
+	 */
 	public Grid2D() {
 		defaults();
 	}
 	
+	/**
+	 * Defaults.
+	 */
 	protected void defaults() {
 		xUnit = getDefaultFITSAxisUnit();
 		yUnit = getDefaultFITSAxisUnit();
@@ -95,7 +101,6 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	 * Equals.
 	 *
 	 * @param o the o
-	 * @param precision the precision
 	 * @return true, if successful
 	 */
 	@Override
@@ -121,7 +126,7 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	 */
 	@Override
 	public int hashCode() {
-		int hash = super.hashCode() ^ HashCode.get(m11) ^ HashCode.get(m22) ^ HashCode.get(m12) ^ HashCode.get(m21);		
+		int hash = super.hashCode() ^ HashCode.from(m11) ^ HashCode.from(m22) ^ HashCode.from(m12) ^ HashCode.from(m21);		
 		if(projection != null) hash ^= projection.hashCode();
 		if(refIndex != null) hash ^= refIndex.hashCode();
 		return hash;
@@ -191,10 +196,20 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 		return new double[][] {{ m11, m12 }, { m21, m22 }};
 	}
 	
+	/**
+	 * Gets the inverse transform.
+	 *
+	 * @return the inverse transform
+	 */
 	public final double[][] getInverseTransform() {
 		return new double[][] {{ i11, i12 }, { i21, i22 }};
 	}
 	
+	/**
+	 * Checks if is rectilinear.
+	 *
+	 * @return true, if is rectilinear
+	 */
 	public boolean isRectilinear() {
 		return m12 == 0.0 && m21 == 0.0;
 	}
@@ -359,6 +374,7 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	/**
 	 * Edits the header.
 	 *
+	 * @param header the header
 	 * @param cursor the cursor
 	 * @throws HeaderCardException the header card exception
 	 */
@@ -410,6 +426,11 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	 */
 	public abstract CoordinateType getCoordinateInstanceFor(String type) throws InstantiationException, IllegalAccessException;
 	
+	/**
+	 * Gets the default fits axis unit.
+	 *
+	 * @return the default fits axis unit
+	 */
 	public Unit getDefaultFITSAxisUnit() { return Unit.unity; }
 	
 	/**
@@ -482,14 +503,34 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 		return toString(Util.s3, xUnit, yUnit);
 	}
 	
+	/**
+	 * To string.
+	 *
+	 * @param nf the nf
+	 * @return the string
+	 */
 	public String toString(NumberFormat nf) {
 		return toString(nf, xUnit, yUnit);
 	}
 	
+	/**
+	 * To string.
+	 *
+	 * @param u the u
+	 * @return the string
+	 */
 	public String toString(Unit u) {
 		return toString(Util.s3, u, u);
 	}
 	
+	/**
+	 * To string.
+	 *
+	 * @param nf the nf
+	 * @param ux the ux
+	 * @param uy the uy
+	 * @return the string
+	 */
 	public String toString(NumberFormat nf, Unit ux, Unit uy) {	
 		CoordinateType reference = projection.getReference();
 		String projectionName = reference.getClass().getSimpleName();

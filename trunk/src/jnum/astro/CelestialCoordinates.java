@@ -82,6 +82,11 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 	public abstract double getZeroLongitude();
 	
 	
+	/**
+	 * Gets the equatorial position angle.
+	 *
+	 * @return the equatorial position angle
+	 */
 	public double getEquatorialPositionAngle() {
 		EquatorialCoordinates equatorialPole = getEquatorialPole();
 		return Math.atan2(-equatorialPole.cosLat() * Math.sin(x()), equatorialPole.sinLat() * cosLat() - equatorialPole.cosLat() * sinLat() * Math.cos(x()));

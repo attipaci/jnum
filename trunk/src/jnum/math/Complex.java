@@ -650,7 +650,7 @@ public class Complex extends Vector2D implements
 	/**
 	 * Converts the complex number to a string in the format 'a + bi' Using the provied decimal format. E.g. '1.123+0.451i'.
 	 *
-	 * @param df the df
+	 * @param nf the nf
 	 * @return the string
 	 */
 	@Override
@@ -702,6 +702,12 @@ public class Complex extends Vector2D implements
 		set(x() * x() - y() * y(), 2.0 * x() * y());
 	}
 		
+	/**
+	 * Creates the array.
+	 *
+	 * @param size the size
+	 * @return the complex[]
+	 */
 	public static Complex[] createArray(int size) {
 		Complex[] z = new Complex[size];
 		for(int i=size; --i >= 0; ) z[i] = new Complex();

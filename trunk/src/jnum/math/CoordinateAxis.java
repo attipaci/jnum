@@ -154,6 +154,13 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 */
 	public String format(double value) { return format.format(reverse ? reverseFrom - value : value); }
 	
+	/**
+	 * Parses the.
+	 *
+	 * @param text the text
+	 * @return the double
+	 * @throws ParseException the parse exception
+	 */
 	public double parse(String text) throws ParseException {
 		double value = format.parse(text).doubleValue();
 		return reverse ? reverseFrom - value : value;
