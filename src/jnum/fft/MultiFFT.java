@@ -40,12 +40,12 @@ import jnum.math.Scalable;
  */
 public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3679294695088014282L;
 	/** The child. */
 	private FFT<?> lastChild;
+	
+	/** The last type. */
 	private Class<?> lastType;
 	
 	/* (non-Javadoc)
@@ -173,6 +173,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 	 * Sets the child for.
 	 *
 	 * @param element the new child for
+	 * @return the child for
 	 */
 	private synchronized FFT<?> getChildFor(Object element) {
 		if(element.getClass().equals(lastType)) return lastChild;
@@ -192,7 +193,8 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 	/**
 	 * Sets the child.
 	 *
-	 * @param fftClass the new child
+	 * @param data the data
+	 * @return the content
 	 */
 	/*
 	private void setChild(Class<? extends FFT<?>> fftClass) {
@@ -862,6 +864,9 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see jnum.fft.RealFFT#real2Amplitude(java.lang.Object)
+	 */
 	@Override
 	public void real2Amplitude(Object[] data) {
 		realTransform(data, FFT.FORWARD);
@@ -870,6 +875,9 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 	}	
 	
 	
+	/* (non-Javadoc)
+	 * @see jnum.fft.RealFFT#amplitude2Real(java.lang.Object)
+	 */
 	@Override
 	public void amplitude2Real(Object[] data) {	
 		realTransform(data, FFT.BACK);
@@ -877,8 +885,11 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 
 	
 	// These are used for calculating the normalization for real-to-amplitude transforms
+	/** The float fft. */
 	// and are created on-the-fly when needed.
 	private static FloatFFT floatFFT;
+	
+	/** The double fft. */
 	private static DoubleFFT doubleFFT;
 	
 

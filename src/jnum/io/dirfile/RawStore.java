@@ -39,9 +39,7 @@ import jnum.Util;
  */
 public abstract class RawStore<Type extends Number> extends DataStore<Type> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 684293239178895163L;
 
 	/** The file. */
@@ -72,11 +70,17 @@ public abstract class RawStore<Type extends Number> extends DataStore<Type> {
 		samples = arraySize;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ file.hashCode() ^ bytes ^ samples ^ (isBigEndian ? 1 : 0);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

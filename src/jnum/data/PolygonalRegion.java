@@ -32,28 +32,53 @@ import jnum.projection.Projection2D;
 import java.text.ParseException;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PolygonalRegion.
+ *
+ * @param <CoordinateType> the generic type
+ */
 public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region<CoordinateType> {
-	/**
-	 * 
-	 */
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7872681437465288221L;
 
+	/** The points. */
 	Vector<CoordinateType> points = new Vector<CoordinateType>();
 	
+	/** The is closed. */
 	//String name = "polygon";
 	boolean isClosed = false;
 
+	/** The reuse to. */
 	private Vector2D reuseFrom = new Vector2D(), reuseTo = new Vector2D();
 	
+	/**
+	 * Instantiates a new polygonal region.
+	 */
 	public PolygonalRegion() {}
 	
+	/**
+	 * Instantiates a new polygonal region.
+	 *
+	 * @param fileName the file name
+	 * @param format the format
+	 * @param forImage the for image
+	 * @throws ParseException the parse exception
+	 */
 	public PolygonalRegion(String fileName, int format, GridImage2D<CoordinateType> forImage) throws ParseException {
 		parse(fileName, format, forImage); 
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#hashCode()
+	 */
 	@Override
 	public int hashCode() { return super.hashCode() ^ points.hashCode() ^ (isClosed ? 1 : 0); }
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -66,6 +91,9 @@ public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#clone()
+	 */
 	@Override
 	public Object clone() {
 		PolygonalRegion<?> polygon = (PolygonalRegion<?>) super.clone();
@@ -74,9 +102,15 @@ public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region
 		return polygon;
 	}
 	
+	/**
+	 * Close.
+	 */
 	public void close() { isClosed = true; }
 	
 
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#isInside(jnum.data.Grid2D, double, double)
+	 */
 	@Override
 	public boolean isInside(Grid2D<CoordinateType> grid, double i, double j) {
 		Projection2D<CoordinateType> projection = grid.getProjection();
@@ -105,6 +139,9 @@ public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#getBounds(jnum.data.GridImage2D)
+	 */
 	@Override
 	public IndexBounds2D getBounds(GridImage2D<CoordinateType> image) {
 		Vector2D min = (Vector2D) points.get(0).clone();
@@ -138,6 +175,9 @@ public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region
 		return bounds;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#getFlux(jnum.data.GridImage2D)
+	 */
 	@Override
 	public WeightedPoint getFlux(GridImage2D<CoordinateType> image) {
 		WeightedPoint flux = new WeightedPoint();
@@ -156,6 +196,12 @@ public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region
 		return flux;
 	}
 	
+	/**
+	 * Gets the inside level.
+	 *
+	 * @param image the image
+	 * @return the inside level
+	 */
 	public double getInsideLevel(GridImage2D<CoordinateType> image) {
 		double sum = 0.0, sumw = 0.0;
 		IndexBounds2D bounds = getBounds(image);
@@ -170,6 +216,12 @@ public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region
 		return sum / sumw;			
 	}
 	
+	/**
+	 * Gets the rms.
+	 *
+	 * @param image the image
+	 * @return the rms
+	 */
 	public double getRMS(GridImage2D<CoordinateType> image) {
 		double level = getInsideLevel(image);
 		IndexBounds2D bounds = getBounds(image);
@@ -189,6 +241,9 @@ public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region
 	
 
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#parse(java.lang.String, int, jnum.data.GridImage2D)
+	 */
 	@Override
 	public void parse(String spec, int format, GridImage2D<CoordinateType> forImage) throws ParseException {
 		points.clear();
@@ -204,6 +259,9 @@ public class PolygonalRegion<CoordinateType extends Coordinate2D> extends Region
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#toString(jnum.data.GridImage2D)
+	 */
 	@Override
 	public String toString(GridImage2D<CoordinateType> image) {
 		// TODO Auto-generated method stub

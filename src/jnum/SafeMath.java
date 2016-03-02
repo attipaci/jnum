@@ -24,6 +24,10 @@
 package jnum;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SafeMath.
+ */
 public final class SafeMath {
 
 	// Safe asin and acos for when rounding errors make values fall outside of -1:1 range.
@@ -51,13 +55,24 @@ public final class SafeMath {
 		return Math.acos(value);
 	}
 	
+	/**
+	 * Sqrt.
+	 *
+	 * @param value the value
+	 * @return the double
+	 */
 	public final static double sqrt(final double value) {
 		if(value < 0.0) return value < minusOnePlus ? Double.NaN : 0.0;
 		return Math.sqrt(value);
 	}
 	
+	/** The Constant epsilon. */
 	private final static double epsilon = 1e-5;			// The maximum tolerated rounding error assuming float precision.
+	
+	/** The Constant onePlus. */
 	private final static double onePlus = 1.0 + epsilon;
+	
+	/** The Constant minusOnePlus. */
 	private final static double minusOnePlus = -onePlus;
 
 }

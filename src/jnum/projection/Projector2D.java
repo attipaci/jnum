@@ -36,9 +36,7 @@ import jnum.math.Vector2D;
  */
 public class Projector2D<CoordinateType extends Coordinate2D> implements Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1473954926270300168L;
 
 	/** The offset. */

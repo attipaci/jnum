@@ -40,9 +40,7 @@ import jnum.ExtraMath;
 public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3189956387053186573L;
 
 
@@ -305,6 +303,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	 * Load real.
 	 *
 	 * @param data the data
+	 * @param length the length
 	 * @param from the from
 	 * @param to the to
 	 * @param isForward the is forward
@@ -361,6 +360,13 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 		realTransform(data, getAddressBits(data), isForward);
 	}
 	
+	/**
+	 * Real transform.
+	 *
+	 * @param data the data
+	 * @param addressBits the address bits
+	 * @param isForward the is forward
+	 */
 	final void realTransform(final float data[], final int addressBits, final boolean isForward) {	
 		updateThreads(data);
 		
@@ -379,6 +385,14 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 		realTransform(data, getAddressBits(data), isForward, chunks);
 	}
 
+	/**
+	 * Real transform.
+	 *
+	 * @param data the data
+	 * @param addressBits the address bits
+	 * @param isForward the is forward
+	 * @param chunks the chunks
+	 */
 	void realTransform(final float[] data, final int addressBits, final boolean isForward, int chunks) {
 		
 		if(isForward) complexTransform(data, addressBits, FORWARD, chunks);
@@ -426,6 +440,13 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 		
 	}
 	
+	/**
+	 * Sequential real transform.
+	 *
+	 * @param data the data
+	 * @param addressBits the address bits
+	 * @param isForward the is forward
+	 */
 	void sequentialRealTransform(final float[] data, final int addressBits, final boolean isForward) {
 		if(isForward) sequentialComplexTransform(data, addressBits, FORWARD);
 
@@ -450,6 +471,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	 * Scale.
 	 *
 	 * @param data the data
+	 * @param length the length
 	 * @param value the value
 	 * @param threads the threads
 	 */
@@ -495,6 +517,12 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	}
 	
 	
+	/**
+	 * Gets the FFT length.
+	 *
+	 * @param addressBits the address bits
+	 * @return the FFT length
+	 */
 	protected int getFFTLength(final int addressBits) {
 		return 2<<addressBits;
 	}
@@ -609,16 +637,21 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 		return 24;	
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.fft.FFT1D#sizeOf(java.lang.Object)
+	 */
 	@Override
 	public int sizeOf(float[] data) {
 		return data.length;
 	}
 
 	
+	/**
+	 * The Class NyquistUnrolledRealFT.
+	 */
 	public static class NyquistUnrolledRealFT extends FloatFFT {
-		/**
-		 * 
-		 */
+		
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 3073121404450602358L;
 
 		/* (non-Javadoc)
@@ -628,6 +661,9 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 		@Override
 		int addressSizeOf(final float[] data) { return super.addressSizeOf(data) & ~1; }
 		
+		/* (non-Javadoc)
+		 * @see jnum.fft.FloatFFT#realTransform(float[], int, boolean, int)
+		 */
 		@Override
 		void realTransform(final float[] data, final int addressBits, final boolean isForward, int chunks) {
 			final int n = 2<<addressBits;
@@ -645,6 +681,9 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 			}
 		}
 		
+		/* (non-Javadoc)
+		 * @see jnum.fft.FloatFFT#sequentialRealTransform(float[], int, boolean)
+		 */
 		@Override
 		void sequentialRealTransform(final float[] data, final int addressBits, final boolean isForward) {
 			final int n = 2<<addressBits;
@@ -662,6 +701,9 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 			}
 		}
 		
+		/* (non-Javadoc)
+		 * @see jnum.fft.FloatFFT#getFFTLength(int)
+		 */
 		@Override
 		protected int getFFTLength(final int addressBits) {
 			return super.getFFTLength(addressBits) + 2;

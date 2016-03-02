@@ -92,9 +92,15 @@ public class GalacticCoordinates extends CelestialCoordinates {
     public GalacticCoordinates(CelestialCoordinates from) { super(from); }
     
     
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
+     */
     @Override
 	public String getFITSLongitudeStem() { return "GLON"; }
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+	 */
 	@Override
 	public String getFITSLatitudeStem() { return "GLAT"; }
     

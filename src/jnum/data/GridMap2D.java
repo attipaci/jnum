@@ -76,12 +76,15 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	 */
 	@Override
 	public int hashCode() {
-		int hash = super.hashCode() ^ HashCode.get(weightFactor) ^ HashCode.get(filterBlanking) ^ HashCode.get(clippingS2N);
+		int hash = super.hashCode() ^ HashCode.from(weightFactor) ^ HashCode.from(filterBlanking) ^ HashCode.from(clippingS2N);
 		if(weight != null) HashCode.sampleFrom(weight);
 		if(count != null) HashCode.sampleFrom(count);
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.GridImage2D#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -225,6 +228,9 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 		setTime(i, j, 0.0);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Data2D#scale(int, int, double)
+	 */
 	@Override
 	public void scale(int i, int j, double factor) {
 		super.scale(i,  j,  factor);
@@ -234,7 +240,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	/**
 	 * Adds the point at.
 	 *
-	 * @param mapOffset the map offset
+	 * @param index the index
 	 * @param value the value
 	 * @param g the g
 	 * @param w the w
@@ -247,7 +253,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	/**
 	 * Adds the point at.
 	 *
-	 * @param mapOffset the map offset
+	 * @param index the index
 	 * @param value the value
 	 * @param g the g
 	 * @param w the w
@@ -277,12 +283,18 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	
 	
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.GridImage2D#mergePropertiesWith(jnum.data.Data2D)
+	 */
 	@Override
 	public synchronized void mergePropertiesWith(final Data2D data) {
 		super.mergePropertiesWith(data);
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Data2D#merge(int, int, jnum.data.Data2D, double)
+	 */
 	@Override
 	protected void merge(int i, int j, Data2D src, double w) {	
 		super.merge(i,  j,  src, w);
@@ -294,6 +306,9 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Data2D#addWeightedDirect(int, int, jnum.data.Data2D, double)
+	 */
 	@Override
 	protected void addWeightedDirect(int i, int j, Data2D src, double w) {	
 		super.addWeightedDirect(i,  j,  src, w);
@@ -1342,20 +1357,50 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 		else return super.getFormattedEntry(name, formatSpec);
 	}
 	
+	/**
+	 * From header.
+	 *
+	 * @param header the header
+	 * @return the grid map2 d
+	 * @throws Exception the exception
+	 */
 	public static GridMap2D<?> fromHeader(Header header) throws Exception {
 		return fromHeader(header, "");
 	}
 	
+	/**
+	 * From header.
+	 *
+	 * @param header the header
+	 * @param alt the alt
+	 * @return the grid map2 d
+	 * @throws Exception the exception
+	 */
 	public static GridMap2D<?> fromHeader(Header header, String alt) throws Exception {	
 		GridMap2D<?> map = new GridMap2D<Coordinate2D>();
 		map.parseHeader(header, alt);
 		return map;
 	}
 	
+	/**
+	 * From hd us.
+	 *
+	 * @param hdu the hdu
+	 * @return the grid map2 d
+	 * @throws Exception the exception
+	 */
 	public static GridMap2D<?> fromHDUs(BasicHDU<?>[] hdu) throws Exception {
 		return fromHDUs(hdu, "");
 	}
 	
+	/**
+	 * From hd us.
+	 *
+	 * @param hdu the hdu
+	 * @param alt the alt
+	 * @return the grid map2 d
+	 * @throws Exception the exception
+	 */
 	public static GridMap2D<?> fromHDUs(BasicHDU<?>[] hdu, String alt) throws Exception {	
 		GridMap2D<?> map = fromHeader(hdu[0].getHeader(), alt);
 		map.readData(hdu);

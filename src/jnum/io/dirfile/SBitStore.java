@@ -34,9 +34,7 @@ import jnum.util.HashCode;
  */
 public class SBitStore extends DataStore<Long> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4809906475956120084L;
 
 	/** The container. */
@@ -62,11 +60,17 @@ public class SBitStore extends DataStore<Long> {
 		cmask = 1; 
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ container.hashCode() ^ HashCode.get(mask) ^ HashCode.get(cmask) ^ shift;
+		return super.hashCode() ^ container.hashCode() ^ HashCode.from(mask) ^ HashCode.from(cmask) ^ shift;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

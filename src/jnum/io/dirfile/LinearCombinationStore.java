@@ -36,9 +36,7 @@ import jnum.util.HashCode;
  */
 public class LinearCombinationStore extends DataStore<Double> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2557496368888356380L;
 
 	/** The terms. */
@@ -59,15 +57,21 @@ public class LinearCombinationStore extends DataStore<Double> {
 		super(name);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
 		for(DataStore<?> term : terms) hash ^= term.hashCode();
 		for(Vector2D coeff : coeffs) hash ^= coeff.hashCode();
-		for(Double x : indexScale) hash ^= HashCode.get(x);
+		for(Double x : indexScale) hash ^= HashCode.from(x);
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

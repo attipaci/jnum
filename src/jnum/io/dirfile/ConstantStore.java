@@ -35,9 +35,7 @@ import jnum.util.HashCode;
  */
 public class ConstantStore extends DataStore<Number> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8499362540214314258L;
 
 	/** The isFloating. */
@@ -73,9 +71,15 @@ public class ConstantStore extends DataStore<Number> {
 		isFloating = !Double.isNaN(fValue);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#hashCode()
+	 */
 	@Override
-	public int hashCode() { return super.hashCode() ^ HashCode.get(iValue) ^ HashCode.get(fValue) ^ (isFloating ? 1 : 0); }
+	public int hashCode() { return super.hashCode() ^ HashCode.from(iValue) ^ HashCode.from(fValue) ^ (isFloating ? 1 : 0); }
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

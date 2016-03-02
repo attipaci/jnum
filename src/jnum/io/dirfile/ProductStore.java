@@ -34,9 +34,7 @@ import jnum.util.HashCode;
  */
 public class ProductStore extends DataStore<Double> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5702369503063112685L;
 
 	/** The b. */
@@ -59,11 +57,17 @@ public class ProductStore extends DataStore<Double> {
 		indexScale = b.getSamples() / a.getSamples();
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ a.hashCode() ^ b.hashCode() ^ HashCode.get(indexScale);
+		return super.hashCode() ^ a.hashCode() ^ b.hashCode() ^ HashCode.from(indexScale);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

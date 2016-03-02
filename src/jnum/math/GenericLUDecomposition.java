@@ -114,6 +114,12 @@ public class GenericLUDecomposition<T extends LinearAlgebra<? super T> & Abstrac
 		return inverse;
 	}
 	
+	/**
+	 * Gets the inverse to.
+	 *
+	 * @param inverse the inverse
+	 * @return the inverse to
+	 */
 	@SuppressWarnings("unchecked")
 	public void getInverseTo(GenericSquareMatrix<T> inverse) {		
 		final int n = LU.size();

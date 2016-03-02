@@ -26,27 +26,54 @@ package jnum.util;
 
 import java.io.Serializable;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FlagBlock.
+ */
 public class FlagBlock implements Serializable {
-    /**
-     * 
-     */
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3475889288391954525L;
+    
+    /** The space. */
     private FlagSpace space;
+    
+    /** The from bit. */
     private int fromBit;
+    
+    /** The to bit. */
     private int toBit;
+    
+    /** The next bit. */
     private int nextBit;
+    
+    /** The mask. */
     private int mask = 0;
     
+    /**
+     * Instantiates a new flag block.
+     *
+     * @param group the group
+     * @param fromBit the from bit
+     * @param toBit the to bit
+     * @throws IndexOutOfBoundsException the index out of bounds exception
+     */
     public FlagBlock(FlagSpace group, int fromBit, int toBit) throws IndexOutOfBoundsException {
         this.space = group;
         setBits(fromBit, toBit);
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() { 
-        return super.hashCode() ^ space.hashCode() ^ HashCode.get(mask) ^ HashCode.get(nextBit);  
+        return super.hashCode() ^ space.hashCode() ^ HashCode.from(mask) ^ HashCode.from(nextBit);  
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -59,26 +86,66 @@ public class FlagBlock implements Serializable {
         return true;
     }
     
+    /**
+     * Gets the flag space.
+     *
+     * @return the flag space
+     */
     public final FlagSpace getFlagSpace() { return space; } 
     
-    private void setBits(int startBit, int endBit) throws IndexOutOfBoundsException {
+    /**
+     * Sets the bits.
+     *
+     * @param startBit the start bit
+     * @param endBit the end bit
+     * @return true, if successful
+     * @throws IndexOutOfBoundsException the index out of bounds exception
+     */
+    private boolean setBits(int startBit, int endBit) throws IndexOutOfBoundsException {
         if(startBit < 0) throw new IndexOutOfBoundsException("negative flag space start: " + startBit);
         if(endBit <= startBit) throw new IndexOutOfBoundsException("empty flag space.");
-        if(endBit > space.getBits()) throw new IndexOutOfBoundsException("out of range flag space: " + endBit);
+        
+        boolean isUnchanged = true;
+        if(endBit > space.getBits()) {
+            endBit = space.getBits();
+            isUnchanged = false;
+        }
         this.nextBit = this.fromBit = startBit;
         this.toBit = endBit;
             
         mask = 0;
         for(int bit = startBit; bit < endBit; bit++) mask |= 1<<bit;
+        
+        return isUnchanged;
     }
   
-    public Flag next(char letterCode, String name) throws IndexOutOfBoundsException {
+    /**
+     * Create a new flag using the next available flag bit in the block of bits represented by this object. The flag
+     * will be identified with the unique letter code (in the flag space of this block), and will have a descriptive
+     * human-readable name.
+     *
+     * @param letterCode the unique letter code identifying this flag in the flag space of this block.
+     * @param name the descriptive human-readable name of this flag.
+     * @return the flag object.
+     * @throws IndexOutOfBoundsException if no more flags are available inside the block of bits represented by this object.
+     */
+    public synchronized Flag next(char letterCode, String name) throws IndexOutOfBoundsException {
         if(nextBit >= toBit) throw new IndexOutOfBoundsException("ran out of flag space: " + (toBit - fromBit) + "bits");
-        return new Flag(space, 1<<(nextBit++), letterCode, name);
+        int value = 1 << (nextBit++);
+        if(space.contains(value)) return next(letterCode, name);
+        return new Flag(space, value, letterCode, name);
     }
     
-    public final int getMask() { return mask; }
+    /**
+     * Gets the mask.
+     *
+     * @return the mask
+     */
+    public final long getMask() { return mask; }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return space.toString() + "[" + fromBit + ":" + toBit + "]";

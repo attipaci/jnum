@@ -118,8 +118,18 @@ public abstract class ImageLayer extends ContentLayer {
 		drawImage(g);
 	}
 	
+	/**
+	 * Draw image.
+	 *
+	 * @param g the g
+	 */
 	protected abstract void drawImage(Graphics g);
 	
+	/**
+	 * Gets the data range.
+	 *
+	 * @return the data range
+	 */
 	public abstract Range getDataRange();
 	
 	/**

@@ -25,14 +25,37 @@ package jnum.parallel;
 
 import jnum.Parallel;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ParallelReduction.
+ *
+ * @param <ReturnType> the generic type
+ */
 public abstract class ParallelReduction<ReturnType> {
+	
+	/** The task. */
 	private Parallel<ReturnType> task;
 		
+	/**
+	 * Sets the parallel.
+	 *
+	 * @param task the new parallel
+	 */
 	public void setParallel(Parallel<ReturnType> task) {
 		this.task = task;
 	}
 	
+	/**
+	 * Gets the parallel.
+	 *
+	 * @return the parallel
+	 */
 	public Parallel<ReturnType> getParallel() { return task; }
 	
+	/**
+	 * Gets the result.
+	 *
+	 * @return the result
+	 */
 	public abstract ReturnType getResult();
 }

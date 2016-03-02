@@ -34,9 +34,7 @@ import jnum.text.Parser;
  */
 public class GenericArray<T> extends AbstractArray<T> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 86938797450633242L;
 
 	/**

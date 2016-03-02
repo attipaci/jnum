@@ -496,6 +496,12 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 		return ExtraMath.hypot(point.x() - x(), point.y() - y());
 	}
 	
+	/**
+	 * Creates the array.
+	 *
+	 * @param size the size
+	 * @return the vector2 d[]
+	 */
 	public static Vector2D[] createArray(int size) {
 		Vector2D[] v = new Vector2D[size];
 		for(int i=size; --i >= 0; ) v[i] = new Vector2D();

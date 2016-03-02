@@ -74,6 +74,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	/** The parallelism. */
 	private int parallelism = Runtime.getRuntime().availableProcessors();
 	
+	/** The executor. */
 	private ExecutorService executor;
 	
 	/** The base units. */
@@ -94,6 +95,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	/** The header. */
 	public Header header;
 	
+	/** The history. */
 	public Vector<String> history = new Vector<String>();
 	
 	/** The name. */
@@ -112,6 +114,12 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		defaults();
 	}
 	
+	/**
+	 * Instantiates a new data2 d.
+	 *
+	 * @param fileName the file name
+	 * @throws Exception the exception
+	 */
 	public Data2D(String fileName) throws Exception {
 		this();
 		read(fileName);		
@@ -153,6 +161,9 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		this.flag = flag;
 	}
 	
+	/**
+	 * Defaults.
+	 */
 	public void defaults() {
 		Locale.setDefault(Locale.US);
 	}
@@ -171,6 +182,9 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		return hashcode;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -191,12 +205,27 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		return true;
 	}
 	
+	/**
+	 * Sets the executor.
+	 *
+	 * @param executor the new executor
+	 */
 	public void setExecutor(ExecutorService executor) {
 		this.executor = executor;
 	}
 	
+	/**
+	 * Gets the executor.
+	 *
+	 * @return the executor
+	 */
 	public ExecutorService getExecutor() { return executor; }
 	
+	/**
+	 * Adds the processing history.
+	 *
+	 * @param entry the entry
+	 */
 	public void addProcessingHistory(String entry) {
 		history.add(" " + entry);
 	}
@@ -324,6 +353,9 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		data = image;
 	}
 	
+	/**
+	 * Creates the default flag.
+	 */
 	public void createDefaultFlag() {
 		// If the existing flag array is of different size, then destroy it...
 		if(data == null) {
@@ -346,6 +378,11 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		}.process();
 	}
 	
+	/**
+	 * Creates the level flag.
+	 *
+	 * @param flagValue the flag value
+	 */
 	public void createLevelFlag(final double flagValue) {
 		// If the existing flag array is of different size, then destroy it...
 		if(data == null) {
@@ -377,6 +414,12 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	public final void setFlag(int[][] image) { flag = image; }
 	
 	
+	/**
+	 * Gets the value.
+	 *
+	 * @param index the index
+	 * @return the value
+	 */
 	public final double getValue(Index2D index) { return data[index.i()][index.j()]; }
 	
 	/**
@@ -393,7 +436,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 *
 	 * @param i the i
 	 * @param j the j
-	 * @param weight the weight
+	 * @param value the value
 	 */
 	public final void setValue(int i, int j, double value) { data[i][j] = value; }
 	
@@ -485,8 +528,6 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	
 	/**
 	 * Scale.
-	 *
-	 * @param value the value
 	 */
 	public final void flag() {	
 		new Task<Void>() {
@@ -506,8 +547,6 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	
 	/**
 	 * Scale.
-	 *
-	 * @param value the value
 	 */
 	public final void unflag() {	
 		new Task<Void>() {
@@ -886,6 +925,9 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		}.process();	
 	}
 
+	/**
+	 * Clear history.
+	 */
 	public void clearHistory() { history.clear(); }
 	
 	/**
@@ -899,6 +941,9 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		flag[i][j] = 1;
 	}
 	
+	/**
+	 * Zero.
+	 */
 	public void zero() {
 		new Task<Void>() {
 			@Override
@@ -906,6 +951,12 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		}.process();	
 	}
 
+	/**
+	 * Zero.
+	 *
+	 * @param i the i
+	 * @param j the j
+	 */
 	public void zero(int i, int j) {
 		data[i][j] = 0.0;		
 	}
@@ -1153,7 +1204,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	/**
 	 * Gets the gaussian.
 	 *
-	 * @param pixelRadius the pixel radius
+	 * @param sigma the sigma
 	 * @return the gaussian
 	 */
 	public static double[][] getGaussian(double sigma) {
@@ -1195,6 +1246,8 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 *
 	 * @param a the a
 	 * @param b the b
+	 * @param angle the angle
+	 * @param sigmas the sigmas
 	 * @return the gaussian
 	 */
 	public static double[][] getGaussian(double a, double b, double angle, double sigmas) {
@@ -1782,6 +1835,12 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		return level;
 	}
 	
+	/**
+	 * Adds the weighted direct.
+	 *
+	 * @param image the image
+	 * @param w the w
+	 */
 	public synchronized void addWeightedDirect(final Data2D image, final double w) {
 		new Task<Void>() {		
 			@Override
@@ -1793,11 +1852,24 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		mergePropertiesWith(image);
 	}
 	
+	/**
+	 * Adds the weighted direct.
+	 *
+	 * @param i the i
+	 * @param j the j
+	 * @param src the src
+	 * @param w the w
+	 */
 	protected void addWeightedDirect(int i, int j, Data2D src, double w) {
 		data[i][j] += w * src.data[i][j];
 		unflag(i, j);
 	}
 	
+	/**
+	 * Merge unflagged.
+	 *
+	 * @param image the image
+	 */
 	public synchronized void mergeUnflagged(final Data2D image) {
 		new Task<Void>() {		
 			@Override
@@ -1809,6 +1881,11 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		mergePropertiesWith(image);
 	}
 	
+	/**
+	 * Merge non zero.
+	 *
+	 * @param image the image
+	 */
 	public synchronized void mergeNonZero(final Data2D image) {
 		new Task<Void>() {		
 			@Override
@@ -1820,9 +1897,22 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		mergePropertiesWith(image);
 	}
 	
+	/**
+	 * Merge properties with.
+	 *
+	 * @param data the data
+	 */
 	protected synchronized void mergePropertiesWith(final Data2D data) {}
 
 	
+	/**
+	 * Merge.
+	 *
+	 * @param i the i
+	 * @param j the j
+	 * @param src the src
+	 * @param w the w
+	 */
 	protected void merge(int i, int j, Data2D src, double w) {
 		data[i][j] += src.data[i][j];
 		unflag(i, j);
@@ -2149,10 +2239,21 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		parseHistory(header);
 	}
 		
+	/**
+	 * Adds the history.
+	 *
+	 * @param header the header
+	 * @throws HeaderCardException the header card exception
+	 */
 	public void addHistory(Header header) throws HeaderCardException {
 		for(int i=0; i<history.size(); i++) header.addLine(new HeaderCard("HISTORY", history.get(i), false));
 	}
 	
+	/**
+	 * Parses the history.
+	 *
+	 * @param header the header
+	 */
 	public void parseHistory(Header header) {
 		history.clear();
 		
@@ -2306,6 +2407,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	/**
 	 * Edits the header.
 	 *
+	 * @param header the header
 	 * @param cursor the cursor
 	 * @throws HeaderCardException the header card exception
 	 * @throws FitsException the fits exception
@@ -2454,6 +2556,9 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 			catch(Exception e) { e.printStackTrace(); }
 		}
 		
+		/* (non-Javadoc)
+		 * @see jnum.Parallel#process(int, java.util.concurrent.ExecutorService)
+		 */
 		@Override
 		public void process(int chunks, ExecutorService executor) {
 			//System.err.println("# pool: " + pool.getCorePoolSize());

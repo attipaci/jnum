@@ -59,6 +59,9 @@ public class HourAngleFormat extends TimeFormat {
 		return super.format(angle / Unit.timeAngle, toAppendTo, pos);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.text.AngleFormat#parse(java.lang.String, java.text.ParsePosition, int)
+	 */
 	@Override
 	public Number parse(String source, ParsePosition parsePosition, int fromLevel) {
 		return super.parse(source, parsePosition, fromLevel).doubleValue() * Unit.timeAngle;

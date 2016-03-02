@@ -5,8 +5,17 @@ import jnum.math.*;
 import jnum.projection.*;
 import jnum.util.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ProjectionTest.
+ */
 public class ProjectionTest {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		SphericalCoordinates NE = new SphericalCoordinates(1.0 * Unit.deg, 1.0 * Unit.deg);
 		SphericalCoordinates NW = new SphericalCoordinates(-1.0 * Unit.deg, 1.0 * Unit.deg);

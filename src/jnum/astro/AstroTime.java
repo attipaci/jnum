@@ -38,6 +38,7 @@ import jnum.util.HashCode;
 
 
 
+// TODO: Auto-generated Javadoc
 //	2451545.0 JD = 1 January 2000, 11:58:55.816 UT, or 11:59:27.816 TAI
 //  UTC routines are approximate but consistent (btw. getUTC() and setUTC(), and currentTime())
 //  only UTC <===> (MJD, TT) conversion is approximate...
@@ -47,9 +48,7 @@ import jnum.util.HashCode;
  */
 public class AstroTime implements Serializable, Comparable<AstroTime> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 890383504654665623L;
 
 	/** The mjd. */
@@ -60,11 +59,17 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 */
 	public AstroTime() {}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.get(MJD);
+		return super.hashCode() ^ HashCode.from(MJD);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -72,6 +77,9 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		return MJD == ((AstroTime) o).MJD;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(AstroTime time) {
 		return Double.compare(MJD, time.MJD);
@@ -120,15 +128,30 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		return getTAIMillis(MJD);
 	}
 	
+	/**
+	 * Gets the TT millis.
+	 *
+	 * @return the TT millis
+	 */
 	public final long getTTMillis() {
 		return getTTMillis(MJD);
 	}
 	
+	/**
+	 * Gets the GPS millis.
+	 *
+	 * @return the GPS millis
+	 */
 	public final long getGPSMillis() {
 		return getGPSMillis(MJD);
 	}
 	
 	
+	/**
+	 * Gets the UTC millis.
+	 *
+	 * @return the UTC millis
+	 */
 	public final long getUTCMillis() { 
 		return getUTCMillis(MJD);
 	}
@@ -301,6 +324,12 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		return getGMST(0.0);
 	}
 	
+	/**
+	 * Gets the gmst.
+	 *
+	 * @param dUT1 the d u t1
+	 * @return the gmst
+	 */
 	public final double getGMST(double dUT1) {
 		return getGMST0() + getUTC() + dUT1;
 	}
@@ -315,6 +344,13 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		return getLMST(longitude, 0.0);
 	}
 	
+	/**
+	 * Gets the lmst.
+	 *
+	 * @param longitude the longitude
+	 * @param dUT1 the d u t1
+	 * @return the lmst
+	 */
 	public final double getLMST(double longitude, double dUT1) {
 		double LST = Math.IEEEremainder(getGMST(dUT1) + longitude / Unit.timeAngle, Unit.day);
 		if(LST < 0.0) LST += Unit.day;
@@ -395,6 +431,11 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		return fitsDateFormatter.format(millis)	+ 'T' + fitsTimeFormat.format(1e-3 * (millis % dayMillis));
 	}
 	
+	/**
+	 * Gets the fits short date.
+	 *
+	 * @return the fits short date
+	 */
 	public String getFitsShortDate() {
 		long millis = getUTCMillis();
 		return fitsDateFormatter.format(millis);
@@ -442,19 +483,43 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	
 	
 	
+	/**
+	 * Gets the TAI millis.
+	 *
+	 * @param MJD the mjd
+	 * @return the TAI millis
+	 */
 	public final static long getTAIMillis(double MJD) {
 		return millisJ2000 + leap2000Millis + (long)((MJD - mjdJ2000) * dayMillis);
 	}
 	
+	/**
+	 * Gets the TT millis.
+	 *
+	 * @param MJD the mjd
+	 * @return the TT millis
+	 */
 	public final static long getTTMillis(double MJD) {
 		return getTAIMillis(MJD) + millisTAI2TT;
 	}
 	
+	/**
+	 * Gets the GPS millis.
+	 *
+	 * @param MJD the mjd
+	 * @return the GPS millis
+	 */
 	public final static long getGPSMillis(double MJD) {
 		return getTAIMillis(MJD) + millisTAI2GPS;
 	}
 	
 	
+	/**
+	 * Gets the UTC millis.
+	 *
+	 * @param MJD the mjd
+	 * @return the UTC millis
+	 */
 	public final static long getUTCMillis(double MJD) { 
 		final long TAI = getTAIMillis(MJD); 
 		// Since leap seconds are relative to UTC, first get calculate UTC assuming
@@ -519,16 +584,20 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	/** The Constant leap2000. */
 	public final static int leap2000 = 32;
 	
+	/** The Constant leap2000Millis. */
 	protected final static long leap2000Millis = 1000L * leap2000;
 	
+	/** The Constant millisTAI2TT. */
 	protected final static long millisTAI2TT = 32184L;
 	
+	/** The Constant millisTAI2GPS. */
 	protected final static long millisTAI2GPS = -19000L;
 	
 	/** The Constant dayMillis. */
 	protected final static long dayMillis = 86400000L;
 
 		
+	/** The Constant millis0UTC1Jan2000. */
 	public final static long millis0UTC1Jan2000 = 946684800000L;
 	// millis of 2000 UT - leap2000 - tai2tt -> 2000 TT
 	/** The Constant millisJ2000. */
@@ -537,6 +606,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	/** The Constant mjdJ2000. */
 	public final static double mjdJ2000 = 51544.0;	// 0 TT 1 January 2000
 	
+	/** The Constant mjd0UTC1Jan2000. */
 	public final static double mjd0UTC1Jan2000 = mjdJ2000 + (leap2000Millis + millisTAI2TT) / dayMillis;
 	
 	/** The Constant mjdJ1970. */

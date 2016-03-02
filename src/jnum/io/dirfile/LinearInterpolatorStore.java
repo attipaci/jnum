@@ -35,9 +35,7 @@ import jnum.data.SimpleInterpolator;
  */
 public class LinearInterpolatorStore extends DataStore<Double> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1972465553588256489L;
 
 	/** The raw. */
@@ -62,11 +60,17 @@ public class LinearInterpolatorStore extends DataStore<Double> {
 		raw = value;
 	}
 
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ raw.hashCode() ^ fileName.hashCode();
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

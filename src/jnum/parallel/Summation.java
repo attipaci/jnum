@@ -49,9 +49,18 @@ import jnum.Parallel;
 import jnum.data.WeightedPoint;
 import jnum.math.Additive;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Summation.
+ *
+ * @param <ReturnType> the generic type
+ */
 public class Summation<ReturnType extends Additive<ReturnType>> extends ParallelReduction<ReturnType> {
 
 	
+	/* (non-Javadoc)
+	 * @see jnum.parallel.ParallelReduction#getResult()
+	 */
 	@Override
 	public ReturnType getResult() {
 		ReturnType sum = null;
@@ -63,7 +72,16 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		return sum;
 	}
 	
+	/**
+	 * The Class WeightedSum.
+	 *
+	 * @param <ReturnType> the generic type
+	 */
 	public static class WeightedSum<ReturnType extends WeightedPoint> extends ParallelReduction<ReturnType> {
+		
+		/* (non-Javadoc)
+		 * @see jnum.parallel.ParallelReduction#getResult()
+		 */
 		@Override
 		public ReturnType getResult() {
 			ReturnType sum = null;
@@ -79,7 +97,14 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
+	/**
+	 * The Class IntValue.
+	 */
 	public static class IntValue extends ParallelReduction<Integer> {
+		
+		/* (non-Javadoc)
+		 * @see jnum.parallel.ParallelReduction#getResult()
+		 */
 		@Override
 		public Integer getResult() {
 			int sum = 0;
@@ -88,7 +113,14 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
+	/**
+	 * The Class FloatValue.
+	 */
 	public static class FloatValue extends ParallelReduction<Float> {
+		
+		/* (non-Javadoc)
+		 * @see jnum.parallel.ParallelReduction#getResult()
+		 */
 		@Override
 		public Float getResult() {
 			float sum = 0.0F;
@@ -97,7 +129,14 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
+	/**
+	 * The Class DoubleValue.
+	 */
 	public static class DoubleValue extends ParallelReduction<Double> {
+		
+		/* (non-Javadoc)
+		 * @see jnum.parallel.ParallelReduction#getResult()
+		 */
 		@Override
 		public Double getResult() {
 			double sum = 0.0;
@@ -106,7 +145,14 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
+	/**
+	 * The Class IntArray.
+	 */
 	public static class IntArray extends ParallelReduction<int[]> {
+		
+		/* (non-Javadoc)
+		 * @see jnum.parallel.ParallelReduction#getResult()
+		 */
 		@Override
 		public int[] getResult() {
 			int[] sum = null;
@@ -119,7 +165,14 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
+	/**
+	 * The Class FloatArray.
+	 */
 	public static class FloatArray extends ParallelReduction<float[]> {
+		
+		/* (non-Javadoc)
+		 * @see jnum.parallel.ParallelReduction#getResult()
+		 */
 		@Override
 		public float[] getResult() {
 			float[] sum = null;
@@ -132,7 +185,14 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
+	/**
+	 * The Class DoubleArray.
+	 */
 	public static class DoubleArray extends ParallelReduction<double[]> {
+		
+		/* (non-Javadoc)
+		 * @see jnum.parallel.ParallelReduction#getResult()
+		 */
 		@Override
 		public double[] getResult() {
 			double[] sum = null;

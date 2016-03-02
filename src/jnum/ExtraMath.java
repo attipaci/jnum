@@ -192,6 +192,13 @@ public final class ExtraMath {
 		return a*a + b*b + c*c;
 	}
 
+	/**
+	 * Hypot.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	public final static double hypot(final double a, final double b) {
 		return Math.sqrt(a*a + b*b);
 	}
@@ -383,11 +390,11 @@ public final class ExtraMath {
 
 	
 	 /**
-     * Fibonacci.
-     *
-     * @param n 
-     * @return the nth Fibonacci number.
-     */
+ 	 * Fibonacci.
+ 	 *
+ 	 * @param n the n
+ 	 * @return the nth Fibonacci number.
+ 	 */
     public final double fibonacci(double n) {
     	return (Math.pow(Constant.goldenRatio, n) - Math.pow(1.0 - Constant.goldenRatio, n)) / Constant.sqrt5;
     }

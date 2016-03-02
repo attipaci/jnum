@@ -40,9 +40,7 @@ import jnum.data.ArrayUtil;
 @SuppressWarnings("unchecked")
 public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue & Copiable<? super T>> extends GenericMatrix<T> implements SquareMatrixAlgebra<T> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 276116236966727928L;
 
 	/**

@@ -90,7 +90,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.get(value) ^ HashCode.get(weight);
+		return super.hashCode() ^ HashCode.from(value) ^ HashCode.from(weight);
 	}
 	
 	/* (non-Javadoc)
@@ -444,7 +444,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	/**
 	 * To string.
 	 *
-	 * @param df the df
+	 * @param nf the nf
 	 * @param before the before
 	 * @param after the after
 	 * @return the string
@@ -453,6 +453,12 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 		return nf.format(value) + before + nf.format(Math.sqrt(1.0 / weight)) + after; 
 	}
 
+	/**
+	 * Creates the array.
+	 *
+	 * @param size the size
+	 * @return the weighted point[]
+	 */
 	public static WeightedPoint[] createArray(int size) {
 		WeightedPoint[] p = new WeightedPoint[size];
 		for(int i=size; --i >= 0; ) p[i] = new WeightedPoint();

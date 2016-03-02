@@ -23,12 +23,24 @@
 package jnum.io;
 import java.io.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class VAXDataInputStream.
+ */
 public class VAXDataInputStream extends LittleEndianDataInputStream {
 	
+	/**
+	 * Instantiates a new VAX data input stream.
+	 *
+	 * @param stream the stream
+	 */
 	public VAXDataInputStream(InputStream stream) {
 		super(stream);
 	}
 
+	/* (non-Javadoc)
+	 * @see jnum.io.LittleEndianDataInputStream#readDouble()
+	 */
 	@Override
 	public final double readDouble() throws IOException {
 		// The first 32-bits are the same as for a VAX float. So use the built-in float-to-double
@@ -44,6 +56,9 @@ public class VAXDataInputStream extends LittleEndianDataInputStream {
 		return Double.longBitsToDouble(l);	
 	}
 
+	/* (non-Javadoc)
+	 * @see jnum.io.LittleEndianDataInputStream#readFloat()
+	 */
 	@Override
 	public final float readFloat() throws IOException {
 		int i = read4Bytes();

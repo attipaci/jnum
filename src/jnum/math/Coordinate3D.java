@@ -30,9 +30,7 @@ import java.io.Serializable;
  */
 public class Coordinate3D implements Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4670218761839380720L;
 	
 	/** The coordinate components. */

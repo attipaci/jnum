@@ -64,6 +64,9 @@ public abstract class Region<CoordinateType extends Coordinate2D> implements Ser
 	 */
 	public Region(String line, int format, GridImage2D<CoordinateType> forImage) throws ParseException { parse(line, format, forImage); }
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -72,6 +75,9 @@ public abstract class Region<CoordinateType extends Coordinate2D> implements Ser
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

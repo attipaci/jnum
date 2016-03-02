@@ -43,9 +43,7 @@ import java.text.*;
  */
 public class Matrix extends AbstractMatrix<Double> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1648081664701964671L;
 	/** The entry. */
 	public double[][] entry; 
@@ -79,11 +77,17 @@ public class Matrix extends AbstractMatrix<Double> {
 		entry = new double[rows][cols];
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ HashCode.sampleFrom(entry);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

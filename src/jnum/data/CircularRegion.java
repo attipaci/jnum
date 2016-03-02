@@ -65,6 +65,9 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	 */
 	public CircularRegion() {}
 
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -73,6 +76,9 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Region#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

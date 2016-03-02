@@ -96,6 +96,9 @@ public class GaussianSource<CoordinateType extends Coordinate2D> extends Circula
 		super(coords, r);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.CircularRegion#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode() ^ (isCorrected ? 1 : 0);
@@ -103,6 +106,9 @@ public class GaussianSource<CoordinateType extends Coordinate2D> extends Circula
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.CircularRegion#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

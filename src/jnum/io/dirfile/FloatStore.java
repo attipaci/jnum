@@ -32,9 +32,7 @@ import java.io.IOException;
  */
 public class FloatStore extends RawStore<Float> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5365409325445573181L;
 
 	/**

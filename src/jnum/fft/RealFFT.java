@@ -67,7 +67,7 @@ public interface RealFFT<Type> {
 	/**
 	 * Transform the complex amplitudes at non-negative frequencies back to real values.
 	 *
-	 * @param data the data
+	 * @param spectrum the spectrum
 	 */
 	public void amplitude2Real(Type spectrum); 
 

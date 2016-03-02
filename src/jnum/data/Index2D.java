@@ -35,9 +35,7 @@ import jnum.math.Vector2D;
  */
 public class Index2D implements Serializable, Cloneable, Copiable<Index2D> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -364862939591997831L;
 	
 	/** The j. */

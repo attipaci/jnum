@@ -35,11 +35,13 @@ import java.awt.image.BufferedImage;
 import jnum.data.Index2D;
 import jnum.math.Range;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BufferedImageLayer.
+ */
 public abstract class BufferedImageLayer extends ImageLayer {
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5659356933524758138L;
 
 	/** The buffer. */

@@ -58,9 +58,15 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		Collections.sort(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.AbstractList#hashCode()
+	 */
 	@Override
 	public int hashCode() { return super.hashCode() ^ fileName.hashCode() ^ (verbose ? 1 : 0); }
 	
+	/* (non-Javadoc)
+	 * @see java.util.AbstractList#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

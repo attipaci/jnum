@@ -59,8 +59,10 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	/** The grid. */
 	private Grid2D<CoordinateType> grid;
 	
+	/** The underlying beam. */
 	private GaussianPSF underlyingBeam;
 	
+	/** The smoothing. */
 	private GaussianPSF smoothing;
 	
 	/** The ext filter fwhm. */
@@ -75,8 +77,12 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	/** The pixel area. */
 	private Unit pixelAreaUnit = new PixelAreaUnit();
 	
+	/** The preferred grid unit. */
 	private Unit preferredGridUnit;
 	
+	/**
+	 * Instantiates a new grid image2 d.
+	 */
 	/*
 	 * Instantiates a new grid image.
 	 */
@@ -135,6 +141,9 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Data2D#defaults()
+	 */
 	@Override
 	public void defaults() {
 		super.defaults();
@@ -167,7 +176,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode() ^ underlyingBeam.hashCode() ^ smoothing.hashCode() 
-				^ HashCode.get(extFilterFWHM) ^ HashCode.get(correctingFWHM);
+				^ HashCode.from(extFilterFWHM) ^ HashCode.from(correctingFWHM);
 		if(grid != null) hash ^= grid.hashCode();
 		return hash;
 	} 
@@ -217,6 +226,9 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	}
 	
 	
+	/**
+	 * Reset smoothing.
+	 */
 	public void resetSmoothing() {
 		Vector2D resolution = grid.getResolution();
 		smoothing.set(resolution.x() / fwhm2size, resolution.y() / fwhm2size, 0.0);
@@ -245,6 +257,12 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		setResolution(value, value);
 	}
 	
+	/**
+	 * Sets the resolution.
+	 *
+	 * @param dx the dx
+	 * @param dy the dy
+	 */
 	// TODO non rectilinear grids
 	public void setResolution(double dx, double dy) { 
 		getGrid().setResolution(dx, dy);
@@ -268,6 +286,11 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 */
 	public GaussianPSF getSmoothing() { return smoothing; } 
 	
+	/**
+	 * Gets the smooth area.
+	 *
+	 * @return the smooth area
+	 */
 	public double getSmoothArea() { 
 		return smoothing.getArea();
 	}
@@ -371,8 +394,18 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 */
 	public final GaussianPSF getUnderlyingBeam() { return underlyingBeam; }
 	
+	/**
+	 * Sets the underlying beam.
+	 *
+	 * @param psf the new underlying beam
+	 */
 	public void setUnderlyingBeam(GaussianPSF psf) { underlyingBeam = psf; }
 	
+	/**
+	 * Sets the underlying beam.
+	 *
+	 * @param fwhm the new underlying beam
+	 */
 	public void setUnderlyingBeam(double fwhm) { underlyingBeam.set(fwhm); }
 	
 	/**
@@ -386,6 +419,12 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		return beam;
 	}
 	
+	/**
+	 * Gets the image beam.
+	 *
+	 * @param toPSF the to psf
+	 * @return the image beam
+	 */
 	public void getImageBeam(GaussianPSF toPSF) {
 		toPSF.set(underlyingBeam);
 		toPSF.convolveWith(smoothing);
@@ -452,14 +491,30 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	}
 	
 	
+	/**
+	 * Sets the preferred grid unit.
+	 *
+	 * @param u the new preferred grid unit
+	 */
 	public void setPreferredGridUnit(Unit u) {
 		preferredGridUnit = u;
 	}
 	
+	/**
+	 * Gets the preferred grid unit.
+	 *
+	 * @return the preferred grid unit
+	 */
 	public final Unit getPreferredGridUnit() {
 		return getPreferredGridUnit(false);
 	}
 	
+	/**
+	 * Gets the preferred grid unit.
+	 *
+	 * @param ignoreUserSpecified the ignore user specified
+	 * @return the preferred grid unit
+	 */
 	public Unit getPreferredGridUnit(boolean ignoreUserSpecified) {
 		if(!ignoreUserSpecified) if(preferredGridUnit != null) return preferredGridUnit;
 		Grid2D<CoordinateType> grid = getGrid();
@@ -555,6 +610,9 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 */
 	public double getArea() { return countPoints() * getPixelArea(); }
 
+	/* (non-Javadoc)
+	 * @see jnum.data.Data2D#mergePropertiesWith(jnum.data.Data2D)
+	 */
 	@Override
 	protected synchronized void mergePropertiesWith(final Data2D data) {
 		super.mergePropertiesWith(data);
@@ -568,6 +626,12 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	}
 	
 
+	/**
+	 * Smooth.
+	 *
+	 * @param beam the beam
+	 * @param equivalentSmoothFWHM the equivalent smooth fwhm
+	 */
 	public void smooth(double[][] beam, double equivalentSmoothFWHM) {
 		smooth(beam);
 		smoothing.convolveWith(new GaussianPSF(equivalentSmoothFWHM));
@@ -585,6 +649,11 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		smoothTo(new GaussianPSF(FWHM));
 	}	
 	
+	/**
+	 * Smooth to.
+	 *
+	 * @param psf the psf
+	 */
 	public void smoothTo(GaussianPSF psf) {
 		if(smoothing.isEncompassing(psf)) return;
 		psf.deconvolveWith(smoothing);
@@ -605,6 +674,11 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		//if(!Double.isNaN(correctingFWHM)) correctingFWHM = ExtraMath.hypot(correctingFWHM, FWHM);
 	}
 	
+	/**
+	 * Smooth.
+	 *
+	 * @param psf the psf
+	 */
 	// TODO
 	public final void smooth(GaussianPSF psf) {
 		int stepX = (int)Math.ceil(psf.extentInX()/(5.0 * getGrid().pixelSizeX()));
@@ -625,6 +699,12 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		return getSmoothedTo(new GaussianPSF(FWHM));
 	}
 	
+	/**
+	 * Gets the smoothed to.
+	 *
+	 * @param psf the psf
+	 * @return the smoothed to
+	 */
 	public double[][] getSmoothedTo(GaussianPSF psf) {
 		if(smoothing.isEncompassing(psf)) return getData();
 		psf.deconvolveWith(smoothing);
@@ -641,6 +721,12 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		return getSmoothed(new GaussianPSF(FWHM));
 	}   
 
+	/**
+	 * Gets the smoothed.
+	 *
+	 * @param psf the psf
+	 * @return the smoothed
+	 */
 	public double[][] getSmoothed(GaussianPSF psf) {
 		int stepX = (int)Math.ceil(psf.extentInX()/(5.0 * getGrid().pixelSizeX()));
 		int stepY = (int)Math.ceil(psf.extentInY()/(5.0 * getGrid().pixelSizeY()));
@@ -1026,7 +1112,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 *
 	 * @param beam the beam
 	 * @param gain the gain
-	 * @param replacementFWHM the replacement fwhm
+	 * @param replacementBeam the replacement beam
 	 * @return the int
 	 */
 	public int clean(double[][] beam, double gain, GaussianPSF replacementBeam) {
@@ -1039,7 +1125,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 * @param image the search
 	 * @param beam the beam
 	 * @param gain the gain
-	 * @param replacementFWHM the replacement fwhm
+	 * @param replacementBeam the replacement beam
 	 * @return the int
 	 */
 	public int clean(GridImage2D<CoordinateType> image, double[][] beam, double gain, GaussianPSF replacementBeam) {
@@ -1252,15 +1338,34 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see jnum.data.Data2D#parseHeader(nom.tam.fits.Header)
+	 */
 	@Override
 	protected final void parseHeader(Header header) throws Exception {
 		parseHeader(header, "");
 	}
 
+	/**
+	 * Parses the grid.
+	 *
+	 * @param header the header
+	 * @param alt the alt
+	 * @throws HeaderCardException the header card exception
+	 * @throws InstantiationException the instantiation exception
+	 * @throws IllegalAccessException the illegal access exception
+	 */
 	private void parseGrid(Header header, String alt) throws HeaderCardException, InstantiationException, IllegalAccessException {
 		setGrid((Grid2D<CoordinateType>) Grid2D.fromHeader(header, alt));
 	}
 
+	/**
+	 * Parses the header.
+	 *
+	 * @param header the header
+	 * @param alt the alt
+	 * @throws Exception the exception
+	 */
 	// TODO elliptical filter and correcting beams...
 	protected void parseHeader(Header header, String alt) throws Exception {		
 		super.parseHeader(header);
@@ -1486,20 +1591,50 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		else return super.getFormattedEntry(name, formatSpec);
 	}
 
+	/**
+	 * From header.
+	 *
+	 * @param header the header
+	 * @return the grid image2 d
+	 * @throws Exception the exception
+	 */
 	public static GridImage2D<?> fromHeader(Header header) throws Exception {
 		return fromHeader(header, "");
 	}
 	
+	/**
+	 * From header.
+	 *
+	 * @param header the header
+	 * @param alt the alt
+	 * @return the grid image2 d
+	 * @throws Exception the exception
+	 */
 	public static GridImage2D<?> fromHeader(Header header, String alt) throws Exception {	
 		GridImage2D<?> image = new GridImage2D<Coordinate2D>();
 		image.parseHeader(header, alt);
 		return image;
 	}
 	
+	/**
+	 * From hdu.
+	 *
+	 * @param hdu the hdu
+	 * @return the grid image2 d
+	 * @throws Exception the exception
+	 */
 	public static GridImage2D<?> fromHDU(BasicHDU<?> hdu) throws Exception {
 		return fromHDU(hdu, "");
 	}
 	
+	/**
+	 * From hdu.
+	 *
+	 * @param hdu the hdu
+	 * @param alt the alt
+	 * @return the grid image2 d
+	 * @throws Exception the exception
+	 */
 	public static GridImage2D<?> fromHDU(BasicHDU<?> hdu, String alt) throws Exception {	
 		GridImage2D<?> image = fromHeader(hdu.getHeader(), alt);
 		image.readData(hdu);
@@ -1507,6 +1642,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	}
 	
 	
+	/** The Constant rawUnit. */
 	private final static Unit rawUnit = new Unit("raw", 1.0, false);
 	
 }

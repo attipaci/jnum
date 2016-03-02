@@ -87,6 +87,11 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 	}
 
 	
+	/**
+	 * Sets the ruler.
+	 *
+	 * @param value the new ruler
+	 */
 	public void setRuler(boolean value) {
 		if(value == hasRuler()) return;
 		if(value) ruler = new PlotSideRuler(getPlot(), side);
@@ -94,8 +99,18 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 		arrange();
 	}
 	
+	/**
+	 * Checks for ruler.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasRuler() { return ruler != null; }
 	
+	/**
+	 * Gets the ruler.
+	 *
+	 * @return the ruler
+	 */
 	public PlotSideRuler getRuler() { return ruler; }
 	
 	/* (non-Javadoc)

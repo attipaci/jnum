@@ -39,9 +39,7 @@ import java.lang.reflect.*;
 @SuppressWarnings("unchecked")
 public class GenericMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractMatrix<T> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2705914561805806547L;
 
 	/** The entry. */

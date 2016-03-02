@@ -39,9 +39,7 @@ import jnum.data.ArrayUtil;
 public abstract class AbstractVector<T> implements LinearAlgebra<AbstractVector<? extends T>>, Serializable, 
 Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Copiable<AbstractVector<T>> {
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 785522803183758105L;
 
 	/**

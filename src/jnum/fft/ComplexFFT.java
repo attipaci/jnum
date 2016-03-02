@@ -38,9 +38,7 @@ import jnum.math.Complex;
 
 public class ComplexFFT extends FFT1D<Complex[]> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -9178097963072050931L;
 
 	/**
@@ -64,6 +62,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 	 * Forward.
 	 *
 	 * @param data the data
+	 * @param nyquist the nyquist
 	 * @throws InterruptedException the interrupted exception
 	 */
 	public void forward(final Complex[] data, final Complex nyquist) throws InterruptedException { complexForward(data); }
@@ -72,6 +71,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 	 * Back.
 	 *
 	 * @param data the data
+	 * @param nyquist the nyquist
 	 * @throws InterruptedException the interrupted exception
 	 */
 	public void back(final Complex[] data, final Complex nyquist) throws InterruptedException { complexBack(data); }
@@ -420,6 +420,9 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 		return 53;	
 	}
 
+	/* (non-Javadoc)
+	 * @see jnum.fft.FFT1D#sizeOf(java.lang.Object)
+	 */
 	@Override
 	public int sizeOf(Complex[] data) {
 		return data.length;

@@ -36,9 +36,7 @@ import jnum.util.HashCode;
  */
 public class PhaseShiftedStore<Type extends Number> extends DataStore<Type> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5398091531703755110L;
 
 	/** The data. */
@@ -60,11 +58,17 @@ public class PhaseShiftedStore<Type extends Number> extends DataStore<Type> {
 		this.shift = shift;
 	}
 
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ data.hashCode() ^ HashCode.get(shift);
+		return super.hashCode() ^ data.hashCode() ^ HashCode.from(shift);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

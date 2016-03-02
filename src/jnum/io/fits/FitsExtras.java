@@ -47,7 +47,6 @@ public final class FitsExtras {
 	 * @param cursor the cursor
 	 * @param key the key
 	 * @param value the value
-	 * @throws FitsException the fits exception
 	 * @throws HeaderCardException the header card exception
 	 */
 	public static void addLongHierarchKey(Cursor<String,HeaderCard> cursor, String key, String value) throws HeaderCardException {
@@ -73,6 +72,15 @@ public final class FitsExtras {
 	//
 	//   1. blah-blah [unitname] blah...
 	//   2. blah-blah (unitname) blah...
+	/**
+	 * Gets the commented unit value.
+	 *
+	 * @param header the header
+	 * @param key the key
+	 * @param defaultValue the default value
+	 * @param defaultUnitValue the default unit value
+	 * @return the commented unit value
+	 */
 	//   3. unitname blah-blah...
 	public static double getCommentedUnitValue(Header header, String key, double defaultValue, double defaultUnitValue) {
 		HeaderCard card = header.findCard(key);
@@ -89,6 +97,13 @@ public final class FitsExtras {
 	}
 	
 	
+	/**
+	 * Gets the commented unit.
+	 *
+	 * @param comment the comment
+	 * @return the commented unit
+	 * @throws Exception the exception
+	 */
 	public static Unit getCommentedUnit(String comment) throws Exception {
 		
 		// Unit in (the first) square bracketed value; 
@@ -117,7 +132,6 @@ public final class FitsExtras {
 	 * @param key the key
 	 * @param part the part
 	 * @param value the value
-	 * @throws FitsException the fits exception
 	 * @throws HeaderCardException the header card exception
 	 */
 	public static void addLongHierarchKey(Cursor<String, HeaderCard> cursor, String key, int part, String value) throws HeaderCardException {	
@@ -153,7 +167,6 @@ public final class FitsExtras {
 	 * @param key the key
 	 * @param value the value
 	 * @param comment the comment
-	 * @throws FitsException the fits exception
 	 * @throws HeaderCardException the header card exception
 	 */
 	public static void addLongKey(Header header, String key, String value, String comment) throws HeaderCardException {
@@ -196,7 +209,6 @@ public final class FitsExtras {
 	 * @param key the key
 	 * @param value the value
 	 * @param comment the comment
-	 * @throws FitsException the fits exception
 	 * @throws HeaderCardException the header card exception
 	 */
 	public static void addLongKey(Cursor<String, HeaderCard> cursor, String key, String value, String comment) throws HeaderCardException {
@@ -289,7 +301,15 @@ public final class FitsExtras {
 	 */
 	
 	
-    public static void write(Fits fits, String fileName) throws FitsException, IOException {
+    /**
+	 * Write.
+	 *
+	 * @param fits the fits
+	 * @param fileName the file name
+	 * @throws FitsException the fits exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public static void write(Fits fits, String fileName) throws FitsException, IOException {
 	    BufferedDataOutputStream stream = new BufferedDataOutputStream(new FileOutputStream(fileName));
 	   
 	    try { fits.write(stream); }

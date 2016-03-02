@@ -39,9 +39,7 @@ import jnum.ExtraMath;
  */
 public abstract class FFT<Type> implements Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3614284894169045332L;
 
 	/** The parallel processing pool used by this FFT. All parallel calls will be submitted to this queue. */
@@ -117,6 +115,11 @@ public abstract class FFT<Type> implements Serializable {
 		this.twiddleErrorBits = value;
 	}
 
+	/**
+	 * Gets the twiddle error bits.
+	 *
+	 * @return the twiddle error bits
+	 */
 	public int getTwiddleErrorBits() { return twiddleErrorBits; }
 	
 	// TODO clone pools properly...
@@ -272,6 +275,12 @@ public abstract class FFT<Type> implements Serializable {
 	abstract int getMaxSignificantBitsFor(Type data);
 	
 	
+	/**
+	 * Sequential complex transform.
+	 *
+	 * @param data the data
+	 * @param isForward the is forward
+	 */
 	public final void sequentialComplexTransform(final Type data, final boolean isForward) {	
 		sequentialComplexTransform(data, getAddressBits(data), isForward);
 	}
@@ -280,6 +289,7 @@ public abstract class FFT<Type> implements Serializable {
 	 * Sequential complex transform.
 	 *
 	 * @param data the data
+	 * @param addressBits the address bits
 	 * @param isForward the is forward
 	 */
 	void sequentialComplexTransform(final Type data, final int addressBits, final boolean isForward) {	
@@ -297,6 +307,13 @@ public abstract class FFT<Type> implements Serializable {
 	}
 	
 	
+	/**
+	 * Complex transform.
+	 *
+	 * @param data the data
+	 * @param isForward the is forward
+	 * @param chunks the chunks
+	 */
 	public final void complexTransform(final Type data, final boolean isForward, int chunks) {
 		complexTransform(data, getAddressBits(data), isForward, chunks);
 	}
@@ -305,6 +322,7 @@ public abstract class FFT<Type> implements Serializable {
 	 * Complex transform.
 	 *
 	 * @param data the data
+	 * @param addressBits the address bits
 	 * @param isForward the is forward
 	 * @param chunks the number of parallel chunks
 	 */	
@@ -536,6 +554,11 @@ public abstract class FFT<Type> implements Serializable {
 		}
 	}
 	
+	/**
+	 * Sets the pool.
+	 *
+	 * @param executor the new pool
+	 */
 	public void setPool(ThreadPoolExecutor executor) {
 		this.pool = executor;
 	}

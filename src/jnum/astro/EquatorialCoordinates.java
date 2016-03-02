@@ -64,6 +64,7 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	/** The default local coordinate system. */
 	static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 	
+	/** The hf. */
 	private static HourAngleFormat hf = new HourAngleFormat(2);
 	
 	static {
@@ -145,6 +146,9 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	 */
 	public EquatorialCoordinates(CelestialCoordinates from) { super(from); }
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.Coordinate2D#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -152,6 +156,9 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 		return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.Coordinate2D#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -163,9 +170,15 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
+	 */
 	@Override
 	public String getFITSLongitudeStem() { return "RA--"; }
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+	 */
 	@Override
 	public String getFITSLatitudeStem() { return "DEC-"; }
 	
@@ -265,12 +278,18 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 		return Math.atan2(site.cosLat() * Math.sin(H), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(H));
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.astro.CelestialCoordinates#getEquatorialPositionAngle()
+	 */
 	@Override
 	public final double getEquatorialPositionAngle() {
 		return 0.0;
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see jnum.astro.CelestialCoordinates#toEquatorial(jnum.astro.EquatorialCoordinates)
+	 */
 	@Override
 	public void toEquatorial(EquatorialCoordinates equatorial) {
 		final CoordinateEpoch toEpoch = equatorial.epoch;
@@ -278,6 +297,9 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 		if(!epoch.equals(toEpoch)) equatorial.precess(toEpoch);			
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.astro.CelestialCoordinates#fromEquatorial(jnum.astro.EquatorialCoordinates)
+	 */
 	@Override
 	public void fromEquatorial(EquatorialCoordinates equatorial) {
 		final CoordinateEpoch toEpoch = epoch;
@@ -379,6 +401,9 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 		return super.toString() + " (" + (epoch == null ? "unknown" : epoch.toString()) + ")";	
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.SphericalCoordinates#toString(int)
+	 */
 	@Override
 	public String toString(int decimals) {
 		return Util.hf[decimals+1].format(longitude()) + " " + Util.af[decimals].format(latitude()) +  " (" + (epoch == null ? "unknown" : epoch.toString()) + ")";	
