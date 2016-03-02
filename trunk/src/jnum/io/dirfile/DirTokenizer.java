@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.util.ArrayList;
 import java.util.Iterator;

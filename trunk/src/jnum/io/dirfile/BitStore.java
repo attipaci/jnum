@@ -22,86 +22,90 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
 
 import jnum.util.HashCode;
 
-
 // TODO: Auto-generated Javadoc
 /**
- * The Class Constant.
+ * The Class BitStore.
  */
-public class ConstantStore extends DataStore<Number> {
+public class BitStore extends DataStore<Long> {
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8499362540214314258L;
+	private static final long serialVersionUID = 6409444230976963190L;
 
-	/** The isFloating. */
-	boolean isFloating = true;
+	/** The container. */
+	DataStore<? extends Number> container;
 	
-	/** The i value. */
-	long iValue;
+	/** The mask. */
+	long mask = 0;
 	
-	/** The value. */
-	double fValue = Double.NaN;
+	/** The shift. */
+	int shift;
 	
 	/**
-	 * Instantiates a new constant.
+	 * Instantiates a new bit store.
 	 *
 	 * @param name the name
-	 * @param type the type
-	 * @param value the value
+	 * @param bits the bits
+	 * @param position the position
 	 */
-	public ConstantStore(String name, String type, String value) {	
+	public BitStore(String name, DataStore<? extends Number> bits, int position) {
 		super(name);
-		
-		type = type.toLowerCase();
-	
-		switch(type.charAt(0)) {
-		case 'u' : iValue = Long.decode(value); break;
-		case 's' : iValue = Long.decode(value); break; 
-		case 'i' : iValue = Long.decode(value); break;
-		case 'f' : fValue = Float.parseFloat(value); break; 
-		case 'd' : fValue = Double.parseDouble(value); break;
-		default : throw new IllegalArgumentException("No constant type for " + type);
-		}
-		
-		isFloating = !Double.isNaN(fValue);
+		this.container = bits;
+		mask = 1 << position; 
+		shift = position;
 	}
 	
 	@Override
-	public int hashCode() { return super.hashCode() ^ HashCode.get(iValue) ^ HashCode.get(fValue) ^ (isFloating ? 1 : 0); }
+	public int hashCode() { return super.hashCode() ^ container.hashCode() ^ shift ^ HashCode.get(mask); }
 	
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
-		if(!(o instanceof ConstantStore)) return false;
+		if(!(o instanceof BitStore)) return false;
 		if(!super.equals(o)) return false;
-		ConstantStore c = (ConstantStore) o;
-		if(isFloating != c.isFloating) return false;
-		if(iValue != c.iValue) return false;
-		if(fValue != c.fValue) return false;
+		BitStore store = (BitStore) o;
+		if(!container.equals(store.container)) return false;
+		if(mask != store.mask) return false;
+		if(shift != store.shift) return false;
 		return true;
+	}
+	
+	/**
+	 * Instantiates a new bit store.
+	 *
+	 * @param name the name
+	 * @param bits the bits
+	 * @param from the from
+	 * @param n the n
+	 */
+	public BitStore(String name, DataStore<? extends Number> bits, int from, int n) {
+		super(name);
+		this.container = bits;
+		shift = from;
+		for(int i=0; i<n; i++, from++) mask |= 1 << from;
 	}
 	
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#get(long)
 	 */
 	@Override
-	public Number get(long n) throws IOException {
-		return isFloating ? fValue : iValue;
+	public Long get(long n) throws IOException {
+		return (container.get(n).longValue() & mask) >> shift;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#getSamples()
 	 */
 	@Override
 	public int getSamples() {
-		return 1;
+		return container.getSamples();
 	}
 	
 	/* (non-Javadoc)
@@ -109,9 +113,8 @@ public class ConstantStore extends DataStore<Number> {
 	 */
 	@Override
 	public long length() throws IOException {
-		return 1L;
+		return container.length();
 	}
-	
-	
-	
+
+
 }

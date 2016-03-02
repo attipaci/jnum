@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.fits;
+package jnum.io.fits;
 
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;

@@ -22,39 +22,39 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class IntegerStore.
+ * The Class UByteStore.
  */
-public class IntegerStore extends RawStore<Integer> {
+public class UByteStore extends RawStore<Short> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2689633147327311579L;
+	private static final long serialVersionUID = -3209183933186574490L;
 
 	/**
-	 * Instantiates a new integer store.
+	 * Instantiates a new u byte store.
 	 *
 	 * @param path the path
 	 * @param name the name
 	 * @param arraySize the array size
 	 */
-	public IntegerStore(String path, String name, int arraySize) {
+	public UByteStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
-		bytes = 4;
+		bytes = 1;
 	}
 
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#get(long)
 	 */
 	@Override
-	public Integer get(long n) throws IOException {
-		return getInt(n);
+	public Short get(long n) throws IOException {
+		return getUnsignedByte(n);
 	}
 
 }

@@ -23,7 +23,6 @@
 package jnum.data;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -38,6 +37,7 @@ import jnum.CopiableContent;
 import jnum.Parallel;
 import jnum.Unit;
 import jnum.Util;
+import jnum.io.fits.FitsExtras;
 import jnum.math.Range;
 import jnum.math.Scalable;
 import jnum.math.Vector2D;
@@ -53,7 +53,6 @@ import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.fits.ImageHDU;
-import nom.tam.util.BufferedDataOutputStream;
 import nom.tam.util.Cursor;
 
 
@@ -2275,9 +2274,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void write(String name) throws HeaderCardException, FitsException, IOException {
-		Fits fits = createFits();	
-		BufferedDataOutputStream file = new BufferedDataOutputStream(new FileOutputStream(name));
-		fits.write(file);	
+		FitsExtras.write(createFits(), name);
 		System.err.println(" Written " + name);
 	}
 	

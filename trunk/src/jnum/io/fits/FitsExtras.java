@@ -20,15 +20,19 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.fits;
+package jnum.io.fits;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 import jnum.Unit;
+import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.BufferedDataOutputStream;
 import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
@@ -284,6 +288,14 @@ public final class FitsExtras {
     }
 	 */
 	
+	
+    public static void write(Fits fits, String fileName) throws FitsException, IOException {
+	    BufferedDataOutputStream stream = new BufferedDataOutputStream(new FileOutputStream(fileName));
+	   
+	    try { fits.write(stream); }
+	    catch(FitsException e) { throw e; }
+	    finally { stream.close(); }   
+	}
 
 	/** The min fits value length. */
 	public static int minFitsValueLength = 5;

@@ -22,39 +22,39 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class DoubleStore.
+ * The Class ByteStore.
  */
-public class DoubleStore extends RawStore<Double> {
+public class ByteStore extends RawStore<Byte> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6398336422409851188L;
+	private static final long serialVersionUID = 1831718235512528971L;
 
 	/**
-	 * Instantiates a new double store.
+	 * Instantiates a new byte store.
 	 *
 	 * @param path the path
 	 * @param name the name
 	 * @param arraySize the array size
 	 */
-	public DoubleStore(String path, String name, int arraySize) {
+	public ByteStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
-		bytes = 8;
+		bytes = 1;
 	}
 
 	/* (non-Javadoc)
 	 * @see kovacs.util.dirfile.DataStore#get(long)
 	 */
 	@Override
-	public Double get(long n) throws IOException {
-		return getDouble(n);
+	public Byte get(long n) throws IOException {
+		return getByte(n);
 	}
 
 }

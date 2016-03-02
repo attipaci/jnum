@@ -104,8 +104,16 @@ public class LogFile {
 					
 		// Otherwise check if the headers match...
 		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(getFile())));
-		try { if(readHeader(in).equals(format)) return; }
+		try { 
+		    boolean pass = false;
+		    if(readHeader(in).equals(format)) pass = true;
+		    try { if(in != null) in.close(); } catch(IOException e) {}
+		    if(pass) return;
+		}
 		catch(IllegalStateException e) { System.err.println("WARNING! " + e.getMessage()); }
+		finally {
+		    try { if(in != null) in.close(); } catch(IOException e) {}
+		}
 		
 		// Conflict...
 		if(conflictPolicy == CONFLICT_OVERWRITE) {
@@ -337,6 +345,8 @@ public class LogFile {
 			while(tokens.hasMoreTokens()) row.add(new Entry(labels.get(col++), tokens.nextToken()));
 			data.add(row);
 		}
+		
+		in.close();
 		
 		return data;		
 	}

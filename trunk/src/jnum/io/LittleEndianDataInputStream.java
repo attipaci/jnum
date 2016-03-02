@@ -34,6 +34,11 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 		this.stream = stream;
 		in = new DataInputStream(stream);
 	}
+	
+	@Override
+    public void close() throws IOException {
+	    if(stream != null) stream.close();
+	}
 
 	@Override
 	public final int read() throws IOException {

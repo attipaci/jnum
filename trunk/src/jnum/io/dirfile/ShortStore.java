@@ -22,31 +22,31 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.dirfile;
+package jnum.io.dirfile;
 
 import java.io.IOException;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class UByteStore.
+ * The Class ShortStore.
  */
-public class UByteStore extends RawStore<Short> {
+public class ShortStore extends RawStore<Short> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3209183933186574490L;
+	private static final long serialVersionUID = -1778998721254246537L;
 
 	/**
-	 * Instantiates a new u byte store.
+	 * Instantiates a new short store.
 	 *
 	 * @param path the path
 	 * @param name the name
 	 * @param arraySize the array size
 	 */
-	public UByteStore(String path, String name, int arraySize) {
+	public ShortStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
-		bytes = 1;
+		bytes = 2;
 	}
 
 	/* (non-Javadoc)
@@ -54,7 +54,7 @@ public class UByteStore extends RawStore<Short> {
 	 */
 	@Override
 	public Short get(long n) throws IOException {
-		return getUnsignedByte(n);
+		return getShort(n);
 	}
 
 }
