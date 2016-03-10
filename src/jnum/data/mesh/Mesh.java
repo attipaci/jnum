@@ -22,7 +22,7 @@
  ******************************************************************************/
 
 
-package jnum.data;
+package jnum.data.mesh;
 
 
 import java.io.Serializable;
@@ -30,6 +30,8 @@ import java.util.*;
 
 import jnum.Copiable;
 import jnum.Function;
+import jnum.data.ArrayUtil;
+import jnum.data.DataIterator;
 import jnum.text.ParseType;
 
 // TODO: Auto-generated Javadoc
@@ -38,7 +40,7 @@ import jnum.text.ParseType;
  *
  * @param <T> the generic type
  */
-public abstract class AbstractArray<T> implements Serializable, Cloneable, Copiable<AbstractArray<T>>, Iterable<T> {
+public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<T>>, Iterable<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1935368290016760524L;
@@ -57,7 +59,7 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 	 *
 	 * @param type the type
 	 */
-	public AbstractArray(Class<T> type) {
+	public Mesh(Class<T> type) {
 		this.type = type;
 	}
 	
@@ -66,7 +68,7 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 	 *
 	 * @param data the data
 	 */
-	public AbstractArray(Object data) {
+	public Mesh(Object data) {
 		setData(data);
 	}
 
@@ -77,7 +79,7 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 	 * @param type the type
 	 * @param dimensions the dimensions
 	 */
-	public AbstractArray(Class<T> type, int[] dimensions) {
+	public Mesh(Class<T> type, int[] dimensions) {
 		this.type = type;
 		size = Arrays.copyOf(dimensions, dimensions.length);
 		data = ArrayUtil.createArray(type, dimensions);
@@ -93,6 +95,12 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 		ArrayUtil.initialize(data);
 	}
 
+	public boolean conformsTo(Mesh<?> o) {
+	    if(size.length != o.size.length) return false;
+	    for(int i=size.length; --i >= 0; ) if(size[i] != o.size[i]) return false;
+	    return true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
@@ -107,8 +115,8 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public AbstractArray<T> copy() {
-		AbstractArray<T> copy = (AbstractArray<T>) clone();
+	public Mesh<T> copy() {
+		Mesh<T> copy = (Mesh<T>) clone();
 		try { copy.data = ArrayUtil.copy(data); }
 		catch(Exception e) { 
 			copy.data = null; 
@@ -179,7 +187,7 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public ArrayIterator<T> iterator() { return ArrayUtil.iterator(data); }
+	public MeshIterator<T> iterator() { return ArrayUtil.iterator(data); }
 
 	/**
 	 * Sets the element at.
@@ -240,14 +248,8 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 	 * @param index the index
 	 * @return the abstract array
 	 */
-	public abstract AbstractArray<T> subArrayAt(int[] index); 
+	public abstract Mesh<T> subArrayAt(int[] index); 
 	
-	// Slim clears private storage...
-	/**
-	 * Slim.
-	 */
-	public abstract void slim();
-
 	/**
 	 * Adds the patch at.
 	 *
@@ -274,7 +276,7 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 	 * @throws Exception the exception
 	 */
 	public void parse(String text) throws Exception {
-		GenericArray<String> stringArray = parseStringArray(text);
+		ObjectMesh<String> stringArray = parseStringArray(text);
 		setSize(stringArray.getSize());
 		DataIterator<T> iterator = iterator();
 		for(String entry : stringArray) {
@@ -289,8 +291,8 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 	 * @param text the text
 	 * @return the generic array
 	 */
-	public static GenericArray<String> parseStringArray(String text) {	
-		return new GenericArray<String>(parseStringArrayData(text));
+	public static ObjectMesh<String> parseStringArray(String text) {	
+		return new ObjectMesh<String>(parseStringArrayData(text));
 	}
 	
 	
@@ -301,7 +303,7 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 	 * @param lowest the lowest
 	 * @return the parses the class
 	 */
-	public static Class<?> getParseClass(GenericArray<String> array, ParseType lowest) {				
+	public static Class<?> getParseClass(ObjectMesh<String> array, ParseType lowest) {				
 		for(String value : array) lowest = ParseType.get(value, lowest);
 		return lowest.getType();
 	}
@@ -337,4 +339,9 @@ public abstract class AbstractArray<T> implements Serializable, Cloneable, Copia
 		return elements.toArray();		
 	}
 	
+	protected Object subarrayDataAt(int[] index) {
+	    // TODO...
+	    return null;
+	}
+
 }

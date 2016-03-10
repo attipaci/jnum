@@ -43,7 +43,6 @@ import java.util.Vector;
 import jnum.io.fits.FitsExtras;
 import jnum.math.Range;
 import jnum.math.Vector2D;
-import nom.tam.fits.FitsException;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;

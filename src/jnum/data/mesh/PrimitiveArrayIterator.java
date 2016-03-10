@@ -21,7 +21,7 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.data.mesh;
 
 import java.util.NoSuchElementException;
 
@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
  *
  * @param <T> the generic type
  */
-public class PrimitiveArrayIterator<T> extends ArrayIterator<T> {
+public class PrimitiveArrayIterator<T> extends MeshIterator<T> {
 	
 	/** The size. */
 	private int size;

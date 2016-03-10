@@ -891,11 +891,11 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	 * @see kovacs.util.data.Data2D#createFits()
 	 */
 	@Override
-	public Fits createFits() throws HeaderCardException, FitsException, IOException {
-		Fits fits = super.createFits();
-		fits.addHDU(getTimeImage().createHDU());
-		fits.addHDU(getRMSImage().createHDU());
-		fits.addHDU(getS2NImage().createHDU());
+	public Fits createFits(Class<? extends Number> dataType) throws HeaderCardException, FitsException, IOException {
+		Fits fits = super.createFits(dataType);
+		fits.addHDU(getTimeImage().createHDU(dataType));
+		fits.addHDU(getRMSImage().createHDU(dataType));
+		fits.addHDU(getS2NImage().createHDU(dataType));
 		return fits;
 	}
 
