@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.data;
+package jnum.data.mesh;
 
 import jnum.Function;
 import jnum.text.Parser;
@@ -32,7 +32,7 @@ import jnum.text.Parser;
  *
  * @param <T> the generic type
  */
-public class GenericArray<T> extends AbstractArray<T> {
+public class ObjectMesh<T> extends Mesh<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 86938797450633242L;
@@ -42,7 +42,7 @@ public class GenericArray<T> extends AbstractArray<T> {
 	 *
 	 * @param type the type
 	 */
-	public GenericArray(Class<T> type) {
+	public ObjectMesh(Class<T> type) {
 		super(type);
 		// TODO Auto-generated constructor stub
 	}
@@ -53,7 +53,7 @@ public class GenericArray<T> extends AbstractArray<T> {
 	 * @param type the type
 	 * @param dimensions the dimensions
 	 */
-	public GenericArray(Class<T> type, int[] dimensions) {
+	public ObjectMesh(Class<T> type, int[] dimensions) {
 		super(type, dimensions);
 		// TODO Auto-generated constructor stub
 	}
@@ -63,7 +63,7 @@ public class GenericArray<T> extends AbstractArray<T> {
 	 *
 	 * @param data the data
 	 */
-	public GenericArray(Object data) {
+	public ObjectMesh(Object data) {
 		super(data);
 		// TODO Auto-generated constructor stub
 	}
@@ -98,20 +98,11 @@ public class GenericArray<T> extends AbstractArray<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.data.AbstractArray#slim()
-	 */
-	@Override
-	public void slim() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
 	 * @see kovacs.data.AbstractArray#subArrayAt(int[])
 	 */
 	@Override
-	public AbstractArray<T> subArrayAt(int[] index) {
-		return new GenericArray<T>(rawSubArrayAt(index));
+	public Mesh<T> subArrayAt(int[] index) {
+		return new ObjectMesh<T>(rawSubArrayAt(index));
 	}
 
 	/* (non-Javadoc)
@@ -123,6 +114,12 @@ public class GenericArray<T> extends AbstractArray<T> {
 		((Parser) value).parse(text);
 		return value;
 	}
+
+    @Override
+    protected Object subarrayDataAt(int[] index) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 	
 }

@@ -22,10 +22,12 @@
  ******************************************************************************/
 
 
-package jnum.data;
+package jnum.data.mesh;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+import jnum.data.DataIterator;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -33,10 +35,10 @@ import java.util.NoSuchElementException;
  *
  * @param <T> the generic type
  */
-public abstract class ArrayIterator<T> implements DataIterator<T> {
+public abstract class MeshIterator<T> implements DataIterator<T> {
 	
 	/** The parent. */
-	ObjectArrayIterator<T> parent;
+	ObjectMeshIterator<T> parent;
 	
 	/** The to index. */
 	int currentIndex, fromIndex, toIndex;
@@ -47,7 +49,7 @@ public abstract class ArrayIterator<T> implements DataIterator<T> {
 	/**
 	 * Instantiates a new array iterator.
 	 */
-	protected ArrayIterator() {}
+	protected MeshIterator() {}
 	
 	/**
 	 * Instantiates a new array iterator.
@@ -55,7 +57,7 @@ public abstract class ArrayIterator<T> implements DataIterator<T> {
 	 * @param from the from
 	 * @param to the to
 	 */
-	public ArrayIterator(int[] from, int[] to) {
+	public MeshIterator(int[] from, int[] to) {
 		fromIndex = from[0];
 		toIndex = to[0];
 		index = Arrays.copyOf(from, from.length);
@@ -66,7 +68,7 @@ public abstract class ArrayIterator<T> implements DataIterator<T> {
 	 *
 	 * @param iterator the new parent
 	 */
-	public void setParent(ObjectArrayIterator<T> iterator) {
+	public void setParent(ObjectMeshIterator<T> iterator) {
 		parent = iterator;
 	}
 	
@@ -75,7 +77,7 @@ public abstract class ArrayIterator<T> implements DataIterator<T> {
 	 *
 	 * @return the parent
 	 */
-	public ObjectArrayIterator<T> getParent() {
+	public ObjectMeshIterator<T> getParent() {
 		return parent;
 	}
 	

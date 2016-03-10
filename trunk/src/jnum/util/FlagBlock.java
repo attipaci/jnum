@@ -30,13 +30,13 @@ import java.io.Serializable;
 /**
  * The Class FlagBlock.
  */
-public class FlagBlock implements Serializable {
+public class FlagBlock<Type extends Number> implements Serializable {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3475889288391954525L;
     
     /** The space. */
-    private FlagSpace space;
+    private FlagSpace<Type> space;
     
     /** The from bit. */
     private int fromBit;
@@ -48,18 +48,18 @@ public class FlagBlock implements Serializable {
     private int nextBit;
     
     /** The mask. */
-    private int mask = 0;
+    private long mask = 0;
     
     /**
      * Instantiates a new flag block.
      *
-     * @param group the group
+     * @param space the group
      * @param fromBit the from bit
      * @param toBit the to bit
      * @throws IndexOutOfBoundsException the index out of bounds exception
      */
-    public FlagBlock(FlagSpace group, int fromBit, int toBit) throws IndexOutOfBoundsException {
-        this.space = group;
+    public FlagBlock(FlagSpace<Type> space, int fromBit, int toBit) throws IndexOutOfBoundsException {
+        this.space = space;
         setBits(fromBit, toBit);
     }
     
@@ -79,7 +79,7 @@ public class FlagBlock implements Serializable {
         if(o == this) return true;
         if(!(o instanceof FlagBlock)) return false;
         if(!super.equals(o)) return false;
-        FlagBlock r = (FlagBlock) o;
+        FlagBlock<?> r = (FlagBlock<?>) o;
         if(r.mask != mask) return false;
         if(r.nextBit != nextBit) return false;
         if(!r.space.equals(space)) return false;
@@ -91,7 +91,7 @@ public class FlagBlock implements Serializable {
      *
      * @return the flag space
      */
-    public final FlagSpace getFlagSpace() { return space; } 
+    public final FlagSpace<?> getFlagSpace() { return space; } 
     
     /**
      * Sets the bits.
@@ -113,8 +113,8 @@ public class FlagBlock implements Serializable {
         this.nextBit = this.fromBit = startBit;
         this.toBit = endBit;
             
-        mask = 0;
-        for(int bit = startBit; bit < endBit; bit++) mask |= 1<<bit;
+        mask = 0L;
+        for(int bit = startBit; bit < endBit; bit++) mask |= 1L<<bit;
         
         return isUnchanged;
     }
@@ -129,11 +129,11 @@ public class FlagBlock implements Serializable {
      * @return the flag object.
      * @throws IndexOutOfBoundsException if no more flags are available inside the block of bits represented by this object.
      */
-    public synchronized Flag next(char letterCode, String name) throws IndexOutOfBoundsException {
+    public synchronized Flag<Type> next(char letterCode, String name) throws IndexOutOfBoundsException {
         if(nextBit >= toBit) throw new IndexOutOfBoundsException("ran out of flag space: " + (toBit - fromBit) + "bits");
-        int value = 1 << (nextBit++);
+        long value = 1L << (nextBit++);
         if(space.contains(value)) return next(letterCode, name);
-        return new Flag(space, value, letterCode, name);
+        return space.createFlag(value, letterCode, name);
     }
     
     /**

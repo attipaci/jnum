@@ -64,7 +64,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -251823028156537784L;
-
+	
 	/** The data. */
 	private double[][] data;
 	
@@ -104,8 +104,10 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	/** The file name. */
 	public String fileName;
 	
+	private Class<? extends Number> dataType;
+	
 	/** The creator. */
-	public String creator = "kovacs.util " + Util.getFullVersion();
+	public String creator = "jnum " + Util.getFullVersion();
 		
 	/**
 	 * Instantiates a new data2 d.
@@ -2286,11 +2288,10 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @throws FitsException the fits exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public Fits createFits() throws HeaderCardException, FitsException, IOException {
+	public Fits createFits(Class<? extends Number> dataType) throws HeaderCardException, FitsException, IOException {
 		FitsFactory.setUseHierarch(true);
 		Fits fits = new Fits();	
-		fits.addHDU(createHDU());
-	
+		fits.addHDU(createHDU(dataType));
 		return fits;
 	}
 
@@ -2326,8 +2327,8 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		// TODO if the image is higher dimensional select first 2D sub-plane...
 		
 		try {
+		    dataType = Float.class;
 			final float[][] fdata = (float[][]) image;
-			
 			new Task<Void>() {
 				@Override
 				protected void process(int i, int j) {
@@ -2340,6 +2341,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		}
 		
 		catch(ClassCastException e) {
+		    dataType = Double.class;
 			final double[][] ddata = (double[][]) image;
 			
 			new Task<Void>() {
@@ -2355,17 +2357,11 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		
 	}
 	
-	/**
-	 * Write.
-	 *
-	 * @throws HeaderCardException the header card exception
-	 * @throws FitsException the fits exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	public void write() throws HeaderCardException, FitsException, IOException {
-		write(fileName);
-	}
 
+	public final void write(String fileName) throws HeaderCardException, FitsException, IOException {
+        write(fileName, dataType == null ? Float.class : dataType);
+    }
+	
 	/**
 	 * Write.
 	 *
@@ -2374,8 +2370,10 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @throws FitsException the fits exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public void write(String name) throws HeaderCardException, FitsException, IOException {
-		FitsExtras.write(createFits(), name);
+	public void write(String name, Class<? extends Number> dataType) throws HeaderCardException, FitsException, IOException {
+		FitsExtras.write(createFits(dataType), name);
+		this.fileName = name;
+		this.dataType = dataType;
 		System.err.println(" Written " + name);
 	}
 	
@@ -2430,6 +2428,10 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		
 		//cursor.add(new HeaderCard("ORIGIN", "Caltech", "California Institute of Technology"));
 	}
+	
+	private final double getStoreValue(final int i, final int j) {
+	    return isUnflagged(i, j) ? getValue(i, j) / unit.value() : Double.NaN;
+	}
 
 	/**
 	 * Creates the hdu.
@@ -2439,21 +2441,29 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @throws FitsException the fits exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public ImageHDU createHDU() throws HeaderCardException, FitsException, IOException {
-		final float[][] fitsImage = new float[sizeY()][sizeX()];
-		final double u = unit.value();
-		
-		new Task<Void>() {
-			@Override
-			protected void process(int i, int j) {
-				if(isUnflagged(i, j)) fitsImage[j][i] = (float) (getValue(i, j) / u);
-				else fitsImage[j][i] = Float.NaN;
-			}
-		}.process();
+	public ImageHDU createHDU(Class<? extends Number> dataType) throws HeaderCardException, FitsException, IOException {
+	    Object fitsImage = null;
+	  	   
+		if(dataType.equals(Float.class)) {
+		    final float[][] fImage = new float[sizeY()][sizeX()];
+		    new Task<Void>() {
+                @Override
+                protected void process(int i, int j) { fImage[j][i] = (float) getStoreValue(i, j); }
+            }.process();
+            fitsImage = fImage;
+		}
+		else if(dataType.equals(Double.class)) {
+		    final double[][] dImage = new double[sizeY()][sizeX()];
+		    new Task<Void>() {
+		        @Override
+		        protected void process(int i, int j) { dImage[j][i] = getStoreValue(i, j); }
+		    }.process();
+		    fitsImage = dImage;
+		}
+		else throw new IllegalArgumentException("Data type must be Float.class or Double.class");
 		
 		ImageHDU hdu = (ImageHDU)Fits.makeHDU(fitsImage);
-		editHeader(hdu);
-		
+		editHeader(hdu);	
 		addHistory(hdu.getHeader());
 		
 		return hdu;

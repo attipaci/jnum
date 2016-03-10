@@ -22,10 +22,12 @@
  ******************************************************************************/
 
 
-package jnum.data;
+package jnum.data.mesh;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+import jnum.data.ArrayUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -33,10 +35,10 @@ import java.util.NoSuchElementException;
  *
  * @param <T> the generic type
  */
-public class ObjectArrayIterator<T> extends ArrayIterator<T> {
+public class ObjectMeshIterator<T> extends MeshIterator<T> {
 	
 	/** The child. */
-	private ArrayIterator<T> child;
+	private MeshIterator<T> child;
 	
 	/** The array. */
 	private Object[] array;
@@ -47,7 +49,7 @@ public class ObjectArrayIterator<T> extends ArrayIterator<T> {
 	 *
 	 * @param data the data
 	 */
-	public ObjectArrayIterator(Object[] data) {
+	public ObjectMeshIterator(Object[] data) {
 		this(data, new int[ArrayUtil.getRank(data)], ArrayUtil.getShape(data));		
 	}
 	
@@ -58,7 +60,7 @@ public class ObjectArrayIterator<T> extends ArrayIterator<T> {
 	 * @param depth the depth
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public ObjectArrayIterator(Object[] data, int depth) throws IllegalArgumentException {
+	public ObjectMeshIterator(Object[] data, int depth) throws IllegalArgumentException {
 		this(data, new int[depth], Arrays.copyOf(ArrayUtil.getShape(data), depth));		
 	}
 	
@@ -71,7 +73,7 @@ public class ObjectArrayIterator<T> extends ArrayIterator<T> {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 * @throws IndexOutOfBoundsException the index out of bounds exception
 	 */
-	public ObjectArrayIterator(Object[] data, int[] from, int[] to) throws IllegalArgumentException, IndexOutOfBoundsException {
+	public ObjectMeshIterator(Object[] data, int[] from, int[] to) throws IllegalArgumentException, IndexOutOfBoundsException {
 		super(from, to);
 		array = data;
 		
@@ -85,7 +87,7 @@ public class ObjectArrayIterator<T> extends ArrayIterator<T> {
 	
 			Object element = array[fromIndex];
 		
-			if(element instanceof Object[]) child = new ObjectArrayIterator<T>((Object[]) element, childFrom, childTo);
+			if(element instanceof Object[]) child = new ObjectMeshIterator<T>((Object[]) element, childFrom, childTo);
 			else child = new PrimitiveArrayIterator<T>(element, childFrom[0], childTo[0]);
 
 			child.setParent(this);	

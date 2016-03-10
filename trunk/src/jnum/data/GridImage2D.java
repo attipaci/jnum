@@ -1291,15 +1291,6 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		return offset;
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#createHDU()
-	 */
-	@Override
-	public ImageHDU createHDU() throws HeaderCardException, FitsException, IOException {
-		ImageHDU hdu = super.createHDU();	
-		return hdu;
-	}
-	
 	
 	/* (non-Javadoc)
 	 * @see kovacs.util.data.Data2D#editHeader(nom.tam.util.Cursor)
