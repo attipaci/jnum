@@ -82,8 +82,8 @@ public class CartesianGrid2D extends Grid2D<Coordinate2D> {
 		
 		CoordinateSystem system = getCoordinateSystem();
 		
-		if(header.containsKey("CTYPE1" + alt)) system.get(0).label = header.getStringValue("CTYPE1" + alt);
-		if(header.containsKey("CTYPE2" + alt)) system.get(1).label = header.getStringValue("CTYPE2" + alt);
+		if(header.containsKey("CTYPE1" + alt)) system.get(0).setShortLabel(header.getStringValue("CTYPE1" + alt));
+		if(header.containsKey("CTYPE2" + alt)) system.get(1).setShortLabel(header.getStringValue("CTYPE2" + alt));
 		
 		if(header.containsKey("CUNIT1" + alt)) xUnit = Unit.get(header.getStringValue("CUNIT1" + alt));
 		if(header.containsKey("CUNIT2" + alt)) yUnit = Unit.get(header.getStringValue("CUNIT2" + alt));
@@ -99,8 +99,8 @@ public class CartesianGrid2D extends Grid2D<Coordinate2D> {
 		CoordinateSystem system = getCoordinateSystem();
 		
 		if(system != null) {
-			cursor.add(new HeaderCard("CTYPE1" + alt, system.get(0).label, "Coordinate name"));
-			cursor.add(new HeaderCard("CTYPE2" + alt, system.get(1).label, "Coordinate name"));
+			cursor.add(new HeaderCard("CTYPE1" + alt, system.get(0).getShortLabel(), "Coordinate name"));
+			cursor.add(new HeaderCard("CTYPE2" + alt, system.get(1).getShortLabel(), "Coordinate name"));
 		}
 		
 		if(xUnit != null) cursor.add(new HeaderCard("CUNIT1" + alt, xUnit.name(), "Unit on x-axis"));

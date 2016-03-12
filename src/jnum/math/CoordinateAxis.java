@@ -43,7 +43,11 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	private static final long serialVersionUID = 7273239690459736139L;
 
 	/** The label. */
-	public String label;
+    private String longLabel;
+	
+	private String shortLabel;
+	
+	private String fancyLabel;
 		
 	/** The format. */
 	public NumberFormat format;
@@ -68,14 +72,20 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 */
 	public CoordinateAxis() { this("unspecified axis"); }
 
+	public CoordinateAxis(String longLabel) {
+	    this(longLabel, null, null);
+	}
+	
 	/**
 	 * Instantiates a new coordinate axis.
 	 *
 	 * @param text the text
 	 */
-	public CoordinateAxis(String text) { 
+	public CoordinateAxis(String longLabel, String shortLabel, String fancyLabel) { 
 		defaults();
-		setLabel(text); 
+		setShortLabel(shortLabel);
+		setFancyLabel(fancyLabel); 
+		setLongLabel(longLabel); 
 	}
 	
 	/* (non-Javadoc)
@@ -101,14 +111,22 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 *
 	 * @param text the new label
 	 */
-	public void setLabel(String text) { label = text; }
+	public void setLongLabel(String text) { longLabel = text; }
+	
+	public void setShortLabel(String text) { shortLabel = text; }
 
+	public void setFancyLabel(String text) { fancyLabel = text; }
+	
 	/**
 	 * Gets the label.
 	 *
 	 * @return the label
 	 */
-	public String getLabel() { return label; }
+	public String getLongLabel() { return longLabel; }
+	
+	public String getShortLabel() { return shortLabel == null ? getLongLabel() : shortLabel; }
+	
+	public String getFancyLabel() { return fancyLabel == null ? getLongLabel() : fancyLabel; }
 
 	/**
 	 * Sets the format.
@@ -174,7 +192,7 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 * @throws HeaderCardException the header card exception
 	 */
 	public void editHeader(Cursor<String, HeaderCard> cursor, String id) throws HeaderCardException {
-		if(label != null) cursor.add(new HeaderCard("CNAME" + id, label, "Coordinate axis name."));
+		if(shortLabel != null) cursor.add(new HeaderCard("CNAME" + id, shortLabel, "Coordinate axis name."));
 	}
 	
 	// TODO
@@ -187,7 +205,7 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 * @param id the id
 	 */
 	public void parse(Header header, String id) {
-		if(header.containsKey("CNAME" + id)) label = header.getStringValue("CNAME" + id);
+		if(header.containsKey("CNAME" + id)) shortLabel = header.getStringValue("CNAME" + id);
 	}
 	
 }

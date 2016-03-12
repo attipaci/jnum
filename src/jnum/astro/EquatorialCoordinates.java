@@ -71,17 +71,17 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 		defaultCoordinateSystem = new CoordinateSystem("Equatorial Coordinates");
 		defaultLocalCoordinateSystem = new CoordinateSystem("Equatorial Offsets");
 		
-		rightAscentionAxis = new CoordinateAxis("Right Ascention");
+		rightAscentionAxis = new CoordinateAxis("Right Ascension", "RA", GreekLetter.alpha + "");
 		rightAscentionAxis.setReverse(true);
 		rightAscentionAxis.setFormat(hf);
 
-		declinationAxis = new CoordinateAxis("Declination");
+		declinationAxis = new CoordinateAxis("Declination", "DEC", GreekLetter.delta + "");
 		declinationAxis.setFormat(af);
 
-		rightAscentionOffsetAxis = new CoordinateAxis(GreekLetter.Delta + "RA");
+		rightAscentionOffsetAxis = new CoordinateAxis("Right Ascension Offset", "dRA", GreekLetter.Delta + " " + GreekLetter.alpha);
 		rightAscentionOffsetAxis.setReverse(true);
 	
-		declinationOffsetAxis = new CoordinateAxis(GreekLetter.Delta + "DEC");
+		declinationOffsetAxis = new CoordinateAxis("Declination Offset", "dDEC", GreekLetter.Delta + " " + GreekLetter.delta);
 		
 		defaultCoordinateSystem.add(rightAscentionAxis);
 		defaultCoordinateSystem.add(declinationAxis);

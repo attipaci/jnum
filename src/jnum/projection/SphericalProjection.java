@@ -371,8 +371,8 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		SphericalCoordinates reference = getReference();
 		CoordinateSystem axes = getReference().getCoordinateSystem();
 			
-		cursor.add(new HeaderCard("CTYPE1" + alt, reference.getFITSLongitudeStem() + "-" + getFitsID(), axes.get(0).label + " in " + getFullName() + " projection."));
-		cursor.add(new HeaderCard("CTYPE2" + alt, reference.getFITSLatitudeStem() + "-" + getFitsID(), axes.get(0).label + " in " + getFullName() + " projection."));
+		cursor.add(new HeaderCard("CTYPE1" + alt, reference.getFITSLongitudeStem() + "-" + getFitsID(), axes.get(0).getShortLabel() + " in " + getFullName() + " projection."));
+		cursor.add(new HeaderCard("CTYPE2" + alt, reference.getFITSLatitudeStem() + "-" + getFitsID(), axes.get(1).getShortLabel() + " in " + getFullName() + " projection."));
 		
 		if(userPole) {
 			cursor.add(new HeaderCard("LONPOLE" + alt, nativePole.x() / Unit.deg, "The longitude (deg) of the native pole."));

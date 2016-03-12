@@ -32,8 +32,10 @@ import jnum.Constant;
 import jnum.SafeMath;
 import jnum.Unit;
 import jnum.Util;
+import jnum.astro.*;
 import jnum.projection.SphericalProjection;
 import jnum.text.AngleFormat;
+import jnum.text.GreekLetter;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -64,14 +66,14 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		defaultCoordinateSystem = new CoordinateSystem("Spherical Coordinates");
 		defaultLocalCoordinateSystem = new CoordinateSystem("Spherical Offsets");
 		
-		CoordinateAxis longitudeAxis = new CoordinateAxis("Latitude");
+		CoordinateAxis longitudeAxis = new CoordinateAxis("Latitude", "LAT", GreekLetter.phi + "");
 		longitudeAxis.setFormat(af);
 	
-		CoordinateAxis latitudeAxis = new CoordinateAxis("Longitude");
+		CoordinateAxis latitudeAxis = new CoordinateAxis("Longitude", "LON", GreekLetter.theta + "");
 		latitudeAxis.setFormat(af);
 		
-		CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("dLon");
-		CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("dLat");
+		CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("Longitude Offset", "dLON", GreekLetter.Delta + " " + GreekLetter.phi + "");
+		CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("Latitude Offset", "dLAT", GreekLetter.delta + " " + GreekLetter.theta + "");
 		
 		defaultCoordinateSystem.add(longitudeAxis);
 		defaultCoordinateSystem.add(latitudeAxis);
@@ -582,24 +584,28 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	public static Class<? extends SphericalCoordinates> getFITSClass(String spec) {
 		spec = spec.toUpperCase();
 		
-		if(spec.startsWith("RA")) return jnum.astro.EquatorialCoordinates.class;
-		else if(spec.startsWith("DEC")) return jnum.astro.EquatorialCoordinates.class;
+		if(spec.startsWith("RA")) return EquatorialCoordinates.class;
+		else if(spec.startsWith("DEC")) return EquatorialCoordinates.class;
 		else if(spec.substring(1).startsWith("LON")) {
 			switch(spec.charAt(0)) {
-			case 'G' : return jnum.astro.GalacticCoordinates.class;
-			case 'E' : return jnum.astro.EclipticCoordinates.class;
-			case 'S' : return jnum.astro.SuperGalacticCoordinates.class;
-			case 'A' : return jnum.astro.HorizontalCoordinates.class;
-			case 'F' : return jnum.astro.FocalPlaneCoordinates.class;
+			case 'G' : return GalacticCoordinates.class;
+			case 'E' : return EclipticCoordinates.class;
+			case 'S' : return SuperGalacticCoordinates.class;
+			case 'A' : return HorizontalCoordinates.class;
+			case 'F' : return FocalPlaneCoordinates.class;
+			case 'T' : return TelescopeCoordinates.class;
+			default : return SphericalCoordinates.class;
 			}
 		}
 		else if(spec.substring(1).startsWith("LAT")) {
 			switch(spec.charAt(0)) {
-			case 'G' : return jnum.astro.GalacticCoordinates.class;
-			case 'E' : return jnum.astro.EclipticCoordinates.class;
-			case 'S' : return jnum.astro.SuperGalacticCoordinates.class;
-			case 'A' : return jnum.astro.HorizontalCoordinates.class;
-			case 'F' : return jnum.astro.FocalPlaneCoordinates.class;
+			case 'G' : return GalacticCoordinates.class;
+			case 'E' : return EclipticCoordinates.class;
+			case 'S' : return SuperGalacticCoordinates.class;
+			case 'A' : return HorizontalCoordinates.class;
+			case 'F' : return FocalPlaneCoordinates.class;
+			case 'T' : return TelescopeCoordinates.class;
+			default: return SphericalCoordinates.class;
 			}
 		}
 		throw new IllegalArgumentException("Unknown Coordinate Definition " + spec);
