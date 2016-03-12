@@ -49,10 +49,10 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
 		defaultCoordinateSystem = new CoordinateSystem("Focal Plane Coordinates");
 		defaultLocalCoordinateSystem = new CoordinateSystem("Focal Plane Offsets");
 
-		xAxis = new CoordinateAxis("X");
-		yAxis = new CoordinateAxis("Y");
-		xOffsetAxis = new CoordinateAxis(GreekLetter.delta + "X");
-		yOffsetAxis = new CoordinateAxis(GreekLetter.delta + "Y");
+		xAxis = new CoordinateAxis("Focal-plane X", "X", "X");
+		yAxis = new CoordinateAxis("Focal-plane Y", "Y", "Y");
+		xOffsetAxis = new CoordinateAxis("Focal-plane dX", "dX", GreekLetter.Delta + "X");
+		yOffsetAxis = new CoordinateAxis("Focal-plane dY", "dY", GreekLetter.Delta + "Y");
 		
 		defaultCoordinateSystem.add(xAxis);
 		defaultCoordinateSystem.add(yAxis);

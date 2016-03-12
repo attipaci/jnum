@@ -48,12 +48,12 @@ public class GalacticCoordinates extends CelestialCoordinates {
 		defaultCoordinateSystem = new CoordinateSystem("Galactic Coordinates");
 		defaultLocalCoordinateSystem = new CoordinateSystem("Galactic Offsets");
 		
-		longitudeAxis = new CoordinateAxis("Galactic Longitude");
+		longitudeAxis = new CoordinateAxis("Galactic Longitude", "GLON", "l");
 		longitudeAxis.setReverse(true);
-		latitudeAxis = new CoordinateAxis("Galactic Latitude");
-		longitudeOffsetAxis = new CoordinateAxis(GreekLetter.Delta + "GLON");
+		latitudeAxis = new CoordinateAxis("Galactic Latitude", "GLAT", "b");
+		longitudeOffsetAxis = new CoordinateAxis("Galactic Longitude Offset", "dGLON", GreekLetter.Delta + "l");
 		longitudeOffsetAxis.setReverse(true);
-		latitudeOffsetAxis = new CoordinateAxis(GreekLetter.Delta + "GLAT");
+		latitudeOffsetAxis = new CoordinateAxis("Galactic Latitude Offset", "dGLAT", GreekLetter.Delta + "b");
 		
 		defaultCoordinateSystem.add(longitudeAxis);
 		defaultCoordinateSystem.add(latitudeAxis);

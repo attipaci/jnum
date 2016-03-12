@@ -61,12 +61,12 @@ public class EclipticCoordinates extends CelestialCoordinates implements Precess
 		defaultCoordinateSystem = new CoordinateSystem("Ecliptic Coordinates");
 		defaultLocalCoordinateSystem = new CoordinateSystem("Ecliptic Offsets");
 		
-		longitudeAxis = new CoordinateAxis(GreekLetter.lambda + "");
+		longitudeAxis = new CoordinateAxis("Ecliptic Longitude", "ELON", GreekLetter.lambda + "");
 		longitudeAxis.setReverse(true);
-		latitudeAxis = new CoordinateAxis(GreekLetter.beta + "");
-		longitudeOffsetAxis = new CoordinateAxis(GreekLetter.delta + "ELON");
+		latitudeAxis = new CoordinateAxis("Ecliptic Latitude", "ELAT", GreekLetter.beta + "");
+		longitudeOffsetAxis = new CoordinateAxis("Ecliptic Longitude Offset", "dELON", GreekLetter.Delta + GreekLetter.lambda + "");
 		longitudeOffsetAxis.setReverse(true);
-		latitudeOffsetAxis = new CoordinateAxis(GreekLetter.delta + "ELAT");
+		latitudeOffsetAxis = new CoordinateAxis("Ecliptic Latitude Offset", "dELAT", GreekLetter.delta + GreekLetter.beta + "");
 		
 		defaultCoordinateSystem.add(longitudeAxis);
 		defaultCoordinateSystem.add(latitudeAxis);

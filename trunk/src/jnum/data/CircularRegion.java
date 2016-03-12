@@ -437,7 +437,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 			CoordinateAxis x = axes.get(0);
 			CoordinateAxis y = axes.get(1);
 		
-			return x.label + " = " + x.format(offset.x()) + "\t" + y.label + " = " + y.format(offset.y());
+			return x.getShortLabel() + " = " + x.format(offset.x()) + "\t" + y.getShortLabel() + " = " + y.format(offset.y());
 		}
 		else return "dx = " + offset.x() + "\tdy = " + offset.y();
 	}

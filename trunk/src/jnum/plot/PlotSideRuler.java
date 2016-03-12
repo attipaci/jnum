@@ -92,13 +92,13 @@ public class PlotSideRuler extends FancyRuler {
 			Unit u = content.getXUnit();
 			if(u != null) setUnit(u);
 			setRange(bounds.getMinX(), bounds.getMaxX());
-			if(content.coordinateSystem != null) setName(content.coordinateSystem.get(0).label);
+			if(content.coordinateSystem != null) setName(content.coordinateSystem.get(0).getFancyLabel());
 		}
 		else if(isVertical()) {
 			Unit u = content.getYUnit();
 			if(u != null) setUnit(u);
 			setRange(bounds.getMinY(), bounds.getMaxY());		
-			if(content.coordinateSystem != null) setName(content.coordinateSystem.get(1).label);
+			if(content.coordinateSystem != null) setName(content.coordinateSystem.get(1).getFancyLabel());
 		}
 		
 		super.validate();
