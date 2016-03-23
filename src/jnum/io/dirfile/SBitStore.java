@@ -105,7 +105,7 @@ public class SBitStore extends DataStore<Long> {
 	 */
 	@Override
 	public Long get(long n) throws IOException {
-		long value = container.get(n).longValue() >> shift;
+		long value = container.get(n).longValue() >>> shift;
 		return (value & mask) - (value & cmask);
 	}
 

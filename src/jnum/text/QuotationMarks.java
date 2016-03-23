@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,31 +21,30 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.parallel;
+package jnum.text;
 
-import jnum.Parallel;
-import jnum.data.WeightedPoint;
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class Averaging.
- *
- * @param <ReturnType> the generic type
- */
-public class Averaging<ReturnType extends WeightedPoint> extends ParallelReduction<ReturnType> {
-
-	/* (non-Javadoc)
-	 * @see jnum.parallel.ParallelReduction#getResult()
-	 */
-	@Override
-	public ReturnType getResult() {
-		ReturnType result = null;
-		for(Parallel<ReturnType> task : getParallel().getWorkers()) {
-			ReturnType local = task.getLocalResult();
-			if(result == null) result = local;
-			else result.average(local);
-		}
-		return result;
-	}
-	
+public final class QuotationMarks {
+    
+    public final static char lowerQuote = '\u0084';
+    
+    public final static char singleQuote = '\u2019';
+    
+    public final static char doubleQuote = '\u201d';
+    
+    public final static char invertedSingleQuote = '\u0091';
+    
+    public final static char invertedDoubleQuote = '\u0093';   
+   
+    public final static char doubleAngleQuoteBegin = '\u00ab';
+    
+    public final static char doubleAngleQuoteEnd = '\u00bb';
+    
+    public final static char singleAngleQuoteBegin = '\u2039';
+    
+    public final static char singleAngleQuoteEnd = '\u203a';
+    
+    public final static char lowerSingleQuote = '\u201a';
+    
+    public final static char lowerDoubleQuote = '\u201e';
+    
 }

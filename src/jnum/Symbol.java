@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,6 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
 package jnum;
 
@@ -30,20 +29,6 @@ package jnum;
  */
 public final class Symbol {
 
-	
-	// Physical
-	/** The Constant degree. */
-	public final static char degree = '\u00b0';
-	
-	/** The Constant hbar. */
-	public final static char hbar = '\u0127';
-	
-	/** The Constant mu. */
-	public final static char mu = '\u00b5';
-	
-	/** The Constant Acircle. */
-	public final static char Acircle = '\u00c5';
-	
 	// Numbers
 	/** The Constant permil. */
 	public final static char permil = '\u0089';
@@ -57,31 +42,7 @@ public final class Symbol {
     /** The Constant third. */
     public final static char third  ='\u00be';
 	
-	// Operators
-	/** The Constant plusminus. */
-	public final static char plusminus = '\u00b1';
     
-    /** The Constant upperminus. */
-    public final static char upperminus = '\u00af';
-    
-    /** The Constant square. */
-    public final static char square = '\u00b2';
-    
-    /** The Constant cube. */
-    public final static char cube = '\u00b3';
-    
-    /** The Constant dot. */
-    public final static char dot = '\u00b7';
-	
-	/** The Constant bigdot. */
-	public final static char bigdot = '\u0095';
-	
-	/** The Constant doubledot. */
-	public final static char doubledot = '\u00a8';
-	
-	/** The Constant cross. */
-	public final static char cross = '\u00d7';
-	
 	// Business
 	/** The Constant trademark. */
 	public final static char trademark = '\u0099';
@@ -105,19 +66,16 @@ public final class Symbol {
     /** The Constant yen. */
     public final static char yen = '\u00a5';
     
+    
     // typographical
-    /** The Constant underquote. */
-    public final static char underquote = '\u0084';
+    /** The Constant paragraph. */
+    public final static char paragraph = '\u00a7';
+    
+ 
     
     /** The Constant ellipses. */
     public final static char ellipses = '\u0085';
-    
-    /** The Constant invertedSingleQuote. */
-    public final static char invertedSingleQuote = '\u0091';
-    
-    /** The Constant invertedQuote. */
-    public final static char invertedQuote = '\u0093';   
-    
+     
     /** The Constant scriptf. */
     public final static char scriptf = '\u0083';    
     
@@ -133,21 +91,142 @@ public final class Symbol {
     /** The Constant ce. */
     public final static char ce = '\u009c';
     
-    /** The Constant invertedExclamation. */
-    public final static char invertedExclamation = '\u00a1';
-    
-    /** The Constant paragraph. */
-    public final static char paragraph = '\u00a7';
-    
-    /** The Constant invertedQuestionMark. */
-    public final static char invertedQuestionMark = '\u00bf';
-    
     /** The Constant AE. */
     public final static char AE = '\u00c6';
     
     /** The Constant ae. */
     public final static char ae = '\u00e6';
     
+    /** The Constant invertedExclamation. */
+    public final static char invertedExclamation = '\u00a1';
+    
+    /** The Constant invertedQuestionMark. */
+    public final static char invertedQuestionMark = '\u00bf';
+    
+    
+     
+    
+    // Math
+    
+    public final static char squareRoot = '\u221a';
+    
+    public final static char cubicRoot = '\u221b';
+    
+    public final static char fourthRoot = '\u221c';
+  
+    
+    /** The Constant plusminus. */
+    public final static char plusminus = '\u00b1';
+    
+    public final static char minusplus = '\u2213';
+    
+    /** The Constant upperminus. */
+    public final static char upperminus = '\u00af';
+    
+    /** The Constant square. */
+    public final static char square = '\u00b2';
+    
+    /** The Constant cube. */
+    public final static char cube = '\u00b3';
+    
+    /** The Constant dot. */
+    public final static char dot = '\u00b7';
+    
+    /** The Constant bigdot. */
+    public final static char bigdot = '\u0095';
+    
+    /** The Constant doubledot. */
+    public final static char doubledot = '\u00a8';
+    
+    /** The Constant cross. */
+    public final static char cross = '\u00d7';
+    
+    public final static char times = '\u00d7';
+    
+    public final static char infinity = '\u221e';
+    
+    public final static char circlePlus = '\u2295';
+    
+    public final static char circleMinus = '\u2296';
+    
+    public final static char circleTimes = '\u2297';
+    
+    public final static char circleDivide = '\u2298';
+    
+    public final static char circleDot = '\u2299';
+    
+    public final static char starOperator = '\u22c6';
+ 
+    public final static char partial = '\u2202';
+    
+    public final static char nabla = '\u2207';
+    
+    public final static char integral = '\u222b';
+    
+    public final static char doubleIntegral = '\u222c';
+    
+    public final static char tripleIntegral = '\u222d';
+    
+    public final static char crossProduct = '\u2a2f';
+    
+    public final static char prime = '\u2032';
+    
+    public final static char doublePrime = '\u2033';
+    
+    public final static char triplePrime = '\u2034';
+    
+    public final static char summation = '\u2211';
+    
+    public final static char product = '\u220f';
+    
+    public final static char notEqual = '\u2260';
+    
+    public final static char proportionalTo = '\u221d';
+    
+    public final static char approximately = '\u2248';
+    
+    
+    // Physics
+    /** The Constant degree. */
+    public final static char degree = '\u00b0';
+    
+    public final static char celsius = '\u2103';
+    
+    public final static char farenheit = '\u2109';
+    
+    /** The Constant hbar. */
+    public final static char hbar = '\u0127';
+    
+    /** The Constant mu. */
+    public final static char mu = '\u00b5';
+    
+    /** The Constant Acircle. */
+    public final static char Acircle = '\u00c5';
+    
+   
+           
+    
+    
+    // Astronomy
+    public final static char Sun = '\u2609';
+    
+    public final static char Mercury = '\u263f';
+    
+    public final static char Venus = '\u2640';
+    
+    public final static char Earth = '\u2641';
+    
+    public final static char Mars = '\u2642';
+    
+    public final static char Jupiter = '\u2643';
+    
+    public final static char Saturn = '\u2644';
+    
+    public final static char Uranus = '\u2645';
+    
+    public final static char Neptune = '\u2646';
+    
+    public final static char Pluto = '\u2647';
     
     
 }

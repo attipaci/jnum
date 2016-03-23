@@ -187,7 +187,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
      * @param value the value
      * @return the flag
      */
-    public final Flag<Type> get(long value) {
+    public final Flag<Type> get(Type value) {
         return values.get(value);
     }
     
@@ -275,12 +275,15 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
         StringBuffer buf = new StringBuffer();
         
         for(int bit = 0; bit<getBits(); bit++) {
-            long value = 1L<<bit;
-            if((flag & value) != 0) buf.append(values.containsKey(value) ? values.get(value).letterCode() : unknownFlag.letterCode());
+            long lValue = 1L<<bit;
+            Type value = getValue(lValue);
+            if((flag & lValue) != 0) buf.append(values.containsKey(value) ? values.get(value).letterCode() : unknownFlag.letterCode());
         }
         
         return buf.length() > 0 ? new String(buf) : "-";
     }
+    
+    public abstract Type getValue(long lValue);
     
     /**
      * Gets the values.
@@ -354,7 +357,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
     protected void editHeader(String id, Header header) throws HeaderCardException {
         id = id.toUpperCase();
         for(int bit = 0; bit < getBits(); bit++) {
-            int value = 1<<bit;
+            Type value = getValue(1L<<bit);
             if(values.containsKey(value)) header.addValue(id + "FLAG" + bit, values.get(value).name(), name + " bit " + bit);
         }
     }
@@ -430,6 +433,11 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
         public final int getBits() {
             return 8;
         }
+
+        @Override
+        public java.lang.Byte getValue(long lValue) {
+            return (byte) (lValue & getMask());
+        }
         
     }
     
@@ -492,6 +500,11 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
         public final int getBits() {
             return 16;
         }
+
+        @Override
+        public java.lang.Short getValue(long lValue) {
+            return (short) (lValue & getMask());
+        }
         
     }
     
@@ -552,6 +565,11 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
         @Override
         public int getBits() {
             return 32;
+        }
+
+        @Override
+        public java.lang.Integer getValue(long lValue) {
+            return (int) (lValue & getMask());
         }
         
     }
@@ -614,6 +632,11 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
         @Override
         public int getBits() {
             return 64;
+        }
+
+        @Override
+        public java.lang.Long getValue(long lValue) {
+            return lValue;
         }
         
     }

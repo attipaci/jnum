@@ -51,8 +51,8 @@ public class TelescopeCoordinates extends SphericalCoordinates {
 
         crossElevationAxis = new CoordinateAxis("Telescope Cross-elevation", "XEL", "XEL");
         elevationAxis = new CoordinateAxis("Telescope Elevation", "EL", "EL");
-        xelOffsetAxis = new CoordinateAxis("Telescioe Cross-elevation Offset", "dXEL", GreekLetter.delta + "XEL");
-        elevationOffsetAxis = new CoordinateAxis("Telescope Elevation Offset", "dEL", GreekLetter.delta + "EL");
+        xelOffsetAxis = new CoordinateAxis("Telescioe Cross-elevation Offset", "dXEL", GreekLetter.Delta + " XEL");
+        elevationOffsetAxis = new CoordinateAxis("Telescope Elevation Offset", "dEL", GreekLetter.Delta + " EL");
         
         defaultCoordinateSystem.add(crossElevationAxis);
         defaultCoordinateSystem.add(elevationAxis);

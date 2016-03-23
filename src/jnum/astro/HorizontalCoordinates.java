@@ -56,8 +56,8 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 
 		azimuthAxis = new CoordinateAxis("Azimuth", "AZ", "Az");
 		elevationAxis = new CoordinateAxis("Elevation", "EL", "El");
-		azimuthOffsetAxis = new CoordinateAxis("Azimuth Offset", "dAZ", GreekLetter.Delta + "AZ");
-		elevationOffsetAxis = new CoordinateAxis("Elevation Offset", "dEL", GreekLetter.delta + "EL");
+		azimuthOffsetAxis = new CoordinateAxis("Azimuth Offset", "dAZ", GreekLetter.Delta + " AZ");
+		elevationOffsetAxis = new CoordinateAxis("Elevation Offset", "dEL", GreekLetter.Delta + " EL");
 		
 		defaultCoordinateSystem.add(azimuthAxis);
 		defaultCoordinateSystem.add(elevationAxis);

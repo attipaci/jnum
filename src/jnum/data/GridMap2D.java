@@ -672,7 +672,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 				}
 			}
 			@Override
-			public WeightedPoint getPartialResult() { return new WeightedPoint(sumw, n); }
+			public WeightedPoint getLocalResult() { return new WeightedPoint(sumw, n); }
 		};
 			
 		avew.process();		
@@ -739,7 +739,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 				}
 			}
 			@Override
-			public WeightedPoint getPartialResult() { return new WeightedPoint(sum, sumw); }
+			public WeightedPoint getLocalResult() { return new WeightedPoint(sum, sumw); }
 		};
 		
 		meanIntTime.process();
@@ -829,7 +829,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 				}
 			}
 			@Override
-			public WeightedPoint getPartialResult() { return new WeightedPoint(chi2, n); }
+			public WeightedPoint getLocalResult() { return new WeightedPoint(chi2, n); }
 		};
 		
 		rChi2.process();

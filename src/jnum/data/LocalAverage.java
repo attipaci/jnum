@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,6 +23,8 @@
 package jnum.data;
 
 import java.util.ArrayList;
+
+import jnum.ExtraMath;
 
 
 // TODO: Auto-generated Javadoc
@@ -48,19 +50,17 @@ public abstract class LocalAverage<DataType extends LocalizedData> extends Array
 	 */
 	public int indexBefore(Locality loc) throws ArrayIndexOutOfBoundsException {
 		int i = 0;
-		int step = size() >> 1;
+		int step = ExtraMath.pow2ceil(size()) >>> 1;
 
-		
 		if(get(0).compareTo(loc) > 0) 
 			throw new ArrayIndexOutOfBoundsException("Specified point precedes lookup range.");
 		
 		if(get(size() - 1).compareTo(loc) < 0) 
 			throw new ArrayIndexOutOfBoundsException("Specified point is beyond lookup range.");
 		
-		
 		while(step > 0) {
-			if(get(i + step).compareTo(loc) < 0) i += step;
-			step >>= 1;
+		    if(i + step < size()) if(get(i + step).compareTo(loc) < 0) i += step;
+			step >>>= 1;
 		}
 		
 		return i;
@@ -118,24 +118,24 @@ public abstract class LocalAverage<DataType extends LocalizedData> extends Array
 	 */
 	public DataType getLocalAverage(Locality loc, Object env, DataType consistencyReference) throws ArrayIndexOutOfBoundsException {
 		int i0 = indexBefore(loc);
-	
+		
 		DataType mean = getLocalizedDataInstance();
 		mean.setLocality(loc);
 		mean.measurements = 0;
 			
 		for(int i = i0; i >= 0; i--) {
-			if(get(i).sortingDistanceTo(loc) > span) break;		
-			DataType point = get(i);
+		    DataType point = get(i);
+		    if(point.sortingDistanceTo(loc) > span) break;		
 			if(consistencyReference != null) if(!point.isConsistentWith(consistencyReference)) continue;
 			
 			mean.average(point, env, getRelativeWeight(point.distanceTo(loc)));
 		}
 	
 		for(int i = i0+1; i < size(); i++) {
-			if(get(i).sortingDistanceTo(loc) > span) break;
-			DataType point = get(i);
+		    DataType point = get(i);
+		    if(point.sortingDistanceTo(loc) > span) break;
 			if(consistencyReference != null) if(point.isConsistentWith(consistencyReference)) continue;
-			
+
 			mean.average(point, env, getRelativeWeight(point.distanceTo(loc)));
 		}
 			
