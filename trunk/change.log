@@ -1,0 +1,546 @@
+0.09-1
+
+
+	[NEW] Parser for enclosed expressions (EnclosureParser). E.g. 
+	for expressions enclosed in brackets (BracketParser) or in quotes
+	(QuoteParser).
+
+	[NEW] Additional classes Brackets, QuotationMarks, Subscript and
+	SuperScript for looking up common unicode symbols.
+
+	[NEW] Offset2D to represent an offset from a particular 2D coordinate.
+	The subclass Projected2D can be used to bundle offsets with the 
+	particular projection as well.
+
+	[NEW] TelescopeCoordinates for representing native telescope 
+	coordinates in cross-elevation and elevation. (Uses FITS WCS naming
+	TLON/TLAT).
+
+	[NEW] Improved flag management.
+
+	[NEW] Introducing the ability to lock, unlock and relock configuration 
+	settings, e.g. to prevent changes to these later (e.g. by 
+	conditionals). 
+
+	[NEW] Improved polling of settings via the '-poll' command. Apart from
+        listing current settings for all keys that start with the specified
+        pattern (as it used to), it now also list any matching settings that
+        were blacklisted (as bracketed). And, it also lists any conditions
+        that might change a matching settings conditionally.
+
+	[FIX] LocalAverage indexBefore() lookup could be off by a little
+	since the step size was not forced to be a power of 2. Fixed.
+
+	[FIX] SphericalProjection FITS header comment was identical for both
+	axes. Fixed.
+
+	[FITS] The nom.tam.fits package updated to the official 1.14.2
+	release.
+
+	[CODE] {CoordinateAxis} Improved labelling by allowing long, short and
+	fancy labels. For example the equatorial RA direction might have a long
+	descriptive label, such as "Right Ascension", a short text label "RA"
+	and a fancy (non-ASCII) label with the unicode greek letter alpha.
+
+	[CODE] {Symbol} Added a bunch of unicode characters to Symbol 
+	(especially common math and physics related ones).
+
+	[CODE] Plugges some potential resource leaks.
+
+	[CODE] Changed how blacklisted settings are handled by the 
+	Configurator. The new approach is cleaner, and faster, and is a step
+	towards allowing locking settings in their state also. More changes 
+	will follow...
+
+	[CODE] Many classes now implement Serializable, and also override
+	hashCode() and equals() more consisitently.
+
+	[CODE] nom.tam.fits libraries upgraded to ver. 1.13.1.
+
+
+0.08-1
+
+	[NEW] {Data2D} Parse and write back existing history entries.
+
+	[NEW] Additional merging and flagging convenience methods added to
+	Data2D (and derivatives).
+
+	[NEW] Static createArray(size) methods added to WeightedPoint, 
+	DataPoint, Vector2D, Complex -- aiding the array creation of these.
+
+	[FIX] parsing of coordinate pair produced error if only a single 
+	character followed the comma separator.
+
+	[FIX] Empty ranges returned -Infinity spans. Fixed.
+
+	[TWEAK] Data2D use of executor still uses the requested number of
+	parallel threads only.
+
+	[TWEAK] editHeader(Cursor) -> editHeader(Header, Cursor) allowing more
+	access to existing keys.
+
+	[TWEAK] Parallel to optionally process through ExecutorService.
+
+	[TWEAK] 'Doppler' colorscheme slightly altered to dim on both ends.
+	This makes for a visually more pleasant range...
+
+
+0.07-1 (16 June 2015)
+	
+
+	[BUG] Aperture flux uncertainties in prior release were garabage.
+	Fixed. 
+
+	[BUG] {AstroTime} FITS timestamping time part malformed in previous
+	release. Fixed. 
+
+	[FIX] {Configurator} Condition value checking [key?value] made case 
+	insensitive (i.e. the match to 'value' is case independent).
+
+	[TWEAK] {GridMap} Smarter reading of FITS images into weighted maps.
+	If it has multiple HDUs, the noise and coverage information is 
+	collected from any HDUs with meaningful labels (EXTNAME header key).
+	If the FITS does not contain additional HDUs, or none that are suitable
+	for determining weight or coverage (even in a rudimentary way), then
+	uniform weights are assumed.
+
+	[TWEAK] {ExponentUnit} Negative exponents bracketed by '(' and ')',
+	following the FITS standard, rather than '{' and '}' before.
+
+	[TWEAK] {Unit} Added some more unit names to lookup for acceptable
+	FITS aliases. E.g., see: 
+	  https://astropy.readthedocs.org/en/v0.1/wcs/units.html
+
+	[CODE] {MultiFFT} Use ExtraMath.roundupRation where possible.
+
+
+0.06-1 (31 March 2015)
+
+
+	[NEW] Added units for speed [kmh], [mph], and knots [kn, kt, kts], 
+	and nautical mile [nmi, NM, M].
+
+	[NEW] SafeMath class for asin(), acos() and sqrt() to return normal
+	values when rounding errors could push the argument outside of the
+	strict domain. The tolerated level of rounding error should accomodate
+	a good deal of float-precision calculations (on the order of a few 
+	thousand compounded rounding errors).
+	
+	[NEW] {FitsExtras} Ability to parse units from comment or header values 
+	whose unit appears in the comment. The comment is parsed for the 
+	unit specification according to the following priorities:
+
+		1. the value inside the first square brackets, e.g. '[arcsec]'
+		2. the value inside the first brackets, e.g. '(arcsec)'
+		3. the first word of the comment. E.g. "arcsec blah-blah..."
+
+	[NEW] {GridImage} Updated to use proper Gaussian beams (see more 
+	below).
+	
+	[NEW] {GridImage} keeps track of the underlying FWHM (such as an 
+	instrument beam).
+
+	[NEW] GaussianPSF class for handling elongated Gaussian beams, in 
+	general.
+
+	[FIX] {Grid2D} parsing of reverted coordinate axes did not invert
+	sign of transformation terms as expected. (Grid2D is defined on native
+	coordinates, whereas FITS headers are written in apparent coordinates). 
+
+	[FIX] Many fixes to AstroTime: more precise GMST and LMST calculations.
+	Improved FITS timestamping of integer MJD dates. Timestamping always
+	based on UTC otherwise.
+	
+	[FIX] {SphericalGrid} non-default constructor did not properly 
+	initialize before.
+
+	[TWEAK] {CoordinateAxis} wcsName removed. Its function is overtaken
+	by SphericalCoordinates.getFITSLongitudeStem() and 
+	getFITSLatitudeStem().
+
+	[TWEAK] {Grid2D} Removed hard units (degrees). Non-default Units are 
+	properly parsed from, and written to, the FITS headers.
+
+	[TWEAK] {CoordinateAxis} Handling of CNAMEia standard FITS keys that
+	contain the preferred coordinate labels.
+
+	[TWEAK] {FITS} Some header keys in output images are deprecated (but
+	still written for now for backward compatibility), in favor of new
+	keywords based on the standard beam definitions based on BMAJ, BMIN, 
+	and BPA. Thus:
+
+		SMOOTH (arcsec) --> SBMAJ, SBMIN, SBPA (radians)
+		EXTFILTR (arcsec) --> XBMAJ, XBMIN, XBPA (radians)
+		CORRECTN (arcsec) --> CBMAJ, CBMIN, CBPA (radians)
+	
+	Also introducing IBMAJ, IBMIN, and IBPA to record the underlying 
+	instrument beam properties.	
+
+	[TWEAK] {Data2D} improved header parsing (BUNIT, EXTNAME).
+
+	[TWEAK] {GridImage} fftFilter updated to use the much faster new FFT
+	classes instead of the old.
+
+	[TWEAK] {GridImage} Removed hardcoded (angular) units to better support
+	general purpose images. Header editing/parsing to use smarter units.
+	(arcsecs for sperical grids, and standard units otherwise. Preferred
+	grid units can be set and queries via get/setPreferredGridUnit().
+
+	[TWEAK] {SphericalCoordinates} Changed default decimal formating to 
+	0.01 s resolution (from 0.001s).
+
+	[CODE] {SignificantFigures} There appears to have been a regression
+	in DecimalFormat, on which SignificantFigures was based, by which
+	the overridable format methods were not called. Thus, 
+	SignificantFigures is now derived directly from NumberFormat to work
+	around it. Various classes had toString(DecimalFormat) methods, which
+	have now been changed to toString(NumberFormat).
+
+
+
+0.05-3 (13 January 2014)
+
+
+	[NEW] FloatFFT and DoubleFFT now both have a NyquistUnrolledRealFT 
+	subclasses which store the Nyquist frequency component as an extra 
+	packed complex value at the end. Thus, these transforms take float[] or 
+	double[] data with sizes 2^p + 2, respectively. The base classes 
+	FloatFFT and DoubleFFT remain packed in the convention of Numerical
+	Recipes, with the Nyquist component stored in the imaginary component
+	of the index 0 (constant) complex value.
+
+	[FIX] {GridImage} Fixed weight normalization when re-smoothing. Also
+	improved the CLEAN-type deconvolution algorithm.
+
+	[FIX] {MultiFFT} Proper handling of Nyquist frequencies (in last index)
+	on real transforms. The Nyquist component is now included as an extra
+	complex value (2 extra real values) at the end of the bottom float[]
+	or double[] arrays. Thus, multi-dimensional arrays used for real 
+	transform have dimensions [n1]...[nm], where all by the last dimension 
+	is a power of 2, whereas the last dimension nm is 2^p+2 to properly 
+	accomodate the Nyquist components in that direction.
+
+	[TWEAK] {Configurator} Added static 'silent' switch. If enabled the
+	Configurator won't report on loading config files.
+
+	[SPEED] {FFT} Faster bit reverse boosts FFT speeds by ~5%.
+
+
+0.05-2 (9 December 2014)
+	
+	[FIX] Reporting the configurations loading on console is reinstated.
+
+
+0.05-1 (21 August 2014)
+
+	[TWEAK] {ColorBar} connected to ImageLayer not ImageArea.
+
+	[TWEAK] {SignificantFigures} Format numbers with no decimal part as
+	integers (e.g. simply '42' instead of '42.0').
+	
+	[TWEAK] {FancyRuler} colliding labels skipped for cleaner look.
+	(works even on reversed axes, and unsorted custom divisions).
+	
+	[TWEAK] {plot} Generalized ImageLayer.
+
+	[TWEAK] {plot} enabling/disabling rulers made easier.
+
+	[FIX] {plot} Initial sizing, resizing, and validation.
+
+	[FIX] {plot} default axis labels.
+
+
+0.04-4 (6 August 2014)
+
+	[BUG] {EquatorialCoordinates} RA direction inadvertently inverted when
+	printing equatorial coordinates. Introduced in prior release. Now 
+	fixed.
+
+
+
+0.04-3 (9 July 2014)
+
+	[BUG] {AngleFormat} Was still broken, now for all negative angles.
+
+	[TWEAK] {sphericalCoordinates} static method get/setDefaultDecimals() 
+	added to control how toString() will format angles by default. Also
+	toString(int decimals) method added to provide control on an ad-hoc 
+	basis also.
+
+	[TWEAK] {Precession} Made concurrent safe (no more recycled temporary
+	storage, but still just as fast, or even faster than before.)
+
+	[TWEAK] {Util} All decimal formats extended up to 12 decimals, 
+	including Angle (afN), Time (tfN), and HourAngleFormats (hfN). Like 
+	decimal formats, these are also available in simple array lookup form
+	(E.g. Util.af[3] = Util.af3); 
+
+
+
+0.04-2 (19 June 2014)
+
+	[BUG] {AngleFormat} Angles between 0 and -1 degrees were wrongly parsed
+	as positive angles. Fixed.
+
+	[BUG] {EclipticCoordinates} Greek letters (axis labels) in FITS headers
+	make FITS unreadable.
+
+	[TWEAK] {Precession} Changed to be threadsafe. 
+
+	[JAVA] Recompiled for Java 1.6.
+
+
+
+0.04-1 (2 June 2014)
+
+	[BUG] {Data2D} Gaussian smoothing beam had missing values on axes.
+
+	[BUG] {dirfile} Little-endian byte-reorder was botched. Fixed.
+
+	[BUG] {SphericalProjection} Projection orientation issue due to 
+	incorrect native pole in most projections. Zenithal (ZEA, SIN, TAN) and
+	GLS projections were unaffected by this bug.
+
+	[BUG] {Grid2D} Inverse transforms were wrong when not a square grid.
+	Fixed.
+
+	[NEW] {CelestialCoordinates} getEquatorialPositionAngle() returns the
+	orientation of the longitude axis relative to equatorial longitude. 
+
+	[NEW] {Data2D} Smoothing with rotated Gaussian.
+
+	[NEW] {text} FixedLengthFormats imported from xcrush.
+
+	[NEW] {Data2D} {GridMap} A few new useful methods.
+
+	[NEW] VAXDataInputStream for handling native VAX data format
+	(e.g. for SHARC).
+
+	[NEW] imported LittleEndianDataInputStream from APEXBridge2.
+
+	[NEW] PolygonalRegion moved from crush.
+
+	[NEW] Imported Matrix support from xcrush.
+
+	[NEW] Imported ArrayUtil, and dependent classes/interfaces from xcrush.
+	(removed ArrayData, which is no longer needed).
+
+	[NEW] Rulers are starting to look good :-).
+
+	[NEW] Added log and sqrt scaling to ImageLayer.
+
+	[NEW] Added Stereographic (STG) and Zenithal Equidistant (ARC) 
+	Bonne's Projection (BON), Cylindrical Perspective (CYP), Cylindrical
+	Equal Area (CEA), Parabolic (PAR), and Polyconic (PCO) projections.
+
+	[NEW] Added optional FITS WCS keywords WCSAXES and WCSNAMEn to map
+        coordinate descriptions.
+
+	[NEW] {util.ExtraMath} roundupRatio(a, b) introduced, which returns
+	the rounded-up ratio of two integers (or longs).
+
+	[RENAME] CelestialProjector -> AstroProjector.
+
+	[BUG] {MultiFFT} Radix-4 was still broken due to badly compactified
+	indexes. Now fixed.
+
+	[FIX] {AngleFormat} Extra 0 digits when seconds round up to 10 has
+	been fixed.
+	
+	[FIX] {FFT} Eliminated some unneeded InterruptedExceptions.
+
+	[TWEAK] {AstroTime} Fits date formatting made consistent.	
+
+	[TWEAK] {EquatorialCoordinates} Conversion to horizontal simplified.
+
+	[TWEAK] {Data2D+} addDirect() extended to superclasses of GridMap and
+	properties, such as smoothing, are taken into account also...
+
+	[TWEAK] {AstroTime} Conversion to and from strings assumes UT times
+	(no leap seconds needed). Separate new methods can be used for UTC
+	comversions.
+
+	[TWEAK] {LeapSeconds} can suppress error messages from LeapSeconds via
+	setVerbose().
+
+	[TWEAK] {GaussianSource} Adaptive integral tweaked with a smaller 
+	incremental change criterion.
+
+	[TWEAK] {Grid2D} SphericalGrids labelled with XXLN and XXLT are now
+	understood as by Calabretta & Greisen (2002).
+
+	[TWEAK] {Grid2D} Choose correct Grid2D class for FITS header.
+
+	[TWEAK] Configurator.toString() now returns the option argument. This
+	allows for more elegant code that omits explicit .getValue() calls.
+
+	[CODE] {SphericalProjections} Support for inverted axes (lat/long vs
+	long/lat).
+
+	[CODE] Cleanup of the spherical projections code. Removed duplicate
+	sin()/cos() calls, general performance tweaks, and better FITS support.
+	Made sure spherical coordinates are set natively.
+
+	[CODE] {kovacs.plot} Work on plots. Some fixes to rulers and side 
+	panels. Still under construction...
+
+
+0.03-1 (9 December 2013)
+	
+
+	[NEW] Added some math interfaces, while thinking of a generic
+	parser for expressions.
+
+	[NEW] Configurator now has getSign(), which returns -1, 0, or +1
+	depending whether the argument is negative, zero, or positive. It
+	also understands '-', '*', and '+' to mean the same thing, as well as
+	'positive', 'negative', 'plus', 'minus', 'pos', 'neg', or 'any' .
+
+	[NEW] LocalAverages now have the ability to get consistency check 
+	values before averaging based on a reference value. Based on this
+	it is possible to get a checked avearage value, where a second-round
+	aevraging is consistency checked against the mean of the first round.
+
+	[FIX] {MultiFFT} (What used to be called GenericFFT). Many many fixes. 
+	As a result it now seems to work More testing is needed to be sure...
+
+	[FIX] {Coordinate2D} Parsing of coordinates from text has been revised.
+	It also provides more useful error messages, when the parsing fails.
+
+	[FIX] {dirfile} Little-endian reading of longs fixed, and streamlined
+	all little-endian conversions. 
+
+	[FIX] GridImage.regridTo(image) did not use the correct intermediate
+	image size. Now fixed.
+	
+	[SPEED] {MultiFFT} Much improved parallelization of Multi-dimensional
+	(and general FFTs).
+
+	[CHANGE] Coordinate2D.getX() and getY() renamed to x() and y() for
+	simplicity.
+	
+	[CHANGE] FFT APIs changed slightly for better consistency and 
+	separating 1D FFTs from multi-dimensional ones (e.g. padding and
+	average power).
+
+
+
+
+0.02-2 (19 August 2013)
+
+	[NEW] cbrt() added to Complex.
+ 
+	[CODE] Added Serialization to some classes (just a beginning...)
+
+	[CODE] HashCode to deal with Object[] arrays more comprehensively.
+
+	[CODE] Added hashCode() to Data2D().
+
+
+0.02-1 (15 July 2013)
+
+	[BUG] Complex division bug found and fixed.
+
+	[BUG] Comparison of Units was messed up with the multiplier comparison.
+
+	[NEW] WeightedPoint multiplication and division operations.
+
+	[NEW] Division interface. Applied to Complex and CompoundUnit.
+
+	[NEW] Hankel functions.
+
+	[NEW] Zeta function evaluations for Complex arguments 
+
+	[NEW] Complex gamma function with Lanczos approximation. Also complex
+	BetaFunction.
+
+	[NEW] Brought in a bunch of interfaces from xcrush.util.math, and
+	applied these to classes where appropriate. This is one small step
+	towards reintagrating the extensive xcrush brach of utilities.
+
+	[NEW] Added Javadoc stems. These are generated by JAutodoc so some of
+	the automatically generated javadoc is nonsensical. In time, it should
+	be filled with meaningful documentation.
+
+	[NEW] Statistics.lineFit expanded for different argument type 
+	scenarios.
+
+	[NEW] Imported math.specialfunctions from xcrush.
+
+	[NEW] ExtraMath class with math functions migrated from Util.
+	
+	[NEW] fits.FitsExtras class with FITS functions migrated from Util.
+
+	[NEW] Added data.FauxComplexArray (Float and Double) for performance 
+	applications. FauxComplexArrays outperform proper Complex[] arrays
+	because of the reduced memory (hence caching) requirement. Below is
+	a summary of the storage required, per element, in each type:
+	
+		Complex[]: 			32 bytes
+		FauxComplexArray.Double: 	16 bytes 
+		FauxComplexArray.Float: 	8 bytes
+
+	The performance advantage becomes significant (2-3x) for arrays 
+	comparable to, or larger than, the CPU cache size.
+
+	[NEW] Added fft.ComplexFFT (tested). For large data, Complex FFTs are
+	a 2-3 times slower than the same sized float or double FFTs. Therefore
+	if performance is a concern, one should use FauxComplexArrays with
+	their appropriate FFTs instead of proper Complex FFTs...
+
+	[FIX] Comparison of angles in SphericalCoordinates could misbehave
+	when the two angles were + and - of 0 within the requested precision.
+	Now fixed.
+	
+	[MIGRATE] Various classes migrated from kovacs.util to kovacs.math
+	and kovacs.projection. Also from kovacs.astro to kovacs.projection.
+
+	[MIGRATE] Util.lineFit -> data.Statistics.lineFit.
+
+	[MOVE] CurrentTime -> util.astro.
+	
+	[RENAME] Simplified package names, e.g. kovacs.util.fft -> kovacs.fft.
+	
+	[RENAME] Data -> ArrayData.
+
+	[RENAME] Datum -> DataTable.Entry. 
+	
+	[RENAME] CoordinatePair -> Coordinate2D.
+
+	[TWEAK] Some optimization tweaks to GridMap/GridImage index<==>offset
+	conversions.
+
+	[TWEAK] WeightedPoint add/subtract optimized to require fewer and 
+	faster operations.
+	
+	[TWEAK] CompoundUnit simplified to contain only factors. Also made
+	to work better, in general.
+
+	[TWEAK] erf() to hanfle infinite arguments, and Cumulative normal 
+	distribution to return infinite values.
+
+	[TWEAK] Old, slow, and not too precise ConfidenceCalculator replaced
+	with math.specialfunctions.CumulativeNormalDistribution.
+
+	[TWEAK] {FFT} Further small performance tweaks to FFT classes, 
+	reaffirming that these are faster than FFTW's famously fast FFTs. This 
+	is especially true for parallel processed FFTs!
+
+	[TWEAK] Cosmological constants updated in Constant.java.
+
+	[TWEAK] Util constants (twoPi, rightAngle, sigmasInFWHM, log2 etc.) 
+	moved to Constant. Spread use of twoPi and rightAngle where 
+	appropriate.
+
+	[TWEAK] Some tweaking/cleanup of Util. Faster getBoolean(String)
+	and standardAngle().
+
+	[TWEAK] Some tweaks to Vector2D and Complex classes, adding new 
+	functionality and speeding up others.
+
+
+0.01-1	(3 Jun 2013)
+
+	- Initial version, split from crush 2.14-1.
+
+

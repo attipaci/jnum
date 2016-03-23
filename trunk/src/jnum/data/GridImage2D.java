@@ -800,7 +800,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 				}
 			}
 			@Override
-			public WeightedPoint getPartialResult() { return new WeightedPoint(sumw, n); }
+			public WeightedPoint getLocalResult() { return new WeightedPoint(sumw, n); }
 		};
 		ecalc.process();
 		

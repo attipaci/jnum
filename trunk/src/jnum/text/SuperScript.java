@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,31 +21,26 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.parallel;
+package jnum.text;
 
-import jnum.Parallel;
-import jnum.data.WeightedPoint;
+public final class SuperScript {
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Averaging.
- *
- * @param <ReturnType> the generic type
- */
-public class Averaging<ReturnType extends WeightedPoint> extends ParallelReduction<ReturnType> {
-
-	/* (non-Javadoc)
-	 * @see jnum.parallel.ParallelReduction#getResult()
-	 */
-	@Override
-	public ReturnType getResult() {
-		ReturnType result = null;
-		for(Parallel<ReturnType> task : getParallel().getWorkers()) {
-			ReturnType local = task.getLocalResult();
-			if(result == null) result = local;
-			else result.average(local);
-		}
-		return result;
-	}
-	
+    public final static char[] number = { '\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', 
+                                           '\u2076', '\u2077', '\u2078', '\u2079' };
+    
+    public final static char n = '\u207f';
+    
+    public final static char i = '\u2071';
+    
+    public final static char plus = '\u207a';
+    
+    public final static char minus = '\u207b';
+    
+    public final static char equals = '\u207c';
+    
+    public final static char curvedLeft = '\u207d';
+    
+    public final static char curvedRight = '\u207e';
+    
+    
 }

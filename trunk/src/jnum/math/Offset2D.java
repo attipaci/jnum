@@ -23,6 +23,8 @@
 
 package jnum.math;
 
+import jnum.Util;
+
 public class Offset2D extends Vector2D {
     /**
      * 
@@ -44,7 +46,7 @@ public class Offset2D extends Vector2D {
         if(o == this) return true;
         if(!(o instanceof Offset2D)) return false;
         Offset2D offset = (Offset2D) o;
-        if(!offset.getCoordinateClass().equals(getCoordinateClass())) return false;
+        if(!Util.equals(offset.getCoordinateClass(), getCoordinateClass())) return false;
         return super.equals(o);
     }
     

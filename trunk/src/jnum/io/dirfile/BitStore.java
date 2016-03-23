@@ -101,7 +101,7 @@ public class BitStore extends DataStore<Long> {
 	 */
 	@Override
 	public Long get(long n) throws IOException {
-		return (container.get(n).longValue() & mask) >> shift;
+		return (container.get(n).longValue() & mask) >>> shift;
 	}
 
 	/* (non-Javadoc)

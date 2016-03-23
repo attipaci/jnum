@@ -48,8 +48,7 @@ public class RegridTest {
 			map.setInterpolationType(Data2D.BICUBIC_SPLINE);
 			map.regrid(1.0 * Unit.arcsec);
 			//map.clean();
-			map.fileName = "test.fits";
-			map.write();
+			map.write("test.fits");
 			
 		}
 		catch(Exception e) {

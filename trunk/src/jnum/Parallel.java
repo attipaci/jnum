@@ -228,7 +228,7 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 	 *
 	 * @return the partial result
 	 */
-	public ReturnType getPartialResult() {
+	public ReturnType getLocalResult() {
 		return null;
 	}
 	

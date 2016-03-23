@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -29,20 +29,20 @@ import jnum.ExtraMath;
 import jnum.Util;
 import jnum.math.*;
 
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class Expression.
  */
 public class Expression {
 	
-	/** The spec. */
-	String spec;
+    String op;  // e.g. "+", "%=", "sin:2"
+	String literal;
 	
-	/** The op. */
-	String op;
-	
-	/** The arguments. */
 	ArrayList<Expression> arguments;
+	
+	VariableLookup localVariables;
+	FunctionLookup localFunctions;
 	
 	/**
 	 * Instantiates a new expression.
@@ -50,39 +50,37 @@ public class Expression {
 	 * @param text the text
 	 */
 	public Expression(String text) {
-		// TODO parse here into hierarchical operators and sub-expressions...
-		// hierarchy: http://introcs.cs.princeton.edu/java/11precedence/
+	    // TODO restricted set of operators
+	    
+	    
+	    // Stage 1. basic evaluations (boolean, integer, and complex math)
+	    // TODO use Operator instead of String literal, allowing changeable notation...
+	    // TODO substitutions, e.g. ^ --> **
+	    // TODO subset of operators...
+	    // Stage 2. built-in functions
+	    // TODO built-in functions...
+	    // Stage 3. user-definitions
+	    // TODO user-defined functions and variables... (check for circular references...)
+	    // TODO constants and units e.g. (#c, @m, @{km/s}...)
+	    // Stage 4. arrays
+	    // TODO arrays and matrices...	    
+		
+	    
+	    // 0. remove empty spaces...
+        // 1. Look for weakest unbracketed binary operator 
+        //    2. - If binary evaluate operator with left-side and right side
+        //           < > <= >= != == & | ^ (+,-,*,/,**) %   
+        // If not binary:
+        //    - Check for unary operator (start/end)
+        //           ! ~ ++ --
+        //    - Check if function -- contains ( -- 
+        //          > Get argumentlist, and evaluate...
+        //    - check if brackets are removable...
 		
 		
 	}
 	
-	/**
-	 * First value.
-	 *
-	 * @return the object
-	 */
-	public Object firstValue() { return arguments.get(0).getValue(); }
-	
-	/**
-	 * Second value.
-	 *
-	 * @return the object
-	 */
-	public Object secondValue() { return arguments.get(1).getValue(); }
-	
-	
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
-	public Object getValue() {
-		if(op == null) return getDirectValue();
-		else if(op.length() == 1) return getByteOpValue();
-		else return getFunctionValue();
-	}
-		
-		
+
 	/**
 	 * Gets the direct value.
 	 *

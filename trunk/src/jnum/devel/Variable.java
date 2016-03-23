@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,31 +21,21 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.parallel;
+package jnum.devel;
 
-import jnum.Parallel;
-import jnum.data.WeightedPoint;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Averaging.
- *
- * @param <ReturnType> the generic type
- */
-public class Averaging<ReturnType extends WeightedPoint> extends ParallelReduction<ReturnType> {
-
-	/* (non-Javadoc)
-	 * @see jnum.parallel.ParallelReduction#getResult()
-	 */
-	@Override
-	public ReturnType getResult() {
-		ReturnType result = null;
-		for(Parallel<ReturnType> task : getParallel().getWorkers()) {
-			ReturnType local = task.getLocalResult();
-			if(result == null) result = local;
-			else result.average(local);
-		}
-		return result;
-	}
-	
+public interface Variable {
+   
+    public void setValue(boolean value);
+    
+    public void setValue(long value);
+    
+    public void setValue(double value);
+    
+    public boolean asBoolean();
+    
+    public long asLong();
+    
+    public double asDouble();
+    
 }

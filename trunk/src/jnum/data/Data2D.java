@@ -1396,11 +1396,11 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 				if(flag[i][j]==0) if(data[i][j] < min) min = data[i][j];
 			}
 			@Override 
-			public Double getPartialResult() { return min; }
+			public Double getLocalResult() { return min; }
 			@Override
 			public Double getResult() {
 				double globalMin = Double.POSITIVE_INFINITY;
-				for(Parallel<Double> task : getWorkers()) if(task.getPartialResult() < globalMin) globalMin = task.getPartialResult();
+				for(Parallel<Double> task : getWorkers()) if(task.getLocalResult() < globalMin) globalMin = task.getLocalResult();
 				return globalMin;
 			}
 		};
@@ -1421,11 +1421,11 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 				if(flag[i][j] == 0) if(data[i][j] > max) max = data[i][j];
 			}
 			@Override 
-			public Double getPartialResult() { return max; }
+			public Double getLocalResult() { return max; }
 			@Override
 			public Double getResult() {
 				double globalMax = Double.NEGATIVE_INFINITY;
-				for(Parallel<Double> task : getWorkers()) if(task.getPartialResult() > globalMax) globalMax = task.getPartialResult();
+				for(Parallel<Double> task : getWorkers()) if(task.getLocalResult() > globalMax) globalMax = task.getLocalResult();
 				return globalMax;
 			}
 		};
@@ -1451,11 +1451,11 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 				if(flag[i][j]==0) range.include(data[i][j]);
 			}
 			@Override 
-			public Range getPartialResult() { return range; }
+			public Range getLocalResult() { return range; }
 			@Override
 			public Range getResult() {
 				Range globalRange = new Range();
-				for(Parallel<Range> task : getWorkers()) globalRange.include(task.getPartialResult());
+				for(Parallel<Range> task : getWorkers()) globalRange.include(task.getLocalResult());
 				return globalRange;
 			}
 		};
@@ -1486,13 +1486,13 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 				}
 			}
 			@Override 
-			public Index2D getPartialResult() { return index; }
+			public Index2D getLocalResult() { return index; }
 			@Override
 			public Index2D getResult() {
 				double globalPeak = Double.NEGATIVE_INFINITY;
 				Index2D globalIndex = null;
 				for(Parallel<Index2D> task : getWorkers()) {
-					Index2D partial = task.getPartialResult();
+					Index2D partial = task.getLocalResult();
 					if(partial != null) if(data[partial.i()][partial.j()] > globalPeak) {
 						globalIndex = partial;
 						globalPeak = data[partial.i()][partial.j()];
@@ -1529,13 +1529,13 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 				}
 			}
 			@Override 
-			public Index2D getPartialResult() { return index; }
+			public Index2D getLocalResult() { return index; }
 			@Override
 			public Index2D getResult() {
 				double globalDev = 0.0;
 				Index2D globalIndex = null;
 				for(Parallel<Index2D> task : getWorkers()) {
-					Index2D partial = task.getPartialResult();
+					Index2D partial = task.getLocalResult();
 					if(partial == null) continue;
 					final double value = Math.abs(data[partial.i()][partial.j()]);
 					if(value > globalDev) {
@@ -1568,7 +1568,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 				}
 			}
 			@Override
-			public WeightedPoint getPartialResult() { return new WeightedPoint(sum, sumw); }
+			public WeightedPoint getLocalResult() { return new WeightedPoint(sum, sumw); }
 		};
 		
 		average.process();
@@ -1619,7 +1619,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 				}
 			}
 			@Override
-			public WeightedPoint getPartialResult() { return new WeightedPoint(sum, n); }
+			public WeightedPoint getLocalResult() { return new WeightedPoint(sum, n); }
 		};
 		
 		rms.process();
@@ -1685,13 +1685,13 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 				if(flag[i][j] == 0) counter++;
 			}
 			@Override
-			public Integer getPartialResult() {
+			public Integer getLocalResult() {
 				return counter;
 			}
 			@Override
 			public Integer getResult() {
 				int globalCount = 0;
-				for(Parallel<Integer> task : getWorkers()) globalCount += task.getPartialResult();
+				for(Parallel<Integer> task : getWorkers()) globalCount += task.getLocalResult();
 				return globalCount;
 			}
 		};
@@ -2629,7 +2629,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		public WeightedPoint getResult() {
 			WeightedPoint ave = new WeightedPoint();
 			for(Parallel<WeightedPoint> task : getWorkers()) {
-				WeightedPoint partial = task.getPartialResult();
+				WeightedPoint partial = task.getLocalResult();
 				ave.add(partial.value());
 				ave.addWeight(partial.weight());
 			}

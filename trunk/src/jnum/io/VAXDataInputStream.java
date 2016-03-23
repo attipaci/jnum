@@ -52,7 +52,7 @@ public class VAXDataInputStream extends LittleEndianDataInputStream {
 		// Now paste in the remaining fraction bits. The fraction bits must shift down by 3 bits for 
 		// proper alignment...
 		int i = read4Bytes();		
-		l |= (((i >> 8 & 0x00FF00FF) | (i & 0x00FF00FF) << 8) >> 3) & 0x2FFFFFFF;
+		l |= (((i >>> 8 & 0x00FF00FF) | (i & 0x00FF00FF) << 8) >>> 3) & 0x2FFFFFFF;
 		return Double.longBitsToDouble(l);	
 	}
 
@@ -62,7 +62,7 @@ public class VAXDataInputStream extends LittleEndianDataInputStream {
 	@Override
 	public final float readFloat() throws IOException {
 		int i = read4Bytes();
-		return 0.25F * Float.intBitsToFloat((i >> 8 & 0x00FF00FF) | (i & 0x00FF00FF) << 8);
+		return 0.25F * Float.intBitsToFloat((i >>> 8 & 0x00FF00FF) | (i & 0x00FF00FF) << 8);
 	}
 
 	

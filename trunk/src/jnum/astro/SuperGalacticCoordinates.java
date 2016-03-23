@@ -46,15 +46,15 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
 	static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 		
 	static {
-		defaultCoordinateSystem = new CoordinateSystem("Super-Galactic Coordinates");
-		defaultLocalCoordinateSystem = new CoordinateSystem("Super-Galactic Offsets");
+		defaultCoordinateSystem = new CoordinateSystem("Supergalactic Coordinates");
+		defaultLocalCoordinateSystem = new CoordinateSystem("Supergalactic Offsets");
 		
-		longitudeAxis = new CoordinateAxis("Supergalactic Longitude", "SGL", "SGL");
+		longitudeAxis = new CoordinateAxis("Supergalactic Longitude", "SGL", "L");
 		longitudeAxis.setReverse(true);
-		latitudeAxis = new CoordinateAxis("Supergalactic Latitude", "SGB", "SGB");
-		longitudeOffsetAxis = new CoordinateAxis("Supergalactic Longitude Offset", "dSGL", GreekLetter.Delta + "SGL");
+		latitudeAxis = new CoordinateAxis("Supergalactic Latitude", "SGB", "B");
+		longitudeOffsetAxis = new CoordinateAxis("Supergalactic Longitude Offset", "dSGL", GreekLetter.Delta + " L");
 		longitudeOffsetAxis.setReverse(true);
-		latitudeOffsetAxis = new CoordinateAxis("Supergalactic Latitude", "dSGB", GreekLetter.Delta + "SGB");
+		latitudeOffsetAxis = new CoordinateAxis("Supergalactic Latitude", "dSGB", GreekLetter.Delta + " B");
 		
 		defaultCoordinateSystem.add(longitudeAxis);
 		defaultCoordinateSystem.add(latitudeAxis);
