@@ -807,8 +807,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 			chi2[k++] = s2n * s2n;
 		}
 	
-		// median(x^2) = 0.454937 * sigma^2 
-		return k > 0 ? Statistics.median(chi2, 0, k) / 0.454937 : 0.0;	
+		return k > 0 ? Statistics.median(chi2, 0, k) / Statistics.medianNormalizedVariance : 0.0;	
 	}
 
 	/**

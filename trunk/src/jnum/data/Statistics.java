@@ -613,4 +613,7 @@ public final class Statistics {
 		return new double[] { (sxx*sy - sx*sxy) / D, (s*sxy - sx*sy) / D };
 	}
 	
+	// median(x^2) = 0.454937 * sigma^2 
+	public static final double medianNormalizedVariance = 0.454937;
+	
 }
