@@ -1639,8 +1639,8 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 			final float value = (float) data[i][j];
 			chi2[k++] = value * value;
 		}
-		// median(x^2) = 0.454937 * sigma^2 
-		return Math.sqrt(Statistics.median(chi2) / 0.454937);	
+		
+		return Math.sqrt(Statistics.median(chi2) / Statistics.medianNormalizedVariance);	
 	}
 	
 

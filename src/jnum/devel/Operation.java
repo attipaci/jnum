@@ -169,7 +169,7 @@ public abstract class Operation {
         }
     }
     
-    public static class Modulus extends Operation implements FloatingMath, IntegerMath {
+    private static class Modulus extends Operation implements FloatingMath, IntegerMath {
         public Modulus() { super("%"); }
 
         @Override
@@ -185,7 +185,7 @@ public abstract class Operation {
         }
     }
   
-    public static class Addition extends Operation implements FloatingMath, IntegerMath {
+    private static class Addition extends Operation implements FloatingMath, IntegerMath {
         public Addition() { super("+"); }
 
         @Override
@@ -201,7 +201,7 @@ public abstract class Operation {
         }
     }
     
-    public static class Subtraction extends Operation implements FloatingMath, IntegerMath {
+    private static class Subtraction extends Operation implements FloatingMath, IntegerMath {
         public Subtraction() { super("-"); }
 
         @Override
@@ -217,7 +217,7 @@ public abstract class Operation {
         }
     }
     
-    public static class BitShiftLeft extends Operation implements IntegerMath {
+    private static class BitShiftLeft extends Operation implements IntegerMath {
         public BitShiftLeft() { super("<<"); }
 
         @Override
@@ -227,7 +227,7 @@ public abstract class Operation {
         }
     }
     
-    public static class BitShiftRight extends Operation implements IntegerMath {
+    private static class BitShiftRight extends Operation implements IntegerMath {
         public BitShiftRight() { super(">>"); }
 
         @Override
@@ -237,14 +237,149 @@ public abstract class Operation {
         }
     }
     
-    public static class BitShiftUnsignedRight extends Operation implements IntegerMath {
-        public BitShiftUnsignedRight() { super(">>"); }
+    private static class BitShiftUnsignedRight extends Operation implements IntegerMath {
+        public BitShiftUnsignedRight() { super(">>>"); }
 
         @Override
         public long getLongValue(Long leftSide, Long rightSide) {
             if(leftSide == null || rightSide == null) throw new IllegalArgumentException("missing argument");
             return leftSide >>> rightSide;
         }
+    }
+    
+    private static class CompareIsLess extends Operation implements Comparison {
+
+        protected CompareIsLess() {
+            super("<");
+        }
+
+        @Override
+        public boolean compare(double a, double b) {
+            return Double.compare(a, b) < 0;
+        }
+
+        @Override
+        public boolean compare(long a, long b) {
+            return a < b;
+        }
+
+        @Override
+        public boolean compare(boolean a, boolean b) {
+            if(a == b) return false;
+            return b;
+        }       
+    }
+     
+    private static class CompareIsGreater extends Operation implements Comparison {
+
+        protected CompareIsGreater() {
+            super(">");
+        }
+
+        @Override
+        public boolean compare(double a, double b) {
+            return Double.compare(a, b) > 0 ;
+        }
+
+        @Override
+        public boolean compare(long a, long b) {
+            return a > b;
+        }  
+        
+        @Override
+        public boolean compare(boolean a, boolean b) {
+            if(a == b) return false;
+            return a;
+        }   
+    }
+    
+    private static class CompareIsLessOrEqual extends Operation implements Comparison {
+
+        protected CompareIsLessOrEqual() {
+            super("<=");
+        }
+
+        @Override
+        public boolean compare(double a, double b) {
+            return Double.compare(a, b) <= 0;
+        }
+
+        @Override
+        public boolean compare(long a, long b) {
+            return a <= b;
+        }
+
+        @Override
+        public boolean compare(boolean a, boolean b) {
+            return b;
+        }       
+    }
+     
+    private static class CompareIsGreaterOrEqual extends Operation implements Comparison {
+
+        protected CompareIsGreaterOrEqual() {
+            super(">=");
+        }
+
+        @Override
+        public boolean compare(double a, double b) {
+            return Double.compare(a, b) >= 0;
+        }
+
+        @Override
+        public boolean compare(long a, long b) {
+            return a >= b ;
+        }  
+        
+        @Override
+        public boolean compare(boolean a, boolean b) {
+            return a;
+        }   
+    }
+    
+    
+    private static class CompareIsEqual extends Operation implements Comparison {
+
+        protected CompareIsEqual() {
+            super("==");
+        }
+
+        @Override
+        public boolean compare(double a, double b) {
+            return Double.compare(a, b) == 0;
+        }
+
+        @Override
+        public boolean compare(long a, long b) {
+            return a == b;
+        }  
+        
+        @Override
+        public boolean compare(boolean a, boolean b) {
+            return a == b;
+        }   
+    }
+    
+    private static class CompareIsNotEqual extends Operation implements Comparison {
+
+        protected CompareIsNotEqual() {
+            super("!=");
+        }
+
+        @Override
+        public boolean compare(double a, double b) {
+            return Double.compare(a, b) != 0;
+        }
+
+        @Override
+        public boolean compare(long a, long b) {
+            return a != b;
+        }  
+        
+        @Override
+        public boolean compare(boolean a, boolean b) {
+            return a != b;
+        }   
     }
     
     

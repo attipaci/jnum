@@ -51,7 +51,7 @@ public final class Util {
 	public final static String version = "0.09-1";
 	
 	/** The Constant revision. */
-	public final static String revision = "beta";
+	public final static String revision = "beta.2";
 	
 	/**
 	 * Gets the decimal format.
