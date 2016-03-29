@@ -37,6 +37,9 @@
 	[FITS] The nom.tam.fits package updated to the official 1.14.2
 	release.
 
+	[CODE] Conversion from median variance to sigma^2 is now a constant
+	in Statistics.
+
 	[CODE] {CoordinateAxis} Improved labelling by allowing long, short and
 	fancy labels. For example the equatorial RA direction might have a long
 	descriptive label, such as "Right Ascension", a short text label "RA"
