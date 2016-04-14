@@ -36,10 +36,10 @@ public interface AbsoluteValue {
 	public double abs();
 	
 	/**
-	 * Norm.
+	 * The absolute square value
 	 *
-	 * @return the norm (square of the absolute value) of this object.
+	 * @return the square of the absolute value of this object.
 	 */
-	public double norm();
+	public double asquare();
 	
 }

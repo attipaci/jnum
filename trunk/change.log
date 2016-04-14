@@ -1,5 +1,7 @@
 0.09-1
 
+	[NEW] New class Angle for faster rotations of Vector2D (or Complex 
+	numbers), using precalculated sin and cos terms.
 
 	[NEW] Parser for enclosed expressions (EnclosureParser). E.g. 
 	for expressions enclosed in brackets (BracketParser) or in quotes

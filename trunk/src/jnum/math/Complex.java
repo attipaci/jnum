@@ -190,7 +190,7 @@ public class Complex extends Vector2D implements
 	@Override
 	public final void inverse() { 
 		conjugate();
-		scale(1.0 / norm());
+		scale(1.0 / asquare());
 	}
 	
 	/* (non-Javadoc)
@@ -255,7 +255,7 @@ public class Complex extends Vector2D implements
 	 */
 	@Override
 	public final void setRatio(final Complex a, final Complex b) {
-		final double A = 1.0 / b.norm();
+		final double A = 1.0 / b.asquare();
 		set(
 				a.x() * b.x() + a.y() * b.y(),
 				a.y() * b.x() - a.x() * b.y()

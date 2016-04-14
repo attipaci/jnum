@@ -428,7 +428,7 @@ public class Real extends Number implements LinearAlgebra<Real>, AbstractAlgebra
 	 * @see kovacs.math.AbsoluteValue#norm()
 	 */
 	@Override
-	public double norm() {
+	public double asquare() {
 		return value * value;
 	}
 

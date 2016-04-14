@@ -203,6 +203,14 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 		set(x() * cosA - y() * sinA, x() * sinA + y() * cosA);
 	}
 	
+	public final void rotate(Angle theta) {
+	    set(x() * theta.cos() - y() * theta.sin(), x() * theta.sin() + y() * theta.cos());
+	}
+	
+	public final void derotate(Angle theta) {
+        set(x() * theta.cos() + y() * theta.sin(), y() * theta.cos() - x() * theta.sin());
+    }
+	
 	/**
 	 * Sets the polar.
 	 *
@@ -247,7 +255,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	 * @return the double
 	 */
 	@Override
-	public final double norm() { return x() * x() + y() * y(); }
+	public final double asquare() { return x() * x() + y() * y(); }
 
 	/**
 	 * Length.
@@ -301,7 +309,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	@Override
 	public final void normalize() throws IllegalStateException { 
 		if(isNull()) throw new IllegalStateException("Null Vector");
-		scale(1.0 / norm()); 
+		scale(1.0 / asquare()); 
 	}
 
 	/**
@@ -469,7 +477,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	public double getValue(int field) throws NoSuchFieldException {
 		switch(field) {
 		case LENGTH: return length();
-		case NORM: return norm();
+		case NORM: return asquare();
 		case ANGLE: return angle();
 		default: return super.getValue(field);
 		}
@@ -482,7 +490,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	public void setValue(int field, double value) throws NoSuchFieldException {
 		switch(field) {
 		case LENGTH: scale(value/length()); break;
-		case NORM: scale(Math.sqrt(value/norm())); break;
+		case NORM: scale(Math.sqrt(value/asquare())); break;
 		case ANGLE: rotate(value - angle()); break;
 		default: super.setValue(field, value);
 		}
