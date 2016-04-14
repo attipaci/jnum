@@ -20,11 +20,8 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
 package jnum.math;
-
-//package crush.util;
 
 import java.text.NumberFormat;
 
@@ -82,7 +79,7 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	 * @param angle the angle
 	 */
 	public final void rotate(double angle) { addY(angle); }
-
+	
 	/**
 	 * Dot.
 	 *

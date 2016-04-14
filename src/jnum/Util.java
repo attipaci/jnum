@@ -48,10 +48,10 @@ import jnum.text.TimeFormat;
 public final class Util {
 	
 	/** The Constant version. */
-	public final static String version = "0.09-b2";
+	public final static String version = "0.09-b4";
 	
 	/** The Constant revision. */
-	public final static String revision = "beta";
+	public final static String revision = "devel.1";
 	
 	/**
 	 * Gets the decimal format.

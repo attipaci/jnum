@@ -349,7 +349,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 			
 			if(spectrum == null) spectrum = new double[nF];
 			
-			for(int i=nF; --i>=0; ) spectrum[i] += block[i].norm();
+			for(int i=nF; --i>=0; ) spectrum[i] += block[i].asquare();
 	
 			start += stepSize;
 	

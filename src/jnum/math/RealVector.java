@@ -194,7 +194,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.AbsoluteValue#norm()
 	 */
 	@Override
-	public double norm() {
+	public double asquare() {
 		return dot(this);
 	}
 

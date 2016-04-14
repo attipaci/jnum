@@ -226,9 +226,9 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.AbsoluteValue#norm()
 	 */
 	@Override
-	public double norm() {
+	public double asquare() {
 		double norm = 0.0;
-		for(int i=component.length; --i >= 0; ) norm += getComponent(i).norm();
+		for(int i=component.length; --i >= 0; ) norm += getComponent(i).asquare();
 		return norm;
 	}
 

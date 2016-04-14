@@ -152,7 +152,7 @@ Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Cop
 	 */
 	@Override
 	public double abs() {
-		return Math.sqrt(norm());
+		return Math.sqrt(asquare());
 	}
 	
 	/* (non-Javadoc)
