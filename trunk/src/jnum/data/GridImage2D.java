@@ -1248,11 +1248,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 * @return the index
 	 */
 	public final void getIndex(final Vector2D offset, final Index2D index) {
-		final double x = offset.x();
-		final double y = offset.y();
-		toIndex(offset);
-		index.set((int) Math.round(offset.x()), (int) Math.round(offset.y()));
-		offset.set(x, y);
+		grid.getIndex(offset, index);
 	}
 	
 	/**
@@ -1263,8 +1259,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 * @return the offset
 	 */
 	public final void getOffset(final Index2D index, final Vector2D offset) {
-		offset.set(index.i(), index.j());
-		toOffset(offset);		
+		grid.getOffset(index, offset);	
 	}
 
 	/**

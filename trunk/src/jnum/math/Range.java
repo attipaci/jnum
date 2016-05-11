@@ -236,7 +236,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 *
 	 * @param value the value
 	 */
-	public void include(double value) {
+	public synchronized void include(double value) {
 		if(value < min) min = value;
 		if(value > max) max = value;		
 	}
@@ -246,7 +246,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 *
 	 * @param range the range
 	 */
-	public void include(Range range) {
+	public final void include(Range range) {
 		include(range.min);
 		include(range.max);
 	}

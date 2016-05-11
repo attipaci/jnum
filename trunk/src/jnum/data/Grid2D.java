@@ -183,9 +183,11 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	 *
 	 * @param delta the new resolution
 	 */
-	public void setResolution(double delta) {
+	public final void setResolution(double delta) {
 		setResolution(delta, delta);
 	}
+	
+	public final void setResolution(Vector2D delta) { setResolution(delta.x(), delta.y()); }
 	
 	/**
 	 * Gets the transform.
@@ -679,6 +681,33 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
     	
     	index.setX(i);
     	index.setY(j);
+    }
+    
+    /**
+     * Gets the index.
+     *
+     * @param offset the offset
+     * @param index the index
+     * @return the index
+     */
+    public final void getIndex(final Vector2D offset, final Index2D index) {
+        final double x = offset.x();
+        final double y = offset.y();
+        toIndex(offset);
+        index.set((int) Math.round(offset.x()), (int) Math.round(offset.y()));
+        offset.set(x, y);
+    }
+    
+    /**
+     * Gets the offset.
+     *
+     * @param index the index
+     * @param offset the offset
+     * @return the offset
+     */
+    public final void getOffset(final Index2D index, final Vector2D offset) {
+        offset.set(index.i(), index.j());
+        toOffset(offset);       
     }
     
     /**
