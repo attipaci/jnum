@@ -625,12 +625,12 @@ public final class ArrayUtil {
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	public static Object copy(Object array) throws InstantiationException, IllegalAccessException {
-		if(array instanceof Object[]) {
+	public static Object copy(Object array) throws InstantiationException, IllegalAccessException { 
+	    if(array == null) return null;
+	    else if(array instanceof Object[]) { 
 			Object[] original = (Object[]) array;
-			Object[] copy = (Object[]) Array.newInstance(original[0].getClass(), original.length);
-			if(array instanceof Copiable) for(int i=original.length; --i >= 0; ) copy[i] = ((Copiable<?>) original[i]).copy();	
-			else for(int i=original.length; --i >= 0; ) copy[i] = copy(original[i]);
+			Object[] copy = (Object[]) Arrays.copyOf(original, original.length);
+			for(int i=original.length; --i >= 0; ) copy[i] = original[i] instanceof Copiable ? ((Copiable<?>) original[i]).copy() : copy(original[i]);
 			return copy;
 		}
 		else if(array instanceof double[]) return Arrays.copyOf((double[]) array, ((double[]) array).length);
@@ -640,7 +640,7 @@ public final class ArrayUtil {
 		else if(array instanceof short[]) return Arrays.copyOf((short[]) array, ((short[]) array).length);
 		else if(array instanceof byte[]) return Arrays.copyOf((byte[]) array, ((byte[]) array).length);
 		else if(array instanceof boolean[]) return Arrays.copyOf((boolean[]) array, ((boolean[]) array).length);
-		else return null;
+		else return new IllegalArgumentException("Cannot copy class " + array.getClass().getSimpleName());
 	}
 	
 	

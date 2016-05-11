@@ -1,3 +1,7 @@
+	[BUG] ArrayUtil.copy() misbehaved (hung) when trying to copy 
+	heterogeneous arrays. Fixed. 
+
+
 0.09-1
 
 	[NEW] New class Angle for faster rotations of Vector2D (or Complex 

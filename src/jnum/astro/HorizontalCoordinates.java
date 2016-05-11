@@ -225,10 +225,13 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 	 */
 	public static void toEquatorial(HorizontalCoordinates horizontal, EquatorialCoordinates equatorial, GeodeticCoordinates site, double LST) {
 		double cosAZ = Math.cos(horizontal.x());
-		equatorial.setNativeLatitude(SafeMath.asin(horizontal.sinLat() * site.sinLat() + horizontal.cosLat() * site.cosLat() * cosAZ));
+		equatorial.setNativeLatitude(
+		        SafeMath.asin(horizontal.sinLat() * site.sinLat() + horizontal.cosLat() * site.cosLat() * cosAZ));
 		final double asinH = -Math.sin(horizontal.x()) * horizontal.cosLat();
 		final double acosH = site.cosLat() * horizontal.sinLat() - site.sinLat() * horizontal.cosLat() * cosAZ;
-		equatorial.setRA(LST * Unit.timeAngle - Math.atan2(asinH, acosH));
+		//final double acosH = (horizontal.sinLat() - equatorial.sinLat() * site.sinLat()) / site.cosLat();
+		
+		equatorial.setLongitude(LST * Unit.timeAngle - Math.atan2(asinH, acosH));
 	}
 
 	

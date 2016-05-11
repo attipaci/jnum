@@ -109,6 +109,11 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	/** The creator. */
 	public String creator = "jnum " + Util.getFullVersion();
 		
+	static {
+	    FitsFactory.setLongStringsEnabled(true);
+	    FitsFactory.setUseHierarch(true);
+	}
+	
 	/**
 	 * Instantiates a new data2 d.
 	 */

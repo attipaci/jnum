@@ -336,7 +336,7 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 	public void parse(String text) throws NumberFormatException, IllegalArgumentException {
 		int from = 0, to = text.length();
 		
-		// NOTE: Written for perforamnce. The routine does not create any intermediate objects...
+		// NOTE: Written for performance. The routine does not create any intermediate objects...
 		
 		// Ignore outer set of brackets, if exist...
 		if(text.contains("(")) {
@@ -354,7 +354,7 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 		
 		// Parse the coordinates here...
 		if(i>0 && i<text.length()) {
-			x = Double.parseDouble(text.substring(from, i));
+			x = Double.parseDouble(text.substring(from, i));	
 			y = Double.parseDouble(text.substring(i+1, to));
 		}
 	}
