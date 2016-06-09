@@ -82,9 +82,40 @@ public class DoubleMesh extends PrimitiveMesh<Double> {
     }
 
     @Override
-    public Mesh<Double> subArrayAt(int[] index) {
-        return new DoubleMesh(subarrayDataAt(index));
+    public void addMultipleOf(PrimitiveMesh<?> o, double factor) {
+        // TODO Auto-generated method stub
+        
     }
+
+    @Override
+    public void add(PrimitiveMesh<?> o) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void subtract(PrimitiveMesh<?> o) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setSum(PrimitiveMesh<?> a, PrimitiveMesh<?> b) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setDifference(PrimitiveMesh<?> a, PrimitiveMesh<?> b) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Mesh<Double> newInstance() {
+        return new DoubleMesh();
+    }
+
 
 
 }

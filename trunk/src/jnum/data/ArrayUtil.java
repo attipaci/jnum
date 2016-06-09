@@ -625,12 +625,12 @@ public final class ArrayUtil {
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	public static Object copy(Object array) throws InstantiationException, IllegalAccessException { 
+	public static Object copyOf(Object array) throws InstantiationException, IllegalAccessException { 
 	    if(array == null) return null;
 	    else if(array instanceof Object[]) { 
-			Object[] original = (Object[]) array;
-			Object[] copy = (Object[]) Arrays.copyOf(original, original.length);
-			for(int i=original.length; --i >= 0; ) copy[i] = original[i] instanceof Copiable ? ((Copiable<?>) original[i]).copy() : copy(original[i]);
+			final Object[] original = (Object[]) array;
+			final Object[] copy = (Object[]) original.clone();	
+			for(int i=original.length; --i >= 0; ) copy[i] = original[i] instanceof Copiable ? ((Copiable<?>) original[i]).copy() : copyOf(original[i]);
 			return copy;
 		}
 		else if(array instanceof double[]) return Arrays.copyOf((double[]) array, ((double[]) array).length);
@@ -1776,7 +1776,7 @@ public final class ArrayUtil {
 	public static Object product(Object a, Object b) throws IllegalArgumentException {
 		if(a instanceof Object[]){
 			Object result = null;
-			try { result = copy(a); }
+			try { result = copyOf(a); }
 			catch(Exception e) { e.printStackTrace(); }
 			multiplyBy((Object[]) result, (Object[]) b);
 			return result;

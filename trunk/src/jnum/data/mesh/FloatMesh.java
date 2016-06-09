@@ -44,7 +44,6 @@ public class FloatMesh extends PrimitiveMesh<Float> {
         setData(data);
     }
 
-    
     @Override
     protected Float getScaled(Float value, double factor) {
         return (float) factor * value;
@@ -82,8 +81,43 @@ public class FloatMesh extends PrimitiveMesh<Float> {
     }
 
     @Override
-    public Mesh<Float> subArrayAt(int[] index) {
+    public Mesh<Float> subarrayAt(int[] index) {
         return new FloatMesh(subarrayDataAt(index));
+    }
+
+    @Override
+    public void addMultipleOf(PrimitiveMesh<?> o, double factor) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void add(PrimitiveMesh<?> o) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void subtract(PrimitiveMesh<?> o) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setSum(PrimitiveMesh<?> a, PrimitiveMesh<?> b) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setDifference(PrimitiveMesh<?> a, PrimitiveMesh<?> b) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Mesh<Float> newInstance() {
+        return new FloatMesh();
     }
 
 }

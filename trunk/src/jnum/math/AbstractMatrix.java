@@ -171,7 +171,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 		AbstractMatrix<T> copy = (AbstractMatrix<T>) clone();
 		if(getData() == null) return copy;
 		if(withContents) {			
-			try { copy.setData(ArrayUtil.copy(getData())); }
+			try { copy.setData(ArrayUtil.copyOf(getData())); }
 			catch(Exception e) { e.printStackTrace(); }
 		}
 		else {
@@ -192,7 +192,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	@Override
 	public void setProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) {
 		if(A.isScalar()) {
-			try { setData(ArrayUtil.copy(B.getData())); }
+			try { setData(ArrayUtil.copyOf(B.getData())); }
 			catch(Exception e) { e.printStackTrace(); }
 			T scalar = A.getValue(0, 0);		
 			if(scalar instanceof Double) ArrayUtil.scale(getData(), ((Double) scalar).doubleValue());

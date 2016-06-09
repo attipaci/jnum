@@ -46,6 +46,8 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	/** The file name. */
 	public String fileName = "";
 	
+	public Interpolator() {}
+	
 	/**
 	 * Instantiates a new interpolator.
 	 *
@@ -53,9 +55,10 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public Interpolator(String fileName) throws IOException {
+	    this();
 		read(fileName);
 		if(verbose) System.err.println(getClass().getSimpleName() + "> " + size() + " records parsed.");	
-		Collections.sort(this);
+		validate();
 	}
 	
 	/* (non-Javadoc)
@@ -78,6 +81,10 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		return true;
 	}
 	
+	public void validate() {
+	    Collections.sort(this);
+	}
+	
 	/**
 	 * Read.
 	 *
@@ -98,6 +105,8 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	 */
 	protected abstract void readData(String fileName) throws IOException; 
 	
+	public double getValue(double ordinate) { return getTrapesoidValue(ordinate); }
+	
 	// Linear interpolation.
 	// Throws Exception if MJD is outside of the interpolator range.
 	/**
@@ -107,7 +116,7 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	 * @return the value
 	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
 	 */
-	public double getValue(double ordinate) throws ArrayIndexOutOfBoundsException {
+	public double getTrapesoidValue(double ordinate) throws ArrayIndexOutOfBoundsException {
 		int upper = getIndexAbove(ordinate);
 		
 		double dt1 = ordinate - get(upper-1).ordinate;
@@ -177,11 +186,36 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		
 		return sum / sumw;
 	}
+	
 
+	/*
+	public double getSplineValue(double ordinate) throws ArrayIndexOutOfBoundsException {
+	    
+	    int iAbove = getIndexAbove(ordinate);
+	   
+	    double sum = 0.0, sumw = 0.0;
+
+	    for(int d=-2; d<=1; d++) {
+	        int i = iAbove + d;
+
+	        if(i < 0) continue;
+	        else if(i >= size()) break;
+
+	        Data p = get(i);
+	        double c = BicubicSplineCoeffs.valueFor(p.ordinate - ordinate); // TODO how to deal with irregular samples...
+
+	        sum += c * p.value;
+	        sumw += c;
+	    }
+
+	    return sum / sumw;   
+	}   
+    */
+	
 	/**
 	 * The Class Data.
 	 */
-	public class Data implements Comparable<Interpolator.Data> {
+	public static class Data implements Comparable<Interpolator.Data> {
 		
 		/** The value. */
 		public double ordinate, value;

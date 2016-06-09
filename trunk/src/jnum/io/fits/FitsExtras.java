@@ -29,6 +29,7 @@ import java.util.StringTokenizer;
 import jnum.Unit;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import nom.tam.fits.FitsFactory;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -135,7 +136,12 @@ public final class FitsExtras {
 	 * @throws HeaderCardException the header card exception
 	 */
 	public static void addLongHierarchKey(Cursor<String, HeaderCard> cursor, String key, int part, String value) throws HeaderCardException {	
-		key = getAbbreviatedHierarchKey(key);
+		if(FitsFactory.isLongStringsEnabled()) {
+		    cursor.add(new HeaderCard("HIERARCH." + key, value, null));
+		    return;
+		}
+	    
+	    key = getAbbreviatedHierarchKey(key);
 		if(value.length() == 0) value = "true";
 		
 		String alt = part > 0 ? "." + part : "";
@@ -212,7 +218,12 @@ public final class FitsExtras {
 	 * @throws HeaderCardException the header card exception
 	 */
 	public static void addLongKey(Cursor<String, HeaderCard> cursor, String key, String value, String comment) throws HeaderCardException {
-		if(key.length() >= 8) key = key.substring(0, 6) + "-";
+		if(FitsFactory.isLongStringsEnabled()) {
+		    cursor.add(new HeaderCard(key, value, comment));
+		    return;
+		}
+	    
+	    if(key.length() >= 8) key = key.substring(0, 6) + "-";
 		
 		final int size = 65 - comment.length();
 	
@@ -233,6 +244,12 @@ public final class FitsExtras {
 			ext++;
 			start = end;
 		}
+	}
+	
+	
+	public static void addLongKeyConvention(Cursor<String, HeaderCard> cursor) throws HeaderCardException {
+	    if(FitsFactory.isLongStringsEnabled()) cursor.add(new HeaderCard("LONGSTRN", "OGIP 1.0", "FITS standard long string convention."));
+	    else cursor.add(new HeaderCard("LONGSTRN", "CRUSH", "CRUSH's own long string convention."));
 	}
 	
 	/*

@@ -39,6 +39,8 @@ public class SimpleInterpolator extends Interpolator {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1849872877231563147L;
 
+	public SimpleInterpolator() {}
+	
 	/**
 	 * Instantiates a new simple interpolator.
 	 *
