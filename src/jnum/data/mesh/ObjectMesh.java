@@ -52,10 +52,11 @@ public class ObjectMesh<T> extends Mesh<T> {
 	 *
 	 * @param type the type
 	 * @param dimensions the dimensions
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
 	public ObjectMesh(Class<T> type, int[] dimensions) {
 		super(type, dimensions);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -98,28 +99,20 @@ public class ObjectMesh<T> extends Mesh<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.data.AbstractArray#subArrayAt(int[])
-	 */
-	@Override
-	public Mesh<T> subArrayAt(int[] index) {
-		return new ObjectMesh<T>(rawSubArrayAt(index));
-	}
-
-	/* (non-Javadoc)
 	 * @see kovacs.data.AbstractArray#parseElement(java.lang.String)
 	 */
 	@Override
 	public T parseElement(String text) throws ClassCastException, InstantiationException, IllegalAccessException  {
-		T value = type.newInstance();
+		T value = elementClass.newInstance();
 		((Parser) value).parse(text);
 		return value;
 	}
 
     @Override
-    protected Object subarrayDataAt(int[] index) {
-        // TODO Auto-generated method stub
-        return null;
+    public Mesh<T> newInstance() {
+        return new ObjectMesh<T>(elementClass);
     }
+
 
 	
 }

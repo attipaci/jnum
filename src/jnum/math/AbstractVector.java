@@ -130,7 +130,7 @@ Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Cop
 	public AbstractVector<T> copy() {
 		AbstractVector<T> copy = (AbstractVector<T>) clone();
 		try { 
-			copy.setData(ArrayUtil.copy(getData())); 
+			copy.setData(ArrayUtil.copyOf(getData())); 
 			return copy;
 		}
 		catch(Exception e) { e.printStackTrace(); }

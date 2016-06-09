@@ -1156,8 +1156,8 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		
 		ipolData.centerOn(ic, jc);
 		
-		final SplineCoeffs splineX = ipolData.splineX;
-		final SplineCoeffs splineY = ipolData.splineY;
+		final BicubicSplineCoeffs splineX = ipolData.splineX;
+		final BicubicSplineCoeffs splineY = ipolData.splineY;
 			
 		final int fromi = Math.max(0, splineX.minIndex());
 		final int toi = Math.min(sizeX(), splineX.maxIndex());
@@ -1776,10 +1776,13 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * Auto crop.
 	 */
 	public void autoCrop() {
-		if(verbose) System.err.print("Auto-cropping. ");
 		int[] hRange = getHorizontalIndexRange();
+		if(hRange == null) return; 
+		
 		int[] vRange = getVerticalIndexRange();
-		if(verbose) System.err.println((hRange[1] - hRange[0] + 1) + "x" + (vRange[1] - vRange[0] + 1));
+		if(vRange == null) return;
+		
+		if(verbose) System.err.println("Auto-cropping: " + (hRange[1] - hRange[0] + 1) + "x" + (vRange[1] - vRange[0] + 1));
 		this.crop(hRange[0], vRange[0], hRange[1], vRange[1]);
 	}
 	
@@ -2417,7 +2420,9 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void editHeader(Header header, Cursor<String, HeaderCard> cursor) throws HeaderCardException, FitsException, IOException {
-		cursor.add(new HeaderCard("OBJECT", name, "The source name."));
+	    FitsExtras.addLongKeyConvention(cursor);
+	    
+	    cursor.add(new HeaderCard("OBJECT", name, "The source name."));
 		cursor.add(new HeaderCard("EXTNAME", contentType, "The type of data contained in this HDU"));
 		cursor.add(new HeaderCard("DATE", FitsDate.getFitsDateString(), "Time-stamp of creation."));
 		cursor.add(new HeaderCard("CREATOR", creator, "The software that created the image."));	
@@ -2672,14 +2677,14 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	public static class InterpolatorData {
 		
 		/** The spline y. */
-		SplineCoeffs splineX, splineY;
+		BicubicSplineCoeffs splineX, splineY;
 		
 		/**
 		 * Instantiates a new interpolator data.
 		 */
 		public InterpolatorData() {
-			splineX = new SplineCoeffs();
-			splineY = new SplineCoeffs();
+			splineX = new BicubicSplineCoeffs();
+			splineY = new BicubicSplineCoeffs();
 		}
 		
 		/**

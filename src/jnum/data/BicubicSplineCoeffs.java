@@ -31,7 +31,7 @@ import jnum.util.HashCode;
 /**
  * The Class SplineCoeffs.
  */
-public class SplineCoeffs implements Serializable {
+public class BicubicSplineCoeffs implements Serializable {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5533149637827653369L;
@@ -63,9 +63,9 @@ public class SplineCoeffs implements Serializable {
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
-		if(!(o instanceof SplineCoeffs)) return false;
+		if(!(o instanceof BicubicSplineCoeffs)) return false;
 		if(!super.equals(o)) return false;
-		SplineCoeffs spline = (SplineCoeffs) o;
+		BicubicSplineCoeffs spline = (BicubicSplineCoeffs) o;
 		if(centerIndex != spline.centerIndex) return false;
 		return Arrays.equals(coeffs, spline.coeffs);
 	}
@@ -122,15 +122,19 @@ public class SplineCoeffs implements Serializable {
 	private void setLocalCenter(final double delta) {
 		final double ic = delta + 1.0;
 		
-		// Calculate the spline coefficients (as necessary)...
+		// Calculate the (bicubic) spline coefficients (as necessary)...
+		// See: https://en.wikipedia.org/wiki/Bicubic_interpolation
+		// using a=-0.5
 		if(localCenter != ic) {
-			for(int i=4; --i >= 0; ) {
-				final double dx = Math.abs(i - ic);
-				coeffs[i] = dx > 1.0 ? 
-					((-0.5 * dx + 2.5) * dx - 4.0) * dx + 2.0 : (1.5 * dx - 2.5) * dx * dx + 1.0;
-			}
+			for(int i=4; --i >= 0; ) coeffs[i] = valueFor(i - ic);
 			localCenter = ic;
 		}
 		
 	}
+	
+	public static double valueFor(double dx) {
+	    dx = Math.abs(dx);
+        return dx > 1.0 ? ((-0.5 * dx + 2.5) * dx - 4.0) * dx + 2.0 : (1.5 * dx - 2.5) * dx * dx + 1.0;
+    }
+
 }

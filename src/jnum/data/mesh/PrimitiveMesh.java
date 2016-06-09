@@ -43,6 +43,8 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
 	 *
 	 * @param type the type
 	 * @param dimensions the dimensions
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
 	public PrimitiveMesh(Class<T> type, int[] dimensions) {
 		super(type, dimensions);
@@ -64,15 +66,6 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
 	 */
 	public PrimitiveMesh(Object data) {
 		super(data);
-	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.data.AbstractArray#initialize()
-	 */
-	@Override
-	public void initialize() {
-		try { super.initialize(); }
-		catch(Exception e) { e.printStackTrace(); }
 	}
 	
 	/* (non-Javadoc)

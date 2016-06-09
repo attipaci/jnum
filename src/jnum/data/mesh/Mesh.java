@@ -49,18 +49,16 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	protected Object data;
 	
 	/** The type. */
-	protected Class<T> type;
+	protected Class<T> elementClass;
 	
-	/** The size. */
 	private int[] size;
-	
 	/**
 	 * Instantiates a new abstract array.
 	 *
 	 * @param type the type
 	 */
-	public Mesh(Class<T> type) {
-		this.type = type;
+	public Mesh(Class<T> elementClass) {
+		this.elementClass = elementClass;
 	}
 	
 	/**
@@ -71,34 +69,28 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	public Mesh(Object data) {
 		setData(data);
 	}
-
+	
+	public abstract Mesh<T> newInstance();
+	
 	// Returns an uninitialized array. Call initialize(), if want to fill with default elements.
 	/**
 	 * Instantiates a new abstract array.
 	 *
 	 * @param type the type
 	 * @param dimensions the dimensions
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	public Mesh(Class<T> type, int[] dimensions) {
-		this.type = type;
-		size = Arrays.copyOf(dimensions, dimensions.length);
-		data = ArrayUtil.createArray(type, dimensions);
+	public Mesh(Class<T> elementClass, int[] dimensions) {
+		this(elementClass);
+		try { setSize(dimensions); }
+		catch(Exception e) {
+		    throw new IllegalArgumentException("Cannot create elements of type: " + elementClass.getSimpleName());
+		}
 	}
 	
-	/**
-	 * Initialize.
-	 *
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
-	public void initialize() throws InstantiationException, IllegalAccessException {
-		ArrayUtil.initialize(data);
-	}
-
 	public boolean conformsTo(Mesh<?> o) {
-	    if(size.length != o.size.length) return false;
-	    for(int i=size.length; --i >= 0; ) if(size[i] != o.size[i]) return false;
-	    return true;
+	    return Arrays.equals(getSize(), o.getSize());
 	}
 	
 	/* (non-Javadoc)
@@ -117,12 +109,11 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	@SuppressWarnings("unchecked")
 	public Mesh<T> copy() {
 		Mesh<T> copy = (Mesh<T>) clone();
-		try { copy.data = ArrayUtil.copy(data); }
+		try { copy.data = ArrayUtil.copyOf(data); }
 		catch(Exception e) { 
 			copy.data = null; 
 			e.printStackTrace();
 		}
-		copy.size = Arrays.copyOf(size, size.length);
 		return copy();
 	}
 	
@@ -130,9 +121,12 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * Sets the size.
 	 *
 	 * @param dimensions the new size
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	public void setSize(int[] dimensions) { 
-		data = ArrayUtil.createArray(type, dimensions);
+	public void setSize(int[] dimensions) throws InstantiationException, IllegalAccessException { 
+	    this.size = dimensions;
+        data = ArrayUtil.createArray(elementClass, dimensions);
 	}
 	
 	/**
@@ -143,7 +137,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	@SuppressWarnings("unchecked")
 	public void setData(Object data) {
 		this.data = data;
-		type = (Class<T>) ArrayUtil.getClass(data);
+		elementClass = (Class<T>) ArrayUtil.getClass(data);
 		size = ArrayUtil.getShape(data);
 	}
 	
@@ -152,7 +146,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 *
 	 * @return the type
 	 */
-	public final Class<T> getType() { return type; }
+	public final Class<T> getType() { return elementClass; }
 
 	/**
 	 * Gets the data.
@@ -196,7 +190,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @param value the value
 	 */
 	public final void setElementAt(int[] index, T value) {
-		setLineElementAt(rawSubArrayAt(index), index[index.length-1], value);
+		setLineElementAt(subarrayDataAt(index), index[index.length-1], value);
 	}
 
 	/**
@@ -206,7 +200,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @return the t
 	 */
 	public T elementAt(int[] index) {
-		return lineElementAt(rawSubArrayAt(index), index[index.length-1]);
+		return lineElementAt(subarrayDataAt(index), index[index.length-1]);
 	}
 	
 	/**
@@ -215,7 +209,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @param index the index
 	 * @return the object
 	 */
-	public Object rawSubArrayAt(int[] index) {
+	public Object subarrayDataAt(int[] index) {
 		Object subarray = data;
 		int depth = index.length;
 		if(depth > size.length) throw new IllegalArgumentException("Index dimension exceeds that of the array.");
@@ -248,7 +242,11 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @param index the index
 	 * @return the abstract array
 	 */
-	public abstract Mesh<T> subArrayAt(int[] index); 
+	public Mesh<T> subarrayAt(int[] index) {
+	    Mesh<T> sub = newInstance();
+	    sub.setData(subarrayDataAt(index));
+	    return sub;
+	}
 	
 	/**
 	 * Adds the patch at.
@@ -339,9 +337,5 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 		return elements.toArray();		
 	}
 	
-	protected Object subarrayDataAt(int[] index) {
-	    // TODO...
-	    return null;
-	}
-
+	
 }

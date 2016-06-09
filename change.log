@@ -1,6 +1,21 @@
-	[BUG] ArrayUtil.copy() misbehaved (hung) when trying to copy 
-	heterogeneous arrays. Fixed. 
 
+0.09-2
+
+	[BUG] ArrayUtil.copy() misbehaved (hung) when trying to copy 
+	heterogeneous arrays. Fixed.
+	
+	[FIX] {Data2D} autocrop to check for and avoid null ranges.
+
+	[CHANGE] {Data2D} Added LONGSTRN keyword to properly identify the
+	convention used to store long FITS header entries. It is set to
+	'OGIP 1.0' by default, when long strings are enabled in the FITS libs.
+	Otherwise it's set to 'CRUSH' if and when CRUSH's own convention is
+	used instead.
+
+	[CHANGE] {FitsExtras} Long FITS header entries are now written using 
+	the default FITS long strings convention by default (with CONTINUE 
+	keys). However, the parsing of long keys will continue to recognise 
+	CRUSH's own convention for legacy.
 
 0.09-1
 
