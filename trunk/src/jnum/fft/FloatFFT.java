@@ -83,20 +83,17 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	 * @param blkbit the blkbit
 	 */
 	@Override
-	protected void merge2(final float[] data, int from, int to, final boolean isForward, int blkbit) {	
-		// Change from abstract index to double[] storage index (x2)
-		blkbit++; 
-	
-		// The double[] block size
-		final int blk = 1 << blkbit;
-		final int blkmask = blk - 1;
+	protected void merge2(final float[] data, int from, int to, final boolean isForward, final int blkbit) {	
 		
+		// The double[] block size
+		final int blk = 1 << (blkbit+1);
+		final int blkmask = blk - 1;
+			
 		// from/to already run 0 -- N/2, since they are complex indices...
 		
 		// convert to sparse indices for i1...		
 		from = ((from & ~blkmask) << 1) | (from & blkmask);
 		to = ((to & ~blkmask) << 1) | (to & blkmask);
-	
 		
 		// <------------------ Processing Block Starts Here ------------------------>
 		// 
@@ -108,7 +105,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 		final double s = Math.sin(theta);
 		final double c = Math.cos(theta);
 		
-		final int m = (from & blkmask) >> 1;
+		int m = (from & blkmask) >>> 1;
 		double r = m == 0 ? 1.0 : Math.cos(m * theta);
 		double i = m == 0 ? 0.0 : Math.sin(m * theta);
 
@@ -119,8 +116,11 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 			if((i1 & blk) != 0) {
 				i1 += blk;
 				if(i1 >= to) break;
-				r = 1.0;
-				i = 0.0;
+				
+				// Reset the twiddle factors...
+				m = (i1 & blkmask) >>> 1;
+		        r = m == 0 ? 1.0 : Math.cos(m * theta);
+		        i = m == 0 ? 0.0 : Math.sin(m * theta);
 			}
 
 			
@@ -176,24 +176,21 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	 * @param blkbit the blkbit
 	 */
 	@Override
-	protected void merge4(final float[] data, int from, int to, final boolean isForward, int blkbit) {	
-		// Change from abstract index to double[] storage index (x2)
-		blkbit++; 
-
+	protected void merge4(final float[] data, int from, int to, final boolean isForward, final int blkbit) {	
+	     
 		// The double[] block size
-		final int blk = 1 << blkbit;
+		final int blk = 1 << (blkbit+1);
 		final int skip = 3 * blk;
 		final int blkmask = blk - 1;
 
 		// make from and to compactified indices for i1 (0...N/4)
-		from >>= 1;
-		to >>= 1;
+		from >>>= 1;
+		to >>>= 1;
 		
 		// convert to sparse indices for i1...		
 		from = ((from & ~blkmask) << 2) | (from & blkmask);
 		to = ((to & ~blkmask) << 2) | (to & blkmask);
-	
-	
+		
 		// <------------------ Processing Block Starts Here ------------------------>
 		// 
 		// This one calculates the twiddle factors on the fly, using generators,
@@ -204,7 +201,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 		final double s = Math.sin(theta);
 		final double c = Math.cos(theta);
 		
-		final int m = (from & blkmask) >> 1;
+		int m = (from & blkmask) >>> 1;
 		double w1r = Math.cos(m * theta);
 		double w1i = Math.sin(m * theta);
 		
@@ -214,8 +211,11 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 			if((i0 & skip) != 0) {
 				i0 += skip;
 				if(i0 >= to) break;
-				w1r = 1.0;
-				w1i = 0.0;
+				
+				// Reset the twiddle factors
+				m = (i0 & blkmask) >>> 1;
+		        w1r = Math.cos(m * theta);
+		        w1i = Math.sin(m * theta);
 			}
 			
 			//->0:    f0 = F0
@@ -310,8 +310,8 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	 */
 	private void loadReal(final float[] data, final int length, int from, int to, final boolean isForward) {	
 		// Make from and to even indices 0...N/2
-		from = Math.max(2, (from >> 2) << 1);
-		to = (to >> 2) << 1;
+		from = Math.max(2, (from >>> 2) << 1);
+		to = (to >>> 2) << 1;
 		
 		final double theta = (isForward ? Constant.twoPi : -Constant.twoPi) / length;
 		final double s = Math.sin(theta);
@@ -319,7 +319,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 		
 		final float sh = isForward ? 0.5F : -0.5F;
 				
-		double a = (from>>1) * theta;
+		double a = (from>>>1) * theta;
 		double wr = from == 2 ? c : Math.cos(a);
 		double wi = from == 2 ? s : Math.sin(a);
 
@@ -512,8 +512,9 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	@Override
 	public void real2Amplitude(final float[] data) {
 		final int addressBits = getAddressBits(data);
+		final int n = getFFTLength(addressBits);
 		realTransform(data, addressBits, true);
-		scale(data, getFFTLength(addressBits), 2.0F / (2<<addressBits), getChunks());
+		scale(data, n, 2.0F / n, getChunks());
 	}
 	
 	
@@ -545,9 +546,9 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	@Override
 	public double[] averagePower(float[] data, final double[] w) {
 		int windowSize = w.length;
-		int stepSize = windowSize >> 1;
+		int stepSize = windowSize >>> 1;
 		final float[] block = new float[ExtraMath.pow2ceil(w.length)];
-		final int nF = block.length >> 1;
+		final int nF = block.length >>> 1;
 		
 		// Create the accumulated spectrum array
 		double[] spectrum = null;
@@ -588,7 +589,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	 * @see kovacs.util.fft.FFT#addressSizeOf(java.lang.Object)
 	 */
 	@Override
-	int addressSizeOf(final float[] data) { return data.length>>1; }
+	int addressSizeOf(final float[] data) { return data.length>>>1; }
 	
 	/* (non-Javadoc)
 	 * @see kovacs.util.fft.FFT#getPadded(java.lang.Object, int)

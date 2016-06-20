@@ -71,6 +71,7 @@ public class ComplexFFTTest {
 		
 		double k1 = Constant.twoPi / data.length;
 		double k2 = 2.0 * k1;
+		double kn1 = ((data.length>>1) - 1) * k1;
 		
 		System.out.println("\ncos(2):");
 		
@@ -94,6 +95,17 @@ public class ComplexFFTTest {
 		}
 		catch(Exception e) { e.printStackTrace(); }
 		
+		
+		System.out.println("\ncos(nf-1):");
+        
+		
+        for(int i=data.length; --i >= 0; ) data[i].set(Math.cos(kn1 * i), 0.0);
+        
+        try { 
+            fft.complexTransform(data, FFT.FORWARD, threads); 
+            print(data);
+        }
+        catch(Exception e) { e.printStackTrace(); }
 		
 	}
 	

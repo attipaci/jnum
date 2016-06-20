@@ -21,11 +21,11 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum.data.fitting;
 
-public interface FloatingMath {
-    
-    public double getDoubleValue(Double leftSide, Double rightSide);
-    
- 
+
+public interface Parametric<Type> {
+
+    public abstract Type evaluate();
+
 }

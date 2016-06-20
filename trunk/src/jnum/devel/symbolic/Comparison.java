@@ -1,4 +1,4 @@
-package jnum.devel;
+package jnum.devel.symbolic;
 
 public interface Comparison {
 

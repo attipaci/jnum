@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,209 +20,145 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
+
 package jnum.data.fitting;
 
-import java.util.Arrays;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collection;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Minimizer.
- */
-public abstract class Minimizer {
-	
-	/** The precision. */
-	public double precision = 1e-6;
-	
-	/**
-	 * Evaluate.
-	 *
-	 * @param tryparms the tryparms
-	 * @return the double
-	 */
-	public abstract double evaluate(double[] tryparms);   
+import jnum.Util;
+import jnum.Verbosity;
+import jnum.data.PrecisionControl;
 
-    /**
-     * Minimize.
-     *
-     * @return the double
-     */
-    public abstract double minimize();
+public abstract class Minimizer implements PrecisionControl, Verbosity {
+    private Parametric<Double> function;
+    private Parameter[] parameters;
+    private double precision;
+    private boolean verbose = false; 
+    private CovarianceMatrix C;
+    private ArrayList<Constraint> constraints = new ArrayList<Constraint>();
+    
+    private Parametric<Double> costFunction = new Parametric<Double>() {
+        @Override
+        public Double evaluate() { return Minimizer.this.evaluate(); } 
+    };
+    
+    public Minimizer(Parametric<Double> function, Collection<Parameter> parameters) {
+        this(function);
+        this.parameters = new Parameter[parameters.size()];
+        parameters.toArray(this.parameters);
+        init();
+    }
+   
+    public Minimizer(Parametric<Double> function, Parameter[] parameters) {
+        this(function);
+        this.parameters = parameters;
+        init();
+    }    
+    
+    private Minimizer(Parametric<Double> function) {
+        this.function = function;
+        setPrecision(DEFAULT_PRECISION);
+    }  
+    
+    public void minimize() throws ConvergenceException {
+        reset();
+        findMinimum();
+        
+        try { calcCovarianceMatrix(); }
+        catch(IllegalArgumentException e) {}
+        
+        if(function instanceof ChiSquared) calcStandardErrors();
+    }
+    
+    protected void init() {
+        reset();
+    }
+    
+    protected void reset() {
+        C = null;
+    }
+        
+    protected abstract void findMinimum();
+    
+    public abstract double getMinimum();
+    
+    public abstract boolean hasConverged();
+    
+    public double evaluate() {
+        double value = function.evaluate();
+        for(Constraint constraint : constraints) value *= 1.0 + constraint.penalty();
+        for(Parameter p : parameters) value *= 1.0 + p.penalty();
+        return value;
+    }
+    
+    public Parametric<Double> getCostFunction() { return costFunction; }
 
-    /**
-     * Gets the fit parameters.
-     *
-     * @return the fit parameters
-     */
-    public abstract double[] getFitParameters();
-    
-    /**
-     * Gets the chi2.
-     *
-     * @return the chi2
-     */
-    public abstract double getChi2();
-    
-    /**
-     * Gets the covariance matrix.
-     *
-     * @return the covariance matrix
-     */
-    public double[][] getCovarianceMatrix() {
-    	return getCovarianceMatrix(1e4 * precision);
-    }
-    	
-    /**
-     * Gets the covariance matrix.
-     *
-     * @param epsilon the epsilon
-     * @return the covariance matrix
-     */
-    public double[][] getCovarianceMatrix(double epsilon) {
-    	double[][] A = getA();
-    	double[][] M = new double[A.length][2*A.length];
-    	
-    	for(int i=0; i<A.length; i++) {
-    		System.arraycopy(A[i], 0, M[i], 0, A.length);
-    		M[i][A.length+i] = 1.0;
-    	}
-    	
-    	gaussJordan(M);
-    	
-    	double[][] C = new double[A.length][A.length];
-    	for(int i=0; i<A.length; i++) System.arraycopy(M[i], A.length, C[i], 0, A.length);
-    	return C;
+    public Parameter getParameter(int i) {
+        return parameters[i];
     }
     
-    /**
-     * Gets the a.
-     *
-     * @return the a
-     */
-    protected double[][] getA() {
-    	return getA(1e4 * precision);
+    public int parameters() { return parameters.length; }
+    
+    public synchronized void addConstraint(Constraint constraint) {
+        constraints.add(constraint);
     }
     
-    /**
-     * Gets the a.
-     *
-     * @param epsilon the epsilon
-     * @return the a
-     */
-    protected double[][] getA(double epsilon) {
-    	double[] parameter = getFitParameters();
-    	double[] delta = new double[parameter.length];
-    	for(int i=0; i<parameter.length; i++) delta[i] = epsilon * parameter[i];
-    	return getA(delta);
-    }
-  
-    /**
-     * Gets the a.
-     *
-     * @param delta the delta
-     * @return the a
-     */
-    protected double[][] getA(double[] delta) {
-    	double[] parameter = getFitParameters();    
-    	double[] tryparm = new double[parameter.length];
-    	System.arraycopy(parameter, 0, tryparm, 0, parameter.length);
-    	double[][] A = new double[parameter.length][parameter.length];
-    	double min = getChi2();
-    	
-    	// Make delta[i] 'exact' to avoud rounding errors...
-    	for(int i=0; i<parameter.length; i++) {
-    		final double temp = parameter[i] + delta[i];
-    		delta[i] = parameter[i] - temp;
-    	}
-    	
-    	for(int i=0; i<parameter.length; i++) {	
-    		tryparm[i] += delta[i];
-    		for(int j=i; j<parameter.length; j++) {
-    			tryparm[j] += delta[j];
-    			A[i][j] = (evaluate(tryparm) - min) / (delta[i] * delta[j]);
-    			A[j][i] = A[i][j];
-    			tryparm[j] = parameter[j];
-    		}
-    		tryparm[i] = parameter[i];
-    	}
-    	
-    	//print(A);
-    	
-    	return A;
+    public synchronized void clearConstraints() { constraints.clear(); }
+    
+    public ArrayList<Constraint> getConstraints() { return constraints; }
+    
+    @Override
+    public void setPrecision(double x) { precision = x; }
+    
+    @Override
+    public double getPrecision() { return precision; }
+    
+    @Override
+    public void setVerbose(boolean value) { verbose = value; }
+    
+    @Override
+    public boolean isVerbose() { return verbose; }
+    
+    public void calcCovarianceMatrix() {
+        if(!hasConverged()) throw new IllegalStateException(getClass().getSimpleName() + " has not converged.");
+        C = new CovarianceMatrix(costFunction, parameters, 1e3 * precision);
     }
     
-    /**
-     * Gauss jordan.
-     *
-     * @param M the m
-     */
-    public void gaussJordan(double[][] M) {
-		int rows = M.length;
-		int cols = M[0].length;
-
-		int[] indxc = new int[rows];
-		int[] indxr = new int[rows];
-		int[] ipiv = new int[rows];
-		
-		Arrays.fill(ipiv, -1);
-
-		for(int i=0;i<rows;i++) {
-			int icol=-1, irow=-1;
-			double big=0.0;
-			for(int j=0;j<rows;j++)
-				if(ipiv[j] != 0)
-					for(int k=0;k<rows;k++) {
-						if(ipiv[k] == -1) {
-							if(Math.abs(M[j][k]) >= big) {
-								big=Math.abs(M[j][k]);
-								irow=j;
-								icol=k;
-							}
-						} 
-						else if(ipiv[k] > 0) throw new IllegalArgumentException("Singular PrimitiveMatrix-1 during Gauss-Jordan elimination.");
-					}
-			++(ipiv[icol]);
-			if(irow != icol) {
-				for(int l=0;l<cols;l++) {
-					double temp = M[irow][l];
-					M[irow][l] = M[icol][l];
-					M[icol][l] = temp;
-				}
-			}
-			indxr[i]=irow;
-			indxc[i]=icol;
-			if(M[icol][icol] == 0.0) throw new IllegalArgumentException("Singular PrimitiveMatrix-2 during Gauss-Jordan elimination.");
-			double pivinv=1.0 / M[icol][icol];
-			M[icol][icol] = 1.0;
-			for(int j=0; j<cols; j++) M[icol][j] *= pivinv;
-			
-			for(int ll=0;ll<rows;ll++)
-				if(ll != icol) {
-					double temp=M[ll][icol];
-					M[ll][icol] = 0.0;
-					for(int j=0; j<cols; j++) M[ll][j] -= temp * M[icol][j];
-				}
-		}
-		for(int l=rows-1;l>=0;l--) {
-			if(indxr[l] != indxc[l])
-				for(int k=0;k<rows;k++) {
-					double temp = M[k][indxr[l]];
-					M[k][indxr[l]] = M[k][indxc[l]];
-					M[k][indxc[l]] = temp;
-				}
-		}
-	}
-    
-    /**
-     * Prints the.
-     *
-     * @param M the m
-     */
-    public void print(double[][] M) {
-    	System.out.println();
-    	for(int i=0; i<M.length; i++) {
-    		for(int j=0; j<M[i].length; j++) System.out.print(M[i][j] + "  ");
-    		System.out.println();
-    	}
+    public CovarianceMatrix getCovarianceMatrix() {
+       return C;
     }
+    
+    public CorrelationMatrix getCorrelationMatrix() {
+        CovarianceMatrix C = getCovarianceMatrix();
+        if(C == null) return null;
+        return C.getCorrelationMatrix();
+    }
+    
+    public void calcStandardErrors() {
+        double[] sigmas = getCovarianceMatrix().getStandardErrors();
+        for(int i=parameters(); --i >= 0; ) getParameter(i).setRMS(sigmas[i]);
+    }
+    
+    public void print() { print(System.out); }
+    
+    public void print(PrintStream out) {
+        out.println(toString());
+    }
+    
+    @Override
+    public String toString() { 
+        StringBuffer info = new StringBuffer(); 
+                
+        info.append(getClass().getSimpleName() + " --> " + function.getClass().getSimpleName() + ":\n\n");    
+        info.append("  min: " + Util.s4.format(getMinimum()) + "\n\n");
+        
+        for(int i=0; i<parameters(); i++) info.append("  " + getParameter(i).toString() + "\n");
+        
+        return new String(info);
+    }
+    
+    public static double DEFAULT_PRECISION = 1e-9;
     
 }

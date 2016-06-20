@@ -126,6 +126,8 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	 */
 	public double getWeightScale() { return weightFactor; }
 	
+	public void setWeightScale(double x) { weightFactor = x; }
+	
 	/**
 	 * Gets the s2 n clip level.
 	 *

@@ -139,7 +139,7 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 			throw new ArrayIndexOutOfBoundsException(getClass().getSimpleName() + "> outside of interpolator range.");
 		
 		while(upper - lower > 1) {
-			int i = (upper + lower) >> 1;
+			int i = (upper + lower) >>> 1;
 			double x = get(i).ordinate;
 			if(ordinate >= x) lower = i;
 			if(ordinate <= x) upper = i;

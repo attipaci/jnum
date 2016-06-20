@@ -29,8 +29,6 @@ import jnum.math.specialfunctions.ErrorFunction;
  * The Class ExtraMath.
  */
 public final class ExtraMath {
-	
-	
 
 	/**
 	 * Square.
@@ -217,39 +215,13 @@ public final class ExtraMath {
 	}
 
 	/**
-	 * The most significant bit (MSB) in the integer.
-	 *
-	 * @param value the value
-	 * @return the most significant bit
-	 */
-	public final static int msb(final int value) {
-		return log2floor(value);
-	}
-	
-	/**
-	 * The most significant bit (MSB) in the long integer.
-	 *
-	 * @param value the value
-	 * @return the most significant bit
-	 */
-	public final static long msb(final long value) {
-		return log2floor(value);
-	}
-
-	// Edit this only!
-	/**
 	 * Log2floor.
 	 *
 	 * @param value the value
 	 * @return the int
 	 */
 	public final static int log2floor(final int value) {		
-		return (int) Math.floor(log2(value));
-		/*
-		int bits = 0;
-		while((value >> bits) > 0) bits++;
-		return bits-1;
-		*/
+		return 31 - Integer.numberOfLeadingZeros(value);
 	}
 	
 	/**
@@ -258,8 +230,8 @@ public final class ExtraMath {
 	 * @param value the value
 	 * @return the long
 	 */
-	public final static long log2floor(final long value) {	
-		return (long) Math.floor(log2(value));
+	public final static int log2floor(final long value) {	
+	    return 63 - Long.numberOfLeadingZeros(value);
 	}
 	/**
 	 * Log2ceil.
@@ -268,8 +240,7 @@ public final class ExtraMath {
 	 * @return the int
 	 */
 	public final static int log2ceil(final int value) {
-		int p = log2floor(value);
-		return 1<<p == value ? p : p+1;
+		return 32 - Integer.numberOfLeadingZeros(value-1);
 	}
 	
 	/**
@@ -278,9 +249,8 @@ public final class ExtraMath {
 	 * @param value the value
 	 * @return the long
 	 */
-	public final static long log2ceil(final long value) {
-		long p = log2floor(value);
-		return 1<<p == value ? p : p+1;
+	public final static int log2ceil(final long value) {
+	    return 64 - Long.numberOfLeadingZeros(value-1L);
 	}
 
 	/**
@@ -294,7 +264,7 @@ public final class ExtraMath {
 		int floor = 1<<pfloor;
 		if(value == floor) return pfloor;
 		
-		return (double) value / floor < (double)(floor<<1) / value ? pfloor : pfloor + 1;
+		return (double) value / floor < (double)(floor << 1) / value ? pfloor : pfloor + 1;
 	}
 	
 	/**
@@ -303,12 +273,12 @@ public final class ExtraMath {
 	 * @param value the value
 	 * @return the long
 	 */
-	public final static long log2round(final long value) {
-		long pfloor = log2floor(value);
-		long floor = 1<<pfloor;
+	public final static int log2round(final long value) {
+		int pfloor = log2floor(value);
+		long floor = 1L << pfloor;
 		if(value == floor) return pfloor;
 		
-		return (double) value / floor < (double)(floor<<1) / value ? pfloor : pfloor + 1;
+		return (double) value / floor < (double)(floor << 1) / value ? pfloor : pfloor + 1;
 	}
 
 	/**
@@ -317,7 +287,7 @@ public final class ExtraMath {
 	 * @param value the value
 	 * @return the int
 	 */
-	public final static int pow2floor(final int value) { return 1 << log2floor(value); }
+	public final static int pow2floor(final int value) { return Integer.highestOneBit(value); }
 	
 	/**
 	 * Pow2floor.
@@ -325,7 +295,7 @@ public final class ExtraMath {
 	 * @param value the value
 	 * @return the long
 	 */
-	public final static long pow2floor(final long value) { return 1 << log2floor(value); }
+	public final static long pow2floor(final long value) { return Long.highestOneBit(value); }
 
 	/**
 	 * Pow2ceil.
@@ -333,7 +303,10 @@ public final class ExtraMath {
 	 * @param value the value
 	 * @return the int
 	 */
-	public final static int pow2ceil(final int value) { return 1 << log2ceil(value); }
+	public final static int pow2ceil(final int value) { 
+	    int floor = pow2floor(value);
+	    return value == floor ? floor : floor << 1;
+	}
 	
 	/**
 	 * Pow2ceil.
@@ -341,7 +314,10 @@ public final class ExtraMath {
 	 * @param value the value
 	 * @return the long
 	 */
-	public final static long pow2ceil(final long value) { return 1 << log2ceil(value); }
+	public final static long pow2ceil(final long value) {
+	    long floor = pow2floor(value);
+        return value == floor ? floor : floor << 1;
+	}
 
 	/**
 	 * Pow2round.
@@ -357,7 +333,7 @@ public final class ExtraMath {
 	 * @param value the value
 	 * @return the long
 	 */
-	public final static long pow2round(final long value) { return 1 << log2round(value); }
+	public final static long pow2round(final long value) { return 1L << log2round(value); }
 
 	
 	/**
@@ -379,12 +355,13 @@ public final class ExtraMath {
 	public final static long roundupRatio(long a, long b) { return (a + b - 1L) / b; }
 	
 	/**
-	 * Return the standardized angle for a given angle.
+	 * Return the standardized angle (between -Pi and Pi) for a given input angle.
 	 *
 	 * @param angle the angle
 	 * @return an angle between -Pi and Pi.
 	 */
 	public final static double standardAngle(final double angle) {
+	    if(angle > -Math.PI) if(angle <= Math.PI) return angle;
 		return Math.IEEEremainder(angle, Constant.twoPi);
 	}
 

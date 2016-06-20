@@ -21,10 +21,22 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum.data.fitting;
 
-public interface FunctionAssignment {
+public class ConvergenceException extends IllegalStateException {
 
-    public void set(Expression e, String definition);
-    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -632245294706738192L;
+
+    public ConvergenceException() {
+        super();
+    }
+
+    public ConvergenceException(String s) {
+        super(s);
+    }
+
+
 }

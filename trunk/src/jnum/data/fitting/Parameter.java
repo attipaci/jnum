@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -25,7 +25,10 @@ package jnum.data.fitting;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
+import jnum.Util;
 import jnum.data.DataPoint;
+import jnum.data.WeightedPoint;
+import jnum.math.Range;
 
 
 
@@ -33,12 +36,23 @@ import jnum.data.DataPoint;
 /**
  * The Class Parameter.
  */
-public class Parameter extends DataPoint {
+public class Parameter extends DataPoint implements Penalty {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8118303849902647386L;
+	
+	
 	/** The name. */
 	private String name;
+	
+	/** Restrict the parameter to a specified range of values... */
+	private Range range;
+	
+	/** The typical step-size when fitting the variable.
+	 *  Values should produce a noticeable but small change when evaluating a function with
+	 *  the parameter. E.g. for chi^2 evaluations, produce a delta chi^2 between ~0.001 and 1 
+	 *  */
+	private double stepSize = Double.NaN;
 	
 	/**
 	 * Instantiates a new parameter.
@@ -57,14 +71,91 @@ public class Parameter extends DataPoint {
 	 * @param name the name
 	 * @param value the value
 	 */
-	public Parameter(String name, double value) { this(name); this.setValue(value); }
+	public Parameter(String name, double value) { this(name); setValue(value); }
 
+	public Parameter(String name, double value, Range r) { 
+	    this(name, value); 
+	    if(!setRange(r)) throw new IllegalArgumentException("initial value outside of specified range.");
+	}
+	
+	public Parameter(String name, double value, double stepSize) { 
+	    this(name, value); 
+	    setStepSize(stepSize);    
+	}
+	
+	public Parameter(String name, double value, Range r, double stepSize) { 
+	    this(name, value, r); 
+	    setStepSize(stepSize); 
+	}
+
+	@Override
+    public WeightedPoint copy() {
+	    Parameter copy = (Parameter) super.copy();
+	    if(name != null) copy.name = new String(name);
+	    if(range != null) copy.range = range.copy();
+	    return copy;
+	}
+	
+	@Override
+    public int hashCode() {
+	    int hash = super.hashCode();
+	    if(name != null) hash ^= name.hashCode();
+	    if(range != null) hash ^= range.hashCode();
+	    return hash;
+	}
+	
+	@Override
+    public boolean equals(Object o) {
+	    if(!super.equals(o)) return false;
+	    if(!(o instanceof Parameter)) return false;
+	    Parameter p = (Parameter) o;
+	    if(!Util.equals(name, p.name)) return false;
+	    if(!Util.equals(range, p.range)) return false;
+	    return true;
+	}
+	
+	@Override
+    public double penalty() {
+	    if(range == null) return 0.0;
+	    double value = value();
+	    if(range.contains(value)) return 0.0;
+	    double dev = (value < range.min() ? range.min() - value : value - range.max()) / getStepSize();
+	    return dev * dev;
+	}
+	
+	/**
+     * Gets the name.
+     *
+     * @return 'true' if the current value is within the specified range, and 'false otherwise.
+     */
+	public boolean setRange(Range r) { 
+	    this.range = r; 
+	    if(r == null) return true;
+	    if(range.span() <= 0.0) throw new IllegalArgumentException("zero or negative parameter range.");
+	    if(value() < range.min()) setValue(range.min());
+	    else if(value() > range.max()) setValue(range.max());
+	    else return true;
+	    return false;
+	}
+	
+	public Range getRange() { return range; }
+	
+	public void setStepSize(double x) { stepSize = x; }
+	
+	public void setDefaultStepSize() { stepSize = Double.NaN; }
+	
+	public double getStepSize() {
+	    if(!Double.isNaN(stepSize)) return stepSize;
+	    if(range != null) if(range.isBounded()) return 1e-3 * range.span();
+	    return value() == 0.0 ? 1e-6 : 1e-3 * value();
+	}
+	
 	/**
 	 * Gets the name.
 	 *
 	 * @return the name
 	 */
-	public String getName() { return name; }
+	public String name() { return name; }
 	
 	/* (non-Javadoc)
 	 * @see kovacs.util.data.WeightedPoint#toString()

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,61 +20,14 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface PowFunctions.
- */
-public interface PowFunctions {
+package jnum.devel.symbolic;
 
-	/**
-	 * abs(x)
-	 *
-	 * @return the double
-	 */
-	public double abs();
-	
-	/**
-	 * x^n
-	 *
-	 * @param n the n
-	 */
-	public void pow(double n);
+public interface BooleanMath {
+    
+    public boolean getBooleanValue(boolean leftSide, boolean rightSide);
+    
+    
+    
 
-	/**
-	 * 1/x
-	 */
-	public void invert();
-	
-	/**
-	 * x^2
-	 */
-	public void square();
-	
-	/**
-	 * sqrt(x)
-	 */
-	public void sqrt();
-	
-	/**
-	 * exp(x)
-	 */
-	public void exp();
-	
-	/**
-     * exp(x-1)
-     */
-	public void expm1();
-	
-	/**
-	 * log(x)
-	 */
-	public void log();
-	
-	/**
-     * log(1+x)
-     */
-    public void log1p();
-	
 }

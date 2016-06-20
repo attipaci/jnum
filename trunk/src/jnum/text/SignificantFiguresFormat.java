@@ -83,7 +83,8 @@ public class SignificantFiguresFormat extends NumberFormat {
 	 */
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
-		return getFormat((int)Math.floor(Math.log10(Math.abs(number)))).format(number, toAppendTo, pos);
+	    if(number == 0.0) return getZeroFormat().format(number, toAppendTo, pos);
+	    return getFormat((int)Math.floor(Math.log10(Math.abs(number)))).format(number, toAppendTo, pos);
 	}
 	
 	/* (non-Javadoc)
@@ -91,9 +92,13 @@ public class SignificantFiguresFormat extends NumberFormat {
 	 */
 	@Override
 	public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
-		return getFormat((int)Math.floor(Math.log10(number))).format(number, toAppendTo, pos);
+	    if(number == 0.0) return getZeroFormat().format(number, toAppendTo, pos);
+	    return getFormat((int)Math.floor(Math.log10(number))).format(number, toAppendTo, pos);
 	}
 	
+	public NumberFormat getZeroFormat() {
+	    return trailingZeroes ? Util.f[digits-1] : Util.F[digits-1];
+	}
 	
 	/**
 	 * Gets the format.

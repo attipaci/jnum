@@ -21,10 +21,14 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum.data.fitting;
 
-public interface IntegerMath {
-
-    public long getLongValue(Long leftSide, Long rightSide);
+public abstract class Constraint implements Penalty {
+    public String id;
+    
+    public Constraint(String id) { this.id = id; }
+    
+    @Override
+    public abstract double penalty();
     
 }

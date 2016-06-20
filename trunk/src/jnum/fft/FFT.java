@@ -54,9 +54,6 @@ public abstract class FFT<Type> implements Serializable {
 	/** The twiddle error should never exceeds this number of bits. */
 	private int twiddleErrorBits = 3;
 	
-	/** The last address bits. */
-	private int lastAddressBits;
-	
 	/**
 	 * Get the number of address bits (of the data elements) that defines an optimal chunk size for running in a thread.
 	 * For optimal multi-threading, the optimal number of threads will be determined such that no thread will run on 
@@ -330,7 +327,7 @@ public abstract class FFT<Type> implements Serializable {
 		// Don't make more chunks than there are processing blocks...
 		final int n = 1<<addressBits;
 		
-		chunks = Math.min(chunks, n >> 2);
+		chunks = Math.min(chunks, n >>> 2);
 		
 		if(chunks == 1) {
 			sequentialComplexTransform(data, isForward);
@@ -341,7 +338,7 @@ public abstract class FFT<Type> implements Serializable {
 		final Queue queue = new Queue();
 		
 		// Make from and to always multiples of 8 (for radix-4 merge)
-		final double dn = (double) (n >> 2) / chunks;
+		final double dn = (double) (n >>> 2) / chunks;
 		final int[] from = new int[chunks];
 		final int[] to = new int[chunks];
 
@@ -473,16 +470,7 @@ public abstract class FFT<Type> implements Serializable {
 	 * @return the address bits
 	 */
 	int getAddressBits(Type data) {
-		int n = addressSizeOf(data);
-		
-		final int currentBits = lastAddressBits; // load to a local variable to make thread safe!
-		if(n == 1 << currentBits) return currentBits;
-		
-		int bits = 0;
-		while((n >>= 1) != 0) bits++;
-		
-		lastAddressBits = bits;
-		return bits;
+		return ExtraMath.log2floor(addressSizeOf(data));
 	}	
 	
 	/**

@@ -434,7 +434,7 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 	/**
 	 * Gets an image of the beam on the specified grid, with a default 3-sigma extent. The image
 	 * has odd number of points in both dimensions, and the center (reference) point of the beam
-	 * is its mid-points (i.e., for a dimension N, the midpoint is c = (N>>1);
+	 * is its mid-points (i.e., for a dimension N, the midpoint is c = (N>>>1);
 	 *
 	 * @param grid the grid
 	 * @return the beam image.
@@ -444,7 +444,7 @@ public class GaussianPSF implements Serializable, Cloneable, Copiable<GaussianPS
 	/**
 	 * Gets an image of the beam on the specified grid, with the specified extent. The image
 	 * has odd number of points in both dimensions, and the center (reference) point of the beam
-	 * is its mid-points (i.e., for a dimension N, the midpoint is c = (N>>1); 
+	 * is its mid-points (i.e., for a dimension N, the midpoint is c = (N>>>1); 
 	 *
 	 * @param grid the grid
 	 * @param sigmas the extent of the image in units of the standard-deviation (sigma).

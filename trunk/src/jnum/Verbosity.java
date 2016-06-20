@@ -21,8 +21,12 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum;
 
-public interface IntegerAssignment {
-    public void set(VariableLookup variables, String id, long value);
+public interface Verbosity {
+
+    public void setVerbose(boolean value);
+    
+    public boolean isVerbose();
+    
 }

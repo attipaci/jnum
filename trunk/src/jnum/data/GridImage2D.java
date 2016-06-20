@@ -806,7 +806,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		
 		final int nx = ExtraMath.pow2ceil(sizeX());
 		final int ny = ExtraMath.pow2ceil(sizeY());
-		final int nx2 = nx>>1;
+		final int nx2 = nx>>>1;
 		
 		final double[][] transformer = new double[nx][ny+2];
 		for(int i=sizeX(); --i >= 0; ) System.arraycopy(extended[i], 0, transformer[i], 0, sizeY()); 	

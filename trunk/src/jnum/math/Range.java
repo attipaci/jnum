@@ -190,6 +190,20 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		max *= value;
 	}
 	
+	public final boolean isBounded() {
+	    return isUpperBounded() && isLowerBounded();
+	}
+	
+	public boolean isUpperBounded() {
+	    if(Double.isInfinite(max)) if(max > 0) return false;
+	    return true;
+	}
+	
+	public boolean isLowerBounded() {
+	    if(Double.isInfinite(min)) if(min < 0) return false;
+	    return true;
+	}
+	
 	/**
 	 * Contains.
 	 *
@@ -197,7 +211,8 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @return true, if successful
 	 */
 	public boolean contains(double value) {
-		if(Double.isNaN(value)) return min == Double.NEGATIVE_INFINITY && max == Double.POSITIVE_INFINITY;
+	    
+		if(Double.isNaN(value)) return !isUpperBounded() && !isLowerBounded();
 		return value >= min && value < max;
 	}
 	
