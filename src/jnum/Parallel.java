@@ -268,9 +268,12 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 			// Don't even start in case it has been interrupted already
 			if(!isInterrupted()) processIndexOf(index, parallelProcessor.getThreadCount()); 	
 		}
+		catch(InterruptedException e) {
+		    // Interrupted...
+		}
 		catch(Exception e) {
-			System.err.println("WARNING! Parallel processing error.");
-			//e.printStackTrace();
+			System.err.println("WARNING! Parallel processing error: " + e.getMessage());
+			if(Util.debug) e.printStackTrace();
 			exception = e;
 			interruptAll();
 		}

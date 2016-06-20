@@ -21,23 +21,8 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum.devel.symbolic;
 
-
-public interface Syntax {
-    
-    public Bracketing getFunctionBrackets();
-    
-    public String getArgumentListSeparator();
-    
-    public Bracketing getDimensionBrackets();
-
-    public Bracketing getListBrackets();
-    
-    public String getListSeparator();
-    
-    public Bracketing[] getGroupingBrackets();
-    
-    public Operation[] getPrecedence();
-
+public interface IntegerAssignment {
+    public void set(VariableLookup variables, String id, long value);
 }

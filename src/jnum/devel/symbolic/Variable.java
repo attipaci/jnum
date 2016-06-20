@@ -21,13 +21,21 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum.devel.symbolic;
 
 
-public interface FunctionLookup {
-
-    public Expression get(String id, int arguments);
+public interface Variable {
+   
+    public void setValue(boolean value);
     
-    public void add(String id, int arguments, Expression expression);
+    public void setValue(long value);
+    
+    public void setValue(double value);
+    
+    public boolean asBoolean();
+    
+    public long asLong();
+    
+    public double asDouble();
     
 }

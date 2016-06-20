@@ -97,13 +97,12 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 		final int blkmask = blk - 1;
 	
 		// make from and to compactified indices for i1 (0...N/2)
-		from >>= 1;
-		to >>= 1; 
+		from >>>= 1;
+		to >>>= 1; 
 		
 		// convert to sparse indices for i1...
 		from = ((from & ~blkmask) << 1) | (from & blkmask);
 		to = ((to & ~blkmask) << 1) | (to & blkmask);
-			
 		
 		// <------------------ Processing Block Starts Here ------------------------>
 		// 
@@ -115,7 +114,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 		
 		final Complex w = new Complex(1.0, 0.0);
 		
-		final int m = from & blkmask;
+		int m = from & blkmask;
 		if(m != 0) w.setUnitVectorAt(m * theta);
 	
 		final Complex x = new Complex();
@@ -128,7 +127,11 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 			if((i1 & blk) != 0) {
 				i1 += blk;
 				if(i1 >= to) break;
-				w.set(1.0, 0.0);
+				
+				// Reset the twiddle factors
+				m = i1 & blkmask;
+				if(m != 0) w.setUnitVectorAt(m * theta);
+				else w.set(1.0, 0.0);
 			}
 
 			// To keep the twiddle precision under control
@@ -178,13 +181,12 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 		final int blkmask = blk - 1;
 
 		// make from and to compactified indices for i1 (0...N/4)
-		from >>= 2;
-		to >>= 2;
+		from >>>= 2;
+		to >>>= 2;
 		
 		// convert to sparse indices for i1...	
 		from = ((from & ~blkmask) << 2) | (from & blkmask);
 		to = ((to & ~blkmask) << 2) | (to & blkmask);
-	
 	
 		// <------------------ Processing Block Starts Here ------------------------>
 		// 
@@ -197,7 +199,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 		
 		final Complex w1 = new Complex(1.0, 0.0); 
 		
-		final int m = from & blkmask;
+		int m = from & blkmask;
 		if(m != 0) w1.setUnitVectorAt(m * theta);
 
 		final Complex w2 = new Complex();
@@ -215,7 +217,11 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 			if((i0 & skip) != 0) {
 				i0 += skip;
 				if(i0 >= to) break;
-				w1.set(1.0, 0.0);
+				
+				// Reset the twiddle factors
+				m = i0 & blkmask;
+				if(m != 0) w1.setUnitVectorAt(m * theta);
+				else w1.set(1.0, 0.0);
 			}
 			
 			//->0:    f0 = F0
@@ -329,12 +335,12 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 	@Override
 	public double[] averagePower(final Complex[] data, final double[] w) {
 		final int windowSize = w.length;
-		final int stepSize = windowSize >> 1;
+		final int stepSize = windowSize >>> 1;
 		
 		final Complex[] block = new Complex[ExtraMath.pow2ceil(w.length)];
 		for(int i=block.length; --i >= 0; ) block[i] = new Complex();
 		
-		final int nF = block.length >> 1;
+		final int nF = block.length >>> 1;
 		
 		// Create the accumulated spectrum array
 		double[] spectrum = null;

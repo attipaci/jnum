@@ -23,49 +23,39 @@
 
 package jnum.devel;
 
-import jnum.Util;
+import java.util.Collection;
+import java.util.Random;
 
-public class ScriptVariable implements Variable {
-    private String id;
-    private String literal;
+import jnum.data.fitting.DownhillSimplex;
+import jnum.data.fitting.Parameter;
+import jnum.data.fitting.Parametric;
+
+public class AnnealingMinimizer extends DownhillSimplex {
+    private Random random = new Random();
     
-    private ScriptVariable(String id) {
-        this.id = id;
+  
+    private double T, coolingSteps;
+    
+    public AnnealingMinimizer(Parametric function, Collection<Parameter> parameters) {
+        super(function, parameters);
+        // TODO Auto-generated constructor stub
+    }
+
+    public AnnealingMinimizer(Parametric function, Parameter[] parameters) {
+        super(function, parameters);
+        // TODO Auto-generated constructor stub
     }
     
-    public ScriptVariable(String id, boolean value) {
-        this(id);
-        setValue(value);
+    @Override
+    public double evaluate() { return super.evaluate() + T * random.nextGaussian(); }
+    
+    public void setTemperature(double T) { this.T = T; }
+    
+    public double getTemperature() { return T; }
+    
+    public void setCoolingSteps(double steps) { 
+        coolingSteps = steps; 
     }
-    
-    public ScriptVariable(String id, long value) {
-        this(id);
-        setValue(value);
-    }
-    
-    public ScriptVariable(String id, double value) {
-        this(id);
-        setValue(value);
-    }
-    
-    
-    public String getID() { return id; }
-    
-    @Override
-    public void setValue(boolean value) { literal = Boolean.toString(value); }
-    
-    @Override
-    public void setValue(long value) { literal = (value == (int)value) ? Integer.toString((int)value) : Long.toString(value); }
-    
-    @Override
-    public void setValue(double value) { literal = Double.toString(value); }
-    
-    @Override
-    public boolean asBoolean() { return Util.parseBoolean(literal); }
-    
-    @Override
-    public long asLong() { return Long.decode(literal); }
-    
-    @Override
-    public double asDouble() { return Double.parseDouble(literal); }
+   
+    public double getCoolingSteps() { return coolingSteps; }
 }

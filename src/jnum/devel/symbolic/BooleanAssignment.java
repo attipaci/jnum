@@ -20,22 +20,8 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
+package jnum.devel.symbolic;
 
-package jnum.devel;
-
-
-public interface Variable {
-   
-    public void setValue(boolean value);
-    
-    public void setValue(long value);
-    
-    public void setValue(double value);
-    
-    public boolean asBoolean();
-    
-    public long asLong();
-    
-    public double asDouble();
-    
+public interface BooleanAssignment {
+    public void set(VariableLookup variables, String id, boolean value);
 }

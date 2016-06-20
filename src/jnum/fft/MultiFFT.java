@@ -344,8 +344,8 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 		final int blkmask = blk - 1;
 	
 		// make from and to compactified indices for i1 (0...N/2)
-		from >>= 1;
-		to >>= 1; 
+		from >>>= 1;
+		to >>>= 1; 
 		
 		// convert to sparse indices for i1...
 		from = ((from & ~blkmask) << 1) | (from & blkmask);
@@ -362,7 +362,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 		
 		final Complex w = new Complex(1.0, 0.0);
 		
-		final int m = from & blkmask;
+		int m = from & blkmask;
 		if(m != 0) w.setUnitVectorAt(m * theta);
 	
 		final Object x = getMatching(data[0]);
@@ -375,7 +375,11 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 			if((i1 & blk) != 0) {
 				i1 += blk;
 				if(i1 >= to) break;
-				w.set(1.0, 0.0);
+				
+				// Reset the twiddle factors
+				m = i1 & blkmask;
+		        if(m != 0) w.setUnitVectorAt(m * theta);
+		        else w.set(1.0, 0.0);
 			}
 
 			// To keep the twiddle precision under control
@@ -435,8 +439,8 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 		final int blkmask = blk - 1;
 
 		// make from and to compactified indices for i1 (0...N/4)
-		from >>= 2;
-		to >>= 2;
+		from >>>= 2;
+		to >>>= 2;
 		
 		// convert to sparse indices for i1...
 		from = ((from & ~blkmask) << 2) | (from & blkmask);
@@ -472,7 +476,11 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 			if((i0 & skip) != 0) {
 				i0 += skip;
 				if(i0 >= to) break;
-				w1.set(1.0, 0.0);
+				
+				// Reset the twiddle factors
+				m = i0 & blkmask;
+		        if(m != 0) w1.setUnitVectorAt(m * theta);
+		        else w1.set(1.0, 0.0);
 			}
 			
 			//->0:    f0 = F0

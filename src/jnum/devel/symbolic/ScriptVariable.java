@@ -21,54 +21,51 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum.devel.symbolic;
 
+import jnum.Util;
 
-public class StandardSyntax implements Syntax {
-
-   
-    @Override
-    public Bracketing getFunctionBrackets() {
-        return Bracketing.curved;
+public class ScriptVariable implements Variable {
+    private String id;
+    private String literal;
+    
+    private ScriptVariable(String id) {
+        this.id = id;
     }
     
-    @Override
-    public String getArgumentListSeparator() { return ","; }
-
-    @Override
-    public Bracketing getDimensionBrackets() {
-        return Bracketing.square; 
-    }
-
-    @Override
-    public Bracketing getListBrackets() {
-        return Bracketing.curly; 
+    public ScriptVariable(String id, boolean value) {
+        this(id);
+        setValue(value);
     }
     
-    @Override
-    public String getListSeparator() { return ","; }
-    
-    @Override
-    public Bracketing[] getGroupingBrackets() {
-        return groupBrackets;
+    public ScriptVariable(String id, long value) {
+        this(id);
+        setValue(value);
     }
-
-    @Override
-    public Operation[] getPrecedence() {
-        return precedence;
+    
+    public ScriptVariable(String id, double value) {
+        this(id);
+        setValue(value);
     }
-
     
-    private Bracketing[] groupBrackets = { Bracketing.curved, Bracketing.square };
     
-    private static final Operation[] precedence = new Operation[] { 
-            Operation.increment, Operation.decrement, 
-            Operation.negation,
-            Operation.power,
-            Operation.multiplication, Operation.division, Operation.modulus,
-            Operation.addition, Operation.subtraction
-            // TODO ...
-    };
-
+    public String getID() { return id; }
     
+    @Override
+    public void setValue(boolean value) { literal = Boolean.toString(value); }
+    
+    @Override
+    public void setValue(long value) { literal = (value == (int)value) ? Integer.toString((int)value) : Long.toString(value); }
+    
+    @Override
+    public void setValue(double value) { literal = Double.toString(value); }
+    
+    @Override
+    public boolean asBoolean() { return Util.parseBoolean(literal); }
+    
+    @Override
+    public long asLong() { return Long.decode(literal); }
+    
+    @Override
+    public double asDouble() { return Double.parseDouble(literal); }
 }

@@ -3,8 +3,22 @@
 
 	[BUG] ArrayUtil.copy() misbehaved (hung) when trying to copy 
 	heterogeneous arrays. Fixed.
+
+	[NEW] Brand new jnum.data.fitting API. Includes fixes to covariance
+	calculation. Allows for restricted parameter ranges, and formulating
+	fitting constraints.
+
+	[NEW] Added expm1() and log1p() functions for Complex numbers.
+
+	[FIX] {FFT} Recalculation of twiddle factors when skipping over data
+	blocks is made safer for multithreading.
+
+	[FIX] {ExtraMath} Fixes to various long integer functions.
 	
 	[FIX] {Data2D} autocrop to check for and avoid null ranges.
+
+	[CHANGE] {ExtraMath} updated integer functions log2XXX() and pow2XXX()
+	with faster methods using builtin integer methods.
 
 	[CHANGE] {Data2D} Added LONGSTRN keyword to properly identify the
 	convention used to store long FITS header entries. It is set to
@@ -16,6 +30,13 @@
 	the default FITS long strings convention by default (with CONTINUE 
 	keys). However, the parsing of long keys will continue to recognise 
 	CRUSH's own convention for legacy.
+
+	[TWEAK] Improved address bit counting, based on builtin functions. 
+	And safer bitshift-down operations with '>>>' instead of '>>'.
+
+	[COSMETIC] {SignificantFigures} Formating of zero values without 
+	exponent.
+
 
 0.09-1
 

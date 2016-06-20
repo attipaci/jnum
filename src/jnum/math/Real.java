@@ -206,6 +206,14 @@ public class Real extends Number implements LinearAlgebra<Real>, AbstractAlgebra
 	}
 
 	/* (non-Javadoc)
+     * @see kovacs.math.PowFunctions#expm1()
+     */
+    @Override
+    public final void expm1() {
+        value = Math.expm1(value);
+    }
+	
+	/* (non-Javadoc)
 	 * @see kovacs.math.PowFunctions#invert()
 	 */
 	@Override
@@ -221,6 +229,14 @@ public class Real extends Number implements LinearAlgebra<Real>, AbstractAlgebra
 		value = Math.log(value);
 	}
 
+	/* (non-Javadoc)
+     * @see kovacs.math.PowFunctions#log1p()
+     */
+    @Override
+    public final void log1p() {
+        value = Math.log1p(value);
+    }
+	
 	/* (non-Javadoc)
 	 * @see kovacs.math.PowFunctions#pow(double)
 	 */
@@ -308,7 +324,7 @@ public class Real extends Number implements LinearAlgebra<Real>, AbstractAlgebra
 	public final double doubleValue() {
 		return value;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Number#floatValue()
 	 */

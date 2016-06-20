@@ -412,7 +412,31 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-
+	/**
+     * exp(z)-1.
+     */
+	@Override
+    public final void expm1() {
+        if(y() == 0) setX(Math.expm1(x()));
+        else {
+            final double siny2 = Math.sin(0.5*y());
+            set(Math.expm1(x()) * Math.cos(y()) - 2.0 * siny2 * siny2, Math.exp(x()) * Math.sin(y()));
+        }
+    }
+    
+	/**
+     * Calculates the exp(z)-1 of the argument.
+     *
+     * @param z the Complex argument
+     * @return exp(z)-1
+     */
+    public static Complex expm1(final Complex z) {
+        final Complex c = (Complex) z.clone();
+        c.expm1();
+        return c;
+    }
+	
+	
 	/**
 	 * log(z).
 	 * 
@@ -434,7 +458,29 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-
+	/**
+     * log(1+z).
+     * 
+     */
+	@Override
+    public final void log1p() {
+        if(y() == 0.0) setX(Math.log1p(x()));
+        else set(0.5 * Math.log1p(x()*(x()+2.0)+y()*y()), Math.atan2(y(), 1.0 + x()));
+    }
+	
+	
+	/**
+     * Calculates the natural log(1+z) of the complex argument z.
+     *
+     * @param z the complex argument
+     * @return log(1+z).
+     */
+    public static Complex log1p(final Complex z) {
+        final Complex c = (Complex) z.clone();
+        c.log1p();
+        return c;
+    }
+	
 	/**
 	 * cos(z).
 	 */

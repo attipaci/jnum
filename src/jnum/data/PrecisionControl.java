@@ -21,26 +21,12 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum.data;
 
-public class Bracketing {
-    String opening;
-    String closing;
+public interface PrecisionControl {
+
+    public void setPrecision(double x);
     
-    public Bracketing(String opening, String closing) {
-        this.opening = opening;
-        this.closing = closing;
-    }
-    
-    public Bracketing(char opening, char closing) {
-        this.opening = opening + "";
-        this.closing = closing + "";
-    }
-    
-    public static final Bracketing curved = new Bracketing("(", ")");
-    
-    public static final Bracketing square = new Bracketing("[", "]");
-    
-    public static final Bracketing curly = new Bracketing("{", "}");
+    public double getPrecision();
     
 }

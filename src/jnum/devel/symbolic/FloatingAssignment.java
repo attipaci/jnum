@@ -21,13 +21,8 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum.devel.symbolic;
 
-
-public interface VariableLookup {
-
-    public Variable get(String id);
-    
-    public void add(String id, Variable v);
-    
+public interface FloatingAssignment {
+    public void set(VariableLookup variables, String id, double value);
 }

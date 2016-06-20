@@ -21,13 +21,13 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.devel;
+package jnum.devel.symbolic;
 
-public interface BooleanMath {
-    
-    public boolean getBooleanValue(boolean leftSide, boolean rightSide);
-    
-    
-    
 
+public interface FunctionLookup {
+
+    public Expression get(String id, int arguments);
+    
+    public void add(String id, int arguments, Expression expression);
+    
 }

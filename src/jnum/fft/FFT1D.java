@@ -104,7 +104,7 @@ public abstract class FFT1D<Type> extends FFT<Type> {
 	public static int bin2Image(int bin, final int addressBits) {
 		final int n = 1 << addressBits;
 		
-		if(bin > (n>>1)) {
+		if(bin > (n>>>1)) {
 			if(bin >= n) throw new ArrayIndexOutOfBoundsException(bin);
 			return bin - n;
 		}

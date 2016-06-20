@@ -299,6 +299,10 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 	@Override
 	public final int size() { return rows(); }
 
+	public void setSize(int size) {
+	    super.setSize(size, size);
+	}
+	
 	/* (non-Javadoc)
 	 * @see kovacs.math.Matrix#setIdentity()
 	 */

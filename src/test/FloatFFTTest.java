@@ -43,6 +43,7 @@ public class FloatFFTTest {
 		float[] data = new float[64];
 		
 		FloatFFT fft = new FloatFFT();
+		fft.setSequential();
 		
 		System.out.println("\ndelta(0):");
 		data[0] = 1.0F;
@@ -74,6 +75,11 @@ public class FloatFFTTest {
 		fft.complexTransform(data, FFT.FORWARD, threads); 
 		print(data);
 		
+		
+		System.out.println("\nBack:");
+		fft.complexTransform(data, FFT.BACK, threads); 
+        print(data);
+        
 	
 		System.out.println("\nsin(1):");
 		
@@ -85,6 +91,61 @@ public class FloatFFTTest {
 		fft.complexTransform(data, FFT.FORWARD, threads); 
 		print(data);
 		
+		System.out.println("\nBack:");
+		fft.complexTransform(data, FFT.BACK, threads); 
+        print(data);
+        
+    
+		
+		
+		System.out.println("\ncos(15):");
+        
+        for(int i=0; i < data.length; i += 2) {
+            data[i] = (float) Math.cos(15 * k1 * i);
+            data[i+1] = 0.0F;
+        }
+         
+        fft.complexTransform(data, FFT.FORWARD, threads); 
+        print(data);
+        
+        
+        System.out.println("\nReal: sin(1):");
+        
+        
+        for(int i=0; i<data.length; i++) {
+            data[i] = (float) Math.sin(k1 * i);
+        }
+        
+        fft.real2Amplitude(data); 
+        print(data);
+        
+        System.out.println("\nBack:");
+        fft.amplitude2Real(data);
+        print(data);
+        
+		
+		System.out.println("\nReal: cos(31):");
+        
+		
+        for(int i=0; i<data.length; i++) {
+            data[i] = (float) Math.cos(31 * k1 * i);
+        }
+        
+        fft.real2Amplitude(data); 
+        print(data);
+        
+        
+		System.out.println("\nReal: const + sin(1) + cos(2):");
+        
+        for(int i=0; i<data.length; i++) {
+            data[i] = 1.0F + (float) Math.sin(k1 * i) + (float) Math.cos(k2 * i);
+        }
+		
+        fft.real2Amplitude(data); 
+        print(data);
+         
+        
+        
 	}
 	
 	

@@ -20,8 +20,9 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.devel;
 
-public interface BooleanAssignment {
-    public void set(VariableLookup variables, String id, boolean value);
+package jnum.data.fitting;
+
+public interface ChiSquared extends Parametric<Double> {
+
 }
