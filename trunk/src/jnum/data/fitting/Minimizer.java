@@ -31,20 +31,20 @@ import jnum.Util;
 import jnum.Verbosity;
 import jnum.data.PrecisionControl;
 
-public abstract class Minimizer implements PrecisionControl, Verbosity {
+public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty {
     private Parametric<Double> function;
     private Parameter[] parameters;
     private double precision;
     private boolean verbose = false; 
     private CovarianceMatrix C;
     private ArrayList<Constraint> constraints = new ArrayList<Constraint>();
-    
+     
     private Parametric<Double> costFunction = new Parametric<Double>() {
         @Override
         public Double evaluate() { return Minimizer.this.evaluate(); } 
     };
     
-    public Minimizer(Parametric<Double> function, Collection<Parameter> parameters) {
+    public Minimizer(Parametric<Double> function, Collection<? extends Parameter> parameters) {
         this(function);
         this.parameters = new Parameter[parameters.size()];
         parameters.toArray(this.parameters);
@@ -62,10 +62,16 @@ public abstract class Minimizer implements PrecisionControl, Verbosity {
         setPrecision(DEFAULT_PRECISION);
     }  
     
+    protected abstract void findMinimum();
+    
+    public abstract double getMinimum();
+    
+    public abstract boolean hasConverged();
+    
     public void minimize() throws ConvergenceException {
         reset();
         findMinimum();
-        
+       
         try { calcCovarianceMatrix(); }
         catch(IllegalArgumentException e) {}
         
@@ -79,18 +85,17 @@ public abstract class Minimizer implements PrecisionControl, Verbosity {
     protected void reset() {
         C = null;
     }
-        
-    protected abstract void findMinimum();
     
-    public abstract double getMinimum();
+    public double evaluate() {  
+        return function.evaluate() * (1.0 + penalty());
+    }
     
-    public abstract boolean hasConverged();
-    
-    public double evaluate() {
-        double value = function.evaluate();
-        for(Constraint constraint : constraints) value *= 1.0 + constraint.penalty();
-        for(Parameter p : parameters) value *= 1.0 + p.penalty();
-        return value;
+    @Override
+    public double penalty() {
+        double penalty = 0.0;
+        for(Constraint constraint : constraints) penalty += constraint.penalty();
+        for(Parameter p : parameters) penalty += p.penalty();
+        return penalty;
     }
     
     public Parametric<Double> getCostFunction() { return costFunction; }
@@ -120,10 +125,10 @@ public abstract class Minimizer implements PrecisionControl, Verbosity {
     
     @Override
     public boolean isVerbose() { return verbose; }
-    
+     
     public void calcCovarianceMatrix() {
         if(!hasConverged()) throw new IllegalStateException(getClass().getSimpleName() + " has not converged.");
-        C = new CovarianceMatrix(costFunction, parameters, 1e3 * precision);
+        C = new CovarianceMatrix(costFunction, parameters, 1e6 * precision);
     }
     
     public CovarianceMatrix getCovarianceMatrix() {
@@ -137,9 +142,10 @@ public abstract class Minimizer implements PrecisionControl, Verbosity {
     }
     
     public void calcStandardErrors() {
-        double[] sigmas = getCovarianceMatrix().getStandardErrors();
-        for(int i=parameters(); --i >= 0; ) getParameter(i).setRMS(sigmas[i]);
+        getCovarianceMatrix().setParameterErrors();
     }
+    
+    public void print(String lead) { print(System.out, lead); }
     
     public void print() { print(System.out); }
     
@@ -147,18 +153,27 @@ public abstract class Minimizer implements PrecisionControl, Verbosity {
         out.println(toString());
     }
     
+    public void print(PrintStream out, String lead) {
+        out.println(toString(lead));
+    }
+    
     @Override
-    public String toString() { 
+    public final String toString() {
+        return toString("");
+    }
+    
+    public String toString(String lead) {
         StringBuffer info = new StringBuffer(); 
                 
-        info.append(getClass().getSimpleName() + " --> " + function.getClass().getSimpleName() + ":\n\n");    
-        info.append("  min: " + Util.s4.format(getMinimum()) + "\n\n");
+        info.append(lead + getClass().getSimpleName() + " --> " + function.getClass().getSimpleName() + ":\n\n");    
+        info.append(lead + "  min: " + Util.s4.format(getMinimum()) + "\n\n");
         
-        for(int i=0; i<parameters(); i++) info.append("  " + getParameter(i).toString() + "\n");
+        for(int i=0; i<parameters(); i++) info.append(lead + "  " + getParameter(i).toString() + "\n");
         
         return new String(info);
     }
     
-    public static double DEFAULT_PRECISION = 1e-9;
+    public static double DEFAULT_PRECISION = 1e-8;
+    public static int DEFAULT_ATTEMPTS = 3;
     
 }
