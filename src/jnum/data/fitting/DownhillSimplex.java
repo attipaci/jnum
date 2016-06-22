@@ -44,7 +44,7 @@ public class DownhillSimplex extends Minimizer implements Scalable {
 
     private Random random;
 
-    public DownhillSimplex(Parametric<Double> function, Collection<Parameter> parameters) {
+    public DownhillSimplex(Parametric<Double> function, Collection<? extends Parameter> parameters) {
         super(function, parameters);
     }
 
@@ -230,8 +230,8 @@ public class DownhillSimplex extends Minimizer implements Scalable {
     }   
 
     @Override
-    public String toString() { 
-        return super.toString() + "\n  " + (hasConverged() ? "converged in " + steps + " steps" : "not converged!");
+    public String toString(String lead) { 
+        return super.toString(lead) + "\n  " + lead + (hasConverged() ? "converged in " + steps + " steps" : "not converged!");
     }
 
 

@@ -68,14 +68,8 @@ public class CovarianceMatrix extends SquareMatrix {
     
     public Parameter[] getParameters() { return parameters; }
  
-    public double[] getStandardErrors() {
-        double[] sigmas = new double[size()];
-        getStandardErrors(sigmas);
-        return sigmas;
-    }
-    
-    public void getStandardErrors(double[] sigma) {
-        for(int i=size(); --i >= 0; ) sigma[i] = Math.sqrt(getValue(i, i));
+    public void setParameterErrors() {
+        for(int i=size(); --i >= 0; ) parameters[i].setWeight(1.0 / getValue(i, i));
     }
     
     public CorrelationMatrix getCorrelationMatrix() {

@@ -110,5 +110,5 @@ public class HessianMatrix extends SquareMatrix {
         return new CovarianceMatrix(this);
     }
     
-    public static double DEFAULT_EPSILON = 1e-6;
+    public static double DEFAULT_EPSILON = 1e-8;
 }

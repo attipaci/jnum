@@ -35,13 +35,14 @@ import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
 
+import java.io.Serializable;
 import java.lang.reflect.*;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Real.
  */
-public class Real extends Number implements LinearAlgebra<Real>, AbstractAlgebra<Real>, AbsoluteValue, Copiable<Real>, CopyCat<Real>, Cloneable, BlankingValue, 
+public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<Real>, AbsoluteValue, Copiable<Real>, CopyCat<Real>, Cloneable, BlankingValue, 
 	PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions,
 	NumberFormating, DecimalFormating, Parser, Metric<Real>, Comparable<Real> {
 	
@@ -317,38 +318,10 @@ public class Real extends Number implements LinearAlgebra<Real>, AbstractAlgebra
 		return Double.isNaN(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Number#doubleValue()
-	 */
-	@Override
-	public final double doubleValue() {
+	public final double value() {
 		return value;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Number#floatValue()
-	 */
-	@Override
-	public final float floatValue() {
-		return (float) value;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Number#intValue()
-	 */
-	@Override
-	public final int intValue() {
-		return (int) Math.round(value);
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Number#longValue()
-	 */
-	@Override
-	public final long longValue() {
-		return Math.round(value);
-	}
-
 	/* (non-Javadoc)
 	 * @see kovacs.text.NumberFormating#toString(java.text.NumberFormat)
 	 */

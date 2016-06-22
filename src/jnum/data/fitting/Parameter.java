@@ -23,7 +23,6 @@
 package jnum.data.fitting;
 
 import java.text.NumberFormat;
-import java.util.StringTokenizer;
 
 import jnum.Util;
 import jnum.data.DataPoint;
@@ -173,19 +172,5 @@ public class Parameter extends DataPoint implements Penalty {
 		return name + " = " + (isExact() ? f.format(value()) : super.toString(f));		
 	}
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param text the text
-	 */
-	public void parse(String text) {
-		StringTokenizer tokens = new StringTokenizer(text, " \t:");
-		setValue(Double.parseDouble(tokens.nextToken()));
-		if(tokens.hasMoreTokens()) {
-			double rms = Double.parseDouble(tokens.nextToken());
-			setWeight(1.0 / (rms * rms));
-		}
-		else exact();
-	}
 	
 }
