@@ -24,8 +24,21 @@
 package jnum.data.fitting;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * A generic interface for functions that depend on a set of parameters. The interface defines a single {@link #evaluate()} 
+ * method whose return value is of the specified generic type.
+ *
+ * @param <Type> the generic type
+ */
 public interface Parametric<Type> {
 
-    public abstract Type evaluate();
+    /**
+     * Evaluates the function at the current set of externally defined parameters, and returns its value as the specified
+     * generic type.
+     *
+     * @return the type
+     */
+    public Type evaluate();
 
 }

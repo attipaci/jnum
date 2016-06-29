@@ -23,17 +23,27 @@
 
 package jnum.data.fitting;
 
+// TODO: Auto-generated Javadoc
+/**
+ * An easily identifiable exception specifically for {@link} Minimizer implementations.
+ */
 public class ConvergenceException extends IllegalStateException {
 
-    /**
-     * 
-     */
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -632245294706738192L;
 
+    /**
+     * Instantiates a new convergence exception.
+     */
     public ConvergenceException() {
         super();
     }
 
+    /**
+     * Instantiates a new convergence exception with a specific message.
+     *
+     * @param s the message providing some explanation on why the exception occurred. 
+     */
     public ConvergenceException(String s) {
         super(s);
     }

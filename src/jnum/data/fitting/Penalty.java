@@ -23,8 +23,18 @@
 
 package jnum.data.fitting;
 
+// TODO: Auto-generated Javadoc
+/**
+ * A generic interface for providing a penalty function. The penalty should be 0.0 (no penalty) or a positive value
+ * when a penalty is warranted.
+ */
 public interface Penalty {
 
+    /**
+     * The penalty value. This should be 0.0 if no penalty is applied, or a positive value for any penalty incurred.
+     *
+     * @return 0.0 (no penalty) or a positive value representing a penalty.
+     */
     public double penalty();
     
 }

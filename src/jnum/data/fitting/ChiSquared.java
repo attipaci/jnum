@@ -23,6 +23,12 @@
 
 package jnum.data.fitting;
 
+/**
+ * An interface to be used when defining chi-squared functions for minimization. When minimizing a function that
+ * implements the ChiSquared interface, the minimizer will calculate and set appropriate uncertainties for the
+ * adjusted parameters, assuming that the function that implements this interface is indeed a properly defined 
+ * chi-squared measure.
+ */
 public interface ChiSquared extends Parametric<Double> {
 
 }

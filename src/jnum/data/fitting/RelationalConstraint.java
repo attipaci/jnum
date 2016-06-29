@@ -23,22 +23,60 @@
 
 package jnum.data.fitting;
 
+// TODO: Auto-generated Javadoc
+/**
+ * A class for formulating simple relational constraints between two quantities, one of which must be of {@link Parametric} type.
+ */
 public class RelationalConstraint extends Constraint {
+    
+    /** The expression. */
     private Parametric<Double> expression;
+    
+    /** The relation. */
     private int relation;
+    
+    /** The target. */
     private Parametric<Double> target;
+    
+    /** The tolerance for enforcing the constraint. */
     private double tolerance;
     
+    /**
+     * Instantiates a new relational constraint.
+     *
+     * @param id the identified of the constraint
+     * @param expression the parametric expression that is constrained
+     * @param relation the relation (e.g. {@link #EQUALS}, {@link #GREATER_THAN} or {@link #LESS_THAN}).
+     * @param targetValue the fixed control value
+     * @param tolerance the tolerance for enforcing the constraint.
+     */
     public RelationalConstraint(String id, Parametric<Double> expression, int relation, double targetValue, double tolerance) {
         this(id, expression, relation, tolerance);
         setTarget(targetValue); 
     }
 
+    /**
+     * Instantiates a new relational constraint.
+     *
+     * @param id the identified of the constraint
+     * @param expression the parametric expression on the left side.
+     * @param relation the relation (e.g. {@link #EQUALS}, {@link #GREATER_THAN} or {@link #LESS_THAN}).
+     * @param targetValue the parametric expression on the right side.
+     * @param tolerance the tolerance for enforcing the constraint.
+     */
     public RelationalConstraint(String id, Parametric<Double> expression, int relation, Parametric<Double> targetValue, double tolerance) {
         this(id, expression, relation, tolerance);
         setTarget(targetValue);
     }
     
+    /**
+     * Partially instantiates a new relational constraint. This constructor is called by other constructors only.
+     *
+     * @param id the identified of the constraint
+     * @param expression the parametric expression on the left side.
+     * @param relation the relation (e.g. {@link #EQUALS}, {@link #GREATER_THAN} or {@link #LESS_THAN}).
+     * @param tolerance the tolerance for enforcing the constraint.
+     */
     private RelationalConstraint(String id, Parametric<Double> expression, int relation, double tolerance) {
         super(id);
         this.expression = expression;
@@ -46,6 +84,11 @@ public class RelationalConstraint extends Constraint {
         setTolerance(tolerance);
     }
     
+    /**
+     * Sets the target value to a fixed value.
+     *
+     * @param value the new target value for the constraint.
+     */
     public void setTarget(final double value) { 
         this.target = new Parametric<Double>() {
             @Override
@@ -53,15 +96,28 @@ public class RelationalConstraint extends Constraint {
         };
     }
     
+    /**
+     * Sets the target to a parametric right-side expression.
+     *
+     * @param value the new parametric right-side expression.
+     */
     public void setTarget(Parametric<Double> value) {
         this.target = value;
     }
     
+    /**
+     * Sets the tolerance to which the constraint is to be enforced.
+     *
+     * @param dx the new tolerance for enforcing the constraint.
+     */
     public void setTolerance(double dx) {
         if(dx == 0.0) throw new IllegalArgumentException("tolerance room must be non-zero.");
         this.tolerance = Math.abs(dx);
     }
     
+    /* (non-Javadoc)
+     * @see jnum.data.fitting.Constraint#penalty()
+     */
     @Override
     public double penalty() {
         final double dev = (expression.evaluate() - target.evaluate()) / tolerance;
@@ -71,10 +127,13 @@ public class RelationalConstraint extends Constraint {
         else return dev >= 0.0 ? 0.0 : dev * dev;
     }
     
+    /** The Constant EQUALS. */
     public static final int EQUALS = 0;
     
+    /** The Constant LESS_THAN. */
     public static final int LESS_THAN = -1;
     
+    /** The Constant GREATER_THAN. */
     public static final int GREATER_THAN = 1;
     
 }
