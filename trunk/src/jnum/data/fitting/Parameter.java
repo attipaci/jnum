@@ -50,11 +50,12 @@ public class Parameter extends DataPoint implements Penalty {
 	/** The typical step-size when fitting the variable.
 	 *  Values should produce a noticeable but small change when evaluating a function with
 	 *  the parameter. E.g. for chi^2 evaluations, produce a delta chi^2 between ~0.001 and 1 
-	 *  */
+	 *  
+	 */
 	private double stepSize = Double.NaN;
 	
 	/**
-	 * Instantiates a new parameter.
+	 * Instantiates a new parameter with the specified identifier.
 	 *
 	 * @param name the name
 	 */
@@ -65,28 +66,59 @@ public class Parameter extends DataPoint implements Penalty {
 	}
 	
 	/**
-	 * Instantiates a new parameter.
+	 * Instantiates a new parameter with the specified identifier and initial value.
 	 *
-	 * @param name the name
-	 * @param value the value
+	 * @param name a name for easy identification of the parameter.
+	 * @param value the initial value of the parameter.
 	 */
 	public Parameter(String name, double value) { this(name); setValue(value); }
 
-	public Parameter(String name, double value, Range r) { 
+	/**
+	 * Instantiates a new parameter with the specified identifier, initial value, and a restricted range.
+	 *
+	 * @param name a name for easy identification of the parameter.
+	 * @param value the initial value of the parameter.
+	 * @param range a range of acceptable values for this parameter.
+	 * 
+	 * @throws IllegalArgumentException if the initial value is outside the specified range.
+	 */
+	public Parameter(String name, double value, Range range) { 
 	    this(name, value); 
-	    if(!setRange(r)) throw new IllegalArgumentException("initial value outside of specified range.");
+	    if(!setRange(range)) throw new IllegalArgumentException("initial value outside of specified range.");
 	}
 	
+	/**
+	 * Instantiates a new parameter with the specified identifier, initial value, and typical initial step size for 
+	 * exploring the parameter space.
+	 *
+	 * @param name a name for easy identification of the parameter.
+     * @param value the initial value of the parameter.
+	 * @param stepSize a typical step size for this parameter. See @link{#setStepSize(double)}.
+	 */
 	public Parameter(String name, double value, double stepSize) { 
 	    this(name, value); 
 	    setStepSize(stepSize);    
 	}
 	
-	public Parameter(String name, double value, Range r, double stepSize) { 
-	    this(name, value, r); 
+	/**
+	 * Instantiates a new parameter with the specified identifier, initial value, restricted range, and a typical initial step size for 
+     * exploring the parameter space.
+	 *
+	 * @param name a name for easy identification of the parameter.
+     * @param value the initial value of the parameter.
+	 * @param range a range of acceptable values for this parameter.
+	 * @param stepSize a typical step size for this parameter. See @link{#setStepSize(double)}.
+	 * 
+	 * @throws IllegalArgumentException if the initial value is outside the specified range.
+	 */
+	public Parameter(String name, double value, Range range, double stepSize) { 
+	    this(name, value, range); 
 	    setStepSize(stepSize); 
 	}
 
+	/* (non-Javadoc)
+	 * @see jnum.data.WeightedPoint#copy()
+	 */
 	@Override
     public WeightedPoint copy() {
 	    Parameter copy = (Parameter) super.copy();
@@ -95,6 +127,9 @@ public class Parameter extends DataPoint implements Penalty {
 	    return copy;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.WeightedPoint#hashCode()
+	 */
 	@Override
     public int hashCode() {
 	    int hash = super.hashCode();
@@ -103,6 +138,9 @@ public class Parameter extends DataPoint implements Penalty {
 	    return hash;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.WeightedPoint#equals(java.lang.Object)
+	 */
 	@Override
     public boolean equals(Object o) {
 	    if(!super.equals(o)) return false;
@@ -113,6 +151,9 @@ public class Parameter extends DataPoint implements Penalty {
 	    return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.fitting.Penalty#penalty()
+	 */
 	@Override
     public double penalty() {
 	    if(range == null) return 0.0;
@@ -123,10 +164,13 @@ public class Parameter extends DataPoint implements Penalty {
 	}
 	
 	/**
-     * Gets the name.
-     *
-     * @return 'true' if the current value is within the specified range, and 'false otherwise.
-     */
+	 * Restrict the parameter to a range of values.
+	 *
+	 * @param r the range of acceptable parameter values.
+	 * @return 'true' if the current value is within the specified range, or false otherwise.
+	 * 
+	 * @see {@link #getRange()}
+	 */
 	public boolean setRange(Range r) { 
 	    this.range = r; 
 	    if(r == null) return true;
@@ -137,22 +181,49 @@ public class Parameter extends DataPoint implements Penalty {
 	    return false;
 	}
 	
+	/**
+	 * Gets the range of acceptable parameter values.
+	 *
+	 * @return the range of acceptable parameter values or null if unrestricted.
+	 * 
+	 * @see {@link #setRange(Range)}
+	 */
 	public Range getRange() { return range; }
 	
+	/**
+	 *  Set the typical step-size when fitting the variable.
+     *  Values should produce a noticeable but small change when evaluating a function with
+     *  the parameter. E.g. for chi^2 evaluations, produce a delta chi^2 between ~0.001 and 1 
+     *  
+	 * @param x the new step size
+	 */
 	public void setStepSize(double x) { stepSize = x; }
 	
+	/**
+	 * Sets the default step size for this parameter, which is calculated either based on the restricted (and bounded)
+	 * range of acceptable values (if any), or the current magnitude of the parameter.
+	 * @see {@link #setStepSize(double)}
+	 */
 	public void setDefaultStepSize() { stepSize = Double.NaN; }
 	
+	/**
+	 * Gets the step size, which may be explicitly set via {@link #setStepSize(double)}, or else calculated
+	 * based either on the restricted (and bounded) range, or the magnitude of parameter. 
+	 *
+	 * @return the recommended step size for exploring the parameter space during fitting...
+	 * 
+	 * @see {@link #setStepSize(double)}, {@link #setDefaultStepSize()}
+	 */
 	public double getStepSize() {
 	    if(!Double.isNaN(stepSize)) return stepSize;
-	    if(range != null) if(range.isBounded()) return 1e-3 * range.span();
-	    return value() == 0.0 ? 1e-6 : 1e-3 * value();
+	    if(range != null) if(range.isBounded()) return 1e-3 * range.span();    // 0.1% of the range
+	    return value() == 0.0 ? 1e-6 : 1e-3 * value();                         // 0.1% of the value, or 1e-6 if zero
 	}
 	
 	/**
-	 * Gets the name.
+	 * Gets the name identifier of this parameter
 	 *
-	 * @return the name
+	 * @return the name or identifier assigned to this parameter.
 	 */
 	public String name() { return name; }
 	

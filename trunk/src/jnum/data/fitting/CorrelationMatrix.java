@@ -26,16 +26,26 @@ package jnum.data.fitting;
 import jnum.Util;
 import jnum.math.SquareMatrix;
 
+// TODO: Auto-generated Javadoc
+/**
+ * Represents a correlation matrix for a set of parameters, calculated from an appropriate {@link CovarianceMatrix} object.
+ */
 public class CorrelationMatrix extends SquareMatrix {
 
-    /**
-     * 
-     */
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1272894374094189932L;
     
+    /** The parameters. */
     private Parameter[] parameters;
+    
+    /** The inver standard deviations. */
     private double[] isigma;
 
+    /**
+     * Instantiates a new correlation matrix from the specified covariance matrix object.
+     *
+     * @param C the covariance matrix
+     */
     public CorrelationMatrix(CovarianceMatrix C) {
         this.setSize(C.size());
        
@@ -45,7 +55,12 @@ public class CorrelationMatrix extends SquareMatrix {
         calcFrom(C);
     }
     
-    protected void calcFrom(CovarianceMatrix C) {
+    /**
+     * Calculates the correlation matrix from a covariance matrix.
+     *
+     * @param C the covariance matrix
+     */
+    private void calcFrom(CovarianceMatrix C) {
         
        for(int i=size(); --i >= 0; ) isigma[i] = 1.0 / Math.sqrt(C.getValue(i, i));
       
@@ -55,16 +70,31 @@ public class CorrelationMatrix extends SquareMatrix {
     }
    
     
+    /**
+     * A string list representation of the standard deviations of the represented parameters.
+     *
+     * @return the string
+     */
     public String sigmasToString() {
         StringBuffer buf = new StringBuffer();
-        for(int i=0; i < size(); i++) buf.append(Util.e3.format(1.0/isigma[i]) + ", ");
+        for(int i=0; i < size(); i++) buf.append(Util.s3.format(1.0/isigma[i]) + ", ");
         return new String(buf);
     }
     
+    /**
+     * Gets the covariance matrix corresponding to this correlation matrix.
+     *
+     * @return the covariance matrix
+     */
     public CovarianceMatrix getCovarianceMatrix() {
         return new CovarianceMatrix(this);
     }
         
+    /**
+     * Gets the parameters represented by this correlation matrix.
+     *
+     * @return the parameters
+     */
     public Parameter[] getParameters() { return parameters; }
     
 }

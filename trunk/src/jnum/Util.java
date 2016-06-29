@@ -51,7 +51,7 @@ public final class Util {
 	public final static String version = "0.09-2";
 	
 	/** The Constant revision. */
-	public final static String revision = "beta2";
+	public final static String revision = "";
 	
 	public static boolean debug = false;
 	
