@@ -1,3 +1,7 @@
+	[NEW] Util methods for wrapping output, with options to prepend text
+	before each line, and indenting multiline outputs. Method for 
+	generating empty spaces of desired length. 
+
 
 0.09-2
 
