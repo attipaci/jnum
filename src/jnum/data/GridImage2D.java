@@ -1416,13 +1416,13 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		Unit sizeUnit = getPreferredGridUnit();
 		
 		String info =
-			"  Map Size: " + sizeX() + " x " + sizeY() + " pixels. (" 
+			"Map Size: " + sizeX() + " x " + sizeY() + " pixels. (" 
 			+ Util.f1.format(sizeX() * grid.pixelSizeX() / sizeUnit.value()) + " x " + Util.f1.format(sizeY() * grid.pixelSizeY() 
 					/ sizeUnit.value()) + " " + sizeUnit.name() + ")." + "\n"
 			+ grid.toString(sizeUnit)
-			+ "  Instrument PSF: " + getUnderlyingBeam().toString(sizeUnit) + " FWHM.\n"
-			+ "  Applied Smoothing: " + smoothing.toString(sizeUnit) + " FWHM (includes pixelization).\n"
-			+ "  Image Resolution: " + getImageBeam().toString(sizeUnit) + " FWHM (includes smoothing).\n";
+			+ "Instrument PSF: " + getUnderlyingBeam().toString(sizeUnit) + " FWHM.\n"
+			+ "Applied Smoothing: " + smoothing.toString(sizeUnit) + " FWHM (includes pixelization).\n"
+			+ "Image Resolution: " + getImageBeam().toString(sizeUnit) + " FWHM (includes smoothing).\n";
 		
 		
 		return info;

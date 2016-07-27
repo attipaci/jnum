@@ -1136,7 +1136,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 		String info = super.toString() +
 			(weightFactor == 1.0 ? 
 					"" : 
-					"  Noise Re-scaling: " + Util.f2.format(Math.sqrt(1.0 / weightFactor)) + "x (from image variance).\n"); 
+					"Noise Re-scaling: " + Util.f2.format(Math.sqrt(1.0 / weightFactor)) + "x (from image variance).\n"); 
 
 		return info;
 	}

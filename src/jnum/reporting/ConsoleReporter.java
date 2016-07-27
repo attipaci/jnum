@@ -25,7 +25,7 @@ package jnum.reporting;
 
 import jnum.Util;
 
-public abstract class ConsoleReporter extends Reporter {
+public class ConsoleReporter extends Reporter {
     private int wrap = 79;
     
     
@@ -35,9 +35,9 @@ public abstract class ConsoleReporter extends Reporter {
     }
 
     
-    public abstract String getPrefix(Object owner);
+    public String getPrefix(Object owner) { return " "; }
        
-    public String getResultPrefix(Object owner) { return "  "; }
+    public String getResultPrefix(Object owner) { return " "; }
  
     
     public String getObjectID(Object owner) {
@@ -55,7 +55,7 @@ public abstract class ConsoleReporter extends Reporter {
     
     @Override
     public void notify(Object owner, String message) { 
-        System.err.println(Util.wrap(message, "", getWrap(), getIndentNotify()));
+        System.err.println(Util.wrap(message, " ", getWrap(), getIndentNotify()));
     }
 
     @Override

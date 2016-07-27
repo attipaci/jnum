@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 import jnum.Unit;
+import jnum.Util;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.FitsFactory;
@@ -149,7 +150,7 @@ public final class FitsExtras {
 		int available = 69 - (key.length() + alt.length() + 3);
 	
 		if(available < 1) {
-			System.err.println("WARNING! Cannot write FITS key: " + key);
+			Util.warning(null, "Cannot write FITS key: " + key);
 			return;
 		}
 		

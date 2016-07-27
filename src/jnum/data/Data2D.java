@@ -1721,7 +1721,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @param jmax the jmax
 	 */
 	protected void crop(int imin, int jmin, int imax, int jmax) {
-		if(verbose) System.err.println("Cropping to " + (imax - imin + 1) + "x" + (jmax - jmin + 1));
+		if(verbose) Util.info(this, "Cropping to " + (imax - imin + 1) + "x" + (jmax - jmin + 1));
 		
 		double[][] olddata = data;
 		int[][] oldflag = flag;
@@ -1782,7 +1782,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		int[] vRange = getVerticalIndexRange();
 		if(vRange == null) return;
 		
-		if(verbose) System.err.println("Auto-cropping: " + (hRange[1] - hRange[0] + 1) + "x" + (vRange[1] - vRange[0] + 1));
+		if(verbose) Util.info(this, "Auto-cropping: " + (hRange[1] - hRange[0] + 1) + "x" + (vRange[1] - vRange[0] + 1));
 		this.crop(hRange[0], vRange[0], hRange[1], vRange[1]);
 	}
 	
@@ -2382,7 +2382,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		FitsExtras.write(createFits(dataType), name);
 		this.fileName = name;
 		this.dataType = dataType;
-		System.err.println(" Written " + name);
+		Util.notify(this, "Written " + name);
 	}
 	
 	/**
