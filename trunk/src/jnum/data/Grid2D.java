@@ -542,13 +542,13 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 		String yName = uy == Unit.unity ? "" : " " + uy.name();
  		
 		String info =
-			"  " + projectionName + ": " + reference.toString() + "\n" +
-			"  Projection: " + projection.getFullName() + " (" + projection.getFitsID() + ")\n" + 
-			"  Grid Spacing: " + (ux == uy ? 
+			projectionName + ": " + reference.toString() + "\n" +
+			"Projection: " + projection.getFullName() + " (" + projection.getFitsID() + ")\n" + 
+			"Grid Spacing: " + (ux == uy ? 
 					nf.format(m11 / ux.value()) + " x " + nf.format(m22 / uy.value()) + xName :
 					nf.format(m11 / ux.value()) +  xName + " x " + nf.format(m22 / uy.value()) + yName
 					) + ".\n" +
-			"  Reference Pixel: " + refIndex.toString(nf) + " C-style, 0-based\n";			
+			"Reference Pixel: " + refIndex.toString(nf) + " C-style, 0-based\n";			
 		
 		return info;
 	}

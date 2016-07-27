@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateSystem;
 import jnum.math.Vector2D;
@@ -300,7 +301,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	 * @param height the height
 	 */
 	public void setRenderSize(int width, int height) {
-		if(verbose) System.err.println("Setting render size to " + width + "x" + height);
+		if(verbose) Util.info(this, "Setting render size to " + width + "x" + height);
 		Rectangle2D bounds = contentLayer.getCoordinateBounds();
 		scale.set(width / bounds.getWidth(), height / bounds.getHeight());
 	}
@@ -338,7 +339,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	 * @param value the new zoom
 	 */
 	public void setZoom(double value) {
-		if(verbose) System.err.println("Setting zoom to " + value);
+		if(verbose) Util.info(this, "Setting zoom to " + value);
 		scale.set(value, value);
 	}
 
@@ -348,7 +349,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	 * @param relative the relative
 	 */
 	public void zoom(double relative) {
-		if(verbose) System.err.println("Zooming by " + relative);
+		if(verbose) Util.info(this, "Zooming by " + relative);
 		scale.scale(relative);
 	}
 	
@@ -561,7 +562,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		int iExt = fileName.lastIndexOf(".");
 		String type = iExt > 0 && iExt < fileName.length() - 1 ? fileName.substring(iExt + 1) : "gif";    
 		ImageIO.write(getRenderedImage(width, height), type, file);
-		System.err.println(" Written " + fileName);
+		Util.info(this, "Written " + fileName);
 	}
 
 	
