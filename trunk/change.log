@@ -1,7 +1,14 @@
+	 
+	[NEW] Util class now contains a default Reporter for conveying JNUM
+	messages. Few jnum classes use it at this point, but the plan is that
+	they will all use it in the future to communicate messages to the user. 
+
 	[NEW] Util methods for wrapping output, with options to prepend text
 	before each line, and indenting multiline outputs. Method for 
 	generating empty spaces of desired length. 
 
+	[CHANGE] {Data2D} The 2D data classes (Data2D and derivatives) now
+	report through the default reporter of the Util class. 
 
 0.09-2
 
