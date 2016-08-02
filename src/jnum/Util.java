@@ -53,7 +53,7 @@ public final class Util {
     public final static String version = "0.09-3";
 
     /** The Constant revision. */
-    public final static String revision = "devel.3";
+    public final static String revision = "devel.4";
 
     public static boolean debug = false;
 
@@ -925,11 +925,13 @@ public final class Util {
     
     public static Reporter getDefaultReporter() { return reporter; }
 
-    public static void setDefaultReporter(Reporter r) { reporter = r; }
+    public static void setReporter(Reporter r) { reporter = r; }
 
+    public static void setDefaultReporter() { setReporter(defaultReporter); }
 
-    public static Reporter reporter = new ConsoleReporter("jnum-default");
+    public static final Reporter defaultReporter = new ConsoleReporter("jnum-default");
 
+    public static Reporter reporter = defaultReporter;
 
     /** The Constant f0. */
     public final static DecimalFormat f0 = new DecimalFormat("0");
