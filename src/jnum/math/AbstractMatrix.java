@@ -31,6 +31,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import jnum.CopiableContent;
+import jnum.Util;
 import jnum.data.ArrayUtil;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
@@ -172,7 +173,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 		if(getData() == null) return copy;
 		if(withContents) {			
 			try { copy.setData(ArrayUtil.copyOf(getData())); }
-			catch(Exception e) { e.printStackTrace(); }
+			catch(Exception e) { Util.error(this, e); }
 		}
 		else {
 			copy.noData();
@@ -193,7 +194,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	public void setProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) {
 		if(A.isScalar()) {
 			try { setData(ArrayUtil.copyOf(B.getData())); }
-			catch(Exception e) { e.printStackTrace(); }
+			catch(Exception e) { Util.error(this, e); }
 			T scalar = A.getValue(0, 0);		
 			if(scalar instanceof Double) ArrayUtil.scale(getData(), ((Double) scalar).doubleValue());
 			else ArrayUtil.scale(getData(), (Multiplicative<?>) scalar);
@@ -303,7 +304,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 			row = (T[]) Array.newInstance(getType(), cols()); 
 			getRow(j, row);
 		}
-		catch(Exception e) { e.printStackTrace(); }
+		catch(Exception e) { Util.error(this, e); }
 		return row;
 	}
 	
@@ -427,7 +428,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 			column = (T[]) Array.newInstance(getType(), rows()); 
 			getColumn(j, column);
 		}
-		catch(Exception e) { e.printStackTrace(); }
+		catch(Exception e) { Util.error(this, e); }
 		return column;
 	}
 	
@@ -608,8 +609,8 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	@Override
 	public void parse(String text) throws NumberFormatException, IllegalArgumentException {
 		try { setData(ArrayUtil.parse(text, getType())); }
-		catch(IllegalAccessException e) { e.printStackTrace(); }
-		catch(InstantiationException e) { e.printStackTrace(); }
+		catch(IllegalAccessException e) { Util.error(this, e); }
+		catch(InstantiationException e) { Util.error(this, e); }
 		catch(ParseException e) { throw new NumberFormatException(e.getMessage()); }
 	}
 

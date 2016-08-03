@@ -30,6 +30,7 @@ import java.text.ParseException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import jnum.Util;
 import jnum.math.Coordinate2D;
 
 
@@ -87,14 +88,14 @@ public class Mask<CoordinateType extends Coordinate2D> extends Vector<Region<Coo
 				add(r);
 			}
 			catch(ParseException e) {
-				System.err.println(" WARNING! parse error for:\n" + spec);
+				Util.warning(this, "Parse error for:\n" + spec);
 			}
 			
 		}
 		
 		in.close();
 		
-		System.err.println(" Parsed " + (size() - startSize) + " regions.");
+		Util.info(this, "Parsed " + (size() - startSize) + " regions.");
 	}
 	
 	/**

@@ -1,3 +1,10 @@
+0.10-1
+
+
+	[NEW] SmartTokenizer class (based on StringTokenizer) to simplify 
+	parsing tokenized values.
+
+	[NEW] LineParser class to uniformize the reading of text input files.
 	 
 	[NEW] Util class now contains a default Reporter for conveying JNUM
 	messages. Few jnum classes use it at this point, but the plan is that

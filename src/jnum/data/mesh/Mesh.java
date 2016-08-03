@@ -30,6 +30,7 @@ import java.util.*;
 
 import jnum.Copiable;
 import jnum.Function;
+import jnum.Util;
 import jnum.data.ArrayUtil;
 import jnum.data.DataIterator;
 import jnum.text.ParseType;
@@ -112,7 +113,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 		try { copy.data = ArrayUtil.copyOf(data); }
 		catch(Exception e) { 
 			copy.data = null; 
-			e.printStackTrace();
+			Util.error(this, e);
 		}
 		return copy();
 	}

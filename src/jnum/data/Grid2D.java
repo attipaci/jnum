@@ -447,7 +447,7 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 		String type = header.getStringValue("CTYPE1" + alt);
 	
 		try { parseProjection(header); }
-		catch(Exception e) { System.err.println("ERROR! Unknown projection " + type.substring(5, 8)); }
+		catch(Exception e) { Util.error(this, "Unknown projection " + type.substring(5, 8)); }
 		
 		CoordinateType reference = null;
 		

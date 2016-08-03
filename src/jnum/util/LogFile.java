@@ -110,7 +110,7 @@ public class LogFile {
 		    try { if(in != null) in.close(); } catch(IOException e) {}
 		    if(pass) return;
 		}
-		catch(IllegalStateException e) { System.err.println("WARNING! " + e.getMessage()); }
+		catch(IllegalStateException e) { Util.warning(this, e); }
 		finally {
 		    try { if(in != null) in.close(); } catch(IOException e) {}
 		}
@@ -162,7 +162,7 @@ public class LogFile {
 	public void delete() {
 		File file = getFile();
 		if(file.exists()) {
-			System.err.println("Deleting " + file.getPath());
+			Util.info(this, "Deleting " + file.getPath());
 			file.delete();
 		}
 	}
@@ -194,7 +194,7 @@ public class LogFile {
 		});
 		
 		for(File file : matches) {
-			System.err.println("Deleting " + file.getPath());
+			Util.info(this, "Deleting " + file.getPath());
 		}
 	}
 	

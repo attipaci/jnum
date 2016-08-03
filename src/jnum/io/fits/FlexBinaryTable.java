@@ -24,6 +24,7 @@ package jnum.io.fits;
 
 import java.util.Vector;
 
+import jnum.Util;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.BinaryTable;
 import nom.tam.fits.BinaryTableHDU;
@@ -72,7 +73,7 @@ public class FlexBinaryTable {
 			FitsExtras.write(out, "test.fits");
 			out.close();
 		}
-		catch(Exception e) { e.printStackTrace(); }
+		catch(Exception e) { Util.error(FlexBinaryTable.class, e); }
 	}
 	
 	/**

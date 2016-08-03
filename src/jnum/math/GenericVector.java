@@ -26,6 +26,8 @@ package jnum.math;
 
 import java.lang.reflect.*;
 
+import jnum.Util;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class GenericVector.
@@ -86,7 +88,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	public T newEntry() {
 		try { return type.newInstance(); }
 		catch(Exception e) {
-			e.printStackTrace();
+			Util.error(this, e);
 			return null;
 		}
 	}
@@ -261,7 +263,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	@Override
 	public void setSize(int size) {
 		try { component = (T[]) Array.newInstance(getType(), size ); }
-		catch(Exception e) { e.printStackTrace(); }
+		catch(Exception e) { Util.error(this, e); }
 	}
 
 	/* (non-Javadoc)

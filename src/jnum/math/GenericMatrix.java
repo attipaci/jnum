@@ -25,6 +25,9 @@
 package jnum.math;
 
 import java.util.Arrays;
+
+import jnum.Util;
+
 import java.lang.reflect.*;
 
 
@@ -99,7 +102,7 @@ public class GenericMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	public T newEntry() {
 		try { return type.newInstance(); }
 		catch(Exception e) { 
-			e.printStackTrace(); 
+			Util.error(this, e);
 			return null;
 		}	
 	}

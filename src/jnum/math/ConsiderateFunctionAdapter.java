@@ -25,6 +25,7 @@ package jnum.math;
 
 import jnum.ConsiderateFunction;
 import jnum.Function;
+import jnum.Util;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -63,8 +64,8 @@ public class ConsiderateFunctionAdapter<ArgType, ReturnType> implements Function
 			function.evaluate(parms, value);
 			return value;
 		}
-		catch(InstantiationException e) { e.printStackTrace(); }
-		catch(IllegalAccessException e) { e.printStackTrace(); }
+		catch(InstantiationException e) { Util.error(this, e); }
+		catch(IllegalAccessException e) { Util.error(this, e); }
 		
 		return null;
 	}	

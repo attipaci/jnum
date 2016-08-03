@@ -22,16 +22,14 @@
  ******************************************************************************/
 package jnum.astro;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.util.Vector;
 
+import jnum.Util;
 import jnum.data.GaussianSource;
 import jnum.data.GridImage2D;
 import jnum.data.Region;
+import jnum.io.LineParser;
 import jnum.math.Coordinate2D;
 
 // TODO: Auto-generated Javadoc
@@ -70,14 +68,15 @@ public class SourceCatalog<CoordinateType extends Coordinate2D> extends Vector<G
 	 * @param map the map
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public void read(String fileName, GridImage2D<CoordinateType> map) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-		String line = null;
-		while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') {
-			try { add(new GaussianSource<CoordinateType>(line, Region.FORMAT_CRUSH, map)); }
-			catch(ParseException e) { System.err.println("WARNING! Cannot parse: " + line); }
-		}
-		in.close();
-		System.err.println(" Source catalog loaded: " + size() + " source(s).");
+	public void read(String fileName, final GridImage2D<CoordinateType> map) throws IOException {
+		new LineParser() {
+            @Override
+            protected boolean parse(String line) throws Exception {
+                add(new GaussianSource<CoordinateType>(line, Region.FORMAT_CRUSH, map));
+                return true;
+            }
+		}.read(fileName);
+		
+		Util.info(this, "Source catalog loaded: " + size() + " source(s).");
 	}
 }

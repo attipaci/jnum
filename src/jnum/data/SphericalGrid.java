@@ -23,6 +23,7 @@
 package jnum.data;
 
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.SphericalCoordinates;
 import jnum.projection.SphericalProjection;
 import nom.tam.fits.Header;
@@ -98,7 +99,7 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 		String type = header.getStringValue("CTYPE1" + getFITSAlt());
 	
 		try { setProjection(SphericalProjection.forName(type.substring(5, 8))); }
-		catch(Exception e) { System.err.println("ERROR! Unknown projection " + type.substring(5, 8)); }
+		catch(Exception e) { Util.error(this, "Unknown projection " + type.substring(5, 8)); }
 	}
 	
 	/* (non-Javadoc)
