@@ -894,7 +894,7 @@ public final class ArrayUtil {
 			while(sourceIterator.hasNext()) destIterator.setNextElement(sourceIterator.next());  
 				
 			return dest;
-		} catch(Exception e) { e.printStackTrace(); }
+		} catch(Exception e) { Util.error(ArrayUtil.class, e); }
 
 		return null;
 	}
@@ -933,7 +933,7 @@ public final class ArrayUtil {
 			}
 
 			return destination;
-		} catch(Exception e) { e.printStackTrace(); }
+		} catch(Exception e) { Util.error(ArrayUtil.class, e); }
 		
 		return null;
 	}
@@ -1777,7 +1777,7 @@ public final class ArrayUtil {
 		if(a instanceof Object[]){
 			Object result = null;
 			try { result = copyOf(a); }
-			catch(Exception e) { e.printStackTrace(); }
+			catch(Exception e) { Util.error(ArrayUtil.class, e); }
 			multiplyBy((Object[]) result, (Object[]) b);
 			return result;
 		}
@@ -2031,7 +2031,7 @@ public final class ArrayUtil {
 		Object smoothed = null;
 		
 		try { smoothed = createArray(double.class, size); }
-		catch(Exception e) { e.printStackTrace(); }
+		catch(Exception e) { Util.error(ArrayUtil.class, e); }
 
 		int[] beamSize = getShape(beam);
 		int dimensions = size.length;
@@ -2086,7 +2086,7 @@ public final class ArrayUtil {
 				iterator.setElement((Double) dot(weightedSignalPatch, beam) / norm);		
 			}
 
-		} catch(Exception e) { e.printStackTrace(); }
+		} catch(Exception e) { Util.error(ArrayUtil.class, e); }
 
 		return smoothed;
 	}

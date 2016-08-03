@@ -24,11 +24,10 @@
 
 package jnum.data;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+
+import jnum.io.LineParser;
+import jnum.text.SmartTokenizer;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -56,21 +55,18 @@ public class SimpleInterpolator extends Interpolator {
 	 */
 	@Override
 	public void readData(String fileName) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-		String line = null;
-		
-		while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') {
-			try {
-				StringTokenizer tokens = new StringTokenizer(line);
-				Interpolator.Data point = new Interpolator.Data();
-				point.ordinate = Double.parseDouble(tokens.nextToken());
-				point.value = Double.parseDouble(tokens.nextToken());
-				add(point);
-			}
-			catch(Exception e) {}			
-		}
-		
-		in.close();
+		new LineParser() {
+            @Override
+            protected boolean parse(String line) throws Exception {
+                SmartTokenizer tokens = new SmartTokenizer(line);
+                Interpolator.Data point = new Interpolator.Data();
+                point.ordinate = tokens.nextDouble();
+                point.value = tokens.nextDouble();
+                add(point);
+                return true;
+            }
+		}.read(fileName);
+
 	}
 
 }

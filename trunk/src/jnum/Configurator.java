@@ -24,12 +24,9 @@
 
 package jnum;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,6 +37,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import jnum.io.LineParser;
 import jnum.io.fits.FitsExtras;
 import jnum.math.Range;
 import jnum.math.Vector2D;
@@ -1635,12 +1633,12 @@ public class Configurator implements Serializable, Cloneable {
 	public void readConfig(String fileName) throws IOException {
 		File configFile = new File(fileName);
 		if(configFile.exists()) {
-			if(!silent) System.err.println("Loading configuration from " + fileName);
+			if(!silent) Util.info(this, "Loading configuration from " + fileName);
 			
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(configFile)));
-			String line = null;
-			while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') parseSilent(line);
-			in.close();
+			new LineParser() {
+                @Override
+                public boolean parse(String line) { parseSilent(line); return true; }
+			}.read(configFile);
 		}
 		else throw new FileNotFoundException(fileName);
 	}

@@ -32,6 +32,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
+import jnum.Util;
 import jnum.data.Index2D;
 import jnum.math.Range;
 
@@ -137,8 +138,8 @@ public abstract class BufferedImageLayer extends ImageLayer {
 	protected void drawImage(Graphics g) {	
 		Graphics2D g2 = (Graphics2D) g;
 		
-		if(getContentArea() == null) System.err.println("!!! content area"); 
-		if(getContentArea().toDisplay() == null) System.err.println("!!! transform"); 
+		if(getContentArea() == null) Util.warning(this, "null content area"); 
+		if(getContentArea().toDisplay() == null) Util.warning(this, "null transform"); 
 		
 		AffineTransform indexToDisplay = new AffineTransform(getContentArea().toDisplay());
 		indexToDisplay.concatenate(indexToCoords());
@@ -182,7 +183,7 @@ public abstract class BufferedImageLayer extends ImageLayer {
 	public void setSubarray(int fromi, int fromj, int toi, int toj) {
 		startIndex.set(fromi, fromj);
 		createBuffer(toi - fromi, toj - fromj);
-		if(verbose) System.err.println("Selecting " + fromi + "," + fromj + " -- " + toi + "," + toj);	
+		if(verbose) Util.info(this, "Selecting " + fromi + "," + fromj + " -- " + toi + "," + toj);	
 	}
 	
 	/**

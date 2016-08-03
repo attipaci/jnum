@@ -33,6 +33,8 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import jnum.Util;
+
 // TODO: Auto-generated Javadoc
 // DirFile reading access
 // For documentation on the dirfile standard, see:
@@ -95,17 +97,16 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 			
 			DataStore<?> store = data.get(field);
 			
-			System.err.println("Class " + store.getClass().getSimpleName());
-			System.err.println("Samples: " + store.getSamples());
-			System.err.println("Length: " + store.length());
-			System.err.println();
+			Util.info(store, "Class " + store.getClass().getSimpleName());
+			Util.info(store, "Samples: " + store.getSamples());
+			Util.info(store, "Length: " + store.length());
 			
 			for(int i=from; i<to; i+=step) {
 				System.err.println(i + "\t" + store.get(i));				
 			}
 		
 		}
-		catch(Exception e) { e.printStackTrace(); }
+		catch(Exception e) { Util.error(DirFile.class, e); }
 	}
 	
 	/**
@@ -129,14 +130,14 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		this.path = path;
 		
 		String endianness = System.getProperty("sun.cpu.endian");
-		if(endianness != null) System.err.println("DirFile> Native endianness: " + endianness);
+		if(endianness != null) Util.info(this, "Native endianness: " + endianness);
 		
 		if(endianness.equalsIgnoreCase("big")) isBigEndian = true;
 		else if(endianness.equalsIgnoreCase("big")) isBigEndian = false;
 		
 		parseFormat(formatName);
 		
-		System.err.println("DirFile> " + size() + " fields parsed.");
+		Util.info(this, size() + " fields parsed.");
 	}
 	
 	/* (non-Javadoc)
@@ -181,7 +182,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 			File subdir = new File(path + File.separator + dirName);
 			if(!subdir.exists()) subdir = new File(dirName);
 
-			if(!subdir.exists()) { System.err.println("WARNING! Could not find inclusion: " + dirName); }
+			if(!subdir.exists()) { Util.warning(this, "Could not find inclusion: " + dirName); }
 			else include(new DirFile(subdir.getPath(), formatName)); 
 		}
 		// Otherwise, just parse the extra format file in place...
@@ -215,7 +216,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') {
 			try { add(getDataStore(line)); }
 			catch(NullPointerException e) { pending.add(line); }
-			catch(ClassCastException e) { System.err.println("DirFile> ERROR! " + e.getMessage()); }
+			catch(ClassCastException e) { Util.error(this, e); }
 		}
 
 		// Pending list is reduced after...
@@ -229,7 +230,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 					pending.remove(i);
 				} 
 				catch(NullPointerException e) {}
-				catch(ClassCastException e) { System.err.println("DirFile> ERROR! " + e.getMessage()); }
+				catch(ClassCastException e) { Util.error(this, e); }
 			}
 		} while(pending.size() < initialSize);	
 		
@@ -254,15 +255,15 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 			if(directive.equals("/include")) {
 				try { include(tokens.nextToken()); }
 				catch(IOException e) { 
-					System.err.println("WARNING! Error encountered during inclusion:" + e.getMessage()); 
+					Util.warning(this, "Error encountered during inclusion:" + e.getMessage()); 
 				}
 			}
 			else if(directive.equals("/endian")) {
 				if(value.equalsIgnoreCase("big")) isBigEndian = true;
 				else if(value.equalsIgnoreCase("little")) isBigEndian = false;
-				System.err.println("DirFile> Endianness set to: " + (isBigEndian ? "big" : "little"));
+				Util.info(this, "Endianness set to: " + (isBigEndian ? "big" : "little"));
 			}
-			else System.err.println("DirFile> WARNING! Directive " + directive + " is not supported.");
+			else Util.warning(this, "Directive " + directive + " is not supported.");
 			
 			return null;
 		}

@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import jnum.ExtraMath;
+import jnum.Util;
 
 
 // TODO: Auto-generated Javadoc
@@ -172,8 +173,8 @@ public abstract class FFT<Type> implements Serializable {
 			while(active > 0) {
 				try { wait(); }
 				catch(InterruptedException e) {
-					System.err.println("WARNING! Unexpected interrupt.");
-					e.printStackTrace();
+					Util.warning(this, "Unexpected interrupt.");
+					if(Util.debug) Util.trace(e);
 				}
 			}
 		}

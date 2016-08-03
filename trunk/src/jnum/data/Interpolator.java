@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import jnum.Constant;
+import jnum.Util;
 
 
 // TODO: Auto-generated Javadoc
@@ -57,7 +58,7 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	public Interpolator(String fileName) throws IOException {
 	    this();
 		read(fileName);
-		if(verbose) System.err.println(getClass().getSimpleName() + "> " + size() + " records parsed.");	
+		if(verbose) Util.info(this, getClass().getSimpleName() + "> " + size() + " records parsed.");	
 		validate();
 	}
 	

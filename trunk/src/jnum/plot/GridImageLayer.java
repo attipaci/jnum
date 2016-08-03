@@ -24,6 +24,7 @@ package jnum.plot;
 
 import java.awt.geom.NoninvertibleTransformException;
 
+import jnum.Util;
 import jnum.data.Grid2D;
 import jnum.data.GridImage2D;
 import jnum.data.SphericalGrid;
@@ -52,11 +53,7 @@ public class GridImageLayer extends Data2DLayer {
 		grid = image.getGrid();
 		
 		try { setCoordinateTransform(grid.getLocalAffineTransform()); }
-		catch(NoninvertibleTransformException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-		}
-		
+		catch(NoninvertibleTransformException e) { Util.warning(this, e); }
 	}
 	
 	/* (non-Javadoc)

@@ -2278,11 +2278,11 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		}
 
 		if(!history.isEmpty()) {
-			System.err.println(" Processing History: " + history.size() + " entries found.");
-			System.err.println("   --> Last: " + history.get(history.size() - 1));
+			Util.info(this, "Processing History: " + history.size() + " entries found.\n"
+			        + "   --> Last: " + history.get(history.size() - 1));
 		}
 			
-		//for(int i=0; i<history.size(); i++) System.err.println("#  " + history.get(i));
+		//for(int i=0; i<history.size(); i++) Util.detail(this, "#  " + history.get(i));
 	}
 	
 	
@@ -2573,7 +2573,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 					super.process(threadCount); 
 				}
 			}
-			catch(Exception e) { e.printStackTrace(); }
+			catch(Exception e) { Util.error(this, e); }
 		}
 		
 		/* (non-Javadoc)
@@ -2583,7 +2583,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		public void process(int chunks, ExecutorService executor) {
 			//System.err.println("# pool: " + pool.getCorePoolSize());
 			try { super.process(chunks, executor); }
-			catch(Exception e) { e.printStackTrace(); }
+			catch(Exception e) { Util.error(this, e); }
 		}
 		
 		

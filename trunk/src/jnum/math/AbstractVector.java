@@ -26,6 +26,7 @@ package jnum.math;
 import java.io.Serializable;
 
 import jnum.Copiable;
+import jnum.Util;
 import jnum.data.ArrayUtil;
 
 
@@ -133,7 +134,7 @@ Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Cop
 			copy.setData(ArrayUtil.copyOf(getData())); 
 			return copy;
 		}
-		catch(Exception e) { e.printStackTrace(); }
+		catch(Exception e) { Util.error(this, e); }
 		return null;
 	}
 

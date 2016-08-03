@@ -24,6 +24,7 @@ package jnum.plot;
 
 import java.awt.Graphics;
 
+import jnum.Util;
 import jnum.math.Cartesian;
 import jnum.math.Range;
 import jnum.plot.colorscheme.GreyScale;
@@ -137,7 +138,7 @@ public abstract class ImageLayer extends ContentLayer {
 	 */
 	public void autoscale() {
 		setRange(getDataRange());
-		if(verbose) System.err.println("Setting scale to " + range);
+		if(verbose) Util.info(this, "Setting scale to " + range);
 	}
 	
 

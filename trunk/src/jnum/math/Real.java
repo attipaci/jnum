@@ -461,7 +461,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 				Object entry = arrayFrom(array[i]);
 				if(realArray == null) {
 					try { realArray = (Object[]) Array.newInstance(entry.getClass(), array.length); }
-					catch(Exception e) { e.printStackTrace(); }		
+					catch(Exception e) { Util.error(Real.class, e); }		
 				}
 				realArray[i] = entry;				
 			}

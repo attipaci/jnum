@@ -189,30 +189,6 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 	}
 	
 	
-	
-	/**
-	 * Sets the child.
-	 *
-	 * @param data the data
-	 * @return the content
-	 */
-	/*
-	private void setChild(Class<? extends FFT<?>> fftClass) {
-		if(child == null) {
-			try { child = fftClass.newInstance(); }
-			catch(InstantiationException e) { e.printStackTrace(); } 
-			catch (IllegalAccessException e) { e.printStackTrace(); }
-		}
-		else if(!child.getClass().equals(fftClass)) {
-			try { child = fftClass.newInstance(); }
-			catch(InstantiationException e) { e.printStackTrace(); } 
-			catch (IllegalAccessException e) { e.printStackTrace(); }			
-		}
-		
-		//if(pool != null) child.setThreads(pool.getCorePoolSize());
-	}
-	*/
-	
 	private Object getContent(Object data) {
 		if(data instanceof FauxComplexArray) return ((FauxComplexArray<?>) data).getData();
 		return data;

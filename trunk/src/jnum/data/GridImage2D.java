@@ -538,7 +538,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 
 		Unit sizeUnit = getPreferredGridUnit();
 		
-		if(isVerbose()) System.err.println("Will crop to " + ((dXmax - dXmin)/sizeUnit.value()) + "x" + ((dYmax - dYmin)/sizeUnit.value()) + " " + sizeUnit.name() + ".");
+		if(isVerbose()) Util.info(this, "Will crop to " + ((dXmax - dXmin)/sizeUnit.value()) + "x" + ((dYmax - dYmin)/sizeUnit.value()) + " " + sizeUnit.name() + ".");
 				
 		Index2D c1 = getIndex(new Vector2D(dXmin, dYmin));
 		Index2D c2 = getIndex(new Vector2D(dXmax, dYmax));
@@ -565,7 +565,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 * @param pattern the pattern
 	 */
 	public void growFlags(final double radius, final int pattern) {
-		if(isVerbose()) System.err.println("Growing flagged areas.");
+		if(isVerbose()) Util.info(this, "Growing flagged areas.");
 		
 		final double dx = getGrid().pixelSizeX();
 		final double dy = getGrid().pixelSizeY();
@@ -920,7 +920,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 */
 	@SuppressWarnings("unchecked")
 	public void resample(GridImage2D<CoordinateType> from) {
-		if(isVerbose()) System.err.println(" Resampling image to "+ sizeX() + "x" + sizeY() + ".");
+		if(isVerbose()) Util.info(this, "Resampling image to "+ sizeX() + "x" + sizeY() + ".");
 		
 		reset(false);
 		
@@ -979,12 +979,12 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		
 		Vector2D refIndex = toGrid.getReferenceIndex();
 		
-		if(isVerbose()) System.err.print(" Reference index: " + refIndex.toString(Util.f1));
+		if(isVerbose()) Util.info(this, "Reference index: " + refIndex.toString(Util.f1));
 		
 		refIndex.scaleX(1.0 / dRes.x());
 		refIndex.scaleY(1.0 / dRes.y());
 		
-		if(isVerbose()) System.err.println(" --> " + refIndex.toString(Util.f1));
+		if(isVerbose()) Util.info(this, "--> " + refIndex.toString(Util.f1));
 		
 		double[][] M = getGrid().getTransform();
 		M[0][0] *= dRes.x();
@@ -1011,7 +1011,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		// Add directly if it is...
 
 		if(toGrid.equals(getGrid())) {
-			if(isVerbose()) System.err.println(" Matching grids.");
+			if(isVerbose()) Util.info(this, "Matching grids.");
 			return this;
 		}
 
@@ -1021,9 +1021,9 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		Unit sizeUnit = getPreferredGridUnit();
 		
 		if(isVerbose()) {
-			System.err.println(" Regrid size: " + nx + "x" + ny);
+			Util.info(this, "Regrid size: " + nx + "x" + ny);
 			Vector2D resolution = toGrid.getResolution();
-			System.err.println(" Resolution = " + (resolution.x() / sizeUnit.value()) + " x " + (resolution.y() / sizeUnit.value()) + " " + sizeUnit.name());
+			Util.info(this, "Resolution = " + (resolution.x() / sizeUnit.value()) + " x " + (resolution.y() / sizeUnit.value()) + " " + sizeUnit.name());
 		}
 		
 		return getRegrid(toGrid, nx, ny);
@@ -1131,7 +1131,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	public int clean(GridImage2D<CoordinateType> image, double[][] beam, double gain, GaussianPSF replacementBeam) {
 		if(isVerbose()) {
 			Unit sizeUnit = getPreferredGridUnit();
-			System.err.println("Deconvolving to " + replacementBeam.toString(sizeUnit) + " resolution.");
+			Util.info(this, "Deconvolving to " + replacementBeam.toString(sizeUnit) + " resolution.");
 		}
 		
 		final int ic = beam.length / 2;
@@ -1194,7 +1194,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		} while(Math.abs(peakValue) > critical && components < maxComponents);
 
 	
-		if(isVerbose()) System.err.println(" " + components + " components removed. (Last: " + Util.f2.format(peakValue) + "-sigma, Ave: " + Util.f2.format(ave) + "-sigma)   ");
+		if(isVerbose()) Util.info(this, components + " components removed. (Last: " + Util.f2.format(peakValue) + "-sigma, Ave: " + Util.f2.format(ave) + "-sigma)   ");
 
 		GridImage2D<?> cleanImage = (GridImage2D<?>) clone();
 		cleanImage.setData(clean);
@@ -1204,8 +1204,6 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		addImage(cleanImage.getSmoothed(replacementBeam));
 		
 		resetSmoothing();
-
-		if(isVerbose()) System.err.println();
 
 		return components;
 	}

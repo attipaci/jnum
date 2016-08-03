@@ -272,8 +272,7 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 		    // Interrupted...
 		}
 		catch(Exception e) {
-			System.err.println("WARNING! Parallel processing error: " + e.getMessage());
-			if(Util.debug) e.printStackTrace();
+			Util.error(this, new Exception("Parallel processing error", e));
 			exception = e;
 			interruptAll();
 		}
@@ -404,9 +403,7 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 			for(Parallel<?> task : processes) {
 				try { task.waitComplete(); }
 				catch(InterruptedException e) { 
-					System.err.println("WARNING! Parallel processing was unexpectedly interrupted.");
-					System.err.println("         Please notify Attila Kovacs <attila@submm.caltech.edu>.");
-					new Exception().printStackTrace();
+					Util.error(this, new Exception("Parallel processing was unexpectedly interrupted.", e));
 				}		
 			}
 		}

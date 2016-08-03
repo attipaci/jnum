@@ -50,10 +50,10 @@ import jnum.text.TimeFormat;
 public final class Util {
 
     /** The Constant version. */
-    public final static String version = "0.09-3";
+    public final static String version = "0.10-a1";
 
     /** The Constant revision. */
-    public final static String revision = "devel.4";
+    public final static String revision = "devel.1";
 
     public static boolean debug = false;
 

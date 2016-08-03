@@ -247,12 +247,14 @@ public class DownhillSimplex extends Minimizer implements Scalable {
     protected synchronized void findMinimum() throws ConvergenceException {
         arm();
 
-        if(isVerbose()) System.err.println(" Initial --> " + Util.e6.format(value[ilo]) + "     ");
+        if(isVerbose()) Util.info(this, "Initial --> " + Util.e6.format(value[ilo]));
 
         while(step()) if(isVerbose()) System.err.print("\r  " + steps + " --> " + Util.e6.format(value[ilo]) + "     ");
         setValues(point[ilo]);
 
         if(isVerbose()) System.err.println("\r " + steps + " --> " + Util.e6.format(value[ilo]) + "     ");
+        
+        if(isVerbose()) Util.info(this, "Final --> " + Util.e6.format(value[ilo]));
 
     }
 

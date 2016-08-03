@@ -22,16 +22,16 @@
  ******************************************************************************/
 package jnum.astro;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.StringTokenizer;
 import java.util.TimeZone;
+
+import jnum.Util;
+import jnum.io.LineParser;
+import jnum.text.SmartTokenizer;
 
 // TODO: Auto-generated Javadoc
 // Last updated on 27 Mar 2015
@@ -62,10 +62,10 @@ public final class LeapSeconds {
 	private static int currentLeap = 36;
 	
 	/** The release epoch. */
-	private static long releaseEpoch = 3535228800L;			// seconds since 1900
+	private static long releaseEpoch = 3629404800L;	        // 5 Jan 2015 -- seconds since 1900
 	
 	/** The expiration epoch. */
-	private static long expirationEpoch = 3597177600L;		// seconds since 1900
+	private static long expirationEpoch = 3691872000L;		// 31 Dec 2016 -- seconds since 1900
 	
 	/** The expiration millis. */
 	private static long expirationMillis = millis1900 + 1000L * expirationEpoch;
@@ -106,30 +106,29 @@ public final class LeapSeconds {
 		
 		if(list == null) {
 			if(dataFile == null) {
-				if(isVerbose) System.err.println("WARNING! No historical leap-seconds data. Will use: " + currentLeap + " s.");
+				if(isVerbose) Util.warning(LeapSeconds.class, "No historical leap-seconds data. Will use: " + currentLeap + " s.");
 				return currentLeap;
 			}
 			
 			try { read(dataFile); }
 			catch(IOException e) {
 				if(isVerbose) {
-					System.err.println("WARNING! Could not real leap seconds data: " + dataFile);
-					System.err.println("         Problem: " + e.getMessage());
-					System.err.println("         Will use current default value: " + currentLeap + " s.");
+					Util.warning(LeapSeconds.class, "Could not real leap seconds data: " + dataFile + "\n"
+					        + "Problem: " + e.getMessage() + "\n"
+					        + "Will use current default value: " + currentLeap + " s.");
 				}
 				return currentLeap;
 			}
 			
 			if(timestamp >= expirationMillis) if(isVerbose) {
-				System.err.println("WARNING! Leap seconds data is no longer current.");
-				System.err.println("         To fix it, update '" + dataFile + "'.");
+				Util.warning(LeapSeconds.class, "Leap seconds data is no longer current. To fix it, update '" + dataFile + "'.");
 			}
-
 		}
 		
+		
 		if(timestamp > expirationMillis) if(isVerbose) {
-			System.err.println("WARNING! Leap data expired: " + dataFile);
-			System.err.println("         Will use the current default value: " + currentLeap + " s");
+			Util.warning(LeapSeconds.class, "Leap data expired: " + dataFile 
+			        + ". Will use the current default value: " + currentLeap + " s");
 		}
 		
 		int lower = 0, upper = list.size()-1;
@@ -166,33 +165,38 @@ public final class LeapSeconds {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void read(String fileName) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-		String line = null;
-		
+			
 		if(list == null) list = new ArrayList<LeapEntry>();
 		else list.clear();
 		
-		if(verbose) System.err.println("Reading leap seconds table from " + fileName);
+		if(verbose) Util.info(LeapSeconds.class, "Reading leap seconds table from " + fileName);
 		
-		while((line=in.readLine()) != null) if(line.length() > 2) {
-			StringTokenizer tokens = new StringTokenizer(line);
-			
-			if(line.charAt(0) == '#') {
-				tokens.nextToken();
-				if(line.charAt(1) == '$') releaseEpoch = Long.parseLong(tokens.nextToken());
-				else if(line.charAt(1) == '@') {
-					expirationEpoch = Long.parseLong(tokens.nextToken());
-					expirationMillis = 1000L * expirationEpoch + millis1900;
-				}
-			}
-			else {
-				LeapEntry entry = new LeapEntry();
-				entry.timestamp = 1000L * Long.parseLong(tokens.nextToken()) + millis1900;
-				entry.leap = Integer.parseInt(tokens.nextToken());
-				list.add(entry);
-			}
-		}
-		
+		new LineParser() {
+		    @Override
+            protected boolean parseComment(String line) throws Exception {
+		        SmartTokenizer tokens = new SmartTokenizer(line);
+		        tokens.nextToken();
+                if(line.charAt(0) == '$') releaseEpoch = tokens.nextLong();
+                else if(line.charAt(0) == '@') {
+                    expirationEpoch = tokens.nextLong();
+                    expirationMillis = 1000L * expirationEpoch + millis1900;
+                }
+		        return true;
+		    }
+		    
+            @Override
+            protected boolean parse(String line) throws Exception {
+                if(line.length() < 3) return false;  
+                SmartTokenizer tokens = new SmartTokenizer(line);
+                LeapEntry entry = new LeapEntry();
+                entry.timestamp = 1000L * tokens.nextLong() + millis1900;
+                entry.leap = tokens.nextInt();
+                list.add(entry); 
+                return true;
+            }
+		    
+		}.read(fileName);
+	
 		Collections.sort(list);
 		
 		LeapEntry current = list.get(list.size() - 1);
@@ -200,15 +204,13 @@ public final class LeapSeconds {
 		currentSinceMillis = current.timestamp;
 		
 		if(verbose) {
-			System.err.println("--> Found " + list.size() + " leap-second entries.");
-		
 			DateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 			tf.setTimeZone(TimeZone.getTimeZone("UTC"));
-			System.err.println("--> Released: " + tf.format(1000L * releaseEpoch + millis1900));
-			System.err.println("--> Expires: " + tf.format(expirationMillis));
+			Util.detail(LeapSeconds.class, "--> Found " + list.size() + " leap-second entries.\n"
+			        + "--> Released: " + tf.format(1000L * releaseEpoch + millis1900) + "\n"
+			        + "--> Expires: " + tf.format(expirationMillis));
 		}
 		
-		in.close();
 	}	
 }
 
