@@ -53,7 +53,7 @@ public final class Util {
     public final static String version = "0.10-a1";
 
     /** The Constant revision. */
-    public final static String revision = "devel.1";
+    public final static String revision = "alpha";
 
     public static boolean debug = false;
 
@@ -822,6 +822,12 @@ public final class Util {
 
     }
 
+    public static String trimEnd(String text) {
+        int n = text.length();
+        for( ; --n >= 0; ) if(!isWhiteSpace(text.charAt(n))) return n == text.length()-1 ? text : text.substring(0, n+1);
+        return "";
+    }
+    
     /**
      * Equals.
      *
@@ -834,56 +840,7 @@ public final class Util {
         if(b == null) return a == null;	
         return a.equals(b);
     }
-
-    public static String wrap(String text) {
-        return wrap(text, "");
-    }
-
-    public static String wrap(String text, String pretext) {
-        return wrap(text, pretext, 80);
-    }
-
-    public static String wrap(String text, int length) {
-        return wrap(text, length, 0);
-    }
-
-    public static String wrap(String text, String pretext, int length) {
-        return wrap(text, pretext, length, 0);
-    }
-
-    public static String wrap(String text, int length, int indent) {
-        return wrap(text, "", length, indent);
-    }
-
-    public static String wrap(String text, String pretext, int length, int indent) {
-        if(pretext == null) pretext = "";    
-
-        if(length < pretext.length()) throw new IllegalStateException("negative wrapping space.");
-
-
-        // If the text contains a line break, then wrap split...
-        if(text.contains("\n")) {
-            int i = text.indexOf('\n');
-            return wrap(text.substring(0, i), pretext, length, indent) + "\n" 
-            + wrap(text.substring(i+1), pretext + spaces(indent), length, 0);
-        }
-
-        // If the text is shorter than the limit, then use as is..
-        if(pretext.length() + text.length() < length) return pretext + text;
-
-
-        // Try to wrap around the last space, discarding intermediate spaces...
-        for(int i=text.length(); --i > 0; ) if(text.charAt(i) == ' ') {
-            for(int j=i; --j > 0; ) if(text.charAt(j) != ' ') 
-                return pretext + text.substring(0, j+1) + "\n" + wrap(text.substring(i+1), pretext + spaces(indent), length, 0);
-            return "\n" + wrap(text.substring(i+1), pretext + spaces(indent), length, 0);
-        }
-
-        // If there is no space to wrap around, then just cut mid-word...
-        return pretext + text.substring(0, length) + "\n" + wrap(text.substring(length), pretext + spaces(indent), length, 0);
-
-    }
-
+   
     public static String spaces(int n) {
         if(n < 1) return "";
 

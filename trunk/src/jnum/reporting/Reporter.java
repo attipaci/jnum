@@ -75,10 +75,4 @@ public abstract class Reporter {
     
     public abstract void suggest(Object owner, String message);
     
-    
-   
-    
-    
-    
-    
 }
