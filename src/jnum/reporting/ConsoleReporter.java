@@ -23,10 +23,10 @@
 
 package jnum.reporting;
 
-import jnum.Util;
+import jnum.text.TextWrapper;
 
 public class ConsoleReporter extends Reporter {
-    private int wrap = 79;
+    private TextWrapper wrapper = new TextWrapper(79);
     private int level = LEVEL_DETAIL;
     
     
@@ -46,9 +46,9 @@ public class ConsoleReporter extends Reporter {
         return owner.getClass().getSimpleName();
     }
     
-    public int getWrap() { return wrap; }
+    public int getWrap() { return wrapper.getWidth(); }
     
-    public void setWrap(int chars) { wrap = chars; }
+    public void setWrap(int chars) { wrapper.setWidth(chars); }
     
     public void setLevel(int level) { this.level = level; }
     
@@ -56,53 +56,53 @@ public class ConsoleReporter extends Reporter {
     
     @Override
     public void info(Object owner, String message) { 
-        if(level >= LEVEL_INFO) System.err.println(Util.wrap(message, getPrefix(owner), getWrap(), getIndentInfo()));
+        if(level >= LEVEL_INFO) System.err.println(wrapper.wrap(message, getPrefix(owner), getIndentInfo()));
     }
     
     @Override
     public void notify(Object owner, String message) { 
-        if(level >= LEVEL_NOTIFY) System.err.println(Util.wrap(message, " ", getWrap(), getIndentNotify()));
+        if(level >= LEVEL_NOTIFY) System.err.println(wrapper.wrap(message, " ", getIndentNotify()));
     }
 
     @Override
     public void debug(Object owner, String message) { 
-        if(level >= LEVEL_DEBUG) System.err.println(Util.wrap(message, "DEBUG> ", getWrap(), getIndentDebug()));
+        if(level >= LEVEL_DEBUG) System.err.println(wrapper.wrap(message, "DEBUG> ", getIndentDebug()));
     }
     
     @Override
     public void warning(Object owner, String message) {
-        if(level >= LEVEL_WARNING) System.err.println(Util.wrap("WARNING! " + message, getPrefix(owner), getWrap(), getIndentWarning()));
+        if(level >= LEVEL_WARNING) System.err.println(wrapper.wrap("WARNING! " + message, getPrefix(owner), getIndentWarning()));
     }
 
     @Override
     public void error(Object owner, String message) {
-        if(level >= LEVEL_ERROR) System.err.println(Util.wrap("ERROR! " + message, getPrefix(owner), getWrap(), getIndentErrors()));
+        if(level >= LEVEL_ERROR) System.err.println(wrapper.wrap("ERROR! " + message, getPrefix(owner), getIndentErrors()));
     }
 
     @Override
     public void status(Object owner, String message) {
-        if(level >= LEVEL_STATUS) System.err.println(Util.wrap(getObjectID(owner) + "> " + message, getWrap(), getIndentStatus()));
+        if(level >= LEVEL_STATUS) System.err.println(wrapper.wrap(getObjectID(owner) + "> " + message, getIndentStatus()));
     }
 
     @Override
     public void result(Object owner, String message) {
-        if(level >= LEVEL_RESULT) System.out.println(Util.wrap("\n" + message + "\n", getResultPrefix(owner), getWrap(), getIndentResult()));
+        if(level >= LEVEL_RESULT) System.out.println(wrapper.wrap("\n" + message + "\n", getResultPrefix(owner), getIndentResult()));
         //System.out.println("\n" + message + "\n");
     }
 
     @Override
     public void detail(Object owner, String message) {
-        if(level >= LEVEL_DETAIL) System.err.println("..." + Util.wrap(message, getPrefix(owner), getWrap(), getIndentDetail()));
+        if(level >= LEVEL_DETAIL) System.err.println("..." + wrapper.wrap(message, getPrefix(owner), getIndentDetail()));
     }
     
     @Override
     public void values(Object owner, String message) {
-        if(level >= LEVEL_VALUES) System.err.println(Util.wrap(message, getPrefix(owner), getWrap(), getIndentValues())); 
+        if(level >= LEVEL_VALUES) System.err.println(wrapper.wrap(message, getPrefix(owner), getIndentValues())); 
     }
 
     @Override
     public void suggest(Object owner, String message) {
-        if(level >= LEVEL_SUGGEST) System.err.println("\n" + Util.wrap(message, getPrefix(owner), getWrap(), getIndentSuggest())); 
+        if(level >= LEVEL_SUGGEST) System.err.println("\n" + wrapper.wrap(message, getPrefix(owner), getIndentSuggest())); 
     }
 
     @Override
@@ -114,13 +114,13 @@ public class ConsoleReporter extends Reporter {
     
     public int getIndentNotify() { return 3; }
     
-    public int getIndentDebug() { return 5; }
+    public int getIndentDebug() { return 3; }
     
-    public int getIndentWarning() { return 5; }
+    public int getIndentWarning() { return 3; }
     
-    public int getIndentErrors() { return 5; }
+    public int getIndentErrors() { return 3; }
  
-    public int getIndentStatus() { return 5; }
+    public int getIndentStatus() { return 3; }
     
     public int getIndentResult() { return 0; }
     
