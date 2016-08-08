@@ -26,7 +26,7 @@ package jnum.reporting;
 import jnum.text.TextWrapper;
 
 public class ConsoleReporter extends Reporter {
-    private TextWrapper wrapper = new TextWrapper(79);
+    private TextWrapper wrapper = new TextWrapper(79, "({[", ")}]");
     private int level = LEVEL_DETAIL;
     
     

@@ -34,26 +34,64 @@ import java.util.List;
 
 import jnum.Util;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class LineParser.
+ */
 public abstract class LineParser {
+    
+    /** The comments. */
     private int lines = 0, comments = 0;
+    
+    /** The line number. */
     private int lineNumber = 0;
+    
+    /** The id. */
     private String id;
+    
+    /** The parse exceptions. */
     private ArrayList<Exception> parseExceptions = new ArrayList<Exception>();
    
     
+    /**
+     * Read all available bytes from the specified InputStream, parsing the content line-by-line until
+     *  the end of stream (EOF) is reached.
+     *
+     * @param in the in
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public void read(InputStream in) throws IOException {
         read(new BufferedReader(new InputStreamReader(in)));
     }
     
+    /**
+     * Read the specified file fully, parsing its content line-by-line.
+     *
+     * @param file the file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     @SuppressWarnings("resource")
     public void read(File file) throws IOException {
         read(new FileInputStream(file));
     }
     
-    public void read(String spec) throws IOException {
-        read(Util.getReader(spec));
+    /**
+     * Read the file or online resource, specified by the descriptor, line-by-line. 
+     *
+     * @param descriptor the file name, including path as neccessary, or URL specification to
+     *        an online resource.
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void read(String descriptor) throws IOException {
+        read(Util.getReader(descriptor));
     }
     
+    /**
+     * Read the specified BufferedReader input fully, line-by-line, until the end-of-file (EOF).
+     *
+     * @param in the in
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public void read(BufferedReader in) throws IOException {
         String line = null;
         
@@ -65,37 +103,97 @@ public abstract class LineParser {
                 }
                 else if(parse(line)) lines++;
             }
-            catch(Exception e) { 
-                Util.warning(this, id + ":" + lineNumber + "> " + e.getClass().getSimpleName() + ": " + e.getMessage());
-                parseExceptions.add(new Exception("@" + lineNumber + "> " + e.getClass().getSimpleName() + ": " + e.getMessage(), e));
-            }
+            catch(Exception e) { handleParseException(e); }
         }
         in.close();
     }
     
+    /**
+     * Handle parse exceptions.
+     *
+     * @param e the exception that occurred during parsing.
+     */
+    protected void handleParseException(Exception e) {
+        Util.warning(this, id + ":" + lineNumber + "> " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        parseExceptions.add(new Exception("@" + lineNumber + "> " + e.getClass().getSimpleName() + ": " + e.getMessage(), e));
+    }
     
+    /**
+     * Read a single line from the underlying BufferedReader input.
+     *
+     * @param in the input
+     * @return the next line from the input
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     private String readLine(BufferedReader in) throws IOException {
         lineNumber++;
         String line = in.readLine(); 
         return line == null ? null : line.trim();
     }
     
+    /**
+     * Checks if the specified character is a comment marker.
+     *
+     * @param c the character
+     * @return true, if c is a comment marker.
+     */
     protected boolean isCommentChar(char c) {
         return c == '#';
     }
     
+    /**
+     * Parses a comment line.
+     *
+     * @param comment the comment line to parse (with the leading comment marker, such as {@link #clone()}, removed).
+     * @return true, if the content was successfully parsed (that is information from it was retrieved), false if the
+     *    line contained incomplete or no information for successful parsing.
+     * @throws Exception any exception encountered during a failed parse attempt.
+     */
     protected boolean parseComment(String comment) throws Exception { return true; }
     
+    /**
+     * Parses an uncommented line from the input. 
+     *
+     * @param line the next uncommented line from the input
+     * @return true, if the parsing was successful (that is information from the line was retrieved), false if the 
+     *    line contained incomplete or no information for successful parsing.
+     * @throws Exception any exception encountered during a failed parse attempt.
+     */
     protected abstract boolean parse(String line) throws Exception;
     
+    /**
+     * Gets the line number of the last line read from the input.
+     *
+     * @return the current line number for processing.
+     */
     protected final int getLineNumber() { return lineNumber; }
       
+    /**
+     * Gets the total number of uncommented input lines processed successfully from the input.
+     *
+     * @return the number of uncommented lines processed
+     */
     public final int getLinesProcessed() { return lines; }
     
+    /**
+     * Gets the total number of commented lines processed successfully from the input.
+     *
+     * @return the number of comment lines processed
+     */
     public final int getCommentsProcessed() { return comments; }
     
+    /**
+     * Check whether any exceptions occurred during the parsing of the input.
+     *
+     * @return true, if the parsing encountered any exceptions during parsing.
+     */
     public final boolean hadExceptions() { return !parseExceptions.isEmpty(); }
     
+    /**
+     * Retrieve the list of exceptions that occurred while the input was processed.
+     *
+     * @return the list the exceptions during parsing.
+     */
     public final List<Exception> getParseExceptions() { return parseExceptions; }
        
 }
