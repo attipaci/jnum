@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -50,11 +50,12 @@ import jnum.text.TimeFormat;
 public final class Util {
 
     /** The Constant version. */
-    public final static String version = "0.10-a2";
+    public final static String version = "0.10-b1";
 
     /** The Constant revision. */
-    public final static String revision = "devel.1";
+    public final static String revision = "beta";
 
+    /** The debug. */
     public static boolean debug = false;
 
     /**
@@ -822,11 +823,6 @@ public final class Util {
 
     }
 
-    public static String trimEnd(String text) {
-        int n = text.length();
-        for( ; --n >= 0; ) if(!isWhiteSpace(text.charAt(n))) return n == text.length()-1 ? text : text.substring(0, n+1);
-        return "";
-    }
     
     /**
      * Equals.
@@ -841,6 +837,12 @@ public final class Util {
         return a.equals(b);
     }
    
+    /**
+     * Generates a String with the desired number of white space characters.
+     *
+     * @param n the number of white space characters
+     * @return the string consisting of the specified number of white spaces alone. 
+     */
     public static String spaces(int n) {
         if(n < 1) return "";
 
@@ -849,45 +851,151 @@ public final class Util {
         return new String(buf);
     }
 
+    /**
+     * Info.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void info(Object owner, String message) { reporter.info(owner, message); }
 
+    /**
+     * Notify.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void notify(Object owner, String message) { reporter.notify(owner, message); }
 
+    /**
+     * Debug.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void debug(Object owner, String message) { reporter.debug(owner, message); }
 
+    /**
+     * Warning.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void warning(Object owner, String message) { reporter.warning(owner, message); }
 
+    /**
+     * Warning.
+     *
+     * @param owner the owner
+     * @param e the e
+     * @param debug the debug
+     */
     public static void warning(Object owner, Exception e, boolean debug) { reporter.warning(owner, e, debug); }
 
+    /**
+     * Warning.
+     *
+     * @param owner the owner
+     * @param e the e
+     */
     public static void warning(Object owner, Exception e) { reporter.warning(owner, e, debug); }
 
+    /**
+     * Error.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void error(Object owner, String message) { reporter.error(owner, message); }
 
+    /**
+     * Error.
+     *
+     * @param owner the owner
+     * @param e the e
+     * @param debug the debug
+     */
     public static void error(Object owner, Throwable e, boolean debug) { reporter.error(owner, e, debug); }
 
+    /**
+     * Error.
+     *
+     * @param owner the owner
+     * @param e the e
+     */
     public static void error(Object owner, Throwable e) { reporter.error(owner, e); }
 
+    /**
+     * Status.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void status(Object owner, String message) { reporter.status(owner, message); }
 
+    /**
+     * Result.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void result(Object owner, String message) { reporter.result(owner, message); }
 
+    /**
+     * Detail.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void detail(Object owner, String message) { reporter.detail(owner, message); }
 
+    /**
+     * Values.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void values(Object owner, String message) { reporter.values(owner, message); }
 
+    /**
+     * Suggest.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public static void suggest(Object owner, String message) { reporter.suggest(owner, message); }
 
+    /**
+     * Trace.
+     *
+     * @param e the e
+     */
     public static void trace(Throwable e) { reporter.trace(e); }
 
     
+    /**
+     * Gets the default reporter.
+     *
+     * @return the default reporter
+     */
     public static Reporter getDefaultReporter() { return reporter; }
 
+    /**
+     * Sets the reporter.
+     *
+     * @param r the new reporter
+     */
     public static void setReporter(Reporter r) { reporter = r; }
 
+    /**
+     * Sets the default reporter.
+     */
     public static void setDefaultReporter() { setReporter(defaultReporter); }
 
+    /** The Constant defaultReporter. */
     public static final Reporter defaultReporter = new ConsoleReporter("jnum-default");
 
+    /** The reporter. */
     public static Reporter reporter = defaultReporter;
 
     /** The Constant f0. */

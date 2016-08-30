@@ -70,7 +70,7 @@ public class FlexBinaryTable {
 			}
 			fits.close();
 			
-			FitsExtras.write(out, "test.fits");
+			FitsToolkit.write(out, "test.fits");
 			out.close();
 		}
 		catch(Exception e) { Util.error(FlexBinaryTable.class, e); }

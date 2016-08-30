@@ -83,6 +83,7 @@ public class TextWrapper {
      * Sets the number of characters available before wrapping is required.
      *
      * @param n the new width
+     * @see #getWidth()
      */
     public void setWidth(int n) { this.width = n; }
     
@@ -90,6 +91,7 @@ public class TextWrapper {
      * Gets the number of characters available before wrapping is required.
      *
      * @return the width
+     * @see #setWidth(int)
      */
     public int getWidth() { return width; }
     
@@ -98,6 +100,9 @@ public class TextWrapper {
      * For example, you can set the "({[" to allow wrapping lines before opening brackets as well as white spaces.
      *
      * @param chars the new break before
+     * @see #getBreakBefore()
+     * @see #setBreakAfter(String)
+     * @see #setWhiteSpaces(String)
      */
     public void setBreakBefore(String chars) { breakablesBefore = chars; }
     
@@ -105,6 +110,9 @@ public class TextWrapper {
      * Gets the list of characters, beyond the white space characters, before which a line can be broken (wrapped).
      *
      * @return the list of non-whitespace characters before which a line can be wrapped.
+     * @see #setBreakBefore(String)
+     * @see #getBreakAfter()
+     * @see #getWhiteSpaces()
      */
     public String getBreakBefore() { return breakablesBefore; }
 
@@ -113,6 +121,9 @@ public class TextWrapper {
      * For example, you can set the ")}]" to allow wrapping lines after closing brackets as well as white spaces.
      *
      * @param chars the new break after
+     * @see #getBreakAfter()
+     * @see #setBreakBefore(String)
+     * @see #setWhiteSpaces(String)
      */
     public void setBreakAfter(String chars) { breakablesAfter = chars; }
     
@@ -120,6 +131,9 @@ public class TextWrapper {
      * Gets the list of characters, beyond the white space characters, after which a line can be broken (wrapped).
      *
      * @return the list of non-whitespace characters before which a line can be wrapped.
+     * @see #setBreakAfter(String)
+     * @see #getBreakBefore()
+     * @see #getWhiteSpaces()
      */
     public String getBreakAfter() { return breakablesAfter; }
     
@@ -128,6 +142,9 @@ public class TextWrapper {
      * ignored at the beginning of new lines.
      *
      * @param chars the list of new white space characters
+     * @see #getWhiteSpaces()
+     * @see #setBreakBefore(String)
+     * @see #setBreakAfter(String)
      */
     public void setWhiteSpaces(String chars) { whiteSpaces = chars; }
     
@@ -135,6 +152,9 @@ public class TextWrapper {
      * Gets the white space characters.
      *
      * @return the list of white space characters.
+     * @see #setWhiteSpaces(String)
+     * @see #getBreakBefore()
+     * @see #getBreakAfter()
      */
     public String getWhiteSpaces() { return whiteSpaces; }
      
@@ -182,7 +202,7 @@ public class TextWrapper {
     public String wrap(String text, String lineHeader, int indent) {
       
         // Remove trailing spaces...
-        text = Util.trimEnd(text);
+        text = trimEnd(text);
         
         if(lineHeader == null) lineHeader = "";    
 
@@ -218,6 +238,10 @@ public class TextWrapper {
      * @param text the text
      * @param index the index
      * @return true, if is breakable at
+     * 
+     * @see #getBreakBefore()
+     * @see #getBreakAfter()
+     * @see #getWhiteSpaces()
      */
     protected boolean isBreakableAt(String text, int index) {
         if(isBreakableBefore(text.charAt(index))) return true;
@@ -238,10 +262,25 @@ public class TextWrapper {
     }
     
     /**
+     * Remove the trailing white spaces from a String.
+     *
+     * @param text the text
+     * @return the text with the trailing white spaces removed, or the input string itself it it has no trailing spaces.
+     */
+    public String trimEnd(String text) {
+        int n = text.length();
+        for( ; --n >= 0; ) if(!isWhiteSpace(text.charAt(n))) return n == text.length()-1 ? text : text.substring(0, n+1);
+        return "";
+    }
+    
+    
+    /**
      * Checks if is white space.
      *
      * @param c the c
      * @return true, if is white space
+     * 
+     * @see #getWhiteSpaces()
      */
     private boolean isWhiteSpace(char c) { return contains(getWhiteSpaces(), c); }
      
@@ -250,6 +289,8 @@ public class TextWrapper {
      *
      * @param c the c
      * @return true, if is breakable before
+     * 
+     * @see #getBreakBefore()
      */
     private boolean isBreakableBefore(char c) {
         if(contains(getBreakBefore(), c)) return true;
@@ -261,6 +302,8 @@ public class TextWrapper {
      *
      * @param c the c
      * @return true, if is breakable after
+     * 
+     * @see #getBreakAfter()
      */
     private boolean isBreakableAfter(char c) {
         if(contains(getBreakAfter(), c)) return true;

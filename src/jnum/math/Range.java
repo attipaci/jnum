@@ -330,8 +330,8 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 */
 	public void grow(double factor) {
 		double span = span();
-		min -= factor * span;
-		max += factor * span;		
+		min -= (factor-1.0) * span;
+		max += (factor-1.0) * span;		
 	}
 	
 	/* (non-Javadoc)

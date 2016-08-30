@@ -562,7 +562,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		int iExt = fileName.lastIndexOf(".");
 		String type = iExt > 0 && iExt < fileName.length() - 1 ? fileName.substring(iExt + 1) : "gif";    
 		ImageIO.write(getRenderedImage(width, height), type, file);
-		Util.info(this, "Written " + fileName);
+		Util.notify(this, "Written " + fileName);
 	}
 
 	

@@ -69,7 +69,7 @@ public class ComplexMatrix extends GenericMatrix<Complex> implements ComplexScal
 	 * @param a the a
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public ComplexMatrix(Real[][] a) throws IllegalArgumentException { 
+	public ComplexMatrix(Scalar[][] a) throws IllegalArgumentException { 
 		this((Complex[][]) ArrayUtil.asComplex(a));
 	}
 	

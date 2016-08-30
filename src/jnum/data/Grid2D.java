@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,7 +23,6 @@
 package jnum.data;
 
 import java.awt.geom.AffineTransform;
-import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
@@ -51,7 +50,8 @@ import nom.tam.util.Cursor;
  *
  * @param <CoordinateType> the generic type
  */
-public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Serializable, Cloneable, Copiable<Grid2D<CoordinateType>> {
+public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Grid<CoordinateType, Vector2D>, 
+FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8109608722575396734L;
@@ -187,7 +187,8 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 		setResolution(delta, delta);
 	}
 	
-	public final void setResolution(Vector2D delta) { setResolution(delta.x(), delta.y()); }
+	@Override
+    public final void setResolution(Vector2D delta) { setResolution(delta.x(), delta.y()); }
 	
 	/**
 	 * Gets the transform.
@@ -306,7 +307,8 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 	 *
 	 * @return the resolution
 	 */
-	public Vector2D getResolution() {
+	@Override
+    public Vector2D getResolution() {
 		return new Vector2D(m11, m22);
 	}
 	
@@ -597,11 +599,41 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
 		offset.set(m11 * di + m12 * dj, m21 * di + m22 * dj);
 	}
 	
+	@Override
+    public Vector2D indexOf(CoordinateType value) {
+	    Vector2D v = new Vector2D();
+	    indexOf(value, v);
+	    return v;
+	}
+	
+	@Override
+    public CoordinateType valueAt(Vector2D index) {
+	    @SuppressWarnings("unchecked")
+        CoordinateType coords = (CoordinateType) projection.getReference().copy();
+	    valueAt(index, coords);
+	    return coords;
+	}
+	
+	@Override
+    public void indexOf(CoordinateType value, Vector2D toIndex) {
+        projection.project(value, toIndex);
+        toIndex(toIndex);
+    }
+    
+    @Override
+    public void valueAt(Vector2D index, CoordinateType toValue) {
+        toOffset(index);
+        projection.deproject(index, toValue);
+        toIndex(index);
+    }
+    
+	
     /**
      * Gets the reference.
      *
      * @return the reference
      */
+    @Override
     public final CoordinateType getReference() { return projection.getReference(); }
     
     /**
@@ -609,6 +641,7 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
      *
      * @param reference the new reference
      */
+    @Override
     public void setReference(CoordinateType reference) { projection.setReference(reference); }
     
     /**
@@ -616,6 +649,7 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
      *
      * @return the reference index
      */
+    @Override
     public Vector2D getReferenceIndex() { return refIndex; }
     
     /**
@@ -623,6 +657,7 @@ public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Ser
      *
      * @param v the new reference index
      */
+    @Override
     public void setReferenceIndex(Vector2D v) { refIndex = v; }
     
     /**

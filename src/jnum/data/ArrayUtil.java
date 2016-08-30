@@ -54,7 +54,7 @@ import jnum.math.Additive;
 import jnum.math.Complex;
 import jnum.math.LinearAlgebra;
 import jnum.math.Multiplicative;
-import jnum.math.Real;
+import jnum.math.Scalar;
 import jnum.math.Scalable;
 import jnum.text.BracketedListTokenizer;
 import jnum.text.DecimalFormating;
@@ -1164,7 +1164,7 @@ public final class ArrayUtil {
 	 * @return the object
 	 */
 	public static Object asComplex(Object data) {
-		if(data instanceof Real) return new Complex(((Real) data).getValue());
+		if(data instanceof Scalar) return new Complex(((Scalar) data).getValue());
 		else if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
 			Object[] complexArray = null;
@@ -1289,7 +1289,7 @@ public final class ArrayUtil {
 	 * @param data the data
 	 * @return the complex[]
 	 */
-	public static Complex[] asComplex(Real[] data) {
+	public static Complex[] asComplex(Scalar[] data) {
 		Complex[] c = new Complex[data.length];
 		for(int i=0; i<data.length; i++) c[i] = new Complex(data[i].getValue(), 0.0);
 		return c;
