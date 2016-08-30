@@ -29,7 +29,7 @@ import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.fft.MultiFFT;
-import jnum.io.fits.FitsExtras;
+import jnum.io.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
@@ -1366,12 +1366,12 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 			correctingBeam.parseHeader(header);
 			correctingFWHM = correctingBeam.getCircularEquivalentFWHM();		
 		}
-		else correctingFWHM = FitsExtras.getCommentedUnitValue(header, "CORRECTN", Double.NaN, defaultUnit);
+		else correctingFWHM = FitsToolkit.getCommentedUnitValue(header, "CORRECTN", Double.NaN, defaultUnit);
 		
 		// Use old SMOOTH or new SBMAJ/SBMIN
 		if(header.containsKey("SBMAJ")) smoothing.parseHeader(header);	
 		else {
-			double smoothFWHM = FitsExtras.getCommentedUnitValue(header, "SMOOTH", Double.NaN, defaultUnit);
+			double smoothFWHM = FitsToolkit.getCommentedUnitValue(header, "SMOOTH", Double.NaN, defaultUnit);
 			smoothing.set(smoothFWHM);
 		}
 		
@@ -1384,20 +1384,20 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 			extFilterBeam.parseHeader(header);
 			extFilterFWHM = extFilterBeam.getCircularEquivalentFWHM();
 		}
-		extFilterFWHM = FitsExtras.getCommentedUnitValue(header, "EXTFLTR", Double.NaN, defaultUnit);
+		extFilterFWHM = FitsToolkit.getCommentedUnitValue(header, "EXTFLTR", Double.NaN, defaultUnit);
 		
 		// Use new IBMAJ/IBMIN if available
 		// Otherwise calculate it based on BMAJ, BMIN
 		// Else, use old BEAM, or calculate based on old RESOLUTN
 		if(header.containsKey("IBMAJ")) underlyingBeam.parseHeader(header);
 		else if(header.containsKey("BEAM")) 
-			underlyingBeam.set(FitsExtras.getCommentedUnitValue(header, "BEAM", Double.NaN, defaultUnit));
+			underlyingBeam.set(FitsToolkit.getCommentedUnitValue(header, "BEAM", Double.NaN, defaultUnit));
 		else if(header.containsKey("BMAJ")) {
 			underlyingBeam.parseHeader(header);
 			underlyingBeam.deconvolveWith(smoothing);
 		}
 		else if(header.containsKey("RESOLUTN")) {
-			double resolution = FitsExtras.getCommentedUnitValue(header, "RESOLUTN", Double.NaN, defaultUnit);
+			double resolution = FitsToolkit.getCommentedUnitValue(header, "RESOLUTN", Double.NaN, defaultUnit);
 			underlyingBeam.set(resolution > smoothing.getMajorFWHM() ? Math.sqrt(resolution * resolution - smoothing.getMajorFWHM() * smoothing.getMinorFWHM()) : 0.0);
 		}
 		else underlyingBeam.set(0.0);

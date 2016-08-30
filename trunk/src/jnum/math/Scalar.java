@@ -42,9 +42,9 @@ import java.lang.reflect.*;
 /**
  * The Class Real.
  */
-public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<Real>, AbsoluteValue, Copiable<Real>, CopyCat<Real>, Cloneable, BlankingValue, 
+public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar>, AbstractAlgebra<Scalar>, AbsoluteValue, Copiable<Scalar>, CopyCat<Scalar>, Cloneable, BlankingValue, 
 	PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions,
-	NumberFormating, DecimalFormating, Parser, Metric<Real>, Comparable<Real> {
+	NumberFormating, DecimalFormating, Parser, Metric<Scalar>, Comparable<Scalar> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4757211558088511549L;
@@ -55,14 +55,14 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	/**
 	 * Instantiates a new real.
 	 */
-	public Real() {}
+	public Scalar() {}
 	
 	/**
 	 * Instantiates a new real.
 	 *
 	 * @param value the value
 	 */
-	public Real(double value) {
+	public Scalar(double value) {
 		setValue(value);
 	}
 	
@@ -96,7 +96,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.util.CopyCat#copy(java.lang.Object)
 	 */
 	@Override
-	public final void copy(Real template) {
+	public final void copy(Scalar template) {
 		value = template.value;
 	}
 	
@@ -104,7 +104,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public final void addMultipleOf(Real o, double factor) {
+	public final void addMultipleOf(Scalar o, double factor) {
 		value += factor * o.value;		
 	}
 
@@ -112,7 +112,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.math.Additive#subtract(java.lang.Object)
 	 */
 	@Override
-	public final void subtract(Real o) {
+	public final void subtract(Scalar o) {
 		value -= o.value;
 	}
 
@@ -120,7 +120,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.math.Additive#add(java.lang.Object)
 	 */
 	@Override
-	public final void add(Real o) {
+	public final void add(Scalar o) {
 		value += o.value;
 	}
 	
@@ -298,7 +298,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.math.Multiplicative#multiplyBy(java.lang.Object)
 	 */
 	@Override
-	public final void multiplyBy(Real o) {
+	public final void multiplyBy(Scalar o) {
 		value *= o.value;
 	}
 
@@ -306,8 +306,8 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.util.Copiable#copy()
 	 */
 	@Override
-	public final Real copy() {
-		return (Real) clone();
+	public final Scalar copy() {
+		return (Scalar) clone();
 	}
 
 	/* (non-Javadoc)
@@ -350,7 +350,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.math.Metric#distanceTo(java.lang.Object)
 	 */
 	@Override
-	public final double distanceTo(Real point) {
+	public final double distanceTo(Scalar point) {
 		return point.value - value;
 	}
 
@@ -366,8 +366,8 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.math.InverseValue#getInverse()
 	 */
 	@Override
-	public final Real getInverse() {
-		return new Real(1.0 / value);
+	public final Scalar getInverse() {
+		return new Scalar(1.0 / value);
 	}
 	
 	/* (non-Javadoc)
@@ -382,7 +382,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.math.Product#setProduct(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final void setProduct(Real a, Real b) {
+	public final void setProduct(Scalar a, Scalar b) {
 		value = a.value * b.value;		
 	}
 
@@ -390,7 +390,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public final int compareTo(Real o) {
+	public final int compareTo(Scalar o) {
 		return Double.compare(this.value, o.value);
 	}
 
@@ -409,8 +409,8 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @param scalar the scalar
 	 * @return the real
 	 */
-	public Real dot(Real scalar) {
-		return new Real(value * scalar.value);
+	public Scalar dot(Scalar scalar) {
+		return new Scalar(value * scalar.value);
 	}
 
 	/* (non-Javadoc)
@@ -427,8 +427,8 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @param value the value
 	 * @return the real[]
 	 */
-	public static Real[] arrayFrom(double[] value) {
-		Real[] array = new Real[value.length];
+	public static Scalar[] arrayFrom(double[] value) {
+		Scalar[] array = new Scalar[value.length];
 		for(int i=0; i<value.length; i++) array[i].value = value[i];
 		return array;
 	}
@@ -439,8 +439,8 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @param value the value
 	 * @return the real[]
 	 */
-	public static Real[] arrayFrom(float[] value) {
-		Real[] array = new Real[value.length];
+	public static Scalar[] arrayFrom(float[] value) {
+		Scalar[] array = new Scalar[value.length];
 		for(int i=0; i<value.length; i++) array[i].value = value[i];
 		return array;
 	}
@@ -461,7 +461,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 				Object entry = arrayFrom(array[i]);
 				if(realArray == null) {
 					try { realArray = (Object[]) Array.newInstance(entry.getClass(), array.length); }
-					catch(Exception e) { Util.error(Real.class, e); }		
+					catch(Exception e) { Util.error(Scalar.class, e); }		
 				}
 				realArray[i] = entry;				
 			}
@@ -478,7 +478,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @param array the array
 	 * @return the double[]
 	 */
-	public double[] toDoubleArray(Real[] array) {
+	public double[] toDoubleArray(Scalar[] array) {
 		double[] doubles = new double[array.length];
 		for(int i=0; i<array.length; i++) doubles[i] = array[i].value;
 		return doubles;
@@ -490,7 +490,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @param array the array
 	 * @return the float[]
 	 */
-	public float[] toFloatArray(Real[] array) {
+	public float[] toFloatArray(Scalar[] array) {
 		float[] floats = new float[array.length];
 		for(int i=0; i<array.length; i++) floats[i] = (float) array[i].value;
 		return floats;
@@ -500,7 +500,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final void setSum(Real a, Real b) {
+	public final void setSum(Scalar a, Scalar b) {
 		value = a.value + b.value;
 	}
 
@@ -508,7 +508,7 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	 * @see kovacs.math.Additive#setDifference(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final void setDifference(Real a, Real b) {
+	public final void setDifference(Scalar a, Scalar b) {
 		value = a.value - b.value;
 	}
 
@@ -543,6 +543,26 @@ public class Real implements Serializable, LinearAlgebra<Real>, AbstractAlgebra<
 	public final void atanh() {
 		value = ExtraMath.atanh(value);
 	}
+
+    @Override
+    public double doubleValue() {
+        return value;
+    }
+
+    @Override
+    public float floatValue() {
+        return (float) value;
+    }
+
+    @Override
+    public int intValue() {
+        return (int) value;
+    }
+
+    @Override
+    public long longValue() {
+        return (long) value;
+    }
 	
 	
 }

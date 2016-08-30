@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 
 import jnum.Unit;
 import jnum.Util;
+import jnum.text.TextWrapper;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.FitsFactory;
@@ -41,7 +42,7 @@ import nom.tam.util.Cursor;
 /**
  * The Class FitsExtras.
  */
-public final class FitsExtras {
+public final class FitsToolkit {
 
 	/**
 	 * Adds the long hierarch key.
@@ -52,7 +53,7 @@ public final class FitsExtras {
 	 * @throws HeaderCardException the header card exception
 	 */
 	public static void addLongHierarchKey(Cursor<String,HeaderCard> cursor, String key, String value) throws HeaderCardException {
-		FitsExtras.addLongHierarchKey(cursor, key, 0, value);
+		FitsToolkit.addLongHierarchKey(cursor, key, 0, value);
 	}
 
 	/**
@@ -62,7 +63,7 @@ public final class FitsExtras {
 	 * @return the abbreviated hierarch key
 	 */
 	public static String getAbbreviatedHierarchKey(String key) {
-		int max = 66 - minFitsValueLength;
+		int max = 66 - MIN_VALUE_LENGTH;
 		if(key.length() <= max) return key;
 		
 		int n = (max - 3) / 2;
@@ -179,7 +180,7 @@ public final class FitsExtras {
 	public static void addLongKey(Header header, String key, String value, String comment) throws HeaderCardException {
 		Cursor<String, HeaderCard> cursor = header.iterator();
 		while(cursor.hasNext()) cursor.next();
-		FitsExtras.addLongKey(cursor, key, value, comment);
+		FitsToolkit.addLongKey(cursor, key, value, comment);
 	}
 
 	/**
@@ -334,9 +335,36 @@ public final class FitsExtras {
 	    catch(FitsException e) { throw e; }
 	    finally { stream.close(); }   
 	}
+	
+	public static void addHistory(Header header, String history) throws HeaderCardException {
+	    // manually wrap long history entries into multiple lines... 
+	    if(history.length() <= MAX_HISTORY_LENGTH) header.addLine(new HeaderCard("HISTORY", history, false));
+        else {
+            TextWrapper wrapper = new TextWrapper(MAX_HISTORY_LENGTH);
+            wrapper.setBreakAfter(wrapper.getBreakAfter() + extraHistoryBreaksAfter);
+            StringTokenizer lines = new StringTokenizer(wrapper.wrap(history, 4), "\n");
+            addHistory(header, lines.nextToken());
+            while(lines.hasMoreTokens()) addHistory(header, "... " + lines.nextToken().substring(4));
+        }
+       
+	}
+	
+	public static void addHistory(Cursor<String, HeaderCard> cursor, String history) throws HeaderCardException {
+	    // manually wrap long history entries into multiple lines... 
+	    if(history.length() <= MAX_HISTORY_LENGTH) cursor.add(new HeaderCard("HISTORY", history, false));
+	    else {
+	        TextWrapper wrapper = new TextWrapper(MAX_HISTORY_LENGTH);
+	        wrapper.setBreakAfter(wrapper.getBreakAfter() + extraHistoryBreaksAfter);
+	        StringTokenizer lines = new StringTokenizer(wrapper.wrap(history, 4), "\n");
+	        addHistory(cursor, lines.nextToken());
+	        while(lines.hasMoreTokens()) addHistory(cursor, "... " + lines.nextToken().substring(4));
+	    }
+	}
 
-	/** The min fits value length. */
-	public static int minFitsValueLength = 5;
-
+	
+	public static String extraHistoryBreaksAfter = "/\\:;_=";
+	
+	public static final int MIN_VALUE_LENGTH = 5;
+	public static final int MAX_HISTORY_LENGTH = 71;
 
 }

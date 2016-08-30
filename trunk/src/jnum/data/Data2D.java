@@ -37,7 +37,7 @@ import jnum.CopiableContent;
 import jnum.Parallel;
 import jnum.Unit;
 import jnum.Util;
-import jnum.io.fits.FitsExtras;
+import jnum.io.fits.FitsToolkit;
 import jnum.math.Range;
 import jnum.math.Scalable;
 import jnum.math.Vector2D;
@@ -2256,7 +2256,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @throws HeaderCardException the header card exception
 	 */
 	public void addHistory(Header header) throws HeaderCardException {
-		for(int i=0; i<history.size(); i++) header.addLine(new HeaderCard("HISTORY", history.get(i), false));
+		for(int i=0; i<history.size(); i++) FitsToolkit.addHistory(header, history.get(i));
 	}
 	
 	/**
@@ -2379,7 +2379,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void write(String name, Class<? extends Number> dataType) throws HeaderCardException, FitsException, IOException {
-		FitsExtras.write(createFits(dataType), name);
+		FitsToolkit.write(createFits(dataType), name);
 		this.fileName = name;
 		this.dataType = dataType;
 		Util.notify(this, "Written " + name);
@@ -2402,7 +2402,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		editHeader(header, cursor);
 		
 		// Add the processing history...
-		for(int i=0; i<history.size(); i++) cursor.add(new HeaderCard("HISTORY", history.get(i), null));
+		for(int i=0; i<history.size(); i++) FitsToolkit.addHistory(cursor, history.get(i));
 	}
 	
 	
@@ -2420,7 +2420,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void editHeader(Header header, Cursor<String, HeaderCard> cursor) throws HeaderCardException, FitsException, IOException {
-	    FitsExtras.addLongKeyConvention(cursor);
+	    FitsToolkit.addLongKeyConvention(cursor);
 	    
 	    cursor.add(new HeaderCard("OBJECT", name, "The source name."));
 		cursor.add(new HeaderCard("EXTNAME", contentType, "The type of data contained in this HDU"));

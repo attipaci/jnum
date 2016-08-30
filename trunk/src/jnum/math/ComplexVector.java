@@ -75,7 +75,7 @@ public class ComplexVector extends GenericVector<Complex> implements ComplexScal
 	 *
 	 * @param data the data
 	 */
-	public ComplexVector(Real[] data) {
+	public ComplexVector(Scalar[] data) {
 		super(ArrayUtil.asComplex(data));
 	}
 	

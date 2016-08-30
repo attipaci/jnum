@@ -38,7 +38,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import jnum.io.LineParser;
-import jnum.io.fits.FitsExtras;
+import jnum.io.fits.FitsToolkit;
 import jnum.math.Range;
 import jnum.math.Vector2D;
 import nom.tam.fits.HeaderCard;
@@ -1653,7 +1653,7 @@ public class Configurator implements Serializable, Cloneable {
 		// Add all active configuration keys...
 		for(String key : getAlphabeticalKeys(false)) {
 			Configurator option = get(key);
-			if(option.isEnabled) FitsExtras.addLongHierarchKey(cursor, key, option.value);
+			if(option.isEnabled) FitsToolkit.addLongHierarchKey(cursor, key, option.value);
 		}
 		
 		// Add all the conditionals...
@@ -1667,7 +1667,7 @@ public class Configurator implements Serializable, Cloneable {
 				if(values.length() > 0) values.append(';');
 				values.append(value);
 			}
-			FitsExtras.addLongHierarchKey(cursor, condition, new String(values));
+			FitsToolkit.addLongHierarchKey(cursor, condition, new String(values));
 		}
 	}	
 	

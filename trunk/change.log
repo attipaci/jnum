@@ -1,4 +1,4 @@
-0.10-1
+0.10-b1
 
 
 	[NEW] SmartTokenizer class (based on StringTokenizer) to simplify 
@@ -13,6 +13,11 @@
 	[NEW] Util methods for wrapping output, with options to prepend text
 	before each line, and indenting multiline outputs. Method for 
 	generating empty spaces of desired length. 
+
+	[FIX] {FITS} Long HISTORY entries ended up producing corrupted FITS
+        files (due to a bug in the nom.tam.fits libraries). A workaround has
+        been added to break long history entries into multiple lines. Wrapped
+        lines start with "... " for easier human recognition...
 
 	[CHANGE] {Data2D} The 2D data classes (Data2D and derivatives) now
 	report through the default reporter of the Util class. 
