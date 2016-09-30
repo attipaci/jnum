@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,6 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2008 Attila Kovacs 
 
 package jnum.math;
 
@@ -47,6 +46,10 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * Instantiates a new range.
 	 */
 	public Range() { empty(); }
+	
+	public Range(double pointValue) {
+	    this(pointValue, pointValue);
+	}
 	
 	/**
 	 * Instantiates a new range.
@@ -83,6 +86,8 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		if(!super.equals(o)) return false;
 
 		Range range = (Range) o;
+		
+		if(range.isEmpty() && isEmpty()) return true; 
 		if(Double.compare(range.min, min) != 0) return false;
 		if(Double.compare(range.max, max) != 0) return false;
 		return true;
@@ -100,6 +105,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * Flip.
 	 */
 	public void flip() {
+	    if(isEmpty()) return;
 		final double temp = min;
 		min = max;
 		max = temp;
@@ -148,25 +154,30 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param min the min
 	 * @param max the max
 	 */
-	public void restrict(double min, double max) {
-		if(this.min < min) this.min = min;
-		if(this.max > max) this.max = max;
+	public synchronized void restrict(double min, double max) {
+		if(min > this.min) this.min = min;
+		if(max < this.max) this.max = max;
 	}
 	
 	
 	/**
 	 * Empty.
 	 */
-	public void empty() {
+	public synchronized void empty() {
 		min=Double.POSITIVE_INFINITY; max=Double.NEGATIVE_INFINITY;		
+	}
+	
+	public boolean isEmpty() {
+	    return min > max;
 	}
 	
 	/**
 	 * Full.
 	 */
-	public void full() {
+	public synchronized void full() {
 		min=Double.NEGATIVE_INFINITY; max=Double.POSITIVE_INFINITY;	
 	}
+	
 	
 	/**
 	 * Sets the range.
@@ -185,7 +196,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param value the value
 	 */
 	@Override
-	public void scale(double value) {
+	public synchronized void scale(double value) {
 		min *= value;
 		max *= value;
 	}
@@ -211,7 +222,6 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @return true, if successful
 	 */
 	public boolean contains(double value) {
-	    
 		if(Double.isNaN(value)) return !isUpperBounded() && !isLowerBounded();
 		return value >= min && value < max;
 	}
@@ -222,7 +232,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param range the range
 	 * @return true, if successful
 	 */
-	public boolean contains(Range range) {
+	public final boolean contains(Range range) {
 		return contains(range.min) && contains(range.max);
 	}
 	
@@ -233,6 +243,8 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @return true, if successful
 	 */
 	public boolean intersects(Range range) {
+	    if(range.isEmpty()) return false;
+	    if(isEmpty()) return false;
 		return contains(range.min) || contains(range.max) || range.contains(this);
 	}
 	
@@ -252,8 +264,16 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param value the value
 	 */
 	public synchronized void include(double value) {
-		if(value < min) min = value;
-		if(value > max) max = value;		
+	    if(Double.isNaN(value)) {
+	        full();
+	    }
+	    else if(isEmpty()) {
+	        min = max = value;
+	    }
+	    else {
+	        if(value < min) min = value;
+	        if(value > max) max = value;
+	    }
 	}
 	
 	/**
@@ -262,6 +282,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param range the range
 	 */
 	public final void include(Range range) {
+	    if(range.isEmpty()) return;
 		include(range.min);
 		include(range.max);
 	}
@@ -315,20 +336,11 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Abs span.
-	 *
-	 * @return the double
-	 */
-	public double absSpan() {
-		return Math.abs(span());
-	}
-	
-	/**
 	 * Grow.
 	 *
 	 * @param factor the factor
 	 */
-	public void grow(double factor) {
+	public synchronized void grow(double factor) {
 		double span = span();
 		min -= (factor-1.0) * span;
 		max += (factor-1.0) * span;		

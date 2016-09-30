@@ -23,9 +23,12 @@
 
 package jnum.text;
 
+import java.text.ParsePosition;
+import java.util.StringTokenizer;
+
 import jnum.Util;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class TextWrapper.
  */
@@ -38,12 +41,17 @@ public class TextWrapper {
     private String whiteSpaces;
     
     /** The breakables before. */
-    private String breakablesBefore;
+    private String wrapBefore;
     
     /** The breakables after. */
-    private String breakablesAfter;
+    private String wrapAfter;
     
+    /** If wrapping at hyphens is allowed. */
+    private boolean isHyphenating = true;
     
+    /** If wrapped lines should be justified, i.e. fill the allotted 'width' of characters. */
+    private boolean isJustified = false;
+        
     /**
      * Instantiates a new text wrapper.
      *
@@ -74,9 +82,9 @@ public class TextWrapper {
      */
     public TextWrapper(int width, String whiteSpaces, String breakBefore, String breakAfter) {
         setWidth(width);
-        setWhiteSpaces(whiteSpaces);
-        setBreakBefore(breakBefore);
-        setBreakAfter(breakAfter);
+        setWhiteSpaceChars(whiteSpaces);
+        setWrapBeforeChars(breakBefore);
+        setWrapAfterChars(breakAfter);
     }
     
     /**
@@ -95,68 +103,109 @@ public class TextWrapper {
      */
     public int getWidth() { return width; }
     
+    
     /**
-     * Sets the list of characters, beyond the white space characters, before which a line can be broken (wrapped). 
+     * Sets whether hyphenating is enabled. If so, the lines can be wrapped after hyphens, which are defined
+     * as '-' characters that are otherwise non-breakable...
+     *
+     * @param value the new hyphenating
+     */
+    public void setHyphenating(boolean value) {
+        isHyphenating = value;
+    }
+    
+    /**
+     * Checks if is hyphenating is enabled.
+     *
+     * @return true, if wrapping after hyphens is enabled.
+     */
+    public boolean isHyphenating() {
+        return isHyphenating;
+    }
+    
+    /**
+     * Sets whether justification is enabled. If so, the lines will be justified to the specified width, by inserting
+     * a uniformly distributed spaces between words, with random variations to fill lines fully.
+     *
+     * @param value the new justification
+     */
+    public void setJustified(boolean value) {
+        isJustified = value;
+    }
+    
+    /**
+     * Checks if is justification is enabled.
+     *
+     * @return true, if justifying lines enabled.
+     */
+    public boolean isJustified() {
+        return isJustified;
+    }
+    
+    
+    
+    /**
+     * Sets the list of characters, beyond the white space characters, before which a line can be wrapped. 
      * For example, you can set the "({[" to allow wrapping lines before opening brackets as well as white spaces.
      *
      * @param chars the new break before
-     * @see #getBreakBefore()
-     * @see #setBreakAfter(String)
-     * @see #setWhiteSpaces(String)
+     * @see #getWrapBeforeChars()
+     * @see #setWrapAfterChars(String)
+     * @see #setWhiteSpaceChars(String)
      */
-    public void setBreakBefore(String chars) { breakablesBefore = chars; }
+    public void setWrapBeforeChars(String chars) { wrapBefore = chars; }
     
     /**
-     * Gets the list of characters, beyond the white space characters, before which a line can be broken (wrapped).
+     * Gets the list of characters, beyond the white space characters, before which a line can be wrapped.
      *
      * @return the list of non-whitespace characters before which a line can be wrapped.
-     * @see #setBreakBefore(String)
-     * @see #getBreakAfter()
-     * @see #getWhiteSpaces()
+     * @see #setWrapBeforeChars(String)
+     * @see #getWrapAfterChars()
+     * @see #getWhiteSpaceChars()
      */
-    public String getBreakBefore() { return breakablesBefore; }
+    public String getWrapBeforeChars() { return wrapBefore; }
 
     /**
-     * Sets the list of characters, beyond the white space characters, before which a line can be broken (wrapped)
+     * Sets the list of characters, beyond the white space characters, before which a line can be wrapped
      * For example, you can set the ")}]" to allow wrapping lines after closing brackets as well as white spaces.
      *
      * @param chars the new break after
-     * @see #getBreakAfter()
-     * @see #setBreakBefore(String)
-     * @see #setWhiteSpaces(String)
+     * @see #getWrapAfterChars()
+     * @see #setWrapBeforeChars(String)
+     * @see #setWhiteSpaceChars(String)
      */
-    public void setBreakAfter(String chars) { breakablesAfter = chars; }
+    public void setWrapAfterChars(String chars) { wrapAfter = chars; }
     
     /**
-     * Gets the list of characters, beyond the white space characters, after which a line can be broken (wrapped).
+     * Gets the list of characters, beyond the white space characters, after which a line can be wrapped.
      *
      * @return the list of non-whitespace characters before which a line can be wrapped.
-     * @see #setBreakAfter(String)
-     * @see #getBreakBefore()
-     * @see #getWhiteSpaces()
+     * @see #setWrapAfterChars(String)
+     * @see #getWrapBeforeChars()
+     * @see #getWhiteSpaceChars()
      */
-    public String getBreakAfter() { return breakablesAfter; }
+    public String getWrapAfterChars() { return wrapAfter; }
     
     /**
      * Sets the white space characters. Lines can always be wrapped around white spaces, and white spaces can be
      * ignored at the beginning of new lines.
      *
      * @param chars the list of new white space characters
-     * @see #getWhiteSpaces()
-     * @see #setBreakBefore(String)
-     * @see #setBreakAfter(String)
+     * @see #getWhiteSpaceChars()
+     * @see #setWrapBeforeChars(String)
+     * @see #setWrapAfterChars(String)
      */
-    public void setWhiteSpaces(String chars) { whiteSpaces = chars; }
+    public void setWhiteSpaceChars(String chars) { whiteSpaces = chars; }
     
     /**
      * Gets the white space characters.
      *
      * @return the list of white space characters.
-     * @see #setWhiteSpaces(String)
-     * @see #getBreakBefore()
-     * @see #getBreakAfter()
+     * @see #setWhiteSpaceChars(String)
+     * @see #getWrapBeforeChars()
+     * @see #getWrapAfterChars()
      */
-    public String getWhiteSpaces() { return whiteSpaces; }
+    public String getWhiteSpaceChars() { return whiteSpaces; }
      
     
     /**
@@ -190,7 +239,7 @@ public class TextWrapper {
     public String wrap(String text, int indent) {
         return wrap(text, "", indent);
     }
-
+    
     /**
      * Wrap.
      *
@@ -200,61 +249,134 @@ public class TextWrapper {
      * @return the string
      */
     public String wrap(String text, String lineHeader, int indent) {
-      
-        // Remove trailing spaces...
+        ParsePosition pos = new ParsePosition(0);
         text = trimEnd(text);
+        if(lineHeader == null) lineHeader = "";
         
-        if(lineHeader == null) lineHeader = "";    
-
-        if(width < lineHeader.length()) throw new IllegalStateException("Negative wrapping space.");
-
-        // If the text contains a line break, then wrap split...
-        if(text.contains("\n")) {
-            int i = text.indexOf('\n');
-            return wrap(text.substring(0, i), lineHeader, indent) + "\n" 
-                + wrap(text.substring(i+1), lineHeader + Util.spaces(indent), 0);
+        final StringBuffer buf = new StringBuffer(text.length() << 1);
+        final String wrappedHeader = lineHeader + Util.spaces(indent);
+        
+        int i;
+        while((i = pos.getIndex()) < text.length()) {
+            boolean isWrapped = false;
+            if(i > 0) if(text.charAt(i-1) != '\n') isWrapped = true;    
+            final String header = isWrapped ? wrappedHeader : lineHeader;
+            buf.append(header + wrapNext(text, width - header.length(), isWrapped, pos));
+            if(pos.getIndex() < text.length()) buf.append('\n');
         }
-
-        final int tlength = width - lineHeader.length();
         
-        // If the text is shorter than the limit, then use as is..
-        if(text.length() < tlength) return lineHeader + text;
+        return new String(buf);
+    }
+    
+    
+    
+    /**
+     * Get the next wrapped line from the input text, starting at the marked position, and fitting in the allotted 
+     * space, and skipping leading spaces as desired.
+     *
+     * @param text the text
+     * @param size the space (number of characters) allowed for the next line.
+     * @param skipLeadingSpaces whether to skip over white spaces at the beginning of the line.
+     * @param pos the current parse position where the next line begins. The position will be updated to the beginning
+     *      of the next line in the text before returning.
+     * @return the next line of text that fits within the allotted space.
+     */
+    public String wrapNext(final String text, final int size, final boolean skipLeadingSpaces, final ParsePosition pos) {
+       
+        int fromi = pos.getIndex();
+        
+        // If wrapped line, skip leading spaces...
+        if(skipLeadingSpaces) for( ; fromi < text.length(); fromi++) if(!isWhiteSpace(text.charAt(fromi))) break; 
+        
+        final int toi = Math.min(text.length(), pos.getIndex() + size);
+        if(toi < fromi) throw new IllegalStateException("Negative wrapping space.");
+        
+        // Check if there is a natural line-break before the line length...
+        for(int i=fromi; i < toi; i++) if(text.charAt(i) == '\n') {
+            pos.setIndex(i+1);
+            return text.substring(fromi, i);
+        }
+        
+        // If the remaining text is shorter than then space, then return all of it.
+        if(toi == text.length()) {
+            pos.setIndex(text.length());
+            return text.substring(fromi);
+        }
         
         // Try to break around a breakable point...
-        for(int i=tlength; --i > 0; ) if(isBreakableAt(text, i)) {
-            // For wrapping skip ahead to the first non-white space character...
-            for(int j=i; j<text.length(); j++) if(!isWhiteSpace(text.charAt(j))) 
-                return lineHeader + text.substring(0, i) + "\n" + wrap(text.substring(j), lineHeader + Util.spaces(indent), 0);
-            return lineHeader + text.substring(0, i); // We should never reach here, but just in case...
+        for(int i=toi; --i > fromi; ) if(canWrapAt(text, i)) {
+            pos.setIndex(i); 
+            String line = text.substring(fromi, i);
+            return isJustified ? justify(line, size) : line;
         }
 
         // If there is no space to wrap around, then just cut mid-word...
-        return lineHeader + text.substring(0, tlength) + "\n" + wrap(text.substring(tlength), lineHeader + Util.spaces(indent), 0);
+        pos.setIndex(toi);
+        return text.substring(fromi, toi);
+        
     }
+   
+    private String justify(String text, int size) {
+        StringTokenizer tokens = new StringTokenizer(text, whiteSpaces);
+        final int words = tokens.countTokens();
+        
+        // Nothing to do...
+        if(words < 2) return text;
+        
+        final StringBuffer buf = new StringBuffer(size);
+        
+        int i=0;
+        for( ; i<text.length(); i++) if(!isWhiteSpace(text.charAt(i))) break;
+         
+        buf.append(text.substring(0, i));
+        int nonspaces = i;
+        for( ; i<text.length(); i++) if(!isWhiteSpace(text.charAt(i))) nonspaces++;
+        
+        text = text.substring(i);
+        buf.append(tokens.nextToken());
+        
+        final String regularSpaces = Util.spaces((size - nonspaces) / (words-1));    
+        int extraSpaces = (size - nonspaces) % (words-1);
     
+        i = words-1;
+               
+        while(tokens.hasMoreTokens()) {
+            boolean addExtraSpace = Math.random() < (double) extraSpaces / i--;
+            if(addExtraSpace) extraSpaces--;
+            buf.append(regularSpaces + (addExtraSpace ? " " : "") + tokens.nextToken()); 
+        }
+        
+        return new String(buf);
+    }
+        
     /**
-     * Checks if is breakable at.
+     * Checks if is breakable at the given position.
      *
      * @param text the text
-     * @param index the index
-     * @return true, if is breakable at
+     * @param index the position in the string
+     * @return true, if is breakable at the given position.
      * 
-     * @see #getBreakBefore()
-     * @see #getBreakAfter()
-     * @see #getWhiteSpaces()
+     * @see #getWrapBeforeChars()
+     * @see #getWrapAfterChars()
+     * @see #getWhiteSpaceChars()
      */
-    protected boolean isBreakableAt(String text, int index) {
-        if(isBreakableBefore(text.charAt(index))) return true;
-        if(index > 0) if(isBreakableAfter(text.charAt(index-1))) return true;
+    protected boolean canWrapAt(String text, int index) {
+        if(canWrapBefore(text.charAt(index))) return true;
+        if(index > 0) {
+            if(canWrapAfter(text.charAt(index-1))) return true;
+            // Allow breaks after a hyphen. A hyphen is a '-' which is not otherwise breakable.
+            if(isHyphenating) if(text.charAt(index-1) == '-') 
+                if(index > 1) return !canWrapAfter(text.charAt(index-2)); 
+        }
         return false;
     }
     
     /**
-     * Contains.
+     * Checks if a string contains a given character.
      *
-     * @param s the s
-     * @param c the c
-     * @return true, if successful
+     * @param s the string
+     * @param c the character
+     * @return true, if the string contains the character.
      */
     private boolean contains(String s, char c) {
         for(int i = s.length(); --i >= 0; ) if(s.charAt(i) == c) return true;
@@ -267,7 +389,7 @@ public class TextWrapper {
      * @param text the text
      * @return the text with the trailing white spaces removed, or the input string itself it it has no trailing spaces.
      */
-    public String trimEnd(String text) {
+    private String trimEnd(String text) {
         int n = text.length();
         for( ; --n >= 0; ) if(!isWhiteSpace(text.charAt(n))) return n == text.length()-1 ? text : text.substring(0, n+1);
         return "";
@@ -275,38 +397,40 @@ public class TextWrapper {
     
     
     /**
-     * Checks if is white space.
+     * Checks if the given character is a white space.
      *
-     * @param c the c
-     * @return true, if is white space
+     * @param c the character
+     * @return true, if the character is a white space.
      * 
-     * @see #getWhiteSpaces()
+     * @see #getWhiteSpaceChars()
      */
-    private boolean isWhiteSpace(char c) { return contains(getWhiteSpaces(), c); }
+    private boolean isWhiteSpace(char c) { return contains(getWhiteSpaceChars(), c); }
      
     /**
-     * Checks if is breakable before.
+     * Checks if is breakable before the given character.
      *
-     * @param c the c
-     * @return true, if is breakable before
+     * @param c the character
+     * @return true, if is breakable before the given character
      * 
-     * @see #getBreakBefore()
+     * @see #getWrapBeforeChars()
      */
-    private boolean isBreakableBefore(char c) {
-        if(contains(getBreakBefore(), c)) return true;
+    private boolean canWrapBefore(char c) {
+        if(contains(getWrapBeforeChars(), c)) return true;
         return isWhiteSpace(c);
     }
 
     /**
-     * Checks if is breakable after.
+     * Checks if text is breakable after the given character.
      *
-     * @param c the c
-     * @return true, if is breakable after
+     * @param c the character
+     * @return true, if is breakable after the given character
      * 
-     * @see #getBreakAfter()
+     * @see #getWrapAfterChars()
      */
-    private boolean isBreakableAfter(char c) {
-        if(contains(getBreakAfter(), c)) return true;
+    private boolean canWrapAfter(char c) {
+        if(contains(getWrapAfterChars(), c)) return true;
         return isWhiteSpace(c);
     }
+    
+ 
 }
