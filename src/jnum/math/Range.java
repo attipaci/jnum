@@ -166,23 +166,23 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	
 	
 	/**
-	 * Empty.
+	 * Make this range an empty range that contains no values (a null set).
 	 */
 	public synchronized void empty() {
 		min=Double.POSITIVE_INFINITY; max=Double.NEGATIVE_INFINITY;		
 	}
 	
 	/**
-	 * Checks if is empty.
+	 * Checks if this range is empty (a null set).
 	 *
-	 * @return true, if is empty
+	 * @return true, if it is empty.
 	 */
 	public boolean isEmpty() {
 	    return min > max;
 	}
 	
 	/**
-	 * Full.
+	 * Make this range represent all real values from -infinity to infinity.
 	 */
 	public synchronized void full() {
 		min=Double.NEGATIVE_INFINITY; max=Double.POSITIVE_INFINITY;	
@@ -190,10 +190,10 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	
 	
 	/**
-	 * Sets the range.
+	 * Sets the range to the specified lower and upper bounds (min/max values).
 	 *
-	 * @param minValue the min value
-	 * @param maxValue the max value
+	 * @param minValue the lower bound value
+	 * @param maxValue the uppper bound value
 	 */
 	public void setRange(double minValue, double maxValue) {
 		min = minValue;
@@ -201,9 +201,9 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Scale.
+	 * Multiply the bounds (min/max values) of this range by the given factor.
 	 *
-	 * @param value the value
+	 * @param value the scaling factor
 	 */
 	@Override
 	public synchronized void scale(double value) {
@@ -212,18 +212,18 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Checks if is bounded.
+	 * Checks if this range is bounded (both from below and above).
 	 *
-	 * @return true, if is bounded
+	 * @return true, if it is bounded
 	 */
 	public final boolean isBounded() {
 	    return isUpperBounded() && isLowerBounded();
 	}
 	
 	/**
-	 * Checks if is upper bounded.
+	 * Checks if this range is upper bounded.
 	 *
-	 * @return true, if is upper bounded
+	 * @return true, if it is upper bounded.
 	 */
 	public boolean isUpperBounded() {
 	    if(Double.isInfinite(max)) if(max > 0) return false;
@@ -231,9 +231,9 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Checks if is lower bounded.
+	 * Checks if this range is lower bounded.
 	 *
-	 * @return true, if is lower bounded
+	 * @return true, if it is lower bounded.
 	 */
 	public boolean isLowerBounded() {
 	    if(Double.isInfinite(min)) if(min < 0) return false;
@@ -241,10 +241,10 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Contains.
+	 * Checks if this range contains a specific real value.
 	 *
-	 * @param value the value
-	 * @return true, if successful
+	 * @param value the real value
+	 * @return true, if this range contains the specified value. False for NaN.
 	 */
 	public boolean contains(double value) {
 		if(Double.isNaN(value)) return !isUpperBounded() && !isLowerBounded();
@@ -252,20 +252,20 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Contains.
+	 * Checks if this range contains all values of the specified other range.
 	 *
-	 * @param range the range
-	 * @return true, if successful
+	 * @param range the other range
+	 * @return true, if all values of the specified range are contained within this range.
 	 */
 	public final boolean contains(Range range) {
 		return contains(range.min) && contains(range.max);
 	}
 	
 	/**
-	 * Intersects.
+	 * Checks if this range intersects with the specified other range.
 	 *
-	 * @param range the range
-	 * @return true, if successful
+	 * @param range the other range
+	 * @return true, if this range intersects the specified other range. 
 	 */
 	public boolean intersects(Range range) {
 	    if(range.isEmpty()) return false;
@@ -274,19 +274,20 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Parses the.
+	 * Creates a new range from text specification.
 	 *
-	 * @param text the text
-	 * @return the range
+	 * @param text the input text specifying the range. The minimim and maximum values must be separated by one
+	 *     or more colons ':'. E.g. "0.0:1.0" or "0.0:::1.0". 
+	 * @return the new range according to the specification
 	 */
 	public static Range parse(String text) {
 		return parse(text, false);
 	}
 	
 	/**
-	 * Include.
+	 * Includes a real (non-NaN) value in this range, altering its boundaries as necessary.
 	 *
-	 * @param value the value
+	 * @param value the real (non-NaN) value to include.
 	 */
 	public synchronized void include(double value) {
 	    if(Double.isNaN(value)) {
@@ -302,9 +303,9 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Include.
+	 * Includes all values in this range that are represented by another range.
 	 *
-	 * @param range the range
+	 * @param range the range of values to include in this range.
 	 */
 	public final void include(Range range) {
 	    if(range.isEmpty()) return;
@@ -313,11 +314,12 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Parses the.
+	 * Parses a new range from the text input.
 	 *
-	 * @param text the text
-	 * @param isPositive the is positive
-	 * @return the range
+	 * @param text the text input specifying the range
+	 * @param isPositive true if the range is for positive only values (allows hyphens as a separator between min and max values 
+	 *     -- otherwise only colon ':' is allowed. E.g. "0.0--1.0" vs the more standard "0.0:1.0").
+	 * @return a new range from the text specification.
 	 */
 	public static Range parse(String text, boolean isPositive) {
 		Range range = new Range();
@@ -351,9 +353,9 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Span.
+	 * Gets the span of real values represented by this range.
 	 *
-	 * @return the double
+	 * @return the real values spanned.
 	 */
 	public double span() {
 		if(max <= min) return 0.0;
@@ -361,14 +363,15 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Grow.
+	 * Grows a bounded range, increasing its span by the specified factor while keeping its midpoint fixed.
 	 *
 	 * @param factor the factor
 	 */
 	public synchronized void grow(double factor) {
+	    if(!isBounded()) return;
 		double span = span();
-		min -= (factor-1.0) * span;
-		max += (factor-1.0) * span;		
+		min -= 0.5 * (factor-1.0) * span;
+		max += 0.5 * (factor-1.0) * span;		
 	}
 	
 	/* (non-Javadoc)
@@ -382,17 +385,17 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	/**
 	 * To string.
 	 *
-	 * @param nf the nf
-	 * @return the string
+	 * @param nf the number format
+	 * @return the string representation of this range, formatted to specification.
 	 */
 	public String toString(NumberFormat nf) {
 		return nf.format(min) + ":" + nf.format(max);
 	}
 	
 	/**
-	 * Gets the empty range.
+	 * Gets an empty range.
 	 *
-	 * @return the empty range
+	 * @return a new empty range that does not contain any real value.
 	 */
 	public static Range getEmptyRange() {
 		Range range = new Range();
@@ -401,9 +404,9 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Gets the full range.
+	 * Gets the full range of real values.
 	 *
-	 * @return the full range
+	 * @return a new full range of real values (-infinity to infinity). 
 	 */
 	public static Range getFullRange() {
 		Range range = new Range();
@@ -412,18 +415,18 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 	
 	/**
-	 * Gets the positive range.
+	 * Gets the standard range of positive real values.
 	 *
-	 * @return the positive range
+	 * @return a new range of positive real values (0.0 to infinity)
 	 */
 	public static Range getPositiveRange() {
 		return new Range(0.0, Double.POSITIVE_INFINITY);
 	}
 	
 	/**
-	 * Gets the negative range.
+	 * Gets the standard range of negative real values.
 	 *
-	 * @return the negative range
+	 * @return a new range of negative real values (-infinity to 0.0)
 	 */
 	public static Range getNegativeRange() {
 		return new Range(Double.NEGATIVE_INFINITY, 0.0);
