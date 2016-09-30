@@ -341,7 +341,7 @@ public final class FitsToolkit {
 	    if(history.length() <= MAX_HISTORY_LENGTH) header.addLine(new HeaderCard("HISTORY", history, false));
         else {
             TextWrapper wrapper = new TextWrapper(MAX_HISTORY_LENGTH);
-            wrapper.setBreakAfter(wrapper.getBreakAfter() + extraHistoryBreaksAfter);
+            wrapper.setWrapAfterChars(wrapper.getWrapAfterChars() + extraHistoryBreaksAfter);
             StringTokenizer lines = new StringTokenizer(wrapper.wrap(history, 4), "\n");
             addHistory(header, lines.nextToken());
             while(lines.hasMoreTokens()) addHistory(header, "... " + lines.nextToken().substring(4));
@@ -354,7 +354,7 @@ public final class FitsToolkit {
 	    if(history.length() <= MAX_HISTORY_LENGTH) cursor.add(new HeaderCard("HISTORY", history, false));
 	    else {
 	        TextWrapper wrapper = new TextWrapper(MAX_HISTORY_LENGTH);
-	        wrapper.setBreakAfter(wrapper.getBreakAfter() + extraHistoryBreaksAfter);
+	        wrapper.setWrapAfterChars(wrapper.getWrapAfterChars() + extraHistoryBreaksAfter);
 	        StringTokenizer lines = new StringTokenizer(wrapper.wrap(history, 4), "\n");
 	        addHistory(cursor, lines.nextToken());
 	        while(lines.hasMoreTokens()) addHistory(cursor, "... " + lines.nextToken().substring(4));
