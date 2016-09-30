@@ -27,26 +27,46 @@ import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.Offset2D;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Projected2D.
+ *
+ * @param <CoordinateType> the generic type
+ */
 public class Projected2D<CoordinateType extends Coordinate2D> extends Offset2D {
-    /**
-     * 
-     */
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -5475466255246701534L;
     
+    /** The projection. */
     private Projection2D<CoordinateType> projection;
 
   
+    /**
+     * Instantiates a new projected 2 D.
+     *
+     * @param projection the projection
+     * @param coords the coords
+     */
     public Projected2D(Projection2D<CoordinateType> projection, CoordinateType coords) {
         super(projection.getReference());
         this.projection = projection;
         setCoordinates(coords);
     }
 
+    /**
+     * Instantiates a new projected 2 D.
+     *
+     * @param projection the projection
+     */
     public Projected2D(Projection2D<CoordinateType> projection) {
         super(projection.getReference());
         this.projection = projection;
     }
     
+    /* (non-Javadoc)
+     * @see jnum.math.Offset2D#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -56,31 +76,68 @@ public class Projected2D<CoordinateType extends Coordinate2D> extends Offset2D {
         return super.equals(o);
     }
     
+    /* (non-Javadoc)
+     * @see jnum.math.Offset2D#hashCode()
+     */
     @Override
     public int hashCode() { return super.hashCode() ^ projection.hashCode(); }
     
+    /**
+     * Sets the coordinates.
+     *
+     * @param coords the new coordinates
+     */
     public void setCoordinates(CoordinateType coords) {
         projection.project(coords, this);
     }
     
+    /**
+     * Gets the coordinates.
+     *
+     * @param toCoords the to coords
+     * @return the coordinates
+     */
     public void getCoordinates(CoordinateType toCoords) {
         projection.deproject(this, toCoords);
     }
     
+    /**
+     * Gets the coordinates.
+     *
+     * @return the coordinates
+     */
     public final CoordinateType getCoordinates() {
         CoordinateType coords = projection.getCoordinateInstance();
         getCoordinates(coords);
         return coords;
     }
     
+    /**
+     * Gets the projection.
+     *
+     * @return the projection
+     */
     public Projection2D<CoordinateType> getProjection() { return projection; }
     
    
+    /**
+     * Gets the reprojected.
+     *
+     * @param p the p
+     * @param temp the temp
+     * @return the reprojected
+     */
     public Projected2D<CoordinateType> getReprojected(Projection2D<CoordinateType> p, CoordinateType temp) {
         projection.deproject(this, temp);
         return new Projected2D<CoordinateType>(p, temp); // TODO new Vector2D(this); ???
     }
    
+    /**
+     * Gets the reprojected.
+     *
+     * @param p the p
+     * @return the reprojected
+     */
     public final Projected2D<CoordinateType> getReprojected(Projection2D<CoordinateType> p) {
         return getReprojected(p, p.getCoordinateInstance());
     }

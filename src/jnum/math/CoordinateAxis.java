@@ -45,8 +45,10 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	/** The label. */
     private String longLabel;
 	
+	/** The short label. */
 	private String shortLabel;
 	
+	/** The fancy label. */
 	private String fancyLabel;
 		
 	/** The format. */
@@ -72,6 +74,11 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 */
 	public CoordinateAxis() { this("unspecified axis"); }
 
+	/**
+	 * Instantiates a new coordinate axis.
+	 *
+	 * @param longLabel the long label
+	 */
 	public CoordinateAxis(String longLabel) {
 	    this(longLabel, null, null);
 	}
@@ -79,7 +86,9 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	/**
 	 * Instantiates a new coordinate axis.
 	 *
-	 * @param text the text
+	 * @param longLabel the long label
+	 * @param shortLabel the short label
+	 * @param fancyLabel the fancy label
 	 */
 	public CoordinateAxis(String longLabel, String shortLabel, String fancyLabel) { 
 		defaults();
@@ -113,8 +122,18 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 */
 	public void setLongLabel(String text) { longLabel = text; }
 	
+	/**
+	 * Sets the short label.
+	 *
+	 * @param text the new short label
+	 */
 	public void setShortLabel(String text) { shortLabel = text; }
 
+	/**
+	 * Sets the fancy label.
+	 *
+	 * @param text the new fancy label
+	 */
 	public void setFancyLabel(String text) { fancyLabel = text; }
 	
 	/**
@@ -124,8 +143,18 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 */
 	public String getLongLabel() { return longLabel; }
 	
+	/**
+	 * Gets the short label.
+	 *
+	 * @return the short label
+	 */
 	public String getShortLabel() { return shortLabel == null ? getLongLabel() : shortLabel; }
 	
+	/**
+	 * Gets the fancy label.
+	 *
+	 * @return the fancy label
+	 */
 	public String getFancyLabel() { return fancyLabel == null ? getLongLabel() : fancyLabel; }
 
 	/**

@@ -23,56 +23,163 @@
 
 package jnum.reporting;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Reporter.
+ */
 public abstract class Reporter {
+    
+    /** The id. */
     private String id;
     
+    /**
+     * Instantiates a new reporter.
+     *
+     * @param id the id
+     */
     public Reporter(String id) {
         this.id = id;
     }
 
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
     public String getID() { return id; }
     
     
+    /**
+     * Info.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void info(Object owner, String message);
    
+    /**
+     * Notify.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void notify(Object owner, String message);
     
+    /**
+     * Debug.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void debug(Object owner, String message);
     
+    /**
+     * Warning.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void warning(Object owner, String message);
     
+    /**
+     * Error.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void error(Object owner, String message);
     
+    /**
+     * Trace.
+     *
+     * @param e the e
+     */
     public abstract void trace(Throwable e);
     
     
+    /**
+     * Error.
+     *
+     * @param owner the owner
+     * @param e the e
+     * @param debug the debug
+     */
     public void error(Object owner, Throwable e, boolean debug) {
         error(owner, e.getMessage());
         if(debug) trace(e);
     }
     
+    /**
+     * Error.
+     *
+     * @param owner the owner
+     * @param e the e
+     */
     public void error(Object owner, Throwable e) {
         error(owner, e, true);
     }
     
+    /**
+     * Warning.
+     *
+     * @param owner the owner
+     * @param e the e
+     * @param debug the debug
+     */
     public void warning(Object owner, Exception e, boolean debug) {
         warning(owner, e.getMessage());
         if(debug) trace(e);
     }
     
+    /**
+     * Warning.
+     *
+     * @param owner the owner
+     * @param e the e
+     */
     public void warning(Object owner, Exception e) {
         warning(owner, e, false);
     }
     
+    /**
+     * Status.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void status(Object owner, String message);
     
+    /**
+     * Result.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void result(Object owner, String message);
     
     
+    /**
+     * Detail.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void detail(Object owner, String message);
     
+    /**
+     * Values.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void values(Object owner, String message); 
     
+    /**
+     * Suggest.
+     *
+     * @param owner the owner
+     * @param message the message
+     */
     public abstract void suggest(Object owner, String message);
     
 }

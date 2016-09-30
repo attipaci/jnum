@@ -29,52 +29,52 @@ package jnum.math;
 public interface PowFunctions {
 
 	/**
-	 * abs(x)
+	 * abs(x).
 	 *
 	 * @return the double
 	 */
 	public double abs();
 	
 	/**
-	 * x^n
+	 * x^n.
 	 *
 	 * @param n the n
 	 */
 	public void pow(double n);
 
 	/**
-	 * 1/x
+	 * 1/x.
 	 */
 	public void invert();
 	
 	/**
-	 * x^2
+	 * x^2.
 	 */
 	public void square();
 	
 	/**
-	 * sqrt(x)
+	 * sqrt(x).
 	 */
 	public void sqrt();
 	
 	/**
-	 * exp(x)
+	 * exp(x).
 	 */
 	public void exp();
 	
 	/**
-     * exp(x-1)
-     */
+	 * exp(x-1).
+	 */
 	public void expm1();
 	
 	/**
-	 * log(x)
+	 * log(x).
 	 */
 	public void log();
 	
 	/**
-     * log(1+x)
-     */
+	 * log(1+x).
+	 */
     public void log1p();
 	
 }

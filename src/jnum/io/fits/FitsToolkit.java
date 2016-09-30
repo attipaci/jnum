@@ -249,6 +249,12 @@ public final class FitsToolkit {
 	}
 	
 	
+	/**
+	 * Adds the long key convention.
+	 *
+	 * @param cursor the cursor
+	 * @throws HeaderCardException the header card exception
+	 */
 	public static void addLongKeyConvention(Cursor<String, HeaderCard> cursor) throws HeaderCardException {
 	    if(FitsFactory.isLongStringsEnabled()) cursor.add(new HeaderCard("LONGSTRN", "OGIP 1.0", "FITS standard long string convention."));
 	    else cursor.add(new HeaderCard("LONGSTRN", "CRUSH", "CRUSH's own long string convention."));
@@ -336,6 +342,13 @@ public final class FitsToolkit {
 	    finally { stream.close(); }   
 	}
 	
+	/**
+	 * Adds the history.
+	 *
+	 * @param header the header
+	 * @param history the history
+	 * @throws HeaderCardException the header card exception
+	 */
 	public static void addHistory(Header header, String history) throws HeaderCardException {
 	    // manually wrap long history entries into multiple lines... 
 	    if(history.length() <= MAX_HISTORY_LENGTH) header.addLine(new HeaderCard("HISTORY", history, false));
@@ -349,6 +362,13 @@ public final class FitsToolkit {
        
 	}
 	
+	/**
+	 * Adds the history.
+	 *
+	 * @param cursor the cursor
+	 * @param history the history
+	 * @throws HeaderCardException the header card exception
+	 */
 	public static void addHistory(Cursor<String, HeaderCard> cursor, String history) throws HeaderCardException {
 	    // manually wrap long history entries into multiple lines... 
 	    if(history.length() <= MAX_HISTORY_LENGTH) cursor.add(new HeaderCard("HISTORY", history, false));
@@ -362,9 +382,13 @@ public final class FitsToolkit {
 	}
 
 	
+	/** The extra history breaks after. */
 	public static String extraHistoryBreaksAfter = "/\\:;_=";
 	
+	/** The Constant MIN_VALUE_LENGTH. */
 	public static final int MIN_VALUE_LENGTH = 5;
+	
+	/** The Constant MAX_HISTORY_LENGTH. */
 	public static final int MAX_HISTORY_LENGTH = 71;
 
 }

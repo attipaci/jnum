@@ -29,6 +29,8 @@ import java.io.Serializable;
 // TODO: Auto-generated Javadoc
 /**
  * The Class FlagBlock.
+ *
+ * @param <Type> the generic type
  */
 public class FlagBlock<Type extends Number> implements Serializable {
     

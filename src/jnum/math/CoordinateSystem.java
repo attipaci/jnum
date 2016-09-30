@@ -134,6 +134,12 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 	 */
 	public String getName() { return name; }
 
+	/**
+	 * Contains.
+	 *
+	 * @param name the name
+	 * @return true, if successful
+	 */
 	/*
 	 * Contains.
 	 *

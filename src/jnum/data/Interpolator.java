@@ -47,6 +47,9 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	/** The file name. */
 	public String fileName = "";
 	
+	/**
+	 * Instantiates a new interpolator.
+	 */
 	public Interpolator() {}
 	
 	/**
@@ -82,6 +85,9 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		return true;
 	}
 	
+	/**
+	 * Validate.
+	 */
 	public void validate() {
 	    Collections.sort(this);
 	}
@@ -106,6 +112,12 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	 */
 	protected abstract void readData(String fileName) throws IOException; 
 	
+	/**
+	 * Gets the value.
+	 *
+	 * @param ordinate the ordinate
+	 * @return the value
+	 */
 	public double getValue(double ordinate) { return getTrapesoidValue(ordinate); }
 	
 	// Linear interpolation.

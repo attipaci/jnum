@@ -203,10 +203,20 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 		set(x() * cosA - y() * sinA, x() * sinA + y() * cosA);
 	}
 	
+	/**
+	 * Rotate.
+	 *
+	 * @param theta the theta
+	 */
 	public final void rotate(Angle theta) {
 	    set(x() * theta.cos() - y() * theta.sin(), x() * theta.sin() + y() * theta.cos());
 	}
 	
+	/**
+	 * Derotate.
+	 *
+	 * @param theta the theta
+	 */
 	public final void derotate(Angle theta) {
         set(x() * theta.cos() + y() * theta.sin(), y() * theta.cos() - x() * theta.sin());
     }

@@ -52,8 +52,6 @@ public class ObjectMesh<T> extends Mesh<T> {
 	 *
 	 * @param type the type
 	 * @param dimensions the dimensions
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
 	 */
 	public ObjectMesh(Class<T> type, int[] dimensions) {
 		super(type, dimensions);
@@ -108,6 +106,9 @@ public class ObjectMesh<T> extends Mesh<T> {
 		return value;
 	}
 
+    /* (non-Javadoc)
+     * @see jnum.data.mesh.Mesh#newInstance()
+     */
     @Override
     public Mesh<T> newInstance() {
         return new ObjectMesh<T>(elementClass);

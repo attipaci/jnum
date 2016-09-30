@@ -23,28 +23,43 @@
 
 package jnum.text;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class QuotationMarks.
+ */
 public final class QuotationMarks {
     
+    /** The Constant lowerQuote. */
     public final static char lowerQuote = '\u0084';
     
+    /** The Constant singleQuote. */
     public final static char singleQuote = '\u2019';
     
+    /** The Constant doubleQuote. */
     public final static char doubleQuote = '\u201d';
     
+    /** The Constant invertedSingleQuote. */
     public final static char invertedSingleQuote = '\u0091';
     
+    /** The Constant invertedDoubleQuote. */
     public final static char invertedDoubleQuote = '\u0093';   
    
+    /** The Constant doubleAngleQuoteBegin. */
     public final static char doubleAngleQuoteBegin = '\u00ab';
     
+    /** The Constant doubleAngleQuoteEnd. */
     public final static char doubleAngleQuoteEnd = '\u00bb';
     
+    /** The Constant singleAngleQuoteBegin. */
     public final static char singleAngleQuoteBegin = '\u2039';
     
+    /** The Constant singleAngleQuoteEnd. */
     public final static char singleAngleQuoteEnd = '\u203a';
     
+    /** The Constant lowerSingleQuote. */
     public final static char lowerSingleQuote = '\u201a';
     
+    /** The Constant lowerDoubleQuote. */
     public final static char lowerDoubleQuote = '\u201e';
     
 }

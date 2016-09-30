@@ -25,10 +25,18 @@ package jnum.text;
 
 import jnum.Symbol;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class QuoteParser.
+ */
 public class QuoteParser extends EnclosureParser {
 
+    /** The is german style. */
     private boolean isGermanStyle = false;
     
+    /* (non-Javadoc)
+     * @see jnum.text.EnclosureParser#isOpening(char)
+     */
     @Override
     protected boolean isOpening(char c) {
         switch(c) {
@@ -50,12 +58,18 @@ public class QuoteParser extends EnclosureParser {
         }
     }
     
+    /* (non-Javadoc)
+     * @see jnum.text.EnclosureParser#isClosing(char)
+     */
     @Override
     protected boolean isClosing(char c) {
         return false; 
     }
     
     
+    /* (non-Javadoc)
+     * @see jnum.text.EnclosureParser#getCloserFor(char)
+     */
     @Override
     protected char getCloserFor(char opener) {
         switch(opener) {
@@ -77,8 +91,18 @@ public class QuoteParser extends EnclosureParser {
         }
     }
     
+    /**
+     * Checks if is german style.
+     *
+     * @return true, if is german style
+     */
     public boolean isGermanStyle() { return isGermanStyle; }
     
+    /**
+     * Sets the german style.
+     *
+     * @param value the new german style
+     */
     public void setGermanStyle(boolean value) { isGermanStyle = value; }
     
     

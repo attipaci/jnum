@@ -189,6 +189,12 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 	}
 	
 	
+	/**
+	 * Gets the content.
+	 *
+	 * @param data the data
+	 * @return the content
+	 */
 	private Object getContent(Object data) {
 		if(data instanceof FauxComplexArray) return ((FauxComplexArray<?>) data).getData();
 		return data;

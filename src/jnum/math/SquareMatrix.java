@@ -299,6 +299,11 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 	@Override
 	public final int size() { return rows(); }
 
+	/**
+	 * Sets the size.
+	 *
+	 * @param size the new size
+	 */
 	public void setSize(int size) {
 	    super.setSize(size, size);
 	}

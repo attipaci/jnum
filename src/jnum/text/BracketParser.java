@@ -24,8 +24,15 @@
 
 package jnum.text;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BracketParser.
+ */
 public class BracketParser extends EnclosureParser {
 
+	/* (non-Javadoc)
+	 * @see jnum.text.EnclosureParser#isOpening(char)
+	 */
 	@Override
     protected boolean isOpening(char c) {
 	    switch(c) {
@@ -46,6 +53,9 @@ public class BracketParser extends EnclosureParser {
 	    }
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.text.EnclosureParser#isClosing(char)
+	 */
 	@Override
     protected boolean isClosing(char c) {
         switch(c) {
@@ -67,6 +77,9 @@ public class BracketParser extends EnclosureParser {
     }
     
 	
+	/* (non-Javadoc)
+	 * @see jnum.text.EnclosureParser#getCloserFor(char)
+	 */
 	@Override
     protected char getCloserFor(char opener) {
 	    switch(opener) {

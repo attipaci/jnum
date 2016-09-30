@@ -43,8 +43,6 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
 	 *
 	 * @param type the type
 	 * @param dimensions the dimensions
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
 	 */
 	public PrimitiveMesh(Class<T> type, int[] dimensions) {
 		super(type, dimensions);
@@ -77,6 +75,9 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.LinearAlgebra#zero()
+	 */
 	@Override
     public void zero() {
         PrimitiveArrayIterator<T> iterator = (PrimitiveArrayIterator<T>) iterator();
@@ -86,6 +87,9 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
         }
     }
 	
+	/* (non-Javadoc)
+	 * @see jnum.math.Scalable#scale(double)
+	 */
 	@Override
     public void scale(double factor) {
         PrimitiveArrayIterator<T> iterator = (PrimitiveArrayIterator<T>) iterator();
@@ -95,6 +99,12 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
         }
     }
 	
+	/**
+	 * Adds the.
+	 *
+	 * @param o the o
+	 * @throws NonConformingException the non conforming exception
+	 */
 	@Override
     public void add(PrimitiveMesh<? extends Number> o) throws NonConformingException {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
@@ -108,6 +118,12 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
         }
     }
  
+	/**
+	 * Subtract.
+	 *
+	 * @param o the o
+	 * @throws NonConformingException the non conforming exception
+	 */
 	@Override
     public void subtract(PrimitiveMesh<? extends Number> o) throws NonConformingException {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
@@ -121,6 +137,12 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
         }
     }
 	
+	/**
+	 * Sets the sum.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 */
 	@Override
 	public void setSum(PrimitiveMesh<? extends Number> a, PrimitiveMesh<? extends Number> b) {
 	    if(!a.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
@@ -137,6 +159,12 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
          
 	}
 
+	/**
+	 * Sets the difference.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 */
 	@Override
 	public void setDifference(PrimitiveMesh<? extends Number> a, PrimitiveMesh<? extends Number> b) {
 	    if(!a.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
@@ -152,6 +180,12 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
         }
 	}
 	
+	/**
+	 * Adds the multiple of.
+	 *
+	 * @param o the o
+	 * @param factor the factor
+	 */
 	@Override
     public void addMultipleOf(PrimitiveMesh<? extends Number> o, double factor) {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
@@ -165,31 +199,80 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
         }
     }
 	
+	/**
+	 * Gets the scaled.
+	 *
+	 * @param value the value
+	 * @param factor the factor
+	 * @return the scaled
+	 */
 	protected abstract T getScaled(T value, double factor);
 	
+	/**
+	 * Gets the sum.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the sum
+	 */
 	protected abstract T getSum(Number a, Number b);
 	
+    /**
+     * Gets the difference.
+     *
+     * @param a the a
+     * @param b the b
+     * @return the difference
+     */
     protected abstract T getDifference(Number a, Number b);
     
+    /**
+     * Zero value.
+     *
+     * @return the t
+     */
     protected abstract T zeroValue();
     
+    /* (non-Javadoc)
+     * @see jnum.data.mesh.Mesh#lineElementAt(java.lang.Object, int)
+     */
     @Override
     protected T lineElementAt(Object linearArray, int index) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see jnum.data.mesh.Mesh#setLineElementAt(java.lang.Object, int, java.lang.Object)
+     */
     @Override
     protected void setLineElementAt(Object linearArray, int index, T value) {
         // TODO Auto-generated method stub
         
     }
 
+    /**
+     * Base line element at.
+     *
+     * @param simpleArray the simple array
+     * @param index the index
+     * @return the t
+     */
     protected abstract T baseLineElementAt(Object simpleArray, int index);
     
+    /**
+     * Sets the base line element at.
+     *
+     * @param simpleArray the simple array
+     * @param index the index
+     * @param value the value
+     */
     protected abstract void setBaseLineElementAt(Object simpleArray, int index, T value);
     
 	
+    /* (non-Javadoc)
+     * @see jnum.data.mesh.Mesh#addPatchAt(java.lang.Object, double[], double[], jnum.Function)
+     */
     @Override
     public void addPatchAt(T point, double[] exactpos, double[] patchSize, Function<double[], Double> shape) {
         // TODO Auto-generated method stub

@@ -26,6 +26,7 @@ package jnum.util;
 import java.io.Serializable;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class representing a bitwise flag in a flag-space of an integer-type container. The flag has a unique letter
  * code identifying it in the flag-space it belongs to, and has a human-readable descriptive name. These allow

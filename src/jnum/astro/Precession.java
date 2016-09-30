@@ -192,6 +192,9 @@ public class Precession implements Serializable {
 		return new SimpleMatrix(R);		
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
     public String toString() {
 	    return fromEpoch.toString() + " --> " + toEpoch.toString();

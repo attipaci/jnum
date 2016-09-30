@@ -25,7 +25,6 @@ package jnum.data;
 import jnum.Unit;
 import jnum.Util;
 import jnum.math.SphericalCoordinates;
-import jnum.math.Vector2D;
 import jnum.projection.SphericalProjection;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;

@@ -53,12 +53,12 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	private double value;
 	
 	/**
-	 * Instantiates a new real.
+	 * Instantiates a new scalar (real) value.
 	 */
 	public Scalar() {}
 	
 	/**
-	 * Instantiates a new real.
+	 * Instantiates a new scala (real) value.
 	 *
 	 * @param value the value
 	 */
@@ -318,6 +318,11 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		return Double.isNaN(value);
 	}
 
+	/**
+	 * Value.
+	 *
+	 * @return the double
+	 */
 	public final double value() {
 		return value;
 	}
@@ -544,21 +549,33 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		value = ExtraMath.atanh(value);
 	}
 
+    /* (non-Javadoc)
+     * @see java.lang.Number#doubleValue()
+     */
     @Override
     public double doubleValue() {
         return value;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Number#floatValue()
+     */
     @Override
     public float floatValue() {
         return (float) value;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Number#intValue()
+     */
     @Override
     public int intValue() {
         return (int) value;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Number#longValue()
+     */
     @Override
     public long longValue() {
         return (long) value;

@@ -187,6 +187,9 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		setResolution(delta, delta);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Grid#setResolution(java.lang.Object)
+	 */
 	@Override
     public final void setResolution(Vector2D delta) { setResolution(delta.x(), delta.y()); }
 	
@@ -599,6 +602,9 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		offset.set(m11 * di + m12 * dj, m21 * di + m22 * dj);
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Grid#indexOf(java.lang.Object)
+	 */
 	@Override
     public Vector2D indexOf(CoordinateType value) {
 	    Vector2D v = new Vector2D();
@@ -606,6 +612,9 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	    return v;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.Grid#valueAt(java.lang.Object)
+	 */
 	@Override
     public CoordinateType valueAt(Vector2D index) {
 	    @SuppressWarnings("unchecked")
@@ -614,12 +623,18 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	    return coords;
 	}
 	
+	/* (non-Javadoc)
+	 * @see jnum.data.FastGridAccess#indexOf(java.lang.Object, java.lang.Object)
+	 */
 	@Override
     public void indexOf(CoordinateType value, Vector2D toIndex) {
         projection.project(value, toIndex);
         toIndex(toIndex);
     }
     
+    /* (non-Javadoc)
+     * @see jnum.data.FastGridAccess#valueAt(java.lang.Object, java.lang.Object)
+     */
     @Override
     public void valueAt(Vector2D index, CoordinateType toValue) {
         toOffset(index);

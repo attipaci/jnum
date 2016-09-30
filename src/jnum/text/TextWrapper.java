@@ -29,6 +29,7 @@ import java.util.StringTokenizer;
 import jnum.Util;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class TextWrapper.
  */
@@ -316,6 +317,13 @@ public class TextWrapper {
         
     }
    
+    /**
+     * Justify.
+     *
+     * @param text the text
+     * @param size the size
+     * @return the string
+     */
     private String justify(String text, int size) {
         StringTokenizer tokens = new StringTokenizer(text, whiteSpaces);
         final int words = tokens.countTokens();
