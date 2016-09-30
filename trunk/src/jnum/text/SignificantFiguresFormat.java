@@ -96,6 +96,11 @@ public class SignificantFiguresFormat extends NumberFormat {
 	    return getFormat((int)Math.floor(Math.log10(number))).format(number, toAppendTo, pos);
 	}
 	
+	/**
+	 * Gets the zero format.
+	 *
+	 * @return the zero format
+	 */
 	public NumberFormat getZeroFormat() {
 	    return trailingZeroes ? Util.f[digits-1] : Util.F[digits-1];
 	}

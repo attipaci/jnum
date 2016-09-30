@@ -283,6 +283,12 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
         return buf.length() > 0 ? new String(buf) : "-";
     }
     
+    /**
+     * Gets the value.
+     *
+     * @param lValue the l value
+     * @return the value
+     */
     public abstract Type getValue(long lValue);
     
     /**
@@ -434,6 +440,9 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
             return 8;
         }
 
+        /* (non-Javadoc)
+         * @see jnum.util.FlagSpace#getValue(long)
+         */
         @Override
         public java.lang.Byte getValue(long lValue) {
             return (byte) (lValue & getMask());
@@ -501,6 +510,9 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
             return 16;
         }
 
+        /* (non-Javadoc)
+         * @see jnum.util.FlagSpace#getValue(long)
+         */
         @Override
         public java.lang.Short getValue(long lValue) {
             return (short) (lValue & getMask());
@@ -567,6 +579,9 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
             return 32;
         }
 
+        /* (non-Javadoc)
+         * @see jnum.util.FlagSpace#getValue(long)
+         */
         @Override
         public java.lang.Integer getValue(long lValue) {
             return (int) (lValue & getMask());
@@ -634,6 +649,9 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
             return 64;
         }
 
+        /* (non-Javadoc)
+         * @see jnum.util.FlagSpace#getValue(long)
+         */
         @Override
         public java.lang.Long getValue(long lValue) {
             return lValue;

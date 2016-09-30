@@ -104,6 +104,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	/** The file name. */
 	public String fileName;
 	
+	/** The data type. */
 	private Class<? extends Number> dataType;
 	
 	/** The creator. */
@@ -2291,6 +2292,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	/**
 	 * Creates the fits.
 	 *
+	 * @param dataType the data type
 	 * @return the fits
 	 * @throws HeaderCardException the header card exception
 	 * @throws FitsException the fits exception
@@ -2366,6 +2368,14 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	}
 	
 
+	/**
+	 * Write.
+	 *
+	 * @param fileName the file name
+	 * @throws HeaderCardException the header card exception
+	 * @throws FitsException the fits exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public final void write(String fileName) throws HeaderCardException, FitsException, IOException {
         write(fileName, dataType == null ? Float.class : dataType);
     }
@@ -2374,6 +2384,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * Write.
 	 *
 	 * @param name the name
+	 * @param dataType the data type
 	 * @throws HeaderCardException the header card exception
 	 * @throws FitsException the fits exception
 	 * @throws IOException Signals that an I/O exception has occurred.
@@ -2439,6 +2450,13 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		//cursor.add(new HeaderCard("ORIGIN", "Caltech", "California Institute of Technology"));
 	}
 	
+	/**
+	 * Gets the store value.
+	 *
+	 * @param i the i
+	 * @param j the j
+	 * @return the store value
+	 */
 	private final double getStoreValue(final int i, final int j) {
 	    return isUnflagged(i, j) ? getValue(i, j) / unit.value() : Double.NaN;
 	}
@@ -2446,6 +2464,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	/**
 	 * Creates the hdu.
 	 *
+	 * @param dataType the data type
 	 * @return the image hdu
 	 * @throws HeaderCardException the header card exception
 	 * @throws FitsException the fits exception

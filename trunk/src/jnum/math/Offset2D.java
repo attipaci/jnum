@@ -25,22 +25,41 @@ package jnum.math;
 
 import jnum.Util;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Offset2D.
+ */
 public class Offset2D extends Vector2D {
-    /**
-     * 
-     */
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -2072131491069589417L;
+    
+    /** The reference. */
     private Coordinate2D reference;
     
+    /**
+     * Instantiates a new offset 2 D.
+     *
+     * @param reference the reference
+     */
     public Offset2D(Coordinate2D reference) {
         this.reference = reference;
     }
     
+    /**
+     * Instantiates a new offset 2 D.
+     *
+     * @param reference the reference
+     * @param offset the offset
+     */
     public Offset2D(Coordinate2D reference, Vector2D offset) {
         this(reference);
         copy(offset);
     }
     
+    /* (non-Javadoc)
+     * @see jnum.math.Coordinate2D#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -50,11 +69,24 @@ public class Offset2D extends Vector2D {
         return super.equals(o);
     }
     
+    /* (non-Javadoc)
+     * @see jnum.math.Coordinate2D#hashCode()
+     */
     @Override
     public int hashCode() { return super.hashCode() ^ reference.hashCode(); }
     
+    /**
+     * Gets the coordinate class.
+     *
+     * @return the coordinate class
+     */
     public Class<?> getCoordinateClass() { return reference.getClass(); }
     
+    /**
+     * Gets the reference.
+     *
+     * @return the reference
+     */
     public Coordinate2D getReference() { return reference; }
     
 }

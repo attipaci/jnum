@@ -23,31 +23,52 @@
 
 package jnum.data.mesh;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class NonConformingException.
+ */
 public class NonConformingException extends IllegalArgumentException {
 
+    /**
+     * Instantiates a new non conforming exception.
+     */
     public NonConformingException() {
         super();
         // TODO Auto-generated constructor stub
     }
 
+    /**
+     * Instantiates a new non conforming exception.
+     *
+     * @param arg0 the arg 0
+     * @param arg1 the arg 1
+     */
     public NonConformingException(String arg0, Throwable arg1) {
         super(arg0, arg1);
         // TODO Auto-generated constructor stub
     }
 
+    /**
+     * Instantiates a new non conforming exception.
+     *
+     * @param arg0 the arg 0
+     */
     public NonConformingException(String arg0) {
         super(arg0);
         // TODO Auto-generated constructor stub
     }
 
+    /**
+     * Instantiates a new non conforming exception.
+     *
+     * @param arg0 the arg 0
+     */
     public NonConformingException(Throwable arg0) {
         super(arg0);
         // TODO Auto-generated constructor stub
     }
 
-    /**
-     * 
-     */
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6650987858665661469L;
 
 }

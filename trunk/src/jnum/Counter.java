@@ -25,17 +25,40 @@ package jnum;
 
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Counter.
+ */
 public class Counter {
+	
+	/** The value. */
 	public double value = 0;
 	
+	/**
+	 * Instantiates a new counter.
+	 */
 	public Counter() {}
 	
+	/**
+	 * Instantiates a new counter.
+	 *
+	 * @param start the start
+	 */
 	public Counter(double start) { value = start; }
 	
+	/**
+	 * Increment.
+	 */
 	public void increment() { value++; }
 	
+	/**
+	 * Decrement.
+	 */
 	public void decrement() { value--; }
 	
+	/**
+	 * Reset.
+	 */
 	public void reset() { value = 0; }
 
 }

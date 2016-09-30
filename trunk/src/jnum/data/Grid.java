@@ -25,22 +25,71 @@ package jnum.data;
 
 import java.io.Serializable;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface Grid.
+ *
+ * @param <CoordinateType> the generic type
+ * @param <OffsetType> the generic type
+ */
 public interface Grid<CoordinateType, OffsetType> extends Serializable, Cloneable {
 
+    /**
+     * Sets the reference.
+     *
+     * @param coords the new reference
+     */
     public void setReference(CoordinateType coords);
     
+    /**
+     * Gets the reference.
+     *
+     * @return the reference
+     */
     public CoordinateType getReference();
     
+    /**
+     * Sets the reference index.
+     *
+     * @param index the new reference index
+     */
     public void setReferenceIndex(OffsetType index);
     
+    /**
+     * Gets the reference index.
+     *
+     * @return the reference index
+     */
     public OffsetType getReferenceIndex();
     
+    /**
+     * Sets the resolution.
+     *
+     * @param delta the new resolution
+     */
     public void setResolution(OffsetType delta);
     
+    /**
+     * Gets the resolution.
+     *
+     * @return the resolution
+     */
     public OffsetType getResolution();
        
+    /**
+     * Value at.
+     *
+     * @param index the index
+     * @return the coordinate type
+     */
     public CoordinateType valueAt(OffsetType index);
     
+    /**
+     * Index of.
+     *
+     * @param value the value
+     * @return the offset type
+     */
     public OffsetType indexOf(CoordinateType value);
     
 }

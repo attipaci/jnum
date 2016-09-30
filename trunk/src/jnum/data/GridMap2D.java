@@ -126,6 +126,11 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	 */
 	public double getWeightScale() { return weightFactor; }
 	
+	/**
+	 * Sets the weight scale.
+	 *
+	 * @param x the new weight scale
+	 */
 	public void setWeightScale(double x) { weightFactor = x; }
 	
 	/**

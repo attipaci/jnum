@@ -36,7 +36,7 @@ public interface AbsoluteValue {
 	public double abs();
 	
 	/**
-	 * The absolute square value
+	 * The absolute square value.
 	 *
 	 * @return the square of the absolute value of this object.
 	 */

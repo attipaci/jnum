@@ -33,10 +33,13 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TelescopeCoordinates.
+ */
 public class TelescopeCoordinates extends SphericalCoordinates {
-    /**
-     * 
-     */
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5165681897613041311L;
 
     /** The elevation offset axis. */
@@ -147,7 +150,7 @@ public class TelescopeCoordinates extends SphericalCoordinates {
     /**
      * Sets the az.
      *
-     * @param AZ the new az
+     * @param XEL the new xel
      */
     public final void setXEL(double XEL) { setNativeLongitude(XEL); }
 
@@ -163,7 +166,7 @@ public class TelescopeCoordinates extends SphericalCoordinates {
      * To equatorial.
      *
      * @param offset the offset
-     * @param site the site
+     * @param telVPA the tel VPA
      */
     public void toEquatorial(Vector2D offset, double telVPA) {
         toEquatorialOffset(offset, telVPA);
@@ -173,7 +176,7 @@ public class TelescopeCoordinates extends SphericalCoordinates {
      * To equatorial offset.
      *
      * @param offset the offset
-     * @param PA the pa
+     * @param telVPA the tel VPA
      */
     public static void toEquatorialOffset(Vector2D offset, double telVPA) {
         offset.rotate(telVPA);

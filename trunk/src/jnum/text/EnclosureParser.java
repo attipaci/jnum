@@ -27,10 +27,23 @@ import java.text.ParseException;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class EnclosureParser.
+ */
 public abstract class EnclosureParser {
   
+    /** The auto close. */
     public boolean autoClose = true;
     
+    /**
+     * Parses the.
+     *
+     * @param text the text
+     * @param pos the pos
+     * @return the string
+     * @throws ParseException the parse exception
+     */
     public String parse(String text, ParsePosition pos) throws ParseException {
         ArrayList<Character> expectedClosing = new ArrayList<Character>();
         
@@ -79,6 +92,12 @@ public abstract class EnclosureParser {
         return text.substring(from) + closers;
     }
     
+    /**
+     * Checks if is empty space.
+     *
+     * @param c the c
+     * @return true, if is empty space
+     */
     private static boolean isEmptySpace(char c) {
         switch(c) {
         case ' ' :
@@ -89,10 +108,28 @@ public abstract class EnclosureParser {
         }
     }
     
+    /**
+     * Checks if is opening.
+     *
+     * @param c the c
+     * @return true, if is opening
+     */
     protected abstract boolean isOpening(char c);
     
+    /**
+     * Checks if is closing.
+     *
+     * @param c the c
+     * @return true, if is closing
+     */
     protected abstract boolean isClosing(char c);
     
+    /**
+     * Gets the closer for.
+     *
+     * @param c the c
+     * @return the closer for
+     */
     protected abstract char getCloserFor(char c);
     
 }

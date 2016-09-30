@@ -108,16 +108,20 @@ public final class Symbol {
     
     // Math
     
+    /** The Constant squareRoot. */
     public final static char squareRoot = '\u221a';
     
+    /** The Constant cubicRoot. */
     public final static char cubicRoot = '\u221b';
     
+    /** The Constant fourthRoot. */
     public final static char fourthRoot = '\u221c';
   
     
     /** The Constant plusminus. */
     public final static char plusminus = '\u00b1';
     
+    /** The Constant minusplus. */
     public final static char minusplus = '\u2213';
     
     /** The Constant upperminus. */
@@ -141,48 +145,70 @@ public final class Symbol {
     /** The Constant cross. */
     public final static char cross = '\u00d7';
     
+    /** The Constant times. */
     public final static char times = '\u00d7';
     
+    /** The Constant infinity. */
     public final static char infinity = '\u221e';
     
+    /** The Constant circlePlus. */
     public final static char circlePlus = '\u2295';
     
+    /** The Constant circleMinus. */
     public final static char circleMinus = '\u2296';
     
+    /** The Constant circleTimes. */
     public final static char circleTimes = '\u2297';
     
+    /** The Constant circleDivide. */
     public final static char circleDivide = '\u2298';
     
+    /** The Constant circleDot. */
     public final static char circleDot = '\u2299';
     
+    /** The Constant starOperator. */
     public final static char starOperator = '\u22c6';
  
+    /** The Constant partial. */
     public final static char partial = '\u2202';
     
+    /** The Constant nabla. */
     public final static char nabla = '\u2207';
     
+    /** The Constant integral. */
     public final static char integral = '\u222b';
     
+    /** The Constant doubleIntegral. */
     public final static char doubleIntegral = '\u222c';
     
+    /** The Constant tripleIntegral. */
     public final static char tripleIntegral = '\u222d';
     
+    /** The Constant crossProduct. */
     public final static char crossProduct = '\u2a2f';
     
+    /** The Constant prime. */
     public final static char prime = '\u2032';
     
+    /** The Constant doublePrime. */
     public final static char doublePrime = '\u2033';
     
+    /** The Constant triplePrime. */
     public final static char triplePrime = '\u2034';
     
+    /** The Constant summation. */
     public final static char summation = '\u2211';
     
+    /** The Constant product. */
     public final static char product = '\u220f';
     
+    /** The Constant notEqual. */
     public final static char notEqual = '\u2260';
     
+    /** The Constant proportionalTo. */
     public final static char proportionalTo = '\u221d';
     
+    /** The Constant approximately. */
     public final static char approximately = '\u2248';
     
     
@@ -190,8 +216,10 @@ public final class Symbol {
     /** The Constant degree. */
     public final static char degree = '\u00b0';
     
+    /** The Constant celsius. */
     public final static char celsius = '\u2103';
     
+    /** The Constant farenheit. */
     public final static char farenheit = '\u2109';
     
     /** The Constant hbar. */
@@ -207,25 +235,35 @@ public final class Symbol {
            
     
     
+    /** The Constant Sun. */
     // Astronomy
     public final static char Sun = '\u2609';
     
+    /** The Constant Mercury. */
     public final static char Mercury = '\u263f';
     
+    /** The Constant Venus. */
     public final static char Venus = '\u2640';
     
+    /** The Constant Earth. */
     public final static char Earth = '\u2641';
     
+    /** The Constant Mars. */
     public final static char Mars = '\u2642';
     
+    /** The Constant Jupiter. */
     public final static char Jupiter = '\u2643';
     
+    /** The Constant Saturn. */
     public final static char Saturn = '\u2644';
     
+    /** The Constant Uranus. */
     public final static char Uranus = '\u2645';
     
+    /** The Constant Neptune. */
     public final static char Neptune = '\u2646';
     
+    /** The Constant Pluto. */
     public final static char Pluto = '\u2647';
     
     

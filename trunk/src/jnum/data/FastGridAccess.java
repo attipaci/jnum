@@ -23,10 +23,29 @@
 
 package jnum.data;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface FastGridAccess.
+ *
+ * @param <CoordinateType> the generic type
+ * @param <OffsetType> the generic type
+ */
 public interface FastGridAccess<CoordinateType, OffsetType> {
    
+    /**
+     * Value at.
+     *
+     * @param index the index
+     * @param toValue the to value
+     */
     public void valueAt(OffsetType index, CoordinateType toValue);
     
+    /**
+     * Index of.
+     *
+     * @param value the value
+     * @param toIndex the to index
+     */
     public void indexOf(CoordinateType value, OffsetType toIndex);
     
 }

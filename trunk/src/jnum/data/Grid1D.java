@@ -24,54 +24,86 @@
 package jnum.data;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Grid1D.
+ */
 public class Grid1D implements Grid<Double, Double> {
-    /**
-     * 
-     */
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4841377680124156007L;
+    
+    /** The resolution. */
     private double refIndex, refValue, resolution;
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
     @Override
     public Object clone() {
         try { return super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
     
+    /* (non-Javadoc)
+     * @see jnum.data.Grid#indexOf(java.lang.Object)
+     */
     @Override
     public Double indexOf(Double value) {
         return (value - refValue) / resolution + refIndex;
     }
     
+    /* (non-Javadoc)
+     * @see jnum.data.Grid#valueAt(java.lang.Object)
+     */
     @Override
     public Double valueAt(Double index) {
         return (index - refIndex) * resolution + refValue;
     }
 
+    /* (non-Javadoc)
+     * @see jnum.data.Grid#setReference(java.lang.Object)
+     */
     @Override
     public void setReference(Double coords) {
         refValue = coords;
     }
 
+    /* (non-Javadoc)
+     * @see jnum.data.Grid#getReference()
+     */
     @Override
     public Double getReference() {
         return refValue;
     }
 
+    /* (non-Javadoc)
+     * @see jnum.data.Grid#setReferenceIndex(java.lang.Object)
+     */
     @Override
     public void setReferenceIndex(Double index) {
         refIndex = index;
     }
 
+    /* (non-Javadoc)
+     * @see jnum.data.Grid#getReferenceIndex()
+     */
     @Override
     public Double getReferenceIndex() {
         return refIndex;
     }
 
+    /* (non-Javadoc)
+     * @see jnum.data.Grid#setResolution(java.lang.Object)
+     */
     @Override
     public void setResolution(Double delta) {
         resolution = delta;
     }
 
+    /* (non-Javadoc)
+     * @see jnum.data.Grid#getResolution()
+     */
     @Override
     public Double getResolution() {
        return resolution;

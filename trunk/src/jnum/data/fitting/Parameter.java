@@ -221,7 +221,7 @@ public class Parameter extends DataPoint implements Penalty {
 	}
 	
 	/**
-	 * Gets the name identifier of this parameter
+	 * Gets the name identifier of this parameter.
 	 *
 	 * @return the name or identifier assigned to this parameter.
 	 */

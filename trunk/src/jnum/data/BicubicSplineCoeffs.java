@@ -132,6 +132,12 @@ public class BicubicSplineCoeffs implements Serializable {
 		
 	}
 	
+	/**
+	 * Value for.
+	 *
+	 * @param dx the dx
+	 * @return the double
+	 */
 	public static double valueFor(double dx) {
 	    dx = Math.abs(dx);
         return dx > 1.0 ? ((-0.5 * dx + 2.5) * dx - 4.0) * dx + 2.0 : (1.5 * dx - 2.5) * dx * dx + 1.0;

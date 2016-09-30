@@ -52,11 +52,13 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	/** The type. */
 	protected Class<T> elementClass;
 	
+	/** The size. */
 	private int[] size;
+	
 	/**
 	 * Instantiates a new abstract array.
 	 *
-	 * @param type the type
+	 * @param elementClass the element class
 	 */
 	public Mesh(Class<T> elementClass) {
 		this.elementClass = elementClass;
@@ -71,16 +73,19 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 		setData(data);
 	}
 	
+	/**
+	 * New instance.
+	 *
+	 * @return the mesh
+	 */
 	public abstract Mesh<T> newInstance();
 	
 	// Returns an uninitialized array. Call initialize(), if want to fill with default elements.
 	/**
 	 * Instantiates a new abstract array.
 	 *
-	 * @param type the type
+	 * @param elementClass the element class
 	 * @param dimensions the dimensions
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
 	 */
 	public Mesh(Class<T> elementClass, int[] dimensions) {
 		this(elementClass);
@@ -90,6 +95,12 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 		}
 	}
 	
+	/**
+	 * Conforms to.
+	 *
+	 * @param o the o
+	 * @return true, if successful
+	 */
 	public boolean conformsTo(Mesh<?> o) {
 	    return Arrays.equals(getSize(), o.getSize());
 	}
@@ -122,8 +133,8 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * Sets the size.
 	 *
 	 * @param dimensions the new size
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
+	 * @throws InstantiationException the instantiation exception
+	 * @throws IllegalAccessException the illegal access exception
 	 */
 	public void setSize(int[] dimensions) throws InstantiationException, IllegalAccessException { 
 	    this.size = dimensions;

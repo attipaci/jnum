@@ -47,6 +47,11 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 */
 	public Range() { empty(); }
 	
+	/**
+	 * Instantiates a new range.
+	 *
+	 * @param pointValue the point value
+	 */
 	public Range(double pointValue) {
 	    this(pointValue, pointValue);
 	}
@@ -167,6 +172,11 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		min=Double.POSITIVE_INFINITY; max=Double.NEGATIVE_INFINITY;		
 	}
 	
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
 	public boolean isEmpty() {
 	    return min > max;
 	}
@@ -201,15 +211,30 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		max *= value;
 	}
 	
+	/**
+	 * Checks if is bounded.
+	 *
+	 * @return true, if is bounded
+	 */
 	public final boolean isBounded() {
 	    return isUpperBounded() && isLowerBounded();
 	}
 	
+	/**
+	 * Checks if is upper bounded.
+	 *
+	 * @return true, if is upper bounded
+	 */
 	public boolean isUpperBounded() {
 	    if(Double.isInfinite(max)) if(max > 0) return false;
 	    return true;
 	}
 	
+	/**
+	 * Checks if is lower bounded.
+	 *
+	 * @return true, if is lower bounded
+	 */
 	public boolean isLowerBounded() {
 	    if(Double.isInfinite(min)) if(min < 0) return false;
 	    return true;

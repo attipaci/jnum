@@ -23,10 +23,24 @@
 
 package jnum;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface Verbosity.
+ */
 public interface Verbosity {
 
+    /**
+     * Sets the verbose.
+     *
+     * @param value the new verbose
+     */
     public void setVerbose(boolean value);
     
+    /**
+     * Checks if is verbose.
+     *
+     * @return true, if is verbose
+     */
     public boolean isVerbose();
     
 }
