@@ -301,23 +301,23 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
     }
 
     /**
-     * Restrict.
+     * Intersect this range with the argument range.
      *
-     * @param r the r
+     * @param r the intersecting range.
      */
-    public void restrict(Range2D r) {
-        xRange.restrict(r.xRange);
-        yRange.restrict(r.yRange);
+    public void intersectWith(Range2D r) {
+        xRange.intersectWith(r.xRange);
+        yRange.intersectWith(r.yRange);
     }
    
     /**
-     * Restrict.
+     * Intersect this range with the argument rectangle
      *
-     * @param r the r
+     * @param r the intersecting rectangle.
      */
-    public void restrict(Rectangle2D r) {
-        xRange.restrict(r.getMinX(), r.getMaxX());
-        yRange.restrict(r.getMinY(), r.getMaxY());
+    public void intersectWith(Rectangle2D r) {
+        xRange.intersectWith(r.getMinX(), r.getMaxX());
+        yRange.intersectWith(r.getMinY(), r.getMaxY());
     }
     
     /**
@@ -328,9 +328,9 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
      * @param xmax the xmax
      * @param ymax the ymax
      */
-    public void restrict(double xmin, double ymin, double xmax, double ymax) {
-        xRange.restrict(xmin, xmax);
-        yRange.restrict(ymin, ymax);
+    public void intersectWith(double xmin, double ymin, double xmax, double ymax) {
+        xRange.intersectWith(xmin, xmax);
+        yRange.intersectWith(ymin, ymax);
     }
     
     /**
@@ -339,10 +339,10 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
      * @param r the r
      * @return true, if successful
      */
-    public boolean intersects(Range2D r) {
+    public boolean isIntersecting(Range2D r) {
         if(r.isEmpty()) return false;
         if(isEmpty()) return false;
-        return xRange.intersects(r.xRange) && yRange.intersects(r.yRange);
+        return xRange.isIntersecting(r.xRange) && yRange.isIntersecting(r.yRange);
     }
     
     /**
@@ -383,6 +383,32 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
      */
     public String toString(NumberFormat nf) {
         return "x:" + xRange.toString(nf) + ", y:" + yRange.toString(nf);
+    }
+    
+    /**
+     * Creates a new range that is the intersection of the two ranges in the argument.
+     *
+     * @param a 
+     * @param b 
+     * @return the range that is the intersection of a and b.
+     */
+    public static Range2D intersectionOf(Range2D a, Range2D b) {
+        Range2D i = a.copy();
+        i.intersectWith(b);
+        return i;
+    }
+    
+    /**
+     * Creates a new range that is the composite of the two ranges in the argument.
+     *
+     * @param a
+     * @param b
+     * @return the smallest range that includes both a and b
+     */
+    public static Range2D compositeOf(Range2D a, Range2D b) {
+        Range2D c = a.copy();
+        c.include(b);
+        return c;
     }
  
 }

@@ -145,12 +145,13 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	public void setMax(double value) { max = value; }
 	
 	/**
-	 * Restrict.
+	 * Intersect this range with the specified other range. The new range will be the intersection
+	 * of the original range and the argument.
 	 *
-	 * @param bounds the bounds
+	 * @param r the range to intesect this range with.
 	 */
-	public void restrict(Range bounds) {
-		restrict(bounds.min, bounds.max);	
+	public void intersectWith(Range r) {
+		intersectWith(r.min, r.max);	
 	}
 	
 	/**
@@ -159,7 +160,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param min the min
 	 * @param max the max
 	 */
-	public synchronized void restrict(double min, double max) {
+	public synchronized void intersectWith(double min, double max) {
 		if(min > this.min) this.min = min;
 		if(max < this.max) this.max = max;
 	}
@@ -267,7 +268,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param range the other range
 	 * @return true, if this range intersects the specified other range. 
 	 */
-	public boolean intersects(Range range) {
+	public boolean isIntersecting(Range range) {
 	    if(range.isEmpty()) return false;
 	    if(isEmpty()) return false;
 		return contains(range.min) || contains(range.max) || range.contains(this);
@@ -431,4 +432,31 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	public static Range getNegativeRange() {
 		return new Range(Double.NEGATIVE_INFINITY, 0.0);
 	}
+	
+	/**
+	 * Creates a new range that is the intersection of the two ranges in the argument.
+	 *
+	 * @param a 
+	 * @param b 
+	 * @return the range that is the intersection of a and b.
+	 */
+	public static Range intersectionOf(Range a, Range b) {
+	    Range i = a.copy();
+	    i.intersectWith(b);
+	    return i;
+	}
+	
+	/**
+	 * Creates a new range that is the composite of the two ranges in the argument.
+	 *
+	 * @param a
+	 * @param b
+	 * @return the smallest range that includes both a and b
+	 */
+	public static Range compositeOf(Range a, Range b) {
+	    Range c = a.copy();
+        c.include(b);
+        return c;
+	}
+	
 }

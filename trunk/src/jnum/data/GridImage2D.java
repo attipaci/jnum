@@ -1302,7 +1302,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 
 		underlyingBeam.editHeader(header, cursor);
 		smoothing.editHeader(header, cursor);
-		if(smoothing.isCircular()) cursor.add(new HeaderCard("SMOOTH", smoothing.getMajorFWHM() / sizeUnit.value(), "{Deprecated} FWHM (" + sizeUnit.name() + ") of the smoothing applied."));	
+		if(smoothing.isCircular()) cursor.add(new HeaderCard("SMOOTH", smoothing.getMajorFWHM() / sizeUnit.value(), "{Deprecated} FWHM (" + sizeUnit.name() + ") smoothing."));	
 
 		// TODO convert extended filter and corrections to proper Gaussian beams...
 		if(!Double.isNaN(extFilterFWHM)) {
