@@ -177,11 +177,13 @@ public abstract class Region<CoordinateType extends Coordinate2D> implements Ser
 	 */
 	public WeightedPoint getIntegral(GridImage2D<CoordinateType> map) {
 		final IndexBounds2D bounds = getBounds(map);
+		Grid2D<CoordinateType> grid = map.getGrid();
 		WeightedPoint sum = new WeightedPoint();
-		for(int i=bounds.fromi; i<=bounds.toi; i++) for(int j=bounds.fromj; j<=bounds.toj; j++) if(map.isUnflagged(i, j)) {
-			sum.add(map.getValue(i, j));	
-			sum.addWeight(1.0 / map.getWeight(i, j));
-		}
+		for(int i=bounds.fromi; i<=bounds.toi; i++) for(int j=bounds.fromj; j<=bounds.toj; j++) 
+		    if(isInside(grid, i, j)) if(map.isUnflagged(i, j)) {
+		        sum.add(map.getValue(i, j));	
+		        sum.addWeight(1.0 / map.getWeight(i, j));
+		    }
 		sum.setWeight(map.getPointsPerSmoothingBeam() / sum.weight());	
 		return sum;
 	}
@@ -197,6 +199,22 @@ public abstract class Region<CoordinateType extends Coordinate2D> implements Ser
 		integral.scale(map.getPixelArea() / map.getImageBeamArea());
 		return integral;
 	}
+	
+	public void flag(GridImage2D<CoordinateType> map, int pattern) {
+        final IndexBounds2D bounds = getBounds(map);
+        Grid2D<CoordinateType> grid = map.getGrid();
+        
+        for(int i=bounds.fromi; i<=bounds.toi; i++) for(int j=bounds.fromj; j<=bounds.toj; j++) if(isInside(grid, i, j))
+            map.flag(i, j, pattern);
+    }
+	
+	public void unflag(GridImage2D<CoordinateType> map, int pattern) {
+        final IndexBounds2D bounds = getBounds(map);
+        Grid2D<CoordinateType> grid = map.getGrid();
+        
+        for(int i=bounds.fromi; i<=bounds.toi; i++) for(int j=bounds.fromj; j<=bounds.toj; j++) if(isInside(grid, i, j))
+            map.unflag(i, j, pattern);
+    }
 	
 	/** The Constant FORMAT_CRUSH. */
 	public final static int FORMAT_CRUSH = 0;

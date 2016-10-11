@@ -199,7 +199,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	@Override
 	public boolean isInside(Grid2D<CoordinateType> grid, double i, double j) {
 		Vector2D centerIndex = getIndex(grid);
-		return ExtraMath.hypot(centerIndex.x() - i, centerIndex.y() - j) <= radius.value();
+		return ExtraMath.hypot((centerIndex.x() - i) * grid.pixelSizeX(), (centerIndex.y() - j) * grid.pixelSizeY()) <= radius.value();
 	}
 	
 	/**
