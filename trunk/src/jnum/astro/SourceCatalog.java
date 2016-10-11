@@ -61,6 +61,15 @@ public class SourceCatalog<CoordinateType extends Coordinate2D> extends Vector<G
 		for(GaussianSource<CoordinateType> source : this) source.subtract(image);
 	}
 	
+	public void flag(GridImage2D<CoordinateType> image, int pattern) {
+        for(GaussianSource<CoordinateType> source : this) source.flag(image, pattern);
+    }
+	
+	public void unflag(GridImage2D<CoordinateType> image, int pattern) {
+        for(GaussianSource<CoordinateType> source : this) source.unflag(image, pattern);
+    }
+    
+	
 	/**
 	 * Read.
 	 *
