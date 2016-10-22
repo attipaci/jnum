@@ -1,4 +1,4 @@
-0.10-b2
+0.10-1
 
 	[BUG] {CircularRegion} isInside() methods treated radii as pixels not 
 	angle.

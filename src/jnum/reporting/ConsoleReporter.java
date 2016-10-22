@@ -170,7 +170,7 @@ public class ConsoleReporter extends Reporter {
      */
     @Override
     public void detail(Object owner, String message) {
-        if(level >= LEVEL_DETAIL) System.err.println("..." + wrapper.wrap(message, getPrefix(owner), getIndentDetail()));
+        if(level >= LEVEL_DETAIL) System.err.println(wrapper.wrap("..." + message, getPrefix(owner), getIndentDetail()));
     }
     
     /* (non-Javadoc)
@@ -293,7 +293,7 @@ public class ConsoleReporter extends Reporter {
     public final static int LEVEL_VALUES = 6;
     
     /** The Constant LEVEL_INFO. */
-    public final static int LEVEL_INFO = 6;
+    public final static int LEVEL_INFO = 7;
     
     /** The Constant LEVEL_DETAIL. */
     public final static int LEVEL_DETAIL = 8;
