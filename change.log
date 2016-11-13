@@ -1,4 +1,20 @@
+0.10-2
+
+	[FIX] Concurrency issue with Broadcaster if new message is created 
+	while reporting another one. Fixed.
+
+	[FIX] Parallel processing errors during init(), or cleanup() were 
+	uncaught and could result in hangs. Now, these are reported as proper 
+	parallel exceptions, just the those produced by the main body. If 
+	multiple exceptions occur (e.g. both during processing and cleanup),
+	only the first one encountered will be reported.
+
+	[TWEAK] Console reporting of details now has space between leading 
+	'...' and message for cleaner visual appearance.
+
+
 0.10-1
+
 
 	[BUG] {CircularRegion} isInside() methods treated radii as pixels not 
 	angle.

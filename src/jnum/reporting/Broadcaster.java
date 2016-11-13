@@ -59,7 +59,7 @@ public class Broadcaster extends Reporter {
      *
      * @param r the r
      */
-    public void add(Reporter r) {
+    public synchronized void add(Reporter r) {
         reporters.put(r.getID(), r);
     }
     
@@ -85,7 +85,7 @@ public class Broadcaster extends Reporter {
      * @param r the r
      * @return the reporter
      */
-    public Reporter remove(Reporter r) { return remove(r.getID()); }
+    public synchronized Reporter remove(Reporter r) { return remove(r.getID()); }
     
     /**
      * Removes the.
@@ -93,13 +93,13 @@ public class Broadcaster extends Reporter {
      * @param id the id
      * @return the reporter
      */
-    public Reporter remove(String id) { return reporters.remove(id); }
+    public synchronized Reporter remove(String id) { return reporters.remove(id); }
     
     /* (non-Javadoc)
      * @see jnum.reporting.Reporter#info(java.lang.Object, java.lang.String)
      */
     @Override
-    public void info(Object owner, String message) {
+    public synchronized void info(Object owner, String message) {
         for(Reporter r : reporters.values()) r.info(owner, message);
     }
 
@@ -107,7 +107,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#notify(java.lang.Object, java.lang.String)
      */
     @Override
-    public void notify(Object owner, String message) {
+    public synchronized void notify(Object owner, String message) {
         for(Reporter r : reporters.values()) r.notify(owner, message);
     }
     
@@ -115,7 +115,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#debug(java.lang.Object, java.lang.String)
      */
     @Override
-    public void debug(Object owner, String message) {
+    public synchronized void debug(Object owner, String message) {
         for(Reporter r : reporters.values()) r.debug(owner, message);
     }
     
@@ -123,7 +123,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#warning(java.lang.Object, java.lang.String)
      */
     @Override
-    public void warning(Object owner, String message) {
+    public synchronized void warning(Object owner, String message) {
         for(Reporter r : reporters.values()) r.warning(owner, message);
         
     }
@@ -132,7 +132,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#error(java.lang.Object, java.lang.String)
      */
     @Override
-    public void error(Object owner, String message) {
+    public synchronized void error(Object owner, String message) {
         for(Reporter r : reporters.values()) r.error(owner, message);
     }
 
@@ -140,7 +140,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#trace(java.lang.Throwable)
      */
     @Override
-    public void trace(Throwable e) {
+    public synchronized void trace(Throwable e) {
         for(Reporter r : reporters.values()) r.trace(e);
     }
 
@@ -148,7 +148,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#status(java.lang.Object, java.lang.String)
      */
     @Override
-    public void status(Object owner, String message) {
+    public synchronized void status(Object owner, String message) {
         for(Reporter r : reporters.values()) r.status(owner, message);
     }
 
@@ -156,7 +156,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#result(java.lang.Object, java.lang.String)
      */
     @Override
-    public void result(Object owner, String message) {
+    public synchronized void result(Object owner, String message) {
         for(Reporter r : reporters.values()) r.result(owner, message);
     }
 
@@ -164,7 +164,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#detail(java.lang.Object, java.lang.String)
      */
     @Override
-    public void detail(Object owner, String message) {
+    public synchronized void detail(Object owner, String message) {
         for(Reporter r : reporters.values()) r.detail(owner, message);
     }
 
@@ -172,7 +172,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#values(java.lang.Object, java.lang.String)
      */
     @Override
-    public void values(Object owner, String message) {
+    public synchronized void values(Object owner, String message) {
         for(Reporter r : reporters.values()) r.values(owner, message);
     }
 
@@ -180,7 +180,7 @@ public class Broadcaster extends Reporter {
      * @see jnum.reporting.Reporter#suggest(java.lang.Object, java.lang.String)
      */
     @Override
-    public void suggest(Object owner, String message) {
+    public synchronized void suggest(Object owner, String message) {
         for(Reporter r : reporters.values()) r.suggest(owner, message);
     }
     

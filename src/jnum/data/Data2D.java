@@ -2618,7 +2618,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		 * @see kovacs.util.Parallel#processIndex(int, int)
 		 */
 		@Override
-		protected void processIndexOf(int index, int threadCount) {
+		protected void processChunk(int index, int threadCount) {
 			final int sizeX = sizeX();
 			for(int i=index; i<sizeX; i += threadCount) {
 				processX(i);

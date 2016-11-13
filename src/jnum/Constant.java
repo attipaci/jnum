@@ -320,6 +320,9 @@ public class Constant {
     public final static double g = 9.80665 * Unit.m / Unit.s2;
 
 
+    /** 0C in kelvins */
+    public final static double zeroCelsius = 273.15 * Unit.K;
+    
     // some constants of questionable accuracy
 
     /** The h0. */

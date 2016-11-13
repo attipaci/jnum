@@ -33,7 +33,7 @@ public interface Weather {
 	 *
 	 * @return the ambient temperature
 	 */
-	public double getAmbientTemperature();
+	public double getAmbientKelvins();
 	
 	/**
 	 * Gets the ambient pressure.

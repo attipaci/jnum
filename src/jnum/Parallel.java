@@ -36,9 +36,6 @@ import jnum.parallel.ParallelReduction;
  */
 public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 	
-	/** The thread. */
-	//private Thread thread;
-	
 	/** The index. */
 	private int index;
 	
@@ -257,16 +254,15 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 	@Override
 	public final void run() {
 		isAlive = true;
+		
 		// clear the exception for reuse...
 		exception = null;
-	
-		init();
-	
-		Thread.yield();
 		
 		try { 
+		    init();
+		    Thread.yield();
 			// Don't even start in case it has been interrupted already
-			if(!isInterrupted()) processIndexOf(index, parallelProcessor.getThreadCount()); 	
+			if(!isInterrupted()) processChunk(index, parallelProcessor.getThreadCount()); 	
 		}
 		catch(InterruptedException e) {
 		    // Interrupted...
@@ -276,9 +272,13 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 			exception = e;
 			interruptAll();
 		}
+		
 		// Clear the interrupt status for reuse...
 		isInterrupted = false;
-		wrapup();
+		
+		// Wrap up, if an exception occurs, record it if not prior exception is recorded already...
+		try { wrapup(); }
+		catch(Exception e) { if(exception == null) exception = e; }
 	}
 
 	/**
@@ -315,11 +315,11 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 	/**
 	 * Process index.
 	 *
-	 * @param i the i
-	 * @param threadCount the thread count
+	 * @param i the chunk index
+	 * @param chunks the total number of processing chunks
 	 * @throws Exception the exception
 	 */
-	protected abstract void processIndexOf(int i, int threadCount) throws Exception;
+	protected abstract void processChunk(int i, int chunks) throws Exception;
 	
 	
 	/**

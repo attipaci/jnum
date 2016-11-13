@@ -170,7 +170,7 @@ public class ConsoleReporter extends Reporter {
      */
     @Override
     public void detail(Object owner, String message) {
-        if(level >= LEVEL_DETAIL) System.err.println(wrapper.wrap("..." + message, getPrefix(owner), getIndentDetail()));
+        if(level >= LEVEL_DETAIL) System.err.println(wrapper.wrap("... " + message, getPrefix(owner), getIndentDetail()));
     }
     
     /* (non-Javadoc)
