@@ -49,7 +49,7 @@ public class WeatherAdapter implements Weather {
 	 * @see kovacs.util.astro.Weather#getAmbientTemperature()
 	 */
 	@Override
-	public double getAmbientTemperature() {
+	public double getAmbientKelvins() {
 		return Double.NaN;
 	}
 
