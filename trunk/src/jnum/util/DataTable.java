@@ -24,8 +24,6 @@ package jnum.util;
 
 import java.text.NumberFormat;
 import java.util.Hashtable;
-
-import jnum.Util;
 import jnum.text.TableFormatter;
 
 
@@ -42,9 +40,9 @@ public class DataTable extends Hashtable<String, DataTable.Entry> implements Tab
 	 * @see kovacs.util.text.TableFormatter.Entries#getFormattedEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String getFormattedEntry(String name, String formatSpec) {
+	public Object getTableEntry(String name) {
 		if(!containsKey(name)) return TableFormatter.NO_SUCH_DATA;
-		return Util.defaultFormat(get(name).getValue(), TableFormatter.getNumberFormat(formatSpec));
+		return get(name).getValue();
 	}
 	
 	/**

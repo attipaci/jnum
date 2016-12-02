@@ -25,7 +25,6 @@
 package jnum.data;
 
 
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
@@ -41,6 +40,8 @@ import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.text.AngleFormat;
 import jnum.text.TableFormatter;
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCardException;
 
 
 // TODO: Auto-generated Javadoc
@@ -626,14 +627,12 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	 * @see kovacs.util.text.TableFormatter.Entries#getFormattedEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String getFormattedEntry(String name, String formatSpec) {
-		NumberFormat nf = TableFormatter.getNumberFormat(formatSpec);
-		
-		if(name.equals("r")) return nf.format(radius.value());
-		else if(name.equals("dr")) return nf.format(radius.rms());
-		if(name.equals("dr")) return nf.format(radius.rms());
+	public Object getTableEntry(String name) {
+		if(name.equals("r")) return radius.value();
+		else if(name.equals("dr")) return radius.rms();
 		else return TableFormatter.NO_SUCH_DATA;
 		
 	}
+	
 }
 

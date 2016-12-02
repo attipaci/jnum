@@ -35,14 +35,12 @@ import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.math.specialfunctions.CumulativeNormalDistribution;
 import jnum.projection.Projection2D;
-import jnum.text.TableFormatter;
 import jnum.util.HashCode;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.fits.ImageHDU;
 import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
@@ -1570,9 +1568,9 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 * @see kovacs.util.data.Data2D#getFormattedEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String getFormattedEntry(String name, String formatSpec) {
-		if(name.equals("beams")) return TableFormatter.getNumberFormat(formatSpec).format(countBeams());
-		else return super.getFormattedEntry(name, formatSpec);
+	public Object getTableEntry(String name) {
+		if(name.equals("beams")) return countBeams();
+		else return super.getTableEntry(name);
 	}
 
 	/**

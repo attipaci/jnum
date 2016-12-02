@@ -31,6 +31,8 @@ import jnum.math.Coordinate2D;
 import jnum.math.Range;
 import jnum.math.Vector2D;
 import jnum.util.DataTable;
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCardException;
 
 
 // TODO: Auto-generated Javadoc
@@ -264,7 +266,30 @@ public class EllipticalSource<CoordinateType extends Coordinate2D> extends Gauss
 		return info;
 	}
 	
+	 @Override
+	 public void editHeader(Header header, GridImage2D<CoordinateType> map, Unit sizeUnit) throws HeaderCardException {
+	     super.editHeader(header, map, sizeUnit);
 	
+	     Range axes = getAxes();
+	       
+	     boolean hasError = getRadius().weight() > 0.0;
+	     
+	     header.addValue("SRCMAJ", axes.max() / sizeUnit.value(), "(" + sizeUnit.name() + ") source major axis.");
+	     if(hasError) {
+	         double da = ExtraMath.hypot(getRadius().rms(), axes.max() * elongation.rms());
+	         header.addValue("SRCMAJER", da / sizeUnit.value(), "(" + sizeUnit.name() + ") major axis error.");
+	     }
+	     
+	     header.addValue("SRCMIN", axes.min() / sizeUnit.value(), "(" + sizeUnit.name() + ") source minor axis.");
+	     if(hasError) {
+             double db = ExtraMath.hypot(getRadius().rms(), axes.min() * elongation.rms());
+             header.addValue("SRCMINER", db / sizeUnit.value(), "(" + sizeUnit.name() + ") minor axis error.");
+	     }
+	     
+	     header.addValue("SRCPA", angle.value() / Unit.deg, "(deg) source position angle.");
+	     header.addValue("SRCPAERR", angle.rms() / Unit.deg, "(deg) source angle error.");
+	 }
+	     
 	
 	// TODO Override add...
 	

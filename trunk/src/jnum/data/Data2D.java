@@ -2749,7 +2749,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	 * @see kovacs.util.text.TableFormatter.Entries#getFormattedEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String getFormattedEntry(String name, String formatSpec) {
+	public Object getTableEntry(String name) {
 		if(name.equals("name")) return getName();
 		else if(name.equals("contentType")) return contentType;
 		else if(name.equals("creator")) return creator;
@@ -2759,9 +2759,9 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		else if(name.equals("sizeX")) return Integer.toString(sizeX());
 		else if(name.equals("sizeY")) return Integer.toString(sizeY());
 		else if(name.equals("points")) return Integer.toString(countPoints());
-		else if(name.equals("min")) return TableFormatter.getNumberFormat(formatSpec).format(getMin() / getUnit().value());
-		else if(name.equals("max")) return TableFormatter.getNumberFormat(formatSpec).format(getMax() / getUnit().value());
-		else if(name.equals("rms")) return TableFormatter.getNumberFormat(formatSpec).format(getRobustRMS() / getUnit().value());
+		else if(name.equals("min")) return getMin() / getUnit().value();
+		else if(name.equals("max")) return getMax() / getUnit().value();
+		else if(name.equals("rms")) return getRobustRMS() / getUnit().value();
 		else return "n/a";
 	}
 	
