@@ -30,7 +30,6 @@ import jnum.Unit;
 import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
-import jnum.text.TableFormatter;
 import jnum.util.HashCode;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
@@ -1358,9 +1357,9 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	 * @see kovacs.util.data.GridImage#getFormattedEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String getFormattedEntry(String name, String formatSpec) {
-		if(name.equals("depth")) return TableFormatter.getNumberFormat(formatSpec).format(getTypicalRMS() / getUnit().value());
-		else return super.getFormattedEntry(name, formatSpec);
+	public Object getTableEntry(String name) {
+		if(name.equals("depth")) return getTypicalRMS() / getUnit().value();
+		else return super.getTableEntry(name);
 	}
 	
 	/**

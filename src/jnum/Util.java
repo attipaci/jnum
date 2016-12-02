@@ -53,7 +53,7 @@ public final class Util {
     public final static String version = "0.10-2";
 
     /** The Constant revision. */
-    public final static String revision = "devel.2";
+    public final static String revision = "devel.6";
 
     /** The debug. */
     public static boolean debug = false;
@@ -587,16 +587,6 @@ public final class Util {
         return value == null ? "n/a" : value;
     }
 
-    /**
-     * Default format.
-     *
-     * @param value the value
-     * @param f the f
-     * @return the string
-     */
-    public static String defaultFormat(double value, NumberFormat f) {
-        return f == null ? Double.toString(value) : f.format(value);
-    }
 
     /**
      * From escaped string.

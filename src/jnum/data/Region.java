@@ -25,8 +25,11 @@ package jnum.data;
 import java.io.Serializable;
 import java.text.ParseException;
 
+import jnum.Unit;
 import jnum.Util;
 import jnum.math.Coordinate2D;
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCardException;
 
 
 // TODO: Auto-generated Javadoc
@@ -215,6 +218,11 @@ public abstract class Region<CoordinateType extends Coordinate2D> implements Ser
         for(int i=bounds.fromi; i<=bounds.toi; i++) for(int j=bounds.fromj; j<=bounds.toj; j++) if(isInside(grid, i, j))
             map.unflag(i, j, pattern);
     }
+	
+	public void editHeader(Header header, GridImage2D<CoordinateType> map, Unit sizeUnit) throws HeaderCardException {
+	    
+	}
+	
 	
 	/** The Constant FORMAT_CRUSH. */
 	public final static int FORMAT_CRUSH = 0;

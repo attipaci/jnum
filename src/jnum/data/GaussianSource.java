@@ -37,6 +37,8 @@ import jnum.astro.Precessing;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import jnum.util.DataTable;
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCardException;
 
 
 
@@ -686,6 +688,34 @@ public class GaussianSource<CoordinateType extends Coordinate2D> extends Circula
 		
 		return new String(info);
 	}
-	
+
+
+    @Override
+    public void editHeader(Header header, GridImage2D<CoordinateType> map, Unit sizeUnit) throws HeaderCardException {
+        super.editHeader(header, map, sizeUnit);
+        
+        double beamScaling = map.getUnderlyingBeam().getArea() / map.getImageBeamArea();
+        
+        peak.scale(beamScaling);
+        
+        header.addValue("SRCPEAK", peak.value() / map.getUnit().value(), "(" + map.getUnit().name() + ") source peak flux.");
+        header.addValue("SRCPKERR", peak.rms() / map.getUnit().value(), "(" + map.getUnit().name() + ") peak flux error.");
+
+        peak.scale(1.0 / beamScaling);
+        
+        DataPoint F = new DataPoint(getAdaptiveIntegral(map));
+        F.scale(map.getPixelArea() / map.getImageBeamArea());
+        F.scale(1.0 / map.getUnit().value());
+        
+        header.addValue("SRCINT", F.value(), "Source integrated flux.");
+        header.addValue("SRCIERR", F.rms(), "Integrated flux error.");
+        
+        header.addValue("SRCFWHM", getRadius().value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source FWHM.");
+        if(getRadius().weight() > 0.0) {
+            header.addValue("SRCWERR", getRadius().rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") FWHM error.");
+        }
+        
+    }
+    
 	
 }

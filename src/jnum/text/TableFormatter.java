@@ -22,10 +22,15 @@
  ******************************************************************************/
 package jnum.text;
 
+
+import java.text.Format;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.StringTokenizer;
 
 import jnum.Util;
+
 
 
 // TODO: Auto-generated Javadoc
@@ -72,11 +77,22 @@ public final class TableFormatter {
 					token = token.substring(0, i);
 				}
 				
-				line.append(entries.getFormattedEntry(token, formatSpec));				
+				Object entry = entries.getTableEntry(token);
+				Format f = null;
+				
+				if(entry == null) entry = NO_SUCH_DATA;
+				else if(entry instanceof Number) f = getNumberFormat(formatSpec);
+				else if(entry instanceof Date) {
+				    try { f = new SimpleDateFormat(formatSpec); }
+				    catch(IllegalArgumentException e) {}
+				}
+				
+				line.append(f == null ? entry : f.format(entry));				
 			}
 		}
 		return new String(line);		
 	}
+	
 	
 	/**
 	 * Gets the number format.
@@ -84,6 +100,7 @@ public final class TableFormatter {
 	 * @param spec the spec
 	 * @return the number format
 	 */
+	
 	public static NumberFormat getNumberFormat(String spec) {
 		if(spec == null) return null;
 		if(spec.length() == 0) return null;
@@ -173,6 +190,7 @@ public final class TableFormatter {
 			}
 			return tf;
 		}
+		
 		return null;
 	}
 	
@@ -188,10 +206,10 @@ public final class TableFormatter {
 		 * @param formatSpec the format spec
 		 * @return the formatted entry
 		 */
-		public String getFormattedEntry(String name, String formatSpec);
-
+		public Object getTableEntry(String name);
+		
 	}
 	
 	/** The no such data. */
-	public static String NO_SUCH_DATA = "(n/a)";
+	public static String NO_SUCH_DATA = "---";
 }
