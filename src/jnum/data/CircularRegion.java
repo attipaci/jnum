@@ -40,8 +40,6 @@ import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.text.AngleFormat;
 import jnum.text.TableFormatter;
-import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCardException;
 
 
 // TODO: Auto-generated Javadoc

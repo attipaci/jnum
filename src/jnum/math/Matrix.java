@@ -29,7 +29,7 @@ import java.util.*;
 
 import jnum.ExtraMath;
 import jnum.data.ArrayUtil;
-import jnum.util.ConvergenceException;
+import jnum.data.fitting.ConvergenceException;
 import jnum.util.HashCode;
 
 import java.text.*;
@@ -570,7 +570,7 @@ public class Matrix extends AbstractMatrix<Double> {
 					}
 					break;
 				}
-				if(its >= maxIterations) throw new ConvergenceException("SVD", its);
+				if(its >= maxIterations) throw new ConvergenceException("SVD did not converge in " + its + " steps.");
 				double x = w[l];
 				nm = k-1;
 				double y = w[nm];

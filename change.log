@@ -1,5 +1,11 @@
 0.10-2
 
+	[NEW] {Configurator} methods for processing environment-based and 
+	Java property-based conditionals.
+
+	[NEW] {CircularRegion+} possibility of reporting properties to FITS 
+	header.
+
 	[FIX] {Broadcaster} Concurrency issue with Broadcaster if new message 
 	is created while reporting another one. Fixed.
 
