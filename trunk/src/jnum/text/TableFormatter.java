@@ -28,8 +28,10 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 
 import jnum.Util;
+import jnum.astro.AstroTime;
 
 
 
@@ -78,14 +80,25 @@ public final class TableFormatter {
 				}
 				
 				Object entry = entries.getTableEntry(token);
+				
+				// Some automatic conversions to more manageable formats...
+				if(entry instanceof AstroTime) entry = ((AstroTime) entry).getDate();
+           
+				// Interpret the format specification based on the entry type
+				// e.g. number vs date.
 				Format f = null;
 				
 				if(entry == null) entry = NO_SUCH_DATA;
 				else if(entry instanceof Number) f = getNumberFormat(formatSpec);
 				else if(entry instanceof Date) {
-				    try { f = new SimpleDateFormat(formatSpec); }
+				    try { 
+				        SimpleDateFormat dateFormat = new SimpleDateFormat(formatSpec); 
+				        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+				        f = dateFormat;
+				    }
 				    catch(IllegalArgumentException e) {}
 				}
+				
 				
 				line.append(f == null ? entry : f.format(entry));				
 			}
