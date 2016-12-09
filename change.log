@@ -6,6 +6,8 @@
 	[NEW] {CircularRegion+} possibility of reporting properties to FITS 
 	header.
 
+	[FIX] {Configurator} 'relock' was not working.
+
 	[FIX] {Broadcaster} Concurrency issue with Broadcaster if new message 
 	is created while reporting another one. Fixed.
 

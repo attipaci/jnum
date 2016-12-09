@@ -431,7 +431,7 @@ public class Configurator implements Serializable, Cloneable {
                 addCondition(condition, setting);
             }
             else if(branchName.equals("lock")) lock(argument);
-            else if(branchName.equals("lock")) relock(argument);
+            else if(branchName.equals("relock")) relock(argument);
             else if(branchName.equals("unlock")) unlock();
             else set(branchName, key, argument);
         }
@@ -856,10 +856,9 @@ public class Configurator implements Serializable, Cloneable {
      * @param argument the argument
      */
     public void lock(String argument) {
-        if(!isBlacklisted()) {
-            if(!argument.isEmpty()) if(!isLocked) value = argument;
-            isLocked = true;
-        }
+        if(isBlacklisted()) return;
+        if(!argument.isEmpty()) if(!isLocked) value = argument;
+        isLocked = true;
     }
 
     /**
