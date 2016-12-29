@@ -145,16 +145,6 @@ public class DownhillSimplex extends Minimizer implements Scalable {
     }
 
     /* (non-Javadoc)
-     * @see jnum.data.fitting.Minimizer#hasConverged()
-     */
-    @Override
-    public boolean hasConverged() {
-        if(steps <= 0) return false;
-        if(steps >= maxSteps) return false;
-        return true;
-    }
-
-    /* (non-Javadoc)
      * @see jnum.data.fitting.Minimizer#init()
      */
     @Override
@@ -166,7 +156,8 @@ public class DownhillSimplex extends Minimizer implements Scalable {
     /**
      * Prepares the simplex for an upcoming minimization.
      */
-    private synchronized void arm() {
+    @Override
+    protected synchronized void arm() {
         int N = parameters();
 
         point = new double[N+1][N];
@@ -255,7 +246,6 @@ public class DownhillSimplex extends Minimizer implements Scalable {
         if(isVerbose()) System.err.println("\r " + steps + " --> " + Util.e6.format(value[ilo]) + "     ");
         
         if(isVerbose()) Util.info(this, "Final --> " + Util.e6.format(value[ilo]));
-
     }
 
     /* (non-Javadoc)
@@ -263,8 +253,7 @@ public class DownhillSimplex extends Minimizer implements Scalable {
      */
     @Override
     public double getMinimum() {
-        if(ilo >= 0) if(hasConverged()) return value[ilo];
-        return Double.NaN;
+        return value[ilo];
     }
 
 
@@ -361,7 +350,7 @@ public class DownhillSimplex extends Minimizer implements Scalable {
      */
     @Override
     public String toString(String lead) { 
-        return super.toString(lead) + "\n  " + lead + (hasConverged() ? "converged in " + steps + " steps" : "not converged!");
+        return super.toString(lead) + "\n  " + lead + (steps < maxSteps ? "converged in " + steps + " steps" : "not converged!");
     }
 
 

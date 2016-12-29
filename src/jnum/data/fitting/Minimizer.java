@@ -60,7 +60,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
         @Override
         public Double evaluate() { return Minimizer.this.evaluate(); } 
     };
-    
+      
     /**
      * Instantiates a new minimizer for a specified function using a set of variable parameters.
      *
@@ -84,8 +84,9 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
         this(function);
         this.parameters = parameters;
         init();
-    }    
+    }   
     
+  
     /**
      * Instantiates a new minimizer.
      *
@@ -93,8 +94,11 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      */
     private Minimizer(Parametric<Double> function) {
         this.function = function;
-        setPrecision(DEFAULT_PRECISION);
     }  
+    
+    public Parameter[] getParameters() { return parameters; }
+    
+    protected synchronized void arm() {}
     
     /**
      * The actual minimum-finding core procedure, that is the engine of the minimizer. 
@@ -113,14 +117,6 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      */
     public abstract double getMinimum();
     
-    /**
-     * Checks for convergence after minimization.
-     *
-     * @return true, if the fit has converged during the last invocation of {@link #minimize()}, false otherwise.
-     * 
-     * @see {@link #minimize()}
-     */
-    public abstract boolean hasConverged();
     
     /**
      * Minimize. This is a wrapper around {@link #findMinimum()} exposed to the user, which calls {@link #reset()} before it, 
@@ -130,21 +126,51 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      * @see {@link #reset()}, {@link #findMinimum()}, {@link #calcCovarianceMatrix()}, 
      *      {@link CovarianceMatrix#setParameterErrors()}
      */
-    public void minimize() throws ConvergenceException {
-        reset();
-        findMinimum();
-       
+    public final void minimize() throws ConvergenceException {
+        minimize(1);
+    }
+    
+    public void minimize(int attempts) throws ConvergenceException {
+        double min = Double.POSITIVE_INFINITY;
+        double[] bestValues = new double[parameters()];
+        int successes = 0;
+        
+        for(int i=0; i<attempts; i++) {
+            reset();
+            arm();
+        
+            try { findMinimum(); }
+            catch(ConvergenceException e) {
+                if(attempts == 1) throw e; 
+                continue;
+            }
+            
+            double value = getMinimum();
+            if(value < min) {
+                min = value;
+                for(int p=parameters(); --p >= 0; ) bestValues[p] = getParameter(p).value();
+                successes++;
+            }
+            
+        }
+        
+        if(successes == 0) throw new ConvergenceException(getClass().getSimpleName() + " has not converged in " + attempts + " attempt(s).");
+        
+        if(attempts > 1) for(int p=parameters(); --p >= 0; ) getParameter(p).setValue(bestValues[p]);
+            
         try { calcCovarianceMatrix(); }
         catch(IllegalArgumentException e) {}
         
-        if(function instanceof ChiSquared) calcStandardErrors();
+        if(getFunction() instanceof ChiSquared) calcStandardErrors();
     }
+    
     
     /**
      * Initializes the minimizer. This methods is called by the constructors. Subclasses can use it to prepare their
      * own initial states. It calls {@link #reset()} by default.
      */
     protected void init() {
+        setPrecision(DEFAULT_PRECISION);
         reset();
     }
     
@@ -162,7 +188,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      * @return the value, including penalties, of the function to be minimized.
      */
     public double evaluate() {  
-        return function.evaluate() * (1.0 + penalty());
+        return getFunction().evaluate() * (1.0 + penalty());
     }
     
     /* (non-Javadoc)
@@ -171,10 +197,12 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
     @Override
     public double penalty() {
         double penalty = 0.0;
-        for(Constraint constraint : constraints) penalty += constraint.penalty();
-        for(Parameter p : parameters) penalty += p.penalty();
+        for(Constraint constraint : getConstraints()) penalty += constraint.penalty();
+        for(Parameter p : getParameters()) penalty += p.penalty();
         return penalty;
     }
+    
+    public final Parametric<Double> getFunction() { return function; }
     
     /**
      * Gets the parametric cost function (which returns the same value as {@link #evaluate()}), which is the 
@@ -186,14 +214,16 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      */
     public Parametric<Double> getCostFunction() { return costFunction; }
 
+    
+    
     /**
      * Gets the parameter with index i from the list.
      *
      * @param i the parameter index.
      * @return the parameter at the specified index.
      */
-    public Parameter getParameter(int i) {
-        return parameters[i];
+    public final Parameter getParameter(int i) {
+        return getParameters()[i];
     }
     
     /**
@@ -201,7 +231,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      *
      * @return the number of variable parameters.
      */
-    public int parameters() { return parameters.length; }
+    public int parameters() { return getParameters().length; }
     
     /**
      * Adds an explicit constraint to the fit.
@@ -211,7 +241,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      * @see {@link #getConstraints()}, {@link #clearConstraints()}
      */
     public synchronized void addConstraint(Constraint constraint) {
-        constraints.add(constraint);
+        getConstraints().add(constraint);
     }
     
     /**
@@ -219,7 +249,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      * 
      * @see {@link #addConstraint(Constraint)}
      */
-    public synchronized void clearConstraints() { constraints.clear(); }
+    public synchronized void clearConstraints() { getConstraints().clear(); }
     
     /**
      * Gets the current list of external constraints that are applied to the fit.
@@ -258,8 +288,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      * Calculates covariance matrix via the numerical second derivatives (i.e. Hessian).
      */
     protected void calcCovarianceMatrix() {
-        if(!hasConverged()) throw new IllegalStateException(getClass().getSimpleName() + " has not converged.");
-        C = new CovarianceMatrix(costFunction, parameters, 1e2 * Math.sqrt(precision));
+        C = new CovarianceMatrix(getCostFunction(), getParameters(), 1e2 * Math.sqrt(precision));
     }
     
     /**
@@ -341,7 +370,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
     public String toString(String lead) {
         StringBuffer info = new StringBuffer(); 
                 
-        info.append(lead + getClass().getSimpleName() + " --> " + function.getClass().getSimpleName() + ":\n\n");
+        info.append(lead + getClass().getSimpleName() + " --> " + getFunction().getClass().getSimpleName() + ":\n\n");
         info.append(lead + "  min: " + Util.s4.format(getMinimum()) + "\n\n");
         
         for(int i=0; i<parameters(); i++) info.append(lead + "  " + getParameter(i).toString() + "\n");
