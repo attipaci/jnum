@@ -21,7 +21,7 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.mesh;
+package jnum;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2017 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,6 +24,7 @@
 package jnum.data.mesh;
 
 import java.lang.Float;
+
 
 // TODO: Auto-generated Javadoc
 /**
@@ -59,21 +60,22 @@ public class FloatMesh extends PrimitiveMesh<Float> {
         this();
         setData(data);
     }
-
+    
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#getScaled(java.lang.Number, double)
      */
     @Override
-    protected Float getScaled(Float value, double factor) {
+    protected final Float getScaled(Float value, double factor) {
         return (float) factor * value;
     }
 
+    
   
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#getSum(java.lang.Number, java.lang.Number)
      */
     @Override
-    protected Float getSum(Number a, Number b) {
+    protected final Float getSumOf(Number a, Number b) {
         return a.floatValue() + b.floatValue();
     }
 
@@ -81,7 +83,7 @@ public class FloatMesh extends PrimitiveMesh<Float> {
      * @see jnum.data.mesh.PrimitiveMesh#getDifference(java.lang.Number, java.lang.Number)
      */
     @Override
-    protected Float getDifference(Number a, Number b) {
+    protected final Float getDifferenceOf(Number a, Number b) {
         return a.floatValue() - b.floatValue();
     }
 
@@ -89,7 +91,7 @@ public class FloatMesh extends PrimitiveMesh<Float> {
      * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
      */
     @Override
-    protected Float zeroValue() {
+    protected final Float zeroValue() {
         return 0.0F;
     }
 
@@ -97,7 +99,7 @@ public class FloatMesh extends PrimitiveMesh<Float> {
      * @see jnum.data.mesh.PrimitiveMesh#baseLineElementAt(java.lang.Object, int)
      */
     @Override
-    protected Float baseLineElementAt(Object simpleArray, int index) {
+    protected Float lineElementAt(Object simpleArray, int index) {
         return ((float[]) simpleArray)[index];
     }
 
@@ -105,7 +107,7 @@ public class FloatMesh extends PrimitiveMesh<Float> {
      * @see jnum.data.mesh.PrimitiveMesh#setBaseLineElementAt(java.lang.Object, int, java.lang.Number)
      */
     @Override
-    protected void setBaseLineElementAt(Object simpleArray, int index, Float value) {
+    protected final void setLineElementAt(Object simpleArray, int index, Float value) {
         ((float[]) simpleArray)[index] = value;
     }
 
@@ -123,51 +125,6 @@ public class FloatMesh extends PrimitiveMesh<Float> {
     @Override
     public Mesh<Float> subarrayAt(int[] index) {
         return new FloatMesh(subarrayDataAt(index));
-    }
-
-    /* (non-Javadoc)
-     * @see jnum.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
-     */
-    @Override
-    public void addMultipleOf(PrimitiveMesh<?> o, double factor) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /* (non-Javadoc)
-     * @see jnum.math.Additive#add(java.lang.Object)
-     */
-    @Override
-    public void add(PrimitiveMesh<?> o) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /* (non-Javadoc)
-     * @see jnum.math.Additive#subtract(java.lang.Object)
-     */
-    @Override
-    public void subtract(PrimitiveMesh<?> o) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /* (non-Javadoc)
-     * @see jnum.math.Additive#setSum(java.lang.Object, java.lang.Object)
-     */
-    @Override
-    public void setSum(PrimitiveMesh<?> a, PrimitiveMesh<?> b) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /* (non-Javadoc)
-     * @see jnum.math.Additive#setDifference(java.lang.Object, java.lang.Object)
-     */
-    @Override
-    public void setDifference(PrimitiveMesh<?> a, PrimitiveMesh<?> b) {
-        // TODO Auto-generated method stub
-        
     }
 
     /* (non-Javadoc)

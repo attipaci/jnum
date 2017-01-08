@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-// (C)2007 Attila Kovacs <attila@submm.caltech.edu>
+
 
 package jnum.math;
 
@@ -31,7 +31,6 @@ import jnum.Util;
 import java.lang.reflect.*;
 
 
-// TODO: Auto-generated Javadoc
 // [row][col] format. This way dot products are on middle indices....
 
 /**

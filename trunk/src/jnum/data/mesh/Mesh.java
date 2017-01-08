@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2017 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -29,7 +29,6 @@ import java.io.Serializable;
 import java.util.*;
 
 import jnum.Copiable;
-import jnum.Function;
 import jnum.Util;
 import jnum.data.ArrayUtil;
 import jnum.data.DataIterator;
@@ -193,7 +192,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public MeshIterator<T> iterator() { return ArrayUtil.iterator(data); }
+	public Iterator<T> iterator() { return ArrayUtil.iterator(data); }
 
 	/**
 	 * Sets the element at.
@@ -260,15 +259,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	    return sub;
 	}
 	
-	/**
-	 * Adds the patch at.
-	 *
-	 * @param point the point
-	 * @param exactpos the exactpos
-	 * @param patchSize the patch size
-	 * @param shape the shape
-	 */
-	public abstract void addPatchAt(T point, double[] exactpos, double[] patchSize, Function<double[], Double> shape);
+	
 
 	/**
 	 * Parses the element.
@@ -349,5 +340,123 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 		return elements.toArray();		
 	}
 	
+	/**
+	 * The Class Mesh.Iterator.
+	 *
+	 * @param <T> the generic type
+	 */
+	public abstract static class Iterator<T> implements DataIterator<T> {
+	    
+	    /** The parent. */
+	    ObjectMesh.Iterator<T> parent;
+	    
+	    /** The to index. */
+	    int currentIndex, fromIndex, toIndex;
+	    
+	    /** The index. */
+	    int[] index;
+	    
+	    /**
+	     * Instantiates a new array iterator.
+	     */
+	    protected Iterator() {}
+	    
+	    /**
+	     * Instantiates a new array iterator.
+	     *
+	     * @param from the from
+	     * @param to the to
+	     */
+	    public Iterator(int[] from, int[] to) {
+	        fromIndex = from[0];
+	        toIndex = to[0];
+	        index = Arrays.copyOf(from, from.length);
+	    }
+	    
+	    /**
+	     * Sets the parent.
+	     *
+	     * @param iterator the new parent
+	     */
+	    public void setParent(ObjectMesh.Iterator<T> iterator) {
+	        parent = iterator;
+	    }
+	    
+	    /**
+	     * Gets the parent.
+	     *
+	     * @return the parent
+	     */
+	    public ObjectMesh.Iterator<T> getParent() {
+	        return parent;
+	    }
+	    
+	    /* (non-Javadoc)
+	     * @see kovacs.data.DataManager#reset()
+	     */
+	    @Override
+	    public abstract void reset();
+	    
+	    /**
+	     * Sets the array.
+	     *
+	     * @param data the new array
+	     * @throws IllegalArgumentException the illegal argument exception
+	     */
+	    public abstract void setArray(Object data) throws IllegalArgumentException; 
+
+	    /* (non-Javadoc)
+	     * @see kovacs.data.DataManager#setElement(java.lang.Object)
+	     */
+	    @Override
+	    public abstract void setElement(T element);
+	    
+	    /**
+	     * Sets the next element.
+	     *
+	     * @param element the new next element
+	     * @throws NoSuchElementException the no such element exception
+	     */
+	    public void setNextElement(T element) throws NoSuchElementException {
+	        next();
+	        setElement(element);
+	    }
+	    
+	    
+	    /**
+	     * Sets the index.
+	     *
+	     * @param index the new index
+	     */
+	    protected abstract void setIndex(int index);
+	    
+	    /**
+	     * Position.
+	     *
+	     * @param index the index
+	     */
+	    public void position(int[] index) { setIndex(index, 0); }
+	    
+	    /**
+	     * Sets the index.
+	     *
+	     * @param index the index
+	     * @param depth the depth
+	     */
+	    protected abstract void setIndex(int[] index, int depth);
+	    
+	    // returned index should be read-only access, else it may be corrupted!!!!
+	    /**
+	     * Gets the index.
+	     *
+	     * @return the index
+	     */
+	    public int[] getIndex() { return index; }
+	    
+	    // void setRange(int[] from, int[] to);
+	    // int[][] getRange(); // [from|to][]
+	    
+	}   
 	
+
 }

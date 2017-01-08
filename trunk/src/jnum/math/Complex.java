@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,17 +20,14 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.math;
-
-//package crush.util;
 
 import java.text.NumberFormat;
 
 
-// TODO: Auto-generated Javadoc
-//Add parsing
+
 
 /**
  * The class for handling complex numbers (x + i*y). 

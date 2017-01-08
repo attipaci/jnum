@@ -29,7 +29,7 @@ import jnum.fft.DoubleFFT;
 /**
  * The Class DoubleFFTPerfTest.
  */
-public class DoubleFFTPerfTest {
+public class DoubleFFTBenchmark {
 	
 	/**
 	 * The main method.
