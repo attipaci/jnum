@@ -20,6 +20,10 @@
 	[TWEAK] {ConsoleReporter} Console reporting of details now has space 
 	between leading '...' and message for cleaner visual appearance.
 
+	[UPDATE] Leap seconds updated to latest -- now 37 seconds...
+
+	[CODE] More work on multidimensional arrays (Mesh and subclasses).
+
 	[CODE] TableFormatter simplified generation of entries and toplevel
 	formatting.
 

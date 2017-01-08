@@ -397,7 +397,7 @@ public abstract class Parallel<ReturnType> implements Runnable, Cloneable {
 		}
 		
 		/**
-		 * Wait complete.
+		 * Wait until the processing is complete.
 		 */
 		public synchronized void waitComplete() {
 			for(Parallel<?> task : processes) {

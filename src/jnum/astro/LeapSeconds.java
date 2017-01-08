@@ -59,13 +59,13 @@ public final class LeapSeconds {
 	public static boolean verbose = false;
 	
 	/** The current leap. */
-	private static int currentLeap = 36;
+	private static int currentLeap = 37;
 	
 	/** The release epoch. */
-	private static long releaseEpoch = 3629404800L;	        // 5 Jan 2015 -- seconds since 1900
+	private static long releaseEpoch = 3676924800L;        // 8 July 2016 -- seconds since 1900
 	
 	/** The expiration epoch. */
-	private static long expirationEpoch = 3691872000L;		// 31 Dec 2016 -- seconds since 1900
+	private static long expirationEpoch = 3707596800L;     // 28 Jun 2017 -- seconds since 1900
 	
 	/** The expiration millis. */
 	private static long expirationMillis = millis1900 + 1000L * expirationEpoch;

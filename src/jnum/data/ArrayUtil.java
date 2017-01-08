@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2017 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -46,9 +46,10 @@ import jnum.Constant;
 import jnum.Copiable;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
-import jnum.data.mesh.MeshIterator;
-import jnum.data.mesh.ObjectMeshIterator;
+import jnum.data.mesh.Mesh;
+import jnum.data.mesh.ObjectMesh;
 import jnum.data.mesh.PrimitiveArrayIterator;
+import jnum.data.mesh.PrimitiveMesh;
 import jnum.math.AbsoluteValue;
 import jnum.math.Additive;
 import jnum.math.Complex;
@@ -888,8 +889,8 @@ public final class ArrayUtil {
 		try {
 			Object dest = createArray(getClass(array), newshape);
 
-			MeshIterator<T> sourceIterator = iterator(array, from, to);
-			MeshIterator<T> destIterator = iterator(dest, newshape.length);
+			Mesh.Iterator<T> sourceIterator = iterator(array, from, to);
+			Mesh.Iterator<T> destIterator = iterator(dest, newshape.length);
 
 			while(sourceIterator.hasNext()) destIterator.setNextElement(sourceIterator.next());  
 				
@@ -924,8 +925,8 @@ public final class ArrayUtil {
 		try {
 			Object destination = createArray(type, newdims);
 
-			MeshIterator<T> sourceIterator = iterator(array);
-			MeshIterator<T> destIterator = iterator(destination);
+			Mesh.Iterator<T> sourceIterator = iterator(array);
+			Mesh.Iterator<T> destIterator = iterator(destination);
 
 			while(sourceIterator.hasNext()) {
 				destIterator.next();
@@ -965,8 +966,8 @@ public final class ArrayUtil {
 	 * @param array the array
 	 * @return the array iterator
 	 */
-	public static <T> MeshIterator<T> iterator(Object array) {
-		if(array instanceof Object[]) return new ObjectMeshIterator<T>((Object[]) array);
+	public static <T> Mesh.Iterator<T> iterator(Object array) {
+		if(array instanceof Object[]) return new ObjectMesh.Iterator<T>((Object[]) array);
 		else return new PrimitiveArrayIterator<T>(array);
 	}
 	
@@ -978,9 +979,9 @@ public final class ArrayUtil {
 	 * @param depth the depth
 	 * @return the array iterator
 	 */
-	public static <T> MeshIterator<T> iterator(Object array, int depth) {
+	public static <T> Mesh.Iterator<T> iterator(Object array, int depth) {
 		if(depth >= getRank(array)) return iterator(array);
-		else return new ObjectMeshIterator<T>((Object[]) array, depth);
+		else return new ObjectMesh.Iterator<T>((Object[]) array, depth);
 	}
 	
 	/**
@@ -992,8 +993,8 @@ public final class ArrayUtil {
 	 * @param toIndex the to index
 	 * @return the array iterator
 	 */
-	public static <T> MeshIterator<T> iterator(Object array, int[] fromIndex, int[] toIndex) {
-		if(array instanceof Object[]) return new ObjectMeshIterator<T>((Object[]) array, fromIndex, toIndex);
+	public static <T> Mesh.Iterator<T> iterator(Object array, int[] fromIndex, int[] toIndex) {
+		if(array instanceof Object[]) return new ObjectMesh.Iterator<T>((Object[]) array, fromIndex, toIndex);
 		else return new PrimitiveArrayIterator<T>(array, fromIndex[0], toIndex[0]);	
 	}	
 	
@@ -1041,8 +1042,8 @@ public final class ArrayUtil {
 		if(dstSize != getNextSize(linearView)) throw new IllegalArgumentException("Folding to a an array of different size.");
 		
 		Object folded = createArray(linearView.getClass().getComponentType(), dimensions);
-		MeshIterator<T> dstIterator = iterator(folded);
-		MeshIterator<T> srcIterator = iterator(linearView);
+		Mesh.Iterator<T> dstIterator = iterator(folded);
+		Mesh.Iterator<T> srcIterator = iterator(linearView);
 		
 		while(srcIterator.hasNext()) dstIterator.setNextElement(srcIterator.next()); 
 
@@ -2050,7 +2051,7 @@ public final class ArrayUtil {
 			Object weightedSignalPatch = createArray(double.class, beamSize);
 			Object weightsPatch = createArray(double.class, beamSize);
 
-			MeshIterator<Double> iterator = iterator(smoothed);
+			Mesh.Iterator<Double> iterator = iterator(smoothed);
 
 			int[] position = iterator.getIndex();
 			int[] from = new int[position.length];
@@ -2269,9 +2270,7 @@ public final class ArrayUtil {
 	// TODO convolve via FFT
 	
 	
-	
-	
-	
+
 	/**
 	 * Adds the pin at.
 	 *
