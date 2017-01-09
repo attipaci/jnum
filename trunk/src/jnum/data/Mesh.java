@@ -4,25 +4,25 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
 
-package jnum.data.mesh;
+package jnum.data;
 
 
 import java.io.Serializable;
@@ -30,8 +30,6 @@ import java.util.*;
 
 import jnum.Copiable;
 import jnum.Util;
-import jnum.data.ArrayUtil;
-import jnum.data.DataIterator;
 import jnum.text.ParseType;
 
 // TODO: Auto-generated Javadoc
@@ -114,7 +112,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Copiable#copy()
+	 * @see jnum.Copiable#copy()
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -192,7 +190,10 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public Iterator<T> iterator() { return ArrayUtil.iterator(data); }
+	public MeshIterator<T> iterator() { return MeshIterator.createFor(data); }
+	
+
+    public MeshIterator<T> iterator(int[] from, int[] to) { return MeshIterator.createFor(data, from, to); }
 
 	/**
 	 * Sets the element at.
@@ -201,7 +202,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @param value the value
 	 */
 	public final void setElementAt(int[] index, T value) {
-		setLineElementAt(subarrayDataAt(index), index[index.length-1], value);
+		setLinearElementAt(subarrayDataAt(index), index[index.length-1], value);
 	}
 
 	/**
@@ -211,7 +212,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @return the t
 	 */
 	public T elementAt(int[] index) {
-		return lineElementAt(subarrayDataAt(index), index[index.length-1]);
+		return linearElementAt(subarrayDataAt(index), index[index.length-1]);
 	}
 	
 	/**
@@ -226,7 +227,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 		if(depth > size.length) throw new IllegalArgumentException("Index dimension exceeds that of the array.");
 		if(depth == size.length) depth--;
 		for(int i=0; i<depth; i++) subarray = ((Object[]) subarray)[index[i]];
-		return depth == index.length ? subarray : lineElementAt(subarray, index[depth]);		
+		return depth == index.length ? subarray : linearElementAt(subarray, index[depth]);		
 	}
 	
 	/**
@@ -236,7 +237,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @param index the index
 	 * @return the t
 	 */
-	protected abstract T lineElementAt(Object linearArray, int index); 
+	protected abstract T linearElementAt(Object linearArray, int index); 
 
 	/**
 	 * Sets the line element at.
@@ -245,7 +246,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @param index the index
 	 * @param value the value
 	 */
-	protected abstract void setLineElementAt(Object linearArray, int index, T value);
+	protected abstract void setLinearElementAt(Object linearArray, int index, T value);
 	
 	/**
 	 * Sub array at.
@@ -340,123 +341,4 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 		return elements.toArray();		
 	}
 	
-	/**
-	 * The Class Mesh.Iterator.
-	 *
-	 * @param <T> the generic type
-	 */
-	public abstract static class Iterator<T> implements DataIterator<T> {
-	    
-	    /** The parent. */
-	    ObjectMesh.Iterator<T> parent;
-	    
-	    /** The to index. */
-	    int currentIndex, fromIndex, toIndex;
-	    
-	    /** The index. */
-	    int[] index;
-	    
-	    /**
-	     * Instantiates a new array iterator.
-	     */
-	    protected Iterator() {}
-	    
-	    /**
-	     * Instantiates a new array iterator.
-	     *
-	     * @param from the from
-	     * @param to the to
-	     */
-	    public Iterator(int[] from, int[] to) {
-	        fromIndex = from[0];
-	        toIndex = to[0];
-	        index = Arrays.copyOf(from, from.length);
-	    }
-	    
-	    /**
-	     * Sets the parent.
-	     *
-	     * @param iterator the new parent
-	     */
-	    public void setParent(ObjectMesh.Iterator<T> iterator) {
-	        parent = iterator;
-	    }
-	    
-	    /**
-	     * Gets the parent.
-	     *
-	     * @return the parent
-	     */
-	    public ObjectMesh.Iterator<T> getParent() {
-	        return parent;
-	    }
-	    
-	    /* (non-Javadoc)
-	     * @see kovacs.data.DataManager#reset()
-	     */
-	    @Override
-	    public abstract void reset();
-	    
-	    /**
-	     * Sets the array.
-	     *
-	     * @param data the new array
-	     * @throws IllegalArgumentException the illegal argument exception
-	     */
-	    public abstract void setArray(Object data) throws IllegalArgumentException; 
-
-	    /* (non-Javadoc)
-	     * @see kovacs.data.DataManager#setElement(java.lang.Object)
-	     */
-	    @Override
-	    public abstract void setElement(T element);
-	    
-	    /**
-	     * Sets the next element.
-	     *
-	     * @param element the new next element
-	     * @throws NoSuchElementException the no such element exception
-	     */
-	    public void setNextElement(T element) throws NoSuchElementException {
-	        next();
-	        setElement(element);
-	    }
-	    
-	    
-	    /**
-	     * Sets the index.
-	     *
-	     * @param index the new index
-	     */
-	    protected abstract void setIndex(int index);
-	    
-	    /**
-	     * Position.
-	     *
-	     * @param index the index
-	     */
-	    public void position(int[] index) { setIndex(index, 0); }
-	    
-	    /**
-	     * Sets the index.
-	     *
-	     * @param index the index
-	     * @param depth the depth
-	     */
-	    protected abstract void setIndex(int[] index, int depth);
-	    
-	    // returned index should be read-only access, else it may be corrupted!!!!
-	    /**
-	     * Gets the index.
-	     *
-	     * @return the index
-	     */
-	    public int[] getIndex() { return index; }
-	    
-	    // void setRange(int[] from, int[] to);
-	    // int[][] getRange(); // [from|to][]
-	    
-	}   
-	
-
 }

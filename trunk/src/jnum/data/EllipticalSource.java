@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -145,7 +145,7 @@ public class EllipticalSource<CoordinateType extends Coordinate2D> extends Gauss
 	public DataPoint getAngle() { return angle; }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GaussianSource#measureShape(kovacs.util.data.GridImage)
+	 * @see jnum.data.GaussianSource#measureShape(jnum.data.GridImage)
 	 */
 	@Override
 	public void measureShape(GridImage2D<CoordinateType> map) {	
@@ -222,7 +222,7 @@ public class EllipticalSource<CoordinateType extends Coordinate2D> extends Gauss
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GaussianSource#getData(kovacs.util.data.GridImage, kovacs.util.Unit)
+	 * @see jnum.data.GaussianSource#getData(jnum.data.GridImage, jnum.Unit)
 	 */
 	@Override
 	public DataTable getData(GridImage2D<CoordinateType> map, Unit sizeUnit) {
@@ -244,7 +244,7 @@ public class EllipticalSource<CoordinateType extends Coordinate2D> extends Gauss
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GaussianSource#pointingInfo(kovacs.util.data.GridImage, kovacs.util.Unit)
+	 * @see jnum.data.GaussianSource#pointingInfo(jnum.data.GridImage, jnum.Unit)
 	 */
 	@Override
 	public String pointingInfo(GridImage2D<CoordinateType> map, Unit sizeUnit) {

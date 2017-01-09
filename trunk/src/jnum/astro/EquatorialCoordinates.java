@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -383,7 +383,7 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.Precessing#precess(kovacs.util.astro.CoordinateEpoch)
+	 * @see jnum.astro.Precessing#precess(jnum.astro.CoordinateEpoch)
 	 */
 	@Override
 	public void precess(CoordinateEpoch newEpoch) {
@@ -393,7 +393,7 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalCoordinates#toString()
+	 * @see jnum.SphericalCoordinates#toString()
 	 */
 	@Override
 	public String toString() {
@@ -411,7 +411,7 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalCoordinates#toString(java.text.NumberFormat)
+	 * @see jnum.SphericalCoordinates#toString(java.text.NumberFormat)
 	 */
 	@Override
 	public String toString(NumberFormat nf) {
@@ -420,7 +420,7 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalCoordinates#parse(java.lang.String)
+	 * @see jnum.SphericalCoordinates#parse(java.lang.String)
 	 */
 	@Override
 	public void parse(String coords) throws NumberFormatException, IllegalArgumentException {
@@ -433,7 +433,7 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
+	 * @see jnum.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
 	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {
@@ -443,7 +443,7 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalCoordinates#parse(nom.tam.fits.Header, java.lang.String)
+	 * @see jnum.SphericalCoordinates#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
 	public void parse(Header header, String alt) {
@@ -460,13 +460,13 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.CelestialCoordinates#getEquatorialPole()
+	 * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
 	 */
 	@Override
 	public EquatorialCoordinates getEquatorialPole() { return equatorialPole; }
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.CelestialCoordinates#getZeroLongitude()
+	 * @see jnum.astro.CelestialCoordinates#getZeroLongitude()
 	 */
 	@Override
 	public double getZeroLongitude() { return 0.0; }
@@ -475,13 +475,13 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	private static EquatorialCoordinates equatorialPole = new EquatorialCoordinates(0.0, Constant.rightAngle);
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.Precessing#getEpoch()
+	 * @see jnum.astro.Precessing#getEpoch()
 	 */
 	@Override
 	public CoordinateEpoch getEpoch() { return epoch; }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.Precessing#setEpoch(kovacs.util.astro.CoordinateEpoch)
+	 * @see jnum.astro.Precessing#setEpoch(jnum.astro.CoordinateEpoch)
 	 */
 	@Override
 	public void setEpoch(CoordinateEpoch epoch) { this.epoch = epoch; }

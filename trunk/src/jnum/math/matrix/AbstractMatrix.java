@@ -4,35 +4,35 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.math;
+package jnum.math.matrix;
 
 
 
 import java.text.*;
 import java.io.Serializable;
 import java.lang.reflect.*;
-import java.util.*;
 
 import jnum.CopiableContent;
 import jnum.Util;
 import jnum.data.ArrayUtil;
+import jnum.math.Multiplicative;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
@@ -156,7 +156,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	protected abstract void checkShape() throws IllegalStateException;
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Copiable#copy()
+	 * @see jnum.Copiable#copy()
 	 */
 	@Override
 	public AbstractMatrix<T> copy() {
@@ -164,7 +164,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.CopiableContent#copy(boolean)
+	 * @see jnum.CopiableContent#copy(boolean)
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -534,7 +534,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public Iterator<T> iterator() { return new MatrixIterator<T>(this); }
+	public java.util.Iterator<T> iterator() { return new Iterator(); }
 	
 	
 	/** The Constant ROW_VECTOR. */
@@ -681,6 +681,48 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	public void scale(T scalar) {
 		for(int i=0; i<rows(); i++) scaleRow(i, scalar);
 	}
+	
+	
+	/**
+     * The Class Matrix.Iterator.
+     *
+     * @param <T> the generic type
+     */
+    private class Iterator implements java.util.Iterator<T> {
+        private int rows = rows(), cols = cols();
+        private int i=0, j=-1;
+        
+        /* (non-Javadoc)
+         * @see java.util.Iterator#hasNext()
+         */
+        @Override
+        public final boolean hasNext() {
+            if(i < rows) return true;
+            return j < cols;
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.Iterator#next()
+         */
+        @Override
+        public final T next() {
+            j++;
+            if(j >= cols) {
+                j=0;
+                i++;
+            }
+            return getValue(i, j);
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.Iterator#remove()
+         */
+        @Override
+        public final void remove() {
+            throw new UnsupportedOperationException("Cannot remove elements from a matrix type object.");
+        }
+
+    }
 	
 	
 }

@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -353,7 +353,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.RealFFT#realTransform(java.lang.Object, boolean)
+	 * @see jnum.fft.RealFFT#realTransform(java.lang.Object, boolean)
 	 */
 	@Override
 	public final void realTransform(final float data[], final boolean isForward) {
@@ -507,7 +507,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.RealFFT#real2Amplitude(java.lang.Object)
+	 * @see jnum.fft.RealFFT#real2Amplitude(java.lang.Object)
 	 */	
 	@Override
 	public void real2Amplitude(final float[] data) {
@@ -530,7 +530,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.RealFFT#amplitude2Real(java.lang.Object)
+	 * @see jnum.fft.RealFFT#amplitude2Real(java.lang.Object)
 	 */
 	@Override
 	public void amplitude2Real(final float[] data) { 
@@ -541,7 +541,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	
 	// Rewritten to skip costly intermediate Complex storage...
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#averagePower(java.lang.Object, double[])
+	 * @see jnum.fft.FFT#averagePower(java.lang.Object, double[])
 	 */
 	@Override
 	public double[] averagePower(float[] data, final double[] w) {
@@ -586,13 +586,13 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#addressSizeOf(java.lang.Object)
+	 * @see jnum.fft.FFT#addressSizeOf(java.lang.Object)
 	 */
 	@Override
 	int addressSizeOf(final float[] data) { return data.length>>>1; }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#getPadded(java.lang.Object, int)
+	 * @see jnum.fft.FFT#getPadded(java.lang.Object, int)
 	 */
 	@Override
 	public float[] getPadded(final float[] data, final int n) {
@@ -606,7 +606,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#getMaxErrorBitsFor(java.lang.Object)
+	 * @see jnum.fft.FFT#getMaxErrorBitsFor(java.lang.Object)
 	 */
 	@Override
 	public int countOps(float[] data) {
@@ -631,7 +631,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#getMaxSignificantBits()
+	 * @see jnum.fft.FFT#getMaxSignificantBits()
 	 */
 	@Override
 	final int getMaxSignificantBitsFor(float[] data) {
@@ -656,7 +656,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 		private static final long serialVersionUID = 3073121404450602358L;
 
 		/* (non-Javadoc)
-		 * @see kovacs.util.fft.FFT#addressSizeOf(java.lang.Object)
+		 * @see jnum.fft.FFT#addressSizeOf(java.lang.Object)
 		 */
 		// Ignore the presence of an extra component, used for real transforms...
 		@Override

@@ -4,28 +4,27 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.data.mesh;
+package jnum.data;
 
 
 import jnum.Function;
 import jnum.NonConformingException;
-import jnum.data.ArrayUtil;
 import jnum.math.LinearAlgebra;
 
 
@@ -83,7 +82,7 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
 	 */
 	@Override
     public void zero() {
-        Mesh.Iterator<T> iterator = iterator();
+        MeshIterator<T> iterator = iterator();
         while(iterator.hasNext()) {
             iterator.next();
             iterator.setElement(zeroValue());
@@ -95,7 +94,7 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
 	 */
 	@Override
     public void scale(double factor) {
-        Mesh.Iterator<T> iterator = iterator();
+        MeshIterator<T> iterator = iterator();
         while(iterator.hasNext()) {
             T value = iterator.next();
             iterator.setElement(getScaled(value, factor));
@@ -113,8 +112,8 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
     public void addMultipleOf(PrimitiveMesh<? extends Number> o, double factor) {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
         
-        Mesh.Iterator<T> i = iterator();
-        Mesh.Iterator<? extends Number> i2 = o.iterator();
+        MeshIterator<T> i = iterator();
+        MeshIterator<? extends Number> i2 = o.iterator();
         
         while(i.hasNext()) {
             i.setElement(getSumOf(i.next(), i2.next().doubleValue() * factor));
@@ -133,8 +132,8 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
     public void add(PrimitiveMesh<? extends Number> o) throws NonConformingException {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
         
-        Mesh.Iterator<T> i = iterator();
-        Iterator<? extends Number> i2 = (Iterator<? extends Number>) o.iterator();
+        MeshIterator<T> i = iterator();
+        MeshIterator<? extends Number> i2 = (MeshIterator<? extends Number>) o.iterator();
         
         while(i.hasNext()) {
             i.setElement(getSumOf(i.next(), i2.next()));
@@ -151,8 +150,8 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
     public void subtract(PrimitiveMesh<? extends Number> o) throws NonConformingException {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
         
-        Mesh.Iterator<T> i = iterator();
-        Mesh.Iterator<? extends Number> i2 = o.iterator();
+        MeshIterator<T> i = iterator();
+        MeshIterator<? extends Number> i2 = o.iterator();
         
         while(i.hasNext()) {
             i.setElement(getDifferenceOf(i.next(), i2.next()));
@@ -170,9 +169,9 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
 	    if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
 	    if(!b.conformsTo(this)) throw new NonConformingException("non-conforming second argument.");
 	    
-	    Mesh.Iterator<T> i = iterator();
-	    Mesh.Iterator<? extends Number> iA = a.iterator();
-        Mesh.Iterator<? extends Number> iB = b.iterator();
+	    MeshIterator<T> i = iterator();
+	    MeshIterator<? extends Number> iA = a.iterator();
+        MeshIterator<? extends Number> iB = b.iterator();
         
         while(i.hasNext()) {
             i.setNextElement(getSumOf(iA.next(), iB.next()));
@@ -191,9 +190,9 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
 	    if(!a.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
         if(!b.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
         
-        Mesh.Iterator<T> i = iterator();
-        Mesh.Iterator<? extends Number> iA = a.iterator();
-        Mesh.Iterator<? extends Number> iB = b.iterator();
+        MeshIterator<T> i = iterator();
+        MeshIterator<? extends Number> iA = a.iterator();
+        MeshIterator<? extends Number> iB = b.iterator();
         
         while(i.hasNext()) {
             i.setNextElement(getDifferenceOf(iA.next(), iB.next()));
@@ -223,7 +222,7 @@ public abstract class PrimitiveMesh<T extends Number> extends Mesh<T> implements
             to[i] = Math.min(size[i], (int) Math.ceil(exactOffset[i] + patchSize[i]));
         }
         
-        Mesh.Iterator<T> i = ArrayUtil.iterator(data, from, to);
+        MeshIterator<T> i = MeshIterator.createFor(data, from, to);
         
         while(i.hasNext()) {
             int[] index = i.getIndex();

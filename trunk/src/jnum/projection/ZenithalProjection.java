@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -46,7 +46,7 @@ public abstract class ZenithalProjection extends SphericalProjection {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalProjection#calcCelestialPole()
+	 * @see jnum.SphericalProjection#calcCelestialPole()
 	 */
 	@Override 
 	public void calcCelestialPole() {
@@ -54,7 +54,7 @@ public abstract class ZenithalProjection extends SphericalProjection {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalProjection#phi(kovacs.util.Coordinate2D)
+	 * @see jnum.SphericalProjection#phi(jnum.Coordinate2D)
 	 */
 	@Override
 	protected final void getPhiTheta(final Coordinate2D offset, final SphericalCoordinates phiTheta) {
@@ -63,7 +63,7 @@ public abstract class ZenithalProjection extends SphericalProjection {
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalProjection#getOffsets(double, double, kovacs.util.Coordinate2D)
+	 * @see jnum.SphericalProjection#getOffsets(double, double, jnum.Coordinate2D)
 	 */
 	@Override
 	protected final void getOffsets(final double theta, final double phi, final Coordinate2D toOffset) {

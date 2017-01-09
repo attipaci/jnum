@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -141,7 +141,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#copy(kovacs.util.data.Data2D, int)
+	 * @see jnum.data.Data2D#copy(jnum.data.Data2D, int)
 	 */
 	@Override
 	protected void copy(Data2D other, int i) {
@@ -156,7 +156,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#setImage(kovacs.util.data.Data2D)
+	 * @see jnum.data.Data2D#setImage(jnum.data.Data2D)
 	 */
 	@Override
 	public void setImage(Data2D other) {
@@ -171,7 +171,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#annihilate()
+	 * @see jnum.data.Data2D#annihilate()
 	 */
 	@Override
 	public void destroy() {
@@ -181,7 +181,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#setSize(int, int)
+	 * @see jnum.data.Data2D#setSize(int, int)
 	 */
 	@Override
 	public void setSize(int i, int j) {
@@ -191,7 +191,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#getPixelInfo(int, int)
+	 * @see jnum.data.Data2D#getPixelInfo(int, int)
 	 */
 	@Override
 	public String getPixelInfo(int i, int j) {
@@ -202,7 +202,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GridImage#crop(int, int, int, int)
+	 * @see jnum.data.GridImage#crop(int, int, int, int)
 	 */
 	@Override
 	protected void crop(int imin, int jmin, int imax, int jmax) {
@@ -225,7 +225,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#clear(int, int)
+	 * @see jnum.data.Data2D#clear(int, int)
 	 */
 	@Override
 	public void zero(int i, int  j) {
@@ -326,7 +326,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#sanitize(int, int)
+	 * @see jnum.data.Data2D#sanitize(int, int)
 	 */
 	@Override
 	protected void sanitize(int i, int j) {
@@ -528,7 +528,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#smooth(double[][])
+	 * @see jnum.data.Data2D#smooth(double[][])
 	 */
 	@Override
 	public void smooth(double[][] beam) {
@@ -541,7 +541,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#fastSmooth(double[][], int, int)
+	 * @see jnum.data.Data2D#fastSmooth(double[][], int, int)
 	 */
 	@Override
 	public void fastSmooth(double[][] beam, int stepX, int stepY) {
@@ -556,7 +556,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GridImage#resample(kovacs.util.data.GridImage)
+	 * @see jnum.data.GridImage#resample(jnum.data.GridImage)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -646,7 +646,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#getRMS(int, int)
+	 * @see jnum.data.Data2D#getRMS(int, int)
 	 */
 	@Override
 	public final double getRMS(final int i, final int j) {
@@ -654,7 +654,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#getS2N(int, int)
+	 * @see jnum.data.Data2D#getS2N(int, int)
 	 */
 	@Override
 	public final double getS2N(final int i, final int j) {
@@ -688,7 +688,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	
 		
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#getSkip(double)
+	 * @see jnum.data.Data2D#getSkip(double)
 	 */
 	@Override
 	public int[][] getSkip(final double blankingValue) {
@@ -753,7 +753,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#median()
+	 * @see jnum.data.Data2D#median()
 	 */
 	@Override
 	public double median() {
@@ -893,7 +893,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#createFits()
+	 * @see jnum.data.Data2D#createFits()
 	 */
 	@Override
 	public Fits createFits(Class<? extends Number> dataType) throws HeaderCardException, FitsException, IOException {
@@ -906,7 +906,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GridImage#parseHeader(nom.tam.fits.Header)
+	 * @see jnum.data.GridImage#parseHeader(nom.tam.fits.Header)
 	 */
 	@Override
 	protected void parseHeader(Header header, String alt) throws Exception {			
@@ -989,7 +989,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GridImage#editHeader(nom.tam.util.Cursor)
+	 * @see jnum.data.GridImage#editHeader(nom.tam.util.Cursor)
 	 */
 	@Override
 	public void editHeader(Header header, Cursor<String, HeaderCard> cursor) throws HeaderCardException, FitsException, IOException {
@@ -1123,7 +1123,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GridImage#clean(double[][], double, double)
+	 * @see jnum.data.GridImage#clean(double[][], double, double)
 	 */
 	@Override
 	public int clean(double[][] beam, double gain, GaussianPSF replacementBeam) {
@@ -1132,7 +1132,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GridImage#toString()
+	 * @see jnum.data.GridImage#toString()
 	 */
 	@Override
 	public String toString() {	
@@ -1146,7 +1146,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Timed2D#getTime()
+	 * @see jnum.data.Timed2D#getTime()
 	 */
 	@Override
 	public final double[][] getTime() {
@@ -1154,7 +1154,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Timed2D#setTime(double[][])
+	 * @see jnum.data.Timed2D#setTime(double[][])
 	 */
 	@Override
 	public final void setTime(final double[][] image) {
@@ -1162,7 +1162,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Timed2D#getTime(int, int)
+	 * @see jnum.data.Timed2D#getTime(int, int)
 	 */
 	@Override
 	public final double getTime(final int i, final int j) {
@@ -1170,7 +1170,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Timed2D#setTime(int, int, double)
+	 * @see jnum.data.Timed2D#setTime(int, int, double)
 	 */
 	@Override
 	public final void setTime(final int i, final int j, final double t) {
@@ -1178,7 +1178,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Timed2D#incrementTime(int, int, double)
+	 * @see jnum.data.Timed2D#incrementTime(int, int, double)
 	 */
 	@Override
 	public final void incrementTime(final int i, final int j, final double dt) {
@@ -1200,7 +1200,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Weighted2D#getWeight()
+	 * @see jnum.data.Weighted2D#getWeight()
 	 */
 	@Override
 	public final double[][] getWeight() {
@@ -1208,7 +1208,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Weighted2D#setWeight(double[][])
+	 * @see jnum.data.Weighted2D#setWeight(double[][])
 	 */
 	@Override
 	public final void setWeight(final double[][] image) {
@@ -1216,7 +1216,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#getWeight(int, int)
+	 * @see jnum.data.Data2D#getWeight(int, int)
 	 */
 	@Override
 	public final double getWeight(final int i, final int j) {
@@ -1224,7 +1224,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Weighted2D#scaleWeight(double)
+	 * @see jnum.data.Weighted2D#scaleWeight(double)
 	 */
 	@Override
 	public void scaleWeight(final double scalar) {
@@ -1237,7 +1237,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Weighted2D#setWeight(int, int, double)
+	 * @see jnum.data.Weighted2D#setWeight(int, int, double)
 	 */
 	@Override
 	public final void setWeight(final int i, final int j, final double w) {
@@ -1245,7 +1245,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Weighted2D#incrementWeight(int, int, double)
+	 * @see jnum.data.Weighted2D#incrementWeight(int, int, double)
 	 */
 	@Override
 	public final void incrementWeight(final int i, final int j, final double dw) {
@@ -1253,7 +1253,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Weighted2D#scaleWeight(int, int, double)
+	 * @see jnum.data.Weighted2D#scaleWeight(int, int, double)
 	 */
 	@Override
 	public void scaleWeight(final int i, final int j, final double factor) {
@@ -1274,7 +1274,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Noise2D#getRMS()
+	 * @see jnum.data.Noise2D#getRMS()
 	 */
 	@Override
 	public double[][] getRMS() {
@@ -1289,7 +1289,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Noise2D#setRMS(double[][])
+	 * @see jnum.data.Noise2D#setRMS(double[][])
 	 */
 	@Override
 	public void setRMS(final double[][] image) {
@@ -1300,7 +1300,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Noise2D#scaleRMS(double)
+	 * @see jnum.data.Noise2D#scaleRMS(double)
 	 */
 	@Override
 	public void scaleRMS(final double scalar) {
@@ -1308,7 +1308,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Noise2D#setRMS(int, int, double)
+	 * @see jnum.data.Noise2D#setRMS(int, int, double)
 	 */
 	@Override
 	public void setRMS(int i, int j, double sigma) {
@@ -1316,7 +1316,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Noise2D#scaleRMS(int, int, double)
+	 * @see jnum.data.Noise2D#scaleRMS(int, int, double)
 	 */
 	@Override
 	public void scaleRMS(int i, int j, double factor) {
@@ -1339,7 +1339,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Noise2D#getS2N()
+	 * @see jnum.data.Noise2D#getS2N()
 	 */
 	@Override
 	public double[][] getS2N() {
@@ -1354,7 +1354,7 @@ public class GridMap2D<CoordinateType extends Coordinate2D> extends GridImage2D<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.GridImage#getFormattedEntry(java.lang.String, java.lang.String)
+	 * @see jnum.data.GridImage#getFormattedEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Object getTableEntry(String name) {

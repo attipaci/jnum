@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -73,13 +73,13 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Grid2D#isReverseX()
+	 * @see jnum.data.Grid2D#isReverseX()
 	 */
 	@Override
 	public boolean isReverseX() { return getReference().isReverseLongitude(); }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Grid2D#isReverseY()
+	 * @see jnum.data.Grid2D#isReverseY()
 	 */
 	@Override
 	public boolean isReverseY() { return getReference().isReverseLatitude(); }
@@ -92,7 +92,7 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	public Unit getDefaultFITSAxisUnit() { return SphericalCoordinates.degree; }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Grid2D#parseProjection(nom.tam.fits.Header)
+	 * @see jnum.data.Grid2D#parseProjection(nom.tam.fits.Header)
 	 */
 	@Override
 	public void parseProjection(Header header) throws HeaderCardException {
@@ -103,7 +103,7 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Grid2D#getCoordinateInstanceFor(java.lang.String)
+	 * @see jnum.data.Grid2D#getCoordinateInstanceFor(java.lang.String)
 	 */
 	@Override
 	public SphericalCoordinates getCoordinateInstanceFor(String type) throws InstantiationException, IllegalAccessException {

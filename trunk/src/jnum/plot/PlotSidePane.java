@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -62,13 +62,13 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.plot.PlotSide#getSide()
+	 * @see jnum.plot.PlotSide#getSide()
 	 */
 	@Override
 	public int getSide() { return side; }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.plot.PlotSide#setSide(int)
+	 * @see jnum.plot.PlotSide#setSide(int)
 	 */
 	@Override
 	public void setSide(int side) {
@@ -114,7 +114,7 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 	public PlotSideRuler getRuler() { return ruler; }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.plot.Arrangeable#arrange()
+	 * @see jnum.plot.Arrangeable#arrange()
 	 */
 	@Override
 	public void arrange() {
@@ -191,13 +191,13 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.plot.PlotSide#isHorizontal()
+	 * @see jnum.plot.PlotSide#isHorizontal()
 	 */
 	@Override
 	public boolean isHorizontal() { return side == Plot.TOP_SIDE || side == Plot.BOTTOM_SIDE; }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.plot.PlotSide#isVertical()
+	 * @see jnum.plot.PlotSide#isVertical()
 	 */
 	@Override
 	public boolean isVertical() { return side == Plot.LEFT_SIDE || side == Plot.RIGHT_SIDE; }

@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -330,7 +330,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 	
 	// Rewritten to skip costly intermediate Complex storage...
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#averagePower(java.lang.Object, double[])
+	 * @see jnum.fft.FFT#averagePower(java.lang.Object, double[])
 	 */
 	@Override
 	public double[] averagePower(final Complex[] data, final double[] w) {
@@ -372,13 +372,13 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#addressSizeOf(java.lang.Object)
+	 * @see jnum.fft.FFT#addressSizeOf(java.lang.Object)
 	 */
 	@Override
 	final int addressSizeOf(final Complex[] data) { return data.length; }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#getPadded(java.lang.Object, int)
+	 * @see jnum.fft.FFT#getPadded(java.lang.Object, int)
 	 */
 	@Override
 	public Complex[] getPadded(final Complex[] data, final int n) {
@@ -393,7 +393,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#getMaxErrorBitsFor(java.lang.Object)
+	 * @see jnum.fft.FFT#getMaxErrorBitsFor(java.lang.Object)
 	 */
 	@Override
 	public int countOps(Complex[] data) {
@@ -419,7 +419,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.fft.FFT#getMaxSignificantBits()
+	 * @see jnum.fft.FFT#getMaxSignificantBits()
 	 */
 	@Override
 	final int getMaxSignificantBitsFor(Complex[] data) {

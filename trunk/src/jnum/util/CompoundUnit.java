@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -54,7 +54,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	public CompoundUnit(String spec, ExponentUnit template) { super(spec); }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Unit#copy()
+	 * @see jnum.Unit#copy()
 	 */
 	@Override
 	public Unit copy() {
@@ -64,7 +64,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Unit#name()
+	 * @see jnum.Unit#name()
 	 */
 	@Override
 	public String name() {
@@ -140,7 +140,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Unit#value()
+	 * @see jnum.Unit#value()
 	 */
 	@Override
 	public double value() {
@@ -150,7 +150,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Unit#setMultiplier(kovacs.util.Unit.Multiplier)
+	 * @see jnum.Unit#setMultiplier(jnum.Unit.Multiplier)
 	 */
 	@Override
 	public void setMultiplier(Multiplier m) { 
@@ -159,7 +159,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Unit#getMultiplier()
+	 * @see jnum.Unit#getMultiplier()
 	 */
 	@Override
 	public Multiplier getMultiplier() { 

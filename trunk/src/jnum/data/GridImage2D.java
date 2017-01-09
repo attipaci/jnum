@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -182,7 +182,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#copy(boolean)
+	 * @see jnum.data.Data2D#copy(boolean)
 	 */
 	@SuppressWarnings({ "unchecked", "cast" })
 	@Override
@@ -545,7 +545,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#crop(int, int, int, int)
+	 * @see jnum.data.Data2D#crop(int, int, int, int)
 	 */
 	@Override
 	protected void crop(int imin, int jmin, int imax, int jmax) {
@@ -1284,7 +1284,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#editHeader(nom.tam.util.Cursor)
+	 * @see jnum.data.Data2D#editHeader(nom.tam.util.Cursor)
 	 */
 	@Override
 	public void editHeader(Header header, Cursor<String, HeaderCard> cursor) throws HeaderCardException, FitsException, IOException {
@@ -1456,7 +1456,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#addBaseUnits()
+	 * @see jnum.data.Data2D#addBaseUnits()
 	 */
 	@Override
 	public void addBaseUnits() {
@@ -1531,7 +1531,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		}
 		
 		/* (non-Javadoc)
-		 * @see kovacs.util.Unit#value()
+		 * @see jnum.Unit#value()
 		 */
 		@Override
 		public double value() { return getImageBeamArea(); }
@@ -1551,7 +1551,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 		private PixelAreaUnit() { super("pixel", Double.NaN); }
 		
 		/* (non-Javadoc)
-		 * @see kovacs.util.Unit#value()
+		 * @see jnum.Unit#value()
 		 */
 		@Override
 		public double value() { return getPixelArea(); }
@@ -1565,7 +1565,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	public Class<? extends Coordinate2D> getCoordinateClass() { return getReference().getClass(); }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Data2D#getFormattedEntry(java.lang.String, java.lang.String)
+	 * @see jnum.data.Data2D#getFormattedEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Object getTableEntry(String name) {

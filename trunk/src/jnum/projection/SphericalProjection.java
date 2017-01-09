@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -93,7 +93,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#equals(java.lang.Object)
+	 * @see jnum.Projection2D#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object o) {
@@ -110,7 +110,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#hashCode()
+	 * @see jnum.Projection2D#hashCode()
 	 */
 	@Override
 	public int hashCode() {
@@ -122,7 +122,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#copy()
+	 * @see jnum.Projection2D#copy()
 	 */
 	@Override
 	public Projection2D<SphericalCoordinates> copy() {
@@ -145,7 +145,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	
 	// Global projection
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#project(kovacs.util.Coordinate2D, kovacs.util.Coordinate2D)
+	 * @see jnum.Projection2D#project(jnum.Coordinate2D, jnum.Coordinate2D)
 	 */
 	@Override
 	public void project(final SphericalCoordinates coords, final Coordinate2D toProjected) {		
@@ -181,7 +181,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	
 	// Global deprojection
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#deproject(kovacs.util.Coordinate2D, kovacs.util.Coordinate2D)
+	 * @see jnum.Projection2D#deproject(jnum.Coordinate2D, jnum.Coordinate2D)
 	 */
 	@Override
 	public void deproject(final Coordinate2D projected, final SphericalCoordinates toCoords) {	
@@ -233,7 +233,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	protected abstract void getOffsets(double theta, double phi, Coordinate2D toOffset);
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#setReference(kovacs.util.Coordinate2D)
+	 * @see jnum.Projection2D#setReference(jnum.Coordinate2D)
 	 */
 	@Override
 	public void setReference(SphericalCoordinates coords) {
@@ -364,7 +364,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#edit(nom.tam.util.Cursor, java.lang.String)
+	 * @see jnum.Projection2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
 	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {		
@@ -406,7 +406,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#parse(nom.tam.fits.Header, java.lang.String)
+	 * @see jnum.Projection2D#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
 	public void parse(Header header, String alt) {
@@ -468,7 +468,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#getCoordinateInstance()
+	 * @see jnum.Projection2D#getCoordinateInstance()
 	 */
 	@Override
 	public SphericalCoordinates getCoordinateInstance() {

@@ -22,10 +22,21 @@
 
 	[UPDATE] Leap seconds updated to latest -- now 37 seconds...
 
-	[CODE] More work on multidimensional arrays (Mesh and subclasses).
+	[CODE] MatrixIterator class is hidden (private subclass of
+	AbstractMatrix).
+
+	[CODE] Reorganization: jnum.data.mesh.* --> jnum.data.*
+	
+	[CODE] Reorganization: Matrixes and related classes moved to new
+	jnum.math.matrix package,
+
+	[CODE] Work on multidimensional arrays (Mesh and subclasses).
 
 	[CODE] TableFormatter simplified generation of entries and toplevel
 	formatting.
+
+	[COPYRIGHT] Fixed stale reference to kovacs.util in copyright notices
+	in all source files.
 
 
 0.10-1
