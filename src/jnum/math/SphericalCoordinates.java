@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -164,7 +164,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#copy(kovacs.util.Coordinate2D)
+	 * @see jnum.Coordinate2D#copy(jnum.Coordinate2D)
 	 */
 	@Override
 	public void copy(Coordinate2D coords) {
@@ -190,7 +190,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#addY(double)
+	 * @see jnum.Coordinate2D#addY(double)
 	 */
 	@Override
 	public final void addY(final double value) { 
@@ -201,7 +201,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#addY(double)
+	 * @see jnum.Coordinate2D#addY(double)
 	 */
 	@Override
 	public final void subtractY(final double value) { 
@@ -211,19 +211,19 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#zero()
+	 * @see jnum.Coordinate2D#zero()
 	 */
 	@Override
 	public void zero() { super.zero(); cosLat = 1.0; sinLat = 0.0; }
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#NaN()
+	 * @see jnum.Coordinate2D#NaN()
 	 */
 	@Override
 	public void NaN() { super.NaN(); cosLat = Double.NaN; sinLat = Double.NaN; }
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#set(double, double)
+	 * @see jnum.Coordinate2D#set(double, double)
 	 */
 	@Override
 	public void set(final double lon, final double lat) { setLongitude(lon); setLatitude(lat); }
@@ -445,7 +445,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#toString()
+	 * @see jnum.Coordinate2D#toString()
 	 */
 	@Override
 	public String toString() {
@@ -464,7 +464,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#toString(java.text.NumberFormat)
+	 * @see jnum.Coordinate2D#toString(java.text.NumberFormat)
 	 */
 	@Override
 	public String toString(NumberFormat nf) {
@@ -472,7 +472,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#parse(java.lang.String)
+	 * @see jnum.Coordinate2D#parse(java.lang.String)
 	 */
 	@Override
 	public void parse(String coords) throws NumberFormatException, IllegalArgumentException {
@@ -486,7 +486,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Metric#distanceTo(java.lang.Object)
+	 * @see jnum.Metric#distanceTo(java.lang.Object)
 	 */
 	@Override
 	public double distanceTo(SphericalCoordinates point) {
@@ -496,7 +496,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#edit(nom.tam.util.Cursor, java.lang.String)
+	 * @see jnum.Coordinate2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
 	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {	
@@ -513,7 +513,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 		
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#parse(nom.tam.fits.Header, java.lang.String)
+	 * @see jnum.Coordinate2D#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
 	public void parse(Header header, String alt) {
@@ -612,7 +612,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.math.Invertible#invert()
+	 * @see jnum.math.Invertible#invert()
 	 */
 	@Override
 	public void invert() {

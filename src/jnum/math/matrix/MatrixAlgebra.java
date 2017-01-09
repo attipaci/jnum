@@ -4,52 +4,67 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
 
-package jnum.math;
+package jnum.math.matrix;
 
+import jnum.math.IdentityValue;
+import jnum.math.LinearAlgebra;
+import jnum.math.Metric;
+import jnum.math.Product;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class GenericVectorBasis.
+ * The Interface MatrixAlgebra.
  *
  * @param <T> the generic type
  */
-public class GenericVectorBasis<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVectorBasis<T> {
-	
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 196973970496491957L;
+public interface MatrixAlgebra<T> extends LinearAlgebra<T>, Product<T, T>, Metric<T>, IdentityValue {
 
 	/**
-	 * Instantiates a new generic vector basis.
+	 * Dot.
+	 *
+	 * @param B the b
+	 * @return the t
 	 */
-	public GenericVectorBasis() {}
+	public T dot(T B);
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVectorBasis#asMatrix()
+	/**
+	 * Transpose.
 	 */
-	@Override
-	public AbstractMatrix<T> asMatrix() {
-		GenericMatrix<T> M = new GenericMatrix<T>(get(0).getType());
-		asMatrix(M);
-		return M;
-	}
-
-
+	public void transpose();
+	
+	/**
+	 * Gets the rank.
+	 *
+	 * @return the rank
+	 */
+	public int getRank();
+	
+	/**
+	 * Gauss.
+	 */
+	public void gauss();
+	
+	/**
+	 * Gauss jordan.
+	 */
+	public void gaussJordan();
+	
 }

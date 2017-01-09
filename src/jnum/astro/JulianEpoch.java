@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -59,13 +59,13 @@ public class JulianEpoch extends CoordinateEpoch {
 	protected JulianEpoch(double epoch, boolean immutable) { super(epoch, immutable); }
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.CoordinateEpoch#getJulianYear()
+	 * @see jnum.astro.CoordinateEpoch#getJulianYear()
 	 */
 	@Override
 	public double getJulianYear() { return getYear(); }
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.CoordinateEpoch#getBesselianYear()
+	 * @see jnum.astro.CoordinateEpoch#getBesselianYear()
 	 */
 	@Override
 	public double getBesselianYear() { return BesselianEpoch.getYearForMJD(getMJD()); }
@@ -80,7 +80,7 @@ public class JulianEpoch extends CoordinateEpoch {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.CoordinateEpoch#setMJD(double)
+	 * @see jnum.astro.CoordinateEpoch#setMJD(double)
 	 */
 	@Override
 	public void setMJD(double MJD) {
@@ -88,7 +88,7 @@ public class JulianEpoch extends CoordinateEpoch {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.CoordinateEpoch#getMJD()
+	 * @see jnum.astro.CoordinateEpoch#getMJD()
 	 */
 	@Override
 	public double getMJD() {

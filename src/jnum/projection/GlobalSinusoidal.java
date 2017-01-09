@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -42,20 +42,20 @@ public class GlobalSinusoidal extends SphericalProjection {
 	public GlobalSinusoidal() {}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#getFitsID()
+	 * @see jnum.Projection2D#getFitsID()
 	 */
 	@Override
 	public String getFitsID() { return "GLS"; }
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#getFullName()
+	 * @see jnum.Projection2D#getFullName()
 	 */
 	@Override
 	public String getFullName() { return "Global Sinusoidal"; }
 
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalProjection#project(kovacs.util.SphericalCoordinates, kovacs.util.Coordinate2D)
+	 * @see jnum.SphericalProjection#project(jnum.SphericalCoordinates, jnum.Coordinate2D)
 	 */
 	@Override
 	public final void project(final SphericalCoordinates coords, final Coordinate2D toProjected) {
@@ -66,7 +66,7 @@ public class GlobalSinusoidal extends SphericalProjection {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalProjection#deproject(kovacs.util.Coordinate2D, kovacs.util.SphericalCoordinates)
+	 * @see jnum.SphericalProjection#deproject(jnum.Coordinate2D, jnum.SphericalCoordinates)
 	 */
 	@Override
 	public final void deproject(final Coordinate2D projected, final SphericalCoordinates toCoords) {
@@ -77,7 +77,7 @@ public class GlobalSinusoidal extends SphericalProjection {
 	
 	// These are not used thanks to the overriding of the projection equations...
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalProjection#getOffsets(double, double, kovacs.util.Coordinate2D)
+	 * @see jnum.SphericalProjection#getOffsets(double, double, jnum.Coordinate2D)
 	 */
 	@Override
 	protected void getOffsets(final double theta, final double phi, Coordinate2D toOffset) {
@@ -85,7 +85,7 @@ public class GlobalSinusoidal extends SphericalProjection {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.SphericalProjection#phi(kovacs.util.Coordinate2D)
+	 * @see jnum.SphericalProjection#phi(jnum.Coordinate2D)
 	 */
 	@Override
 	protected void getPhiTheta(Coordinate2D offset, SphericalCoordinates phiTheta) {

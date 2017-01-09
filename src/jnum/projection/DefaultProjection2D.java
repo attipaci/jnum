@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -38,7 +38,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	private static final long serialVersionUID = 2413285303727304456L;
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#getCoordinateInstance()
+	 * @see jnum.Projection2D#getCoordinateInstance()
 	 */
 	@Override
 	public Coordinate2D getCoordinateInstance() {
@@ -46,7 +46,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#project(kovacs.util.Coordinate2D, kovacs.util.Coordinate2D)
+	 * @see jnum.Projection2D#project(jnum.Coordinate2D, jnum.Coordinate2D)
 	 */
 	@Override
 	public void project(Coordinate2D coords, Coordinate2D toProjected) {
@@ -54,7 +54,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#deproject(kovacs.util.Coordinate2D, kovacs.util.Coordinate2D)
+	 * @see jnum.Projection2D#deproject(jnum.Coordinate2D, jnum.Coordinate2D)
 	 */
 	@Override
 	public void deproject(Coordinate2D projected, Coordinate2D toCoords) {
@@ -62,7 +62,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#getFitsID()
+	 * @see jnum.Projection2D#getFitsID()
 	 */
 	@Override
 	public String getFitsID() {
@@ -70,7 +70,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#getFullName()
+	 * @see jnum.Projection2D#getFullName()
 	 */
 	@Override
 	public String getFullName() {
@@ -78,7 +78,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#parse(nom.tam.fits.Header, java.lang.String)
+	 * @see jnum.Projection2D#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
 	public void parse(Header header, String alt) {
@@ -86,7 +86,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#edit(nom.tam.util.Cursor, java.lang.String)
+	 * @see jnum.Projection2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
 	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {

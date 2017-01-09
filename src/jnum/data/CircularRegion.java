@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -127,7 +127,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	public CircularRegion(String line, int format, GridImage2D<CoordinateType> forImage) throws ParseException { super(line, format, forImage); }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Region#clone()
+	 * @see jnum.data.Region#clone()
 	 */ 
 	@Override
 	public Object clone() {
@@ -149,7 +149,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Region#getBounds(kovacs.util.data.GridImage)
+	 * @see jnum.data.Region#getBounds(jnum.data.GridImage)
 	 */
 	@Override
 	public IndexBounds2D getBounds(GridImage2D<CoordinateType> image) {
@@ -193,7 +193,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Region#isInside(kovacs.util.data.Grid2D, double, double)
+	 * @see jnum.data.Region#isInside(jnum.data.Grid2D, double, double)
 	 */
 	@Override
 	public boolean isInside(Grid2D<CoordinateType> grid, double i, double j) {
@@ -290,7 +290,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Region#toString(kovacs.util.data.GridImage)
+	 * @see jnum.data.Region#toString(jnum.data.GridImage)
 	 */
 	@Override
 	public String toString(GridImage2D<CoordinateType> image) {
@@ -443,7 +443,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.data.Region#parse(java.lang.String, int, kovacs.util.data.GridImage)
+	 * @see jnum.data.Region#parse(java.lang.String, int, jnum.data.GridImage)
 	 */
 	@Override
 	public void parse(String line, int format, GridImage2D<CoordinateType> forImage) throws ParseException {	
@@ -622,7 +622,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 	
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.text.TableFormatter.Entries#getFormattedEntry(java.lang.String, java.lang.String)
+	 * @see jnum.text.TableFormatter.Entries#getFormattedEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Object getTableEntry(String name) {

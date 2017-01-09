@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -39,7 +39,7 @@ public class ZenithalEqualArea extends ZenithalProjection {
 	public ZenithalEqualArea() {}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.ZenithalProjection#R(double)
+	 * @see jnum.astro.ZenithalProjection#R(double)
 	 */
 	@Override
 	protected final double R(double theta) {
@@ -47,7 +47,7 @@ public class ZenithalEqualArea extends ZenithalProjection {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.astro.ZenithalProjection#thetaOfR(double)
+	 * @see jnum.astro.ZenithalProjection#thetaOfR(double)
 	 */
 	@Override
 	protected final double thetaOfR(double value) {
@@ -55,13 +55,13 @@ public class ZenithalEqualArea extends ZenithalProjection {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#getFitsID()
+	 * @see jnum.Projection2D#getFitsID()
 	 */
 	@Override
 	public String getFitsID() { return "ZEA"; }
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Projection2D#getFullName()
+	 * @see jnum.Projection2D#getFullName()
 	 */
 	@Override
 	public String getFullName() { return "Zenithal Equal-Area"; }

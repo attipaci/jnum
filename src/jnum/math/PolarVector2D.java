@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -60,7 +60,7 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	public PolarVector2D(PolarVector2D template) { super(template); }
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#isNull()
+	 * @see jnum.Coordinate2D#isNull()
 	 */
 	@Override
 	public boolean isNull() { return x() == 0.0; }
@@ -266,7 +266,7 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	public String toString(NumberFormat nf) { return "(" + nf.format(x()) + " cis " + nf.format(y()) + ")"; }
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Coordinate2D#toString()
+	 * @see jnum.Coordinate2D#toString()
 	 */
 	@Override
 	public String toString() { return "(" + x() + " cis " + y() + ")"; }

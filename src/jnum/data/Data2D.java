@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -719,7 +719,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	}
 		
 	/* (non-Javadoc)
-	 * @see kovacs.util.Copiable#copy()
+	 * @see jnum.Copiable#copy()
 	 */
 	@Override
 	public final Data2D copy() { return copy(true); }
@@ -2581,7 +2581,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	public abstract class Task<ReturnType> extends Parallel<ReturnType> {			
 		
 		/* (non-Javadoc)
-		 * @see kovacs.util.Parallel#process(int)
+		 * @see jnum.Parallel#process(int)
 		 */
 		@Override
 		public void process(int threadCount) {
@@ -2615,7 +2615,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		}
 		
 		/* (non-Javadoc)
-		 * @see kovacs.util.Parallel#processIndex(int, int)
+		 * @see jnum.Parallel#processIndex(int, int)
 		 */
 		@Override
 		protected void processChunk(int index, int threadCount) {
@@ -2652,7 +2652,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	public abstract class AveragingTask extends Task<WeightedPoint> {
 		
 		/* (non-Javadoc)
-		 * @see kovacs.util.Parallel#getResult()
+		 * @see jnum.Parallel#getResult()
 		 */
 		@Override
 		public WeightedPoint getResult() {
@@ -2676,7 +2676,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		private InterpolatorData ipolData;
 		
 		/* (non-Javadoc)
-		 * @see kovacs.util.Parallel#init()
+		 * @see jnum.Parallel#init()
 		 */
 		@Override
 		protected void init() { ipolData = new InterpolatorData(); }
@@ -2746,7 +2746,7 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.text.TableFormatter.Entries#getFormattedEntry(java.lang.String, java.lang.String)
+	 * @see jnum.text.TableFormatter.Entries#getFormattedEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Object getTableEntry(String name) {

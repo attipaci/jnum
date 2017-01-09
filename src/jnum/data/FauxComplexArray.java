@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -76,13 +76,13 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.Copiable#copy()
+	 * @see jnum.Copiable#copy()
 	 */
 	@Override
 	public final FauxComplexArray<Type> copy() { return copy(true); }
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.CopiableContent#copy(boolean)
+	 * @see jnum.CopiableContent#copy(boolean)
 	 */
 	@Override
 	public abstract FauxComplexArray<Type> copy(boolean fill);
@@ -412,7 +412,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		}
 		
 		/* (non-Javadoc)
-		 * @see kovacs.util.data.FauxComplexArray#getData()
+		 * @see jnum.data.FauxComplexArray#getData()
 		 */
 		@Override
 		public float[] getData() {
@@ -420,7 +420,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		}
 
 		/* (non-Javadoc)
-		 * @see kovacs.util.data.FauxComplexArray#get(int)
+		 * @see jnum.data.FauxComplexArray#get(int)
 		 */
 		@Override
 		protected final double get(int i) {
@@ -428,7 +428,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		}
 
 		/* (non-Javadoc)
-		 * @see kovacs.util.data.FauxComplexArray#set(int, double)
+		 * @see jnum.data.FauxComplexArray#set(int, double)
 		 */
 		@Override
 		protected final void set(int i, double value) {
@@ -436,7 +436,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		}
 
 		/* (non-Javadoc)
-		 * @see kovacs.util.data.FauxComplexArray#getFFT()
+		 * @see jnum.data.FauxComplexArray#getFFT()
 		 */
 		@Override
 		public FFT<float[]> getFFT() {
@@ -508,7 +508,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		}
 		
 		/* (non-Javadoc)
-		 * @see kovacs.util.data.FauxComplexArray#getData()
+		 * @see jnum.data.FauxComplexArray#getData()
 		 */
 		@Override
 		public double[] getData() {
@@ -516,7 +516,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		}
 
 		/* (non-Javadoc)
-		 * @see kovacs.util.data.FauxComplexArray#get(int)
+		 * @see jnum.data.FauxComplexArray#get(int)
 		 */
 		@Override
 		protected final double get(int i) {
@@ -524,7 +524,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		}
 
 		/* (non-Javadoc)
-		 * @see kovacs.util.data.FauxComplexArray#set(int, double)
+		 * @see jnum.data.FauxComplexArray#set(int, double)
 		 */
 		@Override
 		protected final void set(int i, double value) {
@@ -532,7 +532,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		}
 
 		/* (non-Javadoc)
-		 * @see kovacs.util.data.FauxComplexArray#getFFT()
+		 * @see jnum.data.FauxComplexArray#getFFT()
 		 */
 		@Override
 		public FFT<double[]> getFFT() {

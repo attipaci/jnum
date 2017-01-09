@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -46,10 +46,6 @@ import jnum.Constant;
 import jnum.Copiable;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
-import jnum.data.mesh.Mesh;
-import jnum.data.mesh.ObjectMesh;
-import jnum.data.mesh.PrimitiveArrayIterator;
-import jnum.data.mesh.PrimitiveMesh;
 import jnum.math.AbsoluteValue;
 import jnum.math.Additive;
 import jnum.math.Complex;
@@ -889,8 +885,8 @@ public final class ArrayUtil {
 		try {
 			Object dest = createArray(getClass(array), newshape);
 
-			Mesh.Iterator<T> sourceIterator = iterator(array, from, to);
-			Mesh.Iterator<T> destIterator = iterator(dest, newshape.length);
+			MeshIterator<T> sourceIterator = MeshIterator.createFor(array, from, to);
+			MeshIterator<T> destIterator = MeshIterator.createFor(dest, newshape.length);
 
 			while(sourceIterator.hasNext()) destIterator.setNextElement(sourceIterator.next());  
 				
@@ -925,8 +921,8 @@ public final class ArrayUtil {
 		try {
 			Object destination = createArray(type, newdims);
 
-			Mesh.Iterator<T> sourceIterator = iterator(array);
-			Mesh.Iterator<T> destIterator = iterator(destination);
+			MeshIterator<T> sourceIterator = MeshIterator.createFor(array);
+			MeshIterator<T> destIterator = MeshIterator.createFor(destination);
 
 			while(sourceIterator.hasNext()) {
 				destIterator.next();
@@ -957,46 +953,6 @@ public final class ArrayUtil {
 	
 	// Iterators....
 	
-	// deep iterators can be used to provide write access to primite arrays as well via the setElement() method.
-	// Careful thuogh, it may be slow if the required autoboxing/unboxing has overheads
-	/**
-	 * Iterator.
-	 *
-	 * @param <T> the generic type
-	 * @param array the array
-	 * @return the array iterator
-	 */
-	public static <T> Mesh.Iterator<T> iterator(Object array) {
-		if(array instanceof Object[]) return new ObjectMesh.Iterator<T>((Object[]) array);
-		else return new PrimitiveArrayIterator<T>(array);
-	}
-	
-	/**
-	 * Iterator.
-	 *
-	 * @param <T> the generic type
-	 * @param array the array
-	 * @param depth the depth
-	 * @return the array iterator
-	 */
-	public static <T> Mesh.Iterator<T> iterator(Object array, int depth) {
-		if(depth >= getRank(array)) return iterator(array);
-		else return new ObjectMesh.Iterator<T>((Object[]) array, depth);
-	}
-	
-	/**
-	 * Iterator.
-	 *
-	 * @param <T> the generic type
-	 * @param array the array
-	 * @param fromIndex the from index
-	 * @param toIndex the to index
-	 * @return the array iterator
-	 */
-	public static <T> Mesh.Iterator<T> iterator(Object array, int[] fromIndex, int[] toIndex) {
-		if(array instanceof Object[]) return new ObjectMesh.Iterator<T>((Object[]) array, fromIndex, toIndex);
-		else return new PrimitiveArrayIterator<T>(array, fromIndex[0], toIndex[0]);	
-	}	
 	
 	
 	// TODO Rewrite without iterator? 
@@ -1014,7 +970,7 @@ public final class ArrayUtil {
 		
 		view = createArray(type, new int[] {N});
 			
-		Iterator<?> iterator = iterator(array, getRank(array)-1);
+		Iterator<?> iterator = MeshIterator.createFor(array, getRank(array)-1);
 		int offset = 0;
 		while(iterator.hasNext()) {
 			Object element = iterator.next();
@@ -1042,8 +998,8 @@ public final class ArrayUtil {
 		if(dstSize != getNextSize(linearView)) throw new IllegalArgumentException("Folding to a an array of different size.");
 		
 		Object folded = createArray(linearView.getClass().getComponentType(), dimensions);
-		Mesh.Iterator<T> dstIterator = iterator(folded);
-		Mesh.Iterator<T> srcIterator = iterator(linearView);
+		MeshIterator<T> dstIterator = MeshIterator.createFor(folded);
+		MeshIterator<T> srcIterator = MeshIterator.createFor(linearView);
 		
 		while(srcIterator.hasNext()) dstIterator.setNextElement(srcIterator.next()); 
 
@@ -2051,7 +2007,7 @@ public final class ArrayUtil {
 			Object weightedSignalPatch = createArray(double.class, beamSize);
 			Object weightsPatch = createArray(double.class, beamSize);
 
-			Mesh.Iterator<Double> iterator = iterator(smoothed);
+			MeshIterator<Double> iterator = MeshIterator.createFor(smoothed);
 
 			int[] position = iterator.getIndex();
 			int[] from = new int[position.length];

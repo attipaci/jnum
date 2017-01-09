@@ -4,18 +4,18 @@
  * 
  * This file is part of jnum.
  * 
- *     kovacs.util is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     kovacs.util is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with kovacs.util.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
@@ -105,7 +105,7 @@ public class LinearCombinationStore extends DataStore<Double> {
 	}
 
 	/* (non-Javadoc)
-	 * @see kovacs.util.dirfile.DataStore#get(long)
+	 * @see jnum.dirfile.DataStore#get(long)
 	 */
 	@Override
 	public Double get(long n) throws IOException {
@@ -120,7 +120,7 @@ public class LinearCombinationStore extends DataStore<Double> {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.dirfile.DataStore#getSamples()
+	 * @see jnum.dirfile.DataStore#getSamples()
 	 */
 	@Override
 	public int getSamples() {
@@ -128,7 +128,7 @@ public class LinearCombinationStore extends DataStore<Double> {
 	}
 	
 	/* (non-Javadoc)
-	 * @see kovacs.util.dirfile.DataStore#length()
+	 * @see jnum.dirfile.DataStore#length()
 	 */
 	@Override
 	public long length() throws IOException {

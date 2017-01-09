@@ -27,10 +27,10 @@ package test;
 import java.util.Random;
 
 import jnum.Util;
-import jnum.math.LUDecomposition;
-import jnum.math.Matrix;
-import jnum.math.SVD;
-import jnum.math.SquareMatrix;
+import jnum.math.matrix.LUDecomposition;
+import jnum.math.matrix.Matrix;
+import jnum.math.matrix.SVD;
+import jnum.math.matrix.SquareMatrix;
 
 
 
