@@ -46,6 +46,7 @@ import jnum.Constant;
 import jnum.Copiable;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
+import jnum.data.mesh.MeshCrawler;
 import jnum.math.AbsoluteValue;
 import jnum.math.Additive;
 import jnum.math.Complex;
@@ -885,10 +886,10 @@ public final class ArrayUtil {
 		try {
 			Object dest = createArray(getClass(array), newshape);
 
-			MeshIterator<T> sourceIterator = MeshIterator.createFor(array, from, to);
-			MeshIterator<T> destIterator = MeshIterator.createFor(dest, newshape.length);
+			MeshCrawler<T> sourceIterator = MeshCrawler.createFor(array, from, to);
+			MeshCrawler<T> destIterator = MeshCrawler.createFor(dest, newshape.length);
 
-			while(sourceIterator.hasNext()) destIterator.setNextElement(sourceIterator.next());  
+			while(sourceIterator.hasNext()) destIterator.setNext(sourceIterator.next());  
 				
 			return dest;
 		} catch(Exception e) { Util.error(ArrayUtil.class, e); }
@@ -921,12 +922,12 @@ public final class ArrayUtil {
 		try {
 			Object destination = createArray(type, newdims);
 
-			MeshIterator<T> sourceIterator = MeshIterator.createFor(array);
-			MeshIterator<T> destIterator = MeshIterator.createFor(destination);
+			MeshCrawler<T> sourceIterator = MeshCrawler.createFor(array);
+			MeshCrawler<T> destIterator = MeshCrawler.createFor(destination);
 
 			while(sourceIterator.hasNext()) {
 				destIterator.next();
-				destIterator.setElement(sourceIterator.next());
+				destIterator.setCurrent(sourceIterator.next());
 			}
 
 			return destination;
@@ -970,7 +971,7 @@ public final class ArrayUtil {
 		
 		view = createArray(type, new int[] {N});
 			
-		Iterator<?> iterator = MeshIterator.createFor(array, getRank(array)-1);
+		Iterator<?> iterator = MeshCrawler.createFor(array, getRank(array)-1);
 		int offset = 0;
 		while(iterator.hasNext()) {
 			Object element = iterator.next();
@@ -998,10 +999,10 @@ public final class ArrayUtil {
 		if(dstSize != getNextSize(linearView)) throw new IllegalArgumentException("Folding to a an array of different size.");
 		
 		Object folded = createArray(linearView.getClass().getComponentType(), dimensions);
-		MeshIterator<T> dstIterator = MeshIterator.createFor(folded);
-		MeshIterator<T> srcIterator = MeshIterator.createFor(linearView);
+		MeshCrawler<T> dstIterator = MeshCrawler.createFor(folded);
+		MeshCrawler<T> srcIterator = MeshCrawler.createFor(linearView);
 		
-		while(srcIterator.hasNext()) dstIterator.setNextElement(srcIterator.next()); 
+		while(srcIterator.hasNext()) dstIterator.setNext(srcIterator.next()); 
 
 		return folded;
 	}
@@ -1983,6 +1984,8 @@ public final class ArrayUtil {
 		// check that signal and weight dimensions match
 
 		int[] size = getShape(signal);
+		int[] position = new int[size.length];
+		
 		Object weightedSignal = product(signal, weights);	
 		
 		Object smoothed = null;
@@ -2007,9 +2010,9 @@ public final class ArrayUtil {
 			Object weightedSignalPatch = createArray(double.class, beamSize);
 			Object weightsPatch = createArray(double.class, beamSize);
 
-			MeshIterator<Double> iterator = MeshIterator.createFor(smoothed);
+			MeshCrawler<Double> iterator = MeshCrawler.createFor(smoothed);
 
-			int[] position = iterator.getIndex();
+			iterator.getPosition(position);
 			int[] from = new int[position.length];
 			int[] to = new int[position.length];
 
@@ -2040,7 +2043,7 @@ public final class ArrayUtil {
 				// check the math here... 
 
 				double norm = (Double) dot(weightsPatch, beam);
-				iterator.setElement((Double) dot(weightedSignalPatch, beam) / norm);		
+				iterator.setCurrent((Double) dot(weightedSignalPatch, beam) / norm);		
 			}
 
 		} catch(Exception e) { Util.error(ArrayUtil.class, e); }

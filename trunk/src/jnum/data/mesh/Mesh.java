@@ -22,14 +22,17 @@
  ******************************************************************************/
 
 
-package jnum.data;
+package jnum.data.mesh;
 
 
 import java.io.Serializable;
 import java.util.*;
 
 import jnum.Copiable;
+import jnum.Function;
+import jnum.NonConformingException;
 import jnum.Util;
+import jnum.data.ArrayUtil;
 import jnum.text.ParseType;
 
 // TODO: Auto-generated Javadoc
@@ -190,10 +193,10 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public MeshIterator<T> iterator() { return MeshIterator.createFor(data); }
+	public MeshCrawler<T> iterator() { return MeshCrawler.createFor(data); }
 	
 
-    public MeshIterator<T> iterator(int[] from, int[] to) { return MeshIterator.createFor(data, from, to); }
+    public MeshCrawler<T> iterator(int[] from, int[] to) { return MeshCrawler.createFor(data, from, to); }
 
 	/**
 	 * Sets the element at.
@@ -260,8 +263,34 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	    return sub;
 	}
 	
+	/**
+     * Adds the patch at.
+     *
+     * @param point the point
+     * @param exactpos the exactpos
+     * @param patchSize the patch size
+     * @param shape the shape
+     */
+	public abstract void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize);
 	
-
+	
+	public void pasteAt(int[] offset, Mesh<T> patch) { 
+	    if(patch == this) return;
+	    
+	    if(patch.getDimension() != getDimension()) throw new NonConformingException("path of different dimensionality.");
+	    
+	    int[] size = getSize();
+	    int[] pSize = patch.getSize();
+	    
+	    int[] to = new int[size.length];
+	    for(int k=size.length; --k >= 0; ) to[k] = Math.min(offset[k] + pSize[k], size[k]);
+	    
+	    final MeshCrawler<T> i = iterator(offset, to);
+	    final MeshCrawler<T> iP = patch.iterator();
+	    
+	    while(i.hasNext()) i.setNext(iP.next()); 
+	}
+	
 	/**
 	 * Parses the element.
 	 *
@@ -280,10 +309,9 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	public void parse(String text) throws Exception {
 		ObjectMesh<String> stringArray = parseStringArray(text);
 		setSize(stringArray.getSize());
-		DataIterator<T> iterator = iterator();
+		MeshCrawler<T> iterator = iterator();
 		for(String entry : stringArray) {
-			iterator.next();
-			iterator.setElement(parseElement(entry));
+			iterator.setNext(parseElement(entry));
 		}
 	}
 
