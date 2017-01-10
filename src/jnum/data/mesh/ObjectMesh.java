@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
-package jnum.data;
+package jnum.data.mesh;
 
 import jnum.Function;
 import jnum.NonConformingException;
@@ -110,10 +110,11 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
     public void add(Mesh<T> o) {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
         
-        final MeshIterator<T> i = iterator();
-        final MeshIterator<T> i2 = o.iterator();
+        final MeshCrawler<T> i = iterator();
+        final MeshCrawler<T> i2 = o.iterator();
         
         while(i.hasNext()) {
+            @SuppressWarnings("unchecked")
             Additive<? super T> value = (Additive<? super T>) i.next();
             value.add(i2.next());
         }
@@ -123,10 +124,11 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
     public void subtract(Mesh<T> o) {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot subtract array of different size/shape.");
         
-        final MeshIterator<T> i = iterator();
-        final MeshIterator<T> i2 = o.iterator();
+        final MeshCrawler<T> i = iterator();
+        final MeshCrawler<T> i2 = o.iterator();
         
         while(i.hasNext()) {
+            @SuppressWarnings("unchecked")
             Additive<? super T> value = (Additive<? super T>) i.next();
             value.subtract(i2.next());
         }
@@ -137,11 +139,12 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
         if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
         if(!b.conformsTo(this)) throw new NonConformingException("non-conforming second argument.");
         
-        final MeshIterator<T> i = iterator();
-        final MeshIterator<T> iA = a.iterator();
-        final MeshIterator<T> iB = b.iterator();
+        final MeshCrawler<T> i = iterator();
+        final MeshCrawler<T> iA = a.iterator();
+        final MeshCrawler<T> iB = b.iterator();
         
         while(i.hasNext()) {
+            @SuppressWarnings("unchecked")
             Additive<? super T> value = (Additive<? super T>) i.next();
             value.setSum(iA.next(), iB.next());
         }
@@ -152,11 +155,12 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
         if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
         if(!b.conformsTo(this)) throw new NonConformingException("non-conforming second argument.");
         
-        final MeshIterator<T> i = iterator();
-        final MeshIterator<T> iA = a.iterator();
-        final MeshIterator<T> iB = b.iterator();
+        final MeshCrawler<T> i = iterator();
+        final MeshCrawler<T> iA = a.iterator();
+        final MeshCrawler<T> iB = b.iterator();
         
         while(i.hasNext()) {
+            @SuppressWarnings("unchecked")
             Additive<? super T> value = (Additive<? super T>) i.next();
             value.setDifference(iA.next(), iB.next());
         }
@@ -164,7 +168,7 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
 
     @Override
     public void scale(double factor) {  
-        final MeshIterator<T> i = iterator();
+        final MeshCrawler<T> i = iterator();
   
         while(i.hasNext()) ((Scalable) i.next()).scale(factor);
     }
@@ -173,10 +177,11 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
     public void addMultipleOf(Mesh<T> o, double factor) {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add scaled array of different size/shape.");
         
-        final MeshIterator<T> i = iterator();
-        final MeshIterator<T> i2 = o.iterator();
+        final MeshCrawler<T> i = iterator();
+        final MeshCrawler<T> i2 = o.iterator();
         
         while(i.hasNext()) {
+            @SuppressWarnings("unchecked")
             LinearAlgebra<? super T> value = (LinearAlgebra<? super T>) i.next();
             value.addMultipleOf(i2.next(), factor);
         }
@@ -184,8 +189,9 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
 
     @Override
     public boolean isNull() {
-        final MeshIterator<T> i = iterator();
+        final MeshCrawler<T> i = iterator();
         while(i.hasNext()) {
+            @SuppressWarnings("unchecked")
             LinearAlgebra<? super T> value = (LinearAlgebra<? super T>) i.next();
             if(!value.isNull()) return false;
         }
@@ -194,22 +200,17 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
 
     @Override
     public void zero() {
-        final MeshIterator<T> i = iterator();
+        final MeshCrawler<T> i = iterator();
         while(i.hasNext()) {
+            @SuppressWarnings("unchecked")
             LinearAlgebra<? super T> value = (LinearAlgebra<? super T>) i.next();
             value.zero();
         }   
     }
 
 
-    /**
-     * Adds the patch at.
-     *
-     * @param point the point
-     * @param exactpos the exactpos
-     * @param patchSize the patch size
-     * @param shape the shape
-     */
+    
+    @Override
     public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize) {
          
         final int[] from = new int[exactOffset.length];
@@ -217,6 +218,7 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
         final double[] d = new double[exactOffset.length];
        
         final int size[] = getSize();
+        final int index[] = new int[size.length];
         
         for(int i=from.length; --i >=0; ) {
             from[i] = Math.max(0, (int) Math.floor(exactOffset[i]));
@@ -224,11 +226,12 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
             to[i] = Math.min(size[i], (int) Math.ceil(exactOffset[i] + patchSize[i]));
         }
         
-        MeshIterator<T> i = iterator(from, to);
+        MeshCrawler<T> i = iterator(from, to);
         
         while(i.hasNext()) {
-            int[] index = i.getIndex();
+            i.getPosition(index);
             for(int k=index.length; --k >= 0; ) d[k] = index[k] + exactOffset[k] - (from[k]<<1);
+            @SuppressWarnings("unchecked")
             final Additive<? super T> value = (Additive<? super T>) i.next();
             value.add(shape.valueAt(d));
         } 

@@ -87,7 +87,7 @@ public class Expression {
 	 * @return the direct value
 	 */
 	protected Object getDirectValue() {
-		if(variables.containsKey(spec)) return variables.get(spec).getValue();
+		if(variables.containsKey(spec)) return variables.getType(spec).getValue();
 		
 		try { return Util.parseBoolean(spec); }
 		catch(Exception e) {}

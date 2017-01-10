@@ -21,33 +21,28 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.data.mesh;
 
-import java.lang.Double;
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class DoubleMesh.
- */
-public class DoubleMesh extends PrimitiveMesh<Double> {
-    
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -6960364610546704958L;
+public class ByteMesh extends NumberMesh<Byte> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6417694497366820158L;
 
     /**
      * Instantiates a new double mesh.
      *
      * @param dimensions the dimensions
      */
-    public DoubleMesh(int[] dimensions) {
-        super(Double.class, dimensions);
+    public ByteMesh(int[] dimensions) {
+        super(byte.class, dimensions);
     }
 
     /**
      * Instantiates a new double mesh.
      */
-    public DoubleMesh() {
-        super(Double.class);
+    public ByteMesh() {
+        super(byte.class);
     }
 
     /**
@@ -55,76 +50,73 @@ public class DoubleMesh extends PrimitiveMesh<Double> {
      *
      * @param data the data
      */
-    public DoubleMesh(Object data) {
+    public ByteMesh(Object data) {
         this();
         setData(data);
     }   
-     
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#getScaled(java.lang.Number, double)
-     */
+    
     @Override
-    protected final Double getScaled(Double value, double factor) {
-        return factor * value;
-    }
-
-  
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#getSum(java.lang.Number, java.lang.Number)
-     */
-    @Override
-    protected final Double getSumOf(Number a, Number b) {
-        return a.doubleValue() + b.doubleValue();
-    }
-
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#getDifference(java.lang.Number, java.lang.Number)
-     */
-    @Override
-    protected final Double getDifferenceOf(Number a, Number b) {
-        return a.doubleValue() - b.doubleValue();
-    }
+    public final Byte convert(Number x) { return x.byteValue(); }
 
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
      */
     @Override
-    protected final Double zeroValue() {
-        return 0.0;
+    protected final Byte zeroValue() {
+        return (byte) 0;
     }
 
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#baseLineElementAt(java.lang.Object, int)
      */
     @Override
-    protected final Double linearElementAt(Object simpleArray, int index) {
-        return ((double[]) simpleArray)[index];
+    protected final Byte linearElementAt(Object simpleArray, int index) {
+        return ((byte[]) simpleArray)[index];
     }
 
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#setBaseLineElementAt(java.lang.Object, int, java.lang.Number)
      */
     @Override
-    protected final void setLinearElementAt(Object simpleArray, int index, Double value) {
-        ((double[]) simpleArray)[index] = value;
+    protected final void setLinearElementAt(Object simpleArray, int index, Byte value) {
+        ((byte[]) simpleArray)[index] = value;
     }
 
     /* (non-Javadoc)
      * @see jnum.data.mesh.Mesh#parseElement(java.lang.String)
      */
     @Override
-    public Double parseElement(String text) throws Exception {
-        return Double.parseDouble(text);
+    public Byte parseElement(String text) throws Exception {
+        return Byte.decode(text);
     }
 
     /* (non-Javadoc)
      * @see jnum.data.mesh.Mesh#newInstance()
      */
     @Override
-    public Mesh<Double> newInstance() {
-        return new DoubleMesh();
+    public Mesh<Byte> newInstance() {
+        return new ByteMesh();
     }
-
+    
+    @Override
+    public final Byte getSumOf(Number a, Number b) {
+        return (byte) (a.intValue() + b.intValue());
+    }
+    
+    @Override
+    public final Byte getDifferenceOf(Number a, Number b) {
+        return (byte) (a.intValue() - b.intValue());
+    }
+    
+    @Override
+    public final Byte getProductOf(Number a, Number b) {
+        return (byte) (a.intValue() * b.intValue());
+    }
+    
+    @Override
+    public final Byte getRatioOf(Number a, Number b) {
+        return (byte) (a.intValue() / b.intValue());
+    }
 
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2017 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -25,30 +25,36 @@ package jnum.data;
 
 import java.util.Iterator;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface DataManager.
+ * An interface that enables crawling data objects. Unlike {@link Iterator}, it allows updating the underlying data
+ * elements, not only querying them. Also, crawlers can be re-used: a call to {@link #reset()} will start the
+ * next crawl from the beginning all over again...
  *
  * @param <T> the generic type
  */
-public interface DataIterator<T> extends Iterator<T> {
+public interface DataCrawler<T> extends Iterator<T> {
 
 	/**
-	 * Gets the data.
+	 * Returns the underlying data object that this crawler operates on.
 	 *
-	 * @return the data
+	 * @return the underlying data object.
 	 */
 	public Object getData();
 	
 	/**
-	 * Sets the element.
+	 * Sets the element at the current crawler position to the specified value. Use only after {@link Iterator#next()} 
+	 * was called to point to a valid element after initialization or {@link #reset()}.
 	 *
-	 * @param value the new element
+	 * @param value the new element at the current crawl position.
+	 * @see Iterator#next();
 	 */
-	public void setElement(T value);
+	public void setCurrent(T value);
 	
 	/**
-	 * Reset.
+	 * Resets the crawler, so that the underlying data object will be be crawled from the beginning again.
+	 * I.e., a successive call to {@link Iterator#next()} will return the first element to be crawled.
+	 * 
+	 * @see Iterator#next()
 	 */
 	public void reset();
 	

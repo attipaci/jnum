@@ -21,7 +21,7 @@
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.data.mesh;
 
 import java.lang.Float;
 
@@ -30,7 +30,7 @@ import java.lang.Float;
 /**
  * The Class FloatMesh.
  */
-public class FloatMesh extends PrimitiveMesh<Float> {
+public class FloatMesh extends NumberMesh<Float> {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4081004880332314702L;
@@ -41,14 +41,14 @@ public class FloatMesh extends PrimitiveMesh<Float> {
      * @param dimensions the dimensions
      */
     public FloatMesh(int[] dimensions) {
-        super(Float.class, dimensions);
+        super(float.class, dimensions);
     }
 
     /**
      * Instantiates a new float mesh.
      */
     public FloatMesh() {
-        super(Float.class);
+        super(float.class);
     }
 
     /**
@@ -61,31 +61,8 @@ public class FloatMesh extends PrimitiveMesh<Float> {
         setData(data);
     }
     
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#getScaled(java.lang.Number, double)
-     */
     @Override
-    protected final Float getScaled(Float value, double factor) {
-        return (float) factor * value;
-    }
-
-    
-  
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#getSum(java.lang.Number, java.lang.Number)
-     */
-    @Override
-    protected final Float getSumOf(Number a, Number b) {
-        return a.floatValue() + b.floatValue();
-    }
-
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#getDifference(java.lang.Number, java.lang.Number)
-     */
-    @Override
-    protected final Float getDifferenceOf(Number a, Number b) {
-        return a.floatValue() - b.floatValue();
-    }
+    public final Float convert(Number x) { return x.floatValue(); }
 
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
@@ -134,5 +111,26 @@ public class FloatMesh extends PrimitiveMesh<Float> {
     public Mesh<Float> newInstance() {
         return new FloatMesh();
     }
+    
+    @Override
+    public final Float getSumOf(Number a, Number b) {
+        return a.floatValue() + b.floatValue();
+    }
+    
+    @Override
+    public final Float getDifferenceOf(Number a, Number b) {
+        return a.floatValue() - b.floatValue();
+    }
+    
+    @Override
+    public final Float getProductOf(Number a, Number b) {
+        return a.floatValue() * b.floatValue();
+    }
+    
+    @Override
+    public final Float getRatioOf(Number a, Number b) {
+        return a.floatValue() / b.floatValue();
+    }
 
+  
 }
