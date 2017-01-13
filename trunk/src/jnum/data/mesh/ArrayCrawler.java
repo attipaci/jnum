@@ -133,13 +133,14 @@ public abstract class ArrayCrawler<T> extends MeshCrawler<T> {
      * @return the array crawler
      */
     static ArrayCrawler<?> forArray(Object data) {
-        if(data instanceof double[]) return new DoubleArrayCrawler((double[]) data);
-        else if(data instanceof float[]) return new FloatArrayCrawler((float[]) data);
-        else if(data instanceof long[]) return new LongArrayCrawler((long[]) data);
+        // In order of commonality / size for faster lookups in expected usage scenarios...
+        if(data instanceof float[]) return new FloatArrayCrawler((float[]) data);
         else if(data instanceof int[]) return new IntArrayCrawler((int[]) data);
-        else if(data instanceof short[]) return new ShortArrayCrawler((short[]) data);
-        else if(data instanceof byte[]) return new ByteArrayCrawler((byte[]) data);
+        else if(data instanceof double[]) return new DoubleArrayCrawler((double[]) data);
         else if(data instanceof boolean[]) return new BooleanArrayCrawler((boolean[]) data);
+        else if(data instanceof byte[]) return new ByteArrayCrawler((byte[]) data);
+        else if(data instanceof short[]) return new ShortArrayCrawler((short[]) data);
+        else if(data instanceof long[]) return new LongArrayCrawler((long[]) data);
         else if(data instanceof char[]) return new CharArrayCrawler((char[]) data);
         return null;
     }         
@@ -153,16 +154,14 @@ public abstract class ArrayCrawler<T> extends MeshCrawler<T> {
      * @return the array crawler
      */
     static ArrayCrawler<?> forArray(Object data, int from, int to) {
-        if(data instanceof double[]) {
-            
-            return new DoubleArrayCrawler((double[]) data, from, to);
-        }
-        else if(data instanceof float[]) return new FloatArrayCrawler((float[]) data, from, to);
-        else if(data instanceof long[]) return new LongArrayCrawler((long[]) data, from, to);
+        // In order of commonality / size for faster lookups in expected usage scenarios...
+        if(data instanceof float[]) return new FloatArrayCrawler((float[]) data, from, to);
         else if(data instanceof int[]) return new IntArrayCrawler((int[]) data, from, to);
-        else if(data instanceof short[]) return new ShortArrayCrawler((short[]) data, from, to);
-        else if(data instanceof byte[]) return new ByteArrayCrawler((byte[]) data, from, to);
+        else if(data instanceof double[]) return new DoubleArrayCrawler((double[]) data, from, to);
         else if(data instanceof boolean[]) return new BooleanArrayCrawler((boolean[]) data, from, to);
+        else if(data instanceof byte[]) return new ByteArrayCrawler((byte[]) data, from, to);
+        else if(data instanceof short[]) return new ShortArrayCrawler((short[]) data, from, to);
+        else if(data instanceof long[]) return new LongArrayCrawler((long[]) data, from, to);
         else if(data instanceof char[]) return new CharArrayCrawler((char[]) data, from, to);
         return null;
     }     

@@ -23,7 +23,7 @@
 
 package jnum.data.mesh;
 
-public class ShortMesh extends NumberMesh<Short> {
+public class ShortMesh extends NumberMesh.IntegerType<Short> {
 
     /**
      * 
@@ -57,14 +57,14 @@ public class ShortMesh extends NumberMesh<Short> {
     }   
 
     @Override
-    public final Short convert(Number x) { return x.shortValue(); }
+    public final Short cast(Number x) { return x.shortValue(); }
     
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
      */
     @Override
     protected final Short zeroValue() {
-        return 0;
+        return (short) 0;
     }
 
     /* (non-Javadoc)
@@ -100,23 +100,13 @@ public class ShortMesh extends NumberMesh<Short> {
     }
     
     @Override
-    public final Short getSumOf(Number a, Number b) {
+    public final Short getSumOf(final Number a, final Number b) {
         return (short) (a.intValue() + b.intValue());
     }
     
     @Override
-    public final Short getDifferenceOf(Number a, Number b) {
+    public final Short getDifferenceOf(final Number a, final Number b) {
         return (short) (a.intValue() - b.intValue());
-    }
-    
-    @Override
-    public final Short getProductOf(Number a, Number b) {
-        return (short) (a.intValue() * b.intValue());
-    }
-    
-    @Override
-    public final Short getRatioOf(Number a, Number b) {
-        return (short) (a.intValue() / b.intValue());
     }
 
 }

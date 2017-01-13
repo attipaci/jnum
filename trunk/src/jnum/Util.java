@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
+ * Copyright (c) 2017 Attila Kovacs <attila_kovacs[AT]post.harvard.edu>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -53,7 +53,7 @@ public final class Util {
     public final static String version = "0.11-b2";
 
     /** The Constant revision. */
-    public final static String revision = "devel.3";
+    public final static String revision = "devel.4";
 
     /** The debug. */
     public static boolean debug = false;

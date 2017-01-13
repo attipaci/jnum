@@ -23,7 +23,7 @@
 
 package jnum.data.mesh;
 
-public class IntMesh extends NumberMesh<Integer> {
+public class IntMesh extends NumberMesh.IntegerType<Integer> {
 
     /**
      * 
@@ -57,7 +57,7 @@ public class IntMesh extends NumberMesh<Integer> {
     }   
      
     @Override
-    public final Integer convert(Number x) { return x.intValue(); }
+    public final Integer cast(Number x) { return x.intValue(); }
 
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
@@ -100,24 +100,14 @@ public class IntMesh extends NumberMesh<Integer> {
     }
 
     @Override
-    public final Integer getSumOf(Number a, Number b) {
+    public final Integer getSumOf(final Number a, final Number b) {
         return a.intValue() + b.intValue();
     }
     
     @Override
-    public final Integer getDifferenceOf(Number a, Number b) {
+    public final Integer getDifferenceOf(final Number a, final Number b) {
         return a.intValue() - b.intValue();
     }
     
-    @Override
-    public final Integer getProductOf(Number a, Number b) {
-        return a.intValue() * b.intValue();
-    }
-    
-    @Override
-    public final Integer getRatioOf(Number a, Number b) {
-        return a.intValue() / b.intValue();
-    }
-    
-
+  
 }

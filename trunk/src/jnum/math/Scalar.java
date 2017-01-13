@@ -104,7 +104,7 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public final void addMultipleOf(Scalar o, double factor) {
+	public final void addScaled(Scalar o, double factor) {
 		value += factor * o.value;		
 	}
 

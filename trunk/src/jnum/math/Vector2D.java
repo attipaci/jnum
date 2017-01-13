@@ -168,7 +168,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	 * @param factor the factor
 	 */
 	@Override
-	public final void addMultipleOf(final Vector2D vector, final double factor) {
+	public final void addScaled(final Vector2D vector, final double factor) {
 		addX(factor * vector.x());
 		addY(factor * vector.y());
 	}

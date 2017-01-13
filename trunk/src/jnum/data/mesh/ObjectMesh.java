@@ -20,13 +20,10 @@
  * Contributors:
  *     Attila Kovacs <attila_kovacs[AT]post.harvard.edu> - initial API and implementation
  ******************************************************************************/
+
 package jnum.data.mesh;
 
-import jnum.Function;
-import jnum.NonConformingException;
-import jnum.math.Additive;
-import jnum.math.LinearAlgebra;
-import jnum.math.Scalable;
+import jnum.Copiable;
 import jnum.text.Parser;
 
 
@@ -36,7 +33,7 @@ import jnum.text.Parser;
  *
  * @param <T> the generic type
  */
-public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
+public class ObjectMesh<T> extends Mesh<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 86938797450633242L;
@@ -69,6 +66,14 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
 		super(data);
 	}
 	
+	  /* (non-Javadoc)
+     * @see jnum.data.mesh.Mesh#newInstance()
+     */
+    @Override
+    public Mesh<T> newInstance() {
+        return new ObjectMesh<T>(elementClass);
+    }
+	
 	/* (non-Javadoc)
 	 * @see kovacs.data.AbstractArray#lineElementAt(java.lang.Object, int)
 	 */
@@ -97,151 +102,19 @@ public class ObjectMesh<T> extends Mesh<T> implements LinearAlgebra<Mesh<T>> {
 		return value;
 	}
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#newInstance()
-     */
-    @Override
-    public Mesh<T> newInstance() {
-        return new ObjectMesh<T>(elementClass);
+    @SuppressWarnings("unchecked")
+    public void fill(final T x) {
+        if(!(x instanceof Copiable)) throw new IllegalArgumentException("filler value must implement Copiable");
+        final MeshCrawler<T> i = iterator(); 
+        while(i.hasNext()) i.setNext((T) ((Copiable<T>) x).copy());
     }
     
-    
-    @Override
-    public void add(Mesh<T> o) {
-        if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
-        
-        final MeshCrawler<T> i = iterator();
-        final MeshCrawler<T> i2 = o.iterator();
-        
-        while(i.hasNext()) {
-            @SuppressWarnings("unchecked")
-            Additive<? super T> value = (Additive<? super T>) i.next();
-            value.add(i2.next());
-        }
-    }
-
-    @Override
-    public void subtract(Mesh<T> o) {
-        if(!o.conformsTo(this)) throw new NonConformingException("cannot subtract array of different size/shape.");
-        
-        final MeshCrawler<T> i = iterator();
-        final MeshCrawler<T> i2 = o.iterator();
-        
-        while(i.hasNext()) {
-            @SuppressWarnings("unchecked")
-            Additive<? super T> value = (Additive<? super T>) i.next();
-            value.subtract(i2.next());
-        }
-    }
-
-    @Override
-    public void setSum(Mesh<T> a, Mesh<T> b) {
-        if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
-        if(!b.conformsTo(this)) throw new NonConformingException("non-conforming second argument.");
-        
-        final MeshCrawler<T> i = iterator();
-        final MeshCrawler<T> iA = a.iterator();
-        final MeshCrawler<T> iB = b.iterator();
-        
-        while(i.hasNext()) {
-            @SuppressWarnings("unchecked")
-            Additive<? super T> value = (Additive<? super T>) i.next();
-            value.setSum(iA.next(), iB.next());
-        }
-    }
-
-    @Override
-    public void setDifference(Mesh<T> a, Mesh<T> b) {
-        if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
-        if(!b.conformsTo(this)) throw new NonConformingException("non-conforming second argument.");
-        
-        final MeshCrawler<T> i = iterator();
-        final MeshCrawler<T> iA = a.iterator();
-        final MeshCrawler<T> iB = b.iterator();
-        
-        while(i.hasNext()) {
-            @SuppressWarnings("unchecked")
-            Additive<? super T> value = (Additive<? super T>) i.next();
-            value.setDifference(iA.next(), iB.next());
-        }
-    }
-
-    @Override
-    public void scale(double factor) {  
-        final MeshCrawler<T> i = iterator();
-  
-        while(i.hasNext()) ((Scalable) i.next()).scale(factor);
-    }
-
-    @Override
-    public void addMultipleOf(Mesh<T> o, double factor) {
-        if(!o.conformsTo(this)) throw new NonConformingException("cannot add scaled array of different size/shape.");
-        
-        final MeshCrawler<T> i = iterator();
-        final MeshCrawler<T> i2 = o.iterator();
-        
-        while(i.hasNext()) {
-            @SuppressWarnings("unchecked")
-            LinearAlgebra<? super T> value = (LinearAlgebra<? super T>) i.next();
-            value.addMultipleOf(i2.next(), factor);
-        }
-    }
-
-    @Override
-    public boolean isNull() {
-        final MeshCrawler<T> i = iterator();
-        while(i.hasNext()) {
-            @SuppressWarnings("unchecked")
-            LinearAlgebra<? super T> value = (LinearAlgebra<? super T>) i.next();
-            if(!value.isNull()) return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void zero() {
-        final MeshCrawler<T> i = iterator();
-        while(i.hasNext()) {
-            @SuppressWarnings("unchecked")
-            LinearAlgebra<? super T> value = (LinearAlgebra<? super T>) i.next();
-            value.zero();
-        }   
-    }
-
-
-    
-    @Override
-    public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize) {
-         
-        final int[] from = new int[exactOffset.length];
-        final int[] to = new int[exactOffset.length];
-        final double[] d = new double[exactOffset.length];
+    @SuppressWarnings("unchecked")
+    public void fill(final int[] from, final int[] to, final T x) {
+        if(!(x instanceof Copiable)) throw new IllegalArgumentException("filler value must implement Copiable");
+        final MeshCrawler<T> i = iterator(from, to);
+        while(i.hasNext()) i.setNext((T) ((Copiable<T>) x).copy());
        
-        final int size[] = getSize();
-        final int index[] = new int[size.length];
-        
-        for(int i=from.length; --i >=0; ) {
-            from[i] = Math.max(0, (int) Math.floor(exactOffset[i]));
-            if(from[i] > size[i]) return; // The patch is outside of the available range...
-            to[i] = Math.min(size[i], (int) Math.ceil(exactOffset[i] + patchSize[i]));
-        }
-        
-        MeshCrawler<T> i = iterator(from, to);
-        
-        while(i.hasNext()) {
-            i.getPosition(index);
-            for(int k=index.length; --k >= 0; ) d[k] = index[k] + exactOffset[k] - (from[k]<<1);
-            @SuppressWarnings("unchecked")
-            final Additive<? super T> value = (Additive<? super T>) i.next();
-            value.add(shape.valueAt(d));
-        } 
     }
-    
-    
-    
-    
-    
-    
    
-  
 }

@@ -24,13 +24,16 @@
 package test;
 
 import jnum.data.mesh.DoubleMesh;
+import jnum.data.mesh.Mesh;
 import jnum.data.mesh.MeshCrawler;
+import jnum.data.mesh.ObjectMesh;
 
 public class DoubleMeshTest {
 
     public static void main(String[] args) {
-        double[][] x = new double[][] { { 0, 1, 3 }, { 4, 5, 6} }; 
+        double[][] x = new double[][] { { 0, 1, 2 }, { 3, 4, 5 } }; 
         DoubleMesh A = new DoubleMesh(x);
+     
         
         //A.add(A);
         
@@ -44,7 +47,25 @@ public class DoubleMeshTest {
             i.setCurrent(-element);
         }
         
-       
+        System.out.println();
+        
+        Mesh<Double> oA = new ObjectMesh<Double>(Double.class, new int[] {3,2});
+        
+        
+        MeshCrawler<Double> oi = oA.iterator();
+        double n = 0.0;
+        while(oi.hasNext()) { 
+            oi.setNext(n);
+            n += 1.0; 
+        }
+        
+        oi.reset();
+        
+        while(oi.hasNext()) {
+            double element = oi.next();
+            oi.getPosition(coords);
+            System.out.println(coords[0] + "," + coords[1] + ":" + element);
+        }
         
         System.out.println();
        

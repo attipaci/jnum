@@ -194,7 +194,7 @@ public class GenericMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 		if(result.length != rows()) throw new IllegalArgumentException("Mismatched matrix/output-vector sizes.");
 		for(int i=rows(); --i >= 0; ) {
 			result[i].zero();
-			for(int j=cols(); --j >= 0; ) result[i].addMultipleOf(entry[i][j], v[j]);
+			for(int j=cols(); --j >= 0; ) result[i].addScaled(entry[i][j], v[j]);
 		}
 	}
 	
@@ -221,7 +221,7 @@ public class GenericMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 		if(result.length != rows()) throw new IllegalArgumentException("Mismatched matrix/output-vector sizes.");
 		for(int i=rows(); --i >= 0; ) {
 			result[i].zero();
-			for(int j=cols(); --j >= 0; ) result[i].addMultipleOf(entry[i][j], v[j]);
+			for(int j=cols(); --j >= 0; ) result[i].addScaled(entry[i][j], v[j]);
 		}
 	}
 	
@@ -340,8 +340,8 @@ public class GenericMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public void addMultipleOf(AbstractMatrix<? extends T> o, double factor) {
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) entry[i][j].addMultipleOf(o.getValue(i, j), factor);
+	public void addScaled(AbstractMatrix<? extends T> o, double factor) {
+		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) entry[i][j].addScaled(o.getValue(i, j), factor);
 	}
 
 	/* (non-Javadoc)
@@ -559,7 +559,7 @@ public class GenericMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 */
 	@Override
 	public void addMultipleOfRow(int row, int toRow, double scaling) {
-		for(int j=cols(); --j >= 0; ) entry[toRow][j].addMultipleOf(entry[row][j], scaling);
+		for(int j=cols(); --j >= 0; ) entry[toRow][j].addScaled(entry[row][j], scaling);
 	}
 	
 	/* (non-Javadoc)
