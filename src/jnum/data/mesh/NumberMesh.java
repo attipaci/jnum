@@ -23,12 +23,10 @@
 package jnum.data.mesh;
 
 
+import jnum.CopyCat;
 import jnum.Function;
 import jnum.NonConformingException;
-import jnum.math.Division;
 import jnum.math.LinearAlgebra;
-import jnum.math.Multiplicative;
-import jnum.math.Ratio;
 
 
 
@@ -38,8 +36,7 @@ import jnum.math.Ratio;
  *
  * @param <T> the generic type
  */
-public abstract class NumberMesh<T extends Number> extends Mesh<T> implements LinearAlgebra<NumberMesh<?>>,
-    Multiplicative<NumberMesh<?>>, Division<NumberMesh<?>>, Ratio<NumberMesh<?>, NumberMesh<?>>{
+public abstract class NumberMesh<T extends Number> extends Mesh<T> implements CopyCat<Mesh<? extends Number>>, LinearAlgebra<Mesh<? extends Number>>, Overlayable<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8401121783922804093L;
@@ -91,6 +88,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Li
         while(iterator.hasNext()) iterator.setNext(zeroValue);
     }
 	
+	
 	/* (non-Javadoc)
 	 * @see jnum.math.Scalable#scale(double)
 	 */
@@ -98,10 +96,31 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Li
     public void scale(double factor) {
         final MeshCrawler<T> iterator = iterator();
         while(iterator.hasNext()) {
-            T value = iterator.next();
-            iterator.setCurrent(getProductOf(value, factor));
+            final T value = iterator.next();
+            iterator.setCurrent(cast(value.doubleValue() * factor));
         }
     }
+	
+	public void add(Number x) {
+	    final T offset = cast(x);
+        final MeshCrawler<T> iterator = iterator();
+        while(iterator.hasNext()) {
+            final T value = iterator.next();
+            iterator.setCurrent(getSumOf(value, offset));
+        }
+	}
+	
+	@Override
+    public void copy(Mesh<? extends Number> o) {
+	    if(!o.conformsTo(this)) throw new NonConformingException("cannot copy mesh of different size/shape.");
+
+        final MeshCrawler<T> i = iterator();
+        final MeshCrawler<? extends Number> oi = o.iterator();
+        while(i.hasNext()) {
+            i.setNext(cast(oi.next()));
+        }
+    }
+    
 	
 	/**
      * Adds the multiple of.
@@ -110,8 +129,8 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Li
      * @param factor the factor
      */
     @Override
-    public void addMultipleOf(NumberMesh<? extends Number> o, double factor) {
-        if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
+    public void addScaled(Mesh<? extends Number> o, double factor) {
+        if(!o.conformsTo(this)) throw new NonConformingException("cannot add mesh of different size/shape.");
         
         final MeshCrawler<T> i = iterator();
         final MeshCrawler<? extends Number> i2 = o.iterator();
@@ -130,8 +149,8 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Li
 	 * @throws NonConformingException the non conforming exception
 	 */
 	@Override
-    public void add(NumberMesh<? extends Number> o) throws NonConformingException {
-        if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
+    public void add(Mesh<? extends Number> o) throws NonConformingException {
+        if(!o.conformsTo(this)) throw new NonConformingException("cannot add mesh of different size/shape.");
         
         final MeshCrawler<T> i = iterator();
         final MeshCrawler<? extends Number> i2 = (MeshCrawler<? extends Number>) o.iterator();
@@ -148,8 +167,8 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Li
 	 * @throws NonConformingException the non conforming exception
 	 */
 	@Override
-    public void subtract(NumberMesh<? extends Number> o) throws NonConformingException {
-        if(!o.conformsTo(this)) throw new NonConformingException("cannot add array of different size/shape.");
+    public void subtract(Mesh<? extends Number> o) throws NonConformingException {
+        if(!o.conformsTo(this)) throw new NonConformingException("cannot add mesh of different size/shape.");
         
         final MeshCrawler<T> i = iterator();
         final MeshCrawler<? extends Number> i2 = o.iterator();
@@ -166,7 +185,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Li
 	 * @param b the b
 	 */
 	@Override
-	public void setSum(NumberMesh<? extends Number> a, NumberMesh<? extends Number> b) {
+	public void setSum(Mesh<? extends Number> a, Mesh<? extends Number> b) {
 	    if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
         if(!b.conformsTo(this)) throw new NonConformingException("non-conforming second argument.");
 	    
@@ -187,7 +206,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Li
 	 * @param b the b
 	 */
 	@Override
-	public void setDifference(NumberMesh<? extends Number> a, NumberMesh<? extends Number> b) {
+	public void setDifference(Mesh<? extends Number> a, Mesh<? extends Number> b) {
 	    if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
         if(!b.conformsTo(this)) throw new NonConformingException("non-conforming second argument.");
 	    
@@ -199,66 +218,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Li
             i.setNext(getDifferenceOf(iA.next(), iB.next()));
         }
 	}
-	
-	
-	@Override
-    public void multiplyBy(NumberMesh<? extends Number> o) throws NonConformingException {
-        if(!o.conformsTo(this)) throw new NonConformingException("cannot multiply by array of different size/shape.");
-        
-        final MeshCrawler<T> i = iterator();
-        final MeshCrawler<? extends Number> i2 = (MeshCrawler<? extends Number>) o.iterator();
-        
-        while(i.hasNext()) {
-            i.setCurrent(getProductOf(i.next(), i2.next()));
-        }
-    }
-	
-	
-	
-	@Override
-    public void setProduct(NumberMesh<? extends Number> a, NumberMesh<? extends Number> b) {
-	    if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
-        if(!b.conformsTo(this)) throw new NonConformingException("non-conforming second argument.");
-        
-        final MeshCrawler<T> i = iterator();
-        final MeshCrawler<? extends Number> iA = a.iterator();
-        final MeshCrawler<? extends Number> iB = b.iterator();
-        
-        while(i.hasNext()) {
-            i.setNext(getProductOf(iA.next(), iB.next()));
-        }
-    }
-	
-	@Override
-    public void divideBy(NumberMesh<? extends Number> o) throws NonConformingException {
-        if(!o.conformsTo(this)) throw new NonConformingException("cannot multiply by array of different size/shape.");
-        
-        final MeshCrawler<T> i = iterator();
-        final MeshCrawler<? extends Number> i2 = (MeshCrawler<? extends Number>) o.iterator();
-        
-        while(i.hasNext()) {
-            i.setCurrent(getRatioOf(i.next(), i2.next()));
-        }
-    }
-    
-    
-    
-    @Override
-    public void setRatio(NumberMesh<? extends Number> a, NumberMesh<? extends Number> b) {
-        if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
-        if(!b.conformsTo(this)) throw new NonConformingException("non-conforming second argument.");
-        
-        final MeshCrawler<T> i = iterator();
-        final MeshCrawler<? extends Number> iA = a.iterator();
-        final MeshCrawler<? extends Number> iB = b.iterator();
-        
-        while(i.hasNext()) {
-            i.setNext(getRatioOf(iA.next(), iB.next()));
-        }
-    }
-	
-	
-	
+
     @Override
     public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize) {
          
@@ -284,25 +244,104 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Li
         } 
     }
 	
+	public void fill(Number x) {
+	    final T value = cast(x);
+	    final MeshCrawler<T> i = iterator();
+	    while(i.hasNext()) i.setNext(value);
+	}
 	
-    /**
-     * Zero value.
-     *
-     * @return the t
-     */
+	public void fill(int[] from, int[] to, Number x) {
+        final T value = cast(x);
+        final MeshCrawler<T> i = iterator(from, to);
+        while(i.hasNext()) i.setNext(value);
+    }
+	
+
     protected abstract T zeroValue();
     
-    public abstract T convert(Number x);
+    public abstract T cast(Number x);
     
     public abstract T getSumOf(Number a, Number b);
   
     public abstract T getDifferenceOf(Number a, Number b);
-    
-    public abstract T getProductOf(Number a, Number b);
-    
-    public abstract T getRatioOf(Number a, Number b);
-    
-    
-
+   
   
+    static abstract class IntegerType<T extends Number> extends NumberMesh<T> {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -6285382549219235124L;
+
+        public IntegerType(Class<T> type, int[] dimensions) {
+            super(type, dimensions);
+        }
+
+        public IntegerType(Class<T> type) {
+            super(type);
+        }
+
+        public IntegerType(Object data) {
+            super(data);
+        }
+        
+        public final void bitwiseNOT() {
+            final MeshCrawler<T> i = iterator();
+            while(i.hasNext()) i.setCurrent(cast(~i.next().longValue()));
+        }
+        
+        public final void bitwiseAND(IntegerType<? extends Number> o) {
+            if(!o.conformsTo(this)) throw new NonConformingException("cannot bitwise AND mesh of different size/shape.");        
+            final MeshCrawler<T> i = iterator();
+            final MeshCrawler<? extends Number> oi = o.iterator();
+            while(i.hasNext()) i.setCurrent(cast(oi.next().longValue() & i.next().longValue()));
+        }
+        
+        public final void bitwiseOR(IntegerType<? extends Number> o) {
+            if(!o.conformsTo(this)) throw new NonConformingException("cannot bitwise OR mesh of different size/shape.");        
+            final MeshCrawler<T> i = iterator();
+            final MeshCrawler<? extends Number> oi = o.iterator();
+            while(i.hasNext()) i.setCurrent(cast(oi.next().longValue() | i.next().longValue()));
+        }
+        
+        public final void bitwiseXOR(IntegerType<? extends Number> o) {
+            if(!o.conformsTo(this)) throw new NonConformingException("cannot bitwise XOR mesh of different size/shape.");        
+            final MeshCrawler<T> i = iterator();
+            final MeshCrawler<? extends Number> oi = o.iterator();
+            while(i.hasNext()) i.setCurrent(cast(oi.next().longValue() ^ i.next().longValue()));
+        }
+        
+        public final void bitwiseNAND(IntegerType<? extends Number> o) {
+            if(!o.conformsTo(this)) throw new NonConformingException("cannot bitwise NAND mesh of different size/shape.");        
+            final MeshCrawler<T> i = iterator();
+            final MeshCrawler<? extends Number> oi = o.iterator();
+            while(i.hasNext()) i.setCurrent(cast(~(oi.next().longValue() & i.next().longValue())));
+        }
+        
+        
+    }
+    
+    static abstract class FloatingType<T extends Number> extends NumberMesh<T> {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 7666677987876533478L;
+
+        public FloatingType(Class<T> type, int[] dimensions) {
+            super(type, dimensions);
+        }
+
+        public FloatingType(Class<T> type) {
+            super(type);
+        }
+
+        public FloatingType(Object data) {
+            super(data);
+        }
+        
+   
+    }
+    
+    
 }

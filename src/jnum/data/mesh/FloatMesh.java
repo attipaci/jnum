@@ -30,7 +30,7 @@ import java.lang.Float;
 /**
  * The Class FloatMesh.
  */
-public class FloatMesh extends NumberMesh<Float> {
+public class FloatMesh extends NumberMesh.FloatingType<Float> {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4081004880332314702L;
@@ -62,7 +62,7 @@ public class FloatMesh extends NumberMesh<Float> {
     }
     
     @Override
-    public final Float convert(Number x) { return x.floatValue(); }
+    public final Float cast(Number x) { return x.floatValue(); }
 
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
@@ -113,24 +113,14 @@ public class FloatMesh extends NumberMesh<Float> {
     }
     
     @Override
-    public final Float getSumOf(Number a, Number b) {
+    public final Float getSumOf(final Number a, final Number b) {
         return a.floatValue() + b.floatValue();
     }
     
     @Override
-    public final Float getDifferenceOf(Number a, Number b) {
+    public final Float getDifferenceOf(final Number a, final Number b) {
         return a.floatValue() - b.floatValue();
     }
     
-    @Override
-    public final Float getProductOf(Number a, Number b) {
-        return a.floatValue() * b.floatValue();
-    }
-    
-    @Override
-    public final Float getRatioOf(Number a, Number b) {
-        return a.floatValue() / b.floatValue();
-    }
-
-  
+   
 }

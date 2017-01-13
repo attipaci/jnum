@@ -29,7 +29,7 @@ import java.lang.Double;
 /**
  * The Class DoubleMesh.
  */
-public class DoubleMesh extends NumberMesh<Double> {
+public class DoubleMesh extends NumberMesh.FloatingType<Double> {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6960364610546704958L;
@@ -61,7 +61,7 @@ public class DoubleMesh extends NumberMesh<Double> {
     }   
 
     @Override
-    public final Double convert(Number x) { return x.doubleValue(); }
+    public final Double cast(Number x) { return x.doubleValue(); }
     
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
@@ -104,24 +104,15 @@ public class DoubleMesh extends NumberMesh<Double> {
     }
 
     @Override
-    public final Double getSumOf(Number a, Number b) {
+    public final Double getSumOf(final Number a, final Number b) {
         return a.doubleValue() + b.doubleValue();
     }
     
     @Override
-    public final Double getDifferenceOf(Number a, Number b) {
+    public final Double getDifferenceOf(final Number a, final Number b) {
         return a.doubleValue() - b.doubleValue();
     }
     
-    @Override
-    public final Double getProductOf(Number a, Number b) {
-        return a.doubleValue() * b.doubleValue();
-    }
-    
-    @Override
-    public final Double getRatioOf(Number a, Number b) {
-        return a.doubleValue() / b.doubleValue();
-    }
-
+   
 
 }

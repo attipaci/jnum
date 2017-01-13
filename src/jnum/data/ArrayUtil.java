@@ -2254,7 +2254,7 @@ public final class ArrayUtil {
 	@SuppressWarnings("unchecked")
 	private static <T> void addPinAt(Object data, T point, double scale, double[] pos, int depth) {
 		if(data instanceof LinearAlgebra) {
-			((LinearAlgebra<T>) data).addMultipleOf(point, scale);		
+			((LinearAlgebra<T>) data).addScaled(point, scale);		
 		}
 		else {
 			int ipos = (int) pos[depth];

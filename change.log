@@ -1,4 +1,5 @@
-0.10-2
+0.11-1
+
 
 	[NEW] {Configurator} methods for processing environment-based and 
 	Java property-based conditionals.
@@ -30,7 +31,8 @@
 	[CODE] Reorganization: Matrixes and related classes moved to new
 	jnum.math.matrix package,
 
-	[CODE] Work on multidimensional arrays (Mesh and subclasses).
+	[CODE] Multidimensional arrays (Mesh and subclasses) are taking shape
+	(more or less)...
 
 	[CODE] TableFormatter simplified generation of entries and toplevel
 	formatting.

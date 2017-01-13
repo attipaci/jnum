@@ -298,7 +298,7 @@ public class Matrix extends AbstractMatrix<Double> {
 	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public void addMultipleOf(AbstractMatrix<? extends Double> o, double factor) {
+	public void addScaled(AbstractMatrix<? extends Double> o, double factor) {
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) entry[i][j] += o.getValue(i, j) * factor;
 	}
 

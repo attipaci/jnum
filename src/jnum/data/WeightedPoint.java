@@ -270,7 +270,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 * @see jnum.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public void addMultipleOf(final WeightedPoint x, final double factor) {
+	public void addScaled(final WeightedPoint x, final double factor) {
 		value += factor * x.value;
 		if(weight == 0.0) return;
 		if(x.weight == 0.0) weight = 0.0;

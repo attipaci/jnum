@@ -177,9 +177,9 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public void addMultipleOf(AbstractVector<? extends T> o, double factor) {
+	public void addScaled(AbstractVector<? extends T> o, double factor) {
 		checkMatching(o);
-		for(int i=component.length; --i >= 0; ) component[i].addMultipleOf(o.getComponent(i), factor);		
+		for(int i=component.length; --i >= 0; ) component[i].addScaled(o.getComponent(i), factor);		
 	}
 
 	/* (non-Javadoc)
@@ -258,7 +258,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 */
 	@Override
 	public void orthogonalizeTo(AbstractVector<? extends T> v) {
-		addMultipleOf(v,-dot(v).abs() / (abs() * v.abs()));
+		addScaled(v,-dot(v).abs() / (abs() * v.abs()));
 	}
 
 	/* (non-Javadoc)

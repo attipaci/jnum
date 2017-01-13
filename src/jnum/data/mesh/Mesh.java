@@ -29,7 +29,6 @@ import java.io.Serializable;
 import java.util.*;
 
 import jnum.Copiable;
-import jnum.Function;
 import jnum.NonConformingException;
 import jnum.Util;
 import jnum.data.ArrayUtil;
@@ -262,16 +261,6 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	    sub.setData(subarrayDataAt(index));
 	    return sub;
 	}
-	
-	/**
-     * Adds the patch at.
-     *
-     * @param point the point
-     * @param exactpos the exactpos
-     * @param patchSize the patch size
-     * @param shape the shape
-     */
-	public abstract void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize);
 	
 	
 	public void pasteAt(int[] offset, Mesh<T> patch) { 

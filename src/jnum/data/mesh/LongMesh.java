@@ -23,7 +23,8 @@
 
 package jnum.data.mesh;
 
-public class LongMesh extends NumberMesh<Long> {
+
+public class LongMesh extends NumberMesh.IntegerType<Long> {
     
     /**
      * 
@@ -57,7 +58,7 @@ public class LongMesh extends NumberMesh<Long> {
     }   
     
     @Override
-    public final Long convert(Number x) { return x.longValue(); }
+    public final Long cast(Number x) { return x.longValue(); }
     
     /* (non-Javadoc)
      * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
@@ -100,23 +101,14 @@ public class LongMesh extends NumberMesh<Long> {
     }
     
     @Override
-    public final Long getSumOf(Number a, Number b) {
+    public final Long getSumOf(final Number a, final Number b) {
         return a.longValue() + b.longValue();
     }
     
     @Override
-    public final Long getDifferenceOf(Number a, Number b) {
+    public final Long getDifferenceOf(final Number a, final Number b) {
         return a.longValue() - b.longValue();
     }
     
-    @Override
-    public final Long getProductOf(Number a, Number b) {
-        return a.longValue() * b.longValue();
-    }
-    
-    @Override
-    public final Long getRatioOf(Number a, Number b) {
-        return a.longValue() / b.longValue();
-    }
 
 }

@@ -142,7 +142,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public void addMultipleOf(AbstractVector<? extends Double> o, double factor) {
+	public void addScaled(AbstractVector<? extends Double> o, double factor) {
 		checkMatching(o);
 		for(int i=size(); --i >= 0; ) component[i] += o.getComponent(i) * factor;		
 	}
@@ -217,7 +217,7 @@ public class RealVector extends AbstractVector<Double> {
 	 */
 	@Override
 	public void orthogonalizeTo(AbstractVector<? extends Double> v) {
-		addMultipleOf(v, -dot(v) / (abs() * v.abs()));
+		addScaled(v, -dot(v) / (abs() * v.abs()));
 	}
 	
 	/**
