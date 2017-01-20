@@ -263,21 +263,33 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	}
 	
 	
-	public void pasteAt(int[] offset, Mesh<T> patch) { 
-	    if(patch == this) return;
+	public void copyTo(Mesh<T> destination, int[] dstOffset) { 
+	    if(destination == this) throw new IllegalArgumentException("Cannot copy mesh onto itself");
 	    
-	    if(patch.getDimension() != getDimension()) throw new NonConformingException("path of different dimensionality.");
+	    final int dim = getDimension();
+	    if(destination.getDimension() != dim) throw new NonConformingException("patch of different dimensionality.");
+	       
+	    final int[] from = new int[dim];
+	    final int[] to = new int[dim];
 	    
-	    int[] size = getSize();
-	    int[] pSize = patch.getSize();
+	    // First figure out the range of destination indices...
+	    for(int k=dim; --k >= 0; ) {
+	        to[k] = Math.min(destination.getSize(k), dstOffset[k] + getSize(k));
+	        from[k] = dstOffset[k] < 0 ? 0 : dstOffset[k];
+	    }
 	    
-	    int[] to = new int[size.length];
-	    for(int k=size.length; --k >= 0; ) to[k] = Math.min(offset[k] + pSize[k], size[k]);
+	    final MeshCrawler<T> iDst = destination.iterator(from, to);
 	    
-	    final MeshCrawler<T> i = iterator(offset, to);
-	    final MeshCrawler<T> iP = patch.iterator();
+	    // Now, the range of corresponding source indices...
+	    for(int k=dim; --k >= 0; ) {
+            from[k] = dstOffset[k] < 0 ? -dstOffset[k] : 0;
+            to[k] = to[k] - dstOffset[k];
+        }
 	    
-	    while(i.hasNext()) i.setNext(iP.next()); 
+	    final MeshCrawler<T> iSrc = iterator(from, to);
+	    
+	    // Do the actual copy...
+	    while(iDst.hasNext()) iDst.setNext(iSrc.next()); 
 	}
 	
 	/**
