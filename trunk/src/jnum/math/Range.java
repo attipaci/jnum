@@ -121,14 +121,16 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 *
 	 * @return the double
 	 */
-	public double min() { return min; }
+	public final double min() { return min; }
 	
 	/**
 	 * Max.
 	 *
 	 * @return the double
 	 */
-	public double max() { return max; }
+	public final double max() { return max; }
+	
+	public final double midPoint() { return 0.5 * (min + max); }
 	
 	/**
 	 * Sets the min.

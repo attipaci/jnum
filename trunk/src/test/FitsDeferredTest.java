@@ -44,7 +44,7 @@ public class FitsDeferredTest {
 	float[][][] images = new float[4][][];
 	
 	/** The hdus. */
-	BasicHDU[] hdus;
+	BasicHDU<?>[] hdus;
 	
 	static { Locale.setDefault(Locale.GERMANY); }
 	
