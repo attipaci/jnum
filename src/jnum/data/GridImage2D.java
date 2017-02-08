@@ -214,7 +214,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	public void setGrid(Grid2D<CoordinateType> grid) { 
 		this.grid = grid; 
 		Vector2D resolution = grid.getResolution();
-		smoothing.encompass(new GaussianPSF(resolution.x() / fwhm2size, resolution.y() / fwhm2size, 0.0));
+		smoothing.encompass(new GaussianPSF(resolution.x() / Constant.fwhm2size, resolution.y() / Constant.fwhm2size, 0.0));
 	
 		// TODO default beam unit for non-spherical grids. Same as grid unit?
 		Unit u = grid instanceof SphericalGrid ? Unit.get("deg") : rawUnit;
@@ -229,7 +229,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 */
 	public void resetSmoothing() {
 		Vector2D resolution = grid.getResolution();
-		smoothing.set(resolution.x() / fwhm2size, resolution.y() / fwhm2size, 0.0);
+		smoothing.set(resolution.x() / Constant.fwhm2size, resolution.y() / Constant.fwhm2size, 0.0);
 	}
 	
 	/**
@@ -264,7 +264,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	// TODO non rectilinear grids
 	public void setResolution(double dx, double dy) { 
 		getGrid().setResolution(dx, dy);
-		smoothing.encompass(new GaussianPSF(dx / fwhm2size, dy / fwhm2size, 0.0));
+		smoothing.encompass(new GaussianPSF(dx / Constant.fwhm2size, dy / Constant.fwhm2size, 0.0));
 	}
 	
 	
@@ -477,7 +477,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 	 */
 	public double countIndependentPoints(double area) {
 		double smoothArea = smoothing.getArea();
-		double filterArea = fwhm2size * fwhm2size * extFilterFWHM * extFilterFWHM;
+		double filterArea = Constant.fwhm2size * Constant.fwhm2size * extFilterFWHM * extFilterFWHM;
 		double beamArea = this.getImageBeamArea();
 		
 		// Account for the filtering correction.
@@ -1373,7 +1373,7 @@ public class GridImage2D<CoordinateType extends Coordinate2D> extends Data2D {
 			smoothing.set(smoothFWHM);
 		}
 		
-		double pixelSmoothing = Math.sqrt(getGrid().getPixelArea()) / fwhm2size;
+		double pixelSmoothing = Math.sqrt(getGrid().getPixelArea()) / Constant.fwhm2size;
 		smoothing.encompass(new GaussianPSF(pixelSmoothing));
 		
 		// Use old EXTFILTR or new XBMAJ, XBMIN

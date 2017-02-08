@@ -32,7 +32,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 
-import jnum.Constant;
 import jnum.CopiableContent;
 import jnum.Parallel;
 import jnum.Unit;
@@ -2130,32 +2129,6 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		data[i][j] = 0.0;		
 	}
 	
-
-	/**
-	 * Gets the histogram.
-	 *
-	 * @param image the image
-	 * @param binSize the bin size
-	 * @return the histogram
-	 */
-	public Vector2D[] getHistogram(final double[][] image, final double binSize) {
-		Range range = getRange();
-		
-		int bins = 1 + (int)Math.round(range.max() / binSize) - (int)Math.round(range.min() / binSize);
-		final Vector2D[] bin = new Vector2D[bins];
-		for(int i=0; i<bins; i++) bin[i] = new Vector2D(i*binSize, 0.0);
-		
-		new Task<Void>() {
-			@Override
-			protected void process(int i, int j) {
-				if(flag[i][j] == 0) bin[(int)Math.round(image[i][j] / binSize)].addY(1.0);
-			}
-		}.process();
-		
-		return bin;
-	}
-	
-	
 	
 	/**
 	 * Read.
@@ -2765,12 +2738,6 @@ public class Data2D implements Serializable, Cloneable, TableFormatter.Entries, 
 		else return "n/a";
 	}
 	
-	
-	// 2 pi sigma^2 = a^2
-	// a = sqrt(2 pi) sigma
-	//   = sqrt(2 pi) fwhm / 2.35
-	/** The fwhm2size. */
-	public static double fwhm2size = Math.sqrt(Constant.twoPi) / Constant.sigmasInFWHM;
 	
 	/** The undefined. */
 	public static String UNDEFINED = "<undefined>";

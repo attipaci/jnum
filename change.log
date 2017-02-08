@@ -1,3 +1,11 @@
+
+
+	[CODE] Data2D.fwhm2size moved to Constant.
+	
+	[CODE] Data2D.getHistogram() refactored to more universal 
+	Histogram.createFrom(Object data).
+
+
 0.11-1
 
 
