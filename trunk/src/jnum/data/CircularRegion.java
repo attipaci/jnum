@@ -101,7 +101,7 @@ public class CircularRegion<CoordinateType extends Coordinate2D> extends Region<
 		coords = (CoordinateType) image.getReference().clone();
 		image.getProjection().deproject(offset, coords);
 		setRadius(r);
-		radius.setRMS(Math.sqrt(image.getPixelArea()) / (GridImage2D.fwhm2size * Constant.sigmasInFWHM));
+		radius.setRMS(Math.sqrt(image.getPixelArea()) / (Constant.fwhm2size * Constant.sigmasInFWHM));
 	}
 	
 	/**

@@ -263,4 +263,51 @@ public class Histogram implements Cloneable {
 		return data;
 	}
 	
+	
+	public void add(Object data) throws IllegalArgumentException {   
+	    if(data instanceof Number) add(((Number) data).doubleValue());
+	    else if(data instanceof WeightedPoint) add(((WeightedPoint) data).value());
+	    else if(data instanceof double[]) add((double[]) data);
+	    else if(data instanceof float[]) add((float[]) data);
+	    else if(data instanceof long[]) add((long[]) data);
+	    else if(data instanceof int[]) add((int[]) data);
+	    else if(data instanceof short[]) add((short[]) data);
+	    else if(data instanceof byte[]) add((byte[]) data);
+	    else if(data instanceof Object[]) {
+	        for(Object value : (Object[]) data) add(value);
+	    }
+	    else throw new IllegalArgumentException("Cannot add type " + data.getClass().getSimpleName() + " to histogram.");
+    }
+	
+    public void add(double[] data) {   
+        for(double value : data) add(value);
+    }
+    
+    public void add(float[] data) {   
+        for(double value : data) add(value);
+    }
+    
+    public void add(long[] data) {   
+        for(double value : data) add(value);
+    }
+    
+    public void add(int[] data) {   
+        for(double value : data) add(value);
+    }
+    
+    public void add(short[] data) {   
+        for(double value : data) add(value);
+    }
+    
+    public void add(byte[] data) {   
+        for(double value : data) add(value);
+    }
+    
+    
+    public static Histogram createFrom(Object data, double binSize) {
+        Histogram histogram = new Histogram(binSize);
+        histogram.add(data);
+        return histogram;
+    }
+    
 }

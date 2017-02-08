@@ -347,7 +347,14 @@ public class Constant {
     public static double Omega_M = 0.27;
     
     /** The Omega_ lambda. */
-    public static double Omega_Lambda = 0.73;    
+    public static double Omega_Lambda = 0.73;
+
+    // 2 pi sigma^2 = a^2
+    // a = sqrt(2 pi) sigma
+    //   = sqrt(2 pi) fwhm / 2.35
+    /** The fwhm2size. */
+    public static double fwhm2size = Math.sqrt(twoPi) / sigmasInFWHM;   
+ 
 
 }
 
