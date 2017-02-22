@@ -191,21 +191,17 @@ public final class FitsToolkit {
 	 * @return the long key
 	 */
 	public static String getLongKey(Header header, String key) {
-		if(key.length() >= 8) key = key.substring(0, 6) + "-";
-	
 		String value = header.getStringValue(key);
 	
-		if(value == null) {
-			value = new String();
-			char ext = 'A';
-			String part;
-			do {
-				part = header.getStringValue(key + ext);
-				if(part != null) value += part;
-				ext++;
-			} 
-			while(part != null);
-		}
+		if(key.length() >= 8) key = key.substring(0, 6) + "-";
+		
+		char ext = 'A';
+		String part;
+		
+		while((part = header.getStringValue(key + ext)) != null) {
+		    value += part;
+		    ext++;
+		} 
 	
 		return value;
 	}
@@ -220,28 +216,36 @@ public final class FitsToolkit {
 	 * @throws HeaderCardException the header card exception
 	 */
 	public static void addLongKey(Cursor<String, HeaderCard> cursor, String key, String value, String comment) throws HeaderCardException {
-		if(FitsFactory.isLongStringsEnabled()) {
+		/*
+		 * FIXME long keys work only for HIERARCH now (nom.tam.fits 1.15.1)
+		 * 
+	    if(FitsFactory.isLongStringsEnabled()) {
 		    cursor.add(new HeaderCard(key, value, comment));
 		    return;
 		}
+	    */
 	    
-	    if(key.length() >= 8) key = key.substring(0, 6) + "-";
+	    
+	    
+	    
+	   
 		
-		final int size = 65 - comment.length();
-	
+		final int size = 68; // 8 - 8(key) - 2("= ") - 2('')
+		
 		if(value.length() <= size) {
 			cursor.add(new HeaderCard(key, value, comment));
 			return;
 		}
-	
-		int start = 0;	
+		
+		cursor.add(new HeaderCard(key, value.substring(0, size), comment));
+		
+		if(key.length() >= 8) key = key.substring(0, 6) + "-";
+		int start = size;	
 		char ext = 'A';
 	
 		while(start < value.length()) {
-			int end = start + size;
-			if(end > value.length()) end = value.length();
-	
-			cursor.add(new HeaderCard(key + ext, value.substring(start, end), comment));
+			int end = Math.min(value.length(), start + size);
+			cursor.add(new HeaderCard(key + ext, value.substring(start, end), (end == value.length() ? comment : "")));
 	
 			ext++;
 			start = end;
