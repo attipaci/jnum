@@ -143,8 +143,10 @@ public class Parameter extends DataPoint implements Penalty {
 	 */
 	@Override
     public boolean equals(Object o) {
-	    if(!super.equals(o)) return false;
+	    if(this == o) return true;
 	    if(!(o instanceof Parameter)) return false;
+	    if(!super.equals(o)) return false;
+	    
 	    Parameter p = (Parameter) o;
 	    if(!Util.equals(name, p.name)) return false;
 	    if(!Util.equals(range, p.range)) return false;

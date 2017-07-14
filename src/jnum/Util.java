@@ -20,6 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum;
 
 import java.io.BufferedReader;
@@ -50,14 +51,23 @@ import jnum.text.TimeFormat;
 public final class Util {
 
     /** The Constant version. */
-    public final static String version = "0.11-2";
+    public final static String version = "0.20-a2";
+    
+    public final static String copyright = "(c)2017 Attila Kovacs"; 
+    
+    public final static String copyrightEmail = "<attila[AT]sigmyne.com>"; 
 
     /** The Constant revision. */
-    public final static String revision = "";
+    public final static String revision = "devel.1";
 
     /** The debug. */
     public static boolean debug = false;
 
+    
+    public static String getCopyrightString() {
+        return "Copyright " + copyright + " " + copyrightEmail;
+    }
+    
     /**
      * Gets the decimal format.
      *
@@ -405,6 +415,7 @@ public final class Util {
      * @return the system path
      */
     public static String getSystemPath(String spec) {
+        
         String homes = System.getProperty("user.home");
 
         // Make sure that UNIX-type pathnames are always accepted since these are default
@@ -841,7 +852,11 @@ public final class Util {
         for(int i=n; --i >= 0; ) buf.append(" ");
         return new String(buf);
     }
-
+    
+    public static String getWhiteSpaceChars() { return " \t\r\n"; }
+    
+  
+    
     /**
      * Info.
      *

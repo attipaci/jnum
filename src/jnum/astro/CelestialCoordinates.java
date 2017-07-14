@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,11 +20,13 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
 package jnum.astro;
 
 import jnum.Constant;
+import jnum.IncompatibleTypesException;
+import jnum.Util;
+import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
 // TODO: Auto-generated Javadoc
@@ -38,6 +40,11 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1991797523903701648L;
 
+
+    /** The reuse equatorial. */
+    private static EquatorialCoordinates reuseEquatorial = new EquatorialCoordinates();
+
+	
 	/**
 	 * Instantiates a new celestial coordinates.
 	 */
@@ -95,9 +102,9 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 	
 	
 	/**
-	 * To equatorial.
+	 * Convert to equatorial.
 	 *
-	 * @return the equatorial coordinates
+	 * @return the equivalent equatorial coordinates
 	 */
 	public EquatorialCoordinates toEquatorial() {
 		EquatorialCoordinates equatorial = new EquatorialCoordinates();
@@ -106,37 +113,47 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 	}
 	
 	/**
-	 * To equatorial.
+	 * Convert to equatorial, placing the result in the supplied destination coordinates.
 	 *
-	 * @param equatorial the equatorial
+	 * @param equatorial the equivalent equatorial coordinates
 	 */
 	public void toEquatorial(EquatorialCoordinates equatorial) {
-		final EquatorialCoordinates pole = getEquatorialPole();
+        if(equatorial.epoch == null) equatorial.epoch = CoordinateEpoch.J2000;
+    
+	    final EquatorialCoordinates pole = getEquatorialPole();
 		
 		CelestialCoordinates.inverseTransform(this, pole, getZeroLongitude(), equatorial);
 		
-		if(!equatorial.epoch.equals(pole.epoch)) {
+		if(!Util.equals(equatorial.epoch, pole.epoch)) {
 			final CoordinateEpoch epoch = equatorial.epoch;
 			equatorial.epoch = pole.epoch;
-			equatorial.precess(epoch);			
+			try { equatorial.precess(epoch); }
+			catch(UndefinedEpochException e) {}
 		}
 		
 	}
 	
 	/**
-	 * From equatorial.
+	 * Convert from the specified equatorial coordinates, keeping the argument's epoch when applicable.
 	 *
-	 * @param equatorial the equatorial
+	 * @param equatorial the equatorial coordinates.
 	 */
-	public synchronized void fromEquatorial(EquatorialCoordinates equatorial) {
+	public void fromEquatorial(EquatorialCoordinates equatorial) {
 		final EquatorialCoordinates pole = getEquatorialPole();
 		
-		if(!equatorial.epoch.equals(pole.epoch)) {
+		if(!Util.equals(equatorial.epoch, pole.epoch)) {
 			equatorial = (EquatorialCoordinates) equatorial.clone();
-			equatorial.precess(pole.epoch);			
+			try { equatorial.precess(pole.epoch); }
+			catch(UndefinedEpochException e) {}
 		}
 		
 		CelestialCoordinates.transform(equatorial, pole, getZeroLongitude(), this);
+	}
+	
+	@Override
+    public void convertFrom(Coordinate2D coords) throws IncompatibleTypesException {
+	    if(coords instanceof CelestialCoordinates) convertFrom((CelestialCoordinates) coords);
+	    else super.convertFrom(coords);
 	}
 	
 	/**
@@ -211,37 +228,37 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 		return supergal;
 	}
 	
-	
-	/** The reuse equatorial. */
-	private static EquatorialCoordinates reuseEquatorial = new EquatorialCoordinates();
-	
+		
 	/**
 	 * Convert.
 	 *
 	 * @param from the from
 	 * @param to the to
 	 */
-	public static synchronized void convert(CelestialCoordinates from, CelestialCoordinates to) {
-		
-		if(from.getClass().equals(to.getClass())) {
+	public static void convert(CelestialCoordinates from, CelestialCoordinates to) {
+	    
+	    // If converting to same type, then just copy, precessing as necessary;
+		if(to.getClass().equals(from.getClass())) {
 			if(from instanceof Precessing) {
-				CoordinateEpoch toEpoch = ((Precessing) to).getEpoch();
 				to.copy(from);
-				((Precessing) to).precess(toEpoch);
+				try { ((Precessing) to).precess(((Precessing) to).getEpoch()); }
+				catch(UndefinedEpochException e) {}
 			}
 			else to.copy(from);
 		}
 		
-		if(from instanceof EquatorialCoordinates) reuseEquatorial = (EquatorialCoordinates) from;
-		else from.toEquatorial(reuseEquatorial);
-		
-		if(to instanceof EquatorialCoordinates) {
-			if(!reuseEquatorial.epoch.equals(((EquatorialCoordinates) to).epoch)) reuseEquatorial.precess(((EquatorialCoordinates) to).epoch);
-			to.copy(reuseEquatorial);
+		if(from instanceof EquatorialCoordinates) {
+		    to.fromEquatorial((EquatorialCoordinates) from);
 		}
-		else to.fromEquatorial(reuseEquatorial);
-	}
+		else if(to instanceof EquatorialCoordinates) {
+		    from.toEquatorial((EquatorialCoordinates) to);
+		}
+		else synchronized(reuseEquatorial) {
+		    from.toEquatorial(reuseEquatorial);
+		    to.fromEquatorial(reuseEquatorial);
+		}
 	
+	}
 	
 	/**
 	 * Gets the pole.

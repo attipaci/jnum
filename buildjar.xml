@@ -1,21 +1,35 @@
-<project name="jnum" default="createjar">    
-  <property name="projectHome" location="." />
-  <target name="createjar">
-    <jar 
+<project name="jnum" default="create-jars">
+	<property name="projectHome" location="." />
+
+	<target name="create-jars" depends="jnum.jar,jnum-src.jar"/>
+
+	<target name="cleanall" depends="clean"/>
+
+	<target name="clean">
+		<delete file="${projectHome}/jnum.jar"/>
+		<delete file="${projectHome}/jnum-src.jar"/>
+	</target>
+
+	<target name="jnum.jar">
+		<jar 
 	destfile="${projectHome}/jnum.jar" 
 	basedir="${projectHome}/bin"
 	includes="**/*.class" 
-	excludes="**/test/*,**/devel/*,**/TODO*,**/*~,**/.*" 
+	excludes="**/test/**,**/devel/**,**/TODO*,**/*~,**/.*" 
 	index="true"
 	level="9" 
     />
-    <jar 
+	</target>
+
+	<target name="jnum-src.jar">
+		<jar 
 	destfile="${projectHome}/jnum-src.jar" 
 	basedir="${projectHome}/src"
 	includes="**/*.java" 
-	excludes="**/test/*,**/devel/*,**/TODO*,**/*~,**/.*" 
+	excludes="**/test/**,**/devel/**,**/TODO*,**/*~,**/.*" 
 	index="true"
 	level="9" 
     />
-  </target>    
+	</target>
+
 </project>

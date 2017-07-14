@@ -23,8 +23,8 @@
 package test;
 
 import jnum.Unit;
-import jnum.data.Data2D;
-import jnum.data.GridMap2D;
+import jnum.data.image.Data2D;
+import jnum.data.image.GridMap2D;
 import jnum.math.Coordinate2D;
 
 

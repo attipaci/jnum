@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -136,17 +136,17 @@ public final class TableFormatter {
 			if(spec.length() > 3) {
 				char levelSpec = spec.charAt(3);
 				switch(levelSpec) {
-				case 'd' : af.topLevel = AngleFormat.DEGREE;
-				case 'm' : af.topLevel = AngleFormat.MINUTE;
-				case 's' : af.topLevel = AngleFormat.SECOND;
+				case 'd' : af.topLevel = AngleFormat.LEVEL_DEGREE;
+				case 'm' : af.topLevel = AngleFormat.LEVEL_MINUTE;
+				case 's' : af.topLevel = AngleFormat.LEVEL_SECOND;
 				}
 			}
 			if(spec.length() > 4) {
 				char levelSpec = spec.charAt(4);
 				switch(levelSpec) {
-				case 'd' : af.bottomLevel = AngleFormat.DEGREE;
-				case 'm' : af.bottomLevel = AngleFormat.MINUTE;
-				case 's' : af.bottomLevel = AngleFormat.SECOND;
+				case 'd' : af.bottomLevel = AngleFormat.LEVEL_DEGREE;
+				case 'm' : af.bottomLevel = AngleFormat.LEVEL_MINUTE;
+				case 's' : af.bottomLevel = AngleFormat.LEVEL_SECOND;
 				}
 			}
 			return af;
@@ -162,17 +162,17 @@ public final class TableFormatter {
 			if(spec.length() > 3) {
 				char levelSpec = spec.charAt(3);
 				switch(levelSpec) {
-				case 'd' : hf.topLevel = HourAngleFormat.DEGREE;
-				case 'm' : hf.topLevel = HourAngleFormat.MINUTE;
-				case 's' : hf.topLevel = HourAngleFormat.SECOND;
+				case 'd' : hf.topLevel = HourAngleFormat.LEVEL_DEGREE;
+				case 'm' : hf.topLevel = HourAngleFormat.LEVEL_MINUTE;
+				case 's' : hf.topLevel = HourAngleFormat.LEVEL_SECOND;
 				}
 			}
 			if(spec.length() > 4) {
 				char levelSpec = spec.charAt(4);
 				switch(levelSpec) {
-				case 'd' : hf.bottomLevel = HourAngleFormat.DEGREE;
-				case 'm' : hf.bottomLevel = HourAngleFormat.MINUTE;
-				case 's' : hf.bottomLevel = HourAngleFormat.SECOND;
+				case 'd' : hf.bottomLevel = HourAngleFormat.LEVEL_DEGREE;
+				case 'm' : hf.bottomLevel = HourAngleFormat.LEVEL_MINUTE;
+				case 's' : hf.bottomLevel = HourAngleFormat.LEVEL_SECOND;
 				}
 			}
 			return hf;
@@ -188,17 +188,17 @@ public final class TableFormatter {
 			if(spec.length() > 3) {
 				char levelSpec = spec.charAt(3);
 				switch(levelSpec) {
-				case 'h' : tf.topLevel = TimeFormat.HOUR;
-				case 'm' : tf.topLevel = TimeFormat.MINUTE;
-				case 's' : tf.topLevel = TimeFormat.SECOND;
+				case 'h' : tf.topLevel = TimeFormat.LEVEL_HOUR;
+				case 'm' : tf.topLevel = TimeFormat.LEVEL_MINUTE;
+				case 's' : tf.topLevel = TimeFormat.LEVEL_SECOND;
 				}
 			}
 			if(spec.length() > 4) {
 				char levelSpec = spec.charAt(4);
 				switch(levelSpec) {
-				case 'h' : tf.bottomLevel = TimeFormat.HOUR;
-				case 'm' : tf.bottomLevel = TimeFormat.MINUTE;
-				case 's' : tf.bottomLevel = TimeFormat.SECOND;
+				case 'h' : tf.bottomLevel = TimeFormat.LEVEL_HOUR;
+				case 'm' : tf.bottomLevel = TimeFormat.LEVEL_MINUTE;
+				case 's' : tf.bottomLevel = TimeFormat.LEVEL_SECOND;
 				}
 			}
 			return tf;

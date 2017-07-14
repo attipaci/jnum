@@ -47,13 +47,6 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	/**
 	 * Instantiates a new 2D vector.
 	 *
-	 * @param text the text
-	 */
-	public Vector2D(String text) { parse(text); }
-
-	/**
-	 * Instantiates a new 2D vector.
-	 *
 	 * @param X the x
 	 * @param Y the y
 	 */
@@ -73,6 +66,18 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	 */
 	public Vector2D(Point2D point) { super(point); }
 	
+	/**
+     * Instantiates a new 2D vector.
+     *
+     * @param text the text
+     */
+    public Vector2D(String text) { super(text); }
+	
+    
+    @Override
+    public Vector2D copy() {
+        return (Vector2D) super.copy();
+    }
 	
 	/**
 	 * Absolute value (radius) of the complex number. Same as {@link jnum.math.Vector2D#length()}.

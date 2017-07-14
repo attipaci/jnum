@@ -1,7 +1,7 @@
 package test;
 
 import jnum.Unit;
-import jnum.data.GaussianPSF;
+import jnum.data.image.Gaussian2D;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -15,8 +15,8 @@ public class PSFTest {
 	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
-		GaussianPSF p1 = new GaussianPSF(4.0, 3.0, -55.0 * Unit.deg);
-		GaussianPSF p2 = new GaussianPSF(9.0, 2.0, 22.0 * Unit.deg);
+		Gaussian2D p1 = new Gaussian2D(4.0, 3.0, -55.0 * Unit.deg);
+		Gaussian2D p2 = new Gaussian2D(9.0, 2.0, 22.0 * Unit.deg);
 		
 		System.err.println(p1);
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -50,32 +50,17 @@ public class AngleFormat extends NumberFormat {
 	private double precision;
 	
 	/** The top level. */
-	public int topLevel = DEGREE;
+	public int topLevel = LEVEL_DEGREE;
 	
 	/** The bottom level. */
-	public int bottomLevel = SECOND;
-	
-		
-	/** The Constant colonMarker. */
-	protected static final char[] colonMarker = { ':', ':', 0};
-	
-	/** The Constant dmsMarker. */
-	protected static final char[] dmsMarker = { 'd', 'm', 's'};
-	
-	/** The Constant symbolMarker. */
-	protected static final char[] symbolMarker = { Symbol.degree, '\'', '"'};
+	public int bottomLevel = LEVEL_SECOND;
 
-	/** The unit. */
-	protected double[] unit = { Unit.deg, Unit.arcmin, Unit.arcsec };	
+	/** The separators. */
+	protected char[] marks = dmsMarks;
 	
-	/** The marker. */
-	protected char[] marker = dmsMarker;
-	
-	/** The wraparound. */
-	protected double wraparound = Constant.twoPi;
 	
 	/** The one sided. */
-	protected boolean wrap = true, oneSided = false;
+	protected boolean wrap = true, isPositiveOnly = false;
 	
 	/**
 	 * Instantiates a new angle format.
@@ -98,13 +83,8 @@ public class AngleFormat extends NumberFormat {
 	 *
 	 * @param type the new separator
 	 */
-	public void setSeparator(int type) {
-		switch(type) {
-		case COLONS: marker = colonMarker; break;
-		case DMS: marker = dmsMarker; break;
-		case SYMBOLS: marker = symbolMarker; break;
-		default: marker = colonMarker;
-		}	
+	public void setMarks(int type) {
+		marks = getMarkerChars(type);
 	}
 	
 	/**
@@ -112,27 +92,44 @@ public class AngleFormat extends NumberFormat {
 	 *
 	 * @return the separator
 	 */
-	public int getSeparator() {
-		if(marker == colonMarker) return COLONS;
-		else if(marker == dmsMarker) return DMS;
-		else if(marker == symbolMarker) return SYMBOLS;	
+	public int getMarks() {
+		if(marks == colonMarks) return FORMAT_COLONS;
+		else if(marks == dmsMarks) return FORMAT_DMS;
+		else if(marks == symbolMarks) return FORMAT_SYMBOLS;	
+		else if(marks == fancyMarks) return FORMAT_FANCY;
 		else return -1;
 	}
 	
+	
+	public char[] getMarkerChars(int type) {
+	    switch(type) {
+        case FORMAT_COLONS: return colonMarks;
+        case FORMAT_DMS: return dmsMarks;
+        case FORMAT_SYMBOLS: return symbolMarks;
+        case FORMAT_FANCY: return fancyMarks;
+        default: return colonMarks;
+	    }  
+	}
+
 	/**
 	 * Colons.
 	 */
-	public void colons() { marker = colonMarker; }
+	public void colons() { marks = colonMarks; }
 	
 	/**
 	 * Letters.
 	 */
-	public void letters() { marker = dmsMarker; }
+	public void letters() { marks = dmsMarks; }
 	
 	/**
 	 * Symbols.
 	 */
-	public void symbols() { marker = symbolMarker; }
+	public void symbols() { marks = symbolMarks; }
+	
+	/**
+     * Alternative Symbols.
+     */
+    public void fancy() { marks = fancyMarks; }
 	
 	/**
 	 * Sets the top level.
@@ -140,7 +137,7 @@ public class AngleFormat extends NumberFormat {
 	 * @param level the new top level
 	 */
 	public void setTopLevel(int level) { 
-		if(level < DEGREE || level > SECOND) throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " level.");
+		if(level < LEVEL_DEGREE || level > LEVEL_SECOND) throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " level.");
 		topLevel = level; 	
 	}
 	
@@ -150,7 +147,7 @@ public class AngleFormat extends NumberFormat {
 	 * @param level the new bottom level
 	 */
 	public void setBottomLevel(int level) { 
-		if(level < DEGREE || level > SECOND) throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " level.");
+		if(level < LEVEL_DEGREE || level > LEVEL_SECOND) throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " level.");
 		bottomLevel = level; 		
 	}
 	
@@ -174,8 +171,9 @@ public class AngleFormat extends NumberFormat {
 	 * @param decimals the new decimals
 	 */
 	public void setDecimals(int decimals) { 
+	    if(decimals < 0) decimals = MAX_DECIMALS;
 		this.decimals = decimals; 
-		precision = decimals > 0 ? Math.pow(0.1, decimals) : 0.0;
+		precision = decimals >= 0 ? Math.pow(0.1, decimals) : 0.0;
 	}
 	
 	/**
@@ -190,14 +188,14 @@ public class AngleFormat extends NumberFormat {
 	 *
 	 * @param value the new one sided
 	 */
-	public void setOneSided(boolean value) { oneSided = value; }
+	public void setPositiveOnly(boolean value) { isPositiveOnly = value; }
 	
 	/**
 	 * Checks if is one sided.
 	 *
 	 * @return true, if is one sided
 	 */
-	public boolean isOneSided() { return oneSided; }
+	public boolean isPositiveOnly() { return isPositiveOnly; }
 	
 	/**
 	 * Wrap.
@@ -214,14 +212,18 @@ public class AngleFormat extends NumberFormat {
 	public boolean isWrapping() { return wrap; }
 	
 	
+	protected double getWrapValue() {
+	    return Constant.twoPi;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.text.NumberFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
 	 */
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {		
 		if(wrap) {
-			number = Math.IEEEremainder(number, wraparound);
-			if(oneSided && number < 0) number += wraparound;
+			number = Math.IEEEremainder(number, getWrapValue());
+			if(isPositiveOnly && number < 0) number += getWrapValue();
 		}
 		
 		pos.setBeginIndex(toAppendTo.length());
@@ -239,67 +241,91 @@ public class AngleFormat extends NumberFormat {
 		return null;
 	}
 	
+
+    @Override
+    public final Number parse(String source) throws NumberFormatException {
+	    return parse(source, new ParsePosition(0));
+	}
+	
+	
 	// Parse with any markers, and any level below the top level.
 	// The top level is then readjusted to the 
 	/* (non-Javadoc)
 	 * @see java.text.NumberFormat#parse(java.lang.String, java.text.ParsePosition)
 	 */
 	@Override
-	public Number parse(String source, ParsePosition parsePosition) {
-		return parse(source, parsePosition, DEGREE);
+	public final Number parse(String source, ParsePosition parsePosition) throws NumberFormatException {
+	    for(int format=0; format<MAX_FORMAT; format++) {
+	        try { return parse(source, parsePosition, format); }
+	        catch(NumberFormatException e) {}
+	    }
+	    throw new NumberFormatException("Not an angle format: " + source);
+	}
+
+	// Parse around spaces and commas by default...
+	public String getGenericDelimiters() {
+	    return Util.getWhiteSpaceChars() + ",";
 	}
 	
 	/**
 	 * Parses the.
 	 *
 	 * @param source the source
-	 * @param parsePosition the parse position
+	 * @param pos the parse position
 	 * @param fromLevel the from level
 	 * @return the number
 	 */
-	public Number parse(String source, ParsePosition parsePosition, int fromLevel) {
+	public Number parse(String source, ParsePosition pos, int formatStyle) throws NumberFormatException {
 		int sign = 1;
-		double angle = 0.0;
+		double angle = Double.NaN;
 		
-		if(marker[fromLevel] != 0) {
-			int pos = parsePosition.getIndex();
-			colons();
-			if(source.indexOf(marker[fromLevel], pos) < 0) {
-				letters();
-				if(source.indexOf(marker[fromLevel], pos) < 0) {
-					symbols();
-					if(source.indexOf(marker[fromLevel], pos) < 0) return parse(source, parsePosition, fromLevel+1);
-				}
-			}
+		source = source.toLowerCase();
+        
+		StringParser parser = new StringParser(source, pos);	
+        String markers = new String(getMarkerChars(formatStyle));
+
+        parser.skipWhiteSpaces();
+      
+		for(int level = LEVEL_DEGREE; level <= LEVEL_SECOND && pos.getIndex() < source.length(); level++) {
+		    parser.skipWhiteSpaces();  
+		    
+		    int to = parser.nextIndexOf(getGenericDelimiters() + markers);
+	            
+		    if(to < 0) to = source.length();
+		    else {
+		        char delim = source.charAt(to);
+		    
+		        // Check if the parse level is marked differently from expected, and adjust as needed...
+		        if(delim != markers.charAt(level)) for(int k = level+1; k <= LEVEL_SECOND; k++) if(delim == markers.charAt(k)) { 
+		            level = k;
+		            break;
+		        }
+		    }
+	       
+	        // Top level parse errors will throw an exception....
+	        if(Double.isNaN(angle)) {
+	            //System.err.println("### top '" + source.substring(from, to) + "'");
+	            angle = Double.parseDouble(source.substring(pos.getIndex(), to)) * getUnit(level);
+	            if(angle < 0.0) {
+	                angle *= -1.0;
+	                sign = -1;
+	            }
+	            pos.setIndex(to + 1);
+	        }
+	        // Sub-level parse error assume complete...
+	        else {
+	            try {
+	                //System.err.println("### sub '" + source.substring(from, to) + "'");
+	                angle += Double.parseDouble(source.substring(pos.getIndex(), to)) * getUnit(level);
+	                pos.setIndex(to + 1);
+	            }
+	            catch(NumberFormatException e) { return sign * angle; }
+	        }
 		}
 		
-		int i = parsePosition.getIndex();
-		char c = source.charAt(i);
 		
-		while(c == ' ' || c == '\t' || c == '\n' || c == '\r') c = source.charAt(++i);
-			
-		if(c == '-') {
-			sign = -1;
-			i++;
-		}
-		parsePosition.setIndex(i);
+		if(Double.isNaN(angle)) throw new NumberFormatException("Could not parse angle from " + source.substring(pos.getIndex()));
 		
-		for(int level = fromLevel; level <= SECOND; level++) {
-			if(marker[level] != 0) {			
-				int pos = parsePosition.getIndex();
-				int to = source.indexOf(marker[level], pos);
-				if(to < 0) {
-					bottomLevel = level;
-					break;
-				}
-				if(level == SECOND) angle += Double.parseDouble(source.substring(pos, to)) * unit[level];
-				else angle += Integer.parseInt(source.substring(pos, to)) * unit[level];
-				
-				parsePosition.setIndex(to+1);
-			}
-			else angle += Util.f[decimals].parse(source, parsePosition).doubleValue() * unit[SECOND];		
-		} 
-			
 		return sign * angle;
 	}
 	
@@ -319,43 +345,79 @@ public class AngleFormat extends NumberFormat {
 	
 		// Round the angle to the formatting resolution (here, use the quick and dirty approach...)
 		// This way the rounding is correctly propagated...
-		// E.g. 1:20:59.9999 -> 1:21:00 instead of the wrong 1:20:60		
-		angle += 0.5 * precision * unit[SECOND];
+		// E.g. 1:20:59.9999 -> 1:21:00 instead of the incorrect 1:20:60		
+		angle += 0.05 * precision * getUnit(bottomLevel);
 		
 		for(int level = topLevel; level <= bottomLevel; level++) {
-			if(level != SECOND) {
-				int value = (int) (angle / unit[level]);
-				angle -= value * unit[level];
+			if(level != LEVEL_SECOND) {
+				int value = (int) Math.floor(angle / getUnit(level));
+				angle -= value * getUnit(level);
 				text.append(Util.d2.format(value));
-				text.append(marker[level]);
+				text.append(marks[level]);
 			}
 			else {
-				angle /= unit[SECOND];
+				angle /= getUnit(LEVEL_SECOND);
 				double twodigits = 10.0 - 5.0 * Math.pow(0.1, decimals+1);
 				if(angle < twodigits) text.append('0');
 				text.append(Util.f[decimals].format(angle));
-				if(marker[SECOND] != 0.0) text.append(marker[SECOND]);
+				if(marks[LEVEL_SECOND] != 0.0) text.append(marks[LEVEL_SECOND]);
 			}			
-		}
+ 		}
 		
 		return new String(text);		
 	}
+
+	public double getUnit(int level) {
+	    switch(level) {
+	    case LEVEL_DEGREE: return Unit.deg;
+	    case LEVEL_MINUTE: return Unit.arcmin;
+	    case LEVEL_SECOND: return Unit.arcsec;
+	    default: return Double.NaN;
+	    }
+	    
+	}
 	
+    
+    /** The Constant colonMarker. */
+    protected static final char[] colonMarks = { ':', ':', 0};
+    
+    /** The Constant dmsMarker. */
+    protected static final char[] dmsMarks = { 'd', 'm', 's'};
+    
+    /** The Constant symbolMarker. */
+    protected static final char[] symbolMarks = { Symbol.degree, '\'', '"'};
+
+    protected static final char[] fancyMarks = { Symbol.degree, Symbol.prime, Symbol.doublePrime};
+ 
+    
 	/** The Constant DEGREE. */
-	public static final int DEGREE = 0;
+	public static final int LEVEL_DEGREE = 0;
 	
 	/** The Constant MINUTE. */
-	public static final int MINUTE = 1;
+	public static final int LEVEL_MINUTE = 1;
 	
 	/** The Constant SECOND. */
-	public static final int SECOND = 2;
+	public static final int LEVEL_SECOND = 2;
+
+	
+	public final static int MAX_DECIMALS = -1;
+
+	
 	
 	/** The Constant COLONS. */
-	public static final int COLONS = 0;
+	public static final int FORMAT_COLONS = 0;
 	
 	/** The Constant DMS. */
-	public static final int DMS = 1;
+	public static final int FORMAT_DMS = 1;
 	
 	/** The Constant SYMBOLS. */
-	public static final int SYMBOLS = 2;
+	public static final int FORMAT_SYMBOLS = 2;
+	
+	public static final int FORMAT_FANCY = 3;
+	
+	private final static int MAX_FORMAT = 4;
+	
+	
+
+	
 }

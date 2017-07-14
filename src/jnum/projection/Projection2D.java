@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,6 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.projection;
 
 import java.io.Serializable;
@@ -28,9 +29,7 @@ import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -63,8 +62,10 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	public boolean equals(Object o) {
 		if(o == this) return true;
 		if(!(o instanceof Projection2D)) return false;
+		
 		Projection2D<?> projection = (Projection2D<?>) o;
 		if(!Util.equals(projection.reference, reference)) return false;
+		
 		return true;		
 	}
 	
@@ -189,7 +190,7 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	 * @param cursor the cursor
 	 * @throws HeaderCardException the header card exception
 	 */
-	public void edit(Cursor<String, HeaderCard> cursor) throws HeaderCardException { edit(cursor, ""); }
+	public void edit(Header header) throws HeaderCardException { edit(header, ""); }
 	
 	/**
 	 * Edits the.
@@ -198,7 +199,7 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	 * @param alt the alt
 	 * @throws HeaderCardException the header card exception
 	 */
-	public abstract void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException;
+	public abstract void edit(Header header, String alt) throws HeaderCardException;
 	
 	
 }

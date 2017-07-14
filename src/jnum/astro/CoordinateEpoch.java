@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.astro;
 
@@ -31,7 +31,6 @@ import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -68,6 +67,8 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 	 */
 	protected CoordinateEpoch(double epoch, boolean immutable) { this(epoch); this.immutable = immutable; }
 
+	
+	
 	// The clone is always mutable...
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
@@ -96,7 +97,6 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 		if(o == this) return true;
 		if(o == null) return false;
 		if(!o.getClass().equals(getClass())) return false;
-		if(!super.equals(o)) return false;
 		return year == ((CoordinateEpoch) o).year;
 	}
 	
@@ -201,7 +201,7 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 	 * @param cursor the cursor
 	 * @throws HeaderCardException the header card exception
 	 */
-	public void edit(Cursor<String, HeaderCard> cursor) throws HeaderCardException { edit(cursor, ""); }
+	public void edit(Header header) throws HeaderCardException { edit(header, ""); }
 	
 	/**
 	 * Edits the.
@@ -210,8 +210,8 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 	 * @param alt the alt
 	 * @throws HeaderCardException the header card exception
 	 */
-	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {
-		cursor.add(new HeaderCard("EQUINOX" + alt, year, "The epoch of the quoted coordinates"));
+	public void edit(Header header, String alt) throws HeaderCardException {
+		header.addLine(new HeaderCard("EQUINOX" + alt, year, "The epoch of the quoted coordinates"));
 	}
 	
 	/**

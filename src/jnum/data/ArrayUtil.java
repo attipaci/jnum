@@ -2740,7 +2740,7 @@ public final class ArrayUtil {
 			}
 			else if(Parser.class.isAssignableFrom(type)) {
 				Parser element = (Parser) type.newInstance();
-				element.parse(text);
+				element.parse(text, new ParsePosition(0));
 				return element;
 			}
 			else if(type.equals(String.class)) return text;				
@@ -2759,14 +2759,14 @@ public final class ArrayUtil {
 	 * @param data the data
 	 * @throws ParseException the parse exception
 	 * @throws NumberFormatException the number format exception
-	 */
+	 */	
 	public static void parse(String text, Object data) throws ParseException, NumberFormatException {
 		text.trim();
 		if(data instanceof String) {
 			data = text;
 		}
 		else if(data instanceof Parser) {
-			((Parser) data).parse(text);
+			((Parser) data).parse(text, new ParsePosition(0));
 		}
 		else if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;

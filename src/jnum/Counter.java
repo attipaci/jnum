@@ -23,7 +23,7 @@
 
 package jnum;
 
-
+import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -45,6 +45,18 @@ public class Counter {
 	 * @param start the start
 	 */
 	public Counter(double start) { value = start; }
+	
+	@Override
+    public int hashCode() { return super.hashCode() ^ HashCode.from(value); }
+	
+	@Override
+    public boolean equals(Object o) {
+	    if(o == this) return true;
+	    if(!(o instanceof Counter)) return false;
+	    
+	    Counter c = (Counter) o;
+	    return value == c.value;
+	}
 	
 	/**
 	 * Increment.

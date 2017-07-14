@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,13 +20,12 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
 package jnum.math;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.StringTokenizer;
+import java.util.Hashtable;
 
 import jnum.Constant;
 import jnum.SafeMath;
@@ -36,10 +35,10 @@ import jnum.astro.*;
 import jnum.projection.SphericalProjection;
 import jnum.text.AngleFormat;
 import jnum.text.GreekLetter;
+import jnum.text.StringParser;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 // TODO add BinaryTableIO interface (with projections...)
@@ -55,32 +54,11 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	/** The sin lat. */
 	private double cosLat, sinLat;
 		
-	/** The default local coordinate system. */
-	static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 	
 	/** The af. */
 	protected static AngleFormat af = new AngleFormat(2);
 	
-	static {
-		
-		defaultCoordinateSystem = new CoordinateSystem("Spherical Coordinates");
-		defaultLocalCoordinateSystem = new CoordinateSystem("Spherical Offsets");
-		
-		CoordinateAxis longitudeAxis = new CoordinateAxis("Latitude", "LAT", GreekLetter.phi + "");
-		longitudeAxis.setFormat(af);
-	
-		CoordinateAxis latitudeAxis = new CoordinateAxis("Longitude", "LON", GreekLetter.theta + "");
-		latitudeAxis.setFormat(af);
-		
-		CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("Longitude Offset", "dLON", GreekLetter.Delta + " " + GreekLetter.phi + "");
-		CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("Latitude Offset", "dLAT", GreekLetter.delta + " " + GreekLetter.theta + "");
-		
-		defaultCoordinateSystem.add(longitudeAxis);
-		defaultCoordinateSystem.add(latitudeAxis);
-		
-		defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
-		defaultLocalCoordinateSystem.add(latitudeOffsetAxis);			
-	}
+
 	
 
 	/**
@@ -110,6 +88,8 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @return the FITS latitude stem
 	 */
 	public String getFITSLatitudeStem() { return "LAT-"; }
+	
+	public String getTwoLetterCode() { return "SP"; }
 	
 	/**
 	 * Instantiates a new spherical coordinates.
@@ -155,6 +135,9 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 */
 	public CoordinateSystem getCoordinateSystem() { return defaultCoordinateSystem; }
 
+	public final CoordinateAxis getLongitudeAxis() { return getCoordinateSystem().get(0); }
+	
+	public final CoordinateAxis getLatitudeAxis() { return getCoordinateSystem().get(1); }
 	
 	/**
 	 * Gets the local coordinate system.
@@ -475,16 +458,48 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @see jnum.Coordinate2D#parse(java.lang.String)
 	 */
 	@Override
-	public void parse(String coords) throws NumberFormatException, IllegalArgumentException {
-		StringTokenizer tokens = new StringTokenizer(coords, ", \t\n");
-		CoordinateSystem coordinateSystem = getCoordinateSystem();
-		try {
-			setLongitude(coordinateSystem.get(0).format.parse(tokens.nextToken()).doubleValue());
-			setLatitude(coordinateSystem.get(1).format.parse(tokens.nextToken()).doubleValue());
-		} 
-		catch(ParseException e) { throw new NumberFormatException(e.getMessage()); }
-	}
+	public void parse(StringParser parser) throws NumberFormatException, IllegalArgumentException {
+	    parser.skipWhiteSpaces();
+	    
+	    SphericalCoordinates parseCoords = null; 
+	    
+	    if(parser.nextIndexOf(Util.getWhiteSpaceChars() + "(") - parser.getIndex() == 2) {
+	        String id = parser.getString().substring(parser.getIndex(), parser.getIndex() + 2);
+	        Class<? extends SphericalCoordinates> parseClass = SphericalCoordinates.getTwoLetterClass(id);
+	        
+	        if(parseClass != null) {
+	            parser.skip(3);
+	            parser.skipWhiteSpaces();
+	            
+	            try { parseCoords = parseClass.newInstance(); }
+	            catch(Exception e) { Util.warning(this, e); }
+	        }
+	    }
+	    
+	    if(parseCoords == null) parseCoords = (SphericalCoordinates) copy();
+	    
+	    parseCoords.parseDirect(parser);
 
+	    convertFrom(parseCoords);
+	}
+	
+	protected void parseDirect(StringParser parser) throws NumberFormatException, IllegalArgumentException {
+	    super.parse(parser);
+	}
+	
+	@Override
+    public void parseX(String spec) throws NumberFormatException {
+	    try { setLongitude(getLongitudeAxis().format.parse(spec).doubleValue()); }
+	    catch(ParseException e) { throw new NumberFormatException("Unparseable longitude: " + spec); }
+	}
+	 
+	@Override
+    public void parseY(String spec) {
+        try { setLatitude(getLatitudeAxis().format.parse(spec).doubleValue()); }
+        catch(ParseException e) { throw new NumberFormatException("Unparseable latitude: " + spec); }
+    }
+	
+	
 	/* (non-Javadoc)
 	 * @see jnum.Metric#distanceTo(java.lang.Object)
 	 */
@@ -499,17 +514,17 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @see jnum.Coordinate2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {	
+	public void edit(Header header, String alt) throws HeaderCardException {	
 		// Always write longitude in the 0:2Pi range.
 		// Some FITS utilities may require it, even if it's not required by the FITS standard...
 		double lon = Math.IEEEremainder(longitude(), Constant.twoPi);
 		if(lon < 0.0) lon += Constant.twoPi;
 
-		cursor.add(new HeaderCard("CRVAL1" + alt, lon / Unit.deg, "The reference longitude coordinate (deg)."));
-		cursor.add(new HeaderCard("CRVAL2" + alt, latitude() / Unit.deg, "The reference latitude coordinate (deg)."));
+		header.addLine(new HeaderCard("CRVAL1" + alt, lon / Unit.deg, "The reference longitude coordinate (deg)."));
+		header.addLine(new HeaderCard("CRVAL2" + alt, latitude() / Unit.deg, "The reference latitude coordinate (deg)."));
 		
 		//cursor.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
-		if(alt.length() == 0) cursor.add(new HeaderCard("WCSAXES", 2, "Number of celestial coordinate axes."));
+		if(alt.length() == 0) header.addLine(new HeaderCard("WCSAXES", 2, "Number of celestial coordinate axes."));
 	}
 		
 	/* (non-Javadoc)
@@ -525,6 +540,24 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		//if(name != null) getCoordinateSystem().name = name;
 	}
 	
+	/* (non-Javadoc)
+     * @see jnum.math.Invertible#invert()
+     */
+    @Override
+    public void invert() {
+        invertX(); invertY();
+    }
+    
+    /* (non-Javadoc)
+     * @see kovacs.math.Coordinate2D#invertY()
+     */
+    @Override
+    public void invertY() {
+        super.invertY();
+        sinLat *= -1.0;
+    }
+    
+	
 	
 	/**
 	 * Equal angles.
@@ -536,9 +569,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	public static boolean equalAngles(double a1, double a2) {
 		return Math.abs(Math.IEEEremainder(a1-a2, Constant.twoPi)) < angularAccuracy;
 	}
-	
-	/** The Constant angularAccuracy. */
-	public final static double angularAccuracy = 1e-12;
 	
 	
 	/**
@@ -581,53 +611,97 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @param spec the spec
 	 * @return the FITS class
 	 */
-	public static Class<? extends SphericalCoordinates> getFITSClass(String spec) {
-		spec = spec.toUpperCase();
-		
-		if(spec.startsWith("RA")) return EquatorialCoordinates.class;
-		else if(spec.startsWith("DEC")) return EquatorialCoordinates.class;
-		else if(spec.substring(1).startsWith("LON")) {
-			switch(spec.charAt(0)) {
-			case 'G' : return GalacticCoordinates.class;
-			case 'E' : return EclipticCoordinates.class;
-			case 'S' : return SuperGalacticCoordinates.class;
-			case 'A' : return HorizontalCoordinates.class;
-			case 'F' : return FocalPlaneCoordinates.class;
-			case 'T' : return TelescopeCoordinates.class;
-			default : return SphericalCoordinates.class;
-			}
-		}
-		else if(spec.substring(1).startsWith("LAT")) {
-			switch(spec.charAt(0)) {
-			case 'G' : return GalacticCoordinates.class;
-			case 'E' : return EclipticCoordinates.class;
-			case 'S' : return SuperGalacticCoordinates.class;
-			case 'A' : return HorizontalCoordinates.class;
-			case 'F' : return FocalPlaneCoordinates.class;
-			case 'T' : return TelescopeCoordinates.class;
-			default: return SphericalCoordinates.class;
-			}
-		}
-		throw new IllegalArgumentException("Unknown Coordinate Definition " + spec);
+	public static Class<? extends SphericalCoordinates> getFITSClass(String spec) {	
+	    if(fitsTypes == null) registerTypes();
+	    
+	    if(spec.length() > 4) spec = spec.substring(0, 4);
+	    if(spec.length() < 4) {
+	        StringBuffer buf = new StringBuffer(4);
+	        buf.append(spec);
+	        while(buf.length() < 4) buf.append('-');
+	        spec = new String(buf);
+	    }
+	  
+		Class<? extends SphericalCoordinates> coordClass = fitsTypes.get(spec.toUpperCase());
+		if(coordClass == null) throw new IllegalArgumentException("Unknown Coordinate Definition " + spec);
+		return coordClass;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.math.Invertible#invert()
-	 */
-	@Override
-	public void invert() {
-		invertX(); invertY();
+	public static Class<? extends SphericalCoordinates> getTwoLetterClass(String id) {
+	    if(ids == null) registerTypes();
+	    Class<? extends SphericalCoordinates> coordClass = ids.get(id.toUpperCase());
+        if(coordClass == null) throw new IllegalArgumentException("Unknown Coordinate Definition " + id);
+        return coordClass;
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.Coordinate2D#invertY()
-	 */
-	@Override
-	public void invertY() {
-		super.invertY();
-		sinLat *= -1.0;
+	public static String getTwoLetterCodeFor(Class<? extends Coordinate2D> coordinateClass) {
+	    if(idLookup == null) registerTypes();
+	    return idLookup.get(coordinateClass);
 	}
 	
+	 
+    private static Hashtable<Class<? extends SphericalCoordinates>, String> idLookup;
+    private static Hashtable<String, Class<? extends SphericalCoordinates>> ids;
+    private static Hashtable<String, Class<? extends SphericalCoordinates>> fitsTypes;
+	
+	static void registerTypes() {
+	    
+	    idLookup = new Hashtable<Class<? extends SphericalCoordinates>, String>();
+	    ids = new Hashtable<String, Class<? extends SphericalCoordinates>>();
+	    fitsTypes = new Hashtable<String, Class<? extends SphericalCoordinates>>();
+
+	    
+	    register(new SphericalCoordinates());
+	    register(new HorizontalCoordinates());
+	    register(new TelescopeCoordinates());
+	    register(new FocalPlaneCoordinates());
+	    register(new EquatorialCoordinates());
+	    register(new EclipticCoordinates());
+	    register(new GalacticCoordinates());
+	    register(new SuperGalacticCoordinates());
+	}
+	
+	
+	   
+    public static void register(SphericalCoordinates coords) {
+        ids.put(coords.getTwoLetterCode().toUpperCase(), coords.getClass());
+        idLookup.put(coords.getClass(), coords.getTwoLetterCode().toUpperCase());
+        fitsTypes.put(coords.getFITSLongitudeStem().toUpperCase(), coords.getClass());
+        fitsTypes.put(coords.getFITSLatitudeStem().toUpperCase(), coords.getClass());
+    }
+    
+    
+
+    /** The default local coordinate system. */
+    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+
+  
+    static {
+        defaultCoordinateSystem = new CoordinateSystem("Spherical Coordinates");
+        defaultLocalCoordinateSystem = new CoordinateSystem("Spherical Offsets");
+        
+        CoordinateAxis longitudeAxis = new CoordinateAxis("Latitude", "LAT", GreekLetter.phi + "");
+        longitudeAxis.setFormat(af);
+    
+        CoordinateAxis latitudeAxis = new CoordinateAxis("Longitude", "LON", GreekLetter.theta + "");
+        latitudeAxis.setFormat(af);
+        
+        CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("Longitude Offset", "dLON", GreekLetter.Delta + " " + GreekLetter.phi + "");
+        CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("Latitude Offset", "dLAT", GreekLetter.delta + " " + GreekLetter.theta + "");
+        
+        defaultCoordinateSystem.add(longitudeAxis);
+        defaultCoordinateSystem.add(latitudeAxis);
+        
+        defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
+        defaultLocalCoordinateSystem.add(latitudeOffsetAxis);           
+    }
+    
+  
+
+    
+    /** The Constant angularAccuracy. */
+    public final static double angularAccuracy = 1e-12;
+
 
 	/** The Constant degree. */
 	public final static Unit degree = Unit.get("deg");

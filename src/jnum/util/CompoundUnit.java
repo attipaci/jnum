@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,6 +24,7 @@ package jnum.util;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Map;
 
 import jnum.Unit;
 import jnum.math.Division;
@@ -51,16 +52,26 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	 * @param spec the spec
 	 * @param template the template
 	 */
-	public CompoundUnit(String spec, ExponentUnit template) { super(spec); }
+	public CompoundUnit(String spec) { 
+	    this();
+	    parse(spec); 
+	}
+	
+	public CompoundUnit(String spec, Hashtable<String, Unit> baseUnits) { 
+        this();
+        parse(spec, baseUnits); 
+    }
+    
 	
 	/* (non-Javadoc)
 	 * @see jnum.Unit#copy()
 	 */
 	@Override
-	public Unit copy() {
-		CompoundUnit u = (CompoundUnit) super.copy();
-		u.factors.addAll(factors);
-		return u;
+	public CompoundUnit copy() {
+		CompoundUnit copy = (CompoundUnit) super.copy();
+		factors = new ArrayList<ExponentUnit>(factors.size());
+		for(ExponentUnit factor : factors) copy.factors.add(factor.copy());
+		return copy;
 	}
 	
 	/* (non-Javadoc)
@@ -186,7 +197,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	 * @param spec the spec
 	 * @param baseUnits the base units
 	 */
-	public void parse(String spec, Hashtable<String, Unit> baseUnits) {		
+	public void parse(String spec, Map<String, Unit> baseUnits) {		
 		if(factors == null) factors = new ArrayList<ExponentUnit>();
 		else factors.clear();
 			
@@ -222,7 +233,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	 * @param invert the invert
 	 * @param baseUnits the base units
 	 */
-	private void addFactor(String spec, boolean invert, Hashtable<String, Unit> baseUnits) {
+	private void addFactor(String spec, boolean invert, Map<String, Unit> baseUnits) {
 		ExponentUnit u = ExponentUnit.get(spec, baseUnits);
 		if(invert) u.setExponent(-u.getExponent());
 		factors.add(u);	

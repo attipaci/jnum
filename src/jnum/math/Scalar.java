@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -34,6 +34,8 @@ import jnum.data.BlankingValue;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
+import jnum.text.StringParser;
+import jnum.util.HashCode;
 
 import java.io.Serializable;
 import java.lang.reflect.*;
@@ -66,6 +68,20 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		setValue(value);
 	}
 	
+	
+	@Override
+    public int hashCode() { return super.hashCode() ^ HashCode.from(value); }
+	
+	@Override
+    public boolean equals(Object o) {
+	    if(this == o) return false;
+	    if(!(o instanceof Number)) return false;
+	    
+	    Number n = (Number) o;
+	    if(!Util.equals(value, n.doubleValue())) return false;
+	 
+	    return true;
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
@@ -347,8 +363,9 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	 * @see kovacs.text.Parser#parse(java.lang.String)
 	 */
 	@Override
-	public final void parse(String text) throws NumberFormatException, IllegalArgumentException {
-		value = Double.parseDouble(text);		
+	public final void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException {
+	    // TODO redo without Parser creation...
+	    value = Double.parseDouble(new StringParser(text, pos).nextToken());		
 	}
 
 	/* (non-Javadoc)

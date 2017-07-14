@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,7 +23,10 @@
 
 package jnum.fft;
 
+import java.util.concurrent.ExecutorService;
+
 import jnum.data.WindowFunction;
+import jnum.parallel.ParallelProcessing;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -36,6 +39,18 @@ public abstract class FFT1D<Type> extends FFT<Type> {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1722639496940144592L;
 
+	protected FFT1D() { super(); }
+	
+    protected FFT1D(ExecutorService executor) {
+        super(executor);
+    }
+
+    protected FFT1D(ParallelProcessing processing) {
+        super(processing);
+    }
+
+	
+	
 	/**
 	 * Average power.
 	 *

@@ -1,0 +1,300 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * All rights reserved. 
+ * 
+ * This file is part of jnum.
+ * 
+ *     jnum is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     jnum is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ ******************************************************************************/
+
+package jnum.data.image.region;
+
+import jnum.Constant;
+import jnum.ExtraMath;
+import jnum.IncompatibleTypesException;
+import jnum.Unit;
+import jnum.Util;
+import jnum.data.DataPoint;
+import jnum.data.image.Gaussian2D;
+import jnum.data.image.Grid2D;
+import jnum.data.image.IndexBounds2D;
+import jnum.data.image.Map2D;
+import jnum.data.image.MapProperties;
+import jnum.data.image.Value2D;
+import jnum.data.image.overlay.Viewport2D;
+import jnum.math.Coordinate2D;
+import jnum.math.Vector2D;
+import jnum.util.DataTable;
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCardException;
+
+
+
+public class EllipticalSource extends GaussianSource {
+
+
+    private static final long serialVersionUID = -7816545856774075826L;
+
+    private DataPoint elongation = new DataPoint();
+
+    private DataPoint angle = new DataPoint();
+
+
+    public EllipticalSource(Class<? extends Coordinate2D> coordinateClass) {
+        super(coordinateClass);
+    }
+
+
+    public EllipticalSource(Coordinate2D coords, double a, double b, double angle) {
+        super(coords, Math.sqrt(a * b));
+        
+        if(a > b) {
+            setElongation(a, b);
+            getAngle().setValue(angle);
+        }
+        else {
+            setElongation(b, a);
+            getAngle().setValue(angle + Constant.rightAngle);
+        }
+    }
+
+    public EllipticalSource(Class<? extends Coordinate2D> coordinateClass, String line, int format) throws Exception {
+        super(coordinateClass, line, format);
+    }
+
+
+    @Override
+    public int hashCode() { 
+        int hash = super.hashCode();
+        if(angle != null) hash ^= angle.hashCode();
+        if(elongation != null) hash ^= elongation.hashCode();
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(!(o instanceof EllipticalSource)) return false;
+        if(!super.equals(o)) return false;
+        EllipticalSource e = (EllipticalSource) o;
+        if(!Util.equals(angle, e.angle)) return false;
+        if(!Util.equals(elongation, e.elongation)) return false;
+        return true;
+    }
+
+    public DataPoint getElongation() { return elongation; }
+    
+    public void setElongation(double major, double minor) {
+        elongation.setValue((major - minor) / (major + minor));
+        elongation.exact();
+    }
+
+    public DataPoint getAngle() { return angle; }
+
+
+    public DataPoint getMajorFWHM() { 
+        DataPoint major = new DataPoint(getFWHM());
+        major.multiplyBy(elongation);
+        major.add(getFWHM());
+        // Renormalize to keep area unchanged...
+        major.scale(1.0 / (1.0 - elongation.value() * elongation.value()));  
+        return major;
+    }
+
+    public DataPoint getMinorFWHM() { 
+        DataPoint minor = new DataPoint(getFWHM());
+        minor.multiplyBy(elongation);
+        minor.scale(-1.0);
+        minor.add(getFWHM());
+        // Renormalize to keep area unchanged...
+        minor.scale(1.0 / (1.0 - elongation.value() * elongation.value()));  
+        return minor;
+    }
+
+    @Override
+    public void editHeader(Header header, Unit sizeUnit) throws HeaderCardException {
+        super.editHeader(header, sizeUnit);
+
+        DataPoint major = getMajorFWHM();
+        DataPoint minor = getMinorFWHM();
+        DataPoint angle = getAngle();
+
+        boolean hasError = getRadius().weight() > 0.0;
+
+        header.addValue("SRCMAJ", major.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source major axis.");
+        if(hasError) {
+            header.addValue("SRCMAJER", major.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") major axis error.");
+        }
+
+        header.addValue("SRCMIN", minor.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source minor axis.");
+        if(hasError) {
+            header.addValue("SRCMINER", minor.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") minor axis error.");
+        }
+
+        header.addValue("SRCPA", angle.value() / Unit.deg, "(deg) source position angle.");
+        header.addValue("SRCPAERR", angle.rms() / Unit.deg, "(deg) source angle error.");
+    }
+
+
+    @Override
+    public String pointingInfo(Map2D map) {
+        String info = super.pointingInfo(map);
+
+        MapProperties properties = map.getProperties();
+        Unit sizeUnit = properties.getDisplayGridUnit();
+
+        DataPoint major = getMajorFWHM();
+        DataPoint minor = getMinorFWHM();
+
+        major.scale(1.0 / sizeUnit.value());
+        minor.scale(1.0 / sizeUnit.value());
+
+        DataPoint angle = getAngle();
+        angle.scale(1.0 / Unit.deg);
+
+        info += " (a=" + major.toString(Util.f1) + ", b=" + minor.toString(Util.f1) 
+        + ", angle=" + angle.toString(Util.d1) +  " deg)";
+
+        return info;
+    }
+
+
+
+    
+    
+    @Override
+    public Gaussian2D getGaussian2D() {
+        return new Gaussian2D(getMajorFWHM().value(), getMinorFWHM().value(), getAngle().value());
+    }
+    
+  
+    
+    @Override
+    public EllipticalSource.Representation getRepresentation(Grid2D<?> grid) throws IncompatibleTypesException {
+        return new Representation(grid);
+    }
+
+
+
+    public class Representation extends GaussianSource.Representation {
+
+
+        protected Representation(Grid2D<?> grid) throws IncompatibleTypesException {
+            super(grid);
+        }
+
+
+        @Override
+        public double adaptTo(final Value2D image) { 
+            double I = super.adaptTo(image);
+            measureShape(image, 0.0, 1.5);
+            return I;
+        }
+        
+        public void measureShape(final Value2D image, double minRScale, double maxRScale) {      
+            final double minr = minRScale * getFWHM().value();
+            final Vector2D center = getCenterOffset();    
+            
+            getFWHM().scale(maxRScale);
+            
+            final Viewport2D view = getViewer(image);
+   
+            view.new Loop<Void>() {
+
+                private double m2c = 0.0, m2s = 0.0, sumw = 0.0;
+                private Vector2D v = new Vector2D();
+
+                @Override
+                public void process(int i, int j) {     
+                    if(!view.isValid(i, j)) return;
+                       
+                    double w = view.get(i,j).doubleValue();
+                     
+                    v.set(i + view.fromi(), j + view.fromj());
+                    getGrid().toOffset(v);
+                    v.subtract(center);
+      
+                    if(v.length() < minr) return;
+
+                    double theta = 2.0 * v.angle();
+                    double c = Math.cos(theta);
+                    double s = Math.sin(theta);
+
+                    m2c += w * c;
+                    m2s += w * s;
+                    sumw += Math.abs(w);
+                }      
+                
+                @Override
+                protected Void getResult() {  
+                    if(sumw > 0.0) {              
+                        m2c *= 1.0 / sumw;
+                        m2s *= 1.0 / sumw;
+
+                        elongation.setValue(2.0 * ExtraMath.hypot(m2s, m2c));
+                        elongation.setWeight(sumw);
+
+                        angle.setValue(0.5 * Math.atan2(m2s, m2c));
+                        angle.setRMS(elongation.rms() / elongation.value());
+                    }
+                    else {
+                        angle.noData();
+                        elongation.noData();
+                    }
+                    return null;
+                }
+                
+            }.process();
+            
+            getFWHM().scale(1.0 / maxRScale);
+            
+        }
+
+
+        @Override
+        public void updateBounds(IndexBounds2D bounds, double radialScale) {       
+            super.updateBounds(bounds, (1.0 + elongation.value()) * radialScale);
+        }
+
+
+        @Override
+        public DataTable getData(Unit sizeUnit) {
+            DataTable data = super.getData(sizeUnit);
+
+            DataPoint major = getMajorFWHM();
+            DataPoint minor = getMinorFWHM();
+            DataPoint angle = getAngle();
+            
+            Unit deg = Unit.get("deg");
+            
+            
+            data.new Entry("a", major.value(), sizeUnit);
+            data.new Entry("b", minor.value(), sizeUnit);
+            data.new Entry("angle", angle.value(), deg);
+            data.new Entry("dangle", angle.rms(), deg);
+
+            data.new Entry("da", major.rms(), sizeUnit);
+            data.new Entry("db", minor.rms(), sizeUnit);
+
+            return data;
+        }
+
+      
+
+    }
+
+}

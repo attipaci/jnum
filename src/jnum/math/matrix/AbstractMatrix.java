@@ -36,6 +36,7 @@ import jnum.math.Multiplicative;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
+import jnum.text.StringParser;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -607,8 +608,9 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	 * @see kovacs.text.Parser#parse(java.lang.String)
 	 */
 	@Override
-	public void parse(String text) throws NumberFormatException, IllegalArgumentException {
-		try { setData(ArrayUtil.parse(text, getType())); }
+	public void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException {
+	    // TODO need to update parseposition...
+	    try { setData(ArrayUtil.parse(text.substring(pos.getIndex()), getType())); }
 		catch(IllegalAccessException e) { Util.error(this, e); }
 		catch(InstantiationException e) { Util.error(this, e); }
 		catch(ParseException e) { throw new NumberFormatException(e.getMessage()); }

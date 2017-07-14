@@ -23,6 +23,8 @@
 
 package jnum.data.mesh;
 
+import java.text.ParsePosition;
+
 import jnum.Copiable;
 import jnum.text.Parser;
 
@@ -98,7 +100,7 @@ public class ObjectMesh<T> extends Mesh<T> {
 	@Override
 	public T parseElement(String text) throws ClassCastException, InstantiationException, IllegalAccessException  {
 		T value = elementClass.newInstance();
-		((Parser) value).parse(text);
+		((Parser) value).parse(text, new ParsePosition(0));
 		return value;
 	}
 

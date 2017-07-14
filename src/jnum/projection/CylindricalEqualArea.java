@@ -28,7 +28,6 @@ import jnum.math.SphericalCoordinates;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -89,10 +88,10 @@ public class CylindricalEqualArea extends CylindricalProjection {
 	 * @see kovacs.projection.SphericalProjection#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {		
-		super.edit(cursor, alt);
+	public void edit(Header header, String alt) throws HeaderCardException {		
+		super.edit(header, alt);
 		String latPrefix = getLatitudeParameterPrefix();
-		cursor.add(new HeaderCard(latPrefix + "1" + alt, lambda, "lambda parameter for cylindrical equal area projection."));	
+		header.addLine(new HeaderCard(latPrefix + "1" + alt, lambda, "lambda parameter for cylindrical equal area projection."));	
 	}
 
 }

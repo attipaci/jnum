@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,15 +20,20 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.io.fits;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import jnum.Unit;
 import jnum.Util;
 import jnum.text.TextWrapper;
+import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.FitsFactory;
@@ -44,227 +49,221 @@ import nom.tam.util.Cursor;
  */
 public final class FitsToolkit {
 
-	/**
-	 * Adds the long hierarch key.
-	 *
-	 * @param cursor the cursor
-	 * @param key the key
-	 * @param value the value
-	 * @throws HeaderCardException the header card exception
-	 */
-	public static void addLongHierarchKey(Cursor<String,HeaderCard> cursor, String key, String value) throws HeaderCardException {
-		FitsToolkit.addLongHierarchKey(cursor, key, 0, value);
-	}
+    /**
+     * Adds the long hierarch key.
+     *
+     * @param cursor the cursor
+     * @param key the key
+     * @param value the value
+     * @throws HeaderCardException the header card exception
+     */
+    public static void addLongHierarchKey(Header header, String key, String value) throws HeaderCardException {
+        FitsToolkit.addLongHierarchKey(header, key, 0, value);
+    }
 
-	/**
-	 * Gets the abbreviated hierarch key.
-	 *
-	 * @param key the key
-	 * @return the abbreviated hierarch key
-	 */
-	public static String getAbbreviatedHierarchKey(String key) {
-		int max = 66 - MIN_VALUE_LENGTH;
-		if(key.length() <= max) return key;
-		
-		int n = (max - 3) / 2;
-		return key.substring(0, n) + "---" + key.substring(key.length() - n, key.length());
-	}
+    /**
+     * Gets the abbreviated hierarch key.
+     *
+     * @param key the key
+     * @return the abbreviated hierarch key
+     */
+    public static String getAbbreviatedHierarchKey(String key) {
+        int max = 66 - MIN_VALUE_LENGTH;
+        if(key.length() <= max) return key;
 
-	
-	// Searches unit the following unit definitions in the comment, in order of priority
-	//
-	//   1. blah-blah [unitname] blah...
-	//   2. blah-blah (unitname) blah...
-	/**
-	 * Gets the commented unit value.
-	 *
-	 * @param header the header
-	 * @param key the key
-	 * @param defaultValue the default value
-	 * @param defaultUnitValue the default unit value
-	 * @return the commented unit value
-	 */
-	//   3. unitname blah-blah...
-	public static double getCommentedUnitValue(Header header, String key, double defaultValue, double defaultUnitValue) {
-		HeaderCard card = header.findCard(key);
-		
-		double value = header.getDoubleValue(key, defaultValue);
-		
-		if(card != null) {
-			try { value *= getCommentedUnit(card.getComment()).value(); }
-			catch(Exception e) { value *= defaultUnitValue; }
-			
-		}
-		
-		return value;
-	}
-	
-	
-	/**
-	 * Gets the commented unit.
-	 *
-	 * @param comment the comment
-	 * @return the commented unit
-	 * @throws Exception the exception
-	 */
-	public static Unit getCommentedUnit(String comment) throws Exception {
-		
-		// Unit in (the first) square bracketed value; 
-		if(comment.contains("[")) {
-			int end = comment.indexOf(']');
-			if(end < 0) end = comment.length();
-			return Unit.get(comment.substring(comment.indexOf('(') + 1, end).trim()); 
-		}
-		// Unit in (the first) bracketed value; 
-		else if(comment.contains("(")) {
-			int end = comment.indexOf(')');
-			if(end < 0) end = comment.length();
-			return Unit.get(comment.substring(comment.indexOf('(') + 1, end).trim());
-		}
-		// Unit is first word in comment; 
-		else {
-			StringTokenizer tokens = new StringTokenizer(comment);
-			return Unit.get(tokens.nextToken());
-		}
-	}
-	
-	/**
-	 * Adds the long hierarch key.
-	 *
-	 * @param cursor the cursor
-	 * @param key the key
-	 * @param part the part
-	 * @param value the value
-	 * @throws HeaderCardException the header card exception
-	 */
-	public static void addLongHierarchKey(Cursor<String, HeaderCard> cursor, String key, int part, String value) throws HeaderCardException {	
-		if(FitsFactory.isLongStringsEnabled()) {
-		    cursor.add(new HeaderCard("HIERARCH." + key, value, null));
-		    return;
-		}
-	    
-	    key = getAbbreviatedHierarchKey(key);
-		if(value.length() == 0) value = "true";
-		
-		String alt = part > 0 ? "." + part : "";
-	
-		int available = 69 - (key.length() + alt.length() + 3);
-	
-		if(available < 1) {
-			Util.warning(null, "Cannot write FITS key: " + key);
-			return;
-		}
-		
-		if(value.length() < available) cursor.add(new HeaderCard("HIERARCH." + key + alt, value, null));
-		else { 
-			if(alt.length() == 0) {
-				part = 1;
-				alt = "." + part;
-				available -= 2;
-			}
-	
-			cursor.add(new HeaderCard("HIERARCH." + key + alt, value.substring(0, available), null));
-			addLongHierarchKey(cursor, key, (char)(part+1), value.substring(available)); 
-		}
-	}
+        int n = (max - 3) / 2;
+        return key.substring(0, n) + "---" + key.substring(key.length() - n, key.length());
+    }
 
-	/**
-	 * Adds the long key.
-	 *
-	 * @param header the header
-	 * @param key the key
-	 * @param value the value
-	 * @param comment the comment
-	 * @throws HeaderCardException the header card exception
-	 */
-	public static void addLongKey(Header header, String key, String value, String comment) throws HeaderCardException {
-		Cursor<String, HeaderCard> cursor = header.iterator();
-		while(cursor.hasNext()) cursor.next();
-		FitsToolkit.addLongKey(cursor, key, value, comment);
-	}
 
-	/**
-	 * Gets the long key.
-	 *
-	 * @param header the header
-	 * @param key the key
-	 * @return the long key
-	 */
-	public static String getLongKey(Header header, String key) {
-		String value = header.getStringValue(key);
-	
-		if(key.length() >= 8) key = key.substring(0, 6) + "-";
-		
-		char ext = 'A';
-		String part;
-		
-		while((part = header.getStringValue(key + ext)) != null) {
-		    value += part;
-		    ext++;
-		} 
-	
-		return value;
-	}
+    // Searches unit the following unit definitions in the comment, in order of priority
+    //
+    //   1. blah-blah [unitname] blah...
+    //   2. blah-blah (unitname) blah...
+    /**
+     * Gets the commented unit value.
+     *
+     * @param header the header
+     * @param key the key
+     * @param defaultValue the default value
+     * @param defaultUnitValue the default unit value
+     * @return the commented unit value
+     */
+    //   3. unitname blah-blah...
+    public static double getCommentedUnitValue(Header header, String key, double defaultValue, double defaultUnitValue) {
+        HeaderCard card = header.findCard(key);
 
-	/**
-	 * Adds the long key.
-	 *
-	 * @param cursor the cursor
-	 * @param key the key
-	 * @param value the value
-	 * @param comment the comment
-	 * @throws HeaderCardException the header card exception
-	 */
-	public static void addLongKey(Cursor<String, HeaderCard> cursor, String key, String value, String comment) throws HeaderCardException {
-		/*
-		 * FIXME long keys work only for HIERARCH now (nom.tam.fits 1.15.1)
-		 * 
+        double value = header.getDoubleValue(key, defaultValue);
+
+        if(card != null) {
+            try { value *= getCommentedUnit(card.getComment()).value(); }
+            catch(Exception e) { value *= defaultUnitValue; }
+
+        }
+
+        return value;
+    }
+
+
+    /**
+     * Gets the commented unit.
+     *
+     * @param comment the comment
+     * @return the commented unit
+     * @throws Exception the exception
+     */
+    public static Unit getCommentedUnit(String comment) throws Exception {
+
+        // Unit in (the first) square bracketed value; 
+        if(comment.contains("[")) {
+            int end = comment.indexOf(']');
+            if(end < 0) end = comment.length();
+            return Unit.get(comment.substring(comment.indexOf('(') + 1, end).trim()); 
+        }
+        // Unit in (the first) bracketed value; 
+        else if(comment.contains("(")) {
+            int end = comment.indexOf(')');
+            if(end < 0) end = comment.length();
+            return Unit.get(comment.substring(comment.indexOf('(') + 1, end).trim());
+        }
+        // Unit is first word in comment; 
+        else {
+            StringTokenizer tokens = new StringTokenizer(comment);
+            return Unit.get(tokens.nextToken());
+        }
+    }
+
+    /**
+     * Adds the long hierarch key.
+     *
+     * @param cursor the cursor
+     * @param key the key
+     * @param part the part
+     * @param value the value
+     * @throws HeaderCardException the header card exception
+     */
+    public static void addLongHierarchKey(Header header, String key, int part, String value) throws HeaderCardException {	
+        if(FitsFactory.isLongStringsEnabled()) {
+            header.addLine(new HeaderCard("HIERARCH." + key, value, null));
+            return;
+        }
+
+        key = getAbbreviatedHierarchKey(key);
+        if(value.length() == 0) value = "true";
+
+        String alt = part > 0 ? "." + part : "";
+
+        int available = 69 - (key.length() + alt.length() + 3);
+
+        if(available < 1) {
+            Util.warning(null, "Cannot write FITS key: " + key);
+            return;
+        }
+
+        if(value.length() < available) header.addLine(new HeaderCard("HIERARCH." + key + alt, value, null));
+        else { 
+            if(alt.length() == 0) {
+                part = 1;
+                alt = "." + part;
+                available -= 2;
+            }
+
+            header.addLine(new HeaderCard("HIERARCH." + key + alt, value.substring(0, available), null));
+            addLongHierarchKey(header, key, (char)(part+1), value.substring(available)); 
+        }
+    }
+
+  
+
+    /**
+     * Gets the long key.
+     *
+     * @param header the header
+     * @param key the key
+     * @return the long key
+     */
+    public static String getLongKey(Header header, String key) {
+        String value = header.getStringValue(key);
+
+        if(key.length() >= 8) key = key.substring(0, 6) + "-";
+
+        char ext = 'A';
+        String part;
+
+        while((part = header.getStringValue(key + ext)) != null) {
+            value += part;
+            ext++;
+        } 
+
+        return value;
+    }
+
+    /**
+     * Adds the long key.
+     *
+     * @param cursor the cursor
+     * @param key the key
+     * @param value the value
+     * @param comment the comment
+     * @throws HeaderCardException the header card exception
+     */
+    public static void addLongKey(Header header, String key, String value, String comment) throws HeaderCardException {
+        /*
+         * FIXME long keys with comments can be broken in 1.15.1+
+         * 
+         */
 	    if(FitsFactory.isLongStringsEnabled()) {
-		    cursor.add(new HeaderCard(key, value, comment));
+		    header.addLine(new HeaderCard(key, value, ""));
 		    return;
 		}
-	    */
-	    
-	    
-	    
-	    
-	   
-		
-		final int size = 68; // 8 - 8(key) - 2("= ") - 2('')
-		
-		if(value.length() <= size) {
-			cursor.add(new HeaderCard(key, value, comment));
-			return;
-		}
-		
-		cursor.add(new HeaderCard(key, value.substring(0, size), comment));
-		
-		if(key.length() >= 8) key = key.substring(0, 6) + "-";
-		int start = size;	
-		char ext = 'A';
-	
-		while(start < value.length()) {
-			int end = Math.min(value.length(), start + size);
-			cursor.add(new HeaderCard(key + ext, value.substring(start, end), (end == value.length() ? comment : "")));
-	
-			ext++;
-			start = end;
-		}
-	}
-	
-	
-	/**
-	 * Adds the long key convention.
-	 *
-	 * @param cursor the cursor
-	 * @throws HeaderCardException the header card exception
-	 */
-	public static void addLongKeyConvention(Cursor<String, HeaderCard> cursor) throws HeaderCardException {
-	    if(FitsFactory.isLongStringsEnabled()) cursor.add(new HeaderCard("LONGSTRN", "OGIP 1.0", "FITS standard long string convention."));
-	    else cursor.add(new HeaderCard("LONGSTRN", "CRUSH", "CRUSH's own long string convention."));
-	}
-	
-	/*
+         
+	    /*
+	     * Otherwise use the home-brewed convention...
+	     */
+
+        final int size = 68; // 8 - 8(key) - 2("= ") - 2('')
+        final int total = value.length() + 3 + comment.length(); // comments are separated with ' / '
+     
+        if(total <= size) {       
+            header.addLine(new HeaderCard(key, value, comment));
+            return;
+        }
+            
+        header.addLine(new HeaderCard(key, value.length() > size ? value.substring(0, size) : value, ""));
+
+        if(key.length() >= 8) key = key.substring(0, 6) + "-";
+        int start = size;	
+        char ext = 'A';
+
+        while(start < value.length()) {
+            int end = Math.min(value.length(), start + size);
+            header.addLine(new HeaderCard(key + ext, value.substring(start, end), ""));
+
+            ext++;
+            start = end;
+        }
+        
+      
+    }
+
+
+    public static void addLongKeyConvention(Header header) throws HeaderCardException {
+        if(FitsFactory.isLongStringsEnabled()) header.addLine(new HeaderCard("LONGSTRN", "OGIP 1.0", "FITS standard long string convention."));
+        else header.addLine(new HeaderCard("LONGSTRN", "CRUSH", "CRUSH's own long string convention."));
+    }
+
+    /**
+     * Adds the long key convention.
+     *
+     * @param cursor the cursor
+     * @throws HeaderCardException the header card exception
+     */
+    public static void addLongKeyConvention(Cursor<String, HeaderCard> cursor) throws HeaderCardException {
+        if(FitsFactory.isLongStringsEnabled()) cursor.add(new HeaderCard("LONGSTRN", "OGIP 1.0", "FITS standard long string convention."));
+        else cursor.add(new HeaderCard("LONGSTRN", "CRUSH", "CRUSH's own long string convention."));
+    }
+
+    /*
     public static double fitsDouble(double value) {
 	if(value < 0.0 && value > -1.0) {
 	    DecimalFormat df = new DecimalFormat("0.0000000000000E0");
@@ -327,35 +326,37 @@ public final class FitsToolkit {
 	    start = end;
 	}
     }
-	 */
-	
-	
+     */
+
     /**
-	 * Write.
-	 *
-	 * @param fits the fits
-	 * @param fileName the file name
-	 * @throws FitsException the fits exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	public static void write(Fits fits, String fileName) throws FitsException, IOException {
-	    BufferedDataOutputStream stream = new BufferedDataOutputStream(new FileOutputStream(fileName));
-	   
-	    try { fits.write(stream); }
-	    catch(FitsException e) { throw e; }
-	    finally { stream.close(); }   
-	}
-	
-	/**
-	 * Adds the history.
-	 *
-	 * @param header the header
-	 * @param history the history
-	 * @throws HeaderCardException the header card exception
-	 */
-	public static void addHistory(Header header, String history) throws HeaderCardException {
-	    // manually wrap long history entries into multiple lines... 
-	    if(history.length() <= MAX_HISTORY_LENGTH) header.addLine(new HeaderCard("HISTORY", history, false));
+     * Write.
+     *
+     * @param fits the fits
+     * @param fileName the file name
+     * @throws FitsException the fits exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static void write(Fits fits, String fileName) throws FitsException, IOException {
+        BufferedDataOutputStream stream = new BufferedDataOutputStream(new FileOutputStream(fileName));
+
+        try { 
+            fits.write(stream); 
+            Util.notify(fits, "Written " + fileName);
+        }
+        catch(FitsException e) { throw e; }
+        finally { stream.close(); }   
+    }
+
+    /**
+     * Adds the history.
+     *
+     * @param header the header
+     * @param history the history
+     * @throws HeaderCardException the header card exception
+     */
+    public static void addHistory(Header header, String history) throws HeaderCardException {
+        // manually wrap long history entries into multiple lines... 
+        if(history.length() <= MAX_HISTORY_LENGTH) header.addLine(new HeaderCard("HISTORY", history, false));
         else {
             TextWrapper wrapper = new TextWrapper(MAX_HISTORY_LENGTH);
             wrapper.setWrapAfterChars(wrapper.getWrapAfterChars() + extraHistoryBreaksAfter);
@@ -363,36 +364,85 @@ public final class FitsToolkit {
             addHistory(header, lines.nextToken());
             while(lines.hasMoreTokens()) addHistory(header, "... " + lines.nextToken().substring(4));
         }
-       
-	}
-	
-	/**
-	 * Adds the history.
-	 *
-	 * @param cursor the cursor
-	 * @param history the history
-	 * @throws HeaderCardException the header card exception
-	 */
-	public static void addHistory(Cursor<String, HeaderCard> cursor, String history) throws HeaderCardException {
-	    // manually wrap long history entries into multiple lines... 
-	    if(history.length() <= MAX_HISTORY_LENGTH) cursor.add(new HeaderCard("HISTORY", history, false));
-	    else {
-	        TextWrapper wrapper = new TextWrapper(MAX_HISTORY_LENGTH);
-	        wrapper.setWrapAfterChars(wrapper.getWrapAfterChars() + extraHistoryBreaksAfter);
-	        StringTokenizer lines = new StringTokenizer(wrapper.wrap(history, 4), "\n");
-	        addHistory(cursor, lines.nextToken());
-	        while(lines.hasMoreTokens()) addHistory(cursor, "... " + lines.nextToken().substring(4));
-	    }
-	}
 
-	
-	/** The extra history breaks after. */
-	public static String extraHistoryBreaksAfter = "/\\:;_=";
-	
-	/** The Constant MIN_VALUE_LENGTH. */
-	public static final int MIN_VALUE_LENGTH = 5;
-	
-	/** The Constant MAX_HISTORY_LENGTH. */
-	public static final int MAX_HISTORY_LENGTH = 71;
+    }
+ 
+    public static void addHistory(Header header, List<String> history) throws HeaderCardException {
+        for(String entry : history) addHistory(header, entry);
+    }
+
+
+    /**
+     * Adds the history.
+     *
+     * @param cursor the cursor
+     * @param history the history
+     * @throws HeaderCardException the header card exception
+     */
+    public static void addHistory(Cursor<String, HeaderCard> cursor, String history) throws HeaderCardException {
+        // manually wrap long history entries into multiple lines... 
+        if(history.length() <= MAX_HISTORY_LENGTH) cursor.add(new HeaderCard("HISTORY", history, false));
+        else {
+            TextWrapper wrapper = new TextWrapper(MAX_HISTORY_LENGTH);
+            wrapper.setWrapAfterChars(wrapper.getWrapAfterChars() + extraHistoryBreaksAfter);
+            StringTokenizer lines = new StringTokenizer(wrapper.wrap(history, 4), "\n");
+            addHistory(cursor, lines.nextToken());
+            while(lines.hasMoreTokens()) addHistory(cursor, "... " + lines.nextToken().substring(4));
+        }
+    }
+
+    
+    public static ArrayList<String> parseHistory(Header header) {
+        ArrayList<String> history = new ArrayList<String>();
+        
+        Cursor<String, HeaderCard> cursor = header.iterator();
+        
+        while(cursor.hasNext()) {
+            HeaderCard card = (HeaderCard) cursor.next();
+            if(card.getKey().equalsIgnoreCase("HISTORY")) {
+                String comment = card.getComment();
+                if(comment != null) history.add(comment);
+            }
+        }
+
+        if(!history.isEmpty()) {
+            Util.info(FitsToolkit.class, "Processing History: " + history.size() + " entries found.\n"
+                    + "   --> Last: " + history.get(history.size() - 1));
+        }
+            
+        //for(int i=0; i<history.size(); i++) Util.detail(this, "#  " + history.get(i));
+        
+        return history;
+    }
+    
+    public static void setName(BasicHDU<?> hdu, String name) throws HeaderCardException {
+        hdu.addValue("EXTNAME", name, "Identifier of data contained in this HDU");
+    }
+   
+    
+    public static void add(Header header, String key, String value, String comment) throws HeaderCardException {
+        if(value == null) return;
+        if(header.containsKey(key)) return;
+        header.addLine(new HeaderCard(key, value, comment));
+    }
+
+    
+    /** The extra history breaks after. */
+    public static String extraHistoryBreaksAfter = "/\\:;_=";
+
+    /** The Constant MIN_VALUE_LENGTH. */
+    public static final int MIN_VALUE_LENGTH = 5;
+
+    /** The Constant MAX_HISTORY_LENGTH. */
+    public static final int MAX_HISTORY_LENGTH = 71;
+    
+    public static final int BITPIX_BYTE = 8;
+    public static final int BITPIX_SHORT = 16;
+    public static final int BITPIX_INT = 32;
+    public static final int BITPIX_LONG = 64;
+    public static final int BITPIX_DOUBLE = -64;
+    public static final int BITPIX_FLOAT = -32;
+    
+    
 
 }

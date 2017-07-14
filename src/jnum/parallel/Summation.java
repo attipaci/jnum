@@ -45,7 +45,6 @@
 
 package jnum.parallel;
 
-import jnum.Parallel;
 import jnum.data.WeightedPoint;
 import jnum.math.Additive;
 
@@ -64,7 +63,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 	@Override
 	public ReturnType getResult() {
 		ReturnType sum = null;
-		for(Parallel<ReturnType> task : getParallel().getWorkers()) {
+		for(ParallelTask<ReturnType> task : getParallel().getWorkers()) {
 			ReturnType local = task.getLocalResult();
 			if(sum == null) sum = local;
 			else sum.add(local);
@@ -85,7 +84,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		@Override
 		public ReturnType getResult() {
 			ReturnType sum = null;
-			for(Parallel<ReturnType> task : getParallel().getWorkers()) {
+			for(ParallelTask<ReturnType> task : getParallel().getWorkers()) {
 				ReturnType local = task.getLocalResult();
 				if(sum == null) sum = local;
 				else {
@@ -108,7 +107,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		@Override
 		public Integer getResult() {
 			int sum = 0;
-			for(Parallel<Integer> task : getParallel().getWorkers()) sum += task.getLocalResult();
+			for(ParallelTask<Integer> task : getParallel().getWorkers()) sum += task.getLocalResult();
 			return sum;
 		}
 	}
@@ -124,7 +123,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		@Override
 		public Float getResult() {
 			float sum = 0.0F;
-			for(Parallel<Float> task : getParallel().getWorkers()) sum += task.getLocalResult();
+			for(ParallelTask<Float> task : getParallel().getWorkers()) sum += task.getLocalResult();
 			return sum;
 		}
 	}
@@ -140,7 +139,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		@Override
 		public Double getResult() {
 			double sum = 0.0;
-			for(Parallel<Double> task : getParallel().getWorkers()) sum += task.getLocalResult();
+			for(ParallelTask<Double> task : getParallel().getWorkers()) sum += task.getLocalResult();
 			return sum;
 		}
 	}
@@ -156,7 +155,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		@Override
 		public int[] getResult() {
 			int[] sum = null;
-			for(Parallel<int[]> task : getParallel().getWorkers()) {
+			for(ParallelTask<int[]> task : getParallel().getWorkers()) {
 				int[] local = task.getLocalResult();
 				if(sum == null) sum = local;
 				else for(int k=sum.length; --k >= 0; ) sum[k] += local[k];
@@ -176,7 +175,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		@Override
 		public float[] getResult() {
 			float[] sum = null;
-			for(Parallel<float[]> task : getParallel().getWorkers()) {
+			for(ParallelTask<float[]> task : getParallel().getWorkers()) {
 				float[] local = task.getLocalResult();
 				if(sum == null) sum = local;
 				else for(int k=sum.length; --k >= 0; ) sum[k] += local[k];
@@ -196,7 +195,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		@Override
 		public double[] getResult() {
 			double[] sum = null;
-			for(Parallel<double[]> task : getParallel().getWorkers()) {
+			for(ParallelTask<double[]> task : getParallel().getWorkers()) {
 				double[] local = task.getLocalResult();
 				if(sum == null) sum = local;
 				else for(int k=sum.length; --k >= 0; ) sum[k] += local[k];

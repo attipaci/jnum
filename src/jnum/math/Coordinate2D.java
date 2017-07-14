@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,27 +20,28 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
 package jnum.math;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.text.NumberFormat;
-import java.util.StringTokenizer;
+import java.text.ParsePosition;
 
 import jnum.Copiable;
 import jnum.CopyCat;
+import jnum.IncompatibleTypesException;
 import jnum.Unit;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
+import jnum.text.StringParser;
 import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
+
 
 // TODO: Auto-generated Javadoc
 //Add parsing
@@ -48,7 +49,8 @@ import nom.tam.util.Cursor;
 /**
  * The Class Coordinate2D.
  */
-public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinate2D>, CopyCat<Coordinate2D>, ViewableAsDoubles, Parser, NumberFormating {
+public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinate2D>, CopyCat<Coordinate2D>, 
+ViewableAsDoubles, Parser, NumberFormating {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3978373428597134906L;
@@ -62,33 +64,41 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 	public Coordinate2D() {}
 	
 	/**
-	 * Instantiates a new coordinate2 d.
-	 *
-	 * @param point the point
-	 */
-	public Coordinate2D(Point2D point) { setX(point.getX()); setY(point.getY()); }
+     * Instantiates a new coordinate2 d.
+     *
+     * @param X the x
+     * @param Y the y
+     */
+    public Coordinate2D(double X, double Y) { 
+        this();
+        setX(X); 
+        setY(Y); 
+    }
 	
 	/**
 	 * Instantiates a new coordinate2 d.
 	 *
-	 * @param text the text
+	 * @param point the point
 	 */
-	public Coordinate2D(String text) { parse(text); }
-
-	/**
-	 * Instantiates a new coordinate2 d.
-	 *
-	 * @param X the x
-	 * @param Y the y
-	 */
-	public Coordinate2D(double X, double Y) { setX(X); setY(Y); }
+	public Coordinate2D(Point2D point) { this(point.getX(), point.getY()); }
+	
 
 	/**
 	 * Instantiates a new coordinate2 d.
 	 *
 	 * @param template the template
 	 */
-	public Coordinate2D(Coordinate2D template) { setX(template.x); setY(template.y); }
+	public Coordinate2D(Coordinate2D template) { this(template.x, template.y); }
+	
+
+    /**
+     * Instantiates a new coordinate2 d.
+     *
+     * @param text the text
+     */
+    public Coordinate2D(String text) { parse(text); }
+
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -108,7 +118,6 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 	public boolean equals(Object o, double precision) {
 		if(o == this) return true;
 		if(!(o instanceof Coordinate2D)) return false;
-		if(!super.equals(o)) return false;
 		
 		final Coordinate2D coord = (Coordinate2D) o;
 	
@@ -324,6 +333,10 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 		x = w1 * x + w2 * coord.x;
 		y = w1 * y + w2 * coord.y;
 	}
+	
+	public final void parse(String spec) {
+	    parse(spec, new ParsePosition(0));
+	}
 
 	/**
 	 * Parses the.
@@ -333,41 +346,65 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
 	@Override
-	public void parse(String text) throws NumberFormatException, IllegalArgumentException {
-		int from = 0, to = text.length();
-		
-		// NOTE: Written for performance. The routine does not create any intermediate objects...
-		
-		// Ignore outer set of brackets, if exist...
-		if(text.contains("(")) {
-			from = text.indexOf('(') + 1;
-			to = text.lastIndexOf(')');
-			if(to < from) throw new IllegalArgumentException("Unmatched brackets: " + text);
-		}
-		
-		// Find the comma that separating the coordinates...
-		int i = text.indexOf(',');
-		
-		// Check that the comma falls between the limits and that 
-		// at least one character is available for both coordinates.
-		if(i == from || i+1 >= to) throw new IllegalArgumentException("Not a comma-separated pair of coordinates: " + text.substring(from, to));
-		
-		// Parse the coordinates here...
-		if(i>0 && i<text.length()) {
-			x = Double.parseDouble(text.substring(from, i));	
-			y = Double.parseDouble(text.substring(i+1, to));
-		}
+	public final void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException {
+	    parse(new StringParser(text, pos));
 	}
 	
 	/**
-	 * Parses the.
-	 *
-	 * @param tokens the tokens
+	 * Parses text x,y 2D coordinate representations that are in the format(s) of:
+	 * <p>
+	 * <pre>
+	 * {@code
+	 *     x,y / x y
+	 * }
+	 * </pre>
+	 * <p>
+	 * or
+	 * <p>
+	 * <pre>
+	 * {@code
+	 *     (x,y) / (x y)
+	 * }
+	 * </pre>
+	 * <p>
+	 * More specifically, the x and y values may be separated either by comma(s) or white space(s) (including 
+	 * tabs line breaks, carriage returns), or a combination of both. The pair of values may be bracketed (or 
+	 * not). Any number of white spaces may exists between the elements (brackets and pair of values), or 
+	 * precede the text element. Thus, the following will parse as a proper x,y (1.0,-2.0) pair:
+	 * <p>
+	 * <pre>
+	 * {@code
+	 *     (  \t\n 1.0 ,,, \r , \t -2.0    \n  )
+	 * }
+	 * </pre>
+	 * 
+	 * @param parser  The string parsing helper object.
+	 * @throws NumberFormatException
+	 * @throws IllegalArgumentException
 	 */
-	public void parse(StringTokenizer tokens) {
-		set(Double.parseDouble(tokens.nextToken()), Double.parseDouble(tokens.nextToken())); 
+	public void parse(StringParser parser) throws NumberFormatException, IllegalArgumentException {
+	    boolean isBracketed = false;
+	    
+	    parser.skipWhiteSpaces();
+	       
+	    if(parser.peek() == '(') {
+	        isBracketed = true;
+	        parser.skip(1);
+	        parser.skipWhiteSpaces();
+	    }
+	        
+	    parseX(parser.nextToken(Util.getWhiteSpaceChars() + ","));
+	    parseY(parser.nextToken(Util.getWhiteSpaceChars() + "," + (isBracketed ? "" : ")")));
 	}
 
+	protected void parseX(String token) throws NumberFormatException {
+	    setX(Double.parseDouble(token));
+	}
+	
+	protected void parseY(String token) throws NumberFormatException {
+	    setY(Double.parseDouble(token));
+	}
+	
 	/**
 	 * To string.
 	 *
@@ -464,7 +501,7 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 	 * @param cursor the cursor
 	 * @throws HeaderCardException the header card exception
 	 */
-	public void edit(Cursor<String, HeaderCard> cursor) throws HeaderCardException { edit(cursor, ""); }
+	public void edit(Header header) throws HeaderCardException { edit(header, ""); }
 	
 	/**
 	 * Edits the.
@@ -473,9 +510,9 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 	 * @param alt the alt
 	 * @throws HeaderCardException the header card exception
 	 */
-	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {
-		cursor.add(new HeaderCard("CRVAL1" + alt, x, "The reference x coordinate in SI units."));
-		cursor.add(new HeaderCard("CRVAL2" + alt, y, "The reference y coordinate in SI units."));
+	public void edit(Header header, String alt) throws HeaderCardException {
+		header.addLine(new HeaderCard("CRVAL1" + alt, x, "The reference x coordinate in SI units."));
+		header.addLine(new HeaderCard("CRVAL2" + alt, y, "The reference y coordinate in SI units."));
 	}
 	
 	/**
@@ -519,6 +556,16 @@ public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinat
 		return Util.f[decimals].format(coords.x / unit.value()) +  ", " 
 			+ Util.f[decimals].format(coords.y / unit.value()) + " " + unit.name();
 	}
+
+	public void convertFrom(Coordinate2D coords) throws IncompatibleTypesException {
+	    if(getClass().isAssignableFrom(coords.getClass())) copy(coords);
+	    else throw new IncompatibleTypesException(coords, this);
+	}
+
+	public final void convertTo(Coordinate2D coords) {
+	    coords.convertFrom(this);
+	}
+	
 
 	
 	

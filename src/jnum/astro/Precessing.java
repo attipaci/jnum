@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.astro;
 
@@ -49,6 +49,6 @@ public interface Precessing {
 	 *
 	 * @param epoch the epoch
 	 */
-	public void precess(CoordinateEpoch epoch);
+	public void precess(CoordinateEpoch epoch) throws UndefinedEpochException;
 	
 }

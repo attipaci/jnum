@@ -27,6 +27,7 @@ import jnum.Util;
 import jnum.fft.ComplexFFT;
 import jnum.fft.FFT;
 import jnum.math.Complex;
+import jnum.parallel.ParallelTask;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -45,13 +46,14 @@ public class ComplexFFTTest {
 		Complex[] data = new Complex[32];
 		for(int i=data.length; --i >= 0; ) data[i] = new Complex();
 		
-		ComplexFFT fft = new ComplexFFT();
+		ComplexFFT fft = new ComplexFFT(ParallelTask.newDefaultParallelExecutor());
+		fft.setParallel(threads);
 		
 		System.out.println("\ndelta(0):");
 		data[0].set(1.0, 0.0);
 		
 		try { 
-			fft.complexTransform(data, FFT.FORWARD, threads); 
+			fft.complexTransform(data, FFT.FORWARD); 
 			print(data);
 		}
 		catch(Exception e) { e.printStackTrace(); }
@@ -62,7 +64,7 @@ public class ComplexFFTTest {
 		for(int i=data.length; --i >= 0; ) data[i].set(1.0, 0.0);
 		
 		try { 
-			fft.complexTransform(data, FFT.FORWARD, threads); 
+			fft.complexTransform(data, FFT.FORWARD); 
 			print(data);
 		}
 		catch(Exception e) { e.printStackTrace(); }
@@ -78,7 +80,7 @@ public class ComplexFFTTest {
 		for(int i=data.length; --i >= 0; ) data[i].set(Math.cos(k2 * i), 0.0);
 		
 		try { 
-			fft.complexTransform(data, FFT.FORWARD, threads); 
+			fft.complexTransform(data, FFT.FORWARD); 
 			print(data);
 		}
 		catch(Exception e) { e.printStackTrace(); }
@@ -90,7 +92,7 @@ public class ComplexFFTTest {
 		for(int i=data.length; --i >= 0; ) data[i].set(Math.sin(k1 * i), 0.0);
 		
 		try { 
-			fft.complexTransform(data, FFT.FORWARD, threads); 
+			fft.complexTransform(data, FFT.FORWARD); 
 			print(data);
 		}
 		catch(Exception e) { e.printStackTrace(); }
@@ -102,7 +104,7 @@ public class ComplexFFTTest {
         for(int i=data.length; --i >= 0; ) data[i].set(Math.cos(kn1 * i), 0.0);
         
         try { 
-            fft.complexTransform(data, FFT.FORWARD, threads); 
+            fft.complexTransform(data, FFT.FORWARD); 
             print(data);
         }
         catch(Exception e) { e.printStackTrace(); }

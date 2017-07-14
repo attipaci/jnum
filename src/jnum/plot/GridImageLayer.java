@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,41 +20,48 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.plot;
 
 import java.awt.geom.NoninvertibleTransformException;
 
 import jnum.Util;
-import jnum.data.Grid2D;
-import jnum.data.GridImage2D;
-import jnum.data.SphericalGrid;
+import jnum.data.image.Grid2D;
+import jnum.data.image.SphericalGrid;
+import jnum.data.image.Value2D;
 
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class GridImageLayer.
  */
-public class GridImageLayer extends Data2DLayer {
+public class GridImageLayer extends BufferedImageLayer {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5730801953668713086L;
 	
 	/** The grid. */
 	private Grid2D<?> grid;
+
 	
 	/**
 	 * Instantiates a new grid image layer.
 	 *
 	 * @param image the image
 	 */
-	public GridImageLayer(GridImage2D<?> image) {
-		super(image);
+	public GridImageLayer(Value2D data, Grid2D<?> grid) {
+		super(data);
 			
-		grid = image.getGrid();
+		setGrid(grid);
 		
 		try { setCoordinateTransform(grid.getLocalAffineTransform()); }
 		catch(NoninvertibleTransformException e) { Util.warning(this, e); }
 	}
+	
+	public void setGrid(Grid2D<?> grid) { this.grid = grid; }
+	
+	public Grid2D<?> getGrid() { return grid; }
+	
 	
 	/* (non-Javadoc)
 	 * @see kovacs.plot.ImageLayer#setContentArea(kovacs.plot.ContentArea)
@@ -73,18 +80,6 @@ public class GridImageLayer extends Data2DLayer {
 				
 	}
 	
-	/**
-	 * Gets the grid.
-	 *
-	 * @return the grid
-	 */
-	public Grid2D<?> getGrid() { return grid; }
-		
-	/**
-	 * Gets the grid image.
-	 *
-	 * @return the grid image
-	 */
-	public GridImage2D<?> getGridImage() { return (GridImage2D<?>) getData2D(); }
+	
 	
 }

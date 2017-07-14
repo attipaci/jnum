@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,82 +20,91 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.math;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Coordinate3D.
- */
-public class Coordinate3D implements Serializable {
-	
-	/** The Constant serialVersionUID. */
+import jnum.Copiable;
+import jnum.CopyCat;
+import jnum.ViewableAsDoubles;
+import jnum.text.NumberFormating;
+import jnum.text.Parser;
+
+
+public class Coordinate3D implements Serializable, Cloneable, Copiable<Coordinate3D>, CopyCat<Coordinate3D>, 
+ViewableAsDoubles, Parser, NumberFormating {
+
 	private static final long serialVersionUID = 4670218761839380720L;
-	
-	/** The coordinate components. */
+
 	private double x, y, z;
+
+	public Coordinate3D() {}
 	
-	/**
-	 * Instantiates a new coordinate3 d.
-	 */
-	public Coordinate3D() {
-		this(0.0, 0.0, 0.0);
-	}
-	
-	/**
-	 * Instantiates a new coordinate3 d.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @param z the z
-	 */
 	public Coordinate3D(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	    this();
+	    set(x, y, z);
+	}
+
+	@Override
+    public Coordinate3D clone() {
+	    try { return (Coordinate3D) super.clone(); }
+	    catch(CloneNotSupportedException e) { return null; }
 	}
 	
-	/**
-	 * Gets the x.
-	 *
-	 * @return the x
-	 */
-	public double x() { return x; }
+	@Override
+    public Coordinate3D copy() {
+	    return clone();
+	}
 	
-	/**
-	 * Gets the y.
-	 *
-	 * @return the y
-	 */
-	public double y() { return y; }
+	@Override
+    public void copy(Coordinate3D other) {
+	    set(other.x(), other.y(), other.z());
+	}
 	
-	/**
-	 * Gets the z.
-	 *
-	 * @return the z
-	 */
-	public double z() { return z; }
+	public void zero() {
+	    set(0.0, 0.0, 0.0);
+	}
 	
-	/**
-	 * Sets the x.
-	 *
-	 * @param value the new x
-	 */
-	public void setX(double value) { this.x = value; }
+	public boolean isNull() {
+	    if(x != 0.0) return false;
+	    if(y != 0.0) return false;
+	    if(z != 0.0) return false;
+	    return true;
+	}
 	
-	/**
-	 * Sets the y.
-	 *
-	 * @param value the new y
-	 */
-	public void setY(double value) { this.y = value; }
+	public final double x() { return x; }
+
+	public final double y() { return y; }
+
+	public final double z() { return z; }
 	
-	/**
-	 * Sets the z.
-	 *
-	 * @param value the new z
-	 */
-	public void setZ(double value) { this.z = value; }
+	public final void set(final double x, final double y, final double z) {
+	    this.x = x;
+	    this.y = y;
+	    this.z = z;
+	}
+
+	public final void setX(final double value) { this.x = value; }
+
+	public final void setY(final double value) { this.y = value; }
+
+	public final void setZ(final double value) { this.z = value; }
+	
+	  
+    @Override
+    public double[] viewAsDoubles() {
+        return new double[] { x, y, z };
+    }
+    
+    @Override
+    public void createFromDoubles(Object array) {
+        createFromDoubles((double[]) array);
+    }
+    
+    public void createFromDoubles(double[] values) {
+        set(values[0], values[1], values[2]);
+    }
+ 
 	
 }

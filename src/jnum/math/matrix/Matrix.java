@@ -92,7 +92,7 @@ public class Matrix extends AbstractMatrix<Double> {
 	public boolean equals(Object o) {
 		if(o == this) return true;
 		if(!(o instanceof Matrix)) return false;
-		if(!super.equals(o)) return false;
+	
 		return Arrays.equals(entry, ((Matrix) o).entry);
 	}
 	

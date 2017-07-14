@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,6 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.astro;
 
 import java.io.Serializable;
@@ -84,6 +85,15 @@ public class AstroSystem implements Serializable {
 	 */
 	public boolean isFocalPlane() { return FocalPlaneCoordinates.class.isAssignableFrom(system); }
 	
+
+    /**
+     * Checks if is telescope coordinates.
+     *
+     * @return true, if is super galactic
+     */
+    public boolean isTelescope()  { return TelescopeCoordinates.class.isAssignableFrom(system); }
+    
+	
 	/**
 	 * Checks if is equatorial.
 	 *
@@ -111,6 +121,8 @@ public class AstroSystem implements Serializable {
 	 * @return true, if is super galactic
 	 */
 	public boolean isSuperGalactic()  { return SuperGalacticCoordinates.class.isAssignableFrom(system); }
+
+
 	
 	/**
 	 * Gets the id.
@@ -137,28 +149,10 @@ public class AstroSystem implements Serializable {
 	 * @return the id
 	 */
 	public static String getID(Class<? extends SphericalCoordinates> coordType) {
-		if(HorizontalCoordinates.class.isAssignableFrom(coordType)) return "HO";
-		else if(EquatorialCoordinates.class.isAssignableFrom(coordType)) return "EQ";
-		else if(EclipticCoordinates.class.isAssignableFrom(coordType)) return "EC";
-		else if(GalacticCoordinates.class.isAssignableFrom(coordType)) return "GL";
-		else if(SuperGalacticCoordinates.class.isAssignableFrom(coordType)) return "SG";
-		else return "--";
+		String id = SphericalCoordinates.getTwoLetterCodeFor(coordType);
+		return id == null ? "--" : id;
 	}
 	
-	/**
-	 * Gets the id.
-	 *
-	 * @param coords the coords
-	 * @return the id
-	 */
-	public static String getID(AstroSystem coords) {
-		if(coords.isHorizontal()) return "HO";
-		if(coords.isEquatorial()) return "EQ";
-		if(coords.isEcliptic()) return "EC";
-		if(coords.isGalactic()) return "GL";
-		if(coords.isSuperGalactic()) return "SG";
-		return "--";
-	}
 	
 	/**
 	 * Gets the coordinate class.
@@ -167,13 +161,7 @@ public class AstroSystem implements Serializable {
 	 * @return the coordinate class
 	 */
 	public static Class<? extends SphericalCoordinates> getCoordinateClass(String id) {
-		id = id.toUpperCase();
-		if(id.equals("ho")) return HorizontalCoordinates.class;
-		if(id.equals("eq")) return EquatorialCoordinates.class;
-		if(id.equals("ec")) return EclipticCoordinates.class;
-		if(id.equals("gl")) return GalacticCoordinates.class;
-		if(id.equals("sg")) return SuperGalacticCoordinates.class;
-		return null;
+		return SphericalCoordinates.getTwoLetterClass(id);
 	}
 	
 	/**

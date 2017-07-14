@@ -24,6 +24,8 @@ package jnum.util;
 
 import java.text.NumberFormat;
 import java.util.Hashtable;
+
+import jnum.Unit;
 import jnum.text.TableFormatter;
 
 
@@ -86,6 +88,11 @@ public class DataTable extends Hashtable<String, DataTable.Entry> implements Tab
 			put(name, Entry.this);
 		}
 
+		public Entry(String name, double value, Unit unit) {
+            this(name, value / unit.value(), unit.name());
+        }
+        
+		
 		/**
 		 * Gets the value.
 		 *

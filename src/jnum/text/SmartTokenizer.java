@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -155,7 +155,7 @@ public class SmartTokenizer extends StringTokenizer {
      */
     public double nextTimeValue(int separatorType) throws ParseException {
         TimeFormat tf = new TimeFormat();
-        tf.setSeparator(separatorType);
+        tf.setMarks(separatorType);
         return tf.parse(nextToken()).doubleValue();
     }
     
@@ -168,7 +168,7 @@ public class SmartTokenizer extends StringTokenizer {
      */
     public double nextAngle(int separatorType) throws ParseException {
         AngleFormat af = new AngleFormat();
-        af.setSeparator(separatorType);
+        af.setMarks(separatorType);
         return af.parse(nextToken()).doubleValue();
     }
     

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,6 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
 package jnum.astro;
 
@@ -37,31 +36,6 @@ public class GalacticCoordinates extends CelestialCoordinates {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -942734735652370919L;
-
-	/** The latitude offset axis. */
-	static CoordinateAxis longitudeAxis, latitudeAxis, longitudeOffsetAxis, latitudeOffsetAxis;
-	
-	/** The default local coordinate system. */
-	static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
-	
-	static {
-		defaultCoordinateSystem = new CoordinateSystem("Galactic Coordinates");
-		defaultLocalCoordinateSystem = new CoordinateSystem("Galactic Offsets");
-		
-		longitudeAxis = new CoordinateAxis("Galactic Longitude", "GLON", "l");
-		longitudeAxis.setReverse(true);
-		latitudeAxis = new CoordinateAxis("Galactic Latitude", "GLAT", "b");
-		longitudeOffsetAxis = new CoordinateAxis("Galactic Longitude Offset", "dGLON", GreekLetter.Delta + " l");
-		longitudeOffsetAxis.setReverse(true);
-		latitudeOffsetAxis = new CoordinateAxis("Galactic Latitude Offset", "dGLAT", GreekLetter.Delta + " b");
-		
-		defaultCoordinateSystem.add(longitudeAxis);
-		defaultCoordinateSystem.add(latitudeAxis);
-		defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
-		defaultLocalCoordinateSystem.add(latitudeOffsetAxis);	
-		
-		for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
-	}
 
 
     /**
@@ -104,42 +78,21 @@ public class GalacticCoordinates extends CelestialCoordinates {
 	@Override
 	public String getFITSLatitudeStem() { return "GLAT"; }
     
-    /**
-	 * Gets the coordinate system.
-	 *
-	 * @return the coordinate system
-	 */
-	@Override
-	public CoordinateSystem getCoordinateSystem() { return defaultCoordinateSystem; }
-
 	
-	/**
-	 * Gets the local coordinate system.
-	 *
-	 * @return the local coordinate system
-	 */
 	@Override
-	public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
-    
-    
-    /** The Constant equatorialPole. */
-    public static final EquatorialCoordinates equatorialPole = new EquatorialCoordinates(12.0 * Unit.hourAngle + 49.0 * Unit.minuteAngle, 27.4 * Unit.deg, "B1950.0");
-    
-    /** The phi0. */
-    public static double phi0 = 123.0 * Unit.deg;
+    public String getTwoLetterCode() { return "GA"; }
+	
+	@Override
+	public CoordinateSystem getCoordinateSystem() {
+	    return defaultCoordinateSystem;
+	}
 
-    // Change the pole and phi0 to J2000, s.t. conversion to J2000 is faster...
-    static { 
-    	GalacticCoordinates zero = new GalacticCoordinates(phi0, 0.0);
-    	phi0 = 0.0;
-    	EquatorialCoordinates equatorialZero = zero.toEquatorial();
-    	equatorialZero.precess(CoordinateEpoch.J2000);
-    	zero.fromEquatorial(equatorialZero);
-    	phi0 = -zero.x();
-    	equatorialPole.precess(CoordinateEpoch.J2000);
-    }
-  
-    
+	@Override
+	public CoordinateSystem getLocalCoordinateSystem() {
+	    return defaultLocalCoordinateSystem;
+	}
+
+
     /* (non-Javadoc)
      * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
      */
@@ -155,5 +108,48 @@ public class GalacticCoordinates extends CelestialCoordinates {
 	public double getZeroLongitude() {
 		return phi0;
 	}
+	
+
+    /** The default local coordinate system. */
+    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+
+      
+    static {
+        defaultCoordinateSystem = new CoordinateSystem("Galactic Coordinates");
+        defaultLocalCoordinateSystem = new CoordinateSystem("Galactic Offsets");
+        
+        CoordinateAxis longitudeAxis = new CoordinateAxis("Galactic Longitude", "GLON", "l");
+        longitudeAxis.setReverse(true);
+        CoordinateAxis latitudeAxis = new CoordinateAxis("Galactic Latitude", "GLAT", "b");
+        CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("Galactic Longitude Offset", "dGLON", GreekLetter.Delta + " l");
+        longitudeOffsetAxis.setReverse(true);
+        CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("Galactic Latitude Offset", "dGLAT", GreekLetter.Delta + " b");
+        
+        defaultCoordinateSystem.add(longitudeAxis);
+        defaultCoordinateSystem.add(latitudeAxis);
+        defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
+        defaultLocalCoordinateSystem.add(latitudeOffsetAxis);   
+        
+        for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
+    }
+    
+    /** The Constant equatorialPole. */
+    public static final EquatorialCoordinates equatorialPole = new EquatorialCoordinates(12.0 * Unit.hourAngle + 49.0 * Unit.minuteAngle, 27.4 * Unit.deg, "B1950.0");
+    
+    /** The phi0. */
+    public static double phi0 = 123.0 * Unit.deg;
+    
+    // Change the pole and phi0 to J2000, s.t. conversion to J2000 is faster...
+    static { 
+        GalacticCoordinates zero = new GalacticCoordinates(phi0, 0.0);
+        phi0 = 0.0;
+        EquatorialCoordinates equatorialZero = zero.toEquatorial();
+        equatorialZero.precess(CoordinateEpoch.J2000);
+        zero.fromEquatorial(equatorialZero);
+        phi0 = -zero.x();
+        equatorialPole.precess(CoordinateEpoch.J2000);
+    }
+  
+
 
 }
