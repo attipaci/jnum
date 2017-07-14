@@ -1,0 +1,62 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * All rights reserved. 
+ * 
+ * This file is part of jnum.
+ * 
+ *     jnum is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     jnum is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ ******************************************************************************/
+
+package jnum.data.image.overlay;
+
+import jnum.data.image.Value2D;
+import jnum.math.Coordinate2D;
+
+public class Referenced2D extends Overlay2D {
+    private Coordinate2D referenceIndex;
+
+    public Referenced2D() {}
+
+    public Referenced2D(Value2D values) {
+        super(values);
+    }
+    
+    public Referenced2D(Value2D values, Coordinate2D refIndex) {
+        this(values);
+        setReferenceIndex(refIndex);
+    }
+
+    
+    @Override
+    public int hashCode() { return super.hashCode() ^ referenceIndex.hashCode(); }
+    
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof Referenced2D)) return false;
+        
+        Referenced2D r = (Referenced2D) o;
+        if(!referenceIndex.equals(r.referenceIndex)) return false;
+        
+        return super.equals(o);
+    }
+
+    public Coordinate2D getReferenceIndex() { return referenceIndex; }
+    
+    public void setReferenceIndex(Coordinate2D index) { this.referenceIndex = index; }
+
+}

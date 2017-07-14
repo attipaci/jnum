@@ -1,0 +1,124 @@
+1. Finish up Gaussian/Elliptical sources...
+2. SourceCatalog
+3. ScalarMap...
+4. Get CRUSH working again with new image classes...
+
+
+Overall...
+
+- AbstractMatrix / ArrayUtil parse with position.
+
+- Gaussian/Elliptical source:
+  --> call adapt() before getting shape parameters...
+
+- Revised returntypes for subclasses (to avoid unnecessary casts...)
+  e.g. copy() / clone()
+
+- copy() not to copy Strings (they are inmutable!), or other inmutable objects
+
+- hashCode() / equals for new classes!
+
+- weight / exposure units...
+
+- avoid duplicate header edits between Instrument / MapProperties...
+
+- store scaled with Unit or not...
+
+- synchronized...
+
+- Image2D.getImage() to return itself (fast) or copy (consistent)?
+
+- redor FFT to use Parallel (instead of proprietary task / queue...)
+
+
+* GridSource, AstroImage, AstroMap -> SourceMap / SourceModelProperties
+
+* SourceModel to have SourceModelProperties
+
+* SourceMap.Properties to include SourceModelProperties
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Data2D -> points
+
+	* T getValueAt(i,j) / setValue(i, j, T)
+
+	* Each element to be Object for safe concurrent access
+	  (synchronized updates!) -- 5x overhead for float arrays, 3x 
+	  for double...
+
+	* Map2D is a stack of separate planes (value, weight, exposure)
+
+	* Weighted sums with external weight W
+
+		sum { W w x } / sum { W w }
+
+		w and x may be vectors or complex objects...
+
+	  A. If x and w are of type <T>, then want wx to be also type <T>
+	    and the sums to be <T> and their ratios to be <T>,
+
+            so T must implement:
+
+		Copiable
+		*W --> Scalable
+		sum{} --> Additive<T>
+		wx --> Multiplicative<T>
+		sum{}/sum{} --> Division<T>, Ration<T,T>
+		
+	  B. Z contains T w, and T x
+		T.copy([withContent])
+						(T: CopiableContent/Copiable)
+
+		Z.accumulate(Z, double W) --> 	x += W * Z.w * Z.x
+					  	w += W * Z.w
+
+						(T: Product, Scalable, Additive)
+						? Multiplicative, LinearAlgebra
+
+		Z.accumulate(Z, double W, double G) -->
+
+						x += W * G * Z.w * Z.x
+						w += W * Z.w * G^2
+				
+
+		Z.endAccumulation() -->		x /= w
+	
+						(T: Ratio)
+						
+
+		T.scale(double)
+		T.add(double)	
+
+			RealMath extends Scalable, RealOffset
+				add(double)
+				subtract(double)
+				scale(double)
+
+
+		-> interface Z
+
+		WeightedPoint implements Z
+
+	* (optional) Can read/write as multidim primitive arrays (Fot FITS)...
+
+	

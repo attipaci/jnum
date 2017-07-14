@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -38,17 +38,9 @@ public interface RealFFT<Type> {
 	 */
 	public void realTransform(Type data, boolean isForward);	
 	
+		
 	/**
-	 * Parallel real transform.
-	 *
-	 * @param data the data
-	 * @param isForward true if forward transform, false for back transform.
-	 * @param chunks the number of parallel chunks
-	 */
-	public void realTransform(Type data, boolean isForward, int chunks);	
-	
-	/**
-	 * Sequential real transform.
+	 * sequential real transform.
 	 *
 	 * @param data the data
 	 * @param isForward true if forward transform, false for back transform.

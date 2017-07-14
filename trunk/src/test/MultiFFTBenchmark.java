@@ -25,6 +25,7 @@ package test;
 import jnum.ExtraMath;
 import jnum.Util;
 import jnum.fft.MultiFFT;
+import jnum.parallel.ParallelTask;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -67,7 +68,7 @@ public class MultiFFTBenchmark {
 		System.err.println("sequent'l " + repeats + " x " + n + "k points: " + Util.f2.format(speed) + " FFTs/s");
 		*/
 		
-		MultiFFT fft = new MultiFFT();
+		MultiFFT fft = new MultiFFT(ParallelTask.newDefaultParallelExecutor());
 		if(args.length > 1) fft.setTwiddleErrorBits(Integer.parseInt(args[1]));		
 		
 		System.err.println("error bits: " + Util.f2.format(fft.getMaxErrorBitsFor(data)));
@@ -77,7 +78,7 @@ public class MultiFFTBenchmark {
 		
 		for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) data[i][j] = (float) Math.random();
 		//for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) for(int k=data[0][0].length; --k >= 0; ) data[i][j][k] = (float) Math.random();	
-		fft.setThreads(1);
+		fft.setParallel(1);
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -93,7 +94,7 @@ public class MultiFFTBenchmark {
 			
 		for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) data[i][j] = (float) Math.random();
 		//for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) for(int k=data[0][0].length; --k >= 0; ) data[i][j][k] = (float) Math.random();
-		fft.setThreads(2);
+		fft.setParallel(2);
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -108,7 +109,7 @@ public class MultiFFTBenchmark {
 
 		for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) data[i][j] = (float) Math.random();
 		//for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) for(int k=data[0][0].length; --k >= 0; ) data[i][j][k] = (float) Math.random();
-		fft.setThreads(4);
+		fft.setParallel(4);
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -123,7 +124,7 @@ public class MultiFFTBenchmark {
 	
 		for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) data[i][j] = (float) Math.random();
 		//for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) for(int k=data[0][0].length; --k >= 0; ) data[i][j][k] = (float) Math.random();
-		fft.setThreads(8);
+		fft.setParallel(8);
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -143,7 +144,7 @@ public class MultiFFTBenchmark {
 		
 		for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) data[i][j] = (float) Math.random();
 		//for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) for(int k=data[0][0].length; --k >= 0; ) data[i][j][k] = (float) Math.random();
-		fft.setThreads(cpus/2);
+		fft.setParallel(cpus/2);
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -158,7 +159,7 @@ public class MultiFFTBenchmark {
 		
 		for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) data[i][j] = (float) Math.random();
 		//for(int i=data.length; --i >= 0; ) for(int j=data[0].length; --j >= 0; ) for(int k=data[0][0].length; --k >= 0; ) data[i][j][k] = (float) Math.random();
-		fft.setThreads(cpus);
+		fft.setParallel(cpus);
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }

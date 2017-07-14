@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.text;
 
@@ -42,14 +42,14 @@ public class HourAngleFormat extends TimeFormat {
 	/**
 	 * Instantiates a new hour angle format.
 	 */
-	public HourAngleFormat() { super(); setOneSided(true); }
+	public HourAngleFormat() { super(); setPositiveOnly(true); }
 		
 	/**
 	 * Instantiates a new hour angle format.
 	 *
 	 * @param decimals the decimals
 	 */
-	public HourAngleFormat(int decimals) { super(decimals); setOneSided(true); }
+	public HourAngleFormat(int decimals) { super(decimals); setPositiveOnly(true); }
 	
 	/* (non-Javadoc)
 	 * @see jnum.text.AngleFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
@@ -63,8 +63,8 @@ public class HourAngleFormat extends TimeFormat {
 	 * @see jnum.text.AngleFormat#parse(java.lang.String, java.text.ParsePosition, int)
 	 */
 	@Override
-	public Number parse(String source, ParsePosition parsePosition, int fromLevel) {
-		return super.parse(source, parsePosition, fromLevel).doubleValue() * Unit.timeAngle;
+	public Number parse(String source, ParsePosition parsePosition, int format) {
+		return super.parse(source, parsePosition, format).doubleValue() * Unit.timeAngle;
 	}	
 
 }

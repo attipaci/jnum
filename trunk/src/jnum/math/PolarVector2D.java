@@ -58,6 +58,7 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	 * @param template the template
 	 */
 	public PolarVector2D(PolarVector2D template) { super(template); }
+	
 
 	/* (non-Javadoc)
 	 * @see jnum.Coordinate2D#isNull()

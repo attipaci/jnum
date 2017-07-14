@@ -95,7 +95,7 @@ public class Precession implements Serializable {
 	public boolean equals(Object o) {
 		if(o == this) return true;
 		if(!(o instanceof Precession)) return false;
-		if(!super.equals(o)) return false;
+		
 		Precession p = (Precession) o;
 		
 		if(!Util.equals(fromEpoch, p.fromEpoch)) return false;

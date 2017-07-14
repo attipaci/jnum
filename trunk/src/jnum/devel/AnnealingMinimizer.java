@@ -36,12 +36,12 @@ public class AnnealingMinimizer extends DownhillSimplex {
   
     private double T, coolingSteps;
     
-    public AnnealingMinimizer(Parametric function, Collection<Parameter> parameters) {
+    public AnnealingMinimizer(Parametric<Double> function, Collection<Parameter> parameters) {
         super(function, parameters);
         // TODO Auto-generated constructor stub
     }
 
-    public AnnealingMinimizer(Parametric function, Parameter[] parameters) {
+    public AnnealingMinimizer(Parametric<Double> function, Parameter[] parameters) {
         super(function, parameters);
         // TODO Auto-generated constructor stub
     }

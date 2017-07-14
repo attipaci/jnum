@@ -24,7 +24,9 @@ package test;
 
 import jnum.Util;
 import jnum.fft.ComplexFFT;
+import jnum.fft.FFT;
 import jnum.math.Complex;
+import jnum.parallel.ParallelTask;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -62,7 +64,7 @@ public class ComplexFFTBenchmark {
 		System.err.println("sequent'l " + repeats + " x " + n + "k points: " + Util.f2.format(speed) + " FFTs/s");
 		*/
 		
-		ComplexFFT fft = new ComplexFFT();
+		ComplexFFT fft = new ComplexFFT(ParallelTask.newDefaultParallelExecutor());
 		fft.setTwiddleErrorBits(errorbits);
 		System.err.println("error bits: " + Util.f2.format(fft.getMaxErrorBitsFor(data)));
 		System.err.println("precision: " + Util.e2.format(fft.getMinPrecisionFor(data)));
@@ -70,7 +72,7 @@ public class ComplexFFTBenchmark {
 		
 		
 		for(int i=0; i<data.length; i++) data[i].set(Math.random(), Math.random());
-		fft.setThreads(1);
+		fft.setParallel(1);
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -85,7 +87,7 @@ public class ComplexFFTBenchmark {
 		
 			
 		for(int i=0; i<data.length; i++) data[i].set(Math.random(), Math.random());
-		fft.setThreads(2);	
+		fft.setParallel(2);	
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -99,7 +101,7 @@ public class ComplexFFTBenchmark {
 		System.err.println("2 threads " + repeats + " x " + n + "k points: " + Util.f2.format(speed) + " FFTs/s");
 		
 		for(int i=0; i<data.length; i++) data[i].set(Math.random(), Math.random());
-		fft.setThreads(4);	
+		fft.setParallel(4);	
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -113,7 +115,7 @@ public class ComplexFFTBenchmark {
 		System.err.println("4 threads " + repeats + " x " + n + "k points: " + Util.f2.format(speed) + " FFTs/s");
 	
 		for(int i=0; i<data.length; i++) data[i].set(Math.random(), Math.random());
-		fft.setThreads(4);	
+		fft.setParallel(4);	
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -127,7 +129,7 @@ public class ComplexFFTBenchmark {
 		System.err.println("8 threads " + repeats + " x " + n + "k points: " + Util.f2.format(speed) + " FFTs/s");
 	
 		for(int i=0; i<data.length; i++) data[i].set(Math.random(), Math.random());
-		fft.setThreads(16);	
+		fft.setParallel(16);	
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -141,7 +143,7 @@ public class ComplexFFTBenchmark {
 		System.err.println("16 threads " + repeats + " x " + n + "k points: " + Util.f2.format(speed) + " FFTs/s");
 	
 		for(int i=0; i<data.length; i++) data[i].set(Math.random(), Math.random());
-		fft.autoThread();	
+		fft.setParallel(FFT.AUTO_PARALLELISM);	
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -152,7 +154,7 @@ public class ComplexFFTBenchmark {
 		}
 		time += System.currentTimeMillis();
 		speed = repeats / (1e-3*time);
-		System.err.println("[auto] " + fft.getThreads() + " threads " + repeats + " x " + n + "k points: " + Util.f2.format(speed) + " FFTs/s");
+		System.err.println("[auto] " + fft.getParallel() + " threads " + repeats + " x " + n + "k points: " + Util.f2.format(speed) + " FFTs/s");
 		
 		
 		
@@ -161,7 +163,7 @@ public class ComplexFFTBenchmark {
 		if(cpus == 8) { fft.shutdown(); return; }
 		
 		for(int i=0; i<data.length; i++) data[i].set(Math.random(), Math.random());
-		fft.setThreads(cpus/2);	
+		fft.setParallel(cpus/2);	
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }
@@ -175,7 +177,7 @@ public class ComplexFFTBenchmark {
 		System.err.println((cpus/2) + " threads " + repeats + " x " + n + "k points: " + Util.f2.format(speed) + " FFTs/s");
 		
 		for(int i=0; i<data.length; i++) data[i].set(Math.random(), Math.random());
-		fft.setThreads(cpus);	
+		fft.setParallel(cpus);	
 		time = -System.currentTimeMillis();
 		for(int k=repeats; --k>=0; ) {
 			try { fft.complexTransform(data, (k & 1) == 0); }

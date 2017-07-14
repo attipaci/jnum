@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,10 +20,12 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.data;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
 
 import jnum.CopiableContent;
 import jnum.ExtraMath;
@@ -31,6 +33,7 @@ import jnum.fft.DoubleFFT;
 import jnum.fft.FFT;
 import jnum.fft.FloatFFT;
 import jnum.math.Complex;
+import jnum.parallel.ParallelProcessing;
 import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
@@ -311,7 +314,10 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 	 *
 	 * @return the fft
 	 */
-	public abstract FFT<Type> getFFT();
+	public abstract FFT<Type> getFFT(ExecutorService executor);
+	
+	public abstract FFT<Type> getFFT(ParallelProcessing processing);
+	
 	
 	
 	/**
@@ -435,13 +441,16 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 			data[i] = (float) value;
 		}
 
-		/* (non-Javadoc)
-		 * @see jnum.data.FauxComplexArray#getFFT()
-		 */
+		
 		@Override
-		public FFT<float[]> getFFT() {
-			return new FloatFFT();
+		public FloatFFT getFFT(ExecutorService executor) {
+			return new FloatFFT(executor);
 		}	
+		
+		@Override
+        public FloatFFT getFFT(ParallelProcessing processing) {
+            return new FloatFFT(processing);
+        }   
 	}
 	
 	
@@ -530,14 +539,17 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		protected final void set(int i, double value) {
 			data[i] = value;
 		}
-
-		/* (non-Javadoc)
-		 * @see jnum.data.FauxComplexArray#getFFT()
-		 */
+		
 		@Override
-		public FFT<double[]> getFFT() {
-			return new DoubleFFT();
-		}
+        public DoubleFFT getFFT(ExecutorService executor) {
+            return new DoubleFFT(executor);
+        }   
+        
+        @Override
+        public DoubleFFT getFFT(ParallelProcessing processing) {
+            return new DoubleFFT(processing);
+        }   
+
 	}
 	
 }

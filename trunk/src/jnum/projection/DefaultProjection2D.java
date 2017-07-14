@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,13 +20,12 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.projection;
 
 import jnum.math.Coordinate2D;
 import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -37,6 +36,12 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2413285303727304456L;
 
+	public DefaultProjection2D() {
+	    super();
+	    setReference(new Coordinate2D());
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see jnum.Projection2D#getCoordinateInstance()
 	 */
@@ -89,7 +94,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	 * @see jnum.Projection2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {
+	public void edit(Header header, String alt) throws HeaderCardException {
 		// TODO Auto-generated method stub
 		
 	}

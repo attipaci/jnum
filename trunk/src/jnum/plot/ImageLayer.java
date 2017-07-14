@@ -25,7 +25,7 @@ package jnum.plot;
 import java.awt.Graphics;
 
 import jnum.Util;
-import jnum.math.Cartesian;
+import jnum.math.CartesianSystem;
 import jnum.math.Range;
 import jnum.plot.colorscheme.GreyScale;
 
@@ -44,7 +44,7 @@ public abstract class ImageLayer extends ContentLayer {
 	private ColorScheme colorScheme = new GreyScale();
 	
 	/** The range. */
-	private Range range, logRange = new Range(), sqrtRange = new Range();
+	private Range range, logRange, sqrtRange;
 	
 	/** The scaling. */
 	private int scaling = SCALE_LINEAR;
@@ -54,13 +54,19 @@ public abstract class ImageLayer extends ContentLayer {
 	protected boolean verbose = false;	
 	
 	
+	public ImageLayer(){
+	    range = new Range();
+	    logRange = new Range();
+	    sqrtRange = new Range();
+	}
+	
 	/* (non-Javadoc)
 	 * @see kovacs.plot.PlotLayer#setContentArea(kovacs.plot.ContentArea)
 	 */
 	@Override
 	public void setContentArea(ContentArea<?> area) {
 		super.setContentArea(area);
-		area.coordinateSystem = new Cartesian(2);
+		area.coordinateSystem = new CartesianSystem(2);
 	}
 	
 	
@@ -105,7 +111,7 @@ public abstract class ImageLayer extends ContentLayer {
 	 * @return the rgb
 	 */
 	public int getRGB(double value) {
-		return java.lang.Double.isNaN(value) ? colorScheme.noData : colorScheme.getRGB(getScaled(value));
+		return Double.isNaN(value) ? colorScheme.noData : colorScheme.getRGB(getScaled(value));
 	}
 	
 	
@@ -177,8 +183,8 @@ public abstract class ImageLayer extends ContentLayer {
 	 *
 	 * @param r the new range
 	 */
-	public void setRange(Range r) { 
-		this.range = r; 
+	public void setRange(Range r) {
+		this.range.setRange(r.min(), r.max()); 
 		logRange.setRange(0.1 * Math.log(Math.abs(r.min())), Math.log(Math.abs(r.max())));
 		sqrtRange.setRange(Math.signum(r.min()) * Math.sqrt(Math.abs(r.min())), Math.signum(r.max()) * Math.log(Math.abs(r.max())));
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2009 Attila Kovacs 
+
 
 package jnum;
 
@@ -41,9 +41,8 @@ import jnum.io.LineParser;
 import jnum.io.fits.FitsToolkit;
 import jnum.math.Range;
 import jnum.math.Vector2D;
-import nom.tam.fits.HeaderCard;
+import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
 
 // TODO: Auto-generated Javadoc
@@ -289,7 +288,7 @@ public class Configurator implements Serializable, Cloneable {
      * @return the string
      */
     private String resolve(String argument, String marker, String endmarker) {
-        int index = 0;
+        int last = 0;
 
         // If these is nothing to resolve, just return the argument as is...
         if(!argument.contains(marker)) return argument;
@@ -298,30 +297,29 @@ public class Configurator implements Serializable, Cloneable {
         StringBuffer resolved = new StringBuffer();
 
         for(;;) {
-            if(index >= argument.length()) break;
-            int i = argument.indexOf(marker, index);
+            if(last >= argument.length()) break;
+            int i = argument.indexOf(marker, last);
             if(i < 0) {
-                resolved.append(argument, index, argument.length());
+                resolved.append(argument, last, argument.length());
                 break;
             }				
-            resolved.append(argument, index, i);
+            resolved.append(argument, last, i);
 
             int from = i + marker.length();
             int to = argument.indexOf(endmarker, from);
 
             if(to < 0) {
-                resolved.append(argument, index, argument.length());
+                resolved.append(argument, last, argument.length());
                 break;
             }
-            if(to == from) resolved.append(getValue());
-            else {
-                String key = argument.substring(from, to);
+            else if (to > from) {
+                String key = argument.substring(from, to);   
                 String property = getProperty(key, marker);
 
                 if(property != null) resolved.append(property);
                 else resolved.append(argument, i, to + endmarker.length());
             }
-            index = to + endmarker.length();			
+            last = to + endmarker.length();			
         }
 
         return new String(resolved);
@@ -1650,11 +1648,11 @@ public class Configurator implements Serializable, Cloneable {
      * @param cursor the cursor
      * @throws HeaderCardException the header card exception
      */
-    public void editHeader(Cursor<String, HeaderCard> cursor) throws HeaderCardException {
+    public void editHeader(Header header) throws HeaderCardException {
         // Add all active configuration keys...
         for(String key : getAlphabeticalKeys(false)) {
             Configurator option = get(key);
-            if(option.isEnabled) FitsToolkit.addLongHierarchKey(cursor, key, option.value);
+            if(option.isEnabled) FitsToolkit.addLongHierarchKey(header, key, option.value);
         }
 
         // Add all the conditionals...
@@ -1668,7 +1666,7 @@ public class Configurator implements Serializable, Cloneable {
                 if(values.length() > 0) values.append(';');
                 values.append(value);
             }
-            FitsToolkit.addLongHierarchKey(cursor, condition, new String(values));
+            FitsToolkit.addLongHierarchKey(header, condition, new String(values));
         }
     }	
 

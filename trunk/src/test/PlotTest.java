@@ -28,7 +28,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import jnum.data.GridMap2D;
+import jnum.data.image.GridMap2D;
 import jnum.math.Coordinate2D;
 import jnum.plot.ColorBar;
 import jnum.plot.Data2DLayer;

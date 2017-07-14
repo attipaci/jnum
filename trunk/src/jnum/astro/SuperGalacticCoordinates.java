@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,6 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
 package jnum.astro;
 
@@ -35,36 +34,12 @@ import jnum.text.GreekLetter;
  * The Class SuperGalacticCoordinates.
  */
 public class SuperGalacticCoordinates extends CelestialCoordinates {
-	
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 5322669438151443525L;
 
-	/** The latitude offset axis. */
-	static CoordinateAxis longitudeAxis, latitudeAxis, longitudeOffsetAxis, latitudeOffsetAxis;
-	
-	/** The default local coordinate system. */
-	static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
-		
-	static {
-		defaultCoordinateSystem = new CoordinateSystem("Supergalactic Coordinates");
-		defaultLocalCoordinateSystem = new CoordinateSystem("Supergalactic Offsets");
-		
-		longitudeAxis = new CoordinateAxis("Supergalactic Longitude", "SGL", "L");
-		longitudeAxis.setReverse(true);
-		latitudeAxis = new CoordinateAxis("Supergalactic Latitude", "SGB", "B");
-		longitudeOffsetAxis = new CoordinateAxis("Supergalactic Longitude Offset", "dSGL", GreekLetter.Delta + " L");
-		longitudeOffsetAxis.setReverse(true);
-		latitudeOffsetAxis = new CoordinateAxis("Supergalactic Latitude", "dSGB", GreekLetter.Delta + " B");
-		
-		defaultCoordinateSystem.add(longitudeAxis);
-		defaultCoordinateSystem.add(latitudeAxis);
-		defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
-		defaultLocalCoordinateSystem.add(latitudeOffsetAxis);	
-		
-		for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
-			
-	}
-	
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5322669438151443525L;
+
+
+
     /**
      * Instantiates a new super galactic coordinates.
      */
@@ -84,72 +59,99 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
      * @param lon the lon
      */
     public SuperGalacticCoordinates(double lat, double lon) { super(lat, lon); }
-    
+
     /**
      * Instantiates a new super galactic coordinates.
      *
      * @param from the from
      */
     public SuperGalacticCoordinates(CelestialCoordinates from) { super(from); }
-    
-    
+
+
     /* (non-Javadoc)
      * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
      */
     @Override
-	public String getFITSLongitudeStem() { return "SLON"; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-	 */
-	@Override
-	public String getFITSLatitudeStem() { return "SLAT"; }
-    
-    
-    /**
-	 * Gets the coordinate system.
-	 *
-	 * @return the coordinate system
-	 */
-	@Override
-	public CoordinateSystem getCoordinateSystem() { return defaultCoordinateSystem; }
+    public String getFITSLongitudeStem() { return "SLON"; }
 
-	
-	/**
-	 * Gets the local coordinate system.
-	 *
-	 * @return the local coordinate system
-	 */
-	@Override
-	public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
-    
-    
-    /** The Constant galacticPole. */
-    public final static GalacticCoordinates galacticPole = new GalacticCoordinates(47.37*Unit.deg, 6.32*Unit.deg);
-    
-    /** The Constant galacticZero. */
-    public final static GalacticCoordinates galacticZero = new GalacticCoordinates(137.37*Unit.deg, 0.0);
-    
-    /** The Constant equatorialPole. */
-    public final static EquatorialCoordinates equatorialPole = galacticPole.toEquatorial(); 
-    
-    /** The phi0. */
-    public static double phi0 = CelestialCoordinates.getZeroLongitude(galacticZero, new SuperGalacticCoordinates());
-    
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+     */
+    @Override
+    public String getFITSLatitudeStem() { return "SLAT"; }
+
+
+    @Override
+    public String getTwoLetterCode() { return "SG"; }
+
+    @Override
+    public CoordinateSystem getCoordinateSystem() {
+        return defaultCoordinateSystem;
+    }
+
+    @Override
+    public CoordinateSystem getLocalCoordinateSystem() {
+        return defaultLocalCoordinateSystem;
+    }
+
+
     /* (non-Javadoc)
      * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
      */
     @Override
-	public EquatorialCoordinates getEquatorialPole() {
-		return equatorialPole;
-	}
+    public EquatorialCoordinates getEquatorialPole() {
+        return equatorialPole;
+    }
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.CelestialCoordinates#getZeroLongitude()
-	 */
-	@Override
-	public double getZeroLongitude() {
-		return phi0;
-	}
+    /* (non-Javadoc)
+     * @see jnum.astro.CelestialCoordinates#getZeroLongitude()
+     */
+    @Override
+    public double getZeroLongitude() {
+        return phi0;
+    }
+  
+
+    
+    /** The default local coordinate system. */
+    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+
+    
+    static {
+        defaultCoordinateSystem = new CoordinateSystem("Supergalactic Coordinates");
+        defaultLocalCoordinateSystem = new CoordinateSystem("Supergalactic Offsets");
+
+        CoordinateAxis longitudeAxis = new CoordinateAxis("Supergalactic Longitude", "SGL", "L");
+        longitudeAxis.setReverse(true);
+        CoordinateAxis latitudeAxis = new CoordinateAxis("Supergalactic Latitude", "SGB", "B");
+        CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("Supergalactic Longitude Offset", "dSGL", GreekLetter.Delta + " L");
+        longitudeOffsetAxis.setReverse(true);
+        CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("Supergalactic Latitude", "dSGB", GreekLetter.Delta + " B");
+
+        defaultCoordinateSystem.add(longitudeAxis);
+        defaultCoordinateSystem.add(latitudeAxis);
+        defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
+        defaultLocalCoordinateSystem.add(latitudeOffsetAxis);   
+
+        for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
+
+    }
+
+
+
+
+    /** The Constant galacticPole. */
+    public final static GalacticCoordinates galacticPole = new GalacticCoordinates(47.37*Unit.deg, 6.32*Unit.deg);
+
+    /** The Constant galacticZero. */
+    public final static GalacticCoordinates galacticZero = new GalacticCoordinates(137.37*Unit.deg, 0.0);
+
+    /** The Constant equatorialPole. */
+    public final static EquatorialCoordinates equatorialPole = galacticPole.toEquatorial(); 
+
+    /** The phi0. */
+    public static double phi0 = CelestialCoordinates.getZeroLongitude(galacticZero, new SuperGalacticCoordinates());
+
+
 
 }

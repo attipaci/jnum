@@ -1,3 +1,64 @@
+>> Equatorial / Eqcliptic Coordinate parse:
+	- default epoch when converting from...
+	- (generally check conversion epochs...)
+	- null epochs (use or not, and when, and how...)
+
+>> FFT parallel division improvements (bitreverse!!!)
+
+
+
+
+	[NEW] Coordinate2D.convertFrom()/To().
+
+	[NEW] Parallel now has synchronize() method to provide common 
+	synchronization points among the worker threads.
+
+	[FIX] Reinstated standard long FITS header keywords. Problems occur
+	only when trimming comments...
+
+	[FIX] More fixes to home-brewed long FITS header cards.
+
+	[FIX] Flawed implementation of equals() for many of the classes.
+	Classes that derived directly from Object should not rely on
+	super.equals() typically, as it will return false always, unless
+	the two objects are one and the same.
+
+	[CHANGE] Complete overhaul of 2D image classes and related classes,
+	with the aim of more versatile, more powerful and cleaner code, that
+	is easier to maintain.
+
+	[TWEAK] {SphericalCoordinates} Parsing now recognizes 2-letter codes
+	in front of coordinates and will attempt an appropriate conversion if
+	possible (or throw an exception if not...)
+
+	[TWEAK] {CubicSpline} Streamlined spline calculation slightly.
+
+	[TWEAK] {FFT} Parallel FFTs migrated to use Parallel for threading.
+	Some simplifications (especially MultiFFT) and cleanup.
+
+	[FIX] {AngleFormat} Better rounding for formatted output, plus much 
+	improved parsing of various angle formats...
+
+	[FIX] More consistent and robust parsing of 2D coordinates from text.
+
+	[FIX] {CubicSpline} was not properly initialized, returning NaN
+	when evaluated at 0 first. Fixed.
+
+	[FIX] {CubicSpline} Poorly handled negative indices due to simple
+	modulus (%) operator. Not a big issue since negative indices weren't
+	really used. Fixed anyway...
+
+	[FIX] {Data2D} mean() was not actually a weighted mean.
+
+
+0.11-3
+
+	[FIX] Fixed constructor of CompoundUnit(String).
+
+	[TWEAK] ExponentUnit recognises both "**" and "^" as exponent markers
+	by default.
+
+
 0.11-2
 
 	[CODE] Data2D.fwhm2size moved to Constant.

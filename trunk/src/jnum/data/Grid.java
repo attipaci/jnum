@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,6 +24,9 @@
 package jnum.data;
 
 import java.io.Serializable;
+
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCardException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -92,4 +95,9 @@ public interface Grid<CoordinateType, OffsetType> extends Serializable, Cloneabl
      */
     public OffsetType indexOf(CoordinateType value);
     
+  
+    public void parseHeader(Header header) throws Exception;
+   
+    public void editHeader(Header header) throws HeaderCardException;
+ 
 }

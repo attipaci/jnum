@@ -23,8 +23,6 @@
 
 package jnum.parallel;
 
-import jnum.Parallel;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class ParallelReduction.
@@ -34,14 +32,14 @@ import jnum.Parallel;
 public abstract class ParallelReduction<ReturnType> {
 	
 	/** The task. */
-	private Parallel<ReturnType> task;
+	private ParallelTask<ReturnType> task;
 		
 	/**
 	 * Sets the parallel.
 	 *
 	 * @param task the new parallel
 	 */
-	public void setParallel(Parallel<ReturnType> task) {
+	public void setParallel(ParallelTask<ReturnType> task) {
 		this.task = task;
 	}
 	
@@ -50,7 +48,7 @@ public abstract class ParallelReduction<ReturnType> {
 	 *
 	 * @return the parallel
 	 */
-	public Parallel<ReturnType> getParallel() { return task; }
+	public ParallelTask<ReturnType> getParallel() { return task; }
 	
 	/**
 	 * Gets the result.

@@ -22,9 +22,12 @@
  ******************************************************************************/
 package test;
 
+
 import jnum.ExtraMath;
 import jnum.Util;
+import jnum.fft.FFT;
 import jnum.fft.FloatFFT;
+import jnum.parallel.ParallelTask;
 
 
 /**
@@ -33,8 +36,8 @@ import jnum.fft.FloatFFT;
 public class FloatFFTDemo {
     private int repeats = 1;
     private float[] data;
-    private final FloatFFT fft = new FloatFFT();
-    
+    private final FloatFFT fft = new FloatFFT(ParallelTask.newDefaultParallelExecutor());
+     
 	/**
 	 * The main method.
 	 *
@@ -57,16 +60,20 @@ public class FloatFFTDemo {
 		Util.info(this, "dynamic range: " + Util.f1.format(-20.0 * Math.log10(fft.getMinPrecisionFor(data))) + " dB");
 	}
 	
-	public void benchmark() {  
-	    final FloatFFT fft = new FloatFFT();
+	public void benchmark() {     
 	    final int cpus = Runtime.getRuntime().availableProcessors();
         
-        for(int nThreads = 1; nThreads <= (cpus<<1); nThreads<<=1) benchmark(fft, nThreads);
+        for(int nThreads = 1; nThreads <= (cpus<<2); nThreads<<=1) benchmark(fft, nThreads);
     
+        System.err.print("AUTO: ");
+        benchmark(fft, FFT.AUTO_PARALLELISM);
+        
+        
         if(cpus == ExtraMath.pow2ceil(cpus)) { fft.shutdown(); return; }
         
-        for(int nThreads = Math.max(1, cpus>>1); nThreads <= (cpus<<1); nThreads<<=1) benchmark(fft, nThreads);
-        
+        for(int nThreads = Math.max(1, cpus>>1); nThreads <= (cpus<<2); nThreads<<=1) benchmark(fft, nThreads);
+   
+             
         fft.shutdown();
 	}
 		
@@ -75,7 +82,7 @@ public class FloatFFTDemo {
 	 
 	    for(int i=data.length; --i >= 0; ) data[i] = (float) Math.random();
         
-	    fft.setThreads(nThreads);
+	    fft.setParallel(nThreads);
         time = -System.currentTimeMillis();
         
         for(int k=repeats; --k >= 0; ) {

@@ -3,128 +3,129 @@
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="jnum">
-    <property environment="env"/>
-    <property name="crush.location" value="../crush"/>
-    <property name="adcspec.location" value="../adcspec"/>
-    <property name="aqua-client.location" value="../aqua-client"/>
-    <property name="crushtools.location" value="../crushtools"/>
-    <property name="ECLIPSE_HOME" value="../../../../usr/lib64/eclipse/"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.6"/>
-    <property name="source" value="1.6"/>
-    <path id="jnum.classpath">
-        <pathelement location="bin"/>
-        <pathelement location="${crush.location}/fits.jar"/>
-    </path>
-    <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="bin"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <classpath refid="jnum.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
-        <ant antfile="build.xml" dir="${adcspec.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${adcspec.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-        <ant antfile="build.xml" dir="${aqua-client.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${aqua-client.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-        <ant antfile="build.xml" dir="${crush.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${crush.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-        <ant antfile="build.xml" dir="${crushtools.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${crushtools.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-    </target>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
-    <target name="ComplexFFTTest">
-        <java classname="test.ComplexFFTTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
-    <target name="MultiFFTTest">
-        <java classname="test.MultiFFTTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
-    <target name="FloatFFTTest">
-        <java classname="test.FloatFFTTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
-    <target name="ParDoubleFFTTest">
-        <java classname="test.ParDoubleFFTTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
-    <target name="MultiFFTPerfTest">
-        <java classname="test.MultiFFTPerfTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
-    <target name="PSFTest">
-        <java classname="test.PSFTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
-    <target name="PlotTest">
-        <java classname="test.PlotTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
-    <target name="DownhillSimplexTest">
-        <java classname="test.DownhillSimplexTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
-    <target name="LongCommentCardTest">
-        <java classname="test.LongCommentCardTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
-    <target name="WrappingTest">
-        <java classname="test.WrappingTest" failonerror="true" fork="yes">
-            <classpath refid="jnum.classpath"/>
-        </java>
-    </target>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="jnum">
+	<property environment="env"/>
+	<property name="crush.location" value="../crush"/>
+	<property name="adcspec.location" value="../adcspec"/>
+	<property name="aqua-client.location" value="../aqua-client"/>
+	<property name="crushtools.location" value="../crushtools"/>
+	<property name="ECLIPSE_HOME" value="../../../../usr/lib64/eclipse/"/>
+	<property name="debuglevel" value="source,lines,vars"/>
+	<property name="target" value="1.6"/>
+	<property name="source" value="1.6"/>
+	<path id="jnum.classpath">
+		<pathelement location="bin"/>
+		<pathelement location="${crush.location}/fits.jar"/>
+	</path>
+	<target name="init">
+		<mkdir dir="bin"/>
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="src">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="bin"/>
+	</target>
+	<target depends="clean" name="cleanall"/>
+	<target depends="build-subprojects,build-project" name="build"/>
+	<target name="build-subprojects"/>
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}"/>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+			<src path="src"/>
+			<classpath refid="jnum.classpath"/>
+		</javac>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+		<ant antfile="build.xml" dir="${adcspec.location}" inheritAll="false" target="clean"/>
+		<ant antfile="build.xml" dir="${adcspec.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler"/>
+			</propertyset>
+		</ant>
+		<ant antfile="build.xml" dir="${aqua-client.location}" inheritAll="false" target="clean"/>
+		<ant antfile="build.xml" dir="${aqua-client.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler"/>
+			</propertyset>
+		</ant>
+		<ant antfile="build.xml" dir="${crush.location}" inheritAll="false" target="clean"/>
+		<ant antfile="build.xml" dir="${crush.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler"/>
+			</propertyset>
+		</ant>
+		<ant antfile="build.xml" dir="${crushtools.location}" inheritAll="false" target="clean"/>
+		<ant antfile="build.xml" dir="${crushtools.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler"/>
+			</propertyset>
+		</ant>
+	</target>
+	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+		<copy todir="${ant.library.dir}">
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+		</copy>
+		<unzip dest="${ant.library.dir}">
+			<patternset includes="jdtCompilerAdapter.jar"/>
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+		</unzip>
+	</target>
+	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+		<antcall target="build"/>
+	</target>
+	<target name="ComplexFFTTest">
+		<java classname="test.ComplexFFTTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
+	<target name="MultiFFTTest">
+		<java classname="test.MultiFFTTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
+	<target name="FloatFFTTest">
+		<java classname="test.FloatFFTTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
+	<target name="ParDoubleFFTTest">
+		<java classname="test.ParDoubleFFTTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
+	<target name="MultiFFTPerfTest">
+		<java classname="test.MultiFFTPerfTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
+	<target name="PSFTest">
+		<java classname="test.PSFTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
+	<target name="PlotTest">
+		<java classname="test.PlotTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
+	<target name="DownhillSimplexTest">
+		<java classname="test.DownhillSimplexTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
+	<target name="LongCommentCardTest">
+		<java classname="test.LongCommentCardTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
+	<target name="WrappingTest">
+		<java classname="test.WrappingTest" failonerror="true" fork="yes">
+			<classpath refid="jnum.classpath"/>
+		</java>
+	</target>
 </project>

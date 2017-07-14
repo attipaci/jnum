@@ -24,6 +24,7 @@ package test;
 
 import jnum.Util;
 import jnum.fft.DoubleFFT;
+import jnum.parallel.ParallelTask;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -39,8 +40,8 @@ public class ParDoubleFFTTest {
 public static void main(String[] args) {
 		double[] data = new double[64];
 		
-		DoubleFFT fft = new DoubleFFT();
-		fft.setThreads(3);
+		DoubleFFT fft = new DoubleFFT(ParallelTask.newDefaultParallelExecutor());
+		fft.setParallel(3);
 		fft.setTwiddleErrorBits(3);
 		
 		System.err.println("delta[0]:");

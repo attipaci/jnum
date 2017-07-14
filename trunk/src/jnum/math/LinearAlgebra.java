@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,6 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.math;
 
 // TODO: Auto-generated Javadoc
@@ -30,7 +31,7 @@ package jnum.math;
  *
  * @param <DataType> the generic type for which this algebra applies.
  */
-public interface LinearAlgebra<DataType> extends Additive<DataType>, Scalable {
+public interface LinearAlgebra<DataType> extends ZeroValue, Additive<DataType>, Scalable {
 
 	/**
 	 * Add a multiple of the argument.
@@ -40,16 +41,4 @@ public interface LinearAlgebra<DataType> extends Additive<DataType>, Scalable {
 	 */
 	public void addScaled(DataType o, double factor);
 	
-	
-	/**
-	 * Checks if the object null (zero).
-	 *
-	 * @return true, if the object is null (zero).
-	 */
-	public boolean isNull();
-	
-	/**
-	 * Set this to be the zero value under this linear algebra.
-	 */
-	public void zero();
 }

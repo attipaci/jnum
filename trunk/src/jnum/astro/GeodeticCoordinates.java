@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,13 +20,13 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.astro;
 
+import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 import jnum.Unit;
 import jnum.math.SphericalCoordinates;
 
@@ -76,14 +76,17 @@ public class GeodeticCoordinates extends SphericalCoordinates {
 		setNativeLatitude(geocentric.y() + X * Math.sin(2.0 * geocentric.y()));
 	}
 	
+	@Override
+    public String getTwoLetterCode() { return "GD"; }
+	
 
 	/* (non-Javadoc)
 	 * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {	
-		super.edit(cursor, alt);	
-		cursor.add(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
+	public void edit(Header header, String alt) throws HeaderCardException {	
+		super.edit(header, alt);	
+		header.addLine(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
 	}
 	
 	

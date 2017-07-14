@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -29,9 +29,9 @@ import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.text.GreekLetter;
+import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -42,30 +42,7 @@ public class TelescopeCoordinates extends SphericalCoordinates {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5165681897613041311L;
 
-    /** The elevation offset axis. */
-    static CoordinateAxis crossElevationAxis, elevationAxis, xelOffsetAxis, elevationOffsetAxis;
-    
-    /** The default local coordinate system. */
-    static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
-    
-    static {
-        defaultCoordinateSystem = new CoordinateSystem("Telescope Coordinates");
-        defaultLocalCoordinateSystem = new CoordinateSystem("Telescope Offsets");
-
-        crossElevationAxis = new CoordinateAxis("Telescope Cross-elevation", "XEL", "XEL");
-        elevationAxis = new CoordinateAxis("Telescope Elevation", "EL", "EL");
-        xelOffsetAxis = new CoordinateAxis("Telescioe Cross-elevation Offset", "dXEL", GreekLetter.Delta + " XEL");
-        elevationOffsetAxis = new CoordinateAxis("Telescope Elevation Offset", "dEL", GreekLetter.Delta + " EL");
-        
-        defaultCoordinateSystem.add(crossElevationAxis);
-        defaultCoordinateSystem.add(elevationAxis);
-        defaultLocalCoordinateSystem.add(xelOffsetAxis);
-        defaultLocalCoordinateSystem.add(elevationOffsetAxis);
-        
-        for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
-    }
-
-
+  
     /**
      * Instantiates a new horizontal coordinates.
      */
@@ -99,23 +76,18 @@ public class TelescopeCoordinates extends SphericalCoordinates {
     public String getFITSLatitudeStem() { return "TLAT"; }
     
     
-    /**
-     * Gets the coordinate system.
-     *
-     * @return the coordinate system
-     */
     @Override
-    public CoordinateSystem getCoordinateSystem() { return defaultCoordinateSystem; }
-
+    public String getTwoLetterCode() { return "TE"; }
     
-    /**
-     * Gets the local coordinate system.
-     *
-     * @return the local coordinate system
-     */
     @Override
-    public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
-    
+    public CoordinateSystem getCoordinateSystem() {
+        return defaultCoordinateSystem;
+    }
+     
+    @Override
+    public CoordinateSystem getLocalCoordinateSystem() {
+        return defaultLocalCoordinateSystem;
+    }
 
 
     /**
@@ -188,9 +160,32 @@ public class TelescopeCoordinates extends SphericalCoordinates {
      * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
      */
     @Override
-    public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {    
-        super.edit(cursor, alt);    
-        cursor.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
+    public void edit(Header header, String alt) throws HeaderCardException {    
+        super.edit(header, alt);    
+        header.addLine(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
     }
     
+
+    /** The default local coordinate system. */
+    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+ 
+     
+    static {
+        defaultCoordinateSystem = new CoordinateSystem("Telescope Coordinates");
+        defaultLocalCoordinateSystem = new CoordinateSystem("Telescope Offsets");
+
+        CoordinateAxis crossElevationAxis = new CoordinateAxis("Telescope Cross-elevation", "XEL", "XEL");
+        CoordinateAxis elevationAxis = new CoordinateAxis("Telescope Elevation", "EL", "EL");
+        CoordinateAxis xelOffsetAxis = new CoordinateAxis("Telescioe Cross-elevation Offset", "dXEL", GreekLetter.Delta + " XEL");
+        CoordinateAxis elevationOffsetAxis = new CoordinateAxis("Telescope Elevation Offset", "dEL", GreekLetter.Delta + " EL");
+        
+        defaultCoordinateSystem.add(crossElevationAxis);
+        defaultCoordinateSystem.add(elevationAxis);
+        defaultLocalCoordinateSystem.add(xelOffsetAxis);
+        defaultLocalCoordinateSystem.add(elevationOffsetAxis);
+        
+        for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
+    }
+       
+
 }

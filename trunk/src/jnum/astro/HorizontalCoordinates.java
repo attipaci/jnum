@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,13 +20,13 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.astro;
 
+import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 import jnum.SafeMath;
 import jnum.Unit;
 import jnum.math.CoordinateAxis;
@@ -43,29 +43,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3759766679620485628L;
-
-	/** The elevation offset axis. */
-	static CoordinateAxis azimuthAxis, elevationAxis, azimuthOffsetAxis, elevationOffsetAxis;
 	
-	/** The default local coordinate system. */
-	static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
-	
-	static {
-		defaultCoordinateSystem = new CoordinateSystem("Horizontal Coordinates");
-		defaultLocalCoordinateSystem = new CoordinateSystem("Horizontal Offsets");
-
-		azimuthAxis = new CoordinateAxis("Azimuth", "AZ", "Az");
-		elevationAxis = new CoordinateAxis("Elevation", "EL", "El");
-		azimuthOffsetAxis = new CoordinateAxis("Azimuth Offset", "dAZ", GreekLetter.Delta + " AZ");
-		elevationOffsetAxis = new CoordinateAxis("Elevation Offset", "dEL", GreekLetter.Delta + " EL");
-		
-		defaultCoordinateSystem.add(azimuthAxis);
-		defaultCoordinateSystem.add(elevationAxis);
-		defaultLocalCoordinateSystem.add(azimuthOffsetAxis);
-		defaultLocalCoordinateSystem.add(elevationOffsetAxis);
-		
-		for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
-	}
 
 
 	/**
@@ -101,24 +79,20 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 	public String getFITSLatitudeStem() { return "ALAT"; }
 	
 	
-	/**
-	 * Gets the coordinate system.
-	 *
-	 * @return the coordinate system
-	 */
 	@Override
-	public CoordinateSystem getCoordinateSystem() { return defaultCoordinateSystem; }
-
+    public String getTwoLetterCode() { return "HO"; }
 	
-	/**
-	 * Gets the local coordinate system.
-	 *
-	 * @return the local coordinate system
-	 */
-	@Override
-	public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
-	
-
+	  
+    @Override
+    public CoordinateSystem getCoordinateSystem() {
+        return defaultCoordinateSystem;
+    }
+     
+    @Override
+    public CoordinateSystem getLocalCoordinateSystem() {
+        return defaultLocalCoordinateSystem;
+    }
+    
 
 	/**
 	 * Az.
@@ -261,8 +235,34 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 	 * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {	
-		super.edit(cursor, alt);	
-		cursor.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
+	public void edit(Header header, String alt) throws HeaderCardException {	
+		super.edit(header, alt);	
+		header.addLine(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
 	}
+	
+
+    
+    /** The default local coordinate system. */
+    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+  
+	
+	static {
+        defaultCoordinateSystem = new CoordinateSystem("Horizontal Coordinates");
+        defaultLocalCoordinateSystem = new CoordinateSystem("Horizontal Offsets");
+
+        CoordinateAxis azimuthAxis = new CoordinateAxis("Azimuth", "AZ", "Az");
+        CoordinateAxis elevationAxis = new CoordinateAxis("Elevation", "EL", "El");
+        CoordinateAxis azimuthOffsetAxis = new CoordinateAxis("Azimuth Offset", "dAZ", GreekLetter.Delta + " AZ");
+        CoordinateAxis elevationOffsetAxis = new CoordinateAxis("Elevation Offset", "dEL", GreekLetter.Delta + " EL");
+        
+        defaultCoordinateSystem.add(azimuthAxis);
+        defaultCoordinateSystem.add(elevationAxis);
+        defaultLocalCoordinateSystem.add(azimuthOffsetAxis);
+        defaultLocalCoordinateSystem.add(elevationOffsetAxis);
+        
+        for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
+    }
+	
+  
+
 }

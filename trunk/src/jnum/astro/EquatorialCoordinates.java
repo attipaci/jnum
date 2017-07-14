@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,24 +23,16 @@
 
 package jnum.astro;
 
-import java.text.NumberFormat;
-import java.util.StringTokenizer;
 
 import jnum.Constant;
 import jnum.SafeMath;
 import jnum.Unit;
 import jnum.Util;
-import jnum.math.Coordinate2D;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
-import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.text.GreekLetter;
 import jnum.text.HourAngleFormat;
-import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCard;
-import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
 
 // TODO: Auto-generated Javadoc
@@ -50,51 +42,23 @@ import nom.tam.util.Cursor;
 /**
  * The Class EquatorialCoordinates.
  */
-public class EquatorialCoordinates extends CelestialCoordinates implements Precessing {
+public class EquatorialCoordinates extends PrecessingCoordinates {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3445122576647034180L;
+	
 
-	/** The epoch. */
-	public CoordinateEpoch epoch;
-	
-	/** The declination offset axis. */
-	static CoordinateAxis rightAscentionAxis, declinationAxis, rightAscentionOffsetAxis, declinationOffsetAxis;
-	
-	/** The default local coordinate system. */
-	static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
-	
-	/** The hf. */
-	private static HourAngleFormat hf = new HourAngleFormat(2);
-	
-	static {
-		defaultCoordinateSystem = new CoordinateSystem("Equatorial Coordinates");
-		defaultLocalCoordinateSystem = new CoordinateSystem("Equatorial Offsets");
-		
-		rightAscentionAxis = new CoordinateAxis("Right Ascension", "RA", GreekLetter.alpha + "");
-		rightAscentionAxis.setReverse(true);
-		rightAscentionAxis.setFormat(hf);
-
-		declinationAxis = new CoordinateAxis("Declination", "DEC", GreekLetter.delta + "");
-		declinationAxis.setFormat(af);
-
-		rightAscentionOffsetAxis = new CoordinateAxis("Right Ascension Offset", "dRA", GreekLetter.Delta + " " + GreekLetter.alpha);
-		rightAscentionOffsetAxis.setReverse(true);
-	
-		declinationOffsetAxis = new CoordinateAxis("Declination Offset", "dDEC", GreekLetter.Delta + " " + GreekLetter.delta);
-		
-		defaultCoordinateSystem.add(rightAscentionAxis);
-		defaultCoordinateSystem.add(declinationAxis);
-		
-		defaultLocalCoordinateSystem.add(rightAscentionOffsetAxis);
-		defaultLocalCoordinateSystem.add(declinationOffsetAxis);		
-	}
 	
 	
     /**
      * Instantiates a new equatorial coordinates.
      */
-    public EquatorialCoordinates() { epoch = CoordinateEpoch.J2000; }
+    public EquatorialCoordinates() { }
+    
+    
+    public EquatorialCoordinates(CoordinateEpoch epoch) { 
+        super(epoch);
+    }
 
 	/**
 	 * Instantiates a new equatorial coordinates.
@@ -109,7 +73,9 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	 * @param ra the ra in radians
 	 * @param dec the dec in radians
 	 */
-	public EquatorialCoordinates(double ra, double dec) { super(ra, dec); epoch = CoordinateEpoch.J2000; }
+	public EquatorialCoordinates(double ra, double dec) { 
+	    super(ra, dec); 
+	}
 
 	/**
 	 * Instantiates a new equatorial coordinates.
@@ -118,7 +84,9 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	 * @param dec the dec
 	 * @param aEpoch the a epoch
 	 */
-	public EquatorialCoordinates(double ra, double dec, double aEpoch) { super(ra, dec); epoch = aEpoch < 1984.0 ? new BesselianEpoch(aEpoch) : new JulianEpoch(aEpoch); }
+	public EquatorialCoordinates(double ra, double dec, double epochYear) { 
+	    super(ra, dec, epochYear);
+	}
 
 	/**
 	 * Instantiates a new equatorial coordinates.
@@ -127,7 +95,10 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	 * @param dec the dec
 	 * @param epochSpec the epoch spec
 	 */
-	public EquatorialCoordinates(double ra, double dec, String epochSpec) { super(ra, dec); epoch = CoordinateEpoch.forString(epochSpec); }
+	public EquatorialCoordinates(double ra, double dec, String epochSpec) { 
+	    super(ra, dec, epochSpec); 
+	 
+	}
 	
 	/**
 	 * Instantiates a new equatorial coordinates.
@@ -136,7 +107,9 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	 * @param dec the dec
 	 * @param epoch the epoch
 	 */
-	public EquatorialCoordinates(double ra, double dec, CoordinateEpoch epoch) { super(ra, dec); this.epoch = epoch; }
+	public EquatorialCoordinates(double ra, double dec, CoordinateEpoch epoch) { 
+	    super(ra, dec, epoch); 
+	}
 		
 	
 	/**
@@ -145,29 +118,6 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	 * @param from the from
 	 */
 	public EquatorialCoordinates(CelestialCoordinates from) { super(from); }
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.Coordinate2D#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		int hash = super.hashCode();
-		if(epoch != null) hash ^= epoch.hashCode();
-		return hash;
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.Coordinate2D#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if(o == this) return true;
-		if(!(o instanceof EquatorialCoordinates)) return false;
-		if(!super.equals(o)) return false;
-		EquatorialCoordinates e = (EquatorialCoordinates) o;
-		if(!Util.equals(epoch, e.epoch)) return false;
-		return true;
-	}
 	
 	
 	/* (non-Javadoc)
@@ -183,47 +133,21 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	public String getFITSLatitudeStem() { return "DEC-"; }
 	
 	
-	/**
-	 * Gets the coordinate system.
-	 *
-	 * @return the coordinate system
-	 */
 	@Override
-	public CoordinateSystem getCoordinateSystem() { return defaultCoordinateSystem; }
-
+    public String getTwoLetterCode() { return "EQ"; }
 	
-	/**
-	 * Gets the local coordinate system.
-	 *
-	 * @return the local coordinate system
-	 */
-	@Override
-	public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
 	
-	/**
-	 * Copy.
-	 *
-	 * @return the equatorial coordinates
-	 */
-	@Override
-	public Coordinate2D copy() {
-		EquatorialCoordinates copy = (EquatorialCoordinates) super.copy();
-		if(epoch != null) copy.epoch = epoch.copy();
-		return copy;
-	}
-	
-	/**
-	 * Copy.
-	 *
-	 * @param coords the coords
-	 */
-	public void copy(SphericalCoordinates coords) {
-		super.copy(coords);
-		if(!(coords instanceof EquatorialCoordinates)) return;
-		EquatorialCoordinates equatorial = (EquatorialCoordinates) coords;
-		epoch = (CoordinateEpoch) equatorial.epoch.clone();
-	}
-	
+	  
+    @Override
+    public CoordinateSystem getCoordinateSystem() {
+        return defaultCoordinateSystem;
+    }
+     
+    @Override
+    public CoordinateSystem getLocalCoordinateSystem() {
+        return defaultLocalCoordinateSystem;
+    }
+    	
 	/**
 	 * Ra.
 	 *
@@ -292,19 +216,15 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	 */
 	@Override
 	public void toEquatorial(EquatorialCoordinates equatorial) {
-		final CoordinateEpoch toEpoch = equatorial.epoch;
-		equatorial.copy(this);	
-		if(!epoch.equals(toEpoch)) equatorial.precess(toEpoch);			
+	    equatorial.copy(this);	
 	}
 	
 	/* (non-Javadoc)
 	 * @see jnum.astro.CelestialCoordinates#fromEquatorial(jnum.astro.EquatorialCoordinates)
 	 */
 	@Override
-	public void fromEquatorial(EquatorialCoordinates equatorial) {
-		final CoordinateEpoch toEpoch = epoch;
+	public void fromEquatorial(EquatorialCoordinates equatorial) {	
 		copy(equatorial);
-		if(!epoch.equals(toEpoch)) precess(toEpoch);			
 	}
 	
 	/**
@@ -382,12 +302,9 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.Precessing#precess(jnum.astro.CoordinateEpoch)
-	 */
 	@Override
-	public void precess(CoordinateEpoch newEpoch) {
-		if(epoch.equals(newEpoch)) return;
+	public void precessUnchecked(CoordinateEpoch newEpoch) {
+	    if(epoch.equals(newEpoch)) return;
 		Precession precession = new Precession(epoch, newEpoch);
 		precession.precess(this);
 	}
@@ -398,7 +315,7 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	@Override
 	public String toString() {
 		hf.setDecimals(getDefaultDecimals() + 1);
-		return super.toString() + " (" + (epoch == null ? "unknown" : epoch.toString()) + ")";	
+		return super.toString();	
 	}
 	
 	/* (non-Javadoc)
@@ -406,58 +323,10 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	 */
 	@Override
 	public String toString(int decimals) {
-		return Util.hf[decimals+1].format(longitude()) + " " + Util.af[decimals].format(latitude()) +  " (" + (epoch == null ? "unknown" : epoch.toString()) + ")";	
+		return Util.hf[decimals+1].format(longitude()) + " " + Util.af[decimals].format(latitude()) +
+		        (epoch == null ? "" : " (" + epoch.toString() + ")");	
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalCoordinates#toString(java.text.NumberFormat)
-	 */
-	@Override
-	public String toString(NumberFormat nf) {
-		return super.toString(nf) + " " + "(" + (epoch == null ? "unknown" : epoch.toString()) + ")";	
-	}
-
-
-	/* (non-Javadoc)
-	 * @see jnum.SphericalCoordinates#parse(java.lang.String)
-	 */
-	@Override
-	public void parse(String coords) throws NumberFormatException, IllegalArgumentException {
-		StringTokenizer tokens = new StringTokenizer(coords, ",() \t\r\n");
-		super.parse(tokens.nextToken() + " " + tokens.nextToken());
-		
-		try { epoch = tokens.hasMoreTokens() ? CoordinateEpoch.forString(tokens.nextToken()) : null; }
-		catch(NumberFormatException e) { epoch = null; }
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
-	@Override
-	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {
-		super.edit(cursor, alt);
-		cursor.add(new HeaderCard("RADESYS" + alt, epoch instanceof BesselianEpoch ? "FK4" : "FK5", "Reference convention."));
-		epoch.edit(cursor, alt);
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalCoordinates#parse(nom.tam.fits.Header, java.lang.String)
-	 */
-	@Override
-	public void parse(Header header, String alt) {
-		super.parse(header, alt);
-		
-		String system = header.getStringValue("RADESYS");
-		if(system == null) system = header.getDoubleValue("EQUINOX" + alt) < 1984.0 ? "FK4" : "FK5";
-		
-		if(system.equalsIgnoreCase("FK4")) epoch = new BesselianEpoch();
-		else if(system.equalsIgnoreCase("FK4-NO-E")) epoch = new BesselianEpoch();
-		else epoch = new JulianEpoch();
-		
-		epoch.parse(header, alt);
-	}
 
 	/* (non-Javadoc)
 	 * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
@@ -471,31 +340,61 @@ public class EquatorialCoordinates extends CelestialCoordinates implements Prece
 	@Override
 	public double getZeroLongitude() { return 0.0; }
 	
-	/** The equatorial pole. */
-	private static EquatorialCoordinates equatorialPole = new EquatorialCoordinates(0.0, Constant.rightAngle);
+    
+	   
+    /** The default local coordinate system. */
+    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.Precessing#getEpoch()
-	 */
-	@Override
-	public CoordinateEpoch getEpoch() { return epoch; }
+    
+    /** The hf. */
+    private static HourAngleFormat hf = new HourAngleFormat(2);
+    
+
+    
+    static {
+        defaultCoordinateSystem = new CoordinateSystem("Equatorial Coordinates");
+        defaultLocalCoordinateSystem = new CoordinateSystem("Equatorial Offsets");
+        
+        CoordinateAxis rightAscentionAxis = new CoordinateAxis("Right Ascension", "RA", GreekLetter.alpha + "");
+        rightAscentionAxis.setReverse(true);
+        rightAscentionAxis.setFormat(hf);
+
+        CoordinateAxis declinationAxis = new CoordinateAxis("Declination", "DEC", GreekLetter.delta + "");
+        declinationAxis.setFormat(af);
+
+        CoordinateAxis rightAscentionOffsetAxis = new CoordinateAxis("Right Ascension Offset", "dRA", GreekLetter.Delta + " " + GreekLetter.alpha);
+        rightAscentionOffsetAxis.setReverse(true);
+    
+        CoordinateAxis declinationOffsetAxis = new CoordinateAxis("Declination Offset", "dDEC", GreekLetter.Delta + " " + GreekLetter.delta);
+        
+        defaultCoordinateSystem.add(rightAscentionAxis);
+        defaultCoordinateSystem.add(declinationAxis);
+        
+        defaultLocalCoordinateSystem.add(rightAscentionOffsetAxis);
+        defaultLocalCoordinateSystem.add(declinationOffsetAxis);        
+    }	
 	
-	/* (non-Javadoc)
-	 * @see jnum.astro.Precessing#setEpoch(jnum.astro.CoordinateEpoch)
-	 */
-	@Override
-	public void setEpoch(CoordinateEpoch epoch) { this.epoch = epoch; }
+  
+    
+    
+    /** The equatorial pole. */
+    private static EquatorialCoordinates equatorialPole = new EquatorialCoordinates(0.0, Constant.rightAngle);
+
+
+    
+    /** The Constant NORTH. */
+    public final static int NORTH = 1;
+    
+    /** The Constant SOUTH. */
+    public final static int SOUTH = -1;
+    
+    /** The Constant EAST. */
+    public final static int EAST = -1;
+    
+    /** The Constant WEST. */
+    public final static int WEST = 1;
+    
+    
 	
-	/** The Constant NORTH. */
-	public final static int NORTH = 1;
-	
-	/** The Constant SOUTH. */
-	public final static int SOUTH = -1;
-	
-	/** The Constant EAST. */
-	public final static int EAST = -1;
-	
-	/** The Constant WEST. */
-	public final static int WEST = 1;
 
 }

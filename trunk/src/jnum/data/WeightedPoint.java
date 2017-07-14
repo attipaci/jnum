@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,14 +20,12 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.data;
 
-import java.io.Serializable;
 import java.text.NumberFormat;
 
-import jnum.Copiable;
 import jnum.math.Division;
 import jnum.math.LinearAlgebra;
 import jnum.math.Multiplicative;
@@ -38,12 +36,14 @@ import jnum.util.HashCode;
 /**
  * The Class WeightedPoint.
  */
-public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, Cloneable, Copiable<WeightedPoint>, Multiplicative<WeightedPoint>, Division<WeightedPoint>, Ratio<WeightedPoint, WeightedPoint>, LinearAlgebra<WeightedPoint> {
+public class WeightedPoint extends RealValue implements Multiplicative<WeightedPoint>, Division<WeightedPoint>, Ratio<WeightedPoint, WeightedPoint>, LinearAlgebra<WeightedPoint>, 
+Accumulating<WeightedPoint>
+{
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6583109762992313591L;
 	/** The weight. */
-	private double value, weight;
+	private double weight;
 
 	/**
 	 * Instantiates a new weighted point.
@@ -66,7 +66,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 * @param weight the weight
 	 */
 	public WeightedPoint(final double value, final double weight) { 
-		this.value = value;
+		super(value);
 		this.weight = weight;
 	}
 	
@@ -79,8 +79,8 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 		if(o == this) return true;
 		if(!(o instanceof WeightedPoint)) return false;
 		if(!super.equals(o)) return false;
+		
 		WeightedPoint p = (WeightedPoint) o;
-		if(p.value != value) return false;
 		if(isExact()) if(!p.isExact()) return false;
 		return weight == p.weight;
 	}
@@ -90,53 +90,15 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.from(value) ^ HashCode.from(weight);
+		return super.hashCode() ^ HashCode.from(weight);
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
-	@Override
-	public Object clone() {
-		try { return super.clone(); }
-		catch(CloneNotSupportedException e) { return null; }
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Copiable#copy()
-	 */
-	@Override
-	public WeightedPoint copy() { return (WeightedPoint) clone(); }
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(final WeightedPoint point) throws ClassCastException {
-		return Double.compare(value, point.value);
-	}
-	
-	/**
-	 * Value.
-	 *
-	 * @return the double
-	 */
-	public final double value() { return value; }
 	
 	/**
 	 * Weight.
 	 *
 	 * @return the double
 	 */
-	public final double weight() { return weight; }
-	
-	/**
-	 * Sets the value.
-	 *
-	 * @param x the new value
-	 */
-	public final void setValue(final double x) { this.value = x; }
-	
+	public final double weight() { return weight; }	
 	/**
 	 * Sets the weight.
 	 *
@@ -144,19 +106,6 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	public final void setWeight(final double w) { this.weight = w; }
 	
-	/**
-	 * Adds the.
-	 *
-	 * @param dx the dx
-	 */
-	public final void add(double dx) { value += dx; }
-	
-	/**
-	 * Subtract.
-	 *
-	 * @param dx the dx
-	 */
-	public final void subtract(double dx) { value -= dx; }
 	
 	/**
 	 * Adds the weight.
@@ -170,7 +119,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 *
 	 * @param factor the factor
 	 */
-	public final void scaleValue(double factor) { value *= factor; }
+	public final void scaleValue(double factor) { super.scale(factor); }
 	
 	/**
 	 * Scale weight.
@@ -179,11 +128,11 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	public final void scaleWeight(double factor) { weight *= factor; }
 
-	/**
-	 * No data.
-	 */
-	public final void noData() { 
-		value = weight = 0.0;
+
+	@Override
+    public final void noData() { 
+	    super.noData();
+		weight = 0.0;
 	}
 
 	/**
@@ -200,7 +149,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 * @return true, if is na n
 	 */
 	public final static boolean isNaN(WeightedPoint point) { 
-		return Double.isNaN(point.value) || point.weight == 0.0;
+		return Double.isNaN(point.value()) || point.weight == 0.0;
 	}
 
 	/**
@@ -221,7 +170,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 * @param x the x
 	 */
 	public void copy(final WeightedPoint x) {
-		value = x.value;
+		setValue(x.value());
 		weight = x.weight;
 	}
 	
@@ -252,7 +201,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	public void setSum(final WeightedPoint a, final WeightedPoint b) {
 		final double w = a.weight * b.weight;
 		weight = w > 0.0 ? w / (a.weight + b.weight) : 0.0;
-		value = a.value + b.value;
+		setValue(a.value() + b.value());
 	}
 
 	/* (non-Javadoc)
@@ -262,7 +211,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	public void setDifference(final WeightedPoint a, final WeightedPoint b) {
 		final double w = a.weight * b.weight;
 		weight = w > 0.0 ? w / (a.weight + b.weight) : 0.0;
-		value = a.value - b.value;
+		setValue(a.value() - b.value());
 	}
 
 
@@ -271,7 +220,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	@Override
 	public void addScaled(final WeightedPoint x, final double factor) {
-		value += factor * x.value;
+		add(factor * x.value());
 		if(weight == 0.0) return;
 		if(x.weight == 0.0) weight = 0.0;
 		else weight = weight * x.weight / (x.weight + factor * factor * weight);
@@ -283,7 +232,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 * @param x the x
 	 */
 	public void average(final WeightedPoint x) {
-		average(x.value, x.weight);
+		average(x.value(), x.weight);
 	}
 	
 	/**
@@ -293,11 +242,33 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 * @param w the w
 	 */
 	public void average(final double v, final double w) {
-		value = weight * value + w * v;
+		setValue(weight * value() + w * v);
 		weight += w;
-		if(weight > 0.0) value /= weight;		
+		if(weight > 0.0) setValue(value() / weight);		
 	}
-
+	
+	@Override
+    public void accumulate(WeightedPoint x, double w) {
+	    add(w * x.weight * x.value());
+	    weight += w * x.weight;
+	}
+	
+	@Override
+    public void accumulate(WeightedPoint x, double w, double gain) {
+        add(w * x.weight * x.value() * gain);
+        weight += w * x.weight * gain * gain;
+    }
+	
+	@Override
+    public void startAccumulation() {
+	    setValue(value() * weight);
+	}
+	
+	@Override
+    public void endAccumulation() {
+	    setValue(value() / weight);
+	}
+	
 	/**
 	 * Scale.
 	 *
@@ -305,7 +276,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	@Override
 	public final void scale(final double x) {
-		value *= x;
+		scaleValue(x);
 		weight /= x*x;
 	}
 
@@ -324,8 +295,8 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	@Override
 	public final void setProduct(final WeightedPoint a, final WeightedPoint b) {
 		final double w = a.weight * b.weight;
-		weight = w > 0.0 ? w / (a.value * a.value * a.weight + b.value * b.value * b.weight) : 0.0;
-		value = a.value * b.value;
+		weight = w > 0.0 ? w / (a.value() * a.value() * a.weight + b.value() * b.value() * b.weight) : 0.0;
+		setValue(a.value() * b.value());
 	}
 	
 	/* (non-Javadoc)
@@ -343,11 +314,11 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	public void setRatio(final WeightedPoint a, final WeightedPoint b) {
 		final double w = a.weight * b.weight;
 		if(w > 0.0) {
-			final double b2 = b.value * b.value;	
-			weight = b2 * b2 * w / (a.weight * a.value * a.value + b.weight * b2);
+			final double b2 = b.value() * b.value();	
+			weight = b2 * b2 * w / (a.weight * a.value() * a.value() + b.weight * b2);
 		}
 		else weight = 0.0;
-		value = a.value / b.value;
+		setValue(a.value() / b.value());
 	}
 	
 	/**
@@ -428,7 +399,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 * @return the string
 	 */
 	public String toString(String before, String after) {
-		return value + before + Math.sqrt(1.0 / weight) + after; 
+		return value() + before + Math.sqrt(1.0 / weight) + after; 
 	}
 
 	/**
@@ -450,7 +421,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 * @return the string
 	 */
 	public String toString(final NumberFormat nf, String before, String after) {
-		return nf.format(value) + before + nf.format(Math.sqrt(1.0 / weight)) + after; 
+		return nf.format(value()) + before + nf.format(Math.sqrt(1.0 / weight)) + after; 
 	}
 
 	/**
@@ -473,7 +444,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	public static float[] floatValues(final WeightedPoint[] data) {
 		final float[] fdata = new float[data.length];
-		for(int i=data.length; --i >= 0; ) fdata[i] = (float) data[i].value;
+		for(int i=data.length; --i >= 0; ) fdata[i] = (float) data[i].value();
 		return fdata;
 	}
 	
@@ -485,7 +456,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	public static double[] values(final WeightedPoint[] data) {
 		final double[] ddata = new double[data.length];
-		for(int i=data.length; --i >= 0; ) ddata[i] = data[i].value;
+		for(int i=data.length; --i >= 0; ) ddata[i] = data[i].value();
 		return ddata;
 	}
 	
@@ -521,7 +492,7 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	@Override
 	public boolean isNull() {
-		return value == 0.0 && isExact();
+		return super.isNull() && isExact();
 	}
 
 	/* (non-Javadoc)
@@ -529,9 +500,10 @@ public class WeightedPoint implements Serializable, Comparable<WeightedPoint>, C
 	 */
 	@Override
 	public void zero() {
-		value = 0.0;
+		super.zero();
 		exact();
 	}
 
+   
 	
 }

@@ -119,9 +119,8 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
-        if(!(o instanceof Range)) return false;
-        if(!super.equals(o)) return false;
-
+        if(!(o instanceof Range2D)) return false;
+     
         Range2D r = (Range2D) o;
         if(r.isEmpty() && isEmpty()) return true;
         if(!Util.equals(xRange, r.xRange)) return false;

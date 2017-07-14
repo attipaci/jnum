@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,6 +24,8 @@
 
 package jnum.text;
 
+import java.text.ParsePosition;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Parser.
@@ -37,5 +39,5 @@ public interface Parser {
      * @throws NumberFormatException the number format exception
      * @throws IllegalArgumentException the illegal argument exception
      */
-    public void parse(String text) throws NumberFormatException, IllegalArgumentException;
+    public void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException;
 }

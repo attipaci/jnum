@@ -88,8 +88,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	public boolean equals(Object o) {
 		if(o == this) return true;
 		if(!(o instanceof Range)) return false;
-		if(!super.equals(o)) return false;
-
+		
 		Range range = (Range) o;
 		
 		if(range.isEmpty() && isEmpty()) return true; 

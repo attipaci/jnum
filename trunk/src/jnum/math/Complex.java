@@ -69,6 +69,11 @@ public class Complex extends Vector2D implements
 	 */
 	public Complex(final double real) { super(real, 0.0); }
 
+	@Override
+    public Complex copy() {
+	    return (Complex) super.copy();
+	}
+	
 	/**
 	 * Real part of the complex number. Same as {@link jnum.math.Vector2D#x() }.
 	 *

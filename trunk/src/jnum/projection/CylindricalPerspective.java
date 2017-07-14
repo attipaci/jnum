@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,7 +26,6 @@ package jnum.projection;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 import jnum.ExtraMath;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
@@ -96,11 +95,11 @@ public class CylindricalPerspective extends CylindricalProjection {
 	 * @see kovacs.projection.SphericalProjection#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Cursor<String, HeaderCard> cursor, String alt) throws HeaderCardException {		
-		super.edit(cursor, alt);
+	public void edit(Header header, String alt) throws HeaderCardException {		
+		super.edit(header, alt);
 		String latPrefix = getLatitudeParameterPrefix();
-		cursor.add(new HeaderCard(latPrefix + "1" + alt, mu, "mu parameter for cylindrical perspective."));	
-		cursor.add(new HeaderCard(latPrefix + "2" + alt, lambda, "lambda parameter for cylindrical perspective."));	
+		header.addLine(new HeaderCard(latPrefix + "1" + alt, mu, "mu parameter for cylindrical perspective."));	
+		header.addLine(new HeaderCard(latPrefix + "2" + alt, lambda, "lambda parameter for cylindrical perspective."));	
 	}
 	
 }

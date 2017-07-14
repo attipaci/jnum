@@ -23,7 +23,6 @@
 
 package jnum.parallel;
 
-import jnum.Parallel;
 import jnum.data.WeightedPoint;
 
 // TODO: Auto-generated Javadoc
@@ -40,7 +39,7 @@ public class Averaging<ReturnType extends WeightedPoint> extends ParallelReducti
 	@Override
 	public ReturnType getResult() {
 		ReturnType result = null;
-		for(Parallel<ReturnType> task : getParallel().getWorkers()) {
+		for(ParallelTask<ReturnType> task : getParallel().getWorkers()) {
 			ReturnType local = task.getLocalResult();
 			if(result == null) result = local;
 			else result.average(local);

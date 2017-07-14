@@ -24,6 +24,7 @@ package test;
 
 import jnum.Util;
 import jnum.fft.*;
+import jnum.parallel.ParallelTask;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -37,7 +38,7 @@ public class MultiFFTTest {
 	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
-		DoubleFFT dfft = new DoubleFFT.NyquistUnrolledRealFT();
+		DoubleFFT dfft = new DoubleFFT.NyquistUnrolledReal(ParallelTask.newDefaultParallelExecutor());
 		double[] ddata = new double[10];
 		ddata[0] = 8;
 		dfft.real2Amplitude(ddata);
@@ -47,8 +48,8 @@ public class MultiFFTTest {
 		print(ddata);
 		
 		
-		MultiFFT fft = new MultiFFT();
-		fft.setThreads(1);
+		MultiFFT fft = new MultiFFT(ParallelTask.newDefaultParallelExecutor());
+		fft.setParallel(1);
 		
 		double[][] data = new double[8][10];
 			

@@ -24,6 +24,9 @@ package jnum.util;
 
 import java.util.List;
 
+import jnum.ExtraMath;
+import jnum.data.image.Value2D;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class HashCode.
@@ -281,7 +284,7 @@ public final class HashCode {
 	 * @param values the values
 	 * @return the int
 	 */
-	public static int from(List<?> values) { return get(values, 0, values.size()); }
+	public static int from(List<?> values) { return from(values, 0, values.size()); }
 	
 	/**
 	 * Gets the.
@@ -291,7 +294,7 @@ public final class HashCode {
 	 * @param to the to
 	 * @return the int
 	 */
-	public static int get(List<?> values, int from, int to) {
+	public static int from(List<?> values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) {
 			Object entry = values.get(i);
@@ -306,6 +309,12 @@ public final class HashCode {
 			else hash ^= entry.hashCode() + i; 
 		}
 		return hash;		
+	}
+	
+	public static int from(Value2D values) {
+	    int hash = 0;
+	    for(int i=values.sizeX(); --i >= 0; ) for(int j=values.sizeY(); --j >=0; ) hash ^= values.get(i,  j).hashCode();
+	    return hash;
 	}
 	
 	
@@ -462,8 +471,8 @@ public final class HashCode {
 	 * @return the int
 	 */
 	public static int sampleFrom(List<?> values) {
-		if(values.size() < 32) return get(values, 0, values.size());
-		int hash = get(values, 0, 8) ^ get(values, values.size()-8, values.size());
+		if(values.size() < 32) return from(values, 0, values.size());
+		int hash = from(values, 0, 8) ^ from(values, values.size()-8, values.size());
 		int step = (values.size() - 16) >> 4;
 		for(int i=0, j=8; i<16; i++, j+=step) {
 			Object entry = values.get(j);
@@ -479,6 +488,25 @@ public final class HashCode {
 		}
 		return hash;
 	}
+	
+	
+	public static int sampleFrom(Value2D values) {
+	    final int maxSamples = 32;
+	    int n = values.sizeX() * values.sizeY();
+	    
+        if(n < maxSamples) return from(values);
+       
+        int hash = 0;
+        
+        // Evenly sampled between first and last...
+        for(int k=maxSamples; --k >= 0; ) {
+            int m = ExtraMath.roundupRatio(k * (n-1), maxSamples);
+            hash ^= values.get(m / values.sizeY(), m % values.sizeY()).hashCode();
+        }
+       
+        return hash;
+    }
+   
 	
 }
 

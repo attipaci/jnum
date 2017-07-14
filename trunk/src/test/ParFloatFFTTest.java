@@ -25,6 +25,7 @@ package test;
 import jnum.ExtraMath;
 import jnum.Util;
 import jnum.fft.FloatFFT;
+import jnum.parallel.ParallelTask;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -42,8 +43,8 @@ public static void main(String[] args) {
 	
 		float[] data = new float[32];
 
-		FloatFFT fft = new FloatFFT();
-		fft.setSequential();
+		FloatFFT fft = new FloatFFT(ParallelTask.newDefaultParallelExecutor());
+		fft.noParallel();
 		
 		System.err.println("delta[0]:");
 		data[0] = 1.0F;

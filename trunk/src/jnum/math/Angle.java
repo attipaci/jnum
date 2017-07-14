@@ -97,6 +97,7 @@ Comparable<Angle> {
      */
     @Override
     public boolean equals(Object o) {
+        if(this == o) return true;
         if(!(o instanceof Angle)) return false;
         return value == ((Angle) o).value;
     }

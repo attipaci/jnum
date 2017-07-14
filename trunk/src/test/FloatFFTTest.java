@@ -26,6 +26,7 @@ import jnum.Constant;
 import jnum.Util;
 import jnum.fft.FFT;
 import jnum.fft.FloatFFT;
+import jnum.parallel.ParallelTask;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,17 +39,16 @@ public class FloatFFTTest {
 	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
-			
-		int threads = 1;
+		
 		float[] data = new float[64];
 		
-		FloatFFT fft = new FloatFFT();
-		fft.setSequential();
+		FloatFFT fft = new FloatFFT(ParallelTask.newDefaultParallelExecutor());		
+		fft.setParallel(4);
 		
 		System.out.println("\ndelta(0):");
 		data[0] = 1.0F;
 	
-		fft.complexTransform(data, FFT.FORWARD, threads); 
+		fft.complexTransform(data, FFT.FORWARD); 
 		print(data);
 		
 		
@@ -58,7 +58,7 @@ public class FloatFFTTest {
 			data[i+1] = 0.0F;
 		}
 		
-		fft.complexTransform(data, FFT.FORWARD, threads); 
+		fft.complexTransform(data, FFT.FORWARD); 
 		print(data);
 		
 		
@@ -72,12 +72,12 @@ public class FloatFFTTest {
 			data[i+1] = 0.0F;
 		}
 		 
-		fft.complexTransform(data, FFT.FORWARD, threads); 
+		fft.complexTransform(data, FFT.FORWARD); 
 		print(data);
 		
 		
 		System.out.println("\nBack:");
-		fft.complexTransform(data, FFT.BACK, threads); 
+		fft.complexTransform(data, FFT.BACK); 
         print(data);
         
 	
@@ -88,11 +88,11 @@ public class FloatFFTTest {
 			data[i+1] = 0.0F;
 		}
 		
-		fft.complexTransform(data, FFT.FORWARD, threads); 
+		fft.complexTransform(data, FFT.FORWARD); 
 		print(data);
 		
 		System.out.println("\nBack:");
-		fft.complexTransform(data, FFT.BACK, threads); 
+		fft.complexTransform(data, FFT.BACK); 
         print(data);
         
     
@@ -105,7 +105,7 @@ public class FloatFFTTest {
             data[i+1] = 0.0F;
         }
          
-        fft.complexTransform(data, FFT.FORWARD, threads); 
+        fft.complexTransform(data, FFT.FORWARD); 
         print(data);
         
         
@@ -119,9 +119,10 @@ public class FloatFFTTest {
         fft.real2Amplitude(data); 
         print(data);
         
+        
         System.out.println("\nBack:");
         fft.amplitude2Real(data);
-        print(data);
+        printTime(data);
         
 		
 		System.out.println("\nReal: cos(31):");
@@ -162,5 +163,11 @@ public class FloatFFTTest {
 		System.out.println();	
 	}
 	
+	static void printTime(float[] data) {
+        for(int i=0; i<data.length; i++) {
+            System.out.println(" " + (i>>1) + ":\t" + Util.f3.format(data[i]));
+        }
+        System.out.println();   
+    }
 	
 }

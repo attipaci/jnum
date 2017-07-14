@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,6 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.plot;
 
 import java.awt.Dimension;
@@ -33,26 +34,25 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 import jnum.Util;
-import jnum.data.Index2D;
+import jnum.data.image.Value2D;
 import jnum.math.Range;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class BufferedImageLayer.
  */
-public abstract class BufferedImageLayer extends ImageLayer {
+public class BufferedImageLayer extends ImageLayer {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5659356933524758138L;
 
+	private Value2D data;
+	
 	/** The buffer. */
 	private BufferedImage buffer;
 	
 	/** The interpolation type. */
 	private int interpolationType = AffineTransformOp.TYPE_NEAREST_NEIGHBOR;
-
-	/** The start index. */
-	private Index2D startIndex = new Index2D();	// The subarray offset to image
 	
 	/** The index to coords. */
 	private AffineTransform indexToCoords = new AffineTransform();
@@ -61,13 +61,16 @@ public abstract class BufferedImageLayer extends ImageLayer {
 	private AffineTransform coordsToIndex = new AffineTransform();
 
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotLayer#defaults()
-	 */
-	@Override
-	public void defaults() {
-		setFullArray();
-		super.defaults();
+	public BufferedImageLayer(Value2D data) {
+	    setData(data);
+	    defaults();
+	}
+	
+	public Value2D getData() { return data; }
+	
+	public void setData(Value2D data) { 
+	    this.data = data; 
+	    createBuffer(data.sizeX(), data.sizeY());
 	}
 	
 	/**
@@ -84,7 +87,9 @@ public abstract class BufferedImageLayer extends ImageLayer {
 	 *
 	 * @return the data size
 	 */
-	public abstract Dimension getDataSize();
+	public final Dimension getDataSize() {
+	    return new Dimension(data.sizeX(), data.sizeY());
+	}
 	
 
 	
@@ -95,7 +100,7 @@ public abstract class BufferedImageLayer extends ImageLayer {
 	 * @param j the j
 	 * @return the value
 	 */
-	public abstract double getValue(int i, int j);
+	public final double getValue(int i, int j) { return data.isValid(i, j) ? data.get(i, j).doubleValue() : Double.NaN; }
 
 	
 	
@@ -147,6 +152,15 @@ public abstract class BufferedImageLayer extends ImageLayer {
 		g2.drawImage(buffer, op, 0, 0);				
 	}
 
+	
+	/* (non-Javadoc)
+     * @see jnum.plot.ContentLayer#initialize()
+     */
+    @Override
+    public void initialize() {
+        updateBuffer();
+    }
+
 
 	/**
 	 * Update buffer.
@@ -170,30 +184,7 @@ public abstract class BufferedImageLayer extends ImageLayer {
 		}
 		return range;	
 	}
-	
-	
-	/**
-	 * Sets the subarray.
-	 *
-	 * @param fromi the fromi
-	 * @param fromj the fromj
-	 * @param toi the toi
-	 * @param toj the toj
-	 */
-	public void setSubarray(int fromi, int fromj, int toi, int toj) {
-		startIndex.set(fromi, fromj);
-		createBuffer(toi - fromi, toj - fromj);
-		if(verbose) Util.info(this, "Selecting " + fromi + "," + fromj + " -- " + toi + "," + toj);	
-	}
-	
-	/**
-	 * Sets the full array.
-	 */
-	public void setFullArray() {
-		Dimension size = getDataSize();
-		setSubarray(0, 0, size.width, size.height);
-	}	
-	
+
 	/**
 	 * Sets the coordinate transform.
 	 *
@@ -286,162 +277,7 @@ public abstract class BufferedImageLayer extends ImageLayer {
 	public void setSpline() { setInterpolationType(AffineTransformOp.TYPE_BICUBIC); }
 	
 	
-	/**
-	 * Gets the subarray offset.
-	 *
-	 * @return the subarray offset
-	 */
-	public Index2D getSubarrayOffset() { return startIndex; }
-	
-	/**
-	 * Sets the subarray offset.
-	 *
-	 * @param index the new subarray offset
-	 */
-	public void setSubarrayOffset(Index2D index) { this.startIndex = index; }
-	
-	/**
-	 * Sets the subarray offset.
-	 *
-	 * @param i the i
-	 * @param j the j
-	 */
-	public void setSubarrayOffset(int i, int j) { startIndex.set(i,  j); }
 	
 	
-	/**
-	 * The Class Double.
-	 */
-	public static class Double extends BufferedImageLayer {
-		
-		/** The Constant serialVersionUID. */
-		private static final long serialVersionUID = 6276800154911203125L;
-		
-		/** The data. */
-		private double[][] data;
-		
-		/**
-		 * Instantiates a new double.
-		 */
-		public Double() {}
-		
-		/**
-		 * Instantiates a new double.
-		 *
-		 * @param data the data
-		 */
-		public Double(double[][] data) {
-			setData(data);
-		}
-		
-		/**
-		 * Gets the data.
-		 *
-		 * @return the data
-		 */
-		public double[][] getData() { return data; }
-		
-		/**
-		 * Sets the data.
-		 *
-		 * @param data the new data
-		 */
-		public void setData(double[][] data) {
-			this.data = data;
-			defaults();
-		}
-		
-		/* (non-Javadoc)
-		 * @see jnum.plot.ImageLayer#getDataSize()
-		 */
-		@Override
-		public Dimension getDataSize() {
-			return new Dimension(data.length, data[0].length);
-		}
-
-		/* (non-Javadoc)
-		 * @see jnum.plot.ImageLayer#getValue(int, int)
-		 */
-		@Override
-		public double getValue(int i, int j) {
-			return data[i + getSubarrayOffset().i()][j + getSubarrayOffset().j()];
-		}
-
-		/* (non-Javadoc)
-		 * @see jnum.plot.ContentLayer#initialize()
-		 */
-		@Override
-		public void initialize() {
-			updateBuffer();
-		}
-	}
 	
-	
-	/**
-	 * The Class Float.
-	 */
-	public static class Float extends BufferedImageLayer {
-		
-		/** The Constant serialVersionUID. */
-		private static final long serialVersionUID = -341608880761068245L;
-		
-		/** The data. */
-		private float[][] data;
-		
-		/**
-		 * Instantiates a new float.
-		 */
-		public Float() {}
-		
-		/**
-		 * Instantiates a new float.
-		 *
-		 * @param data the data
-		 */
-		public Float(float[][] data) {
-			setData(data);
-		}
-		
-		/**
-		 * Gets the data.
-		 *
-		 * @return the data
-		 */
-		public float[][] getData() { return data; }
-		
-		/**
-		 * Sets the data.
-		 *
-		 * @param data the new data
-		 */
-		public void setData(float[][] data) {
-			this.data = data;
-			defaults();
-		}
-		
-		/* (non-Javadoc)
-		 * @see jnum.plot.ImageLayer#getDataSize()
-		 */
-		@Override
-		public Dimension getDataSize() {
-			return new Dimension(data.length, data[0].length);
-		}
-
-		/* (non-Javadoc)
-		 * @see jnum.plot.ImageLayer#getValue(int, int)
-		 */
-		@Override
-		public double getValue(int i, int j) {
-			return data[i + getSubarrayOffset().i()][j + getSubarrayOffset().j()];
-		}
-
-		/* (non-Javadoc)
-		 * @see jnum.plot.ContentLayer#initialize()
-		 */
-		@Override
-		public void initialize() {
-			updateBuffer();
-		}
-
-	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -44,6 +44,9 @@ public interface FourierTransforming {
 	 * @param isForward the is forward
 	 */
 	public void complexTransform(boolean isForward);
+	
+
+    public int getPointSize();
 
 	/**
 	 * The Interface Real.
@@ -58,5 +61,6 @@ public interface FourierTransforming {
 		public void realTransform(boolean isForward);
 		
 	}
+	
 	
 }
