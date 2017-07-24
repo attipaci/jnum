@@ -35,7 +35,7 @@ import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
 import jnum.data.image.overlay.Overlay2D;
 import jnum.data.image.overlay.Referenced2D;
-import jnum.io.fits.FitsToolkit;
+import jnum.fits.FitsToolkit;
 import jnum.math.Vector2D;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
@@ -149,7 +149,7 @@ public class Observation2D extends Map2D {
         exposure.setFlags(flags);
     }
 
-    public Abstract2D getWeights() { 
+    public Data2D getWeights() { 
         return weight; 
     }
     
@@ -163,7 +163,7 @@ public class Observation2D extends Map2D {
         claim(getWeightImage());
     }
 
-    public Abstract2D getExposures() { 
+    public Data2D getExposures() { 
         return exposure;
     }
     
@@ -572,7 +572,7 @@ public class Observation2D extends Map2D {
     public void clean(double gain, double significanceThreshold, Gaussian2D replacementPSF) {
         Gaussian2D psf = getProperties().getImageBeam();
 
-        final Abstract2D s2n = getSignificance();
+        final Data2D s2n = getSignificance();
         final Image2D cleanS2N = s2n.clean(psf.getBeam(getGrid()), gain, significanceThreshold);
 
         if(replacementPSF == null) {

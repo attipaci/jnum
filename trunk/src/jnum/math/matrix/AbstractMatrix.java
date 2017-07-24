@@ -36,7 +36,6 @@ import jnum.math.Multiplicative;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
-import jnum.text.StringParser;
 
 // TODO: Auto-generated Javadoc
 /**

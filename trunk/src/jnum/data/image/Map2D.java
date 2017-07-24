@@ -228,7 +228,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         claim(image);
     } 
 
-    protected void claim(Abstract2D image) {
+    protected void claim(Data2D image) {
         image.setUnit(getUnit());
         image.setParallel(getParallel());
         image.setExecutor(getExecutor());
@@ -749,7 +749,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         undoFilterCorrect(this);
     }
     
-    public void undoFilterCorrect(Abstract2D reference) {
+    public void undoFilterCorrect(Data2D reference) {
         double blankingValue = getProperties().getFilterBlanking();
         undoFilterCorrect(new RangeRestricted2D(reference, new Range(-blankingValue, blankingValue)));
     }

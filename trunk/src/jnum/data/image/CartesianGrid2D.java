@@ -24,6 +24,7 @@
 package jnum.data.image;
 
 import jnum.Unit;
+import jnum.fits.FitsToolkit;
 import jnum.math.CartesianSystem;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateSystem;
@@ -31,6 +32,7 @@ import jnum.projection.DefaultProjection2D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 
 // TODO: Auto-generated Javadoc
@@ -95,13 +97,15 @@ public class CartesianGrid2D extends Grid2D<Coordinate2D> {
 		
 		CoordinateSystem system = getCoordinateSystem();
 		
+		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+		
 		if(system != null) {
-			header.addLine(new HeaderCard("CTYPE1" + alt, system.get(0).getShortLabel(), "Coordinate name"));
-			header.addLine(new HeaderCard("CTYPE2" + alt, system.get(1).getShortLabel(), "Coordinate name"));
+			c.add(new HeaderCard("CTYPE1" + alt, system.get(0).getShortLabel(), "Coordinate name"));
+			c.add(new HeaderCard("CTYPE2" + alt, system.get(1).getShortLabel(), "Coordinate name"));
 		}
 		
-		if(xUnit != null) header.addLine(new HeaderCard("CUNIT1" + alt, xUnit.name(), "Unit on x-axis"));
-		if(yUnit != null) header.addLine(new HeaderCard("CUNIT2" + alt, yUnit.name(), "Unit on y-axis"));
+		if(xUnit != null) c.add(new HeaderCard("CUNIT1" + alt, xUnit.name(), "Unit on x-axis"));
+		if(yUnit != null) c.add(new HeaderCard("CUNIT2" + alt, yUnit.name(), "Unit on y-axis"));
 		
 		
 		

@@ -37,19 +37,22 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import jnum.fits.FitsHeaderEditing;
+import jnum.fits.FitsToolkit;
 import jnum.io.LineParser;
-import jnum.io.fits.FitsToolkit;
 import jnum.math.Range;
 import jnum.math.Vector2D;
 import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Configurator.
  */
-public class Configurator implements Serializable, Cloneable {
+public class Configurator implements Serializable, Cloneable, Copiable<Configurator>, FitsHeaderEditing {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5040150005828567005L;
@@ -107,8 +110,8 @@ public class Configurator implements Serializable, Cloneable {
      * @see java.lang.Object#clone()
      */
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public Configurator clone() {
+        try { return (Configurator) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
 
@@ -117,6 +120,7 @@ public class Configurator implements Serializable, Cloneable {
      *
      * @return the configurator
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Configurator copy() {
         Configurator copy = (Configurator) clone();
@@ -133,10 +137,14 @@ public class Configurator implements Serializable, Cloneable {
     @Override
     public boolean equals(Object o) {
         if(value == null) return o == null;
-        if(o instanceof String) return ((String) o).equalsIgnoreCase(value);
+        if(o instanceof String) return equals((String) o);
         else return super.equals(o);
     }
 
+    public boolean equals(String value) {
+        return value.equalsIgnoreCase(this.value);
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -1642,17 +1650,16 @@ public class Configurator implements Serializable, Cloneable {
         else throw new FileNotFoundException(fileName);
     }
 
-    /**
-     * Edits the header.
-     *
-     * @param cursor the cursor
-     * @throws HeaderCardException the header card exception
-     */
+
+    @Override
     public void editHeader(Header header) throws HeaderCardException {
+
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        
         // Add all active configuration keys...
         for(String key : getAlphabeticalKeys(false)) {
             Configurator option = get(key);
-            if(option.isEnabled) FitsToolkit.addLongHierarchKey(header, key, option.value);
+            if(option.isEnabled) FitsToolkit.addLongHierarchKey(c, key, option.value);
         }
 
         // Add all the conditionals...
@@ -1666,7 +1673,7 @@ public class Configurator implements Serializable, Cloneable {
                 if(values.length() > 0) values.append(';');
                 values.append(value);
             }
-            FitsToolkit.addLongHierarchKey(header, condition, new String(values));
+            FitsToolkit.addLongHierarchKey(c, condition, new String(values));
         }
     }	
 

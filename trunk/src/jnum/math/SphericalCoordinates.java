@@ -32,6 +32,7 @@ import jnum.SafeMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.astro.*;
+import jnum.fits.FitsToolkit;
 import jnum.projection.SphericalProjection;
 import jnum.text.AngleFormat;
 import jnum.text.GreekLetter;
@@ -39,6 +40,7 @@ import jnum.text.StringParser;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 // TODO add BinaryTableIO interface (with projections...)
@@ -514,24 +516,26 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @see jnum.Coordinate2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Header header, String alt) throws HeaderCardException {	
+	public void editHeader(Header header, String alt) throws HeaderCardException {	
 		// Always write longitude in the 0:2Pi range.
 		// Some FITS utilities may require it, even if it's not required by the FITS standard...
 		double lon = Math.IEEEremainder(longitude(), Constant.twoPi);
 		if(lon < 0.0) lon += Constant.twoPi;
+		
+		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 
-		header.addLine(new HeaderCard("CRVAL1" + alt, lon / Unit.deg, "The reference longitude coordinate (deg)."));
-		header.addLine(new HeaderCard("CRVAL2" + alt, latitude() / Unit.deg, "The reference latitude coordinate (deg)."));
+		c.add(new HeaderCard("CRVAL1" + alt, lon / Unit.deg, "The reference longitude coordinate (deg)."));
+		c.add(new HeaderCard("CRVAL2" + alt, latitude() / Unit.deg, "The reference latitude coordinate (deg)."));
 		
 		//cursor.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
-		if(alt.length() == 0) header.addLine(new HeaderCard("WCSAXES", 2, "Number of celestial coordinate axes."));
+		if(alt.length() == 0) c.add(new HeaderCard("WCSAXES", 2, "Number of celestial coordinate axes."));
 	}
 		
 	/* (non-Javadoc)
 	 * @see jnum.Coordinate2D#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
-	public void parse(Header header, String alt) {
+	public void parseHeader(Header header, String alt) {
 		setLongitude(header.getDoubleValue("CRVAL1" + alt, 0.0) * Unit.deg);
 		setLatitude(header.getDoubleValue("CRVAL2" + alt, 0.0) * Unit.deg);
 		

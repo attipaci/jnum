@@ -25,16 +25,16 @@ package jnum.data.sequence;
 
 import jnum.data.CubicSpline;
 import jnum.data.ParallelValues;
-import jnum.data.cube.Abstract3D.InterpolatorData;
+import jnum.data.cube.Data3D.InterpolatorData;
 import jnum.text.TableFormatter;
 
-public abstract class Abstract1D extends ParallelValues implements Value1D, TableFormatter.Entries {
+public abstract class Data1D extends ParallelValues implements Value1D, TableFormatter.Entries {
 
     private CubicSpline reuseSpline;
     
     @Override
-    public Abstract1D clone() {
-        Abstract1D clone = (Abstract1D) super.clone();
+    public Data1D clone() {
+        Data1D clone = (Data1D) super.clone();
         clone.reuseSpline = new CubicSpline();
         return clone;
     }

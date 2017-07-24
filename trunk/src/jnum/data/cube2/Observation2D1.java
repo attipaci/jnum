@@ -23,7 +23,7 @@
 
 package jnum.data.cube2;
 
-import jnum.data.image.Abstract2D;
+import jnum.data.image.Data2D;
 import jnum.data.image.Observation2D;
 
 public class Observation2D1 extends AbstractMap2D1<Observation2D> {
@@ -35,19 +35,19 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
     @Override
     public Observation2D getImage2DInstance() { return new Observation2D(getElementType(), getFlagType()); }
   
-    public Abstract2D1<Abstract2D> getWeights() {
-        Abstract2D1<Abstract2D> weight = new Abstract2D1<Abstract2D>() {
+    public Abstract2D1<Data2D> getWeights() {
+        Abstract2D1<Data2D> weight = new Abstract2D1<Data2D>() {
             @Override
-            public Abstract2D getImage2DInstance(int sizeX, int sizeY) { return null; }
+            public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
         };
         for(int i=0; i<sizeZ(); i++) weight.addPlane(getPlane(i).getWeights());
         return weight;
     }
     
-    public Abstract2D1<Abstract2D> getExposures() {
-        Abstract2D1<Abstract2D> weight = new Abstract2D1<Abstract2D>() {
+    public Abstract2D1<Data2D> getExposures() {
+        Abstract2D1<Data2D> weight = new Abstract2D1<Data2D>() {
             @Override
-            public Abstract2D getImage2DInstance(int sizeX, int sizeY) { return null; }
+            public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
         };
         for(int i=0; i<sizeZ(); i++) weight.addPlane(getPlane(i).getExposures());
         return weight;

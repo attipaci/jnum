@@ -39,7 +39,7 @@ import jnum.data.image.overlay.RangeRestricted2D;
 import jnum.data.image.overlay.Referenced2D;
 import jnum.data.image.overlay.Viewport2D;
 import jnum.data.image.transform.Stretch2D;
-import jnum.io.fits.FitsToolkit;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Range;
 import jnum.math.Vector2D;
@@ -62,13 +62,13 @@ import nom.tam.fits.ImageHDU;
  * @author pumukli
  *
  */
-public abstract class Abstract2D extends ParallelValues implements Value2D, TableFormatter.Entries {
+public abstract class Data2D extends ParallelValues implements Value2D, TableFormatter.Entries {
 
 
     private InterpolatorData reuseIpolData;
 
 
-    protected Abstract2D() {
+    protected Data2D() {
         reuseIpolData = new InterpolatorData();
     }
 
@@ -82,10 +82,10 @@ public abstract class Abstract2D extends ParallelValues implements Value2D, Tabl
 
     @Override
     public boolean contentEquals(ParallelValues data) {
-        if(!(data instanceof Abstract2D)) return false;
+        if(!(data instanceof Data2D)) return false;
         
         
-        Abstract2D image = (Abstract2D) data;
+        Data2D image = (Data2D) data;
 
         if(sizeX() != image.sizeX()) return false;
         if(sizeY() != image.sizeY()) return false;
@@ -100,8 +100,8 @@ public abstract class Abstract2D extends ParallelValues implements Value2D, Tabl
 
 
     @Override
-    public Abstract2D clone() {
-        Abstract2D clone = (Abstract2D) super.clone();
+    public Data2D clone() {
+        Data2D clone = (Data2D) super.clone();
         clone.reuseIpolData = new InterpolatorData();
         return clone;
     }
@@ -294,7 +294,7 @@ public abstract class Abstract2D extends ParallelValues implements Value2D, Tabl
         paste(new Overlay2D(source), report);
     }
 
-    public void paste(final Abstract2D source, boolean report) {
+    public void paste(final Data2D source, boolean report) {
         if(source == this) return;
 
         source.new Fork<Void>() {
@@ -1291,7 +1291,7 @@ public abstract class Abstract2D extends ParallelValues implements Value2D, Tabl
 
 
 
-    public void resampleFrom(final Abstract2D image) {
+    public void resampleFrom(final Data2D image) {
         double scaleX = (double) image.sizeX() / sizeX();
         double scaleY = (double) image.sizeY() / sizeY();
 
@@ -1305,7 +1305,7 @@ public abstract class Abstract2D extends ParallelValues implements Value2D, Tabl
 
     }
 
-    public synchronized void resampleFrom(final Abstract2D image, final Transforming2D toSourceIndex, final Referenced2D beam, final Value2D weight) {
+    public synchronized void resampleFrom(final Data2D image, final Transforming2D toSourceIndex, final Referenced2D beam, final Value2D weight) {
 
         new InterpolatingFork() {
             private Vector2D index;
@@ -1421,7 +1421,7 @@ public abstract class Abstract2D extends ParallelValues implements Value2D, Tabl
 
             @Override
             public boolean isValid(int i, int j) {
-                if(!Abstract2D.this.isValid(i, j)) return false;
+                if(!Data2D.this.isValid(i, j)) return false;
 
                 int neighbours = -1;    // will iterate over the actual point too, hence the -1...
 
@@ -1431,14 +1431,14 @@ public abstract class Abstract2D extends ParallelValues implements Value2D, Tabl
                 final int toj = Math.min(sizeY(), j+1);
 
                 for(int i1=toi; --i1 >= fromi; ) for(int j1=toj; --j1 >= fromj; ) 
-                    if(Abstract2D.this.isValid(i1, j1)) neighbours++;
+                    if(Data2D.this.isValid(i1, j1)) neighbours++;
 
                 return neighbours >= minNeighbors;         
             }
 
             @Override
             public void discard(int i, int j) {
-                Abstract2D.this.discard(i, j);
+                Data2D.this.discard(i, j);
             }
 
         };

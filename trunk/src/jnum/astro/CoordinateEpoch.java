@@ -27,16 +27,21 @@ package jnum.astro;
 import java.io.Serializable;
 
 import jnum.Copiable;
+import jnum.fits.FitsHeaderEditing;
+import jnum.fits.FitsHeaderParsing;
+import jnum.fits.FitsToolkit;
 import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class CoordinateEpoch.
  */
-public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiable<CoordinateEpoch>, Comparable<CoordinateEpoch> {
+public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiable<CoordinateEpoch>, 
+Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7090908739252631026L;
@@ -195,13 +200,8 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 	public double getJulianDate() { return getMJD() + 2400000.5; }
 	
 	
-	/**
-	 * Edits the.
-	 *
-	 * @param cursor the cursor
-	 * @throws HeaderCardException the header card exception
-	 */
-	public void edit(Header header) throws HeaderCardException { edit(header, ""); }
+	@Override
+    public void editHeader(Header header) throws HeaderCardException { editHeader(header, ""); }
 	
 	/**
 	 * Edits the.
@@ -210,16 +210,13 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 	 * @param alt the alt
 	 * @throws HeaderCardException the header card exception
 	 */
-	public void edit(Header header, String alt) throws HeaderCardException {
-		header.addLine(new HeaderCard("EQUINOX" + alt, year, "The epoch of the quoted coordinates"));
+	public void editHeader(Header header, String alt) throws HeaderCardException {
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+		c.add(new HeaderCard("EQUINOX" + alt, year, "The epoch of the quoted coordinates"));
 	}
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param header the header
-	 */
-	public void parse(Header header) { parse(header, ""); }
+	@Override
+    public void parseHeader(Header header) { parseHeader(header, ""); }
 
 	/**
 	 * Parses the.
@@ -227,7 +224,7 @@ public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiab
 	 * @param header the header
 	 * @param alt the alt
 	 */
-	public void parse(Header header, String alt) {
+	public void parseHeader(Header header, String alt) {
 		year = header.getDoubleValue("EQUINOX" + alt, this instanceof BesselianEpoch ? 1950.0 : 2000.0);
 	}
 	

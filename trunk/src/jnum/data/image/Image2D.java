@@ -32,12 +32,13 @@ import jnum.CopiableContent;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.image.overlay.Transposed2D;
-import jnum.io.fits.FitsToolkit;
+import jnum.fits.FitsToolkit;
 import nom.tam.fits.Fits;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.fits.ImageHDU;
+import nom.tam.util.Cursor;
 
 
 /**
@@ -47,7 +48,7 @@ import nom.tam.fits.ImageHDU;
  * @author pumukli
  *
  */
-public abstract class Image2D extends Abstract2D implements Resizable2D, Serializable, CopiableContent<Image2D> {    
+public abstract class Image2D extends Data2D implements Resizable2D, Serializable, CopiableContent<Image2D> {    
     /**
      * 
      */
@@ -425,7 +426,8 @@ public abstract class Image2D extends Abstract2D implements Resizable2D, Seriali
     protected void editHeader(Header header) throws HeaderCardException {  
         super.editHeader(header);
         
-        if(getID() != null) header.addLine(new HeaderCard("EXTNAME", getID(), "The type of data contained in this HDU")); 
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        if(getID() != null) c.add(new HeaderCard("EXTNAME", getID(), "The type of data contained in this HDU")); 
         
         addHistory(header);
     }

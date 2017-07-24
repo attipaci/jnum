@@ -26,8 +26,10 @@ package jnum.projection;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 import jnum.ExtraMath;
 import jnum.Unit;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
@@ -100,8 +102,8 @@ public class BonnesProjection extends SphericalProjection {
 	 * @see kovacs.projection.SphericalProjection#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
-	public void parse(Header header, String alt) {
-		super.parse(header, alt);
+	public void parseHeader(Header header, String alt) {
+		super.parseHeader(header, alt);
 		String parName = getLatitudeParameterPrefix() + "1" + alt;
 		if(header.containsKey(parName)) setTheta1(header.getDoubleValue(parName) * Unit.deg);
 	}
@@ -110,9 +112,10 @@ public class BonnesProjection extends SphericalProjection {
 	 * @see kovacs.projection.SphericalProjection#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Header header, String alt) throws HeaderCardException {		
-		super.edit(header, alt);
-		header.addLine(new HeaderCard(getLatitudeParameterPrefix() + "1" + alt, theta1 / Unit.deg, "Theta1 parameter for Bonne's projection."));		
+	public void editHeader(Header header, String alt) throws HeaderCardException {		
+		super.editHeader(header, alt);
+		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+		c.add(new HeaderCard(getLatitudeParameterPrefix() + "1" + alt, theta1 / Unit.deg, "Theta1 parameter for Bonne's projection."));		
 	}
 	
 }

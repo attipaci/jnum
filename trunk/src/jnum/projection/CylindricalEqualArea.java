@@ -23,11 +23,13 @@
 
 package jnum.projection;
 
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -77,8 +79,8 @@ public class CylindricalEqualArea extends CylindricalProjection {
 	 * @see kovacs.projection.SphericalProjection#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
-	public void parse(Header header, String alt) {
-		super.parse(header, alt);
+	public void parseHeader(Header header, String alt) {
+		super.parseHeader(header, alt);
 
 		String parName = getLatitudeParameterPrefix() + "1" + alt;
 		if(header.containsKey(parName)) lambda = header.getDoubleValue(parName);		
@@ -88,10 +90,13 @@ public class CylindricalEqualArea extends CylindricalProjection {
 	 * @see kovacs.projection.SphericalProjection#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Header header, String alt) throws HeaderCardException {		
-		super.edit(header, alt);
+	public void editHeader(Header header, String alt) throws HeaderCardException {		
+		super.editHeader(header, alt);
 		String latPrefix = getLatitudeParameterPrefix();
-		header.addLine(new HeaderCard(latPrefix + "1" + alt, lambda, "lambda parameter for cylindrical equal area projection."));	
+		
+		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+		
+		c.add(new HeaderCard(latPrefix + "1" + alt, lambda, "lambda parameter for cylindrical equal area projection."));	
 	}
 
 }

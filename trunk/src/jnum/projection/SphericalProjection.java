@@ -29,12 +29,14 @@ import java.util.Hashtable;
 import jnum.Constant;
 import jnum.Unit;
 import jnum.Util;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 
 // TODO: Auto-generated Javadoc
@@ -366,21 +368,23 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	 * @see jnum.Projection2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Header header, String alt) throws HeaderCardException {		
+	public void editHeader(Header header, String alt) throws HeaderCardException {		
 		SphericalCoordinates reference = getReference();
 		CoordinateSystem axes = getReference().getCoordinateSystem();
 			
-		header.addLine(new HeaderCard("CTYPE1" + alt, reference.getFITSLongitudeStem() + "-" + getFitsID(), axes.get(0).getShortLabel() + " in " + getFullName() + " projection."));
-		header.addLine(new HeaderCard("CTYPE2" + alt, reference.getFITSLatitudeStem() + "-" + getFitsID(), axes.get(1).getShortLabel() + " in " + getFullName() + " projection."));
+		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+		
+		c.add(new HeaderCard("CTYPE1" + alt, reference.getFITSLongitudeStem() + "-" + getFitsID(), axes.get(0).getShortLabel() + " in " + getFullName() + " projection."));
+		c.add(new HeaderCard("CTYPE2" + alt, reference.getFITSLatitudeStem() + "-" + getFitsID(), axes.get(1).getShortLabel() + " in " + getFullName() + " projection."));
 		
 		if(userPole) {
-			header.addLine(new HeaderCard("LONPOLE" + alt, nativePole.x() / Unit.deg, "The longitude (deg) of the native pole."));
-			header.addLine(new HeaderCard("LATPOLE" + alt, nativePole.y() / Unit.deg, "The latitude (deg) of the native pole."));
+			c.add(new HeaderCard("LONPOLE" + alt, nativePole.x() / Unit.deg, "The longitude (deg) of the native pole."));
+			c.add(new HeaderCard("LATPOLE" + alt, nativePole.y() / Unit.deg, "The latitude (deg) of the native pole."));
 		}
 		if(userReference) {
 			String lonPrefix = getLongitudeParameterPrefix();
-			header.addLine(new HeaderCard(lonPrefix + "1" + alt, nativeReference.x() / Unit.deg, "The longitude (deg) of the native reference."));
-			header.addLine(new HeaderCard(lonPrefix + "2" + alt, nativeReference.y() / Unit.deg, "The latitude (deg) of the native reference."));			
+			c.add(new HeaderCard(lonPrefix + "1" + alt, nativeReference.x() / Unit.deg, "The longitude (deg) of the native reference."));
+			c.add(new HeaderCard(lonPrefix + "2" + alt, nativeReference.y() / Unit.deg, "The latitude (deg) of the native reference."));			
 			// TODO should calculate and write PV0_j offsets
 		}	
 	}
@@ -408,7 +412,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	 * @see jnum.Projection2D#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
-	public void parse(Header header, String alt) {
+	public void parseHeader(Header header, String alt) {
 		String axis1 = header.getStringValue("CTYPE1" + alt).toLowerCase();
 		if(axis1.startsWith("dec")) invertedFITSAxes = true;
 		else if(axis1.startsWith("lat")) invertedFITSAxes = true;

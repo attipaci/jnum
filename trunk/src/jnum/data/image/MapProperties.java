@@ -27,8 +27,8 @@ package jnum.data.image;
 
 import jnum.Unit;
 import jnum.Util;
-import jnum.io.fits.FitsProperties;
-import jnum.io.fits.FitsToolkit;
+import jnum.fits.FitsProperties;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import jnum.projection.Projection2D;
@@ -36,6 +36,7 @@ import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 
 public class MapProperties extends FitsProperties {
@@ -377,15 +378,17 @@ public class MapProperties extends FitsProperties {
         Unit fitsUnit = getDefaultGridUnit();
         Unit displayUnit = getDisplayGridUnit();
         
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        
         if(psf != null) {
             psf.editHeader(header, "image", "", fitsUnit);
-            if(psf.isCircular()) header.addLine(new HeaderCard("RESOLUTN", psf.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} Effective image FWHM (" + displayUnit.name() + ").")); 
+            if(psf.isCircular()) c.add(new HeaderCard("RESOLUTN", psf.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} Effective image FWHM (" + displayUnit.name() + ").")); 
         }
             
         if(underlyingBeam != null) underlyingBeam.editHeader(header, "instrument", underlyingBeamFitsID, fitsUnit);
         if(smoothing != null) smoothing.editHeader(header, "smoothing", smoothingBeamFitsID, fitsUnit);
         
-        if(smoothing.isCircular()) header.addLine(new HeaderCard("SMOOTH", smoothing.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} FWHM (" + displayUnit.name() + ") smoothing.")); 
+        if(smoothing.isCircular()) c.add(new HeaderCard("SMOOTH", smoothing.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} FWHM (" + displayUnit.name() + ") smoothing.")); 
 
         // TODO convert extended filter and corrections to proper Gaussian beams...
         if(!Double.isNaN(filterFWHM)) {
@@ -398,7 +401,7 @@ public class MapProperties extends FitsProperties {
             correctionBeam.editHeader(header, "Peak Corrected", "C", fitsUnit);
         }
             
-        header.addLine(new HeaderCard("SMTHRMS", true, "Is the Noise (RMS) image smoothed?"));
+        c.add(new HeaderCard("SMTHRMS", true, "Is the Noise (RMS) image smoothed?"));
         
         super.editHeader(header);
         

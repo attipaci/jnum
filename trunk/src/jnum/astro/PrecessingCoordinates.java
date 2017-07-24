@@ -26,11 +26,13 @@ package jnum.astro;
 import java.text.NumberFormat;
 
 import jnum.Util;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.text.StringParser;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 public abstract class PrecessingCoordinates extends CelestialCoordinates  implements Precessing {
     /**
@@ -254,18 +256,20 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      * @see jnum.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
      */
     @Override
-    public void edit(Header header, String alt) throws HeaderCardException {
-        super.edit(header, alt);
-        header.addLine(new HeaderCard("RADESYS" + alt, epoch instanceof BesselianEpoch ? "FK4" : "FK5", "Reference convention."));
-        epoch.edit(header, alt);
+    public void editHeader(Header header, String alt) throws HeaderCardException {
+        super.editHeader(header, alt);
+        
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        c.add(new HeaderCard("RADESYS" + alt, epoch instanceof BesselianEpoch ? "FK4" : "FK5", "Reference convention."));
+        epoch.editHeader(header, alt);
     }
     
     /* (non-Javadoc)
      * @see jnum.SphericalCoordinates#parse(nom.tam.fits.Header, java.lang.String)
      */
     @Override
-    public void parse(Header header, String alt) {
-        super.parse(header, alt);
+    public void parseHeader(Header header, String alt) {
+        super.parseHeader(header, alt);
         
         String system = header.getStringValue("RADESYS");
         if(system == null) system = header.getDoubleValue("EQUINOX" + alt) < 1984.0 ? "FK4" : "FK5";
@@ -274,7 +278,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
         else if(system.equalsIgnoreCase("FK4-NO-E")) epoch = new BesselianEpoch();
         else epoch = new JulianEpoch();
         
-        epoch.parse(header, alt);
+        epoch.parseHeader(header, alt);
     }
     
     

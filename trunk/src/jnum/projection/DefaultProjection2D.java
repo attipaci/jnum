@@ -86,7 +86,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	 * @see jnum.Projection2D#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
-	public void parse(Header header, String alt) {
+	public void parseHeader(Header header, String alt) {
 		// TODO Auto-generated method stub
 	}
 
@@ -94,7 +94,7 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	 * @see jnum.Projection2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Header header, String alt) throws HeaderCardException {
+	public void editHeader(Header header, String alt) throws HeaderCardException {
 		// TODO Auto-generated method stub
 		
 	}
