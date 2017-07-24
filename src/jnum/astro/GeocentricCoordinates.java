@@ -24,10 +24,12 @@
 
 package jnum.astro;
 
+import jnum.fits.FitsToolkit;
 import jnum.math.SphericalCoordinates;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -77,9 +79,11 @@ public class GeocentricCoordinates extends SphericalCoordinates {
 	 * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void edit(Header header, String alt) throws HeaderCardException {	
-		super.edit(header, alt);	
-		header.addLine(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
+	public void editHeader(Header header, String alt) throws HeaderCardException {	
+		super.editHeader(header, alt);	
+
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+		c.add(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
 	}
 
 }

@@ -1,7 +1,7 @@
 package jnum.data.image.overlay;
 
 import jnum.Util;
-import jnum.data.image.Abstract2D;
+import jnum.data.image.Data2D;
 import jnum.data.image.Value2D;
 import jnum.parallel.ParallelProcessing;
 
@@ -28,7 +28,7 @@ import jnum.parallel.ParallelProcessing;
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-public class Overlay2D extends Abstract2D {
+public class Overlay2D extends Data2D {
     private Value2D values;
   
     public Overlay2D() {}

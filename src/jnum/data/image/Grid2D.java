@@ -36,6 +36,7 @@ import jnum.astro.HorizontalCoordinates;
 import jnum.astro.SuperGalacticCoordinates;
 import jnum.data.FastGridAccess;
 import jnum.data.Grid;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateSystem;
 import jnum.math.Vector2D;
@@ -44,6 +45,7 @@ import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -403,14 +405,16 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	@Override
     public void editHeader(Header header) throws HeaderCardException {		
 		// TODO 
-		projection.edit(header, alt);
-		projection.getReference().edit(header, alt);
+		projection.editHeader(header, alt);
+		projection.getReference().editHeader(header, alt);
 		
-		if(xUnit != Unit.unity) header.addLine(new HeaderCard("CUNIT1" + alt, xUnit.name(), "Coordinate axis unit."));
-		if(yUnit != Unit.unity) header.addLine(new HeaderCard("CUNIT2" + alt, yUnit.name(), "Coordinate axis unit."));
+		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 		
-		header.addLine(new HeaderCard("CRPIX1" + alt, refIndex.x() + 1, "Reference grid position"));
-		header.addLine(new HeaderCard("CRPIX2" + alt, refIndex.y() + 1, "Reference grid position"));
+		if(xUnit != Unit.unity) c.add(new HeaderCard("CUNIT1" + alt, xUnit.name(), "Coordinate axis unit."));
+		if(yUnit != Unit.unity) c.add(new HeaderCard("CUNIT2" + alt, yUnit.name(), "Coordinate axis unit."));
+		
+		c.add(new HeaderCard("CRPIX1" + alt, refIndex.x() + 1, "Reference grid position"));
+		c.add(new HeaderCard("CRPIX2" + alt, refIndex.y() + 1, "Reference grid position"));
 
 		// Change from native to apparent for reverted axes.
 		double a11 = m11, a12 = m12, a21 = m21, a22 = m22;
@@ -418,14 +422,14 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		if(isReverseY()) { a22 *= -1.0; a12 *= -1.0; }
 						
 		if(m12 == 0.0 && m21 == 0.0) {	
-			header.addLine(new HeaderCard("CDELT1" + alt, a11/xUnit.value(), "Grid spacing (deg)"));	
-			header.addLine(new HeaderCard("CDELT2" + alt, a22/yUnit.value(), "Grid spacing (deg)"));		
+			c.add(new HeaderCard("CDELT1" + alt, a11/xUnit.value(), "Grid spacing (deg)"));	
+			c.add(new HeaderCard("CDELT2" + alt, a22/yUnit.value(), "Grid spacing (deg)"));		
 		}
 		else {		
-			header.addLine(new HeaderCard("CD1_1" + alt, a11 / xUnit.value(), "Transformation matrix element"));
-			header.addLine(new HeaderCard("CD1_2" + alt, a12 / xUnit.value(), "Transformation matrix element"));
-			header.addLine(new HeaderCard("CD2_1" + alt, a21 / yUnit.value(), "Transformation matrix element"));
-			header.addLine(new HeaderCard("CD2_2" + alt, a22 / yUnit.value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD1_1" + alt, a11 / xUnit.value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD1_2" + alt, a12 / xUnit.value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD2_1" + alt, a21 / yUnit.value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD2_2" + alt, a22 / yUnit.value(), "Transformation matrix element"));
 		}
 		
 		
@@ -475,7 +479,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		
 		reference = getCoordinateInstanceFor(type);
 
-		reference.parse(header, alt);
+		reference.parseHeader(header, alt);
 		setReference(reference);
 		
 		// Internally keep the transformation matrix unitary 

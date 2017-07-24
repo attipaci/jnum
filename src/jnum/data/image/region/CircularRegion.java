@@ -29,7 +29,7 @@ import jnum.IncompatibleTypesException;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.DataPoint;
-import jnum.data.image.Abstract2D;
+import jnum.data.image.Data2D;
 import jnum.data.image.Asymmetry2D;
 import jnum.data.image.Grid2D;
 import jnum.data.image.Index2D;
@@ -295,7 +295,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
     
     public Asymmetry2D getAsymmetry(Grid2D<?> grid, Value2D values, double angle, Range radialRange) {
         Representation r = (Representation) getRepresentation(grid);
-        Abstract2D image = values instanceof Abstract2D ? (Abstract2D) values : new Overlay2D(values);
+        Data2D image = values instanceof Data2D ? (Data2D) values : new Overlay2D(values);
         return r.getAsymmetry2D(image, angle, radialRange);
     }
     
@@ -443,7 +443,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
             }
         }
 
-        public Asymmetry2D getAsymmetry2D(Abstract2D image, double angle, Range radialRange) {
+        public Asymmetry2D getAsymmetry2D(Data2D image, double angle, Range radialRange) {
             return image.getAsymmetry2D(getGrid(), getCenterIndex(), angle, radialRange);
         }
       

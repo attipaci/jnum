@@ -35,14 +35,14 @@ import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
 
 
-public abstract class Abstract3D extends ParallelValues implements Value3D, TableFormatter.Entries {
+public abstract class Data3D extends ParallelValues implements Value3D, TableFormatter.Entries {
 
     private InterpolatorData reuseIpolData;
 
     
     @Override
-    public Abstract3D clone() {
-        Abstract3D clone = (Abstract3D) super.clone();
+    public Data3D clone() {
+        Data3D clone = (Data3D) super.clone();
         clone.reuseIpolData = new InterpolatorData();
         return clone;
     }
@@ -198,7 +198,7 @@ public abstract class Abstract3D extends ParallelValues implements Value3D, Tabl
         if(data == this) return true;
         if(!getClass().isAssignableFrom(data.getClass())) return false;
         
-        Abstract3D cube = (Abstract3D) data;
+        Data3D cube = (Data3D) data;
         
         if(!Util.equals(cube.getElementType(), getElementType())) return false;
         if(cube.sizeX() != sizeX()) return false;

@@ -38,12 +38,15 @@ import jnum.data.image.MapProperties;
 import jnum.data.image.Observation2D;
 import jnum.data.image.Value2D;
 import jnum.data.image.overlay.Viewport2D;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import jnum.text.StringParser;
 import jnum.util.DataTable;
 import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 
 
@@ -202,22 +205,23 @@ public class GaussianSource extends CircularRegion {
 
 
     public void editHeader(Header header, Unit sizeUnit) throws HeaderCardException {
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);    
        
-        header.addValue("SRCPEAK", peak.value(), "(" + getUnitName() + ") source peak flux.");
-        header.addValue("SRCPKERR", peak.rms(), "(" + getUnitName() + ") peak flux error.");
+        c.add(new HeaderCard("SRCPEAK", peak.value(), "(" + getUnitName() + ") source peak flux."));
+        c.add(new HeaderCard("SRCPKERR", peak.rms(), "(" + getUnitName() + ") peak flux error."));
 
         // Fint = peak * 1.14 * FWHM^2
         // dFint^2 = (dpeak * 1.14 * FWHM^2)^2 + (1.14 * peak * 2 FWHM * dFWHM)^2
         
         DataPoint F = getIntegral();
         
-        header.addValue("SRCINT", F.value(), "Source integrated flux.");
-        header.addValue("SRCIERR", F.rms(), "Integrated flux error.");
+        c.add(new HeaderCard("SRCINT", F.value(), "Source integrated flux."));
+        c.add(new HeaderCard("SRCIERR", F.rms(), "Integrated flux error."));
 
-        header.addValue("SRCFWHM", getFWHM().value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source FWHM.");
+        c.add(new HeaderCard("SRCFWHM", getFWHM().value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source FWHM."));
        
         if(getRadius().weight() > 0.0) {
-            header.addValue("SRCWERR", getFWHM().rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") FWHM error.");
+            c.add(new HeaderCard("SRCWERR", getFWHM().rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") FWHM error."));
         }
 
     }

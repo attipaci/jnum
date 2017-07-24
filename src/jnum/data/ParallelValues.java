@@ -31,12 +31,14 @@ import java.util.Map;
 import jnum.Unit;
 import jnum.Util;
 import jnum.Verbosity;
+import jnum.fits.FitsToolkit;
 import jnum.math.Range;
 import jnum.parallel.ParallelObject;
 import jnum.util.CompoundUnit;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 public abstract class ParallelValues extends ParallelObject implements Verbosity {
 
@@ -167,17 +169,18 @@ public abstract class ParallelValues extends ParallelObject implements Verbosity
     
     
     protected void editHeader(Header header) throws HeaderCardException {
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         Range range = getRange();
-
+        
         if(!range.isEmpty()) {
-            if(range.isLowerBounded()) header.addLine(new HeaderCard("DATAMIN", range.min() / getUnit().value(), "The lowest value in the image"));
-            if(range.isUpperBounded()) header.addLine(new HeaderCard("DATAMAX", range.max() / getUnit().value(), "The highest value in the image"));
+            if(range.isLowerBounded()) c.add(new HeaderCard("DATAMIN", range.min() / getUnit().value(), "The lowest value in the image"));
+            if(range.isUpperBounded()) c.add(new HeaderCard("DATAMAX", range.max() / getUnit().value(), "The highest value in the image"));
         }
 
-        header.addLine(new HeaderCard("BZERO", 0.0, "Zeroing level of the image data"));
-        header.addLine(new HeaderCard("BSCALE", 1.0, "Scaling of the image data"));
+        c.add(new HeaderCard("BZERO", 0.0, "Zeroing level of the image data"));
+        c.add(new HeaderCard("BSCALE", 1.0, "Scaling of the image data"));
 
-        if(getUnit() != null) header.addLine(new HeaderCard("BUNIT", getUnit().name(), "Data unit specification."));
+        if(getUnit() != null) c.add(new HeaderCard("BUNIT", getUnit().name(), "Data unit specification."));
     }
 
     

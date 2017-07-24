@@ -36,11 +36,14 @@ import jnum.data.image.Map2D;
 import jnum.data.image.MapProperties;
 import jnum.data.image.Value2D;
 import jnum.data.image.overlay.Viewport2D;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import jnum.util.DataTable;
 import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 
 
@@ -135,18 +138,20 @@ public class EllipticalSource extends GaussianSource {
 
         boolean hasError = getRadius().weight() > 0.0;
 
-        header.addValue("SRCMAJ", major.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source major axis.");
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        
+        c.add(new HeaderCard("SRCMAJ", major.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source major axis."));
         if(hasError) {
-            header.addValue("SRCMAJER", major.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") major axis error.");
+            c.add(new HeaderCard("SRCMAJER", major.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") major axis error."));
         }
 
-        header.addValue("SRCMIN", minor.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source minor axis.");
+        c.add(new HeaderCard("SRCMIN", minor.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source minor axis."));
         if(hasError) {
-            header.addValue("SRCMINER", minor.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") minor axis error.");
+            c.add(new HeaderCard("SRCMINER", minor.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") minor axis error."));
         }
 
-        header.addValue("SRCPA", angle.value() / Unit.deg, "(deg) source position angle.");
-        header.addValue("SRCPAERR", angle.rms() / Unit.deg, "(deg) source angle error.");
+        c.add(new HeaderCard("SRCPA", angle.value() / Unit.deg, "(deg) source position angle."));
+        c.add(new HeaderCard("SRCPAERR", angle.rms() / Unit.deg, "(deg) source angle error."));
     }
 
 

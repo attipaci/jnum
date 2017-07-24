@@ -25,8 +25,8 @@ package jnum.data;
 
 import java.io.Serializable;
 
-import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCardException;
+import jnum.fits.FitsHeaderEditing;
+import jnum.fits.FitsHeaderParsing;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -35,7 +35,7 @@ import nom.tam.fits.HeaderCardException;
  * @param <CoordinateType> the generic type
  * @param <OffsetType> the generic type
  */
-public interface Grid<CoordinateType, OffsetType> extends Serializable, Cloneable {
+public interface Grid<CoordinateType, OffsetType> extends Serializable, Cloneable, FitsHeaderEditing, FitsHeaderParsing {
 
     /**
      * Sets the reference.
@@ -96,8 +96,5 @@ public interface Grid<CoordinateType, OffsetType> extends Serializable, Cloneabl
     public OffsetType indexOf(CoordinateType value);
     
   
-    public void parseHeader(Header header) throws Exception;
-   
-    public void editHeader(Header header) throws HeaderCardException;
  
 }

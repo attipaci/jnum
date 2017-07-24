@@ -32,19 +32,19 @@ public class LongCommentCardTest {
         header.setNaxes(0);
         
         // Add a regular keyword of the desired length...
-        header.addLine(new HeaderCard("BLABERY", counts(length), ""));
+        c.add(new HeaderCard("BLABERY", counts(length), ""));
    
         // Add a non-nullable HISTORY entry with the desired length...
-        header.addLine(new HeaderCard("HISTORY", counts(length), false));
+        c.add(new HeaderCard("HISTORY", counts(length), false));
         
         // Add a non-nullable COMMENT entry with the desired length...
-        header.addLine(new HeaderCard("COMMENT", counts(length), false)); 
+        c.add(new HeaderCard("COMMENT", counts(length), false)); 
         
         // Add a nullable HISTORY entry with the desired length...
-        header.addLine(new HeaderCard("HISTORY", counts(length), true)); 
+        c.add(new HeaderCard("HISTORY", counts(length), true)); 
         
         // Add a nullable COMMENT entry with the desired length...
-        header.addLine(new HeaderCard("COMMENT", counts(length), true));
+        c.add(new HeaderCard("COMMENT", counts(length), true));
         
         
         // Write the result to 'longcommenttest.fits' in the user's home...

@@ -33,6 +33,7 @@ import jnum.SafeMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.image.overlay.Referenced2D;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Division;
 import jnum.math.Multiplication;
@@ -44,12 +45,14 @@ import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Gaussian2D.
  */
-public class Gaussian2D implements Serializable, Cloneable, Copiable<Gaussian2D>, Scalable, Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D>, Ratio<Gaussian2D, Gaussian2D> {
+public class Gaussian2D implements Serializable, Cloneable, Copiable<Gaussian2D>, Scalable, 
+Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D>, Ratio<Gaussian2D, Gaussian2D> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1182818146658831916L;
@@ -514,7 +517,7 @@ public class Gaussian2D implements Serializable, Cloneable, Copiable<Gaussian2D>
 	}
      */
 
-
+  
     /**
      * Parses the FITS header.
      *
@@ -535,10 +538,12 @@ public class Gaussian2D implements Serializable, Cloneable, Copiable<Gaussian2D>
      * @throws HeaderCardException the header card exception
      */
     public void editHeader(Header header, String name, String fitsID, Unit sizeUnit) throws HeaderCardException {
-        if(name != null) header.addLine(new HeaderCard(fitsID + "BNAM", name, "Beam name."));
-        header.addLine(new HeaderCard(fitsID + "BMAJ", majorFWHM / sizeUnit.value(), "Beam major axis (" + sizeUnit.name() + ")."));
-        header.addLine(new HeaderCard(fitsID + "BMIN", minorFWHM / sizeUnit.value(), "Beam minor axis (" + sizeUnit.name() + ")."));
-        header.addLine(new HeaderCard(fitsID + "BPA", positionAngle / Unit.deg, "Beam position angle (deg)."));
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        
+        if(name != null) c.add(new HeaderCard(fitsID + "BNAM", name, "Beam name."));
+        c.add(new HeaderCard(fitsID + "BMAJ", majorFWHM / sizeUnit.value(), "Beam major axis (" + sizeUnit.name() + ")."));
+        c.add(new HeaderCard(fitsID + "BMIN", minorFWHM / sizeUnit.value(), "Beam minor axis (" + sizeUnit.name() + ")."));
+        c.add(new HeaderCard(fitsID + "BPA", positionAngle / Unit.deg, "Beam position angle (deg)."));
     }
 
     /* (non-Javadoc)

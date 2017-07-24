@@ -34,6 +34,9 @@ import jnum.IncompatibleTypesException;
 import jnum.Unit;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
+import jnum.fits.FitsHeaderEditing;
+import jnum.fits.FitsHeaderParsing;
+import jnum.fits.FitsToolkit;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
 import jnum.text.StringParser;
@@ -41,6 +44,7 @@ import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 
 // TODO: Auto-generated Javadoc
@@ -50,7 +54,7 @@ import nom.tam.fits.HeaderCardException;
  * The Class Coordinate2D.
  */
 public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinate2D>, CopyCat<Coordinate2D>, 
-ViewableAsDoubles, Parser, NumberFormating {
+ViewableAsDoubles, Parser, NumberFormating, FitsHeaderParsing, FitsHeaderEditing {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3978373428597134906L;
@@ -495,13 +499,9 @@ ViewableAsDoubles, Parser, NumberFormating {
 		}
 	}
 	
-	/**
-	 * Edits the.
-	 *
-	 * @param cursor the cursor
-	 * @throws HeaderCardException the header card exception
-	 */
-	public void edit(Header header) throws HeaderCardException { edit(header, ""); }
+
+	@Override
+    public void editHeader(Header header) throws HeaderCardException { editHeader(header, ""); }
 	
 	/**
 	 * Edits the.
@@ -510,17 +510,15 @@ ViewableAsDoubles, Parser, NumberFormating {
 	 * @param alt the alt
 	 * @throws HeaderCardException the header card exception
 	 */
-	public void edit(Header header, String alt) throws HeaderCardException {
-		header.addLine(new HeaderCard("CRVAL1" + alt, x, "The reference x coordinate in SI units."));
-		header.addLine(new HeaderCard("CRVAL2" + alt, y, "The reference y coordinate in SI units."));
+	public void editHeader(Header header, String alt) throws HeaderCardException {
+	    Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+		c.add(new HeaderCard("CRVAL1" + alt, x, "The reference x coordinate in SI units."));
+		c.add(new HeaderCard("CRVAL2" + alt, y, "The reference y coordinate in SI units."));
 	}
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param header the header
-	 */
-	public void parse(Header header) { parse(header, ""); }
+
+	@Override
+    public void parseHeader(Header header) { parseHeader(header, ""); }
 	
 	/**
 	 * Parses the.
@@ -528,7 +526,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 	 * @param header the header
 	 * @param alt the alt
 	 */
-	public void parse(Header header, String alt) {
+	public void parseHeader(Header header, String alt) {
 		x = header.getDoubleValue("CRVAL1" + alt, 0.0);
 		y = header.getDoubleValue("CRVAL2" + alt, 0.0);
 	}

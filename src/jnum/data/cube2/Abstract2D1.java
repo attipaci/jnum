@@ -30,11 +30,11 @@ import jnum.NonConformingException;
 import jnum.Util;
 import jnum.data.ParallelValues;
 import jnum.data.cube.Index3D;
-import jnum.data.cube.Abstract3D;
-import jnum.data.image.Abstract2D;
+import jnum.data.cube.Data3D;
+import jnum.data.image.Data2D;
 import jnum.math.Range;
 
-public abstract class Abstract2D1<ImageType extends Abstract2D> extends Abstract3D {
+public abstract class Abstract2D1<ImageType extends Data2D> extends Data3D {
 
     private Vector<ImageType> stack = new Vector<ImageType>();
     

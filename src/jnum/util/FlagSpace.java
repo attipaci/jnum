@@ -27,8 +27,12 @@ import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Set;
 
+import jnum.fits.FitsHeaderEditing;
+import jnum.fits.FitsToolkit;
 import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -36,7 +40,7 @@ import nom.tam.fits.HeaderCardException;
  *
  * @param <Type> the generic type
  */
-public abstract class FlagSpace<Type extends Number> implements Serializable {
+public abstract class FlagSpace<Type extends Number> implements Serializable, FitsHeaderEditing {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1742300725746047436L;
@@ -339,18 +343,14 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
      * @param header the header
      * @throws HeaderCardException the header card exception
      */
-    public void editHeader(char id, Header header) throws HeaderCardException {
-        editHeader(id + "", header);
+    public void editHeader(Header header, char id) throws HeaderCardException {
+        editHeader(header, id + "");
     }
     
-    /**
-     * Edits the header.
-     *
-     * @param header the header
-     * @throws HeaderCardException the header card exception
-     */
+
+    @Override
     public void editHeader(Header header) throws HeaderCardException {
-        editHeader("", header);
+        editHeader(header, "");
     }
     
     /**
@@ -360,11 +360,12 @@ public abstract class FlagSpace<Type extends Number> implements Serializable {
      * @param header the header
      * @throws HeaderCardException the header card exception
      */
-    protected void editHeader(String id, Header header) throws HeaderCardException {
+    protected void editHeader(Header header, String id) throws HeaderCardException {
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         id = id.toUpperCase();
         for(int bit = 0; bit < getBits(); bit++) {
             Type value = getValue(1L<<bit);
-            if(values.containsKey(value)) header.addValue(id + "FLAG" + bit, values.get(value).name(), name + " bit " + bit);
+            if(values.containsKey(value)) c.add(new HeaderCard(id + "FLAG" + bit, values.get(value).name(), name + " bit " + bit));
         }
     }
     

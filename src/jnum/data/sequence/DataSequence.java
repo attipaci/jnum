@@ -23,6 +23,6 @@
 
 package jnum.data.sequence;
 
-public class DataSequence extends Abstract1D {
+public class DataSequence extends Data1D {
 
 }

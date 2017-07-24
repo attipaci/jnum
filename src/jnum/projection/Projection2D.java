@@ -26,6 +26,8 @@ package jnum.projection;
 import java.io.Serializable;
 
 import jnum.Util;
+import jnum.fits.FitsHeaderEditing;
+import jnum.fits.FitsHeaderParsing;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import nom.tam.fits.Header;
@@ -37,7 +39,8 @@ import nom.tam.fits.HeaderCardException;
  *
  * @param <CoordinateType> the generic type
  */
-public abstract class Projection2D<CoordinateType extends Coordinate2D> implements Serializable, Cloneable  {
+public abstract class Projection2D<CoordinateType extends Coordinate2D> implements Serializable, Cloneable,
+    FitsHeaderParsing, FitsHeaderEditing {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4215964283613898581L;
@@ -169,12 +172,9 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 		return coords;		
 	}
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param header the header
-	 */
-	public void parse(Header header) { parse(header, ""); }
+
+	@Override
+    public void parseHeader(Header header) { parseHeader(header, ""); }
 	
 	/**
 	 * Parses the.
@@ -182,15 +182,11 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	 * @param header the header
 	 * @param alt the alt
 	 */
-	public abstract void parse(Header header, String alt);
+	public abstract void parseHeader(Header header, String alt);
 	
-	/**
-	 * Edits the.
-	 *
-	 * @param cursor the cursor
-	 * @throws HeaderCardException the header card exception
-	 */
-	public void edit(Header header) throws HeaderCardException { edit(header, ""); }
+
+	@Override
+    public void editHeader(Header header) throws HeaderCardException { editHeader(header, ""); }
 	
 	/**
 	 * Edits the.
@@ -199,7 +195,7 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	 * @param alt the alt
 	 * @throws HeaderCardException the header card exception
 	 */
-	public abstract void edit(Header header, String alt) throws HeaderCardException;
+	public abstract void editHeader(Header header, String alt) throws HeaderCardException;
 	
 	
 }
