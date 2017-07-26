@@ -21,12 +21,12 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.sequence;
+package jnum.data.samples;
 
 public interface Validating1D {
 
-    public boolean isValid(int i);
+    public boolean isValid(Integer i);
     
-    public void discard(int i);
+    public void discard(Integer i);
     
 }

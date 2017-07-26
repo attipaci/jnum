@@ -27,6 +27,12 @@ public class Index3D {
 
     private int i, j, k;
     
+    public Index3D() { this(0, 0, 0); }
+    
+    public Index3D(int i, int j, int k) {
+        set(i, j, k);
+    }
+    
     public final int i() { return i; }
     
     public final int j() { return j; }

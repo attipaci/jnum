@@ -58,7 +58,7 @@ public final class Util {
     public final static String copyrightEmail = "<attila[AT]sigmyne.com>"; 
 
     /** The Constant revision. */
-    public final static String revision = "devel.2";
+    public final static String revision = "devel.3";
 
     /** The debug. */
     public static boolean debug = false;

@@ -26,6 +26,7 @@ import java.util.List;
 
 import jnum.ExtraMath;
 import jnum.data.image.Value2D;
+import jnum.data.samples.Value1D;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -173,7 +174,7 @@ public final class HashCode {
 	 */
 	public static int from(int[] values, int from, int to) {
 		int hash = from ^ to;
-		for(int i=from; i<to; i++) hash ^= values[i] + i; 
+		for(int i=from; i<to; i++) hash ^= values[i]; 
 		return hash;
 	}
 	
@@ -196,7 +197,7 @@ public final class HashCode {
 	 */
 	public static int from(long[] values, int from, int to) {
 		int hash = from ^ to;
-		for(int i=from; i<to; i++) hash ^= from(values[i]) + i; 
+		for(int i=from; i<to; i++) hash ^= from(values[i]); 
 		return hash;
 	}
 	
@@ -219,7 +220,7 @@ public final class HashCode {
 	 */
 	public static int from(float[] values, int from, int to) {
 		int hash = from ^ to;
-		for(int i=from; i<to; i++) hash ^= from(values[i]) + i; 
+		for(int i=from; i<to; i++) hash ^= from(values[i]); 
 		return hash;		
 	}
 	
@@ -241,9 +242,33 @@ public final class HashCode {
 	 */
 	public static int from(double[] values, int from, int to) {
 		int hash = from ^ to;
-		for(int i=from; i<to; i++) hash ^= from(values[i]) + i; 
+		for(int i=from; i<to; i++) hash ^= from(values[i]); 
 		return hash;		
 	}
+	
+
+    /**
+     * Gets the.
+     *
+     * @param values the values
+     * @return the int
+     */
+    public static int from(Value1D values) { return from(values, 0, values.size()); }
+    
+    /**
+     * Gets the.
+     *
+     * @param values the values
+     * @param from the from
+     * @param to the to
+     * @return the int
+     */
+    public static int from(Value1D values, int from, int to) {
+        int hash = from ^ to;
+        for(int i=from; i<to; i++) hash ^= values.get(i).hashCode(); 
+        return hash;        
+    }
+	
 	
 	/**
 	 * Gets the.
@@ -437,6 +462,23 @@ public final class HashCode {
 		for(int i=0, j=8; i<16; i++, j+=step) hash ^= from(values[j]);
 		return hash;
 	}
+	
+	
+	// Get the first 8, last 8 and 16 scattered
+    /**
+     * Sample from.
+     *
+     * @param values the values
+     * @return the int
+     */
+    public static int sampleFrom(Value1D values) {
+        if(values.size() < 32) return from(values, 0, values.size());
+        int hash = from(values, 0, 8) ^ from(values, values.size()-8, values.size());
+        int step = (values.size() - 16) >> 4;
+        for(int i=0, j=8; i<16; i++, j+=step) hash ^= values.get(j).hashCode();
+        return hash;
+    }
+	
 	
 	// Get the first 8, last 8 and 16 scattered
 	/**

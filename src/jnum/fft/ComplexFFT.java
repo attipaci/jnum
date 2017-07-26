@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 
 import jnum.ExtraMath;
 import jnum.math.Complex;
-import jnum.parallel.ParallelProcessing;
+import jnum.parallel.Parallelizable;
 
 
 // TODO: Auto-generated Javadoc
@@ -52,7 +52,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
         super(executor);
     }
 
-    public ComplexFFT(ParallelProcessing processing) {
+    public ComplexFFT(Parallelizable processing) {
         super(processing);
     }
     

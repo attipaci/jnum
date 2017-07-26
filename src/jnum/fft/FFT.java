@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 
 import jnum.ExtraMath;
 import jnum.parallel.ParallelObject;
-import jnum.parallel.ParallelProcessing;
+import jnum.parallel.Parallelizable;
 
 
 
@@ -53,7 +53,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
         setExecutor(executor);
     }
     
-    protected FFT(ParallelProcessing processing) {
+    protected FFT(Parallelizable processing) {
         this();
         copyParallel(processing);
     }

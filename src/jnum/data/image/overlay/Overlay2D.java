@@ -3,7 +3,7 @@ package jnum.data.image.overlay;
 import jnum.Util;
 import jnum.data.image.Data2D;
 import jnum.data.image.Value2D;
-import jnum.parallel.ParallelProcessing;
+import jnum.parallel.Parallelizable;
 
 /*******************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
@@ -35,7 +35,7 @@ public class Overlay2D extends Data2D {
     
     public Overlay2D(Value2D values) {
         setBasis(values);
-        if(values instanceof ParallelProcessing) copyParallel(((ParallelProcessing) values));
+        if(values instanceof Parallelizable) copyParallel(((Parallelizable) values));
     }
     
     @Override

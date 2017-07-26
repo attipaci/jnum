@@ -28,11 +28,15 @@ import java.util.Vector;
 
 import jnum.NonConformingException;
 import jnum.Util;
-import jnum.data.ParallelValues;
+import jnum.data.Data;
 import jnum.data.cube.Index3D;
+import jnum.data.cube.Data3D.Fork;
 import jnum.data.cube.Data3D;
 import jnum.data.image.Data2D;
 import jnum.math.Range;
+import jnum.parallel.ParallelPointOp;
+import jnum.parallel.ParallelTask;
+import jnum.parallel.PointOp;
 
 public abstract class Abstract2D1<ImageType extends Data2D> extends Data3D {
 
@@ -87,7 +91,7 @@ public abstract class Abstract2D1<ImageType extends Data2D> extends Data3D {
     }
 
     @Override
-    public boolean contentEquals(ParallelValues data) {
+    public boolean contentEquals(Data data) {
         if(data == this) return true;
         if(!(data instanceof Abstract2D1)) return false;
         if(!super.contentEquals(data)) return false;
@@ -234,6 +238,17 @@ public abstract class Abstract2D1<ImageType extends Data2D> extends Data3D {
  
         return transpose;
     }
+    
+    
+    
+    @Override
+    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op) {
+        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; )
+            for(int k=sizeY(); --k >= 0; ) if(isValid(i, j, k)) op.process(get(i, j, k));
+        return op.getResult();
+    }
+    
+   
 
     // TODO 3D methods
     /*

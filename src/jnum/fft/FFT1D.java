@@ -26,7 +26,7 @@ package jnum.fft;
 import java.util.concurrent.ExecutorService;
 
 import jnum.data.WindowFunction;
-import jnum.parallel.ParallelProcessing;
+import jnum.parallel.Parallelizable;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -45,7 +45,7 @@ public abstract class FFT1D<Type> extends FFT<Type> {
         super(executor);
     }
 
-    protected FFT1D(ParallelProcessing processing) {
+    protected FFT1D(Parallelizable processing) {
         super(processing);
     }
 

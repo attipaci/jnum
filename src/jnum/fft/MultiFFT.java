@@ -34,7 +34,7 @@ import jnum.math.Additive;
 import jnum.math.Complex;
 import jnum.math.ComplexMultiplication;
 import jnum.math.Scalable;
-import jnum.parallel.ParallelProcessing;
+import jnum.parallel.Parallelizable;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -57,7 +57,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         super(executor);
     }
 
-    public MultiFFT(ParallelProcessing processing) {
+    public MultiFFT(Parallelizable processing) {
         super(processing);
     }
 
