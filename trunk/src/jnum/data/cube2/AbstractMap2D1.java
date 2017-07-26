@@ -28,7 +28,7 @@ import jnum.data.cube.Index3D;
 import jnum.data.image.Flag2D;
 import jnum.data.image.Grid2D;
 import jnum.data.image.Map2D;
-import jnum.data.sequence.Grid1D;
+import jnum.data.samples.Grid1D;
 import jnum.math.Coordinate2D;
 
 public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1<MapType> {

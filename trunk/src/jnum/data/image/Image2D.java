@@ -61,15 +61,8 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
  
 
     private String id;
-     
-    private boolean logNewData;
-    
-     
-    
-    protected Image2D() {
-        logNewData = true;
-    }
-    
+      
+   
  
     @Override
     public int hashCode() {
@@ -91,13 +84,6 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         return super.equals(o);
     }
     
-    
-    @Override
-    public Image2D clone() {
-        Image2D clone = (Image2D) super.clone();    
-        clone.logNewData = true;
-        return clone;
-    }
     
 
     @Override
@@ -131,28 +117,14 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     
     public void setID(String id) { this.id = id; }
    
-  
-   
-    @Override
-    public Number getLowestCompareValue() { return Long.MIN_VALUE; }
-    
-    @Override
-    public Number getHighestCompareValue() { return Long.MAX_VALUE; }
     
     
-    
-    @Override
-    public int compare(Number a, Number b) {
-        if(a.longValue() == b.longValue()) return 0;
-        return a.longValue() < b.longValue() ? -1 : 1;
-    }
-   
-
+ 
     @Override
     public void setSize(int sizeX, int sizeY) {
         setDataSize(sizeX, sizeY);
         clearHistory();
-        addHistory("new size " + sizeX + "x" + sizeY);
+        addHistory("new size " + getSizeString());
     }
     
     public void destroy() {
@@ -191,17 +163,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     }
     
     
-    protected void silentNextNewData() {
-        logNewData = false;
-    }
-    
-    protected void recordNewData(String detail) {
-        if(!logNewData) logNewData = false;
-        else {
-            clearHistory();
-            addHistory("set new image " + getSizeString() + (detail == null ? "" : " " + detail));
-        }
-    }
+  
     
     public synchronized void setData(final double[][] data) { 
         setSize(data.length, data[0].length);
@@ -544,7 +506,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public Object getData() {
+        public double[][] getData() {
             return data;
         }
         
@@ -621,7 +583,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public Object getData() {
+        public float[][] getData() {
             return data;
         }
         
@@ -688,7 +650,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public Object getData() {
+        public long[][] getData() {
             return data;
         }
         
@@ -747,7 +709,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public Object getData() {
+        public int[][] getData() {
             return data;
         }
         
@@ -807,7 +769,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public Object getData() {
+        public short[][] getData() {
             return data;
         }
         
@@ -866,7 +828,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public Object getData() {
+        public byte[][] getData() {
             return data;
         }
         

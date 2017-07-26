@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 
 import jnum.Constant;
 import jnum.ExtraMath;
-import jnum.parallel.ParallelProcessing;
+import jnum.parallel.Parallelizable;
 
 
 /**
@@ -52,7 +52,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         super(executor);
     }
 
-    public FloatFFT(ParallelProcessing processing) {
+    public FloatFFT(Parallelizable processing) {
         super(processing);
     }
 
@@ -621,7 +621,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
             super(executor);
         }
 
-        public NyquistUnrolledReal(ParallelProcessing processing) {
+        public NyquistUnrolledReal(Parallelizable processing) {
             super(processing);
         }
 

@@ -29,9 +29,9 @@ import jnum.Constant;
 import jnum.ExtraMath;
 import jnum.Util;
 import jnum.data.DataPoint;
-import jnum.data.ParallelValues;
+import jnum.data.Data;
+import jnum.data.DataCrawler;
 import jnum.data.CubicSpline;
-import jnum.data.Statistics;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.InvertedValidator2D;
 import jnum.data.image.overlay.Overlay2D;
@@ -43,9 +43,9 @@ import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Range;
 import jnum.math.Vector2D;
+import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
-import jnum.parallel.Summation;
-import jnum.text.TableFormatter;
+import jnum.parallel.PointOp;
 import jnum.util.HashCode;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
@@ -62,7 +62,7 @@ import nom.tam.fits.ImageHDU;
  * @author pumukli
  *
  */
-public abstract class Data2D extends ParallelValues implements Value2D, TableFormatter.Entries {
+public abstract class Data2D extends Data<Index2D> implements Value2D {
 
 
     private InterpolatorData reuseIpolData;
@@ -81,9 +81,8 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
 
 
     @Override
-    public boolean contentEquals(ParallelValues data) {
-        if(!(data instanceof Data2D)) return false;
-        
+    public boolean contentEquals(Data<Index2D> data) {
+        if(!(data instanceof Data2D)) return false;    
         
         Data2D image = (Data2D) data;
 
@@ -105,7 +104,6 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
         clone.reuseIpolData = new InterpolatorData();
         return clone;
     }
-
 
     public Image2D getEmptyImage() {
         return Image2D.createType(getElementType(), sizeX(), sizeY());
@@ -166,11 +164,11 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
     }
 
   
-
-
+    @Override
     public String getSizeString() { return sizeX() + "x" + sizeY(); }
 
 
+    @Override
     public final boolean isValid(Index2D index) {
         return isValid(index.i(), index.j());
     }
@@ -208,6 +206,7 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
 
 
 
+    @Override
     public final Number get(Index2D index) { return get(index.i(), index.j()); }
 
     public final Number getValid(final int i, final int j, final Number defaultValue) {
@@ -218,9 +217,11 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
     public final Number getValid(final Index2D index, final Number defaultValue) { return getValid(index.i(), index.j(), defaultValue); }
 
 
+    @Override
     public final void set(Index2D index, Number value) { set(index.i(), index.j(), value); }
 
 
+    @Override
     public final void add(Index2D index, Number value) { add(index.i(), index.j(), value); }
 
 
@@ -228,11 +229,14 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
         set(i, j, get(i, j).doubleValue() * factor);
     }
 
+    @Override
     public final void scale(Index2D index, double factor) { scale(index.i(), index.j(), factor); }
 
+    @Override
     public final void discard(Index2D index) { discard(index.i(), index.j()); }
 
 
+    @Override
     public int capacity() {
         if(sizeX() <= 0) return 0;
         if(sizeY() <= 0) return 0;
@@ -356,16 +360,11 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
         addHistory("clear " + getSizeString());
     }
 
+    @Override
+    public final void clear(Index2D index) { clear(index.i(), index.j()); }
+    
     public void clear(int i, int j) { set(i, j, 0); }
 
-    public void scale(final double factor) {
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) { scale(i, j, factor); }
-        }.process();
-        clearHistory();
-        addHistory("scaled by " + factor);
-    }
 
     public void add(final Number value) {
         new Fork<Void>() {
@@ -376,168 +375,17 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
         addHistory("add " + value);
     }
 
-
-    public int countPoints() {
-        Fork<Integer> counter = new Fork<Integer>() {
-            private int counter = 0;
+    
+    public void scale(final double factor) {
+        new Fork<Void>() {
             @Override
-            protected void process(int i, int j) {
-                if(isValid(i, j)) counter++;
-            }
-            @Override
-            public Integer getLocalResult() {
-                return counter;
-            }
-            @Override
-            public Integer getResult() {
-                int globalCount = 0;
-                for(ParallelTask<Integer> task : getWorkers()) globalCount += task.getLocalResult();
-                return globalCount;
-            }
-        };
-
-        counter.process();
-
-        return counter.getResult();
+            protected void process(int i, int j) { scale(i, j, factor); }
+        }.process();
+        clearHistory();
+        addHistory("scale by " + factor);
     }
 
-
-    public double getSum() {
-        Fork<Double> integral = new Fork<Double>() {
-            private double sum = 0.0;
-
-            @Override
-            protected void process(int i, int j) {
-                if(isValid(i, j)) sum += get(i, j).doubleValue();
-            }
-
-            @Override
-            public Double getLocalResult() { return sum; }
-
-        };
-        integral.setReduction(new Summation.DoubleValue());
-        integral.process();
-        return integral.getResult();
-
-    }
-
-    public double getAbsSum() {
-        Fork<Double> integral = new Fork<Double>() {
-            private double sum = 0.0;
-
-            @Override
-            protected void process(int i, int j) {
-                if(isValid(i, j)) sum += Math.abs(get(i, j).doubleValue());
-            }
-
-            @Override
-            public Double getLocalResult() { return sum; }
-
-        };
-        integral.setReduction(new Summation.DoubleValue());
-        integral.process();
-        return integral.getResult();
-    }
-
-
-    public double getSquareSum() {
-        Fork<Double> integral = new Fork<Double>() {
-            private double sum = 0.0;
-
-            @Override
-            protected void process(int i, int j) {  
-                if(!isValid(i, j)) return;
-                final double value = get(i, j).doubleValue();
-                sum += value * value;
-            }
-
-            @Override
-            public Double getLocalResult() { return sum; }
-
-        };     
-        integral.setReduction(new Summation.DoubleValue());
-        integral.process();
-
-        return integral.getResult();
-
-    }
-
-
-    public double mean() {
-        Fork<WeightedPoint> average = new AveragingFork() {
-            private double sum = 0.0;
-            private int n = 0;
-            @Override
-            protected void process(int i, int j) { 
-                if(!isValid(i, j)) return;
-                sum += get(i, j).doubleValue();
-                n++;
-            }
-            @Override
-            public WeightedPoint getLocalResult() { return new WeightedPoint(sum, n); }
-        };
-
-        average.process();
-        return average.getResult().value(); 
-    }
-
-    public double median() {
-        double[] temp = new double[countPoints()];
-        if(temp.length == 0) return Double.NaN;
-        int n=0;
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) 
-            temp[n++] = get(i, j).doubleValue();
-        return Statistics.median(temp, 0, n);
-    }
-
-
-    public double select(double fraction) {
-        double[] temp = new double[countPoints()];
-        if(temp.length == 0) return Double.NaN;
-        int n=0;
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) 
-            temp[n++] = (float) get(i, j).doubleValue();
-        return Statistics.select(temp, fraction, 0, n);
-    }
-
-
-    public final double getRMS(boolean isRobust) {
-        return isRobust ? getRobustRMS() : getRMS();
-    }
-
-    protected double getRobustRMS() {
-        double[] chi2 = new double[countPoints()];
-        if(chi2.length == 0) return 0.0;
-
-        for(int i=sizeX(), k=0; --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) {
-            final double value = get(i, j).doubleValue();
-            chi2[k++] = value * value;
-        }
-
-        return Math.sqrt(Statistics.median(chi2) / Statistics.medianNormalizedVariance);    
-    }
-
-
-    protected double getRMS() {
-        Fork<WeightedPoint> rms = new AveragingFork() {
-            private double sum = 0.0;
-            private int n = 0;
-            @Override
-            protected void process(int i, int j) { 
-                if(!isValid(i, j)) return;
-
-                double value = get(i, j).doubleValue();
-                sum += value * value;
-                n++;
-            }
-            @Override
-            public WeightedPoint getLocalResult() { return new WeightedPoint(sum, n); }
-        };
-
-        rms.process();
-        return rms.getResult().value(); 
-    }
-
+ 
 
 
     public DataPoint getAsymmetry(final Grid2D<?> grid, final Vector2D centerIndex, final double angle, final Range radialRange) {    
@@ -664,81 +512,8 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
 
 
 
+
     @Override
-    public Range getRange() {
-        Fork<Range> search = new Fork<Range>() {
-            private Range range;
-            @Override
-            protected void init() {
-                super.init();
-                range = new Range();
-            }
-            @Override
-            protected void process(int i, int j) {
-                if(isValid(i, j)) range.include(get(i,j).doubleValue());
-            }
-            @Override 
-            public Range getLocalResult() { return range; }
-            @Override
-            public Range getResult() {
-                Range globalRange = new Range();
-                for(ParallelTask<Range> task : getWorkers()) globalRange.include(task.getLocalResult());
-                return globalRange;
-            }
-        };
-        search.process();
-        return search.getResult();
-    }
-
-
-
-
-
-    public Number getMin() {
-        Fork<Number> search = new Fork<Number>() {
-            private Number min = getHighestCompareValue();
-            @Override
-            protected void process(int i, int j) {
-                if(!isValid(i, j)) return;
-                if(compare(get(i,j), min) < 0) min = get(i, j);
-            }
-            @Override 
-            public Number getLocalResult() { return min; }
-            @Override
-            public Number getResult() {
-                Number globalMin = getHighestCompareValue();
-                for(ParallelTask<Number> task : getWorkers()) if(compare(task.getLocalResult(), globalMin) < 0) 
-                    globalMin = task.getLocalResult();
-                return globalMin;
-            }
-        };
-        search.process();
-        return search.getResult();
-    }
-
-
-    public Number getMax() {
-        Fork<Number> search = new Fork<Number>() {
-            private Number max = getLowestCompareValue();
-            @Override
-            protected void process(int i, int j) {
-                if(!isValid(i, j)) return;
-                if(compare(get(i,j), max) > 0) max = get(i, j);
-            }
-            @Override 
-            public Number getLocalResult() { return max; }
-            @Override
-            public Number getResult() {
-                Number globalMax = getLowestCompareValue();
-                for(ParallelTask<Number> task : getWorkers()) if(compare(task.getLocalResult(), globalMax) > 0) 
-                    globalMax = task.getLocalResult();
-                return globalMax;
-            }
-        };
-        search.process();
-        return search.getResult();
-    }
-
     public Index2D indexOfMin() {      
         Fork<Index2D> search = new Fork<Index2D>() {
             private Index2D index;
@@ -763,9 +538,13 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
                 Index2D globalIndex = null;
                 for(ParallelTask<Index2D> task : getWorkers()) {
                     Index2D partial = task.getLocalResult();
-                    if(partial != null) if(compare(get(partial.i(), partial.j()), globalLow) < 0) {
+                    if(partial == null) continue;
+                    
+                    Number localMin = get(partial.i(), partial.j());
+                    
+                    if(compare(localMin, globalLow) < 0) {
                         globalIndex = partial;
-                        globalLow = get(partial.i(), partial.j()).doubleValue();
+                        globalLow = localMin.doubleValue();
                     }
                 }
                 return globalIndex;
@@ -777,6 +556,7 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
     }
 
 
+    @Override
     public Index2D indexOfMax() {        
         Fork<Index2D> search = new Fork<Index2D>() {
             private Index2D index;
@@ -801,9 +581,12 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
                 Index2D globalIndex = null;
                 for(ParallelTask<Index2D> task : getWorkers()) {
                     Index2D partial = task.getLocalResult();
-                    if(partial != null) if(compare(get(partial.i(), partial.j()), globalPeak) > 0) {
+                    if(partial == null) continue; 
+                    
+                    Number localMax = get(partial.i(), partial.j());
+                    if(compare(localMax, globalPeak) > 0) {
                         globalIndex = partial;
-                        globalPeak = get(partial.i(), partial.j()).doubleValue();
+                        globalPeak = localMax.doubleValue();
                     }
                 }
                 return globalIndex;
@@ -816,6 +599,7 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
 
 
 
+    @Override
     public Index2D indexOfMaxDev() {            
         Fork<Index2D> search = new Fork<Index2D>() {
             private Index2D index;
@@ -1450,16 +1234,9 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
 
     @Override
     public Object getTableEntry(String name) {
-        if(name.equals("points")) return Integer.toString(countPoints());
-        else if(name.equals("size")) return getSizeString();
-        else if(name.equals("sizeX")) return sizeX();
+        if(name.equals("sizeX")) return sizeX();
         else if(name.equals("sizeY")) return sizeY();  
-        else if(name.equals("min")) return getMin().doubleValue();
-        else if(name.equals("max")) return getMax().doubleValue();
-        else if(name.equals("mean")) return mean();
-        else if(name.equals("median")) return median();
-        else if(name.equals("rms")) return getRMS(true);
-        else return TableFormatter.NO_SUCH_DATA;
+        else return super.getTableEntry(name);
     }
 
 
@@ -1478,7 +1255,100 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
         String info = "Map Size: " + sizeX() + " x " + sizeY() + " pixels.";
         return info;
     }
+    
+    
+    @Override
+    public DataCrawler<Number> iterator() {
+        return new DataCrawler<Number>() {
+            int i = 0, j = 0;
+            
+            @Override
+            public final boolean hasNext() {
+                if(i < sizeX()) return true;
+                return j < (sizeY()-1);
+            }
 
+            @Override
+            public final Number next() {
+                if(i >= sizeX()) return null;
+                j++;
+                if(j == sizeY()) { j = 0; i++; }
+                return i < sizeX() ? get(i, j) : null;
+            }
+
+            @Override
+            public final void remove() {
+                discard(i, j);
+            }
+
+            @Override
+            public final Object getData() {
+                return Data2D.this;
+            }
+
+            @Override
+            public final void setCurrent(Number value) {
+                set(i, j, value);
+            }
+
+            @Override
+            public final boolean isValid() {
+                return Data2D.this.isValid(i, j);
+            }
+            
+            @Override
+            public final void reset() {
+                i = j = 0;
+            }
+            
+        };
+        
+    }
+    
+
+    @Override
+    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op) {
+        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) op.process(get(i, j));
+        return op.getResult();
+    }
+    
+    @Override
+    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
+      
+        Fork<ReturnType> fork = new Fork<ReturnType>() {
+            private ParallelPointOp<Number, ReturnType> localOp;
+            
+            @Override
+            public void init() {
+                super.init();
+                localOp = op.newInstance();
+            }
+            
+            @Override
+            protected void process(int i, int j) {
+                if(isValid(i, j)) localOp.process(get(i, j));
+            }
+            
+            @Override
+            public ReturnType getLocalResult() { return localOp.getResult(); }
+            
+
+            @Override
+            public ReturnType getResult() { 
+                ParallelPointOp<Number, ReturnType> globalOp = op.newInstance();
+                
+                for(ParallelTask<ReturnType> worker : getWorkers()) {
+                    globalOp.mergeResult(worker.getLocalResult());
+                }
+                return globalOp.getResult();
+            }
+            
+        };
+        
+        fork.process();
+        return fork.getResult();
+    }
+    
 
 
 
@@ -1520,6 +1390,7 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
 
 
     public abstract class Loop<ReturnType> {
+
         public ReturnType process() {
             for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) process(i, j);
             return getResult();
@@ -1529,7 +1400,6 @@ public abstract class Data2D extends ParallelValues implements Value2D, TableFor
 
         protected ReturnType getResult() { return null; }
     }
-
 
 
     public abstract class AveragingFork extends Fork<WeightedPoint> {

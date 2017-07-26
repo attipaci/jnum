@@ -21,7 +21,7 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.sequence;
+package jnum.data.samples;
 
 import jnum.data.Value;
 
@@ -31,11 +31,11 @@ public interface Value1D extends Value, Validating1D {
     
     public int size();
     
-    public Number get(int i);
+    public Number get(Integer i);
     
-    public void add(int i, Number value);
+    public void add(Integer i, Number value);
     
-    public void set(int i, Number value);
+    public void set(Integer i, Number value);
     
     public double valueAtIndex(double i);
        

@@ -21,7 +21,7 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.sequence;
+package jnum.data.samples;
 
 import jnum.data.CartesianGrid;
 import jnum.util.HashCode;

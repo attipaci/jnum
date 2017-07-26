@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 
 import jnum.Util;
 
-public abstract class ParallelObject implements Cloneable, ParallelProcessing {
+public abstract class ParallelObject implements Cloneable, Parallelizable {
     private ExecutorService executor;
     private int parallelism;
     
@@ -63,7 +63,7 @@ public abstract class ParallelObject implements Cloneable, ParallelProcessing {
         setParallel(1);
     }
     
-    public void copyParallel(ParallelProcessing processor) {
+    public void copyParallel(Parallelizable processor) {
         setExecutor(processor.getExecutor());
         setParallel(processor.getParallel());
     }
@@ -77,6 +77,7 @@ public abstract class ParallelObject implements Cloneable, ParallelProcessing {
 
     
     public abstract class Task<ReturnType> extends ParallelTask<ReturnType> {           
+
         public void process() {
             process(getParallel());
         }

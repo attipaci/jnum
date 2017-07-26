@@ -51,6 +51,13 @@ public interface DataCrawler<T> extends Iterator<T> {
 	public void setCurrent(T value);
 	
 	/**
+	 * Check whether the entry at the current position is valid.
+	 * 
+	 * @return true if the current element is valid, false otherwise.
+	 */
+	public boolean isValid();
+	
+	/**
 	 * Resets the crawler, so that the underlying data object will be be crawled from the beginning again.
 	 * I.e., a successive call to {@link Iterator#next()} will return the first element to be crawled.
 	 * 

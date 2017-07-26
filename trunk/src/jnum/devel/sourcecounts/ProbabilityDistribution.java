@@ -9,7 +9,7 @@ import jnum.CopiableContent;
 import jnum.ExtraMath;
 import jnum.Util;
 import jnum.data.Histogram;
-import jnum.data.sequence.Grid1D;
+import jnum.data.samples.Grid1D;
 import jnum.math.Range;
 import jnum.util.HashCode;
 

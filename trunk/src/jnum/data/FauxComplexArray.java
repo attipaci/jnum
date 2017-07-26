@@ -33,7 +33,7 @@ import jnum.fft.DoubleFFT;
 import jnum.fft.FFT;
 import jnum.fft.FloatFFT;
 import jnum.math.Complex;
-import jnum.parallel.ParallelProcessing;
+import jnum.parallel.Parallelizable;
 import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
@@ -316,7 +316,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 	 */
 	public abstract FFT<Type> getFFT(ExecutorService executor);
 	
-	public abstract FFT<Type> getFFT(ParallelProcessing processing);
+	public abstract FFT<Type> getFFT(Parallelizable processing);
 	
 	
 	
@@ -448,7 +448,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		}	
 		
 		@Override
-        public FloatFFT getFFT(ParallelProcessing processing) {
+        public FloatFFT getFFT(Parallelizable processing) {
             return new FloatFFT(processing);
         }   
 	}
@@ -546,7 +546,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
         }   
         
         @Override
-        public DoubleFFT getFFT(ParallelProcessing processing) {
+        public DoubleFFT getFFT(Parallelizable processing) {
             return new DoubleFFT(processing);
         }   
 
