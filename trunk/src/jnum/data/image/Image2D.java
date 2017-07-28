@@ -125,11 +125,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     
     protected abstract void setDataSize(int sizeX, int sizeY);
 
-   
     public abstract Object getData();
-     
-  
-
 
     public void setData(final Value2D values) {
         setSize(values.sizeX(), values.sizeY());
@@ -224,89 +220,27 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         recordNewData("byte[][]");
     }
 
-    public void setRowColImage(Value2D image) {
+    public void setRowColData(Object data) {
+        Image2D cube = null;
+        
+        if(data instanceof Value2D) {
+            setRowColData((Value2D) data);
+            return;
+        }
+        else if(data instanceof double[][][]) cube = Image2D.createType(Double.class);
+        else if(data instanceof float[][][]) cube = Image2D.createType(Float.class);
+        else if(data instanceof long[][][]) cube = Image2D.createType(Long.class);
+        else if(data instanceof int[][][]) cube = Image2D.createType(Integer.class);
+        else if(data instanceof short[][][]) cube = Image2D.createType(Short.class);
+        else if(data instanceof byte[][][]) cube = Image2D.createType(Byte.class);
+        
+        if(cube != null) cube.setData(data);
+    }
+    
+    public void setRowColData(Value2D image) {
         setSize(image.sizeY(), image.sizeX());
         paste(new Transposed2D(image), true);
     }
-
-    public synchronized void setRowColData(Object image) { 
-        if(image instanceof double[][]) setRowColData((double[][]) image);
-        else if(image instanceof float[][]) setRowColData((float[][]) image);
-        else if(image instanceof long[][]) setRowColData((long[][]) image);
-        else if(image instanceof int[][]) setRowColData((int[][]) image);
-        else if(image instanceof short[][]) setRowColData((short[][]) image);
-        else if(image instanceof byte[][]) setRowColData((byte[][]) image);
-        else throw new IllegalArgumentException("Cannot set image content to type " + image.getClass().getSimpleName());
-    }
-
-    public synchronized void setRowColData(final double[][] data) {
-        setSize(data[0].length, data.length);
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                set(i, j, data[j][i]);
-            }
-        }.process();
-        recordNewData("double[row][col]");
-    }
-
-
-    public synchronized void setRowColData(final float[][] data) {
-        setSize(data[0].length, data.length);
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                set(i, j, data[j][i]);
-            }
-        }.process();
-        recordNewData("float[row][col]");
-    }
-
-    public synchronized void setRowColData(final long[][] data) {
-        setSize(data[0].length, data.length);
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                set(i, j, data[j][i]);
-            }
-        }.process();
-        recordNewData("long[row][col]");
-    }
-
-
-    public synchronized void setRowColData(final int[][] data) {
-        setSize(data[0].length, data.length);
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                set(i, j, data[j][i]);
-            }
-        }.process();
-        recordNewData("int[row][col]");
-    }
-
-    public synchronized void setRowColData(final short[][] data) {
-        setSize(data[0].length, data.length);
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                set(i, j, data[j][i]);
-            }
-        }.process();
-        recordNewData("short[row][col]");
-    }
-
-    public synchronized void setRowColData(final byte[][] data) {
-        setSize(data[0].length, data.length);
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                set(i, j, data[j][i]);
-            }
-        }.process();
-        recordNewData("byte[row][col]");
-    }
-    
     
     public Transposed2D getTransposed() {
         return new Transposed2D(this);
@@ -349,20 +283,20 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
 
 
     protected synchronized void crop(int imin, int jmin, int imax, int jmax) {
-        addHistory("cropped " + imin + ", " + jmin + ", " + imax + ", " + jmax);
+        addHistory("cropped " + imin + "," + jmin + " : " + imax + "," + jmax);
         silentNextNewData();
         setData(getCropped(imin, jmin, imax, jmax).getData());
     }
 
 
     public void autoCrop() {
-        int[] hRange = getHorizontalIndexRange();
-        if(hRange == null) return; 
+        int[] xRange = getXIndexRange();
+        if(xRange == null) return; 
 
-        int[] vRange = getVerticalIndexRange();
-        if(vRange == null) return;
+        int[] yRange = getYIndexRange();
+        if(yRange == null) return;
 
-        this.crop(hRange[0], vRange[0], hRange[1], vRange[1]);
+        this.crop(xRange[0], yRange[0], xRange[1], yRange[1]);
     }
 
      

@@ -24,6 +24,8 @@
 package jnum.data.cube;
 
 
+import java.util.List;
+
 import jnum.data.CubicSpline;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
@@ -57,7 +59,37 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
         clone.reuseIpolData = new InterpolatorData();
         return clone;
     }
-        
+   
+    
+    public Cube3D getEmptyCube() {
+        return Cube3D.createType(getElementType(), sizeX(), sizeY(), sizeZ());
+    }
+
+    public Cube3D getCube() {
+        return getCube(getElementType(), getBlankingValue());
+    }
+
+    public final Cube3D getCube(Number blankingValue) {
+        return getCube(getElementType(), blankingValue);
+    }
+
+    public final Cube3D getCube(Class<? extends Number> elementType) {
+        return getCube(elementType, getBlankingValue());
+    }
+
+    public Cube3D getCube(Class<? extends Number> elementType, Number blankingValue) {
+        Cube3D image = Cube3D.createFrom(this, blankingValue, elementType);
+
+        image.copyParallel(this);
+        image.setInterpolationType(getInterpolationType());
+        image.setVerbose(isVerbose());
+        image.setUnit(getUnit());
+
+        List<String> imageHistory = image.getHistory();
+        if(getHistory() != null) imageHistory.addAll(getHistory());
+
+        return image;
+    }
     
     @Override
     public Index3D copyOfIndex(Index3D index) { return new Index3D(index.i(), index.j(), index.k()); }
@@ -116,15 +148,26 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
      
     @Override
     public final void clear(Index3D index) { clear(index.i(), index.j(), index.k()); }
-    
-    public abstract void clear(int i, int j, int k);
-    
+     
     @Override
     public final void add(Index3D index, Number value) { add(index.i(), index.j(), index.k(), value); }
     
     @Override
     public final void scale(Index3D index, double factor) { scale(index.i(), index.j(), index.k(), factor); }
     
+    
+    @Override
+    public boolean isValid(int i, int j, int k) {
+        return isValid(get(i, j, k));
+    }
+
+    
+    @Override
+    public void discard(int i, int j, int k) {
+        set(i, j, k, getBlankingValue());
+    }
+
+    public void clear(int i, int j, int k) { set(i, j, k, 0); }
        
     public void scale(int i, int j, int k, double factor) {
         set(i, j, k, get(i, j, k).doubleValue() * factor);
@@ -302,6 +345,60 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
         if(k >= sizeZ()-0.5) return false;
         return true;
     }
+    
+    public int[] getXIndexRange() {
+        int min = sizeX(), max = -1;
+        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) for(int k=sizeZ(); --k >= 0; ) if(isValid(i, j, k)) {
+            if(i < min) min = i;
+            if(i > max) max = i;
+            break;
+        }
+        return max > min ? new int[] { min, max } : null;
+    }
+
+    public int[] getYIndexRange() {
+        int min = sizeY(), max = -1;
+        for(int j=sizeY(); --j >= 0; ) for(int i=sizeX(); --i >= 0; ) for(int k=sizeZ(); --k >= 0; ) if(isValid(i, j, k)) {
+            if(j < min) min = j;
+            if(j > max) max = j;
+            break;
+        }
+        return max > min ? new int[] { min, max } : null;
+    }
+
+    public int[] getZIndexRange() {
+        int min = sizeY(), max = -1;
+        for(int j=sizeY(); --j >= 0; ) for(int i=sizeX(); --i >= 0; ) for(int k=sizeZ(); --k >= 0; ) if(isValid(i, j, k)) {
+            if(j < min) min = j;
+            if(j > max) max = j;
+            break;
+        }
+        return max > min ? new int[] { min, max } : null;
+    }
+    
+    protected Cube3D getCropped(int imin, int jmin, int kmin, int imax, int jmax, int kmax) {
+        Cube3D cropped = getEmptyCube();
+
+        final int fromi = Math.max(0, imin);
+        final int fromj = Math.max(0, jmin);
+        final int fromk = Math.max(0, kmin);
+        final int toi = Math.min(imax, sizeX()-1);
+        final int toj = Math.min(jmax, sizeY()-1); 
+        final int tok = Math.min(kmax, sizeZ()-1); 
+
+        cropped.setSize(imax-imin+1, jmax-jmin+1, kmax-kmin+1);
+
+        for(int i=fromi, i1=fromi-imin; i<=toi; i++, i1++) 
+            for(int j=fromj, j1=fromj-jmin; j<=toj; j++, j1++) 
+                for(int k=fromk, k1=fromk-kmin; k<=tok; k++, k1++) 
+                    cropped.set(i1, j1, k1, get(i, j, k));
+
+        return cropped;
+    }   
+
+
+
+    
     
     @Override
     public void despike(double level) {

@@ -73,6 +73,9 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         return copy;
     }
 
+    @Override
+    public Samples1D getEmptySamples() { return copy(false); }
+    
     
     @Override
     public void setSize(int size) {
@@ -178,6 +181,24 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }.process();
         recordNewData("byte[]");
     }
+    
+    
+
+    protected synchronized void crop(int imin, int imax) {
+        addHistory("cropped " + imin + " : " + imax);
+        silentNextNewData();
+        setData(getCropped(imin, imax).getData());
+    }
+
+
+    public void autoCrop() {
+        int[] r = getIndexRange();
+        if(r == null) return; 
+
+        this.crop(r[0], r[1]);
+    }
+
+    
     
     @Override
     protected void editHeader(Header header) throws HeaderCardException {          
