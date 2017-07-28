@@ -202,7 +202,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         clear();
     }
     
-    public boolean isValid() {
+    public boolean isConsistent() {
         if(getImage() == null) return false;
         if(getFlags() == null) return false;
         if(properties == null) return false;
@@ -674,10 +674,10 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     }
   
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
+        ArrayList<BasicHDU<?>> hdus = new ArrayList<BasicHDU<?>>();
+        
         ImageHDU hdu = createHDU(dataType);
         editHeader(hdu.getHeader());
-        
-        ArrayList<BasicHDU<?>> hdus = new ArrayList<BasicHDU<?>>();
         hdus.add(hdu);
         
         return hdus;

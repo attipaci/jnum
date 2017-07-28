@@ -36,14 +36,17 @@ public class RangeRestricted2D extends Overlay2D {
         setValidRange(restriction);
     }
     
-    public void setValidRange(Range r) { validRange = r; }
+    public void setValidRange(Range r) { 
+        validRange = r; 
+    }
     
     public Range getValidRange() { return validRange; }
     
     
     @Override
     public boolean isValid(int i, int j) {
-        return validRange.contains(get(i, j).doubleValue()) && super.isValid(i, j);
+        if(!validRange.contains(get(i, j).doubleValue())) return false;
+        return super.isValid(i, j);
     }
 
    

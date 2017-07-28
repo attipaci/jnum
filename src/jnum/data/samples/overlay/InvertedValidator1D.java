@@ -20,15 +20,15 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+package jnum.data.samples.overlay;
 
-package jnum.data.image;
+import jnum.data.samples.Value1D;
 
-import jnum.data.Validating;
+public class InvertedValidator1D extends Overlay1D {
 
-public interface Validating2D extends Validating<Index2D> {
-
-    public boolean isValid(int i, int j);
-       
-    public void discard(int i, int j);
+    public InvertedValidator1D(Value1D base) { super(base); }
+    
+    @Override
+    public boolean isValid(Integer i) { return !super.isValid(i); }
     
 }

@@ -27,18 +27,24 @@ import java.util.List;
 import java.util.Vector;
 
 import jnum.NonConformingException;
-import jnum.Util;
-import jnum.data.Data;
 import jnum.data.cube.Index3D;
-import jnum.data.cube.Data3D.Fork;
 import jnum.data.cube.Data3D;
 import jnum.data.image.Data2D;
-import jnum.math.Range;
-import jnum.parallel.ParallelPointOp;
-import jnum.parallel.ParallelTask;
 import jnum.parallel.PointOp;
 
-public abstract class Abstract2D1<ImageType extends Data2D> extends Data3D {
+public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
+    
+    // TODO 2D+1D split methods...
+    /*
+     * 
+     * - collapseZ(int fromk, int tok); collapseZ()
+     * - smoothXY(), filterXY()
+     * 
+     * 
+     * - collapseXY(IndexBounds2D); collapseXY()
+     * 
+     */
+    
 
     private Vector<ImageType> stack = new Vector<ImageType>();
     
@@ -90,28 +96,6 @@ public abstract class Abstract2D1<ImageType extends Data2D> extends Data3D {
         return getPlane().compare(a, b);
     }
 
-    @Override
-    public boolean contentEquals(Data data) {
-        if(data == this) return true;
-        if(!(data instanceof Abstract2D1)) return false;
-        if(!super.contentEquals(data)) return false;
-        
-        @SuppressWarnings("unchecked")
-        Abstract2D1<ImageType> cube = (Abstract2D1<ImageType>) data;
-        for(int k=sizeZ(); --k >= 0; ) if(!Util.equals(getPlane(k), cube.getPlane(k))) return false;
-        
-        return true;
-    }
-    
-    
-
-    @Override
-    public Range getRange() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    
     
     @Override
     public int sizeX() { return stack.isEmpty() ? 0 : getPlane().sizeX(); }
@@ -139,51 +123,51 @@ public abstract class Abstract2D1<ImageType extends Data2D> extends Data3D {
     }
     
    
+    @Override
+    public boolean isValid(int i, int j, int k) { return getPlane(k).isValid(i, j); }
+     
+    
+    @Override
+    public void discard(int i, int j, int k) { getPlane(k).discard(i, j); }
+
     
     @Override
     public Number get(int i, int j, int k) {
         return getPlane(k).get(i, j);
     }
     
-    public final Number get(Index3D index) {
-        return get(index.i(), index.j(), index.k());
-    }
     
     @Override
     public void set(int i, int j, int k, Number value) {
-        getPlane(k).set(i,  j, value);
+        getPlane(k).set(i, j, value);
     }
     
-    public final void set(Index3D index, Number value) {
-        set(index.i(), index.j(), index.k(), value);
+
+    @Override
+    public void clear(int i, int j, int k) { 
+        getPlane(k).clear(i, j);
     }
+    
     
     @Override
     public void add(int i, int j, int k, Number value) {
-        getPlane(k).add(i,  j, value);
+        getPlane(k).add(i, j, value);
+    }
+   
+    @Override
+    public void scale(int i, int j, int k, double factor) { 
+        getPlane(k).scale(i, j, factor);
     }
     
-    public final void add(Index3D index, Number value) {
-        add(index.i(), index.j(), index.k(), value);
-    }
+
     
     public Number nearestValueAtIndex(double i, double j, double k) {
         return getPlane((int) Math.round(k)).get((int) Math.round(i), (int) Math.round(j));   
     }
     
     
-    @Override
-    public boolean isValid(int i, int j, int k) { return getPlane(k).isValid(i, j); }
-    
-    public final boolean isValid(Index3D index) { return isValid(index.i(), index.j(), index.k()); }
-    
-    
-    @Override
-    public void discard(int i, int j, int k) { getPlane(k).discard(i, j); }
-    
-    public final void discard(Index3D index) { discard(index.i(), index.j(), index.k()); }
-    
-    
+       
+     
    
     
     @Override
@@ -222,61 +206,32 @@ public abstract class Abstract2D1<ImageType extends Data2D> extends Data3D {
     }
     
 
-    @Override
-    public Object getFitsData(Class<? extends Number> dataType) {
-        if(!Double.class.equals(getElementType())) throw new UnsupportedOperationException("not implemented.");
-        
-        final double[][][] transpose = new double[sizeZ()][sizeY()][sizeX()];
-        final double scale = 1.0 / getUnit().value();
-                      
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j, int k) {
-                transpose[k][j][i] = isValid(i, j, k) ? scale * get(i, j, k).doubleValue() : getBlankingValue().doubleValue();
-            }     
-        }.process();
  
-        return transpose;
-    }
     
+    
+    @Override
+    public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op) {
+        final Index3D index = new Index3D();
+        for(int k=sizeY(); --k >= 0; ) for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) {
+            index.set(i, j, k);
+            op.process(index);
+            if(op.exception != null) return null;
+        }
+        return op.getResult();
+    }
     
     
     @Override
     public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op) {
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; )
-            for(int k=sizeY(); --k >= 0; ) if(isValid(i, j, k)) op.process(get(i, j, k));
+        for(int k=sizeY(); --k >= 0; ) for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; )
+            if(isValid(i, j, k)) op.process(get(i, j, k));
         return op.getResult();
     }
     
    
 
-    // TODO 3D methods
-    /*
-     * - getRange();
-     * - getMin();
-     * - getMax();
-     * - restrictRange(Range);
-     * - discardRange(Range);
-     * 
-     * - getMean();
-     * - getMedian();
-     * - getRMS();
-     * - getVariance();
-     * 
-     * - level()
-     */
     
     
-    // TODO 2D+1D split methods...
-    /*
-     * 
-     * - collapseZ(int fromk, int tok); collapseZ()
-     * - smoothXY(), filterXY()
-     * 
-     * 
-     * - collapseXY(IndexBounds2D); collapseXY()
-     * 
-     */
-    
+  
     
 }

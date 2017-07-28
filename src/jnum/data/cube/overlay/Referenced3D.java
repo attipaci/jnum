@@ -21,23 +21,23 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.image.overlay;
+package jnum.data.cube.overlay;
 
-import jnum.data.image.Value2D;
-import jnum.math.Coordinate2D;
+import jnum.data.cube.Value3D;
+import jnum.math.Coordinate3D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
-public class Referenced2D extends Overlay2D {
-    private Coordinate2D referenceIndex;
+public class Referenced3D extends Overlay3D {
+    private Coordinate3D referenceIndex;
 
-    public Referenced2D() {}
+    public Referenced3D() {}
 
-    public Referenced2D(Value2D values) {
+    public Referenced3D(Value3D values) {
         super(values);
     }
     
-    public Referenced2D(Value2D values, Coordinate2D refIndex) {
+    public Referenced3D(Value3D values, Coordinate3D refIndex) {
         this(values);
         setReferenceIndex(refIndex);
     }
@@ -49,18 +49,19 @@ public class Referenced2D extends Overlay2D {
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
-        if(!(o instanceof Referenced2D)) return false;
+        if(!(o instanceof Referenced3D)) return false;
         
-        Referenced2D r = (Referenced2D) o;
+        Referenced3D r = (Referenced3D) o;
         if(!referenceIndex.equals(r.referenceIndex)) return false;
         
         return super.equals(o);
     }
 
-    public Coordinate2D getReferenceIndex() { return referenceIndex; }
+    public Coordinate3D getReferenceIndex() { return referenceIndex; }
     
-    public void setReferenceIndex(Coordinate2D index) { this.referenceIndex = index; }
-
+    public void setReferenceIndex(Coordinate3D index) { this.referenceIndex = index; }
+    
+    
     @Override
     public void editHeader(Header header) throws HeaderCardException {
         super.editHeader(header);
@@ -73,4 +74,5 @@ public class Referenced2D extends Overlay2D {
         referenceIndex.parseHeader(header, "CRPIX", "");
     }
     
+
 }

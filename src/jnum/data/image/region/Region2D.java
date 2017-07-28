@@ -27,10 +27,11 @@ import java.io.Serializable;
 
 import jnum.IncompatibleTypesException;
 import jnum.Util;
+import jnum.data.Validating;
 import jnum.data.image.Flag2D;
 import jnum.data.image.Grid2D;
+import jnum.data.image.Index2D;
 import jnum.data.image.IndexBounds2D;
-import jnum.data.image.Validating2D;
 import jnum.data.image.Value2D;
 import jnum.data.image.overlay.Viewport2D;
 import jnum.math.Coordinate2D;
@@ -145,6 +146,8 @@ public abstract class Region2D implements Serializable, Cloneable {
 
 	    public final Grid2D<?> getGrid() { return grid; }
 	    
+	    public final boolean isInside(Index2D index) { return isInside(index.i(), index.j()); }
+	    
 	    public abstract boolean isInside(double i, double j);
 	    
 	    public abstract IndexBounds2D getBounds();
@@ -186,7 +189,7 @@ public abstract class Region2D implements Serializable, Cloneable {
 	    }
 	    
 	    public void flag(Flag2D flag, final long pattern) {
-	        final Viewport2D viewer = getViewer(flag.getImage());
+	        final Viewport2D viewer = getViewer(flag.getData());
 	        viewer.new Fork<Void>() {
                 @Override
                 protected void process(int i, int j) {
@@ -196,7 +199,7 @@ public abstract class Region2D implements Serializable, Cloneable {
 	    }
 	    
 	    public void unflag(Flag2D flag, final long pattern) {
-            final Viewport2D viewer = getViewer(flag.getImage());
+            final Viewport2D viewer = getViewer(flag.getData());
             final long clearPattern = ~pattern;
             viewer.new Fork<Void>() {
                 @Override
@@ -207,24 +210,24 @@ public abstract class Region2D implements Serializable, Cloneable {
         }
 	        
 	    
-	    public final Validating2D getInsideValidator() { return insideValidator; }
+	    public final Validating<Index2D> getInsideValidator() { return insideValidator; }
 	    
-	    public final Validating2D getOutsideValidator() { return outsideValidator; }
+	    public final Validating<Index2D> getOutsideValidator() { return outsideValidator; }
 	    
-	    private Validating2D insideValidator = new Validating2D() {
+	    private Validating<Index2D> insideValidator = new Validating<Index2D>() {
 	        @Override
-	        public final boolean isValid(int i, int j) { return isInside(i, j); }
+	        public final boolean isValid(Index2D index) { return isInside(index); }
 
 	        @Override
-	        public void discard(int i, int j) {}
+	        public void discard(Index2D index) {}
 	    };
 	     
-	    private Validating2D outsideValidator = new Validating2D() {
+	    private Validating<Index2D> outsideValidator = new Validating<Index2D>() {
             @Override
-            public final boolean isValid(int i, int j) { return !isInside(i, j); }
+            public final boolean isValid(Index2D index) { return !isInside(index); }
 
             @Override
-            public void discard(int i, int j) {}
+            public void discard(Index2D index) {}
         };
         
 	    

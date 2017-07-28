@@ -27,6 +27,7 @@ import jnum.data.CubicSpline;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
 import jnum.data.WeightedPoint;
+import jnum.data.samples.overlay.Overlay1D;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
 import jnum.parallel.PointOp;
@@ -51,23 +52,9 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
         return hash;
     }
 
-
-        
+     
     @Override
-    public boolean contentEquals(Data<Integer> data) {
-        if(!(data instanceof Data1D)) return false;    
-        
-        Data1D image = (Data1D) data;
-
-        if(size() != image.size()) return false;
-       
-        for(int i=size(); --i >= 0; ) {
-            if(!get(i).equals(image.get(i))) return false;
-            if(isValid(i) != image.isValid(i)) return false;
-        }
-
-        return true;
-    }
+    public final Integer copyOfIndex(Integer index) { return index; }
 
     
     
@@ -77,7 +64,24 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
     @Override
     public String getSizeString() { return size() + ""; }
     
+    @Override
+    public final boolean conformsTo(Integer size) {
+        return size() == size;
+    }
     
+    @Override
+    public boolean containsIndex(Integer i) {
+        if(i < 0) return false;
+        if(i >= size()) return false;
+        return true;
+    }
+    
+    @Override
+    public final Number getValid(final Integer i, final Number defaultValue) {
+        if(!isValid(i)) return defaultValue;
+        return get(i);
+    }
+
     
     @Override
     public void clear(Integer i) { set(i, 0); }
@@ -95,6 +99,24 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
     @Override
     public void scale(Integer i, double factor) {
         set(i, get(i).doubleValue() * factor);
+    }
+    
+    public final void paste(final Value1D source, boolean report) {
+        paste(new Overlay1D(source), report);
+    }
+
+    public void paste(final Data1D source, boolean report) {
+        if(source == this) return;
+
+        source.new Fork<Void>() {
+            @Override
+            protected void processElementAt(int i) {
+                if(source.isValid(i)) set(i, source.get(i));
+                else discard(i);
+            }
+        }.process();
+
+        if(report) addHistory("pasted new content: " + source.getSizeString());
     }
     
     @Override
@@ -194,133 +216,52 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
     }
     
     
-    
-
-
 
     @Override
-    public Integer indexOfMin() {      
-        Fork<Integer> search = new Fork<Integer>() {
-            private int index = -1;
-            private Number low = getHighestCompareValue();
-           
-            @Override
-            protected void processElementAt(int i) {
-                if(!isValid(i)) return;
-                if(compare(get(i), low) > 0) return;
-                low = get(i);
-                index = i;
-            }
-            @Override 
-            public Integer getLocalResult() { return index; }
-            @Override
-            public Integer getResult() {
-                Number globalLow = getHighestCompareValue();
-                int globalIndex = -1;
-                for(ParallelTask<Integer> task : getWorkers()) {
-                    int partial = task.getLocalResult();
-                    if(partial < 0) continue;
-                    
-                    Number localMin = get(partial);
-                    
-                    if(compare(localMin, globalLow) < 0) {
-                        globalIndex = partial;
-                        globalLow = localMin.doubleValue();
-                    }
-                }
-                return globalIndex;
-            }
-        };
-
-        search.process();
-        return search.getResult();
+    protected int getInterpolationOps(int type) {
+        switch(type) {
+        case NEAREST : return 5;
+        case LINEAR : return 25;
+        case QUADRATIC : return 30;
+        case SPLINE : return 50;
+        }
+        return 1;
     }
 
+    
+    
 
     @Override
-    public Integer indexOfMax() {        
-        Fork<Integer> search = new Fork<Integer>() {
-            private int index = -1;
-            private Number peak = getLowestCompareValue();
+    public void despike(double level) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public String getInfo() {
+        return "Sample size: " + size() + " bins.";
+    }
+
+    
+    
+    @Override
+    public Object getFitsData(Class<? extends Number> dataType) {  
+        final Samples1D copy = Samples1D.createType(dataType, size());
+        
+        smartFork(new ParallelPointOp.Simple<Integer>() {
+
+            @Override
+            public void process(Integer index) {
+               copy.set(index, isValid(index) ? get(index) : getBlankingValue());
+            }
             
-            @Override
-            protected void processElementAt(int i) {
-                if(!isValid(i)) return;
-                if(compare(get(i), peak) < 0) return;
-                peak = get(i);
-                index = i;
-            }
-            @Override 
-            public Integer getLocalResult() { return index; }
-            @Override
-            public Integer getResult() {
-                Number globalPeak = getLowestCompareValue();
-                int globalIndex = -1;
-                for(ParallelTask<Integer> task : getWorkers()) {
-                    int partial = task.getLocalResult();
-                    if(partial < 0) continue; 
-                    
-                    Number localMax = get(partial);
-                    if(compare(localMax, globalPeak) > 0) {
-                        globalIndex = partial;
-                        globalPeak = localMax.doubleValue();
-                    }
-                }
-                return globalIndex;
-            }
-        };
+        });
+       
+        if(getUnit().value() != 1.0) copy.scale(1.0 / getUnit().value());
 
-        search.process();
-        return search.getResult();
+        return copy.getData();
     }
 
-
-
-    @Override
-    public Integer indexOfMaxDev() {            
-        Fork<Integer> search = new Fork<Integer>() {
-            private int index = -1;
-            private double dev = 0.0;
-
-           
-            @Override
-            protected void processElementAt(int i) {
-                if(!isValid(i)) return;
-                final double value = Math.abs(get(i).doubleValue());
-
-                if(value > dev) {
-                    dev = value;
-                    index = i;
-                }
-            }
-            @Override 
-            public Integer getLocalResult() { return index; }
-            @Override
-            public Integer getResult() {
-                double globalDev = 0.0;
-                int globalIndex = -1;
-                for(ParallelTask<Integer> task : getWorkers()) {
-                    int partial = task.getLocalResult();
-                    if(partial < 0) continue;
-
-                    final double value = Math.abs(get(partial).doubleValue());
-                    if(value > globalDev) {
-                        globalIndex = partial;
-                        globalDev = value;
-                    }
-                }
-
-                return globalIndex;
-            }
-        };
-
-        search.process();
-        return search.getResult();
-    }
-
-    
-    
-    
     
     
     
@@ -387,6 +328,15 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
     }
     
     @Override
+    public <ReturnType> ReturnType loop(final PointOp<Integer, ReturnType> op) {
+        for(int i=size(); --i >= 0; ) {
+            op.process(i);
+            if(op.exception != null) return null;
+        }
+        return op.getResult();
+    }
+    
+    @Override
     public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
       
         Fork<ReturnType> fork = new Fork<ReturnType>() {
@@ -410,6 +360,43 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
             @Override
             public ReturnType getResult() { 
                 ParallelPointOp<Number, ReturnType> globalOp = op.newInstance();
+                
+                for(ParallelTask<ReturnType> worker : getWorkers()) {
+                    globalOp.mergeResult(worker.getLocalResult());
+                }
+                return globalOp.getResult();
+            }
+            
+        };
+        
+        fork.process();
+        return fork.getResult();
+    }
+    
+    @Override
+    public <ReturnType> ReturnType fork(final ParallelPointOp<Integer, ReturnType> op) {
+      
+        Fork<ReturnType> fork = new Fork<ReturnType>() {
+            private ParallelPointOp<Integer, ReturnType> localOp;
+            
+            @Override
+            public void init() {
+                super.init();
+                localOp = op.newInstance();
+            }
+            
+            @Override
+            protected void processElementAt(int i) {
+                localOp.process(i);
+            }
+            
+            @Override
+            public ReturnType getLocalResult() { return localOp.getResult(); }
+            
+
+            @Override
+            public ReturnType getResult() { 
+                ParallelPointOp<Integer, ReturnType> globalOp = op.newInstance();
                 
                 for(ParallelTask<ReturnType> worker : getWorkers()) {
                     globalOp.mergeResult(worker.getLocalResult());

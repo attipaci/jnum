@@ -23,11 +23,10 @@
 
 package jnum.data.image;
 
-import jnum.data.Value;
+import jnum.data.IndexedValues;
 
-public interface Value2D extends Value, Validating2D {
+public interface Value2D extends IndexedValues<Index2D>, Validating2D {
     
-    public Class<? extends Number> getElementType();
   
     public int sizeX();
     

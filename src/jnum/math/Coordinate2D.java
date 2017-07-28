@@ -34,8 +34,6 @@ import jnum.IncompatibleTypesException;
 import jnum.Unit;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
-import jnum.fits.FitsHeaderEditing;
-import jnum.fits.FitsHeaderParsing;
 import jnum.fits.FitsToolkit;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
@@ -54,7 +52,7 @@ import nom.tam.util.Cursor;
  * The Class Coordinate2D.
  */
 public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinate2D>, CopyCat<Coordinate2D>, 
-ViewableAsDoubles, Parser, NumberFormating, FitsHeaderParsing, FitsHeaderEditing {
+ViewableAsDoubles, Parser, NumberFormating {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3978373428597134906L;
@@ -499,9 +497,6 @@ ViewableAsDoubles, Parser, NumberFormating, FitsHeaderParsing, FitsHeaderEditing
 		}
 	}
 	
-
-	@Override
-    public void editHeader(Header header) throws HeaderCardException { editHeader(header, ""); }
 	
 	/**
 	 * Edits the.
@@ -510,25 +505,22 @@ ViewableAsDoubles, Parser, NumberFormating, FitsHeaderParsing, FitsHeaderEditing
 	 * @param alt the alt
 	 * @throws HeaderCardException the header card exception
 	 */
-	public void editHeader(Header header, String alt) throws HeaderCardException {
+	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
 	    Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-		c.add(new HeaderCard("CRVAL1" + alt, x, "The reference x coordinate in SI units."));
-		c.add(new HeaderCard("CRVAL2" + alt, y, "The reference y coordinate in SI units."));
+		c.add(new HeaderCard(keyStem + "1" + alt, x, "The reference x coordinate in SI units."));
+		c.add(new HeaderCard(keyStem + "2" + alt, y, "The reference y coordinate in SI units."));
 	}
 	
 
-	@Override
-    public void parseHeader(Header header) { parseHeader(header, ""); }
-	
 	/**
 	 * Parses the.
 	 *
 	 * @param header the header
 	 * @param alt the alt
 	 */
-	public void parseHeader(Header header, String alt) {
-		x = header.getDoubleValue("CRVAL1" + alt, 0.0);
-		y = header.getDoubleValue("CRVAL2" + alt, 0.0);
+	public void parseHeader(Header header, String keyStem, String alt) {
+		x = header.getDoubleValue(keyStem + "1" + alt, 0.0);
+		y = header.getDoubleValue(keyStem + "2" + alt, 0.0);
 	}
 	
 	/**

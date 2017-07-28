@@ -21,14 +21,10 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.image;
+package jnum.data.cube;
 
-import jnum.data.Validating;
+public interface Resizable3D {
 
-public interface Validating2D extends Validating<Index2D> {
-
-    public boolean isValid(int i, int j);
-       
-    public void discard(int i, int j);
+    public void setSize(int sizeX, int sizeY, int sizeZ);
     
 }

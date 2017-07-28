@@ -23,26 +23,25 @@
 
 package jnum.data.image;
 
-import java.io.Serializable;
 
-import jnum.CopiableContent;
 import jnum.ExtraMath;
+import jnum.data.FlagCompanion;
 import jnum.math.Coordinate2D;
-import jnum.parallel.ParallelObject;
 
 
-public class Flag2D extends ParallelObject implements Resizable2D, Cloneable, CopiableContent<Flag2D>, Serializable {
+
+public class Flag2D extends FlagCompanion<Index2D> implements Resizable2D {
 
     /**
      * 
      */
     private static final long serialVersionUID = 4967521177601467424L;
 
-    int type;
     private Image2D data;
 
 
     public Flag2D(int type) {
+        super(type);
         switch(type) {
         case TYPE_BYTE: data = Image2D.createType(Byte.class); break;
         case TYPE_SHORT: data = Image2D.createType(Short.class); break;
@@ -50,7 +49,6 @@ public class Flag2D extends ParallelObject implements Resizable2D, Cloneable, Co
         case TYPE_LONG: data = Image2D.createType(Long.class); break;
         default: throw new IllegalArgumentException("Unknown type: " + type);
         }
-        this.type = type;
     }
     
     public Flag2D(int type, int sizeX, int sizeY) {
@@ -58,27 +56,7 @@ public class Flag2D extends ParallelObject implements Resizable2D, Cloneable, Co
         setSize(sizeX, sizeY);
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode() ^ type ^ data.hashCode();
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof Flag2D)) return false;
-         
-        Flag2D f = (Flag2D) o;
-        if(type != f.type) return false;
-        if(!data.equals(f.data)) return false;
-        
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; )
-            if(get(i,j) != f.get(i, j)) return false;
-        
-        return true;
-    }
-    
-  
+ 
     @Override
     public Flag2D copy(boolean withContent) {
         Flag2D copy = (Flag2D) clone();
@@ -89,10 +67,9 @@ public class Flag2D extends ParallelObject implements Resizable2D, Cloneable, Co
     @Override
     public Flag2D copy() { return copy(true); }
   
-    public Image2D getImage() { return data; }
-    
-    public final Class<? extends Number> getElementType() { return data.getElementType(); }
-
+    @Override
+    public Image2D getData() { return data; }
+      
     @Override
     public void setSize(int sizeX, int sizeY) {
         data.setSize(sizeX, sizeY);
@@ -104,50 +81,40 @@ public class Flag2D extends ParallelObject implements Resizable2D, Cloneable, Co
     public final int sizeX() { return data.sizeX(); }
 
     public final int sizeY() { return data.sizeY(); }
-
+   
+  
     public final long get(int i, int j) { return data.get(i, j).longValue(); }
+   
+    public final void set(int i, int j, long value) { data.set(i, j, value); }
 
-    public void set(int i, int j, long value) { data.set(i, j, value); }
-
-    public void setBits(int i, int j, long pattern) {
+    public final void setBits(int i, int j, long pattern) {
         data.set(i, j, data.get(i, j).longValue() | pattern);
     }
 
-    public void clearBits(int i, int j, long pattern) {
+    public final void clearBits(int i, int j, long pattern) {
         data.set(i, j, 0L);
     }
-
-    public boolean isClear(int i, int j, long pattern) {
+    
+    public final boolean isClear(int i, int j, long pattern) {
         return (data.get(i, j).longValue() & pattern) == 0L;
     }
-
-    public void clear(int i, int j) {
+  
+    public final void clear(int i, int j) {
         data.set(i, j, 0L);
     }
 
-    public boolean isClear(int i, int j) {
+    
+    public final boolean isClear(int i, int j) {
         return data.get(i, j).longValue() == 0L;
     }
 
 
-    public void clear() {
-        fill(0L);
-    }
-
-    public void fill(long pattern) {
-        data.fill(pattern);
-    }
 
     public void crop(int imin, int jmin, int imax, int jmax) {
         data.crop(imin, jmin, imax, jmax);
     }
 
-    public final static int TYPE_BYTE = 0;
-    public final static int TYPE_SHORT = 1;
-    public final static int TYPE_INT = 2;
-    public final static int TYPE_LONG = 3;
-
-
+ 
     public void grow(final int pattern, final Coordinate2D indexRadius) {   
         data.new Fork<Void>() {
             @Override

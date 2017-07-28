@@ -84,6 +84,11 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
         throw new UnsupportedOperationException("Cannot remove elements from a mesh.");
     }
 
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+    
     /**
      * Sets the next element.
      *

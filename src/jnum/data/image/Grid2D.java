@@ -406,15 +406,14 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
     public void editHeader(Header header) throws HeaderCardException {		
 		// TODO 
 		projection.editHeader(header, alt);
-		projection.getReference().editHeader(header, alt);
-		
+			
 		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 		
-		if(xUnit != Unit.unity) c.add(new HeaderCard("CUNIT1" + alt, xUnit.name(), "Coordinate axis unit."));
-		if(yUnit != Unit.unity) c.add(new HeaderCard("CUNIT2" + alt, yUnit.name(), "Coordinate axis unit."));
 		
 		c.add(new HeaderCard("CRPIX1" + alt, refIndex.x() + 1, "Reference grid position"));
 		c.add(new HeaderCard("CRPIX2" + alt, refIndex.y() + 1, "Reference grid position"));
+		
+		projection.getReference().editHeader(header, "CRVAL", alt);	
 
 		// Change from native to apparent for reverted axes.
 		double a11 = m11, a12 = m12, a21 = m21, a22 = m22;
@@ -432,6 +431,9 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 			c.add(new HeaderCard("CD2_2" + alt, a22 / yUnit.value(), "Transformation matrix element"));
 		}
 		
+		if(xUnit != Unit.unity) c.add(new HeaderCard("CUNIT1" + alt, xUnit.name(), "Coordinate axis unit."));
+		if(yUnit != Unit.unity) c.add(new HeaderCard("CUNIT2" + alt, yUnit.name(), "Coordinate axis unit."));
+	    
 		
 	}
 	
@@ -475,12 +477,6 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		try { parseProjection(header); }
 		catch(Exception e) { Util.error(this, "Unknown projection " + type.substring(5, 8)); }
 		
-		CoordinateType reference = null;
-		
-		reference = getCoordinateInstanceFor(type);
-
-		reference.parseHeader(header, alt);
-		setReference(reference);
 		
 		// Internally keep the transformation matrix unitary 
 		// And have delta carry the pixel sizes...
@@ -519,6 +515,11 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		
 		refIndex.setX(header.getDoubleValue("CRPIX1" + alt) - 1.0);
 		refIndex.setY(header.getDoubleValue("CRPIX2" + alt) - 1.0);
+		
+		CoordinateType reference= getCoordinateInstanceFor(type);
+
+		reference.parseHeader(header, "CRVAL", alt);
+        setReference(reference);
 		
 		calcInverseTransform();
 	}
