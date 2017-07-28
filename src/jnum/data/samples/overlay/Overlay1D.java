@@ -119,5 +119,10 @@ public class Overlay1D extends Data1D {
         return values.compare(a, b);
     }
    
+    @Override
+    public double valueAtIndex(Double i) {
+        return values.valueAtIndex(i);
+    }
     
+   
 }

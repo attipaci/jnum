@@ -29,6 +29,7 @@ import jnum.Constant;
 import jnum.ExtraMath;
 import jnum.Util;
 import jnum.data.DataPoint;
+import jnum.data.Transforming;
 import jnum.data.Validating;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
@@ -53,7 +54,7 @@ import jnum.util.HashCode;
  * @author pumukli
  *
  */
-public abstract class Data2D extends Data<Index2D> implements Value2D {
+public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> implements Value2D {
 
 
     private InterpolatorData reuseIpolData;
@@ -254,6 +255,10 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
     }
 
 
+    @Override
+    public final Image2D getCropped(Index2D from, Index2D to) {
+        return getCropped(from.i(), from.j(), to.i(), to.j());
+    }
     
     protected Image2D getCropped(int imin, int jmin, int imax, int jmax) {
         Image2D cropped = getEmptyImage();
@@ -455,12 +460,13 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
 
 
-    public double valueAtIndex(Vector2D index) {
+    @Override
+    public double valueAtIndex(Coordinate2D index) {
         return valueAtIndex(index.x(), index.y(), null);
     }
 
 
-    public double valueAtIndex(Vector2D index, InterpolatorData ipolData) {
+    public double valueAtIndex(Coordinate2D index, InterpolatorData ipolData) {
         return valueAtIndex(index.x(), index.y(), ipolData);
     }
 
@@ -483,24 +489,28 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
         switch(getInterpolationType()) {
         case NEAREST : return get(i, j).doubleValue();
-        case LINEAR : return bilinearAt(ic, jc);
-        case QUADRATIC : return piecewiseQuadraticAt(ic, jc);
-        case SPLINE : return ipolData == null ? splineAt(ic, jc) : splineAt(ic, jc, ipolData);
+        case LINEAR : return linearAtIndex(ic, jc);
+        case QUADRATIC : return quadraticAtIndex(ic, jc);
+        case SPLINE : return ipolData == null ? splineAtIndex(ic, jc) : splineAtIndex(ic, jc, ipolData);
         }
 
         return Double.NaN;
     }
 
-    public Number nearestValueAtIndex(Vector2D index) {
-        return nearestValueTo(index.x(), index.y());
+    @Override
+    public Number nearestValueAtIndex(Coordinate2D index) {
+        return nearestValueAtIndex(index.x(), index.y());
     }
     
-    public Number nearestValueTo(double ic, double jc) {
+    public Number nearestValueAtIndex(double ic, double jc) {
         return get((int) Math.round(ic), (int) Math.round(jc));
     }
+    
+    @Override
+    public final double linearAtIndex(Coordinate2D index) { return linearAtIndex(index.x(), index.y()); }
 
     // Bilinear interpolation
-    public double bilinearAt(double ic, double jc) {        
+    public double linearAtIndex(double ic, double jc) {        
         final int i = (int)Math.floor(ic);
         final int j = (int)Math.floor(jc);
 
@@ -535,6 +545,11 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         // ~ 45 ops...
     }
 
+    
+    
+    @Override
+    public final double quadraticAtIndex(Coordinate2D index) { return quadraticAtIndex(index.x(), index.y()); }
+
 
     // Interpolate (linear at edges, quadratic otherwise)   
     // Piecewise quadratic...
@@ -545,7 +560,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
      * @param jc the jc
      * @return the double
      */
-    public double piecewiseQuadraticAt(double ic, double jc) {
+    public double quadraticAtIndex(double ic, double jc) {
         // Find the nearest data point (i,j)
         final int i = (int)Math.round(ic);
         final int j = (int)Math.round(jc);
@@ -578,14 +593,19 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
         // ~60 ops...
     }
+    
+    
+    @Override
+    public final double splineAtIndex(Coordinate2D index) { return splineAtIndex(index.x(), index.y()); }
 
-    public double splineAt(final double ic, final double jc) {
-        synchronized(reuseIpolData) { return splineAt(ic, jc, reuseIpolData); }
+
+    public double splineAtIndex(final double ic, final double jc) {
+        synchronized(reuseIpolData) { return splineAtIndex(ic, jc, reuseIpolData); }
     }
 
-
+ 
     // Performs a bicubic spline interpolation...
-    public double splineAt(final double ic, final double jc, InterpolatorData ipolData) {   
+    public double splineAtIndex(final double ic, final double jc, InterpolatorData ipolData) {   
         ipolData.centerOn(ic, jc);
 
         final CubicSpline splineX = ipolData.splineX;
@@ -631,7 +651,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         addHistory("smoothed");
     }
 
-
+    
     public synchronized void fastSmooth(Referenced2D beam, int stepX, int stepY) {
         paste(getFastSmoothed(beam, stepX, stepY, null, null), false);
         addHistory("smoothed (fast method)");
@@ -824,7 +844,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
     }
 
-    public synchronized void resampleFrom(final Data2D image, final Transforming2D toSourceIndex, final Referenced2D beam, final Value2D weight) {
+    public synchronized void resampleFrom(final Data2D image, final Transforming<Vector2D> toSourceIndex, final Referenced2D beam, final Value2D weight) {
 
         new InterpolatingFork() {
             private Vector2D index;
@@ -864,31 +884,6 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
         clearHistory();
         addHistory("resampled " + getSizeString() + " from " + image.getSizeString());
-    }
-
-
-    public void add(final Value2D image) {
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                if(image.isValid(i, j)) add(i, j, image.get(i, j));
-            }
-        }.process();
-        addHistory("added image.");
-    }
-
-    public void addScaled(final Value2D image, final double scaling) {
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                if(image.isValid(i, j)) add(i, j, scaling * image.get(i, j).doubleValue());
-            }
-        }.process();
-        addHistory("added scaled image (" + scaling + "x).");
-    }
-
-    public final void subtract(final Value2D image) {
-        addScaled(image, -1.0);
     }
 
 

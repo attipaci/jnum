@@ -41,7 +41,7 @@ import nom.tam.util.Cursor;
 
 
 /**
- * A generic light-weight 3D image class implementation with FITS I/O support.
+ * A generic light-weight 3D datacube class implementation with FITS I/O support.
  * 
  * 
  * @author pumukli

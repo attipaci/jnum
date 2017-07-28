@@ -121,14 +121,6 @@ public class Viewport1D extends Overlay1D implements Resizable1D {
         super.add(i + i0, value);
     }
 
-    @Override
-    public final double valueAtIndex(double i) {
-        return super.valueAtIndex(i + i0);
-    }
-   
-    
-  
-
     
  
 }

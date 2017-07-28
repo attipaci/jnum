@@ -23,7 +23,7 @@
 
 package jnum.data;
 
-public interface IndexedValues<IndexType> extends Value {
+public interface IndexedValues<IndexType> extends Values {
 
     public IndexType size();
     
@@ -32,6 +32,10 @@ public interface IndexedValues<IndexType> extends Value {
     public void add(IndexType index, Number value);
     
     public void set(IndexType index, Number value);
+    
+     
+    
+    
 
     
 }

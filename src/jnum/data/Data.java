@@ -50,7 +50,7 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.fits.ImageHDU;
 import nom.tam.util.Cursor;
 
-public abstract class Data<IndexType> extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, 
+public abstract class Data<IndexType, CoordType, VectorType> extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, 
 TableFormatter.Entries {
 
     static {
@@ -94,7 +94,7 @@ TableFormatter.Entries {
         if(!getClass().isAssignableFrom(o.getClass())) return false;
         
         @SuppressWarnings("unchecked")
-        Data<IndexType> data = (Data<IndexType>) o;
+        Data<IndexType, CoordType, VectorType> data = (Data<IndexType, CoordType, VectorType>) o;
              
         if(getInterpolationType() != data.getInterpolationType()) return false;
         if(!Util.equals(getBlankingValue(), data.getBlankingValue())) return false;
@@ -104,7 +104,7 @@ TableFormatter.Entries {
     }
     
 
-    public boolean contentEquals(final Data<IndexType> data) {
+    public boolean contentEquals(final Data<IndexType, CoordType, VectorType> data) {
         if(!(data instanceof Data)) return false;    
         
         if(!getSizeString().equals(data.getSizeString())) return false;
@@ -126,8 +126,8 @@ TableFormatter.Entries {
     
     @SuppressWarnings("unchecked")
     @Override
-    public Data<IndexType> clone() {
-        Data<IndexType> clone = (Data<IndexType>) super.clone();
+    public Data<IndexType, CoordType, VectorType> clone() {
+        Data<IndexType, CoordType, VectorType> clone = (Data<IndexType, CoordType, VectorType>) super.clone();
         if(history != null) clone.history = (ArrayList<String>) history.clone();
         clone.logNewData = true;
         return clone;
@@ -297,6 +297,18 @@ TableFormatter.Entries {
     
     public abstract void scale(IndexType index, double factor);
     
+    public abstract double valueAtIndex(CoordType index);
+    
+    public abstract Number nearestValueAtIndex(CoordType index);
+    
+    public abstract double linearAtIndex(CoordType index);
+    
+    public abstract double quadraticAtIndex(CoordType index);
+    
+    public abstract double splineAtIndex(CoordType index);
+    
+    public abstract Data<IndexType, CoordType, VectorType> getCropped(IndexType from, IndexType to);
+    
 
     protected final int getInterpolationOps() { return getInterpolationOps(getInterpolationType()); }
     
@@ -371,7 +383,7 @@ TableFormatter.Entries {
         });
     }
    
-    public final void paste(final Data<IndexType> source, boolean report) {
+    public final void paste(final Data<IndexType, CoordType, VectorType> source, boolean report) {
         if(source == this) return;
 
         source.smartFork(new ParallelPointOp.Simple<IndexType>() {
@@ -388,8 +400,7 @@ TableFormatter.Entries {
     
     
     public abstract void despike(double level);
-    
-    
+      
     public abstract String getInfo();
     
       
@@ -718,6 +729,34 @@ TableFormatter.Entries {
     }
     
     
+    public final void add(final Data<IndexType, CoordType, VectorType> data) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) {
+                if(data.isValid(index)) add(index, data.get(index));
+            }      
+        });
+        
+        addHistory("added " + getClass().getSimpleName());
+    }
+
+
+    public final void addScaled(final Data<IndexType, CoordType, VectorType> data, final double scaling) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) {
+                if(data.isValid(index)) add(index, scaling * data.get(index).doubleValue());
+            }      
+        });
+       
+        addHistory("added scaled " + getClass().getSimpleName() + " (" + scaling + "x).");
+    }
+
+    public final void subtract(final Data<IndexType, CoordType, VectorType> data) {
+        addScaled(data, -1.0);
+    }
+
+    
 
        
     public Fits createFits(Class<? extends Number> dataType) throws FitsException {
@@ -785,20 +824,7 @@ TableFormatter.Entries {
         else if(name.equals("rms")) return getRMS(true);
         else return TableFormatter.NO_SUCH_DATA;
     }
-
-      
-
- 
-    
-    public final static int NEAREST = 0;
-    public final static int LINEAR = 1;
-    public final static int QUADRATIC = 2;
-    public final static int SPLINE = 3;
-    
-    
-    
-    
-   
+  
     
     public abstract class AbstractLoop<ReturnType> {
 
@@ -809,6 +835,12 @@ TableFormatter.Entries {
 
 
     
+    public final static int NEAREST = 0;
+    public final static int LINEAR = 1;
+    public final static int QUADRATIC = 2;
+    public final static int SPLINE = 3;
+    
+   
 
 
 }

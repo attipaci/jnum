@@ -23,11 +23,11 @@
 
 package jnum.data.image.transform;
 
+import jnum.data.Transforming;
 import jnum.data.image.Grid2D;
-import jnum.data.image.Transforming2D;
 import jnum.math.Vector2D;
 
-public class CartesianGridTransform2D implements Transforming2D {
+public class CartesianGridTransform2D implements Transforming<Vector2D> {
     private Grid2D<?> fromGrid;
     private Grid2D<?> toGrid;
     

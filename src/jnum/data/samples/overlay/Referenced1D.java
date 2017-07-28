@@ -23,6 +23,7 @@
 
 package jnum.data.samples.overlay;
 
+import jnum.data.IndexReferenced;
 import jnum.data.samples.Value1D;
 import jnum.fits.FitsToolkit;
 import jnum.util.HashCode;
@@ -31,7 +32,7 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-public class Referenced1D extends Overlay1D {
+public class Referenced1D extends Overlay1D implements IndexReferenced<Double> {
     private double referenceIndex;
 
     public Referenced1D() {}
@@ -60,9 +61,11 @@ public class Referenced1D extends Overlay1D {
         return super.equals(o);
     }
 
-    public double getReferenceIndex() { return referenceIndex; }
+    @Override
+    public Double getReferenceIndex() { return referenceIndex; }
     
-    public void setReferenceIndex(double index) { this.referenceIndex = index; }
+    @Override
+    public void setReferenceIndex(Double index) { this.referenceIndex = index; }
 
     @Override
     public void editHeader(Header header) throws HeaderCardException {

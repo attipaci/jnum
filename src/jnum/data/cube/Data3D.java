@@ -30,6 +30,7 @@ import jnum.data.CubicSpline;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
 import jnum.data.WeightedPoint;
+import jnum.math.Coordinate3D;
 import jnum.math.Vector3D;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
@@ -37,7 +38,7 @@ import jnum.parallel.PointOp;
 
 
 
-public abstract class Data3D extends Data<Index3D> implements Value3D {
+public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> implements Value3D {
 
     private InterpolatorData reuseIpolData;
 
@@ -96,10 +97,7 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
     
    
     @Override
-    public int capacity() { 
-        if(sizeX() <= 0) return 0;
-        if(sizeY() <= 0) return 0;
-        if(sizeZ() <= 0) return 0;   
+    public int capacity() {  
         return sizeX() * sizeY() * sizeZ(); 
     }
     
@@ -201,33 +199,41 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
 
         switch(getInterpolationType()) {
         case NEAREST : return get(i, j, k).doubleValue();
-        case LINEAR : return trilinearAt(ic, jc, kc);
-        case QUADRATIC : return piecewiseQuadraticAt(ic, jc, kc);
-        case SPLINE : return ipolData == null ? splineAt(ic, jc, kc) : splineAt(ic, jc, kc, ipolData);
+        case LINEAR : return linearAtIndex(ic, jc, kc);
+        case QUADRATIC : return quadraticAt(ic, jc, kc);
+        case SPLINE : return ipolData == null ? splineAtIndex(ic, jc, kc) : splineAtIndex(ic, jc, kc, ipolData);
         }
 
         return Double.NaN;
         
     }
     
-    public final double valueAtIndex(Index3D index) {
-        return valueAtIndex(index.i(), index.j(), index.k(), null);
+    @Override
+    public final double valueAtIndex(Coordinate3D index) {
+        return valueAtIndex(index.x(), index.y(), index.z(), null);
     }
     
-    public final double valueAtIndex(Index3D index, InterpolatorData ipolData) {
-        return valueAtIndex(index.i(), index.j(), index.k(), ipolData);
+    public final double valueAtIndex(Coordinate3D index, InterpolatorData ipolData) {
+        return valueAtIndex(index.x(), index.y(), index.z(), ipolData);
     }
     
     
-    public Number nearestValueAtIndex(Vector3D index) {
+    @Override
+    public final Number nearestValueAtIndex(Coordinate3D index) {
         return nearestValueTo(index.x(), index.y(), index.z());
     }
     
     public Number nearestValueTo(double ic, double jc, double kc) {
         return get((int) Math.round(ic), (int) Math.round(jc), (int) Math.round(kc));
     }
+    
+    @Override
+    public final double linearAtIndex(Coordinate3D index) {
+        return linearAtIndex(index.x(), index.y(), index.z());
+    }
+    
    
-    public double trilinearAt(double ic, double jc, double kc) {
+    public double linearAtIndex(double ic, double jc, double kc) {
         int i0 = (int)Math.floor(ic);
         int j0 = (int)Math.floor(jc);
         int k0 = (int)Math.floor(kc);
@@ -254,25 +260,27 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
         // ~90 ops
     }
     
-    public final double trilinearAt(Index3D index) {
-        return trilinearAt(index.i(), index.j(), index.k());
+    
+    @Override
+    public final double quadraticAtIndex(Coordinate3D index) {
+        return quadraticAt(index.x(), index.y(), index.z());
     }
     
-    public double piecewiseQuadraticAt(double ic, double jc, double kc) {
+    public double quadraticAt(double ic, double jc, double kc) {
         // TODO
         throw new UnsupportedOperationException("Not implemented.");
     }
     
-    public final double piecewiseQuadraticAt(Index3D index) {
-        return piecewiseQuadraticAt(index.i(), index.j(), index.k());
+    @Override
+    public final double splineAtIndex(Coordinate3D index) {
+        return splineAtIndex(index.x(), index.y(), index.z());
     }
     
-    
-    public double splineAt(double ic, double jc, double kc) {
-        synchronized(reuseIpolData) { return splineAt(ic, jc, kc, reuseIpolData); }
+    public double splineAtIndex(double ic, double jc, double kc) {
+        synchronized(reuseIpolData) { return splineAtIndex(ic, jc, kc, reuseIpolData); }
     }
     
-    public double splineAt(double ic, double jc, double kc, InterpolatorData ipolData) {
+    public double splineAtIndex(double ic, double jc, double kc, InterpolatorData ipolData) {
         ipolData.centerOn(ic, jc, kc);
 
         final int fromi = Math.max(0, ipolData.splineX.minIndex());
@@ -304,7 +312,7 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
     }
     
     public final double splineAt(Index3D index, InterpolatorData ipolData) {
-        return splineAt(index.i(), index.j(), index.k(), ipolData);
+        return splineAtIndex(index.i(), index.j(), index.k(), ipolData);
     }
     
     
@@ -376,6 +384,11 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
         return max > min ? new int[] { min, max } : null;
     }
     
+    @Override
+    public final Cube3D getCropped(Index3D from, Index3D to) {
+        return getCropped(from.i(), from.j(), from.k(), to.i(), to.j(), to.k());
+    }
+    
     protected Cube3D getCropped(int imin, int jmin, int kmin, int imax, int jmax, int kmax) {
         Cube3D cropped = getEmptyCube();
 
@@ -412,30 +425,29 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
 
     
     @Override
-    public Object getFitsData(Class<? extends Number> dataType) {
-        // TODO...
-        if(!Double.class.equals(getElementType())) throw new UnsupportedOperationException("not implemented.");
+    public Object getFitsData(Class<? extends Number> dataType) {  
+        final Cube3D transpose = Cube3D.createType(dataType, sizeY(), sizeX(), sizeZ());
         
-        final double[][][] transpose = new double[sizeZ()][sizeY()][sizeX()];
-        final double scale = 1.0 / getUnit().value();
-                      
         new Fork<Void>() {
             @Override
             protected void process(int i, int j, int k) {
-                transpose[k][j][i] = isValid(i, j, k) ? scale * get(i, j, k).doubleValue() : getBlankingValue().doubleValue();
+                transpose.set(k, j, i, isValid(i, j, k) ? get(i, j, k) : getBlankingValue());
             }     
         }.process();
- 
-        return transpose;
+
+        if(getUnit().value() != 1.0) transpose.scale(1.0 / getUnit().value());
+
+        return transpose.getData();
     }
-   
+
+  
     
     
     @Override
     public Object getTableEntry(String name) {
         if(name.equals("sizeX")) return sizeX();
         else if(name.equals("sizeY")) return sizeY();
-        else if(name.equals("sizeY")) return sizeZ();
+        else if(name.equals("sizeZ")) return sizeZ();
         else return super.getTableEntry(name);
     }
 

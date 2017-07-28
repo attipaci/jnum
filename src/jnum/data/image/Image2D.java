@@ -221,20 +221,20 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     }
 
     public void setRowColData(Object data) {
-        Image2D cube = null;
+        Image2D image = null;
         
         if(data instanceof Value2D) {
             setRowColData((Value2D) data);
             return;
         }
-        else if(data instanceof double[][][]) cube = Image2D.createType(Double.class);
-        else if(data instanceof float[][][]) cube = Image2D.createType(Float.class);
-        else if(data instanceof long[][][]) cube = Image2D.createType(Long.class);
-        else if(data instanceof int[][][]) cube = Image2D.createType(Integer.class);
-        else if(data instanceof short[][][]) cube = Image2D.createType(Short.class);
-        else if(data instanceof byte[][][]) cube = Image2D.createType(Byte.class);
+        else if(data instanceof double[][][]) image = Image2D.createType(Double.class);
+        else if(data instanceof float[][][]) image = Image2D.createType(Float.class);
+        else if(data instanceof long[][][]) image = Image2D.createType(Long.class);
+        else if(data instanceof int[][][]) image = Image2D.createType(Integer.class);
+        else if(data instanceof short[][][]) image = Image2D.createType(Short.class);
+        else if(data instanceof byte[][][]) image = Image2D.createType(Byte.class);
         
-        if(cube != null) cube.setData(data);
+        if(image != null) image.setData(data);
     }
     
     public void setRowColData(Value2D image) {

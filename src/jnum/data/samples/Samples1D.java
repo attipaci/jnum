@@ -37,6 +37,13 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.fits.ImageHDU;
 import nom.tam.util.Cursor;
 
+/**
+* A generic light-weight 1D data class implementation with FITS I/O support.
+* 
+* 
+* @author pumukli
+*
+*/
 public abstract class Samples1D extends Data1D implements Serializable, Resizable1D, CopiableContent<Samples1D> {
     /**
      * 

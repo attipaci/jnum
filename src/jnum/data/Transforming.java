@@ -21,21 +21,10 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.samples;
+package jnum.data;
 
-import jnum.data.Validating;
-import jnum.data.Values;
+public interface Transforming<CoordinateType> {
 
-public interface Value1D extends Values, Validating<Integer> {
-  
-    public Integer size();
+    public void transform(CoordinateType coords);
     
-    public Number get(Integer i);
-    
-    public void add(Integer i, Number value);
-    
-    public void set(Integer i, Number value);
-    
-    public double valueAtIndex(Double i);
-       
 }

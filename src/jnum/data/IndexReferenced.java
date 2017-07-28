@@ -23,15 +23,10 @@
 
 package jnum.data;
 
-public interface Value {
-    
-    public Class<? extends Number> getElementType();
+public interface IndexReferenced<IndexType> {
 
-    public Number getLowestCompareValue(); 
+    public void setReferenceIndex(IndexType index);
     
-    public Number getHighestCompareValue();
-    
-    public int compare(Number a, Number b);
-    
+    public IndexType getReferenceIndex();
     
 }

@@ -34,6 +34,7 @@ import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.DataPoint;
+import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
 import jnum.data.image.overlay.RangeRestricted2D;
@@ -551,7 +552,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
     
 
-    public Transforming2D getIndexTransformTo(Map2D map) {
+    public Transforming<Vector2D> getIndexTransformTo(Map2D map) {
         // See if we can use a faster/simpler Cartesian transform for re-mapping...
         if(map.getProjection().equals(getProjection())) {
             // If both a Cartesian projections, then yes...

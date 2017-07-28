@@ -36,7 +36,7 @@ import jnum.parallel.PointOp;
 import jnum.text.TableFormatter;
 import jnum.util.HashCode;
 
-public abstract class Data1D extends Data<Integer> implements Value1D, TableFormatter.Entries {
+public abstract class Data1D extends Data<Integer, Double, Double> implements Value1D, TableFormatter.Entries {
 
     private CubicSpline reuseSpline;
     
@@ -92,7 +92,7 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
     
     
     @Override
-    public int capacity() { return size() < 0 ? 0 : size(); }
+    public final int capacity() { return size(); }
     
     @Override
     public String getSizeString() { return size() + ""; }
@@ -153,9 +153,9 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
     }
     
     @Override
-    public double valueAtIndex(double ic) { return valueAtIndex(ic, null); }
+    public double valueAtIndex(Double ic) { return valueAtIndex(ic, null); }
     
-    public double valueAtIndex(double ic, CubicSpline spline) {
+    public double valueAtIndex(Double ic, CubicSpline spline) {
         // The nearest data point (i,j)
         final int i = (int) Math.round(ic);
         if(i < 0) return Double.NaN;
@@ -168,17 +168,25 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
 
         switch(getInterpolationType()) {
         case NEAREST : return get(i).doubleValue();
-        case LINEAR : return linearAt(ic);
-        case QUADRATIC : return quadraticAt(ic);
-        case SPLINE : return spline == null ? splineAt(ic) : splineAt(ic, spline);
+        case LINEAR : return linearAtIndex(ic);
+        case QUADRATIC : return quadraticAtIndex(ic);
+        case SPLINE : return spline == null ? splineAtIndex(ic) : splineAtIndex(ic, spline);
         }
 
         return Double.NaN;
         
     }
     
+    @Override
+    public Number nearestValueAtIndex(Double ic) {
+        int i = (int) Math.round(ic);
+        if(!containsIndex(i)) return Double.NaN;
+        return get(i);
+    }
+    
     // Bilinear interpolation
-    public double linearAt(double ic) {        
+    @Override
+    public double linearAtIndex(Double ic) {        
         final int i = (int)Math.floor(ic);
         final double di = ic - i;
 
@@ -200,7 +208,9 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
         // ~ 25 ops...
     }
     
-    public double quadraticAt(double ic) {
+
+    @Override
+    public double quadraticAtIndex(Double ic) {
         // Find the nearest data point (i)
         final int i = (int)Math.round(ic);
      
@@ -222,13 +232,14 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
     }
 
     
-    public double splineAt(final double ic) {
-        synchronized(reuseSpline) { return splineAt(ic, reuseSpline); }
+    @Override
+    public final double splineAtIndex(final Double ic) {
+        synchronized(reuseSpline) { return splineAtIndex(ic, reuseSpline); }
     }
 
 
     // Performs a bicubic spline interpolation...
-    public double splineAt(final double ic, CubicSpline spline) {   
+    public double splineAtIndex(final Double ic, CubicSpline spline) {   
         spline.centerOn(ic);
 
      
@@ -273,7 +284,8 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
     }
 
     
-    protected Samples1D getCropped(int imin, int imax) {
+    @Override
+    public Samples1D getCropped(Integer imin, Integer imax) {
         Samples1D cropped = getEmptySamples();
 
         final int fromi = Math.max(0, imin);

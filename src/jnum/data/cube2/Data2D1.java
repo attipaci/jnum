@@ -171,7 +171,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
    
     
     @Override
-    public double splineAt(double ic, double jc, double kc, InterpolatorData ipolData) {
+    public double splineAtIndex(double ic, double jc, double kc, InterpolatorData ipolData) {
         ipolData.centerOn(ic, jc, kc);
 
      
