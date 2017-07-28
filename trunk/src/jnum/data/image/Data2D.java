@@ -29,17 +29,14 @@ import jnum.Constant;
 import jnum.ExtraMath;
 import jnum.Util;
 import jnum.data.DataPoint;
+import jnum.data.Validating;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
 import jnum.data.CubicSpline;
 import jnum.data.WeightedPoint;
-import jnum.data.image.overlay.InvertedValidator2D;
-import jnum.data.image.overlay.Overlay2D;
-import jnum.data.image.overlay.RangeRestricted2D;
 import jnum.data.image.overlay.Referenced2D;
 import jnum.data.image.overlay.Viewport2D;
 import jnum.data.image.transform.Stretch2D;
-import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Range;
 import jnum.math.Vector2D;
@@ -47,12 +44,6 @@ import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
 import jnum.parallel.PointOp;
 import jnum.util.HashCode;
-import nom.tam.fits.Fits;
-import nom.tam.fits.FitsException;
-import nom.tam.fits.FitsFactory;
-import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCardException;
-import nom.tam.fits.ImageHDU;
 
 
 /**
@@ -79,25 +70,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         return hash;
     }
 
-
-    @Override
-    public boolean contentEquals(Data<Index2D> data) {
-        if(!(data instanceof Data2D)) return false;    
-        
-        Data2D image = (Data2D) data;
-
-        if(sizeX() != image.sizeX()) return false;
-        if(sizeY() != image.sizeY()) return false;
-
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) {
-            if(!get(i,j).equals(image.get(i,j))) return false;
-            if(isValid(i, j) != image.isValid(i, j)) return false;
-        }
-
-        return true;
-    }
-
-
+      
     @Override
     public Data2D clone() {
         Data2D clone = (Data2D) super.clone();
@@ -105,6 +78,10 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         return clone;
     }
 
+    @Override
+    public final Index2D copyOfIndex(Index2D index) { return new Index2D(index.i(), index.j()); }
+
+    
     public Image2D getEmptyImage() {
         return Image2D.createType(getElementType(), sizeX(), sizeY());
     }
@@ -136,18 +113,12 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
     }
 
 
-    public Fits createFits(Class<? extends Number> dataType) throws FitsException {
-        FitsFactory.setLongStringsEnabled(true);
-        FitsFactory.setUseHierarch(true);
-        Fits fits = new Fits(); 
-        fits.addHDU(createHDU(dataType));
-        return fits;
-    }
+  
 
-
-    public ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException {  
+    @Override
+    public Object getFitsData(Class<? extends Number> dataType) {  
         final Image2D transpose = Image2D.createType(dataType, sizeY(), sizeX());
-
+        
         new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
@@ -155,12 +126,9 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
             }     
         }.process();
 
-        transpose.scale(1.0 / getUnit().value());
+        if(getUnit().value() != 1.0) transpose.scale(1.0 / getUnit().value());
 
-        ImageHDU hdu = (ImageHDU) Fits.makeHDU(transpose.getData());
-        editHeader(hdu.getHeader());
-
-        return hdu;
+        return transpose.getData();
     }
 
   
@@ -186,24 +154,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         set(i, j, getBlankingValue());
     }
 
-    @Override
-    public void setBlankingValue(final Number value) {
-        final Number blankingValue = getBlankingValue();
-
-        // Replace old blanking values in image with the new value, as needed...
-        if(blankingValue != null) if(!blankingValue.equals(value)) {
-            new Fork<Void>() {
-                @Override
-                protected void process(int i, int j) {
-                    if(blankingValue.equals(get(i, j))) set(i, j, value);
-                }
-
-            }.process();
-        }
-
-        super.setBlankingValue(value);
-    }
-
+  
 
 
     @Override
@@ -214,6 +165,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         return get(i, j);
     }
 
+    @Override
     public final Number getValid(final Index2D index, final Number defaultValue) { return getValid(index.i(), index.j(), defaultValue); }
 
 
@@ -235,19 +187,22 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
     @Override
     public final void discard(Index2D index) { discard(index.i(), index.j()); }
 
-
+    @Override
+    public Index2D size() {
+        return new Index2D(sizeX(), sizeY());
+    }
+    
     @Override
     public int capacity() {
-        if(sizeX() <= 0) return 0;
-        if(sizeY() <= 0) return 0;
         return sizeX() * sizeY();
     }
 
-    public boolean conformsTo(Value2D image) {
-        if(image == null) return false;
-        return conformsTo(image.sizeX(), image.sizeY());
+  
+    @Override
+    public boolean conformsTo(Index2D size) {
+        return conformsTo(size.i(), size.j());
     }
-
+  
     public boolean conformsTo(int sizeX, int sizeY) {
         if(sizeX() != sizeX) return false;
         if(sizeY() != sizeY) return false;
@@ -276,6 +231,11 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         return max > min ? new int[] { min, max } : null;
     }
 
+    
+    @Override
+    public final boolean containsIndex(Index2D index) {
+        return containsIndex(index.i(), index.j());        
+    }
 
     public boolean containsIndex(final int i, final int j) {
         if(i < 0) return false;
@@ -294,25 +254,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
     }
 
 
-    public final void paste(final Value2D source, boolean report) {
-        paste(new Overlay2D(source), report);
-    }
-
-    public void paste(final Data2D source, boolean report) {
-        if(source == this) return;
-
-        source.new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                if(source.isValid(i, j)) set(i, j, source.get(i, j));
-                else discard(i, j);
-            }
-        }.process();
-
-        if(report) addHistory("pasted new content: " + source.getSizeString());
-    }
-
-
+    
     protected Image2D getCropped(int imin, int jmin, int imax, int jmax) {
         Image2D cropped = getEmptyImage();
 
@@ -330,62 +272,11 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
     }   
 
 
-
-    public synchronized void validate() {   
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                if(!isValid(get(i, j))) discard(i, j);
-            }     
-        }.process();
-        addHistory("validate");
-    }
-
-
-    public synchronized void fill(final Number value) {
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) { set(i, j, value); }
-        }.process();
-        clearHistory();
-        addHistory("fill " + getSizeString() + " with " + value);
-    }
-
-    public final synchronized void clear() {
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) { clear(i, j); }
-        }.process();   
-        clearHistory();
-        addHistory("clear " + getSizeString());
-    }
-
+   
     @Override
     public final void clear(Index2D index) { clear(index.i(), index.j()); }
     
     public void clear(int i, int j) { set(i, j, 0); }
-
-
-    public void add(final Number value) {
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) { add(i, j, value); }
-        }.process();
-        clearHistory();
-        addHistory("add " + value);
-    }
-
-    
-    public void scale(final double factor) {
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) { scale(i, j, factor); }
-        }.process();
-        clearHistory();
-        addHistory("scale by " + factor);
-    }
-
- 
 
 
     public DataPoint getAsymmetry(final Grid2D<?> grid, final Vector2D centerIndex, final double angle, final Range radialRange) {    
@@ -466,12 +357,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
 
 
-
-
-
-
-
-
+    @Override
     public void despike(double threshold) {
         despike(threshold, null);
     }
@@ -512,140 +398,6 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
 
 
-
-    @Override
-    public Index2D indexOfMin() {      
-        Fork<Index2D> search = new Fork<Index2D>() {
-            private Index2D index;
-            private Number low = getHighestCompareValue();
-            @Override
-            protected void init() {
-                super.init();
-                index = new Index2D();
-            }
-            @Override
-            protected void process(int i, int j) {
-                if(!isValid(i, j)) return;
-                if(compare(get(i, j), low) > 0) return;
-                low = get(i, j);
-                index.set(i, j);
-            }
-            @Override 
-            public Index2D getLocalResult() { return index; }
-            @Override
-            public Index2D getResult() {
-                Number globalLow = getHighestCompareValue();
-                Index2D globalIndex = null;
-                for(ParallelTask<Index2D> task : getWorkers()) {
-                    Index2D partial = task.getLocalResult();
-                    if(partial == null) continue;
-                    
-                    Number localMin = get(partial.i(), partial.j());
-                    
-                    if(compare(localMin, globalLow) < 0) {
-                        globalIndex = partial;
-                        globalLow = localMin.doubleValue();
-                    }
-                }
-                return globalIndex;
-            }
-        };
-
-        search.process();
-        return search.getResult();
-    }
-
-
-    @Override
-    public Index2D indexOfMax() {        
-        Fork<Index2D> search = new Fork<Index2D>() {
-            private Index2D index;
-            private Number peak = getLowestCompareValue();
-            @Override
-            protected void init() {
-                super.init();
-                index = new Index2D();
-            }
-            @Override
-            protected void process(int i, int j) {
-                if(!isValid(i, j)) return;
-                if(compare(get(i, j), peak) < 0) return;
-                peak = get(i, j);
-                index.set(i, j);
-            }
-            @Override 
-            public Index2D getLocalResult() { return index; }
-            @Override
-            public Index2D getResult() {
-                Number globalPeak = getLowestCompareValue();
-                Index2D globalIndex = null;
-                for(ParallelTask<Index2D> task : getWorkers()) {
-                    Index2D partial = task.getLocalResult();
-                    if(partial == null) continue; 
-                    
-                    Number localMax = get(partial.i(), partial.j());
-                    if(compare(localMax, globalPeak) > 0) {
-                        globalIndex = partial;
-                        globalPeak = localMax.doubleValue();
-                    }
-                }
-                return globalIndex;
-            }
-        };
-
-        search.process();
-        return search.getResult();
-    }
-
-
-
-    @Override
-    public Index2D indexOfMaxDev() {            
-        Fork<Index2D> search = new Fork<Index2D>() {
-            private Index2D index;
-            private double dev = 0.0;
-
-            @Override
-            protected void init() {
-                super.init();
-                index = new Index2D(-1,-1);
-            }
-            @Override
-            protected void process(int i, int j) {
-                if(!isValid(i, j)) return;
-                final double value = Math.abs(get(i, j).doubleValue());
-
-                if(value > dev) {
-                    dev = value;
-                    index.set(i, j);
-                }
-            }
-            @Override 
-            public Index2D getLocalResult() { return index; }
-            @Override
-            public Index2D getResult() {
-                double globalDev = 0.0;
-                Index2D globalIndex = null;
-                for(ParallelTask<Index2D> task : getWorkers()) {
-                    Index2D partial = task.getLocalResult();
-                    if(partial == null) continue;
-
-                    final double value = Math.abs(get(partial.i(), partial.j()).doubleValue());
-                    if(value > globalDev) {
-                        globalIndex = partial;
-                        globalDev = value;
-                    }
-                }
-
-                return globalIndex;
-            }
-        };
-
-        search.process();
-        return search.getResult();
-    }
-
-
     public Vector2D getRefinedPeakIndex(Index2D peakIndex) {
         final int i = peakIndex.i();
         final int j = peakIndex.j();
@@ -673,6 +425,8 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         return new Vector2D(i + di, j + dj);
     }
 
+    
+    
     public Vector2D getCentroidIndex() {
         final Vector2D centroid = new Vector2D();
 
@@ -699,24 +453,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         return centroid;
     }
 
-    public void discardRange(final Range discard) {
-        validate(new InvertedValidator2D(new RangeRestricted2D(this, discard)));
-        addHistory("discard range " + discard);
-    }
 
-    public void restrictRange(final Range keep) {
-        validate(new RangeRestricted2D(this, keep));
-        addHistory("restrict range to " + keep);
-    }
-
-    public void validate(final Validating2D validator) {
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                if(!validator.isValid(i, j)) validator.discard(i, j);
-            }      
-        }.process();
-    }
 
     public double valueAtIndex(Vector2D index) {
         return valueAtIndex(index.x(), index.y(), null);
@@ -876,8 +613,8 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         // ~200 ops...
     }
 
-    protected final int getInterpolationOps() { return getInterpolationOps(getInterpolationType()); }
-
+ 
+    @Override
     protected int getInterpolationOps(int type) {
         switch(type) {
         case NEAREST : return 10;
@@ -960,8 +697,6 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
         return convolved;
     }
-
-
 
 
 
@@ -1200,11 +935,14 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
 
 
-    public Validating2D getNeighborValidator(final int minNeighbors) {
-        return new Validating2D() {
+    public Validating<Index2D> getNeighborValidator(final int minNeighbors) {
+        return new Validating<Index2D>() {
 
             @Override
-            public boolean isValid(int i, int j) {
+            public boolean isValid(Index2D index) {
+                int i = index.i();
+                int j = index.j();
+                
                 if(!Data2D.this.isValid(i, j)) return false;
 
                 int neighbours = -1;    // will iterate over the actual point too, hence the -1...
@@ -1221,8 +959,8 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
             }
 
             @Override
-            public void discard(int i, int j) {
-                Data2D.this.discard(i, j);
+            public void discard(Index2D index) {
+                Data2D.this.discard(index);
             }
 
         };
@@ -1241,19 +979,10 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
 
 
-    protected void parseHistory(Header header) {
-        setHistory(FitsToolkit.parseHistory(header));  
-    }
 
-    protected void addHistory(Header header) throws HeaderCardException {  
-        if(getHistory() != null) FitsToolkit.addHistory(header, getHistory());
-    }
-
-
-
+    @Override
     public String getInfo() {
-        String info = "Map Size: " + sizeX() + " x " + sizeY() + " pixels.";
-        return info;
+        return "Image Size: " + getSizeString() + " pixels.";
     }
     
     
@@ -1308,9 +1037,24 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
     @Override
     public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op) {
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) op.process(get(i, j));
+        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) {
+            op.process(get(i, j));
+            if(op.exception != null) return null;
+        }
         return op.getResult();
     }
+    
+    @Override
+    public <ReturnType> ReturnType loop(final PointOp<Index2D, ReturnType> op) {
+        final Index2D index = new Index2D();
+        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) {
+            index.set(i, j);
+            op.process(index);
+            if(op.exception != null) return null;
+        }
+        return op.getResult();
+    }
+    
     
     @Override
     public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
@@ -1350,7 +1094,47 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
     }
     
 
+    @Override
+    public <ReturnType> ReturnType fork(final ParallelPointOp<Index2D, ReturnType> op) {
+      
+        Fork<ReturnType> fork = new Fork<ReturnType>() {
+            private ParallelPointOp<Index2D, ReturnType> localOp;
+            private Index2D index;
+            
+            @Override
+            public void init() {
+                super.init();
+                index = new Index2D();
+                localOp = op.newInstance();
+            }
+            
+            @Override
+            protected void process(int i, int j) {
+                index.set(i, j); 
+                localOp.process(index);
+            }
+            
+            @Override
+            public ReturnType getLocalResult() { return localOp.getResult(); }
+            
 
+            @Override
+            public ReturnType getResult() { 
+                ParallelPointOp<Index2D, ReturnType> globalOp = op.newInstance();
+                
+                for(ParallelTask<ReturnType> worker : getWorkers()) {
+                    globalOp.mergeResult(worker.getLocalResult());
+                }
+                return globalOp.getResult();
+            }
+            
+        };
+        
+        fork.process();
+        return fork.getResult();
+    }
+
+    
 
 
 

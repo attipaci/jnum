@@ -23,13 +23,12 @@
 
 package jnum.data.samples;
 
+import jnum.data.Validating;
 import jnum.data.Value;
 
-public interface Value1D extends Value, Validating1D {
-
-    public Class<? extends Number> getElementType();
-    
-    public int size();
+public interface Value1D extends Value, Validating<Integer> {
+  
+    public Integer size();
     
     public Number get(Integer i);
     

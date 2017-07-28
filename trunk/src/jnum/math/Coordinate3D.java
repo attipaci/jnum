@@ -24,12 +24,21 @@
 package jnum.math;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 
 import jnum.Copiable;
 import jnum.CopyCat;
+import jnum.Util;
 import jnum.ViewableAsDoubles;
+import jnum.fits.FitsToolkit;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
+import jnum.text.StringParser;
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
+import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
 
 public class Coordinate3D implements Serializable, Cloneable, Copiable<Coordinate3D>, CopyCat<Coordinate3D>, 
@@ -92,19 +101,168 @@ ViewableAsDoubles, Parser, NumberFormating {
 	public final void setZ(final double value) { this.z = value; }
 	
 	  
-    @Override
-    public double[] viewAsDoubles() {
-        return new double[] { x, y, z };
-    }
-    
-    @Override
-    public void createFromDoubles(Object array) {
-        createFromDoubles((double[]) array);
-    }
-    
-    public void createFromDoubles(double[] values) {
-        set(values[0], values[1], values[2]);
-    }
- 
 	
+    @Override
+    public String toString(NumberFormat nf) {
+        return "(" + nf.format(x) + "," + nf.format(y) + nf.format(z) + ")";
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() { 
+        return "(" + x + "," + y + z + ")";
+    }
+    
+    
+    public final void parse(String spec) {
+        parse(spec, new ParsePosition(0));
+    }
+
+   
+    @Override
+    public final void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException {
+        parse(new StringParser(text, pos));
+    }
+    
+    /**
+     * Parses text x,y,z 3D coordinate representations that are in the format(s) of:
+     * <p>
+     * <pre>
+     * {@code
+     *     x,y,z / x y z
+     * }
+     * </pre>
+     * <p>
+     * or
+     * <p>
+     * <pre>
+     * {@code
+     *     (x,y,z) / (x y z)
+     * }
+     * </pre>
+     * <p>
+     * More specifically, the x, y, and z values may be separated either by comma(s) or white space(s) (including 
+     * tabs line breaks, carriage returns), or a combination of both. The pair of values may be bracketed (or 
+     * not). Any number of white spaces may exists between the elements (brackets and pair of values), or 
+     * precede the text element. Thus, the following will parse as a proper x,y,z (1.0,-2.0,3.0) pair:
+     * <p>
+     * <pre>
+     * {@code
+     *     (  \t\n 1.0 ,,, \r , \t -2.0 \t 3.0   \n  )
+     * }
+     * </pre>
+     * 
+     * @param parser  The string parsing helper object.
+     * @throws NumberFormatException
+     * @throws IllegalArgumentException
+     */
+    public void parse(StringParser parser) throws NumberFormatException, IllegalArgumentException {
+        boolean isBracketed = false;
+        
+        parser.skipWhiteSpaces();
+           
+        if(parser.peek() == '(') {
+            isBracketed = true;
+            parser.skip(1);
+            parser.skipWhiteSpaces();
+        }
+            
+        parseX(parser.nextToken(Util.getWhiteSpaceChars() + ","));
+        parseY(parser.nextToken(Util.getWhiteSpaceChars() + ","));
+        parseZ(parser.nextToken(Util.getWhiteSpaceChars() + "," + (isBracketed ? "" : ")")));
+    }
+
+    protected void parseX(String token) throws NumberFormatException {
+        setX(Double.parseDouble(token));
+    }
+    
+    protected void parseY(String token) throws NumberFormatException {
+        setY(Double.parseDouble(token));
+    }
+    
+    protected void parseZ(String token) throws NumberFormatException {
+        setY(Double.parseDouble(token));
+    }
+
+    @Override
+    public final void createFromDoubles(Object array) throws IllegalArgumentException {
+        if(!(array instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
+        double[] components = (double[]) array;
+        if(components.length != 3) throw new IllegalArgumentException("argument double[] array is to small.");
+        set(components[0], components[1], components[2]);
+    }
+
+  
+    @Override
+    public final void viewAsDoubles(Object view) throws IllegalArgumentException {
+        if(!(view instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
+        double[] components = (double[]) view;
+        if(components.length != 3) throw new IllegalArgumentException("argument double[] array is to small.");
+        components[0] = x;
+        components[1] = y;
+        components[3] = z;
+    }
+    
+  
+    @Override
+    public final Object viewAsDoubles() {
+        return new double[] { x, y, z };       
+    }
+    
+    
+   
+    public double getValue(int field) throws NoSuchFieldException {
+        switch(field) {
+        case X: return x;
+        case Y: return y;
+        case Z: return z;
+        default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
+        }
+    }
+    
+  
+    public void setValue(int field, double value) throws NoSuchFieldException {
+        switch(field) {
+        case X: x = value; break;
+        case Y: y = value; break;
+        case Z: z = value; break; 
+        default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
+        }
+    }
+    
+    
+    /**
+     * Edits the.
+     *
+     * @param cursor the cursor
+     * @param alt the alt
+     * @throws HeaderCardException the header card exception
+     */
+    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        c.add(new HeaderCard(keyStem + "1" + alt, x, "The reference x coordinate in SI units."));
+        c.add(new HeaderCard(keyStem + "2" + alt, y, "The reference y coordinate in SI units."));
+        c.add(new HeaderCard(keyStem + "3" + alt, z, "The reference z coordinate in SI units."));
+    }
+    
+
+    /**
+     * Parses the.
+     *
+     * @param header the header
+     * @param alt the alt
+     */
+    public void parseHeader(Header header, String keyStem, String alt) {
+        x = header.getDoubleValue(keyStem + "1" + alt, 0.0);
+        y = header.getDoubleValue(keyStem + "2" + alt, 0.0);
+        z = header.getDoubleValue(keyStem + "3" + alt, 0.0);
+    }
+    
+
+    public static final int X = 0;    
+    public static final int Y = 1;
+    public static final int Z = 2;    
+
 }

@@ -21,56 +21,61 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.image.overlay;
+package jnum.data.samples.overlay;
 
-import jnum.data.image.Value2D;
-import jnum.math.Coordinate2D;
+import jnum.data.samples.Value1D;
+import jnum.fits.FitsToolkit;
+import jnum.util.HashCode;
 import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.util.Cursor;
 
-public class Referenced2D extends Overlay2D {
-    private Coordinate2D referenceIndex;
+public class Referenced1D extends Overlay1D {
+    private double referenceIndex;
 
-    public Referenced2D() {}
+    public Referenced1D() {}
 
-    public Referenced2D(Value2D values) {
+    public Referenced1D(Value1D values) {
         super(values);
     }
     
-    public Referenced2D(Value2D values, Coordinate2D refIndex) {
+    public Referenced1D(Value1D values, double refIndex) {
         this(values);
         setReferenceIndex(refIndex);
     }
 
     
     @Override
-    public int hashCode() { return super.hashCode() ^ referenceIndex.hashCode(); }
+    public int hashCode() { return super.hashCode() ^ HashCode.from(referenceIndex); }
     
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
-        if(!(o instanceof Referenced2D)) return false;
+        if(!(o instanceof Referenced1D)) return false;
         
-        Referenced2D r = (Referenced2D) o;
-        if(!referenceIndex.equals(r.referenceIndex)) return false;
+        Referenced1D r = (Referenced1D) o;
+        if(referenceIndex != r.referenceIndex) return false;
         
         return super.equals(o);
     }
 
-    public Coordinate2D getReferenceIndex() { return referenceIndex; }
+    public double getReferenceIndex() { return referenceIndex; }
     
-    public void setReferenceIndex(Coordinate2D index) { this.referenceIndex = index; }
+    public void setReferenceIndex(double index) { this.referenceIndex = index; }
 
     @Override
     public void editHeader(Header header) throws HeaderCardException {
         super.editHeader(header);
-        referenceIndex.editHeader(header, "CRPIX", "");
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        c.add(new HeaderCard("CRPIX1", referenceIndex, "The reference x coordinate in SI units."));
+        
     }
     
     @Override
     public void parseHeader(Header header) {
         super.parseHeader(header);
-        referenceIndex.parseHeader(header, "CRPIX", "");
+        referenceIndex = header.getDoubleValue("CRPIX1", 0.0);
     }
     
 }

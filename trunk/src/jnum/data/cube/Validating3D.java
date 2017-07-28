@@ -23,7 +23,9 @@
 
 package jnum.data.cube;
 
-public interface Validating3D {
+import jnum.data.Validating;
+
+public interface Validating3D extends Validating<Index3D> {
 
     public boolean isValid(int i, int j, int k);
     

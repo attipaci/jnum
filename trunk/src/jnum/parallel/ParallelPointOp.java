@@ -35,7 +35,7 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
       
     public ParallelPointOp<PointType, ReturnType> newInstance() {
         ParallelPointOp<PointType, ReturnType> clone = clone();
-        clone.init();
+        clone.reset();
         return clone();
     }
     
@@ -44,13 +44,27 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
     
     
     
+    public abstract static class Simple<PointType> extends ParallelPointOp<PointType, Void> {
+
+        @Override
+        public void mergeResult(Void localResult) {}
+
+        @Override
+        protected void init() {}
+
+       
+        @Override
+        public Void getResult() { return null; }
+        
+    }
+    
     public abstract static class Count<PointType> extends ParallelPointOp<PointType, Long> {
         private long sum = 0L;
        
         public abstract double getCount(PointType point);
            
         @Override
-        public void init() {
+        protected void init() {
             sum = 0L;
         }
         
@@ -70,11 +84,20 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
         }
     }
     
+    public static class ElementCount<PointType> extends Count<PointType> {
+
+        @Override
+        public final double getCount(PointType point) {
+            return 1;
+        }
+        
+    }
+    
     public abstract static class Sum<PointType> extends ParallelPointOp<PointType, Double> {
         private double sum = 0.0;
        
         @Override
-        public void init() {
+        protected void init() {
             sum = 0.0;
         }
         
@@ -100,7 +123,7 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
         private WeightedPoint ave;
        
         @Override
-        public void init() {
+        protected void init() {
             ave = new WeightedPoint();
         }
         

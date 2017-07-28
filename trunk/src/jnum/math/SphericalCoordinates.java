@@ -516,7 +516,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @see jnum.Coordinate2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void editHeader(Header header, String alt) throws HeaderCardException {	
+	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
 		// Always write longitude in the 0:2Pi range.
 		// Some FITS utilities may require it, even if it's not required by the FITS standard...
 		double lon = Math.IEEEremainder(longitude(), Constant.twoPi);
@@ -524,8 +524,8 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		
 		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 
-		c.add(new HeaderCard("CRVAL1" + alt, lon / Unit.deg, "The reference longitude coordinate (deg)."));
-		c.add(new HeaderCard("CRVAL2" + alt, latitude() / Unit.deg, "The reference latitude coordinate (deg)."));
+		c.add(new HeaderCard(keyStem + "1" + alt, lon / Unit.deg, "The reference longitude coordinate (deg)."));
+		c.add(new HeaderCard(keyStem + "2" + alt, latitude() / Unit.deg, "The reference latitude coordinate (deg)."));
 		
 		//cursor.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
 		if(alt.length() == 0) c.add(new HeaderCard("WCSAXES", 2, "Number of celestial coordinate axes."));
@@ -535,9 +535,9 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @see jnum.Coordinate2D#parse(nom.tam.fits.Header, java.lang.String)
 	 */
 	@Override
-	public void parseHeader(Header header, String alt) {
-		setLongitude(header.getDoubleValue("CRVAL1" + alt, 0.0) * Unit.deg);
-		setLatitude(header.getDoubleValue("CRVAL2" + alt, 0.0) * Unit.deg);
+	public void parseHeader(Header header, String keyStem, String alt) {
+		setLongitude(header.getDoubleValue(keyStem + "1" + alt, 0.0) * Unit.deg);
+		setLatitude(header.getDoubleValue(keyStem + "2" + alt, 0.0) * Unit.deg);
 		
 		
 		//String name = header.getStringValue("WCSNAME");

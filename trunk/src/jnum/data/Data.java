@@ -23,8 +23,10 @@
 
 package jnum.data;
 
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -39,13 +41,23 @@ import jnum.parallel.ParallelTask;
 import jnum.parallel.PointOp;
 import jnum.text.TableFormatter;
 import jnum.util.CompoundUnit;
+import nom.tam.fits.Fits;
+import nom.tam.fits.FitsException;
+import nom.tam.fits.FitsFactory;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
+import nom.tam.fits.ImageHDU;
 import nom.tam.util.Cursor;
 
-public abstract class Data<IndexType> extends ParallelObject implements Verbosity, Value,  Iterable<Number>, TableFormatter.Entries {
+public abstract class Data<IndexType> extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, 
+TableFormatter.Entries {
 
+    static {
+        Locale.setDefault(Locale.US);
+    }
+    
+   
     private Number blankingValue;
 
     private boolean isVerbose;
@@ -58,12 +70,9 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
     
     
     private boolean logNewData;
-    
- 
  
     
-    public Data() {
-        
+    public Data() { 
         setVerbose(false);
         setBlankingValue(Double.NaN);
         setInterpolationType(SPLINE);
@@ -94,8 +103,26 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
         return contentEquals(data);
     }
     
-    public abstract boolean contentEquals(Data<IndexType> data);
-    
+
+    public boolean contentEquals(final Data<IndexType> data) {
+        if(!(data instanceof Data)) return false;    
+        
+        if(!getSizeString().equals(data.getSizeString())) return false;
+        
+        PointOp.Simple<IndexType> comparison = new PointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) {
+                if(isValid(index) != data.isValid(index)) exception = new IllegalStateException("Mismatched validity");
+                if(!get(index).equals(data.get(index))) exception = new IllegalStateException("Mismatched content");
+            }
+        };
+        
+        loop(comparison);
+        if(comparison.exception != null) return false;
+
+        return true;
+    }
+  
     
     @SuppressWarnings("unchecked")
     @Override
@@ -144,10 +171,25 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
     }
 
     
-    public void setBlankingValue(final Number value) {
-        blankingValue = (value == null) ? Double.NaN : value;     
+    public final void setBlankingValue(final Number value) {
+         
+   
+        // Replace old blanking values in image with the new value, as needed...
+        if(blankingValue != null) if(!blankingValue.equals(value)) {
+            smartFork(new ParallelPointOp.Simple<IndexType>() {
+
+                @Override
+                public void process(IndexType index) {
+                    if(blankingValue.equals(get(index))) set(index, value);
+                }
+                
+            });
+        }
+        
+        blankingValue = (value == null) ? Double.NaN : value;    
+
     }
-    
+
     
 
     
@@ -213,23 +255,39 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
     @Override
     public abstract DataCrawler<Number> iterator();
  
+    public abstract <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op);
     
     public abstract <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op);
     
+    public abstract <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op);
+    
     public abstract <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op);
     
-    public <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op) {
+      
+    public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op) {
+        if(capacity() * (2 + op.numberOfOperations()) > 2 * ParallelTask.minExecutorBlockSize) return loop(op);
+        else return fork(op);  
+    }
+    
+    public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op) {
         if(capacity() * (2 + op.numberOfOperations()) > 2 * ParallelTask.minExecutorBlockSize) return loopValid(op);
         else return forkValid(op);  
     }
     
+     
+    public abstract IndexType copyOfIndex(IndexType index);
+        
     public abstract int capacity();
+    
+    public abstract boolean conformsTo(IndexType size);
+         
+    public final boolean conformsTo(IndexedValues<IndexType> data) { return conformsTo(data.size()); }
     
     public abstract String getSizeString();
     
-    public abstract Number get(IndexType index);
-    
-    public abstract void set(IndexType index, Number value);
+    public abstract boolean containsIndex(IndexType index);
+       
+    public abstract Number getValid(final IndexType index, final Number defaultValue);
     
     public abstract boolean isValid(IndexType index);
     
@@ -237,24 +295,106 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
     
     public abstract void clear(IndexType index);
     
-    public abstract void add(IndexType index, Number value);
-    
     public abstract void scale(IndexType index, double factor);
     
-    public abstract IndexType indexOfMin();
-    
-    public abstract IndexType indexOfMax();
 
-    public abstract IndexType indexOfMaxDev();
+    protected final int getInterpolationOps() { return getInterpolationOps(getInterpolationType()); }
+    
+    protected abstract int getInterpolationOps(int type);
+    
+    public final void clear() {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) { clear(index); }
+        });
+        clearHistory();
+        addHistory("clear " + getSizeString());
+    }
+    
+    public final void fill(final Number value) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) { set(index, value); }
+        });
+        clearHistory();
+        addHistory("fill " + getSizeString() + " with " + value);
+    }
+    
+    public final void add(final Number value) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) { add(index, value); }
+        });
+        addHistory("add " + value);
+    }
+    
+    public void scale(final double factor) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) { scale(index, factor); }
+        });
+        addHistory("scale by " + factor);
+    }
+    
+    public final void validate() {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) { if(!isValid(index)) discard(index); }
+        });
+        addHistory("validate");
+    }
+    
+
+    public void validate(final Validating<IndexType> validator) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) { if(!validator.isValid(index)) validator.discard(index); }
+        });
+        addHistory("validate via " + validator);
+    }
+    
+    public final void discardRange(final Range discard) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) { 
+                if(discard.contains(get(index).doubleValue())) discard(index);
+            }
+        });
+    }
+    
+    public final void restrictRange(final Range keep) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) { 
+                if(!keep.contains(get(index).doubleValue())) discard(index);
+            }
+        });
+    }
+   
+    public final void paste(final Data<IndexType> source, boolean report) {
+        if(source == this) return;
+
+        source.smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) {
+                if(source.isValid(index)) set(index, source.get(index));
+                else discard(index); 
+            }     
+        });
+
+        if(report) addHistory("pasted new content: " + source.getSizeString());
+    }
+
+    
+    
+    public abstract void despike(double level);
+    
+    
+    public abstract String getInfo();
     
       
     public int countPoints() {
-        return smartForkValid(new ParallelPointOp.Count<Number>() {
-            @Override
-            public final double getCount(Number point) {
-                return 1;
-            }
-        }).intValue();
+        return smartForkValid(new ParallelPointOp.ElementCount<Number>()).intValue();
     }
     
     public Number getMin() {
@@ -262,7 +402,7 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
             Number min;
             
             @Override
-            public void init() {
+            protected void init() {
                 min = getHighestCompareValue();
             }
             
@@ -288,8 +428,8 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
             Number max;
             
             @Override
-            public void init() {
-                max = getHighestCompareValue();
+            protected void init() {
+                max = getLowestCompareValue();
             }
             
             @Override
@@ -303,8 +443,8 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
             }
     
             @Override
-            public void mergeResult(Number localMin) {
-                if(compare(localMin, max) > 0) max = localMin; 
+            public void mergeResult(Number localMax) {
+                if(compare(localMax, max) > 0) max = localMax; 
             }    
         });
     }
@@ -314,7 +454,7 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
             Range range;
             
             @Override
-            public void init() {
+            protected void init() {
                 range = new Range();
             }
             
@@ -334,6 +474,136 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
             }  
         });
     }
+    
+
+
+    /**
+     * Return the index of the highest value.
+     * If there are multiple points with the same maximum value, it is undefined (and possibly random) whose 
+     * index is returned.
+     * 
+     * 
+     * @return the index corresponding to the highest value.
+     */
+    public final IndexType indexOfMin() { 
+        return smartFork(new ParallelPointOp<IndexType, IndexType>() {
+            private IndexType minIndex;
+            private Number min;
+          
+            @Override
+            protected void init() {
+                minIndex = null;
+                min = getHighestCompareValue();
+            }
+
+            @Override
+            public void process(IndexType index) {
+                if(!isValid(index)) return;
+                if(compare(get(index), min) >= 0) return;
+                min = get(index);
+                minIndex = copyOfIndex(index);
+                
+            }
+
+            @Override
+            public IndexType getResult() {
+                return minIndex;
+            }
+            
+            @Override
+            public void mergeResult(IndexType localMinIndex) {
+                if(compare(get(localMinIndex), get(minIndex)) < 0) minIndex = localMinIndex; 
+            }            
+        });
+    }
+      
+    
+    /**
+     * Return the index of the lowest value.
+     * If there are multiple points with the same minimum value, it is undefined (and possibly random) whose 
+     * index is returned.
+     * 
+     * 
+     * @return the index corresponding to the lowest value.
+     */
+    public final IndexType indexOfMax() { 
+        return smartFork(new ParallelPointOp<IndexType, IndexType>() {
+            private IndexType maxIndex;
+            private Number max;
+          
+            @Override
+            protected void init() {
+                maxIndex = null;
+                max = getLowestCompareValue();
+            }
+
+            @Override
+            public void process(IndexType index) {
+                if(!isValid(index)) return;
+                if(compare(get(index), max) <= 0) return;
+                max = get(index);
+                maxIndex = copyOfIndex(index);
+                
+            }
+
+            @Override
+            public IndexType getResult() {
+                return maxIndex;
+            }
+            
+            @Override
+            public void mergeResult(IndexType localMaxIndex) {
+                if(compare(get(localMaxIndex), get(maxIndex)) > 0) maxIndex = localMaxIndex; 
+            }            
+        });
+    }
+    
+    
+    /**
+     * Return the index of the datum with the largest absolute deviation from zero.
+     * Uses cast to double, so may not work perfectly on long types. If there are multiple points with the
+     * same maximum value, it is undefined (and possibly random) whose index is returned.
+     * 
+     * 
+     * @return the index corresponding to the largest absolute deviation from zero.
+     */
+    public final IndexType indexOfMaxDev() { 
+        return smartFork(new ParallelPointOp<IndexType, IndexType>() {
+            private IndexType maxIndex;
+            private Number max;
+          
+            @Override
+            protected void init() {
+                maxIndex = null;
+                max = getLowestCompareValue();
+            }
+
+            @Override
+            public void process(IndexType index) {
+                if(!isValid(index)) return;
+                if(compare(get(index), max) <= 0) return;
+                max = Math.abs(get(index).doubleValue());
+                maxIndex = copyOfIndex(index);
+                
+            }
+
+            @Override
+            public IndexType getResult() {
+                return maxIndex;
+            }
+            
+            @Override
+            public void mergeResult(IndexType localMaxIndex) {
+                if(Math.abs(get(localMaxIndex).doubleValue()) > Math.abs(get(maxIndex).doubleValue())) maxIndex = localMaxIndex; 
+            }            
+        });
+    }
+
+
+
+
+    
+    
     
     public double mean() {
         return smartForkValid(new ParallelPointOp.Average<Number>() {
@@ -357,7 +627,7 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
             private int k;
             
             @Override
-            public void init() {
+            protected void init() {
                 k = 0;
             }
             
@@ -382,6 +652,9 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
     }
     
     public double select(double fraction) {
+        if(fraction == 0.0) return getMin().doubleValue();
+        else if(fraction == 1.0) return getMax().doubleValue();
+        
         final double[] temp = getValidSortingArray(false);
         if(temp.length == 0) return Double.NaN;
         return Statistics.select(temp, fraction, 0, temp.length);
@@ -416,7 +689,7 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
 
     
     public double getSum() {
-        return forkValid(new ParallelPointOp.Sum<Number>() {
+        return smartForkValid(new ParallelPointOp.Sum<Number>() {
             @Override
             public final double getValue(Number point) {
                 return point.doubleValue();
@@ -426,7 +699,7 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
     
     
     public double getAbsSum() {
-        return forkValid(new ParallelPointOp.Sum<Number>() {
+        return smartForkValid(new ParallelPointOp.Sum<Number>() {
             @Override
             public final double getValue(Number point) {
                return point.doubleValue();
@@ -436,16 +709,36 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
     
     
     public double getSquareSum() {  
-        return forkValid(new ParallelPointOp.Sum<Number>() {
+        return smartForkValid(new ParallelPointOp.Sum<Number>() {
             @Override
             public final double getValue(Number point) {
                 return point.doubleValue() * point.doubleValue();
             }        
-        });
-        
+        });      
     }
-   
+    
+    
+
        
+    public Fits createFits(Class<? extends Number> dataType) throws FitsException {
+        FitsFactory.setLongStringsEnabled(true);
+        FitsFactory.setUseHierarch(true);
+        Fits fits = new Fits(); 
+        fits.addHDU(createHDU(dataType));
+        return fits;
+    }
+    
+
+    public final ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException {  
+        ImageHDU hdu = (ImageHDU) Fits.makeHDU(getFitsData(dataType));
+        editHeader(hdu.getHeader());
+        return hdu;
+    }
+    
+    
+    public abstract Object getFitsData(Class<? extends Number> dataType);
+
+   
     
     protected void editHeader(Header header) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
@@ -460,6 +753,9 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
         c.add(new HeaderCard("BSCALE", 1.0, "Scaling of the image data"));
 
         if(getUnit() != null) c.add(new HeaderCard("BUNIT", getUnit().name(), "Data unit specification."));
+        
+        
+        addHistory(header);
     }
 
     
@@ -467,6 +763,17 @@ public abstract class Data<IndexType> extends ParallelObject implements Verbosit
         setUnit(header.containsKey("BUNIT") ? new Unit(header.getStringValue("BUNIT")) : Unit.unity);
     }
 
+
+
+    protected void parseHistory(Header header) {
+        setHistory(FitsToolkit.parseHistory(header));  
+    }
+
+    protected void addHistory(Header header) throws HeaderCardException {  
+        if(getHistory() != null) FitsToolkit.addHistory(header, getHistory());
+    }
+
+    
     @Override
     public Object getTableEntry(String name) {
         if(name.equals("points")) return Integer.toString(countPoints());

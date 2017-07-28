@@ -23,7 +23,7 @@
 
 package jnum.data.cube;
 
-import jnum.Util;
+
 import jnum.data.CubicSpline;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
@@ -32,15 +32,24 @@ import jnum.math.Vector3D;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
 import jnum.parallel.PointOp;
-import nom.tam.fits.Fits;
-import nom.tam.fits.FitsException;
-import nom.tam.fits.ImageHDU;
+
 
 
 public abstract class Data3D extends Data<Index3D> implements Value3D {
 
     private InterpolatorData reuseIpolData;
 
+    
+
+    // TODO 3D methods
+    /*
+     * - restrictRange(Range);
+     * - discardRange(Range);
+     * 
+     * 
+     * - level()
+     */
+    
     
     @Override
     public Data3D clone() {
@@ -49,6 +58,11 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
         return clone;
     }
         
+    
+    @Override
+    public Index3D copyOfIndex(Index3D index) { return new Index3D(index.i(), index.j(), index.k()); }
+    
+   
     @Override
     public int capacity() { 
         if(sizeX() <= 0) return 0;
@@ -58,7 +72,64 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
     }
     
     @Override
+    public Index3D size() {
+        return new Index3D(sizeX(), sizeY(), sizeZ());
+    }
+    
+    
+    @Override
     public String getSizeString() { return sizeX() + "x" + sizeY() + "x" + sizeZ(); }
+    
+    @Override
+    public final boolean conformsTo(Index3D size) { return conformsTo(size.i(), size.j(), size.k()); }
+    
+    public boolean conformsTo(int sizeX, int sizeY, int sizeZ) {
+        if(sizeX() != sizeX) return false;
+        if(sizeY() != sizeY) return false;
+        if(sizeZ() != sizeZ) return false;
+        return true;
+    }
+  
+    
+    @Override
+    public final Number get(Index3D index) { return get(index.i(), index.j(), index.k()); }
+     
+    public final Number getValid(final int i, final int j, final int k, final Number defaultValue) {
+        if(!isValid(i, j, k)) return defaultValue;
+        return get(i, j, k);
+    }
+
+    @Override
+    public final Number getValid(final Index3D index, final Number defaultValue) { 
+        return getValid(index.i(), index.j(), index.k(), defaultValue); 
+    }
+
+    
+    @Override
+    public final void set(Index3D index, Number value) { set(index.i(), index.j(), index.k(), value); }
+     
+    @Override
+    public final boolean isValid(Index3D index) { return isValid(index.i(), index.j(), index.k()); }
+      
+    @Override
+    public final void discard(Index3D index) { discard(index.i(), index.j(), index.k()); }
+     
+    @Override
+    public final void clear(Index3D index) { clear(index.i(), index.j(), index.k()); }
+    
+    public abstract void clear(int i, int j, int k);
+    
+    @Override
+    public final void add(Index3D index, Number value) { add(index.i(), index.j(), index.k(), value); }
+    
+    @Override
+    public final void scale(Index3D index, double factor) { scale(index.i(), index.j(), index.k(), factor); }
+    
+       
+    public void scale(int i, int j, int k, double factor) {
+        set(i, j, k, get(i, j, k).doubleValue() * factor);
+    }
+
     
     
     @Override
@@ -195,170 +266,72 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
     
     
 
-
+    @Override
+    protected int getInterpolationOps(int type) {
+        switch(type) {
+        case NEAREST : return 15;
+        case LINEAR : return 90;
+        case QUADRATIC : return 100;
+        case SPLINE : return 800;
+        }
+        return 1;
+    }
 
     @Override
-    public Index3D indexOfMin() {      
-        Fork<Index3D> search = new Fork<Index3D>() {
-            private Index3D index;
-            private Number low = getHighestCompareValue();
-            @Override
-            protected void init() {
-                super.init();
-                index = new Index3D();
-            }
+    public final boolean containsIndex(Index3D index) {
+        return containsIndex(index.i(), index.j(), index.k());        
+    }
+
+    public boolean containsIndex(final int i, final int j, final int k) {
+        if(i < 0) return false;
+        if(j < 0) return false;
+        if(k < 0) return false;
+        if(i >= sizeX()) return false;
+        if(j >= sizeY()) return false;
+        if(k >= sizeZ()) return false;
+        return true;
+    }
+
+
+    public boolean containsIndex(final double i, final double j, final double k) {
+        if(i < 0) return false;
+        if(j < 0) return false;
+        if(k < 0) return false;
+        if(i >= sizeX()-0.5) return false;
+        if(j >= sizeY()-0.5) return false;
+        if(k >= sizeZ()-0.5) return false;
+        return true;
+    }
+    
+    @Override
+    public void despike(double level) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public String getInfo() {
+        return "Datacube Size: " + getSizeString() + " voxels.";
+    }
+
+    
+    @Override
+    public Object getFitsData(Class<? extends Number> dataType) {
+        // TODO...
+        if(!Double.class.equals(getElementType())) throw new UnsupportedOperationException("not implemented.");
+        
+        final double[][][] transpose = new double[sizeZ()][sizeY()][sizeX()];
+        final double scale = 1.0 / getUnit().value();
+                      
+        new Fork<Void>() {
             @Override
             protected void process(int i, int j, int k) {
-                if(!isValid(i, j, k)) return;
-                if(compare(get(i, j, k), low) > 0) return;
-                low = get(i, j, k);
-                index.set(i, j, k);
-            }
-            @Override 
-            public Index3D getLocalResult() { return index; }
-            @Override
-            public Index3D getResult() {
-                Number globalLow = getHighestCompareValue();
-                Index3D globalIndex = null;
-                for(ParallelTask<Index3D> task : getWorkers()) {
-                    Index3D partial = task.getLocalResult();
-                    if(partial == null) continue; 
-                    
-                    Number localMin = get(partial.i(), partial.j(), partial.k());
-                    if(compare(localMin, globalLow) < 0) {
-                        globalIndex = partial;
-                        globalLow = localMin.doubleValue();
-                    }
-                }
-                return globalIndex;
-            }
-        };
-
-        search.process();
-        return search.getResult();
+                transpose[k][j][i] = isValid(i, j, k) ? scale * get(i, j, k).doubleValue() : getBlankingValue().doubleValue();
+            }     
+        }.process();
+ 
+        return transpose;
     }
-
-
-    @Override
-    public Index3D indexOfMax() {        
-        Fork<Index3D> search = new Fork<Index3D>() {
-            private Index3D index;
-            private Number peak = getLowestCompareValue();
-            @Override
-            protected void init() {
-                super.init();
-                index = new Index3D();
-            }
-            @Override
-            protected void process(int i, int j, int k) {
-                if(!isValid(i, j, k)) return;
-                if(compare(get(i, j, k), peak) < 0) return;
-                peak = get(i, j, k);
-                index.set(i, j, k);
-            }
-            @Override 
-            public Index3D getLocalResult() { return index; }
-            @Override
-            public Index3D getResult() {
-                Number globalPeak = getLowestCompareValue();
-                Index3D globalIndex = null;
-                for(ParallelTask<Index3D> task : getWorkers()) {
-                    Index3D partial = task.getLocalResult();
-                    if(partial == null) continue;
-                    
-                    Number localMax = get(partial.i(), partial.j(), partial.k());
-                    if(compare(localMax, globalPeak) > 0) {
-                        globalIndex = partial;
-                        globalPeak = localMax.doubleValue();
-                    }
-                }
-                return globalIndex;
-            }
-        };
-
-        search.process();
-        return search.getResult();
-    }
-
-
-
-    @Override
-    public Index3D indexOfMaxDev() {            
-        Fork<Index3D> search = new Fork<Index3D>() {
-            private Index3D index;
-            private double dev = 0.0;
-
-            @Override
-            protected void init() {
-                super.init();
-                index = new Index3D(-1,-1, -1);
-            }
-            @Override
-            protected void process(int i, int j, int k) {
-                if(!isValid(i, j, k)) return;
-                final double value = Math.abs(get(i, j, k).doubleValue());
-
-                if(value > dev) {
-                    dev = value;
-                    index.set(i, j, k);
-                }
-            }
-            @Override 
-            public Index3D getLocalResult() { return index; }
-            @Override
-            public Index3D getResult() {
-                double globalDev = 0.0;
-                Index3D globalIndex = null;
-                for(ParallelTask<Index3D> task : getWorkers()) {
-                    Index3D partial = task.getLocalResult();
-                    if(partial == null) continue;
-
-                    final double value = Math.abs(get(partial.i(), partial.j(), partial.k()).doubleValue());
-                    if(value > globalDev) {
-                        globalIndex = partial;
-                        globalDev = value;
-                    }
-                }
-
-                return globalIndex;
-            }
-        };
-
-        search.process();
-        return search.getResult();
-    }
-
-    
-    
-    
-    public ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException {  
-        ImageHDU hdu = (ImageHDU) Fits.makeHDU(getFitsData(dataType));
-        editHeader(hdu.getHeader());
-        return hdu;
-    }
-    
-    
-    public abstract Object getFitsData(Class<? extends Number> dataType);
-
-
-    
-    @Override
-    public boolean contentEquals(Data<Index3D> data) {
-        if(data == this) return true;
-        if(!getClass().isAssignableFrom(data.getClass())) return false;
-        
-        Data3D cube = (Data3D) data;
-        
-        if(!Util.equals(cube.getElementType(), getElementType())) return false;
-        if(cube.sizeX() != sizeX()) return false;
-        if(cube.sizeY() != sizeY()) return false;
-        if(cube.sizeZ() != sizeZ()) return false;
-        
-        return true;    
-    }
-    
-    
-    
+   
     
     
     @Override
@@ -433,6 +406,17 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
     }
     
     @Override
+    public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op) {
+        final Index3D index = new Index3D();
+        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) for(int k=sizeY(); --k >= 0; ) {
+            index.set(i,  j,  k);
+            op.process(index);
+            if(op.exception != null) return null;
+        }
+        return op.getResult();
+    }
+    
+    @Override
     public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
       
         Fork<ReturnType> fork = new Fork<ReturnType>() {
@@ -469,7 +453,45 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
         return fork.getResult();
     }
     
-    
+    @Override
+    public <ReturnType> ReturnType fork(final ParallelPointOp<Index3D, ReturnType> op) {
+      
+        Fork<ReturnType> fork = new Fork<ReturnType>() {
+            private ParallelPointOp<Index3D, ReturnType> localOp;
+            private Index3D index;
+            
+            @Override
+            public void init() {
+                super.init();
+                index = new Index3D();
+                localOp = op.newInstance();
+            }
+            
+            @Override
+            protected void process(int i, int j, int k) {
+                index.set(i, j, k);
+                localOp.process(index);
+            }
+            
+            @Override
+            public ReturnType getLocalResult() { return localOp.getResult(); }
+            
+
+            @Override
+            public ReturnType getResult() { 
+                ParallelPointOp<Index3D, ReturnType> globalOp = op.newInstance();
+                
+                for(ParallelTask<ReturnType> worker : getWorkers()) {
+                    globalOp.mergeResult(worker.getLocalResult());
+                }
+                return globalOp.getResult();
+            }
+            
+        };
+        
+        fork.process();
+        return fork.getResult();
+    }
     
     
     
@@ -579,7 +601,6 @@ public abstract class Data3D extends Data<Index3D> implements Value3D {
 
         @Override
         protected void init() { ipolData = new InterpolatorData(); }
-
 
         public final InterpolatorData getInterpolatorData() { return ipolData; }
     }   

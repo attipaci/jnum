@@ -23,10 +23,15 @@
 
 package jnum.data.cube2;
 
+import java.io.Serializable;
+
 import jnum.data.image.Image2D;
 
-public abstract class Image2D1 extends Resizable2D1<Image2D> {
-    
+public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7816827408682434510L;
 
     public static Image2D1 create(Class<? extends Number> type) {
         if(type.equals(Double.class)) return new Double2D1();
@@ -46,31 +51,63 @@ public abstract class Image2D1 extends Resizable2D1<Image2D> {
     
 
     public static class Double2D1 extends Image2D1 {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 113550949968714499L;
+
         @Override
         public Image2D getImage2DInstance() { return new Image2D.Double2D(); }
+
+        
     }
     
     public static class Float2D1 extends Image2D1 {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1243630861744367750L;
+
         @Override
         public Image2D getImage2DInstance() { return new Image2D.Float2D(); }
     }
     
     public static class Long2D1 extends Image2D1 {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -1107032476154933891L;
+
         @Override
         public Image2D getImage2DInstance() { return new Image2D.Long2D(); }
     }
     
     public static class Integer2D1 extends Image2D1 {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -4354855370129531989L;
+
         @Override
         public Image2D getImage2DInstance() { return new Image2D.Integer2D(); }
     }
     
     public static class Short2D1 extends Image2D1 {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -5534545653389046267L;
+
         @Override
         public Image2D getImage2DInstance() { return new Image2D.Short2D(); }
     }
     
     public static class Byte2D1 extends Image2D1 {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 5091245705693686730L;
+
         @Override
         public Image2D getImage2DInstance() { return new Image2D.Byte2D(); }
     }

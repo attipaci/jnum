@@ -93,8 +93,8 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
 	 * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
 	@Override
-	public void editHeader(Header header, String alt) throws HeaderCardException {	
-		super.editHeader(header, alt);	
+	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
+		super.editHeader(header, keyStem, alt);	
 
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 		c.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));

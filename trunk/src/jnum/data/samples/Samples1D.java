@@ -23,20 +23,67 @@
 
 package jnum.data.samples;
 
+import java.io.Serializable;
+import java.util.Hashtable;
+import java.util.Map;
 
-public abstract class Samples1D extends Data1D implements Resizable1D {
+import jnum.CopiableContent;
+import jnum.Unit;
+import jnum.fits.FitsToolkit;
+import nom.tam.fits.Fits;
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
+import nom.tam.fits.HeaderCardException;
+import nom.tam.fits.ImageHDU;
+import nom.tam.util.Cursor;
 
+public abstract class Samples1D extends Data1D implements Serializable, Resizable1D, CopiableContent<Samples1D> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -150948566995935566L;
 
+    private String id;
+    
     public abstract Object getData();
     
     protected abstract void setDataSize(int size);
     
 
+    
+    public String getID() { return id; }
+    
+    public void setID(String id) { this.id = id; }
+   
+    @Override
+    public Samples1D copy() {
+        return copy(true);
+    }
+
+    
+    @Override
+    public Samples1D copy(boolean withContent) {   
+        Samples1D copy = (Samples1D) clone();
+        
+        if(capacity() > 0) {
+            copy.setSize(size());
+            if(withContent) copy.paste(this, true);
+        }
+        
+        return copy;
+    }
+
+    
     @Override
     public void setSize(int size) {
         setDataSize(size);
         clearHistory();
         addHistory("new size " + getSizeString());
+    }
+    
+    public void destroy() { 
+        setSize(0); 
+        clearHistory();
     }
 
     public void setData(final Value1D values) {
@@ -132,10 +179,115 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
         recordNewData("byte[]");
     }
     
+    @Override
+    protected void editHeader(Header header) throws HeaderCardException {          
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        if(getID() != null) c.add(new HeaderCard("EXTNAME", getID(), "Content identifier.")); 
+        
+        super.editHeader(header);     
+    }
+   
+
+    @Override
+    protected void parseHeader(Header header) {
+        super.parseHeader(header);
+        setID(header.containsKey("EXTNAME") ? header.getStringValue("EXTNAME") : null);
+    }
+    
+    protected void parseHeader(Header header, Map<String, Unit> extraCoreUnits) {
+        setID(header.getStringValue("EXTNAME"));
+        // The image data unit must be parsed after the instrument beam (underlying + smoothing)
+        // and the coordinate grid are established as it may contain 'beam' or 'pixel' type units.
+        if(header.containsKey("BUNIT")) setUnit(header.getStringValue("BUNIT"), extraCoreUnits);
+        parseHistory(header);
+    }
+    
+    
+    public synchronized void read(ImageHDU hdu, Map<String, Unit> extraCoreUnits) throws Exception {
+        parseHeader(hdu.getHeader(), extraCoreUnits);
+        setData(hdu.getData().getData());   
+        scale(getUnit().value());
+    }
+    
+    
+    
+    
+
+    public static Samples1D createType(Class<? extends Number> type) {       
+        if(type.equals(Double.class)) return new Double1D();
+        else if(type.equals(Float.class)) return new Float1D();
+        else if(type.equals(Long.class)) return new Long1D();
+        else if(type.equals(Integer.class)) return new Integer1D();
+        else if(type.equals(Short.class)) return new Short1D();
+        else if(type.equals(Byte.class)) return new Byte1D();
+        else return null;
+    }
+    
+    
+    public static Samples1D createType(Class<? extends Number> type, int size) {
+        Samples1D samples = createType(type);
+        if(samples == null) return null;
+        samples.setSize(size);
+        return samples;
+    }
+    
+    public static Samples1D createFrom(final Value1D values) { return createFrom(values, null); }
+   
+    
+    public static Samples1D createFrom(final Value1D values, final Number blankingValue) {
+        return createFrom(values, blankingValue, values.getElementType());
+    }
+    
+    public static Samples1D createFrom(final Value1D values, final Number blankingValue, Class<? extends Number> elementType) {
+        final Samples1D samples = createType(elementType);
+        samples.setBlankingValue(blankingValue);
+        samples.setData(values);
+        return samples;
+    }
+   
+    public static Samples1D createBitpixType(int bitpix) {        
+        switch(bitpix) {
+        case FitsToolkit.BITPIX_FLOAT: return createType(Float.class);
+        case FitsToolkit.BITPIX_DOUBLE: return createType(Double.class);
+        case FitsToolkit.BITPIX_LONG: return createType(Long.class);
+        case FitsToolkit.BITPIX_INT: return createType(Integer.class);
+        case FitsToolkit.BITPIX_SHORT: return createType(Short.class);
+        case FitsToolkit.BITPIX_BYTE: return createType(Byte.class);
+        }
+        
+        return null;
+    }
+    
+    public static Samples1D read(Fits fits, int hduIndex) throws Exception {
+        return read(fits, hduIndex, null);
+    }
+    
+    public static Samples1D read(Fits fits, int hduIndex, Hashtable<String, Unit> extraUnits) throws Exception {
+        ImageHDU hdu = (ImageHDU) fits.getHDU(hduIndex);
+        Samples1D samples = createBitpixType(hdu.getBitPix());
+        samples.read(hdu, extraUnits);
+        return samples;
+    }
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
    
-    public static class Double1D extends Samples1D {
-        
+    public static class Double1D extends Samples1D {       
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 2366940573012663433L;
+  
         private double[] data;
 
         
@@ -162,7 +314,7 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
         }
 
         @Override
-        public final int size() {
+        public final Integer size() {
             return data == null ? 0 : data.length;
         }
 
@@ -204,7 +356,11 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
     
     
     public static class Float1D extends Samples1D {
-
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -5993773243990361454L;
+  
         private float[] data;
 
         
@@ -232,7 +388,7 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
         }
 
         @Override
-        public final int size() {
+        public final Integer size() {
             return data == null ? 0 : data.length;
         }
 
@@ -275,7 +431,11 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
     
     
     public static class Long1D extends Samples1D {
-
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -1541121271559319412L;
+        
         private long[] data;
 
 
@@ -292,7 +452,7 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
         }
 
         @Override
-        public final int size() {
+        public final Integer size() {
             return data == null ? 0 : data.length;
         }
 
@@ -328,7 +488,11 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
     
     
     public static class Integer1D extends Samples1D {
-
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 7454521582169682582L;
+    
         private int[] data;
 
 
@@ -344,7 +508,7 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
         }
 
         @Override
-        public final int size() {
+        public final Integer size() {
             return data == null ? 0 : data.length;
         }
 
@@ -381,7 +545,11 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
     
     
     public static class Short1D extends Samples1D {
-
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 6435456779270257246L;
+        
         private short[] data;
 
 
@@ -397,7 +565,7 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
         }
 
         @Override
-        public final int size() {
+        public final Integer size() {
             return data == null ? 0 : data.length;
         }
 
@@ -432,7 +600,11 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
     
     
     public static class Byte1D extends Samples1D {
-
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -20394547035236222L;
+        
         private byte[] data;
 
 
@@ -448,7 +620,7 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
         }
 
         @Override
-        public final int size() {
+        public final Integer size() {
             return data == null ? 0 : data.length;
         }
 
@@ -478,7 +650,13 @@ public abstract class Samples1D extends Data1D implements Resizable1D {
            data[i] += value.byteValue();
         }
 
-        
+        @Override
+        public boolean containsIndex(Integer index) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+       
     }
     
 

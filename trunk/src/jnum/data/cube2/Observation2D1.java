@@ -35,8 +35,8 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
     @Override
     public Observation2D getImage2DInstance() { return new Observation2D(getElementType(), getFlagType()); }
   
-    public Abstract2D1<Data2D> getWeights() {
-        Abstract2D1<Data2D> weight = new Abstract2D1<Data2D>() {
+    public Data2D1<Data2D> getWeights() {
+        Data2D1<Data2D> weight = new Data2D1<Data2D>() {
             @Override
             public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
         };
@@ -44,8 +44,8 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
         return weight;
     }
     
-    public Abstract2D1<Data2D> getExposures() {
-        Abstract2D1<Data2D> weight = new Abstract2D1<Data2D>() {
+    public Data2D1<Data2D> getExposures() {
+        Data2D1<Data2D> weight = new Data2D1<Data2D>() {
             @Override
             public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
         };

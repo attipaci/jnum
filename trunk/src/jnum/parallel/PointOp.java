@@ -26,8 +26,9 @@ package jnum.parallel;
 import jnum.data.WeightedPoint;
 
 public abstract class PointOp<PointType, ReturnType> implements Cloneable {
-
-    public PointOp() { init(); }
+    public Exception exception;
+    
+    public PointOp() { reset(); }
     
     @SuppressWarnings("unchecked")
     @Override
@@ -36,7 +37,12 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
         catch(CloneNotSupportedException e) { return null; }
     }
     
-    public abstract void init();
+    public final void reset() {
+        exception = null;
+        init();
+    }
+    
+    protected abstract void init();
     
     public abstract void process(PointType point);
     
@@ -53,7 +59,7 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
         public abstract double getCount(PointType point);
         
         @Override
-        public void init() {
+        protected void init() {
             sum = 0L;
         }
         
@@ -69,11 +75,29 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
      
     }
     
+    public abstract static class Simple<PointType> extends PointOp<PointType, Void> {
+        @Override
+        protected void init() {}
+       
+        @Override
+        public Void getResult() {
+            return null;
+        }
+        
+    }
+    
+    public static class ElementCount<PointType> extends Count<PointType> {
+        @Override
+        public final double getCount(PointType point) {
+            return 1;
+        }
+    }
+    
     public abstract static class Sum<PointType> extends PointOp<PointType, Double> {
         private double sum;
        
         @Override
-        public void init() {
+        protected void init() {
             sum = 0.0;
         }
         
@@ -95,7 +119,7 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
         private WeightedPoint ave;
        
         @Override
-        public void init() {
+        protected void init() {
             ave = new WeightedPoint();
         }
         

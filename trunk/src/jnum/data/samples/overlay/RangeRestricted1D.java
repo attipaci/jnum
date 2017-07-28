@@ -21,14 +21,34 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.image;
+package jnum.data.samples.overlay;
 
-import jnum.data.Validating;
 
-public interface Validating2D extends Validating<Index2D> {
+import jnum.data.samples.Value1D;
+import jnum.math.Range;
 
-    public boolean isValid(int i, int j);
-       
-    public void discard(int i, int j);
+public class RangeRestricted1D extends Overlay1D {
+    private Range validRange;
+    
+    
+    public RangeRestricted1D(Value1D base, Range restriction) {
+        super(base);
+        setValidRange(restriction);
+    }
+    
+    public void setValidRange(Range r) { 
+        validRange = r; 
+    }
+    
+    public Range getValidRange() { return validRange; }
+    
+    
+    @Override
+    public boolean isValid(Integer i) {
+        if(!validRange.contains(get(i).doubleValue())) return false;
+        return super.isValid(i);
+    }
+
+   
     
 }

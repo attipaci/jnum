@@ -256,8 +256,8 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      * @see jnum.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
      */
     @Override
-    public void editHeader(Header header, String alt) throws HeaderCardException {
-        super.editHeader(header, alt);
+    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
+        super.editHeader(header, keyStem, alt);
         
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         c.add(new HeaderCard("RADESYS" + alt, epoch instanceof BesselianEpoch ? "FK4" : "FK5", "Reference convention."));
@@ -268,8 +268,8 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      * @see jnum.SphericalCoordinates#parse(nom.tam.fits.Header, java.lang.String)
      */
     @Override
-    public void parseHeader(Header header, String alt) {
-        super.parseHeader(header, alt);
+    public void parseHeader(Header header, String keyStem, String alt) {
+        super.parseHeader(header, keyStem, alt);
         
         String system = header.getStringValue("RADESYS");
         if(system == null) system = header.getDoubleValue("EQUINOX" + alt) < 1984.0 ? "FK4" : "FK5";

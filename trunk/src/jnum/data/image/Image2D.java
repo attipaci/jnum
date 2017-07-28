@@ -25,7 +25,6 @@ package jnum.data.image;
 
 import java.io.Serializable;
 import java.util.Hashtable;
-import java.util.Locale;
 import java.util.Map;
 
 import jnum.CopiableContent;
@@ -53,16 +52,8 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
      * 
      */
     private static final long serialVersionUID = -7200384936045773744L;
-    
-    static {
-        Locale.setDefault(Locale.US);
-    }
-    
- 
-
+     
     private String id;
-      
-   
  
     @Override
     public int hashCode() {
@@ -375,6 +366,21 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     }
 
      
+  
+
+    @Override
+    protected void editHeader(Header header) throws HeaderCardException {          
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        if(getID() != null) c.add(new HeaderCard("EXTNAME", getID(), "Content identifier.")); 
+        
+        super.editHeader(header);     
+    }
+
+    @Override
+    protected final void parseHeader(Header header) {
+        parseHeader(header, null);
+    }
+
     protected void parseHeader(Header header, Map<String, Unit> extraCoreUnits) {
         setID(header.getStringValue("EXTNAME"));
         // The image data unit must be parsed after the instrument beam (underlying + smoothing)
@@ -383,24 +389,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         parseHistory(header);
     }
 
-
-    @Override
-    protected void editHeader(Header header) throws HeaderCardException {  
-        super.editHeader(header);
-        
-        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        if(getID() != null) c.add(new HeaderCard("EXTNAME", getID(), "The type of data contained in this HDU")); 
-        
-        addHistory(header);
-    }
-   
-
-    @Override
-    protected void parseHeader(Header header) {
-        super.parseHeader(header);
-        setID(header.containsKey("EXTNAME") ? header.getStringValue("EXTNAME") : null);
-    }
-
+    
     public synchronized void read(ImageHDU hdu, Map<String, Unit> extraCoreUnits) throws Exception {
         parseHeader(hdu.getHeader(), extraCoreUnits);
         setRowColData(hdu.getData().getData());   
@@ -434,7 +423,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     }
     
     public static Image2D createFrom(final Value2D values, final Number blankingValue, Class<? extends Number> elementType) {
-        final Image2D image = Image2D.createType(elementType);
+        final Image2D image = createType(elementType);
         image.setBlankingValue(blankingValue);
         image.setData(values);
         return image;

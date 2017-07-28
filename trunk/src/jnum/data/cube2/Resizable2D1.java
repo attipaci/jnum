@@ -26,7 +26,7 @@ package jnum.data.cube2;
 import jnum.data.image.Data2D;
 import jnum.data.image.Resizable2D;
 
-public abstract class Resizable2D1<ImageType extends Data2D & Resizable2D> extends Abstract2D1<ImageType> {
+public abstract class Resizable2D1<ImageType extends Data2D & Resizable2D> extends Data2D1<ImageType> {
 
     @Override
     public final ImageType getImage2DInstance(int sizeX, int sizeY) {

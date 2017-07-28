@@ -23,12 +23,10 @@
 
 package jnum.data.cube;
 
-import jnum.data.Value;
+import jnum.data.IndexedValues;
 
-public interface Value3D extends Value, Validating3D {
-    
-    public Class<? extends Number> getElementType();
-  
+public interface Value3D extends IndexedValues<Index3D>, Validating3D {
+   
     public int sizeX();
     
     public int sizeY();

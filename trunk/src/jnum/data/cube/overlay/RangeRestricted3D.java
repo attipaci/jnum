@@ -21,14 +21,31 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.image;
+package jnum.data.cube.overlay;
 
-import jnum.data.Validating;
 
-public interface Validating2D extends Validating<Index2D> {
+import jnum.data.cube.Value3D;
+import jnum.math.Range;
 
-    public boolean isValid(int i, int j);
-       
-    public void discard(int i, int j);
+public class RangeRestricted3D extends Overlay3D {
+    private Range validRange;
+    
+    
+    public RangeRestricted3D(Value3D base, Range restriction) {
+        super(base);
+        setValidRange(restriction);
+    }
+    
+    public void setValidRange(Range r) { validRange = r; }
+    
+    public Range getValidRange() { return validRange; }
+    
+    
+    @Override
+    public boolean isValid(int i, int j, int k) {
+        return validRange.contains(get(i, j, k).doubleValue()) && super.isValid(i, j, k);
+    }
+
+   
     
 }
