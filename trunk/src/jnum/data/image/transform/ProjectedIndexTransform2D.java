@@ -23,13 +23,13 @@
 
 package jnum.data.image.transform;
 
+import jnum.data.Transforming;
 import jnum.data.image.Grid2D;
-import jnum.data.image.Transforming2D;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import jnum.projection.Projector2D;
 
-public class ProjectedIndexTransform2D<CoordinateType extends Coordinate2D> implements Transforming2D {
+public class ProjectedIndexTransform2D<CoordinateType extends Coordinate2D> implements Transforming<Vector2D> {
     private Grid2D<CoordinateType> fromGrid;
     private Grid2D<CoordinateType> toGrid;
     

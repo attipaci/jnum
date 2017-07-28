@@ -123,6 +123,5 @@ public class Overlay2D extends Data2D {
     public final int compare(Number a, Number b) {
         return values.compare(a, b);
     }
-   
-    
+
 }

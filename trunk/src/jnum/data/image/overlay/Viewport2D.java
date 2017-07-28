@@ -151,14 +151,7 @@ public class Viewport2D extends Overlay2D implements Resizable2D {
         super.add(i + i0, j + j0, value);
     }
 
-    @Override
-    public final double valueAtIndex(double i, double j) {
-        return super.valueAtIndex(i + i0, j + j0);
-    }
    
-    
-  
-
     
  
 }

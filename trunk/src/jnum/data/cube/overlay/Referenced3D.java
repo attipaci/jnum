@@ -23,12 +23,13 @@
 
 package jnum.data.cube.overlay;
 
+import jnum.data.IndexReferenced;
 import jnum.data.cube.Value3D;
 import jnum.math.Coordinate3D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
-public class Referenced3D extends Overlay3D {
+public class Referenced3D extends Overlay3D implements IndexReferenced<Coordinate3D> {
     private Coordinate3D referenceIndex;
 
     public Referenced3D() {}
@@ -57,8 +58,10 @@ public class Referenced3D extends Overlay3D {
         return super.equals(o);
     }
 
+    @Override
     public Coordinate3D getReferenceIndex() { return referenceIndex; }
     
+    @Override
     public void setReferenceIndex(Coordinate3D index) { this.referenceIndex = index; }
     
     

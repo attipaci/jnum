@@ -88,7 +88,7 @@ CopiableContent<FlagCompanion<IndexType>> {
     }
 
     
-    public abstract Data<IndexType> getData();
+    public abstract Data<IndexType, ?, ?> getData();
     
     public final Class<? extends Number> getElementType() { return getData().getElementType(); }
     

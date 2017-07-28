@@ -31,6 +31,7 @@ import jnum.NonConformingException;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.Statistics;
+import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
 import jnum.data.image.overlay.Overlay2D;
@@ -551,7 +552,7 @@ public class Observation2D extends Map2D {
     public void resampleFrom(Observation2D map) {
         Referenced2D beam = getAntialiasingBeamImageFor(map);
 
-        Transforming2D toSourceIndex = getIndexTransformTo(map);
+        Transforming<Vector2D> toSourceIndex = getIndexTransformTo(map);
 
         getImage().resampleFrom(map.getImage(), toSourceIndex, beam, getWeights());
         getExposureImage().resampleFrom(map.getExposures(), toSourceIndex, beam, getWeights());

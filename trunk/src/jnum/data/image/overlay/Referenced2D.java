@@ -23,12 +23,13 @@
 
 package jnum.data.image.overlay;
 
+import jnum.data.IndexReferenced;
 import jnum.data.image.Value2D;
 import jnum.math.Coordinate2D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
-public class Referenced2D extends Overlay2D {
+public class Referenced2D extends Overlay2D implements IndexReferenced<Coordinate2D> {
     private Coordinate2D referenceIndex;
 
     public Referenced2D() {}
@@ -57,8 +58,10 @@ public class Referenced2D extends Overlay2D {
         return super.equals(o);
     }
 
+    @Override
     public Coordinate2D getReferenceIndex() { return referenceIndex; }
     
+    @Override
     public void setReferenceIndex(Coordinate2D index) { this.referenceIndex = index; }
 
     @Override

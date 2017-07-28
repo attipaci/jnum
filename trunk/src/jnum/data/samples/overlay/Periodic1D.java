@@ -90,7 +90,7 @@ public class Periodic1D extends Overlay1D {
     }
 
     @Override
-    public double valueAtIndex(double i) {
+    public double valueAtIndex(Double i) {
         return super.valueAtIndex(toBaseIndex(i));
     }
     
