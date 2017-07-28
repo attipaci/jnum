@@ -211,7 +211,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
 
 
 
-    public int[] getHorizontalIndexRange() {
+    public int[] getXIndexRange() {
         int min = sizeX(), max = -1;
         for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) {
             if(i < min) min = i;
@@ -221,7 +221,7 @@ public abstract class Data2D extends Data<Index2D> implements Value2D {
         return max > min ? new int[] { min, max } : null;
     }
 
-    public int[] getVerticalIndexRange() {
+    public int[] getYIndexRange() {
         int min = sizeY(), max = -1;
         for(int j=sizeY(); --j >= 0; ) for(int i=sizeX(); --i >= 0; ) if(isValid(i, j)) {
             if(j < min) min = j;

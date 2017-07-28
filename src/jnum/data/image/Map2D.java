@@ -380,10 +380,10 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
 
     public final void autoCrop() {
-        int[] hRange = getHorizontalIndexRange();
+        int[] hRange = getXIndexRange();
         if(hRange == null) return; 
 
-        int[] vRange = getVerticalIndexRange();
+        int[] vRange = getYIndexRange();
         if(vRange == null) return;
 
         if(isVerbose()) Util.info(this, "Auto-cropping: " + (hRange[1] - hRange[0] + 1) + "x" + (vRange[1] - vRange[0] + 1));

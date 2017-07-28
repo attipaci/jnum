@@ -23,6 +23,8 @@
 
 package jnum.data.samples;
 
+import java.util.List;
+
 import jnum.data.CubicSpline;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
@@ -55,6 +57,37 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
      
     @Override
     public final Integer copyOfIndex(Integer index) { return index; }
+
+    
+    public Samples1D getEmptySamples() {
+        return Samples1D.createType(getElementType(), size());
+    }
+
+    public Samples1D getSamples() {
+        return getSamples(getElementType(), getBlankingValue());
+    }
+
+    public final Samples1D getSamples(Number blankingValue) {
+        return getSamples(getElementType(), blankingValue);
+    }
+
+    public final Samples1D getImage(Class<? extends Number> elementType) {
+        return getSamples(elementType, getBlankingValue());
+    }
+
+    public Samples1D getSamples(Class<? extends Number> elementType, Number blankingValue) {
+        Samples1D samples = Samples1D.createFrom(this, blankingValue, elementType);
+
+        samples.copyParallel(this);
+        samples.setInterpolationType(getInterpolationType());
+        samples.setVerbose(isVerbose());
+        samples.setUnit(getUnit());
+
+        List<String> imageHistory = samples.getHistory();
+        if(getHistory() != null) imageHistory.addAll(getHistory());
+
+        return samples;
+    }
 
     
     
@@ -229,6 +262,30 @@ public abstract class Data1D extends Data<Integer> implements Value1D, TableForm
     }
 
     
+    public int[] getIndexRange() {
+        int min = size(), max = -1;
+        for(int i=size(); --i >= 0; ) if(isValid(i)) {
+            if(i < min) min = i;
+            if(i > max) max = i;
+            break;
+        }
+        return max > min ? new int[] { min, max } : null;
+    }
+
+    
+    protected Samples1D getCropped(int imin, int imax) {
+        Samples1D cropped = getEmptySamples();
+
+        final int fromi = Math.max(0, imin);
+        final int toi = Math.min(imax, size()-1);     
+
+        cropped.setSize(imax-imin+1);
+
+        for(int i=fromi, i1=fromi-imin; i<=toi; i++, i1++)
+            cropped.set(i1, get(i));
+
+        return cropped;
+    }   
     
 
     @Override
