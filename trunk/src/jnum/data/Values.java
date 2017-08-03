@@ -33,5 +33,4 @@ public interface Values {
     
     public int compare(Number a, Number b);
     
-    
 }

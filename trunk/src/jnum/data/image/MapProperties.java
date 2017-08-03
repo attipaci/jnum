@@ -139,19 +139,29 @@ public class MapProperties extends FitsProperties {
     public final Grid2D<?> getGrid() { return grid; }
     
     public void setGrid(Grid2D<?> grid) { 
+        // Undo the prior pixel smoothing, if any...
+        if(smoothing != null) if(this.grid != null) smoothing.deconvolveWith(getPixelSmoothing());     
+        
         this.grid = grid; 
+        
+        // Apply new pixel smoothing...
         if(smoothing == null) smoothing = getPixelSmoothing();
         else smoothing.encompass(getPixelSmoothing());      
     }
 
     public void setResolution(double dx, double dy) { 
+        // Undo the prior pixel smoothing, if any...
+        if(smoothing != null) if(this.grid != null) smoothing.deconvolveWith(getPixelSmoothing());      
+        
         getGrid().setResolution(dx, dy);
+        
+        // Apply new pixel smoothing...
         if(smoothing == null) smoothing = getPixelSmoothing();
         else smoothing.encompass(getPixelSmoothing());
     }
     
     public Gaussian2D getPixelSmoothing() {
-        Vector2D resolution = grid.getResolution();     
+        Vector2D resolution = grid.getResolution();      
         return new Gaussian2D(resolution.x() / Gaussian2D.fwhm2size, resolution.y() / Gaussian2D.fwhm2size, 0.0);
     }
     
@@ -424,7 +434,7 @@ public class MapProperties extends FitsProperties {
     @Override
     public String brief(String header) {
         Unit sizeUnit = getDisplayGridUnit();
-   
+         
         String info = 
                 super.brief(header) + "\n" +
                 grid.toString(sizeUnit) +

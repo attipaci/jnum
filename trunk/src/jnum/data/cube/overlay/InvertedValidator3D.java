@@ -22,11 +22,11 @@
  ******************************************************************************/
 package jnum.data.cube.overlay;
 
-import jnum.data.cube.Value3D;
+import jnum.data.cube.Values3D;
 
 public class InvertedValidator3D extends Overlay3D {
 
-    public InvertedValidator3D(Value3D base) { super(base); }
+    public InvertedValidator3D(Values3D base) { super(base); }
     
     @Override
     public boolean isValid(int i, int j, int k) { return !super.isValid(i, j, k); }

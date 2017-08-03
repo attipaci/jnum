@@ -34,7 +34,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 import jnum.Util;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 import jnum.math.Range;
 
 // TODO: Auto-generated Javadoc
@@ -46,7 +46,7 @@ public class BufferedImageLayer extends ImageLayer {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5659356933524758138L;
 
-	private Value2D data;
+	private Values2D data;
 	
 	/** The buffer. */
 	private BufferedImage buffer;
@@ -61,14 +61,14 @@ public class BufferedImageLayer extends ImageLayer {
 	private AffineTransform coordsToIndex = new AffineTransform();
 
 
-	public BufferedImageLayer(Value2D data) {
+	public BufferedImageLayer(Values2D data) {
 	    setData(data);
 	    defaults();
 	}
 	
-	public Value2D getData() { return data; }
+	public Values2D getData() { return data; }
 	
-	public void setData(Value2D data) { 
+	public void setData(Values2D data) { 
 	    this.data = data; 
 	    createBuffer(data.sizeX(), data.sizeY());
 	}

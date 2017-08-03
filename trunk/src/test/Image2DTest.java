@@ -4,7 +4,7 @@ import jnum.Util;
 import jnum.data.image.CartesianGrid2D;
 import jnum.data.image.Gaussian2D;
 import jnum.data.image.Image2D;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 import jnum.data.image.overlay.Referenced2D;
 import jnum.data.image.overlay.Viewport2D;
 import jnum.parallel.ParallelTask;
@@ -66,7 +66,7 @@ public class Image2DTest {
     }
     
     
-    public static void print(String label, Value2D values) {
+    public static void print(String label, Values2D values) {
         System.out.println(label + " " + values.sizeX() + "x" + values.sizeY() + ":");
         
         for(int j=0; j<values.sizeY(); j++) {

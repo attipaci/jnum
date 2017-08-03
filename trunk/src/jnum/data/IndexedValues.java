@@ -33,9 +33,4 @@ public interface IndexedValues<IndexType> extends Values {
     
     public void set(IndexType index, Number value);
     
-     
-    
-    
-
-    
 }

@@ -26,7 +26,7 @@ package jnum.data.image.overlay;
 import jnum.Util;
 import jnum.data.image.Flag2D;
 import jnum.data.image.Index2D;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 import jnum.util.HashCode;
 
 public class Flagged2D extends Overlay2D {
@@ -35,7 +35,7 @@ public class Flagged2D extends Overlay2D {
     
     public Flagged2D() {}
     
-    public Flagged2D(Value2D base, Flag2D flag) {
+    public Flagged2D(Values2D base, Flag2D flag) {
         super(base);
         setFlags(flag);
     }

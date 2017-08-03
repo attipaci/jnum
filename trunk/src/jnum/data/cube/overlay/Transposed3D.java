@@ -23,13 +23,13 @@
 
 package jnum.data.cube.overlay;
 
-import jnum.data.cube.Value3D;
+import jnum.data.cube.Values3D;
 
 public class Transposed3D extends Overlay3D {
 
     public Transposed3D() {}
     
-    public Transposed3D(Value3D values) {
+    public Transposed3D(Values3D values) {
         super(values);
     }
     

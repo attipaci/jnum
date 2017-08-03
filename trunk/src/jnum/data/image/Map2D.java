@@ -466,7 +466,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         fftFilterAbove(FWHM, null);
     }
 
-    public void fftFilterAbove(double FWHM, final Value2D weight) {
+    public void fftFilterAbove(double FWHM, final Values2D weight) {
         fftFilterAbove(FWHM, null, weight);
     }
 
@@ -474,7 +474,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         fftFilterAbove(FWHM, validator, null);
     }
     
-    public final void fftFilterAbove(double FWHM, final Validating2D validator, final Value2D weight) {
+    public final void fftFilterAbove(double FWHM, final Validating2D validator, final Values2D weight) {
         final int nx = ExtraMath.pow2ceil(sizeX());
         final int ny = ExtraMath.pow2ceil(sizeY());
         final int nx2 = nx>>>1;  
@@ -590,7 +590,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         resampleFrom(map, null);
     }
     
-    public void resampleFrom(Map2D map, Value2D weight) {
+    public void resampleFrom(Map2D map, Values2D weight) {
         Referenced2D beam = getAntialiasingBeamImageFor(map);
         resampleFrom(map.getImage(), map.getIndexTransformTo(this), beam, weight);       
         properties.copyProcessingFrom(map.getProperties());
@@ -720,7 +720,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         filterCorrect(underlyingFWHM, this);
     }
     
-    public void filterCorrect(double underlyingFWHM, Value2D reference) {
+    public void filterCorrect(double underlyingFWHM, Values2D reference) {
         double blankingValue = getProperties().getFilterBlanking();
         filterCorrectValidated(underlyingFWHM, new RangeRestricted2D(reference, new Range(-blankingValue, blankingValue)));
     }

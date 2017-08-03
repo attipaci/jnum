@@ -562,7 +562,7 @@ public class Observation2D extends Map2D {
     }
 
     @Override
-    public void resampleFrom(Map2D map, final Value2D externalWeight) {
+    public void resampleFrom(Map2D map, final Values2D externalWeight) {
         if(map instanceof Observation2D) { resampleFrom((Observation2D) map); }
         else throw new UnsupportedOperationException(getClass().getSimpleName() + " cannot be resampled from type " + map.getClass().getSimpleName()); 
     }

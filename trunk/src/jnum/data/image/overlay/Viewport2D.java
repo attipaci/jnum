@@ -26,7 +26,7 @@ package jnum.data.image.overlay;
 import jnum.data.image.Index2D;
 import jnum.data.image.IndexBounds2D;
 import jnum.data.image.Resizable2D;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 
 public class Viewport2D extends Overlay2D implements Resizable2D { 
     private int i0;
@@ -39,19 +39,19 @@ public class Viewport2D extends Overlay2D implements Resizable2D {
         this(null);
     }
     
-    public Viewport2D(Value2D base) {
+    public Viewport2D(Values2D base) {
         this(base, 0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
     
-    public Viewport2D(Value2D base, IndexBounds2D bounds) {
+    public Viewport2D(Values2D base, IndexBounds2D bounds) {
         this(base, bounds.fromi, bounds.fromj, bounds.toi, bounds.toj);
     }
     
-    public Viewport2D(Value2D base, Index2D from, Index2D to) {
+    public Viewport2D(Values2D base, Index2D from, Index2D to) {
         this(base, from.i(), from.j(), to.i(), to.j());
     }
    
-    public Viewport2D(Value2D base, int fromi, int fromj, int toi, int toj) {
+    public Viewport2D(Values2D base, int fromi, int fromj, int toi, int toj) {
         setBasis(base);
         setBounds(fromi, fromj, toi, toj);
     }

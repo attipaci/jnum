@@ -34,7 +34,7 @@ import jnum.data.image.Grid2D;
 import jnum.data.image.IndexBounds2D;
 import jnum.data.image.Map2D;
 import jnum.data.image.MapProperties;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 import jnum.data.image.overlay.Viewport2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
@@ -204,13 +204,13 @@ public class EllipticalSource extends GaussianSource {
 
 
         @Override
-        public double adaptTo(final Value2D image) { 
+        public double adaptTo(final Values2D image) { 
             double I = super.adaptTo(image);
             measureShape(image, 0.0, 1.5);
             return I;
         }
         
-        public void measureShape(final Value2D image, double minRScale, double maxRScale) {      
+        public void measureShape(final Values2D image, double minRScale, double maxRScale) {      
             final double minr = minRScale * getFWHM().value();
             final Vector2D center = getCenterOffset();    
             

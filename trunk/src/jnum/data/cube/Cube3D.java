@@ -130,7 +130,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
   
 
 
-    public void setData(final Value3D values) {
+    public void setData(final Values3D values) {
         setSize(values.sizeX(), values.sizeY(), values.sizeZ());
         new Fork<Void>() {
             @Override
@@ -227,8 +227,8 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
     public void setTransposedData(Object data) {
         Cube3D cube = null;
         
-        if(data instanceof Value3D) {
-            setTransposedData((Value3D) data);
+        if(data instanceof Values3D) {
+            setTransposedData((Values3D) data);
             return;
         }
         else if(data instanceof double[][][]) cube = Cube3D.createType(Double.class);
@@ -241,7 +241,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         if(cube != null) cube.setData(data);
     }
     
-    public void setTransposedData(Value3D image) {
+    public void setTransposedData(Values3D image) {
         setSize(image.sizeZ(), image.sizeY(), image.sizeX());
         paste(new Transposed3D(image), true);
     }
@@ -325,14 +325,14 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         return image;
     }
     
-    public static Cube3D createFrom(final Value3D values) { return createFrom(values, null); }
+    public static Cube3D createFrom(final Values3D values) { return createFrom(values, null); }
    
     
-    public static Cube3D createFrom(final Value3D values, final Number blankingValue) {
+    public static Cube3D createFrom(final Values3D values, final Number blankingValue) {
         return createFrom(values, blankingValue, values.getElementType());
     }
     
-    public static Cube3D createFrom(final Value3D values, final Number blankingValue, Class<? extends Number> elementType) {
+    public static Cube3D createFrom(final Values3D values, final Number blankingValue, Class<? extends Number> elementType) {
         final Cube3D image = createType(elementType);
         image.setBlankingValue(blankingValue);
         image.setData(values);

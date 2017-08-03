@@ -24,14 +24,14 @@
 package jnum.data.samples.overlay;
 
 
-import jnum.data.samples.Value1D;
+import jnum.data.samples.Values1D;
 import jnum.math.Range;
 
 public class RangeRestricted1D extends Overlay1D {
     private Range validRange;
     
     
-    public RangeRestricted1D(Value1D base, Range restriction) {
+    public RangeRestricted1D(Values1D base, Range restriction) {
         super(base);
         setValidRange(restriction);
     }

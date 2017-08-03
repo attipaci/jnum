@@ -25,17 +25,17 @@ package jnum.data.cube.overlay;
 
 import jnum.Util;
 import jnum.data.cube.Data3D;
-import jnum.data.cube.Value3D;
+import jnum.data.cube.Values3D;
 import jnum.parallel.Parallelizable;
 
 
 
 public class Overlay3D extends Data3D {
-    private Value3D values;
+    private Values3D values;
   
     public Overlay3D() {}
     
-    public Overlay3D(Value3D values) {
+    public Overlay3D(Values3D values) {
         setBasis(values);
         if(values instanceof Parallelizable) copyParallel(((Parallelizable) values));
     }
@@ -57,9 +57,9 @@ public class Overlay3D extends Data3D {
     }
    
    
-    public Value3D getBasis() { return values; }
+    public Values3D getBasis() { return values; }
     
-    public void setBasis(Value3D base) {
+    public void setBasis(Values3D base) {
         this.values = base;
     }
     

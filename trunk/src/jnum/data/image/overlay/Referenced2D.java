@@ -24,7 +24,7 @@
 package jnum.data.image.overlay;
 
 import jnum.data.IndexReferenced;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 import jnum.math.Coordinate2D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
@@ -34,11 +34,11 @@ public class Referenced2D extends Overlay2D implements IndexReferenced<Coordinat
 
     public Referenced2D() {}
 
-    public Referenced2D(Value2D values) {
+    public Referenced2D(Values2D values) {
         super(values);
     }
     
-    public Referenced2D(Value2D values, Coordinate2D refIndex) {
+    public Referenced2D(Values2D values, Coordinate2D refIndex) {
         this(values);
         setReferenceIndex(refIndex);
     }

@@ -2,40 +2,44 @@
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
- * This file is part of crush.
+ * This file is part of jnum.
  * 
- *     crush is free software: you can redistribute it and/or modify
+ *     jnum is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  * 
- *     crush is distributed in the hope that it will be useful,
+ *     jnum is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  * 
  *     You should have received a copy of the GNU General Public License
- *     along with crush.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.samples;
+package jnum.data.image;
 
-import jnum.data.Validating;
-import jnum.data.Values;
+import jnum.data.IndexedValues;
 
-public interface Value1D extends Values, Validating<Integer> {
+public interface Values2D extends IndexedValues<Index2D>, Validating2D {
+    
   
-    public Integer size();
+    public int sizeX();
     
-    public Number get(Integer i);
+    public int sizeY();
     
-    public void add(Integer i, Number value);
+    public Number get(int i, int j);
     
-    public void set(Integer i, Number value);
+    public void add(int i, int j, Number value);
     
-    public double valueAtIndex(Double i);
-       
+    public void set(int i, int j, Number value);
+    
+    public double valueAtIndex(double i, double j);
+   
+ 
+ 
 }
