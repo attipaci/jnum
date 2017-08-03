@@ -268,8 +268,8 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      * @see jnum.SphericalCoordinates#parse(nom.tam.fits.Header, java.lang.String)
      */
     @Override
-    public void parseHeader(Header header, String keyStem, String alt) {
-        super.parseHeader(header, keyStem, alt);
+    public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
+        super.parseHeader(header, keyStem, alt, defaultValue);
         
         String system = header.getStringValue("RADESYS");
         if(system == null) system = header.getDoubleValue("EQUINOX" + alt) < 1984.0 ? "FK4" : "FK5";

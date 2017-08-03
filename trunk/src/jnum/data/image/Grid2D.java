@@ -63,7 +63,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	private Projection2D<CoordinateType> projection;
 		
 	/** The ref index. */
-	public Vector2D refIndex = new Vector2D();
+	private Vector2D refIndex = new Vector2D();
 	
 	// These are transformation matrix elements to native offsets
 	/** The i22. */
@@ -141,9 +141,10 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	@SuppressWarnings("unchecked")
+    @Override
+	public Grid2D<CoordinateType> clone() {
+		try { return (Grid2D<CoordinateType>) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
@@ -153,20 +154,20 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	 * @return the grid2 d
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public Grid2D<CoordinateType> copy() {
-		Grid2D<CoordinateType> copy = (Grid2D<CoordinateType>) clone();
+		Grid2D<CoordinateType> copy = clone();
 		copy.projection = projection.copy();
-		copy.refIndex = (Vector2D) refIndex.clone();
+		copy.refIndex = refIndex.copy();
 		copy.alt = new String(alt);
 		return copy;
 	}
 	
-	public Grid2D<CoordinateType> getCoalignedGrid(double resolution) {
-	    return getCoalignedGrid(new Vector2D(resolution, resolution));
+
+	public Grid2D<CoordinateType> forResolution(double resolution) {
+	    return forResolution(new Vector2D(resolution, resolution));
 	}
 	
-	public Grid2D<CoordinateType> getCoalignedGrid(Vector2D resolution) {
+	public Grid2D<CoordinateType> forResolution(Vector2D resolution) {
 	    Grid2D<CoordinateType> grid = copy();
 	    grid.setResolution(resolution);
 	    grid.refIndex.scaleX(getResolution().x() / resolution.x());
@@ -236,6 +237,23 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	public boolean isRectilinear() {
 		return m12 == 0.0 && m21 == 0.0;
 	}
+	
+	
+	/**
+     * Sets the transform.
+     *
+     * @param M the new transform
+     */
+    public void setTransform(float[][] M) {
+        if(M.length != 2) throw new IllegalArgumentException("Coordinate transform should a 2x2 matrix.");
+        if(M[0].length != 2) throw new IllegalArgumentException("Coordinate transform should a 2x2 matrix.");
+        
+        m11 = M[0][0];
+        m12 = M[0][1];
+        m21 = M[1][0];
+        m22 = M[1][1];
+        calcInverseTransform();
+    }
 	
 	/**
 	 * Sets the transform.
@@ -408,8 +426,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		projection.editHeader(header, alt);
 			
 		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-		
-		
+	
 		c.add(new HeaderCard("CRPIX1" + alt, refIndex.x() + 1, "Reference grid position"));
 		c.add(new HeaderCard("CRPIX2" + alt, refIndex.y() + 1, "Reference grid position"));
 		
@@ -513,12 +530,13 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		if(isReverseX()) { m11 *= -1.0; m21 *= -1.0; }
 		if(isReverseY()) { m22 *= -1.0; m12 *= -1.0; }
 		
-		refIndex.setX(header.getDoubleValue("CRPIX1" + alt) - 1.0);
-		refIndex.setY(header.getDoubleValue("CRPIX2" + alt) - 1.0);
+		Vector2D one = new Vector2D(1.0, 1.0);
+		refIndex.parseHeader(header, "CRPIX", "", one);
+		refIndex.subtract(one);
 		
 		CoordinateType reference= getCoordinateInstanceFor(type);
 
-		reference.parseHeader(header, "CRVAL", alt);
+		reference.parseHeader(header, "CRVAL", alt, new Coordinate2D(0.0, 0.0));
         setReference(reference);
 		
 		calcInverseTransform();
@@ -793,17 +811,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
     }
     
     
-    /**
-     * Shift.
-     *
-     * @param offset the offset
-     */
-    public void shift(final Vector2D offset) {
-    	toIndex(offset);
-    	refIndex.add(offset);
-    }
-    
-    
+  
     public Unit getPixelAreaUnit() { 
         return new Unit("pixel", Double.NaN) {
             private static final long serialVersionUID = -2483542207572304222L;
@@ -815,7 +823,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
    
     
     /**
-     * Gets the grid2 d for.
+     * Creates a 2D grid from the supplied FITS header, using the specified alternative coordinate system label.
      *
      * @param header the header
      * @param alt the alt

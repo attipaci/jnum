@@ -67,13 +67,16 @@ public class Referenced2D extends Overlay2D implements IndexReferenced<Coordinat
     @Override
     public void editHeader(Header header) throws HeaderCardException {
         super.editHeader(header);
-        referenceIndex.editHeader(header, "CRPIX", "");
+        new Coordinate2D(referenceIndex.x() + 1.0, referenceIndex.y() + 1.0).editHeader(header, "CRPIX", "");
     }
     
     @Override
     public void parseHeader(Header header) {
         super.parseHeader(header);
-        referenceIndex.parseHeader(header, "CRPIX", "");
+        referenceIndex.parseHeader(header, "CRPIX", "", new Coordinate2D(1.0, 1.0));
+        referenceIndex.subtractX(1.0);
+        referenceIndex.subtractY(1.0);
+        
     }
     
 }

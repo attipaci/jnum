@@ -71,14 +71,14 @@ public class Referenced1D extends Overlay1D implements IndexReferenced<Double> {
     public void editHeader(Header header) throws HeaderCardException {
         super.editHeader(header);
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        c.add(new HeaderCard("CRPIX1", referenceIndex, "The reference x coordinate in SI units."));
+        c.add(new HeaderCard("CRPIX1", referenceIndex + 1.0, "The reference x coordinate in SI units."));
         
     }
     
     @Override
     public void parseHeader(Header header) {
         super.parseHeader(header);
-        referenceIndex = header.getDoubleValue("CRPIX1", 0.0);
+        referenceIndex = header.getDoubleValue("CRPIX1", 1.0) - 1.0;
     }
     
 }

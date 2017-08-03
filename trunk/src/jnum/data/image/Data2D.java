@@ -246,6 +246,10 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         return true;
     }
 
+    public final boolean containsIndex(Coordinate2D index) {
+        return containsIndex(index.x(), index.y());
+    }
+    
     public boolean containsIndex(final double i, final double j) {
         if(i < 0) return false;
         if(j < 0) return false;
@@ -657,7 +661,11 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         addHistory("smoothed (fast method)");
     }
 
-
+    // TODO make generic...
+    protected final void getSmoothedValueAtIndex(final Coordinate2D index, final Referenced2D beam, Value2D weight, WeightedPoint result) {    
+        getSmoothedValueAtIndex(index.x(), index.y(), beam, weight, result);
+    }
+    
 
 
     // Beam fitting: I' = C * sum(wBI) / sum(wB2)
@@ -687,11 +695,13 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
     }
 
+    // TODO make abstract in Data
     public int getPointSmoothOps(int beamPoints, int interpolationType) {
         return 25 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
 
 
+    // TODO make generic with Value2D --> IndexedValues<Index2D>
     public final Image2D getSmoothed(final Referenced2D beam, final Value2D weight, final Value2D smoothedWeights) {
         final Image2D convolved = getEmptyImage();
 
@@ -719,7 +729,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
 
 
-
+    // TODO Try make this generic...
     // Do the convolution proper at the specified intervals (step) only, and interpolate (quadratic) inbetween
     public Image2D getFastSmoothed(final Referenced2D beam, final int stepX, final int stepY, final Value2D weight, final Value2D smoothedWeights) {
         if(stepX * stepY == 1) return getSmoothed(beam, weight, smoothedWeights);
@@ -791,7 +801,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
 
 
-
+    // TODO make generic
     public Image2D clean(final Referenced2D beam, final double gain, final double threshold) { 
         Image2D clean = getEmptyImage();
 
@@ -829,7 +839,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
 
 
-
+    // TODO make generic
     public void resampleFrom(final Data2D image) {
         double scaleX = (double) image.sizeX() / sizeX();
         double scaleY = (double) image.sizeY() / sizeY();
@@ -844,6 +854,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
     }
 
+    // TODO make generic
     public synchronized void resampleFrom(final Data2D image, final Transforming<Vector2D> toSourceIndex, final Referenced2D beam, final Value2D weight) {
 
         new InterpolatingFork() {
@@ -862,11 +873,11 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
                 index.set(i, j);
                 toSourceIndex.transform(index);
 
-                if(!image.containsIndex((int) Math.round(index.x()), (int) Math.round(index.y()))) {
+                if(!image.containsIndex(index)) {
                     discard(i, j);
                 }
                 else if(beam == null) {
-                    double value = image.valueAtIndex(index.x(), index.y(), getInterpolatorData());
+                    double value = image.valueAtIndex(index, getInterpolatorData());
                     if(java.lang.Double.isNaN(value)) discard(i, j);
                     else set(i, j, value);
                 }
@@ -887,6 +898,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
 
 
+    // TODO make generic or else Data2D abstract
     public void addPatchAt(Coordinate2D index, Value2D patch, double scaling) {
         final int imin = Math.max(0, (int) Math.floor(index.x()));
         final int jmin = Math.max(0, (int) Math.floor(index.y()));
@@ -900,6 +912,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
 
 
+    // TODO make generic or else Data2D abstract
     public void addParallelPatchAt(final Coordinate2D index, final Value2D patch, final double scaling) {
         int imin = Math.max(0, (int) Math.floor(index.x()));
         int jmin = Math.max(0, (int) Math.floor(index.y()));
@@ -922,7 +935,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
     }
 
-
+    // TODO make Data abstract...
     public void discardIsolated(final int minNeighbors) { 
         if(minNeighbors < 1) return;   // Nothing to do...
         validate(getNeighborValidator(minNeighbors));

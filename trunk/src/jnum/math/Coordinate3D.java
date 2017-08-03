@@ -100,7 +100,20 @@ ViewableAsDoubles, Parser, NumberFormating {
 
 	public final void setZ(final double value) { this.z = value; }
 	
+	
+	public final void addX(final double value) { this.x += value; }
+
+    public final void addY(final double value) { this.y += value; }
+
+    public final void addZ(final double value) { this.z += value; }
+    
 	  
+    public final void subtractX(final double value) { this.x -= value; }
+
+    public final void subtractY(final double value) { this.y -= value; }
+
+    public final void subtractZ(final double value) { this.z -= value; }
+    
 	
     @Override
     public String toString(NumberFormat nf) {
@@ -254,10 +267,10 @@ ViewableAsDoubles, Parser, NumberFormating {
      * @param header the header
      * @param alt the alt
      */
-    public void parseHeader(Header header, String keyStem, String alt) {
-        x = header.getDoubleValue(keyStem + "1" + alt, 0.0);
-        y = header.getDoubleValue(keyStem + "2" + alt, 0.0);
-        z = header.getDoubleValue(keyStem + "3" + alt, 0.0);
+    public void parseHeader(Header header, String keyStem, String alt, Coordinate3D defaultValue) {
+        x = header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x());
+        y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());
+        z = header.getDoubleValue(keyStem + "3" + alt, defaultValue == null ? 0.0 : defaultValue.z());
     }
     
 
