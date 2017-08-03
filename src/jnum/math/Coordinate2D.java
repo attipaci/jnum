@@ -518,9 +518,9 @@ ViewableAsDoubles, Parser, NumberFormating {
 	 * @param header the header
 	 * @param alt the alt
 	 */
-	public void parseHeader(Header header, String keyStem, String alt) {
-		x = header.getDoubleValue(keyStem + "1" + alt, 0.0);
-		y = header.getDoubleValue(keyStem + "2" + alt, 0.0);
+	public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
+		x = header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x());
+		y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());
 	}
 	
 	/**

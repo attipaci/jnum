@@ -170,9 +170,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         Map2D copy = clone();
            
         if(properties != null) copy.properties = properties.copy();   
-
-        copy.setGrid(getGrid());  
-            
+       
         copy.localUnits = new Hashtable<String, Unit>(localUnits.size());
         copy.localUnits.putAll(localUnits);
         addProprietaryLocalUnits();
@@ -608,7 +606,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         Vector2D resolution = getResolution();
         setSize((int) Math.ceil(sizeX() * resolution.x() / newres.x()), (int) Math.ceil(sizeY() * resolution.y() / newres.y()));
         
-        setGrid(getGrid().getCoalignedGrid(resolution));
+        setGrid(getGrid().forResolution(resolution));
         
         resampleFrom(clone);        
     }

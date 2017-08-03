@@ -50,7 +50,7 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.fits.ImageHDU;
 import nom.tam.util.Cursor;
 
-public abstract class Data<IndexType, CoordType, VectorType> extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, 
+public abstract class Data<IndexType, PositionType, VectorType> extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, 
 TableFormatter.Entries {
 
     static {
@@ -94,7 +94,7 @@ TableFormatter.Entries {
         if(!getClass().isAssignableFrom(o.getClass())) return false;
         
         @SuppressWarnings("unchecked")
-        Data<IndexType, CoordType, VectorType> data = (Data<IndexType, CoordType, VectorType>) o;
+        Data<IndexType, PositionType, VectorType> data = (Data<IndexType, PositionType, VectorType>) o;
              
         if(getInterpolationType() != data.getInterpolationType()) return false;
         if(!Util.equals(getBlankingValue(), data.getBlankingValue())) return false;
@@ -104,7 +104,7 @@ TableFormatter.Entries {
     }
     
 
-    public boolean contentEquals(final Data<IndexType, CoordType, VectorType> data) {
+    public boolean contentEquals(final Data<IndexType, PositionType, VectorType> data) {
         if(!(data instanceof Data)) return false;    
         
         if(!getSizeString().equals(data.getSizeString())) return false;
@@ -126,8 +126,8 @@ TableFormatter.Entries {
     
     @SuppressWarnings("unchecked")
     @Override
-    public Data<IndexType, CoordType, VectorType> clone() {
-        Data<IndexType, CoordType, VectorType> clone = (Data<IndexType, CoordType, VectorType>) super.clone();
+    public Data<IndexType, PositionType, VectorType> clone() {
+        Data<IndexType, PositionType, VectorType> clone = (Data<IndexType, PositionType, VectorType>) super.clone();
         if(history != null) clone.history = (ArrayList<String>) history.clone();
         clone.logNewData = true;
         return clone;
@@ -265,12 +265,14 @@ TableFormatter.Entries {
     
       
     public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op) {
-        if(capacity() * (2 + op.numberOfOperations()) > 2 * ParallelTask.minExecutorBlockSize) return loop(op);
-        else return fork(op);  
+        if(getParallel() < 2) return loop(op);
+        if(capacity() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loop(op);
+        else return fork(op);
     }
     
     public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op) {
-        if(capacity() * (2 + op.numberOfOperations()) > 2 * ParallelTask.minExecutorBlockSize) return loopValid(op);
+        if(getParallel() < 2) return loopValid(op);
+        if(capacity() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loopValid(op);
         else return forkValid(op);  
     }
     
@@ -286,7 +288,7 @@ TableFormatter.Entries {
     public abstract String getSizeString();
     
     public abstract boolean containsIndex(IndexType index);
-       
+         
     public abstract Number getValid(final IndexType index, final Number defaultValue);
     
     public abstract boolean isValid(IndexType index);
@@ -297,17 +299,17 @@ TableFormatter.Entries {
     
     public abstract void scale(IndexType index, double factor);
     
-    public abstract double valueAtIndex(CoordType index);
+    public abstract double valueAtIndex(PositionType index);
     
-    public abstract Number nearestValueAtIndex(CoordType index);
+    public abstract Number nearestValueAtIndex(PositionType index);
     
-    public abstract double linearAtIndex(CoordType index);
+    public abstract double linearAtIndex(PositionType index);
     
-    public abstract double quadraticAtIndex(CoordType index);
+    public abstract double quadraticAtIndex(PositionType index);
     
-    public abstract double splineAtIndex(CoordType index);
+    public abstract double splineAtIndex(PositionType index);
     
-    public abstract Data<IndexType, CoordType, VectorType> getCropped(IndexType from, IndexType to);
+    public abstract Data<IndexType, PositionType, VectorType> getCropped(IndexType from, IndexType to);
     
 
     protected final int getInterpolationOps() { return getInterpolationOps(getInterpolationType()); }
@@ -383,7 +385,7 @@ TableFormatter.Entries {
         });
     }
    
-    public final void paste(final Data<IndexType, CoordType, VectorType> source, boolean report) {
+    public final void paste(final Data<IndexType, PositionType, VectorType> source, boolean report) {
         if(source == this) return;
 
         source.smartFork(new ParallelPointOp.Simple<IndexType>() {
@@ -523,6 +525,8 @@ TableFormatter.Entries {
             
             @Override
             public void mergeResult(IndexType localMinIndex) {
+                if(minIndex == null) minIndex = localMinIndex;
+                if(localMinIndex == null) return;
                 if(compare(get(localMinIndex), get(minIndex)) < 0) minIndex = localMinIndex; 
             }            
         });
@@ -564,6 +568,8 @@ TableFormatter.Entries {
             
             @Override
             public void mergeResult(IndexType localMaxIndex) {
+                if(maxIndex == null) maxIndex = localMaxIndex;
+                if(localMaxIndex == null) return;
                 if(compare(get(localMaxIndex), get(maxIndex)) > 0) maxIndex = localMaxIndex; 
             }            
         });
@@ -605,6 +611,8 @@ TableFormatter.Entries {
             
             @Override
             public void mergeResult(IndexType localMaxIndex) {
+                if(maxIndex == null) maxIndex = localMaxIndex;
+                if(localMaxIndex == null) return;
                 if(Math.abs(get(localMaxIndex).doubleValue()) > Math.abs(get(maxIndex).doubleValue())) maxIndex = localMaxIndex; 
             }            
         });
@@ -729,7 +737,7 @@ TableFormatter.Entries {
     }
     
     
-    public final void add(final Data<IndexType, CoordType, VectorType> data) {
+    public final void add(final Data<IndexType, PositionType, VectorType> data) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
             public void process(IndexType index) {
@@ -741,7 +749,7 @@ TableFormatter.Entries {
     }
 
 
-    public final void addScaled(final Data<IndexType, CoordType, VectorType> data, final double scaling) {
+    public final void addScaled(final Data<IndexType, PositionType, VectorType> data, final double scaling) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
             public void process(IndexType index) {
@@ -752,7 +760,7 @@ TableFormatter.Entries {
         addHistory("added scaled " + getClass().getSimpleName() + " (" + scaling + "x).");
     }
 
-    public final void subtract(final Data<IndexType, CoordType, VectorType> data) {
+    public final void subtract(final Data<IndexType, PositionType, VectorType> data) {
         addScaled(data, -1.0);
     }
 

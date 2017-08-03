@@ -126,11 +126,11 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	 * @see jnum.Projection2D#copy()
 	 */
 	@Override
-	public Projection2D<SphericalCoordinates> copy() {
+	public SphericalProjection copy() {
 		SphericalProjection copy = (SphericalProjection) super.copy();
-		if(celestialPole != null) copy.celestialPole = (SphericalCoordinates) celestialPole.copy();
-		if(nativeReference != null) copy.nativeReference = (SphericalCoordinates) nativeReference.copy();
-		if(nativePole != null) copy.nativePole = (SphericalCoordinates) nativePole.copy();
+		if(celestialPole != null) copy.celestialPole = celestialPole.copy();
+		if(nativeReference != null) copy.nativeReference = nativeReference.copy();
+		if(nativePole != null) copy.nativePole = nativePole.copy();
 		return copy;
 	}
 

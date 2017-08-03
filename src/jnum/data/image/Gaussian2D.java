@@ -113,8 +113,8 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
      * @see java.lang.Object#clone()
      */
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public Gaussian2D clone() {
+        try { return (Gaussian2D) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
 
@@ -123,8 +123,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
      */
     @Override
     public Gaussian2D copy() {
-        Gaussian2D copy = (Gaussian2D) clone();
-        return copy;
+        return clone();
     }
 
 

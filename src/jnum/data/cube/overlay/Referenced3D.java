@@ -68,13 +68,19 @@ public class Referenced3D extends Overlay3D implements IndexReferenced<Coordinat
     @Override
     public void editHeader(Header header) throws HeaderCardException {
         super.editHeader(header);
+        new Coordinate3D(referenceIndex.x() + 1.0, referenceIndex.y() + 1.0, referenceIndex.z() + 1.0).editHeader(header, "CRPIX", "");
+        
         referenceIndex.editHeader(header, "CRPIX", "");
     }
     
     @Override
     public void parseHeader(Header header) {
         super.parseHeader(header);
-        referenceIndex.parseHeader(header, "CRPIX", "");
+        referenceIndex.parseHeader(header, "CRPIX", "", new Coordinate3D(1.0, 1.0, 1.0));
+        
+        referenceIndex.subtractX(-1.0);
+        referenceIndex.subtractY(-1.0);
+        referenceIndex.subtractZ(-1.0);
     }
     
 
