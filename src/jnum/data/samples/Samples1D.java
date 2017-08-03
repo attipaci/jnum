@@ -96,7 +96,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         clearHistory();
     }
 
-    public void setData(final Value1D values) {
+    public void setData(final Values1D values) {
         setSize(values.size());
         new Fork<Void>() {
             @Override
@@ -259,14 +259,14 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         return samples;
     }
     
-    public static Samples1D createFrom(final Value1D values) { return createFrom(values, null); }
+    public static Samples1D createFrom(final Values1D values) { return createFrom(values, null); }
    
     
-    public static Samples1D createFrom(final Value1D values, final Number blankingValue) {
+    public static Samples1D createFrom(final Values1D values, final Number blankingValue) {
         return createFrom(values, blankingValue, values.getElementType());
     }
     
-    public static Samples1D createFrom(final Value1D values, final Number blankingValue, Class<? extends Number> elementType) {
+    public static Samples1D createFrom(final Values1D values, final Number blankingValue, Class<? extends Number> elementType) {
         final Samples1D samples = createType(elementType);
         samples.setBlankingValue(blankingValue);
         samples.setData(values);

@@ -24,14 +24,14 @@
 package jnum.data.cube.overlay;
 
 
-import jnum.data.cube.Value3D;
+import jnum.data.cube.Values3D;
 import jnum.math.Range;
 
 public class RangeRestricted3D extends Overlay3D {
     private Range validRange;
     
     
-    public RangeRestricted3D(Value3D base, Range restriction) {
+    public RangeRestricted3D(Values3D base, Range restriction) {
         super(base);
         setValidRange(restriction);
     }

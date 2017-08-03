@@ -24,14 +24,14 @@
 package jnum.data.image.overlay;
 
 
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 import jnum.math.Range;
 
 public class RangeRestricted2D extends Overlay2D {
     private Range validRange;
     
     
-    public RangeRestricted2D(Value2D base, Range restriction) {
+    public RangeRestricted2D(Values2D base, Range restriction) {
         super(base);
         setValidRange(restriction);
     }

@@ -54,7 +54,7 @@ import jnum.util.HashCode;
  * @author pumukli
  *
  */
-public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> implements Value2D {
+public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> implements Values2D {
 
 
     private InterpolatorData reuseIpolData;
@@ -371,7 +371,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         despike(threshold, null);
     }
 
-    public synchronized void despike(final double significance, final Value2D noiseWeight) {
+    public synchronized void despike(final double significance, final Values2D noiseWeight) {
         final double[][] neighbourData = {{ 0.5, 1, 0.5 }, { 1, 0, 1 }, { 0.5, 1, 0.5 }};
 
         final Image2D neighbourImage = Image2D.createType(getElementType());
@@ -662,7 +662,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
 
     // TODO make generic...
-    protected final void getSmoothedValueAtIndex(final Coordinate2D index, final Referenced2D beam, Value2D weight, WeightedPoint result) {    
+    protected final void getSmoothedValueAtIndex(final Coordinate2D index, final Referenced2D beam, Values2D weight, WeightedPoint result) {    
         getSmoothedValueAtIndex(index.x(), index.y(), beam, weight, result);
     }
     
@@ -672,7 +672,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     // I(x) = I -> I' = I -> C = sum(wB2) / sum(wB)
     // I' = sum(wBI)/sum(wB)
     // rms = Math.sqrt(1 / sum(wB))
-    protected void getSmoothedValueAtIndex(final double i, final double j, final Referenced2D beam, Value2D weight, WeightedPoint result) {    
+    protected void getSmoothedValueAtIndex(final double i, final double j, final Referenced2D beam, Values2D weight, WeightedPoint result) {    
         final double i0 = i - beam.getReferenceIndex().x();
         final int fromi = Math.max(0, (int) Math.ceil(i0));
         final int toi = Math.min(sizeX(), (int)Math.floor(i0) + beam.sizeX());
@@ -702,7 +702,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
 
     // TODO make generic with Value2D --> IndexedValues<Index2D>
-    public final Image2D getSmoothed(final Referenced2D beam, final Value2D weight, final Value2D smoothedWeights) {
+    public final Image2D getSmoothed(final Referenced2D beam, final Values2D weight, final Values2D smoothedWeights) {
         final Image2D convolved = getEmptyImage();
 
         new Fork<Void>() {
@@ -731,7 +731,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
     // TODO Try make this generic...
     // Do the convolution proper at the specified intervals (step) only, and interpolate (quadratic) inbetween
-    public Image2D getFastSmoothed(final Referenced2D beam, final int stepX, final int stepY, final Value2D weight, final Value2D smoothedWeights) {
+    public Image2D getFastSmoothed(final Referenced2D beam, final int stepX, final int stepY, final Values2D weight, final Values2D smoothedWeights) {
         if(stepX * stepY == 1) return getSmoothed(beam, weight, smoothedWeights);
 
         final int nx = ExtraMath.roundupRatio(sizeX(), stepX);
@@ -855,7 +855,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
 
     // TODO make generic
-    public synchronized void resampleFrom(final Data2D image, final Transforming<Vector2D> toSourceIndex, final Referenced2D beam, final Value2D weight) {
+    public synchronized void resampleFrom(final Data2D image, final Transforming<Vector2D> toSourceIndex, final Referenced2D beam, final Values2D weight) {
 
         new InterpolatingFork() {
             private Vector2D index;
@@ -899,7 +899,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
 
     // TODO make generic or else Data2D abstract
-    public void addPatchAt(Coordinate2D index, Value2D patch, double scaling) {
+    public void addPatchAt(Coordinate2D index, Values2D patch, double scaling) {
         final int imin = Math.max(0, (int) Math.floor(index.x()));
         final int jmin = Math.max(0, (int) Math.floor(index.y()));
         final int imax = Math.min(sizeX(), (int) Math.ceil(index.x()) + patch.sizeX());
@@ -913,7 +913,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
 
     // TODO make generic or else Data2D abstract
-    public void addParallelPatchAt(final Coordinate2D index, final Value2D patch, final double scaling) {
+    public void addParallelPatchAt(final Coordinate2D index, final Values2D patch, final double scaling) {
         int imin = Math.max(0, (int) Math.floor(index.x()));
         int jmin = Math.max(0, (int) Math.floor(index.y()));
         int imax = Math.min(sizeX(), patch.sizeX() + (int) Math.floor(index.x()));

@@ -24,7 +24,7 @@
 package jnum.data.samples.overlay;
 
 import jnum.data.samples.Resizable1D;
-import jnum.data.samples.Value1D;
+import jnum.data.samples.Values1D;
 
 public class Viewport1D extends Overlay1D implements Resizable1D { 
     private int i0;
@@ -35,12 +35,12 @@ public class Viewport1D extends Overlay1D implements Resizable1D {
         this(null);
     }
     
-    public Viewport1D(Value1D base) {
+    public Viewport1D(Values1D base) {
         this(base, 0, Integer.MAX_VALUE);
     }
  
    
-    public Viewport1D(Value1D base, int from, int to) {
+    public Viewport1D(Values1D base, int from, int to) {
         setBasis(base);
         setBounds(from, to);
     }

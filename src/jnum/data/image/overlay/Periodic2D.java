@@ -23,14 +23,14 @@
 
 package jnum.data.image.overlay;
 
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 
 public class Periodic2D extends Overlay2D {
 
 
     public Periodic2D() {}
     
-    public Periodic2D(Value2D values) {
+    public Periodic2D(Values2D values) {
         super(values);
     }
    

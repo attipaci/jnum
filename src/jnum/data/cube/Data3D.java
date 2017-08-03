@@ -38,7 +38,7 @@ import jnum.parallel.PointOp;
 
 
 
-public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> implements Value3D {
+public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> implements Values3D {
 
     private InterpolatorData reuseIpolData;
 

@@ -22,11 +22,11 @@
  ******************************************************************************/
 package jnum.data.samples.overlay;
 
-import jnum.data.samples.Value1D;
+import jnum.data.samples.Values1D;
 
 public class InvertedValidator1D extends Overlay1D {
 
-    public InvertedValidator1D(Value1D base) { super(base); }
+    public InvertedValidator1D(Values1D base) { super(base); }
     
     @Override
     public boolean isValid(Integer i) { return !super.isValid(i); }

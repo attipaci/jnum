@@ -25,8 +25,8 @@ package jnum.util;
 import java.util.List;
 
 import jnum.ExtraMath;
-import jnum.data.image.Value2D;
-import jnum.data.samples.Value1D;
+import jnum.data.image.Values2D;
+import jnum.data.samples.Values1D;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -253,7 +253,7 @@ public final class HashCode {
      * @param values the values
      * @return the int
      */
-    public static int from(Value1D values) { return from(values, 0, values.size()); }
+    public static int from(Values1D values) { return from(values, 0, values.size()); }
     
     /**
      * Gets the.
@@ -263,7 +263,7 @@ public final class HashCode {
      * @param to the to
      * @return the int
      */
-    public static int from(Value1D values, int from, int to) {
+    public static int from(Values1D values, int from, int to) {
         int hash = from ^ to;
         for(int i=from; i<to; i++) hash ^= values.get(i).hashCode(); 
         return hash;        
@@ -336,7 +336,7 @@ public final class HashCode {
 		return hash;		
 	}
 	
-	public static int from(Value2D values) {
+	public static int from(Values2D values) {
 	    int hash = 0;
 	    for(int i=values.sizeX(); --i >= 0; ) for(int j=values.sizeY(); --j >=0; ) hash ^= values.get(i,  j).hashCode();
 	    return hash;
@@ -471,7 +471,7 @@ public final class HashCode {
      * @param values the values
      * @return the int
      */
-    public static int sampleFrom(Value1D values) {
+    public static int sampleFrom(Values1D values) {
         if(values.size() < 32) return from(values, 0, values.size());
         int hash = from(values, 0, 8) ^ from(values, values.size()-8, values.size());
         int step = (values.size() - 16) >> 4;
@@ -532,7 +532,7 @@ public final class HashCode {
 	}
 	
 	
-	public static int sampleFrom(Value2D values) {
+	public static int sampleFrom(Values2D values) {
 	    final int maxSamples = 32;
 	    int n = values.sizeX() * values.sizeY();
 	    

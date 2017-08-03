@@ -36,7 +36,7 @@ import jnum.data.image.Index2D;
 import jnum.data.image.IndexBounds2D;
 import jnum.data.image.Map2D;
 import jnum.data.image.Observation2D;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 import jnum.data.image.overlay.Overlay2D;
 import jnum.data.image.overlay.Viewport2D;
 import jnum.math.Coordinate2D;
@@ -281,7 +281,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         adaptTo(map.getGrid(), map);
     }
      
-    public final void adaptTo(Grid2D<?> grid, Value2D values) {
+    public final void adaptTo(Grid2D<?> grid, Values2D values) {
         getRepresentation(grid).adaptTo(values);
     }
           
@@ -293,7 +293,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         return getAsymmetry(values.getGrid(), values, angle, radialRange);
     }
     
-    public Asymmetry2D getAsymmetry(Grid2D<?> grid, Value2D values, double angle, Range radialRange) {
+    public Asymmetry2D getAsymmetry(Grid2D<?> grid, Values2D values, double angle, Range radialRange) {
         Representation r = (Representation) getRepresentation(grid);
         Data2D image = values instanceof Data2D ? (Data2D) values : new Overlay2D(values);
         return r.getAsymmetry2D(image, angle, radialRange);
@@ -376,7 +376,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         
      
         // Increase the aperture until it captures >98% of the flux
-        public double adaptTo(Value2D image) {      
+        public double adaptTo(Values2D image) {      
             moveTo(image, 0);
             
             IndexBounds2D bounds = getBounds();
@@ -408,7 +408,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         
       
         
-        public void moveToLocalPeak(Value2D image, int sign) {
+        public void moveToLocalPeak(Values2D image, int sign) {
             // TODO make sure the radius is at least a few pixels in size...
               
             Viewport2D view = getViewer(image);
@@ -424,7 +424,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         }
         
         
-        public void moveToLocalCentroid(Value2D image) { 
+        public void moveToLocalCentroid(Values2D image) { 
             final Viewport2D view = getViewer(image);
             
             final Vector2D centroid = view.getCentroidIndex();
@@ -435,7 +435,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         }
         
         
-        public void moveTo(Value2D image, int sign) {
+        public void moveTo(Values2D image, int sign) {
             switch(getPositioningMethod()) {
             case POSITION_PEAK: moveToLocalPeak(image, sign); break;
             case POSITION_CENTRIOD: moveToLocalCentroid(image); break;

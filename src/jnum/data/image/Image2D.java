@@ -127,7 +127,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
 
     public abstract Object getData();
 
-    public void setData(final Value2D values) {
+    public void setData(final Values2D values) {
         setSize(values.sizeX(), values.sizeY());
         new Fork<Void>() {
             @Override
@@ -223,8 +223,8 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     public void setRowColData(Object data) {
         Image2D image = null;
         
-        if(data instanceof Value2D) {
-            setRowColData((Value2D) data);
+        if(data instanceof Values2D) {
+            setRowColData((Values2D) data);
             return;
         }
         else if(data instanceof double[][][]) image = Image2D.createType(Double.class);
@@ -237,7 +237,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         if(image != null) image.setData(data);
     }
     
-    public void setRowColData(Value2D image) {
+    public void setRowColData(Values2D image) {
         setSize(image.sizeY(), image.sizeX());
         paste(new Transposed2D(image), true);
     }
@@ -349,14 +349,14 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         return image;
     }
     
-    public static Image2D createFrom(final Value2D values) { return createFrom(values, null); }
+    public static Image2D createFrom(final Values2D values) { return createFrom(values, null); }
    
     
-    public static Image2D createFrom(final Value2D values, final Number blankingValue) {
+    public static Image2D createFrom(final Values2D values, final Number blankingValue) {
         return createFrom(values, blankingValue, values.getElementType());
     }
     
-    public static Image2D createFrom(final Value2D values, final Number blankingValue, Class<? extends Number> elementType) {
+    public static Image2D createFrom(final Values2D values, final Number blankingValue, Class<? extends Number> elementType) {
         final Image2D image = createType(elementType);
         image.setBlankingValue(blankingValue);
         image.setData(values);

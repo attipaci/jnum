@@ -23,14 +23,14 @@
 
 package jnum.data.samples.overlay;
 
-import jnum.data.samples.Value1D;
+import jnum.data.samples.Values1D;
 
 public class Periodic1D extends Overlay1D {
 
 
     public Periodic1D() {}
     
-    public Periodic1D(Value1D values) {
+    public Periodic1D(Values1D values) {
         super(values);
     }
    

@@ -325,7 +325,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
 
     // TODO proper 2D Gaussian equivalent beams...
     // for now we just assume amimuthal symmetry...
-    public void setEquivalent(Value2D beam, Coordinate2D pixelSize) {
+    public void setEquivalent(Values2D beam, Coordinate2D pixelSize) {
         // Smoothing beams are generally small, so no need to parallelize...
         double I = 0.0;
         for(int i=beam.sizeX(); --i >= 0; ) for(int j=beam.sizeY(); --j >= 0; ) if(beam.isValid(i, j)) {
@@ -601,7 +601,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
     }
 
 
-    public static Gaussian2D getEquivalent(Value2D beam, Coordinate2D pixelSize) {
+    public static Gaussian2D getEquivalent(Values2D beam, Coordinate2D pixelSize) {
         Gaussian2D psf = new Gaussian2D();
         psf.setEquivalent(beam, pixelSize);
         return psf;

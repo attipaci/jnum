@@ -23,13 +23,13 @@
 
 package jnum.data.image.overlay;
 
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 
 public class Transposed2D extends Overlay2D {
 
     public Transposed2D() {}
     
-    public Transposed2D(Value2D values) {
+    public Transposed2D(Values2D values) {
         super(values);
     }
     

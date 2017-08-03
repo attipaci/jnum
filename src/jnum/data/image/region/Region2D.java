@@ -32,7 +32,7 @@ import jnum.data.image.Flag2D;
 import jnum.data.image.Grid2D;
 import jnum.data.image.Index2D;
 import jnum.data.image.IndexBounds2D;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 import jnum.data.image.overlay.Viewport2D;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
@@ -182,7 +182,7 @@ public abstract class Region2D implements Serializable, Cloneable {
 	        };
 	    }
 	    
-	    public Viewport2D getViewer(Value2D values) {
+	    public Viewport2D getViewer(Values2D values) {
 	        Viewport2D viewer = getViewer();
 	        viewer.setBasis(values);
 	        return viewer;	        

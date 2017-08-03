@@ -28,7 +28,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import jnum.Util;
 import jnum.data.image.Grid2D;
 import jnum.data.image.SphericalGrid;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 
 
 // TODO: Auto-generated Javadoc
@@ -49,7 +49,7 @@ public class GridImageLayer extends BufferedImageLayer {
 	 *
 	 * @param image the image
 	 */
-	public GridImageLayer(Value2D data, Grid2D<?> grid) {
+	public GridImageLayer(Values2D data, Grid2D<?> grid) {
 		super(data);
 			
 		setGrid(grid);

@@ -36,7 +36,7 @@ import jnum.parallel.PointOp;
 import jnum.text.TableFormatter;
 import jnum.util.HashCode;
 
-public abstract class Data1D extends Data<Integer, Double, Double> implements Value1D, TableFormatter.Entries {
+public abstract class Data1D extends Data<Integer, Double, Double> implements Values1D, TableFormatter.Entries {
 
     private CubicSpline reuseSpline;
     
@@ -134,7 +134,7 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
         set(i, get(i).doubleValue() * factor);
     }
     
-    public final void paste(final Value1D source, boolean report) {
+    public final void paste(final Values1D source, boolean report) {
         paste(new Overlay1D(source), report);
     }
 

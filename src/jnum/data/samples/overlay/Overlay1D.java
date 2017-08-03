@@ -2,7 +2,7 @@ package jnum.data.samples.overlay;
 
 import jnum.Util;
 import jnum.data.samples.Data1D;
-import jnum.data.samples.Value1D;
+import jnum.data.samples.Values1D;
 import jnum.parallel.Parallelizable;
 
 /*******************************************************************************
@@ -29,11 +29,11 @@ import jnum.parallel.Parallelizable;
  ******************************************************************************/
 
 public class Overlay1D extends Data1D {
-    private Value1D values;
+    private Values1D values;
   
     public Overlay1D() {}
     
-    public Overlay1D(Value1D values) {
+    public Overlay1D(Values1D values) {
         setBasis(values);
         if(values instanceof Parallelizable) copyParallel(((Parallelizable) values));
     }
@@ -55,9 +55,9 @@ public class Overlay1D extends Data1D {
     }
    
    
-    public Value1D getBasis() { return values; }
+    public Values1D getBasis() { return values; }
     
-    public void setBasis(Value1D base) {
+    public void setBasis(Values1D base) {
         this.values = base;
     }
     

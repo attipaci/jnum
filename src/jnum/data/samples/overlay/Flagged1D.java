@@ -25,7 +25,7 @@ package jnum.data.samples.overlay;
 
 import jnum.Util;
 import jnum.data.samples.Flag1D;
-import jnum.data.samples.Value1D;
+import jnum.data.samples.Values1D;
 import jnum.util.HashCode;
 
 public class Flagged1D extends Overlay1D {
@@ -34,7 +34,7 @@ public class Flagged1D extends Overlay1D {
     
     public Flagged1D() {}
     
-    public Flagged1D(Value1D base, Flag1D flag) {
+    public Flagged1D(Values1D base, Flag1D flag) {
         super(base);
         setFlags(flag);
     }

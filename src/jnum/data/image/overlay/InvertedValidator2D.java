@@ -22,11 +22,11 @@
  ******************************************************************************/
 package jnum.data.image.overlay;
 
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 
 public class InvertedValidator2D extends Overlay2D {
 
-    public InvertedValidator2D(Value2D base) { super(base); }
+    public InvertedValidator2D(Values2D base) { super(base); }
     
     @Override
     public boolean isValid(int i, int j) { return !super.isValid(i, j); }

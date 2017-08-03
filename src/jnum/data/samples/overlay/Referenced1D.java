@@ -24,7 +24,7 @@
 package jnum.data.samples.overlay;
 
 import jnum.data.IndexReferenced;
-import jnum.data.samples.Value1D;
+import jnum.data.samples.Values1D;
 import jnum.fits.FitsToolkit;
 import jnum.util.HashCode;
 import nom.tam.fits.Header;
@@ -37,11 +37,11 @@ public class Referenced1D extends Overlay1D implements IndexReferenced<Double> {
 
     public Referenced1D() {}
 
-    public Referenced1D(Value1D values) {
+    public Referenced1D(Values1D values) {
         super(values);
     }
     
-    public Referenced1D(Value1D values, double refIndex) {
+    public Referenced1D(Values1D values, double refIndex) {
         this(values);
         setReferenceIndex(refIndex);
     }

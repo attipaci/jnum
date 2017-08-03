@@ -26,7 +26,7 @@ package jnum.data.cube.overlay;
 import jnum.data.cube.Index3D;
 import jnum.data.cube.IndexBounds3D;
 import jnum.data.cube.Resizable3D;
-import jnum.data.cube.Value3D;
+import jnum.data.cube.Values3D;
 
 public class Viewport3D extends Overlay3D implements Resizable3D { 
     private int i0;
@@ -41,19 +41,19 @@ public class Viewport3D extends Overlay3D implements Resizable3D {
         this(null);
     }
     
-    public Viewport3D(Value3D base) {
+    public Viewport3D(Values3D base) {
         this(base, 0, 0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
     
-    public Viewport3D(Value3D base, IndexBounds3D bounds) {
+    public Viewport3D(Values3D base, IndexBounds3D bounds) {
         this(base, bounds.fromi, bounds.fromj, bounds.fromk, bounds.toi, bounds.toj, bounds.tok);
     }
     
-    public Viewport3D(Value3D base, Index3D from, Index3D to) {
+    public Viewport3D(Values3D base, Index3D from, Index3D to) {
         this(base, from.i(), from.j(), from.k(), to.i(), to.j(), to.k());
     }
    
-    public Viewport3D(Value3D base, int fromi, int fromj, int fromk, int toi, int toj, int tok) {
+    public Viewport3D(Values3D base, int fromi, int fromj, int fromk, int toi, int toj, int tok) {
         setBasis(base);
         setBounds(fromi, fromj, fromk, toi, toj, tok);
     }

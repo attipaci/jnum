@@ -36,7 +36,7 @@ import jnum.data.image.Grid2D;
 import jnum.data.image.Map2D;
 import jnum.data.image.MapProperties;
 import jnum.data.image.Observation2D;
-import jnum.data.image.Value2D;
+import jnum.data.image.Values2D;
 import jnum.data.image.overlay.Viewport2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
@@ -285,11 +285,11 @@ public class GaussianSource extends CircularRegion {
             super(grid);
         }
 
-        public final void add(final Value2D image) { addScaled(image, 1.0); }
+        public final void add(final Values2D image) { addScaled(image, 1.0); }
         
-        public final void subtract(final Value2D image) { addScaled(image, -1.0); }
+        public final void subtract(final Values2D image) { addScaled(image, -1.0); }
         
-        public void addScaled(final Value2D image, final double factor) {
+        public void addScaled(final Values2D image, final double factor) {
             final Viewport2D view = getViewer(image);
             final Vector2D center = getCenterIndex();
             final Gaussian2D shape = getGaussian2D();
@@ -311,7 +311,7 @@ public class GaussianSource extends CircularRegion {
         }
         
         
-        public final void setPeakFrom(Value2D image) {        
+        public final void setPeakFrom(Values2D image) {        
             Vector2D centerIndex = getCenterIndex();
             
             peak.setValue(image.valueAtIndex(centerIndex.x(), centerIndex.y()));
@@ -329,7 +329,7 @@ public class GaussianSource extends CircularRegion {
 
         
         @Override
-        public double adaptTo(Value2D image) {         
+        public double adaptTo(Values2D image) {         
             double I = super.adaptTo(image); 
                 
             setFWHM(Math.sqrt(I * getGrid().getPixelArea() / peak.value()) / Gaussian2D.fwhm2size);  
@@ -359,14 +359,14 @@ public class GaussianSource extends CircularRegion {
 
        
         @Override
-        public void moveToLocalPeak(Value2D image, int sign) {
+        public void moveToLocalPeak(Values2D image, int sign) {
             super.moveToLocalPeak(image, sign);     
             setPeakFrom(image);
         }
         
  
         @Override
-        public void moveToLocalCentroid(Value2D image) {
+        public void moveToLocalCentroid(Values2D image) {
             super.moveToLocalCentroid(image);
             setPeakFrom(image);
         }

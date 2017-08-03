@@ -24,7 +24,7 @@
 package jnum.data.cube.overlay;
 
 import jnum.data.IndexReferenced;
-import jnum.data.cube.Value3D;
+import jnum.data.cube.Values3D;
 import jnum.math.Coordinate3D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
@@ -34,11 +34,11 @@ public class Referenced3D extends Overlay3D implements IndexReferenced<Coordinat
 
     public Referenced3D() {}
 
-    public Referenced3D(Value3D values) {
+    public Referenced3D(Values3D values) {
         super(values);
     }
     
-    public Referenced3D(Value3D values, Coordinate3D refIndex) {
+    public Referenced3D(Values3D values, Coordinate3D refIndex) {
         this(values);
         setReferenceIndex(refIndex);
     }
