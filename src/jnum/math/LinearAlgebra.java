@@ -31,7 +31,7 @@ package jnum.math;
  *
  * @param <DataType> the generic type for which this algebra applies.
  */
-public interface LinearAlgebra<DataType> extends ZeroValue, Additive<DataType>, Scalable {
+public interface LinearAlgebra<DataType> extends ZeroValue, Scalable, Additive<DataType> {
 
 	/**
 	 * Add a multiple of the argument.

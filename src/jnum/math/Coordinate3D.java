@@ -41,7 +41,7 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 
-public class Coordinate3D implements Serializable, Cloneable, Copiable<Coordinate3D>, CopyCat<Coordinate3D>, 
+public class Coordinate3D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate3D>, CopyCat<Coordinate3D>, 
 ViewableAsDoubles, Parser, NumberFormating {
 
 	private static final long serialVersionUID = 4670218761839380720L;
@@ -82,11 +82,14 @@ ViewableAsDoubles, Parser, NumberFormating {
 	    return true;
 	}
 	
-	public final double x() { return x; }
+	@Override
+    public final Double x() { return x; }
 
-	public final double y() { return y; }
+	@Override
+    public final Double y() { return y; }
 
-	public final double z() { return z; }
+	@Override
+    public final Double z() { return z; }
 	
 	public final void set(final double x, final double y, final double z) {
 	    this.x = x;
@@ -271,6 +274,31 @@ ViewableAsDoubles, Parser, NumberFormating {
         x = header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x());
         y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());
         z = header.getDoubleValue(keyStem + "3" + alt, defaultValue == null ? 0.0 : defaultValue.z());
+    }
+    
+
+    @Override
+    public final int size() {
+        return 3;
+    }
+
+    @Override
+    public final Double getComponent(final int index) {
+        switch(index) {
+        case 0: return x;
+        case 1: return y;
+        case 2: return z;
+        default: return Double.NaN;
+        }
+    }
+
+    @Override
+    public final void setComponent(final int index, final Double value) {
+        switch(index) {
+        case 0: x = value; break;
+        case 1: y = value; break;
+        case 2: z = value; break;
+        }
     }
     
 

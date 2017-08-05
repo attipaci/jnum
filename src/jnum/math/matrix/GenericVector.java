@@ -29,8 +29,10 @@ import java.lang.reflect.*;
 import jnum.Util;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
+import jnum.math.Coordinates;
 import jnum.math.LinearAlgebra;
 import jnum.math.Metric;
+import jnum.math.TrueVector;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -84,6 +86,16 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	@Override
 	public Class<T> getType() { return (Class<T>) component[0].getClass(); }
 	
+	
+	@Override
+    public final T x() { return component[0]; }
+	
+	@Override
+    public final T y() { return component[1]; }
+	
+	@Override
+    public final T z() { return component[2]; }
+	
 	/**
 	 * New entry.
 	 *
@@ -134,7 +146,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.AbstractVector#dot(kovacs.math.AbstractVector)
 	 */
 	@Override
-	public synchronized T dot(AbstractVector<? extends T> v) {
+	public synchronized T dot(Coordinates<? extends T> v) {
 		checkMatching(v);
 		
 		T term = newEntry();
@@ -177,7 +189,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public void addScaled(AbstractVector<? extends T> o, double factor) {
+	public void addScaled(TrueVector<? extends T> o, double factor) {
 		checkMatching(o);
 		for(int i=component.length; --i >= 0; ) component[i].addScaled(o.getComponent(i), factor);		
 	}
@@ -206,7 +218,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.Additive#subtract(java.lang.Object)
 	 */
 	@Override
-	public void subtract(AbstractVector<? extends T> o) {
+	public void subtract(TrueVector<? extends T> o) {
 		checkMatching(o);
 		for(int i=component.length; --i >= 0; ) component[i].subtract(o.getComponent(i));	
 	}
@@ -215,7 +227,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.Additive#add(java.lang.Object)
 	 */
 	@Override
-	public void add(AbstractVector<? extends T> o) {
+	public void add(TrueVector<? extends T> o) {
 		checkMatching(o);
 		for(int i=component.length; --i >= 0; ) component[i].add(o.getComponent(i));	
 	}
@@ -232,9 +244,9 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.AbsoluteValue#norm()
 	 */
 	@Override
-	public double asquare() {
+	public double absSquared() {
 		double norm = 0.0;
-		for(int i=component.length; --i >= 0; ) norm += getComponent(i).asquare();
+		for(int i=component.length; --i >= 0; ) norm += getComponent(i).absSquared();
 		return norm;
 	}
 
@@ -243,7 +255,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.Metric#distanceTo(java.lang.Object)
 	 */
 	@Override
-	public double distanceTo(AbstractVector<? extends T> v) {
+	public double distanceTo(TrueVector<? extends T> v) {
 		checkMatching(v);
 		double d2 = 0.0;
 		for(int i=component.length; --i >= 0; ) {
@@ -257,7 +269,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.AbstractVector#orthogonalizeTo(kovacs.math.AbstractVector)
 	 */
 	@Override
-	public void orthogonalizeTo(AbstractVector<? extends T> v) {
+	public void orthogonalizeTo(TrueVector<? extends T> v) {
 		addScaled(v,-dot(v).abs() / (abs() * v.abs()));
 	}
 
@@ -274,7 +286,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void setSum(AbstractVector<? extends T> a, AbstractVector<? extends T> b) {
+	public void setSum(TrueVector<? extends T> a, TrueVector<? extends T> b) {
 		if(size() != a.size() || size() != b.size()) throw new IllegalArgumentException("different size vectors.");
 		
 		for(int i=component.length; --i >= 0; ) {
@@ -288,7 +300,7 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.Additive#setDifference(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void setDifference(AbstractVector<? extends T> a, AbstractVector<? extends T> b) {
+	public void setDifference(TrueVector<? extends T> a, TrueVector<? extends T> b) {
 		if(size() != a.size() || size() != b.size()) throw new IllegalArgumentException("different size vectors.");
 		
 		for(int i=component.length; --i >= 0; ) {

@@ -185,7 +185,7 @@ public class Matrix extends AbstractMatrix<Double> {
 	 * @param B the b
 	 * @return the matrix
 	 */
-	public static Matrix product(AbstractMatrix<? extends Double> A, AbstractMatrix<? extends Double> B) {
+	public static Matrix product(AbstractMatrix<Double> A, AbstractMatrix<Double> B) {
 		Matrix product = new Matrix();
 		product.setProduct(A, B);
 		return product;
@@ -954,8 +954,6 @@ public class Matrix extends AbstractMatrix<Double> {
 		if(!a.isEqualSize(b)) throw new IllegalArgumentException("different size matrices.");
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) entry[i][j] = a.getValue(i, j) + b.getValue(i,  j);
 	}
-	
-	
 	
 	
 }

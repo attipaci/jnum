@@ -51,7 +51,7 @@ import nom.tam.util.Cursor;
 /**
  * The Class Coordinate2D.
  */
-public class Coordinate2D implements Serializable, Cloneable, Copiable<Coordinate2D>, CopyCat<Coordinate2D>, 
+public class Coordinate2D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate2D>, CopyCat<Coordinate2D>, 
 ViewableAsDoubles, Parser, NumberFormating {
 	
 	/** The Constant serialVersionUID. */
@@ -145,14 +145,19 @@ ViewableAsDoubles, Parser, NumberFormating {
 	 *
 	 * @return the x
 	 */
-	public final double x() { return x; }
+	@Override
+    public final Double x() { return x; }
 	
 	/**
 	 * Gets the y.
 	 *
 	 * @return the y
 	 */
-	public final double y() { return y; }
+	@Override
+    public final Double y() { return y; }
+	
+	@Override
+    public final Double z() { throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no z coordinate."); }
 	
 	/**
 	 * Sets the x.
@@ -557,6 +562,27 @@ ViewableAsDoubles, Parser, NumberFormating {
 	}
 	
 
+    @Override
+    public final int size() {
+        return 2;
+    }
+
+    @Override
+    public final Double getComponent(final int index) {
+        switch(index) {
+        case 0: return x();
+        case 1: return y();
+        default: return Double.NaN;
+        }
+    }
+
+    @Override
+    public final void setComponent(final int index, final Double value) {
+        switch(index) {
+        case 0: setX(value); break;
+        case 1: setY(value); break;
+        }
+    }
 	
 	
 	/** The Constant X. */
@@ -564,4 +590,5 @@ ViewableAsDoubles, Parser, NumberFormating {
 	
 	/** The Constant Y. */
 	public static final int Y = 1;
+
 }

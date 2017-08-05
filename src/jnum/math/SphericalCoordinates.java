@@ -160,11 +160,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	@Override
     public SphericalCoordinates copy() { return (SphericalCoordinates) super.copy(); }
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.Coordinate2D#setX(double)
-	 */
-	@Override
-	public final void setX(final double value) { super.setX(value); }
 	
 	/* (non-Javadoc)
 	 * @see kovacs.math.Coordinate2D#setY(double)
