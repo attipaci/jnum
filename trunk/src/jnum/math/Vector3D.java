@@ -34,6 +34,11 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double>, Invers
      */
     private static final long serialVersionUID = -6867315174438035749L;
 
+    public Vector3D() {}
+    
+    public Vector3D(double x, double y, double z) { super(x, y, z); }
+    
+    public Vector3D(Coordinates<? extends Double> v) { super(v); } 
     
     
     public void rotateX(double angle) {
@@ -143,6 +148,24 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double>, Invers
     public final Double dot(Coordinates<? extends Double> v) throws NonConformingException {
         if(v.size() != 3) throw new NonConformingException("dot product with vector of different size.");
         return x() * v.getComponent(0) + y() * v.getComponent(1) + z() * v.getComponent(2);
+    }
+    
+    
+
+    public static Vector3D sumOf(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
+        return new Vector3D(a.x() + b.x(), a.y() + b.y(), a.z() + b.z());
+    }
+    
+
+    public static Vector3D differenceOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+        return new Vector3D(a.x() - b.x(), a.y() - b.y(), a.z() - b.z());
+    }
+
+
+    public static Vector3D[] createArray(int size) {
+        Vector3D[] v = new Vector3D[size];
+        for(int i=size; --i >= 0; ) v[i] = new Vector3D();
+        return v;
     }
   
     
