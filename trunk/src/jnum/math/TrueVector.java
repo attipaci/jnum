@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,26 +20,18 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface AbsoluteValue.
- */
-public interface AbsoluteValue {
-	
-	/**
-	 * Absolute value.
-	 *
-	 * @return the absolute value of this object.
-	 */
-	public double abs();
-	
-	/**
-	 * The absolute square value.
-	 *
-	 * @return the square of the absolute value of this object.
-	 */
-	public double absSquared();
-	
+import jnum.NonConformingException;
+import jnum.math.matrix.AbstractMatrix;
+
+public interface TrueVector<T> extends Coordinates<T>, AbsoluteValue, Normalizable, Metric<TrueVector<? extends T>>, LinearAlgebra<TrueVector<? extends T>> {
+ 
+    public T dot(Coordinates<? extends T> v) throws NonConformingException;
+    
+    public abstract AbstractMatrix<T> asRowVector();
+   
+    public abstract AbstractMatrix<T> asColumnVector();
+    
 }

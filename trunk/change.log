@@ -50,6 +50,9 @@
 
 	[FIX] {Data2D} mean() was not actually a weighted mean.
 
+	[CODE] Vector2D, Vector3D, RealVector and GenericVetor classes now
+	use common superinterfaces that provide interoperability.
+
 
 0.11-3
 

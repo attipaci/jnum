@@ -23,11 +23,17 @@
 
 package jnum.math.matrix;
 
+import jnum.NonConformingException;
+import jnum.math.Coordinates;
+import jnum.math.Inversion;
+import jnum.math.TrueVector;
+
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class RealVector.
  */
-public class RealVector extends AbstractVector<Double> {
+public class RealVector extends AbstractVector<Double> implements TrueVector<Double>, Inversion {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1042626482476049050L;
@@ -47,6 +53,16 @@ public class RealVector extends AbstractVector<Double> {
 	public RealVector(int size) {
 		component = new double[size];
 	}
+	
+	
+	@Override
+    public final Double x() { return component[0]; }
+	
+	@Override
+    public final Double y() { return component[1]; }
+	
+	@Override
+    public final Double z() { return component[2]; }
 	
 	/**
 	 * Instantiates a new real vector.
@@ -110,7 +126,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.AbstractVector#dot(kovacs.math.AbstractVector)
 	 */
 	@Override
-	public Double dot(AbstractVector<? extends Double> v) {
+	public Double dot(Coordinates<? extends Double> v) throws NonConformingException {
 		checkMatching(v);
 			
 		double sum = 0.0;
@@ -142,7 +158,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public void addScaled(AbstractVector<? extends Double> o, double factor) {
+	public void addScaled(TrueVector<? extends Double> o, double factor) {
 		checkMatching(o);
 		for(int i=size(); --i >= 0; ) component[i] += o.getComponent(i) * factor;		
 	}
@@ -168,7 +184,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.Additive#subtract(java.lang.Object)
 	 */
 	@Override
-	public void subtract(AbstractVector<? extends Double> o) {
+	public void subtract(TrueVector<? extends Double> o) {
 		checkMatching(o);
 		for(int i=size(); --i >= 0; ) component[i] -= o.getComponent(i);	
 	}
@@ -177,7 +193,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.Additive#add(java.lang.Object)
 	 */
 	@Override
-	public void add(AbstractVector<? extends Double> o) {
+	public void add(TrueVector<? extends Double> o) {
 		checkMatching(o);
 		for(int i=component.length; --i >= 0; ) component[i] += o.getComponent(i);	
 	}
@@ -194,7 +210,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.AbsoluteValue#norm()
 	 */
 	@Override
-	public double asquare() {
+	public double absSquared() {
 		return dot(this);
 	}
 
@@ -202,7 +218,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.Metric#distanceTo(java.lang.Object)
 	 */
 	@Override
-	public double distanceTo(AbstractVector<? extends Double> v) {
+	public double distanceTo(TrueVector<? extends Double> v) {
 		checkMatching(v);
 		double d2 = 0.0;
 		for(int i=size(); --i >= 0; ) {
@@ -216,7 +232,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.AbstractVector#orthogonalizeTo(kovacs.math.AbstractVector)
 	 */
 	@Override
-	public void orthogonalizeTo(AbstractVector<? extends Double> v) {
+	public void orthogonalizeTo(TrueVector<? extends Double> v) {
 		addScaled(v, -dot(v) / (abs() * v.abs()));
 	}
 	
@@ -278,7 +294,7 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void setSum(AbstractVector<? extends Double> a, AbstractVector<? extends Double> b) {
+	public void setSum(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
 		if(size() != a.size() || size() != b.size()) throw new IllegalArgumentException("different size vectors.");
 		
 		for(int i=size(); --i >= 0; ) component[i] = a.getComponent(i) - b.getComponent(i);
@@ -288,11 +304,16 @@ public class RealVector extends AbstractVector<Double> {
 	 * @see kovacs.math.Additive#setDifference(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void setDifference(AbstractVector<? extends Double> a, AbstractVector<? extends Double> b) {
+	public void setDifference(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
 		if(size() != a.size() || size() != b.size()) throw new IllegalArgumentException("different size vectors.");
 		
 		for(int i=size(); --i >= 0; ) component[i] = a.getComponent(i) - b.getComponent(i);
 	}
+
+    @Override
+    public void invert() {
+        for(int i=size(); --i >= 0; ) component[i] *= -1;
+    }
 
 	
 }

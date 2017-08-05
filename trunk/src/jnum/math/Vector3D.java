@@ -24,9 +24,11 @@
 package jnum.math;
 
 import jnum.ExtraMath;
+import jnum.NonConformingException;
+import jnum.math.matrix.AbstractMatrix;
+import jnum.math.matrix.Matrix;
 
-public class Vector3D extends Coordinate3D implements Metric<Vector3D>, LinearAlgebra<Vector3D>, Inversion, 
-Normalizable, AbsoluteValue { 
+public class Vector3D extends Coordinate3D implements TrueVector<Double>, Inversion { 
     /**
      * 
      */
@@ -60,7 +62,7 @@ Normalizable, AbsoluteValue {
     public final double abs() { return length(); }
     
     @Override
-    public final double asquare() { return x() * x() + y() * y() + z() * z(); }
+    public final double absSquared() { return x() * x() + y() * y() + z() * z(); }
     
     public double theta() {
         return Math.atan2(z(), ExtraMath.hypot(x(),  y()));
@@ -75,7 +77,7 @@ Normalizable, AbsoluteValue {
     }
     
     @Override
-    public double distanceTo(final Vector3D v) {
+    public double distanceTo(final TrueVector<? extends Double> v) {
         return ExtraMath.hypot(v.x() - x(), v.y() - y(), v.z() - z());
     }
     
@@ -85,17 +87,17 @@ Normalizable, AbsoluteValue {
     }
     
     @Override
-    public void add(final Vector3D v) {
+    public void add(final TrueVector<? extends Double> v) {
         set(x() + v.x(), y() + v.y(), z() + v.z());
     }
     
     @Override
-    public void subtract(final Vector3D v) {
+    public void subtract(final TrueVector<? extends Double> v) {
         set(x() - v.x(), y() - v.y(), z() - v.z());
     }
     
     @Override
-    public void addScaled(final Vector3D v, final double factor) {
+    public void addScaled(final TrueVector<? extends Double> v, final double factor) {
         set(x() + factor * v.x(), y() + factor * v.y(), z() + factor * v.z());
     }
     
@@ -105,12 +107,12 @@ Normalizable, AbsoluteValue {
     }
     
     @Override
-    public void setSum(final Vector3D a, final Vector3D b) {
+    public void setSum(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
         set(a.x() + b.x(), a.y() + b.y(), a.z() + b.z());
     }
     
     @Override
-    public void setDifference(final Vector3D a, final Vector3D b) {
+    public void setDifference(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
         set(a.x() - b.x(), a.y() - b.y(), a.z() - b.z());
     }
     
@@ -122,6 +124,25 @@ Normalizable, AbsoluteValue {
     @Override
     public void normalize() {
         scale(1.0 / length());
+    }
+    
+    @Override
+    public AbstractMatrix<Double> asRowVector() { 
+        return new Matrix(new double[][] {{ x(), y(), z() }});
+    }
+    
+
+    @Override
+    public AbstractMatrix<Double> asColumnVector() {
+        return new Matrix(new double[][] { {x()}, {y()}, {z()} });
+    }
+    
+  
+
+    @Override
+    public final Double dot(Coordinates<? extends Double> v) throws NonConformingException {
+        if(v.size() != 3) throw new NonConformingException("dot product with vector of different size.");
+        return x() * v.getComponent(0) + y() * v.getComponent(1) + z() * v.getComponent(2);
     }
   
     

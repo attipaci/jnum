@@ -50,16 +50,16 @@ import jnum.text.TimeFormat;
  */
 public final class Util {
 
-    /** The Constant version. */
+
     public final static String version = "0.20-a3";
+    
+    public final static String revision = "devel.3";
     
     public final static String copyright = "(c)2017 Attila Kovacs"; 
     
     public final static String copyrightEmail = "<attila[AT]sigmyne.com>"; 
 
-    /** The Constant revision. */
-    public final static String revision = "devel.2";
-
+  
     /** The debug. */
     public static boolean debug = false;
 

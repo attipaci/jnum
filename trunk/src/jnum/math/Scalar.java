@@ -439,7 +439,7 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	 * @see kovacs.math.AbsoluteValue#norm()
 	 */
 	@Override
-	public double asquare() {
+	public double absSquared() {
 		return value * value;
 	}
 

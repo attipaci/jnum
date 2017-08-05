@@ -283,7 +283,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 	 * @param value the value
 	 */
 	public final void divideBy(int i, Complex value) {
-		final double A = 1.0 / value.asquare();
+		final double A = 1.0 / value.absSquared();
 		final double x = get(i);
 		final double y = get(i+1);
 		

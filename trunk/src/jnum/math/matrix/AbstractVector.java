@@ -26,12 +26,11 @@ package jnum.math.matrix;
 import java.io.Serializable;
 
 import jnum.Copiable;
+import jnum.NonConformingException;
 import jnum.Util;
 import jnum.data.ArrayUtil;
-import jnum.math.AbsoluteValue;
-import jnum.math.LinearAlgebra;
-import jnum.math.Metric;
-import jnum.math.Normalizable;
+import jnum.math.Coordinates;
+import jnum.math.TrueVector;
 
 
 
@@ -41,8 +40,8 @@ import jnum.math.Normalizable;
  *
  * @param <T> the generic type
  */
-public abstract class AbstractVector<T> implements LinearAlgebra<AbstractVector<? extends T>>, Serializable, 
-Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Copiable<AbstractVector<T>> {
+public abstract class AbstractVector<T> implements TrueVector<T>, Serializable, 
+Cloneable, Copiable<AbstractVector<T>> {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 785522803183758105L;
@@ -72,51 +71,8 @@ Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Cop
 	 * @param data the new data
 	 */
 	public abstract void setData(Object data);
+		
 	
-	/**
-	 * Size.
-	 *
-	 * @return the int
-	 */
-	public abstract int size();
-
-	/**
-	 * Gets the component.
-	 *
-	 * @param i the i
-	 * @return the component
-	 */
-	public abstract T getComponent(int i);
-
-	/**
-	 * Sets the component.
-	 *
-	 * @param i the i
-	 * @param x the x
-	 */
-	public abstract void setComponent(int i, T x);
-	
-	/**
-	 * Dot.
-	 *
-	 * @param v the v
-	 * @return the t
-	 */
-	public abstract T dot(AbstractVector<? extends T> v);
-	
-	/**
-	 * As row vector.
-	 *
-	 * @return the abstract matrix
-	 */
-	public abstract AbstractMatrix<T> asRowVector();
-	
-	/**
-	 * As column vector.
-	 *
-	 * @return the abstract matrix
-	 */
-	public abstract AbstractMatrix<T> asColumnVector();
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
@@ -147,8 +103,8 @@ Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Cop
 	 *
 	 * @param v the v
 	 */
-	protected void checkMatching(AbstractVector<? extends T> v) {
-		if(v.size() != size()) throw new IllegalArgumentException("Mismatched " + getClass().getName() + "s.");		
+	protected void checkMatching(Coordinates<? extends T> v) throws NonConformingException {
+		if(v.size() != size()) throw new NonConformingException("Mismatched " + getClass().getName() + "s.");		
 	}
 	
 
@@ -157,7 +113,7 @@ Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Cop
 	 */
 	@Override
 	public double abs() {
-		return Math.sqrt(asquare());
+		return Math.sqrt(absSquared());
 	}
 	
 	/* (non-Javadoc)
@@ -173,7 +129,7 @@ Cloneable, AbsoluteValue, Normalizable, Metric<AbstractVector<? extends T>>, Cop
 	 *
 	 * @param v the v
 	 */
-	public abstract void orthogonalizeTo(AbstractVector<? extends T> v);
+	public abstract void orthogonalizeTo(TrueVector<? extends T> v);
 	
 	/**
 	 * Sets the size.

@@ -27,6 +27,9 @@ package jnum.math;
 import java.awt.geom.Point2D;
 
 import jnum.ExtraMath;
+import jnum.NonConformingException;
+import jnum.math.matrix.AbstractMatrix;
+import jnum.math.matrix.Matrix;
 
 // TODO: Auto-generated Javadoc
 //Add parsing
@@ -34,7 +37,7 @@ import jnum.ExtraMath;
 /**
  * The Class Vector2D.
  */
-public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAlgebra<Vector2D>, Inversion, Normalizable, AbsoluteValue {
+public class Vector2D extends Coordinate2D implements TrueVector<Double>, Inversion {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7319941007342696348L;
@@ -97,7 +100,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	 * @param b the b
 	 */
 	@Override
-	public final void setSum(final Vector2D a, final Vector2D b) {
+	public final void setSum(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
 		set(a.x() + b.x(), a.y() + b.y());		
 	}
 	
@@ -108,7 +111,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	 * @param b the b
 	 */
 	@Override
-	public final void setDifference(final Vector2D a, final Vector2D b) {
+	public final void setDifference(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
 		set(a.x() - b.x(), a.y() - b.y());		
 	}
 	
@@ -156,7 +159,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	 * @param v the v
 	 */
 	@Override
-	public final void add(final Vector2D v) { addX(v.x()); addY(v.y()); }
+	public final void add(final TrueVector<? extends Double> v) { addX(v.x()); addY(v.y()); }
 	
 	/**
 	 * Subtract.
@@ -164,7 +167,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	 * @param v the v
 	 */
 	@Override
-	public final void subtract(final Vector2D v) { subtractX(v.x()); subtractY(v.y()); }
+	public final void subtract(final TrueVector<? extends Double> v) { subtractX(v.x()); subtractY(v.y()); }
 	
 	/**
 	 * Adds the multiple of.
@@ -173,7 +176,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	 * @param factor the factor
 	 */
 	@Override
-	public final void addScaled(final Vector2D vector, final double factor) {
+	public final void addScaled(final TrueVector<? extends Double> vector, final double factor) {
 		addX(factor * vector.x());
 		addY(factor * vector.y());
 	}
@@ -270,7 +273,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	 * @return the double
 	 */
 	@Override
-	public final double asquare() { return x() * x() + y() * y(); }
+	public final double absSquared() { return x() * x() + y() * y(); }
 
 	/**
 	 * Length.
@@ -324,7 +327,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	@Override
 	public final void normalize() throws IllegalStateException { 
 		if(isNull()) throw new IllegalStateException("Null Vector");
-		scale(1.0 / asquare()); 
+		scale(1.0 / absSquared()); 
 	}
 
 	/**
@@ -492,7 +495,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	public double getValue(int field) throws NoSuchFieldException {
 		switch(field) {
 		case LENGTH: return length();
-		case NORM: return asquare();
+		case NORM: return absSquared();
 		case ANGLE: return angle();
 		default: return super.getValue(field);
 		}
@@ -505,17 +508,37 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	public void setValue(int field, double value) throws NoSuchFieldException {
 		switch(field) {
 		case LENGTH: scale(value/length()); break;
-		case NORM: scale(Math.sqrt(value/asquare())); break;
+		case NORM: scale(Math.sqrt(value/absSquared())); break;
 		case ANGLE: rotate(value - angle()); break;
 		default: super.setValue(field, value);
 		}
 	}
+	
+
+    @Override
+    public AbstractMatrix<Double> asRowVector() { 
+        return new Matrix(new double[][] {{ x(), y() }});
+    }
+    
+
+    @Override
+    public AbstractMatrix<Double> asColumnVector() {
+        return new Matrix(new double[][] { {x()}, {y()} });
+    }
+    
+  
+    @Override
+    public final Double dot(Coordinates<? extends Double> v) throws NonConformingException {
+        if(v.size() != 2) throw new NonConformingException("dot product with vector of different size.");
+        return x() * v.getComponent(0) + y() * v.getComponent(1);
+    }
+
 
 	/* (non-Javadoc)
 	 * @see jnum.Metric#distanceTo(java.lang.Object)
 	 */
 	@Override
-	public final double distanceTo(Vector2D point) {
+	public final double distanceTo(TrueVector<? extends Double> point) {
 		return ExtraMath.hypot(point.x() - x(), point.y() - y());
 	}
 	
@@ -543,6 +566,7 @@ public class Vector2D extends Coordinate2D implements Metric<Vector2D>, LinearAl
 	
 	/** The Constant NaN. */
 	public static final Vector2D NaN = new Vector2D(Double.NaN, Double.NaN);
+
 
 
 	
