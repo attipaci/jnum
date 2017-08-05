@@ -432,12 +432,6 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	
 	
 	
-	
-	
-	
-	
-	
-	
 	public static Vector2D sumOf(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
         return new Vector2D(a.x() + b.x(), a.y() + b.y());
     }
@@ -446,9 +440,6 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
     public static Vector2D differenceOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
         return new Vector2D(a.x() - b.x(), a.y() - b.y());
     }
-
-
-    
 
 
 	public static Vector2D[] createArray(int size) {

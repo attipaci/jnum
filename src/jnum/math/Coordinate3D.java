@@ -54,6 +54,10 @@ ViewableAsDoubles, Parser, NumberFormating {
 	    this();
 	    set(x, y, z);
 	}
+	
+	public Coordinate3D(Coordinates<? extends Double> v) {
+	    this(v.x(), v.y(), v.z());
+	}
 
 	@Override
     public Coordinate3D clone() {
@@ -285,19 +289,20 @@ ViewableAsDoubles, Parser, NumberFormating {
     @Override
     public final Double getComponent(final int index) {
         switch(index) {
-        case 0: return x;
-        case 1: return y;
-        case 2: return z;
-        default: return Double.NaN;
+        case X: return x;
+        case Y: return y;
+        case Z: return z;
+        default: return 0.0;
         }
     }
 
     @Override
     public final void setComponent(final int index, final Double value) {
         switch(index) {
-        case 0: x = value; break;
-        case 1: y = value; break;
-        case 2: z = value; break;
+        case X: x = value; break;
+        case Y: y = value; break;
+        case Z: z = value; break;
+        default: throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no component " + index);
         }
     }
     

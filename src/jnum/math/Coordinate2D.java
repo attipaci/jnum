@@ -73,8 +73,11 @@ ViewableAsDoubles, Parser, NumberFormating {
      */
     public Coordinate2D(double X, double Y) { 
         this();
-        setX(X); 
-        setY(Y); 
+        set(X, Y);  
+    }
+    
+    public Coordinate2D(Coordinates<? extends Double> v) {
+        this(v.x(), v.y());
     }
 	
 	/**
@@ -157,7 +160,7 @@ ViewableAsDoubles, Parser, NumberFormating {
     public final Double y() { return y; }
 	
 	@Override
-    public final Double z() { throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no z coordinate."); }
+    public final Double z() { return 0.0; }
 	
 	/**
 	 * Sets the x.
@@ -570,17 +573,18 @@ ViewableAsDoubles, Parser, NumberFormating {
     @Override
     public final Double getComponent(final int index) {
         switch(index) {
-        case 0: return x();
-        case 1: return y();
-        default: return Double.NaN;
+        case X: return x();
+        case Y: return y();
+        default: return 0.0;
         }
     }
 
     @Override
     public final void setComponent(final int index, final Double value) {
         switch(index) {
-        case 0: setX(value); break;
-        case 1: setY(value); break;
+        case X: setX(value); break;
+        case Y: setY(value); break;
+        default: throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no component " + index);
         }
     }
 	
