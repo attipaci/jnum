@@ -122,7 +122,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	 * @param op the op
 	 * @param b the b
 	 */
-	public void set(final Vector2D a, final char op, final Vector2D b) {
+	public void set(final TrueVector<? extends Double> a, final char op, final TrueVector<? extends Double> b) {
 		switch(op) {
 		case '+' : setSum(a, b); break;
 		case '-' : setDifference(a, b); break;
@@ -131,28 +131,8 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 		
 	}
 	
-	/**
-	 * Sum.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the vector2 d
-	 */
-	public static Vector2D sum(Vector2D a, Vector2D b) {
-		return new Vector2D(a.x() + b.x(), a.y() + b.y());
-	}
 	
-	/**
-	 * Difference.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the vector2 d
-	 */
-	public static Vector2D difference(final Vector2D a, final Vector2D b) {
-		return new Vector2D(a.x() - b.x(), a.y() - b.y());
-	}
-	
+		
 	/**
 	 * Adds the.
 	 *
@@ -187,7 +167,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	 * @param v the v
 	 * @param factor the factor
 	 */
-	public final void setMultipleOf(final Vector2D v, final double factor) {
+	public final void setMultipleOf(final TrueVector<? extends Double> v, final double factor) {
 		set(factor * v.x(), factor * v.y());
 	}
 	
@@ -248,24 +228,6 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 		set(Math.cos(angle), Math.sin(angle));
 	}
 
-	/**
-	 * Dot.
-	 *
-	 * @param v the v
-	 * @return the double
-	 */
-	public final double dot(Vector2D v) { return dot(this, v); }
-
-	/**
-	 * Dot.
-	 *
-	 * @param v1 the v1
-	 * @param v2 the v2
-	 * @return the double
-	 */
-	public static double dot(Vector2D v1, Vector2D v2) {
-		return v1.x() * v2.x() + v1.y() * v2.y();
-	}
 
 	/**
 	 * Norm.
@@ -330,17 +292,6 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 		scale(1.0 / absSquared()); 
 	}
 
-	/**
-	 * Normalized.
-	 *
-	 * @param v the v
-	 * @return the vector2 d
-	 */
-	public final Vector2D normalized(Vector2D v) {
-		Vector2D n = new Vector2D(v);
-		n.normalize();
-		return n;
-	}
 
 	/**
 	 * Invert.
@@ -348,30 +299,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	@Override
 	public final void invert() { scale(-1.0); }	
 
-	/**
-	 * Inverse of.
-	 *
-	 * @param v the v
-	 * @return the vector2 d
-	 */
-	public static Vector2D inverseOf(Vector2D v) { return new Vector2D(-v.x(), -v.y()); }
-
-	/**
-	 * Project.
-	 *
-	 * @param v1 the v1
-	 * @param v2 the v2
-	 * @return the vector2 d
-	 */
-	public static Vector2D project(final Vector2D v1, final Vector2D v2) {
-		Vector2D v = new Vector2D(v1);
-		double alpha = v2.angle();
-		v.rotate(-alpha);
-		v.setY(0.0);
-		v.rotate(alpha);
-		return v;
-	}
-
+	
 	/**
 	 * Project on.
 	 *
@@ -405,23 +333,11 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	 *
 	 * @param v the v
 	 */
-	public final void reflectOn(final Vector2D v) {
-		double alpha = v.angle();
+	public final void reflectOn(final TrueVector<? extends Double> v) {
+		double alpha = Math.atan2(v.y(), v.x());
 		rotate(-alpha);
 		scaleY(-1.0);
 		rotate(alpha);
-	}
-
-
-	/**
-	 * Polar.
-	 *
-	 * @return the polar vector2 d
-	 */
-	public final PolarVector2D polar() {
-		PolarVector2D p = new PolarVector2D();
-		p.set(length(), angle());
-		return p;
 	}
 
 
@@ -432,7 +348,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	 * @param v the v
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void math(char op, Vector2D v) throws IllegalArgumentException {
+	public void math(char op, TrueVector<? extends Double> v) throws IllegalArgumentException {
 		switch(op) {
 		case '+': add(v); break;
 		case '-': subtract(v); break;
@@ -441,21 +357,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	}
 
 
-	/**
-	 * Math.
-	 *
-	 * @param a the a
-	 * @param op the op
-	 * @param b the b
-	 * @return the vector2 d
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public static Vector2D math(Vector2D a, char op, Vector2D b) throws IllegalArgumentException {
-		final Vector2D result = (Vector2D) a.clone();
-		result.math(op, b);
-		return result;
-	}
-
+	
 	/**
 	 * Math.
 	 *
@@ -472,20 +374,6 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	}
 
 
-	/**
-	 * Math.
-	 *
-	 * @param a the a
-	 * @param op the op
-	 * @param b the b
-	 * @return the vector2 d
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public static Vector2D math(Vector2D a, char op, double b) throws IllegalArgumentException {
-		final Vector2D result = (Vector2D) a.clone();
-		result.math(op, b);
-		return result;
-	}
 	
 
 	/* (non-Javadoc)
@@ -542,17 +430,34 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 		return ExtraMath.hypot(point.x() - x(), point.y() - y());
 	}
 	
-	/**
-	 * Creates the array.
-	 *
-	 * @param size the size
-	 * @return the vector2 d[]
-	 */
+	
+	
+	
+	
+	
+	
+	
+	
+	public static Vector2D sumOf(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
+        return new Vector2D(a.x() + b.x(), a.y() + b.y());
+    }
+    
+
+    public static Vector2D differenceOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+        return new Vector2D(a.x() - b.x(), a.y() - b.y());
+    }
+
+
+    
+
+
 	public static Vector2D[] createArray(int size) {
 		Vector2D[] v = new Vector2D[size];
 		for(int i=size; --i >= 0; ) v[i] = new Vector2D();
 		return v;
 	}
+	
+	
 	
 
 	/** The Constant LENGTH. */
