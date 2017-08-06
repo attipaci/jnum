@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,10 +26,8 @@ package jnum.math.matrix;
 import java.io.Serializable;
 
 import jnum.Copiable;
-import jnum.NonConformingException;
 import jnum.Util;
 import jnum.data.ArrayUtil;
-import jnum.math.Coordinates;
 import jnum.math.TrueVector;
 
 
@@ -98,15 +96,6 @@ Cloneable, Copiable<AbstractVector<T>> {
 		return null;
 	}
 
-	/**
-	 * Check matching.
-	 *
-	 * @param v the v
-	 */
-	protected void checkMatching(Coordinates<? extends T> v) throws NonConformingException {
-		if(v.size() != size()) throw new NonConformingException("Mismatched " + getClass().getName() + "s.");		
-	}
-	
 
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbsoluteValue#abs()
@@ -123,14 +112,7 @@ Cloneable, Copiable<AbstractVector<T>> {
 	public void normalize() {
 		scale(1.0/abs());
 	}
-
-	/**
-	 * Orthogonalize to.
-	 *
-	 * @param v the v
-	 */
-	public abstract void orthogonalizeTo(TrueVector<? extends T> v);
-	
+		
 	/**
 	 * Sets the size.
 	 *
@@ -147,7 +129,19 @@ Cloneable, Copiable<AbstractVector<T>> {
 		if(size() != size) setSize(size);		
 	}
 
+	@Override
+    public void invert() {
+	    scale(-1.0);
+	}
 	
 	
+	   
+    @Override
+    public void reflectOn(final TrueVector<? extends T> v) {
+        AbstractVector<T> ortho = copy();
+        ortho.orthogonalizeTo(v);
+        addScaled(ortho, -2.0);        
+    }
+    
 	
 }

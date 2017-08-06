@@ -26,6 +26,7 @@ package jnum.math.matrix;
 
 import java.util.Arrays;
 
+import jnum.Copiable;
 import jnum.Util;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
@@ -43,7 +44,7 @@ import java.lang.reflect.*;
  * @param <T> the generic type
  */
 @SuppressWarnings("unchecked")
-public class GenericMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractMatrix<T> {
+public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractMatrix<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2705914561805806547L;

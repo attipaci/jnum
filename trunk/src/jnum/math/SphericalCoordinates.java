@@ -152,9 +152,9 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @see jnum.Coordinate2D#copy(jnum.Coordinate2D)
 	 */
 	@Override
-	public void copy(Coordinate2D coords) {
-		setNativeLongitude(coords.x());
-		setNativeLatitude(coords.y());
+	public void copy(Coordinates<? extends Double> coords) {
+		setX(coords.x());
+		setY(coords.y());
 	}
 	
 	@Override

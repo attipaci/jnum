@@ -23,15 +23,20 @@
 
 package jnum.math;
 
-import jnum.NonConformingException;
 import jnum.math.matrix.AbstractMatrix;
 
-public interface TrueVector<T> extends Coordinates<T>, AbsoluteValue, Normalizable, Metric<TrueVector<? extends T>>, LinearAlgebra<TrueVector<? extends T>> {
- 
-    public T dot(Coordinates<? extends T> v) throws NonConformingException;
+public interface TrueVector<T> extends Coordinates<T>, AbsoluteValue, Normalizable, Inversion, Metric<TrueVector<? extends T>>, LinearAlgebra<TrueVector<? extends T>> {
+     
+    public T dot(Coordinates<? extends T> v);
     
-    public abstract AbstractMatrix<T> asRowVector();
+    public void orthogonalizeTo(TrueVector<? extends T> v);
+    
+    public void projectOn(final TrueVector<? extends T> v) ;
+    
+    public void reflectOn(final TrueVector<? extends T> v) ;
+    
+    public AbstractMatrix<T> asRowVector();
    
-    public abstract AbstractMatrix<T> asColumnVector();
+    public AbstractMatrix<T> asColumnVector();
     
 }

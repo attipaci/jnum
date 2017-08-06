@@ -31,13 +31,11 @@ import jnum.NonConformingException;
 import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 
-// TODO: Auto-generated Javadoc
-//Add parsing
 
 /**
  * The Class Vector2D.
  */
-public class Vector2D extends Coordinate2D implements TrueVector<Double>, Inversion {
+public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7319941007342696348L;
@@ -81,6 +79,15 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
     public Vector2D copy() {
         return (Vector2D) super.copy();
     }
+   
+    
+    /**
+     * Length.
+     *
+     * @return the double
+     */
+    public final double length() { return ExtraMath.hypot(x(), y()); }
+
 	
 	/**
 	 * Absolute value (radius) of the complex number. Same as {@link jnum.math.Vector2D#length()}.
@@ -90,46 +97,30 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	 */
 	@Override
 	public final double abs() { return length(); }
+	
+	   /**
+     * Norm.
+     *
+     * @return the double
+     */
+    @Override
+    public final double absSquared() { return x() * x() + y() * y(); }
 
+ 
+    /**
+     * Angle.
+     *
+     * @return the double
+     */
+    public final double angle() {
+        if(isNull()) return Double.NaN;
+        return Math.atan2(y(), x());
+    }
+    
 
+	public final PolarVector2D polar() { return new PolarVector2D(length(), angle()); }
 	
-	/**
-	 * Sets the sum.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 */
-	@Override
-	public final void setSum(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
-		set(a.x() + b.x(), a.y() + b.y());		
-	}
 	
-	/**
-	 * Sets the difference.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 */
-	@Override
-	public final void setDifference(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
-		set(a.x() - b.x(), a.y() - b.y());		
-	}
-	
-	/**
-	 * Sets the.
-	 *
-	 * @param a the a
-	 * @param op the op
-	 * @param b the b
-	 */
-	public void set(final TrueVector<? extends Double> a, final char op, final TrueVector<? extends Double> b) {
-		switch(op) {
-		case '+' : setSum(a, b); break;
-		case '-' : setDifference(a, b); break;
-		default: throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " operation: '" + op + "'.");
-		}
-		
-	}
 	
 	
 		
@@ -191,6 +182,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 		set(x() * cosA - y() * sinA, x() * sinA + y() * cosA);
 	}
 	
+	
 	/**
 	 * Rotate.
 	 *
@@ -208,6 +200,46 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	public final void derotate(Angle theta) {
         set(x() * theta.cos() + y() * theta.sin(), y() * theta.cos() - x() * theta.sin());
     }
+	
+	
+	/**
+     * Sets the sum.
+     *
+     * @param a the a
+     * @param b the b
+     */
+    @Override
+    public final void setSum(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+        set(a.x() + b.x(), a.y() + b.y());      
+    }
+    
+    /**
+     * Sets the difference.
+     *
+     * @param a the a
+     * @param b the b
+     */
+    @Override
+    public final void setDifference(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+        set(a.x() - b.x(), a.y() - b.y());      
+    }
+    
+    /**
+     * Sets the.
+     *
+     * @param a the a
+     * @param op the op
+     * @param b the b
+     */
+    public void set(final TrueVector<? extends Double> a, final char op, final TrueVector<? extends Double> b) {
+        switch(op) {
+        case '+' : setSum(a, b); break;
+        case '-' : setDifference(a, b); break;
+        default: throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " operation: '" + op + "'.");
+        }
+        
+    }
+    
 	
 	/**
 	 * Sets the polar.
@@ -229,31 +261,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	}
 
 
-	/**
-	 * Norm.
-	 *
-	 * @return the double
-	 */
-	@Override
-	public final double absSquared() { return x() * x() + y() * y(); }
 
-	/**
-	 * Length.
-	 *
-	 * @return the double
-	 */
-	public final double length() { return ExtraMath.hypot(x(), y()); }
-
-	/**
-	 * Angle.
-	 *
-	 * @return the double
-	 */
-	public final double angle() {
-		if(isNull()) return Double.NaN;
-		return Math.atan2(y(), x());
-	}
-	
 	/**
 	 * Cos angle.
 	 *
@@ -300,46 +308,20 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
 	public final void invert() { scale(-1.0); }	
 
 	
-	/**
-	 * Project on.
-	 *
-	 * @param v the v
-	 */
-	public final void projectOn(final Vector2D v) {
-		double alpha = v.angle();
-		rotate(-alpha);
-		setY(0.0);
-		rotate(alpha);
+	@Override
+	public void reflectOn(final TrueVector<? extends Double> v) {
+	    Vector2D ortho = copy();
+	    ortho.orthogonalizeTo(v);
+	    addScaled(ortho, -2.0);        
 	}
-
-	/**
-	 * Reflect.
-	 *
-	 * @param v1 the v1
-	 * @param v2 the v2
-	 * @return the vector2 d
-	 */
-	public static Vector2D reflect(final Vector2D v1, final Vector2D v2) {
-		Vector2D v = new Vector2D(v1);
-		double alpha = v2.angle();
-		v.rotate(-alpha);
-		v.scaleY(-1.0);
-		v.rotate(alpha);
-		return v;
+	
+	@Override
+	public final void projectOn(final TrueVector<? extends Double> v) {
+	    double scaling = dot(v) / v.abs();
+	    copy(v);
+	    scale(scaling);
 	}
-
-	/**
-	 * Reflect on.
-	 *
-	 * @param v the v
-	 */
-	public final void reflectOn(final TrueVector<? extends Double> v) {
-		double alpha = Math.atan2(v.y(), v.x());
-		rotate(-alpha);
-		scaleY(-1.0);
-		rotate(alpha);
-	}
-
+	
 
 	/**
 	 * Math.
@@ -421,10 +403,14 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double>, Invers
         return x() * v.getComponent(0) + y() * v.getComponent(1);
     }
 
+    
 
-	/* (non-Javadoc)
-	 * @see jnum.Metric#distanceTo(java.lang.Object)
-	 */
+    @Override
+    public void orthogonalizeTo(TrueVector<? extends Double> v) {
+        addScaled(v, -dot(v) / (abs() * v.abs()));
+    }
+
+
 	@Override
 	public final double distanceTo(TrueVector<? extends Double> point) {
 		return ExtraMath.hypot(point.x() - x(), point.y() - y());

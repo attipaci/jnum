@@ -28,7 +28,7 @@ import jnum.NonConformingException;
 import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 
-public class Vector3D extends Coordinate3D implements TrueVector<Double>, Inversion { 
+public class Vector3D extends Coordinate3D implements TrueVector<Double> { 
     /**
      * 
      */
@@ -40,6 +40,9 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double>, Invers
     
     public Vector3D(Coordinates<? extends Double> v) { super(v); } 
     
+    
+    @Override
+    public Vector3D copy() { return (Vector3D) super.copy(); }
     
     public void rotateX(double angle) {
         final double s = Math.sin(angle);
@@ -56,8 +59,35 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double>, Invers
     public void rotateZ(double angle) {
         final double s = Math.sin(angle);
         final double c = Math.cos(angle);
-        set(c * x() - s * y(), s * x() + c * y(), z());
+        set(c * x() + s * y(), s * x() + c * y(), z());
     }
+    
+    public void rotateX(Angle angle) {
+        set(x(), angle.cos() * y() - angle.sin() * z(), angle.sin() * y() + angle.cos() * z());
+    }
+    
+    public void rotateY(Angle angle) {
+        set(angle.sin() * z() + angle.cos() * x(), y(), angle.cos() * z() - angle.sin() * x());   
+    }
+    
+    public void rotateZ(Angle angle) {
+        set(angle.cos() * x() + angle.sin() * y(), angle.sin() * x() + angle.cos() * y(), z());
+    }
+   
+   
+    public void derotateX(Angle angle) {
+        set(x(), angle.cos() * y() + angle.sin() * z(), -angle.sin() * y() + angle.cos() * z());
+    }
+    
+    public void derotateY(Angle angle) {
+        set(-angle.sin() * z() + angle.cos() * x(), y(), angle.cos() * z() + angle.sin() * x());   
+    }
+    
+    public void derotateZ(Angle angle) {
+        set(angle.cos() * x() - angle.sin() * y(), -angle.sin() * x() + angle.cos() * y(), z());
+    }
+   
+    
     
     public double length() {
         return ExtraMath.hypot(x(), y(), z());
@@ -77,10 +107,7 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double>, Invers
         return Math.atan2(y(), x());
     }
     
-    public double dot(Vector3D v) {
-        return x() * v.x() + y() * v.y() + z() * v.z();
-    }
-    
+   
     @Override
     public double distanceTo(final TrueVector<? extends Double> v) {
         return ExtraMath.hypot(v.x() - x(), v.y() - y(), v.z() - z());
@@ -148,6 +175,27 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double>, Invers
     public final Double dot(Coordinates<? extends Double> v) throws NonConformingException {
         if(v.size() != 3) throw new NonConformingException("dot product with vector of different size.");
         return x() * v.getComponent(0) + y() * v.getComponent(1) + z() * v.getComponent(2);
+    }
+    
+    
+    @Override
+    public void orthogonalizeTo(TrueVector<? extends Double> v) {
+        addScaled(v, -dot(v) / (abs() * v.abs()));
+    }
+    
+    
+    @Override
+    public void reflectOn(final TrueVector<? extends Double> v) {
+        Vector3D ortho = copy();
+        ortho.orthogonalizeTo(v);
+        addScaled(ortho, -2.0);        
+    }
+    
+    @Override
+    public final void projectOn(final TrueVector<? extends Double> v) {
+        double scaling = dot(v) / v.abs();
+        copy(v);
+        scale(scaling);
     }
     
     
