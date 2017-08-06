@@ -29,7 +29,6 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 
 import jnum.Copiable;
-import jnum.CopyCat;
 import jnum.IncompatibleTypesException;
 import jnum.Unit;
 import jnum.Util;
@@ -51,7 +50,7 @@ import nom.tam.util.Cursor;
 /**
  * The Class Coordinate2D.
  */
-public class Coordinate2D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate2D>, CopyCat<Coordinate2D>, 
+public class Coordinate2D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate2D>, 
 ViewableAsDoubles, Parser, NumberFormating {
 	
 	/** The Constant serialVersionUID. */
@@ -133,14 +132,14 @@ ViewableAsDoubles, Parser, NumberFormating {
 	}
 	
 	
-	/**
-	 * Copy.
-	 *
-	 * @param template the template
-	 */
 	@Override
-	public void copy(final Coordinate2D template) { setX(template.x); setY(template.y); }
+    public void copy(Coordinates<? extends Double> other) {
+        setX(other.x());
+        setY(other.y());
+    }
 	
+	
+
 	
 	// Access methods...
 	/**

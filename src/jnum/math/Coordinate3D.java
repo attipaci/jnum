@@ -28,7 +28,6 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 
 import jnum.Copiable;
-import jnum.CopyCat;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
 import jnum.fits.FitsToolkit;
@@ -41,7 +40,7 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 
-public class Coordinate3D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate3D>, CopyCat<Coordinate3D>, 
+public class Coordinate3D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate3D>, 
 ViewableAsDoubles, Parser, NumberFormating {
 
 	private static final long serialVersionUID = 4670218761839380720L;
@@ -71,7 +70,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 	}
 	
 	@Override
-    public void copy(Coordinate3D other) {
+    public void copy(Coordinates<? extends Double> other) {
 	    set(other.x(), other.y(), other.z());
 	}
 	

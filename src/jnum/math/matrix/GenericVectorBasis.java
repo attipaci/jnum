@@ -24,6 +24,7 @@
 
 package jnum.math.matrix;
 
+import jnum.Copiable;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.LinearAlgebra;
@@ -35,7 +36,7 @@ import jnum.math.Metric;
  *
  * @param <T> the generic type
  */
-public class GenericVectorBasis<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVectorBasis<T> {
+public class GenericVectorBasis<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVectorBasis<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 196973970496491957L;

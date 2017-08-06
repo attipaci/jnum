@@ -23,7 +23,9 @@
 
 package jnum.math;
 
-public interface Coordinates<T> {
+import jnum.CopyCat;
+
+public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>> {
 
     public int size();
     

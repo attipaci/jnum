@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,6 +26,7 @@ package jnum.math.matrix;
 
 import java.lang.reflect.*;
 
+import jnum.Copiable;
 import jnum.Util;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
@@ -41,7 +42,7 @@ import jnum.math.TrueVector;
  * @param <T> the generic type
  */
 @SuppressWarnings("unchecked")
-public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVector<T> {
+public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVector<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4341703980593410457L;
@@ -79,6 +80,12 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 */
 	public GenericVector(T[] data) { setData(data); }
 	
+	
+	@Override
+    public void copy(Coordinates<? extends T> v) {
+	    setSize(v.size());
+	    for(int i=size(); --i >= 0; ) component[i] = (T) v.getComponent(i).copy();
+	}
 		
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractVector#getType()
@@ -146,16 +153,16 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 * @see kovacs.math.AbstractVector#dot(kovacs.math.AbstractVector)
 	 */
 	@Override
-	public synchronized T dot(Coordinates<? extends T> v) {
-		checkMatching(v);
-		
+	public synchronized T dot(Coordinates<? extends T> v) {	
 		T term = newEntry();
 		T sum = newEntry();
 		
 		sum.zero();
 		
 		for(int i=component.length; --i >= 0; ) {
-			term.setProduct(component[i], v.getComponent(i));
+		    T vi = v.getComponent(i);
+		    if(vi == null) continue;
+			term.setProduct(component[i], vi);
 			sum.add(term);
 		}
 		return sum;
@@ -190,8 +197,11 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 */
 	@Override
 	public void addScaled(TrueVector<? extends T> o, double factor) {
-		checkMatching(o);
-		for(int i=component.length; --i >= 0; ) component[i].addScaled(o.getComponent(i), factor);		
+		for(int i=component.length; --i >= 0; ) {
+		    T vi = o.getComponent(i);
+            if(vi == null) continue;
+		    component[i].addScaled(vi, factor);		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -219,8 +229,11 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 */
 	@Override
 	public void subtract(TrueVector<? extends T> o) {
-		checkMatching(o);
-		for(int i=component.length; --i >= 0; ) component[i].subtract(o.getComponent(i));	
+		for(int i=component.length; --i >= 0; ) {
+		    T vi = o.getComponent(i);
+            if(vi == null) continue;
+		    component[i].subtract(vi);	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -228,8 +241,11 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 */
 	@Override
 	public void add(TrueVector<? extends T> o) {
-		checkMatching(o);
-		for(int i=component.length; --i >= 0; ) component[i].add(o.getComponent(i));	
+		for(int i=component.length; --i >= 0; ) {
+		    T vi = o.getComponent(i);
+            if(vi == null) continue;
+		    component[i].add(vi);	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -256,10 +272,11 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 */
 	@Override
 	public double distanceTo(TrueVector<? extends T> v) {
-		checkMatching(v);
 		double d2 = 0.0;
 		for(int i=component.length; --i >= 0; ) {
-			double d = component[i].distanceTo(v.getComponent(i));
+		    T vi = v.getComponent(i);
+            if(vi == null) continue;
+			double d = component[i].distanceTo(vi);
 			d2 += d*d;
 		}
 		return Math.sqrt(d2);
@@ -270,8 +287,16 @@ public class GenericVector<T extends LinearAlgebra<? super T> & AbstractAlgebra<
 	 */
 	@Override
 	public void orthogonalizeTo(TrueVector<? extends T> v) {
-		addScaled(v,-dot(v).abs() / (abs() * v.abs()));
+		addScaled(v, -dot(v).abs() / (abs() * v.abs()));
 	}
+	
+	@Override
+    public final void projectOn(final TrueVector<? extends T> v) {
+        double scaling = dot(v).abs() / v.abs();
+        copy(v);
+        scale(scaling);
+    }
+
 
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractVector#setSize(int)
