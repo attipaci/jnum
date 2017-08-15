@@ -277,8 +277,8 @@ public class EllipticalSource extends GaussianSource {
 
 
         @Override
-        public DataTable getData(Unit sizeUnit) {
-            DataTable data = super.getData(sizeUnit);
+        public DataTable getData(MapProperties properties, Unit sizeUnit) {
+            DataTable data = super.getData(properties, sizeUnit);
 
             DataPoint major = getMajorFWHM();
             DataPoint minor = getMinorFWHM();
