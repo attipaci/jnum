@@ -213,10 +213,9 @@ public class GaussianSource extends CircularRegion {
         // Fint = peak * 1.14 * FWHM^2
         // dFint^2 = (dpeak * 1.14 * FWHM^2)^2 + (1.14 * peak * 2 FWHM * dFWHM)^2
         
-        DataPoint F = getIntegral();
-        
-        c.add(new HeaderCard("SRCINT", F.value(), "Source integrated flux."));
-        c.add(new HeaderCard("SRCIERR", F.rms(), "Integrated flux error."));
+        //DataPoint F = getIntegral();     
+        //c.add(new HeaderCard("SRCINT", F.value(), "Source integrated flux."));
+        //c.add(new HeaderCard("SRCIERR", F.rms(), "Integrated flux error."));
 
         c.add(new HeaderCard("SRCFWHM", getFWHM().value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source FWHM."));
        
@@ -226,11 +225,11 @@ public class GaussianSource extends CircularRegion {
 
     }
     
-    public DataPoint getIntegral() {
-        DataPoint F = new DataPoint(peak);
+    public DataPoint getIntegral(double psfArea) {
+        DataPoint F = new DataPoint(peak);     
         F.multiplyBy(getFWHM());
         F.multiplyBy(getFWHM());    
-        F.scale(Gaussian2D.areaFactor);
+        F.scale(Gaussian2D.areaFactor / psfArea);
         return F;
     }
     
@@ -246,8 +245,7 @@ public class GaussianSource extends CircularRegion {
         info.append("  Peak: " + peak + " " + getUnitName() + " (S/N ~ " + Util.f1.format(peak.significance()) + ")\n");
 
         Unit sizeUnit = properties.getDisplayGridUnit();
-        DataPoint I = getIntegral();
-        I.scale(1.0 / properties.getImageBeamArea());
+        DataPoint I = getIntegral(properties.getImageBeamArea());
         
         info.append("  Int.: " + I + "\n");
      
@@ -373,14 +371,14 @@ public class GaussianSource extends CircularRegion {
        
         
 
-        public DataTable getData(Unit sizeUnit) {
+        public DataTable getData(MapProperties properties, Unit sizeUnit) {
             DataTable data = new DataTable();
 
             data.new Entry("peak", peak.value(), unitName);
             data.new Entry("dpeak", peak.rms(), unitName);
             data.new Entry("peakS2N", peak.significance(), "");
 
-            DataPoint F = GaussianSource.this.getIntegral();
+            DataPoint F = GaussianSource.this.getIntegral(properties.getImageBeamArea());
 
             data.new Entry("int", F.value(), unitName);
             data.new Entry("dint", F.rms(), unitName);

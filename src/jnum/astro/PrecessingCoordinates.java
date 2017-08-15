@@ -28,6 +28,7 @@ import java.text.NumberFormat;
 import jnum.Util;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
+import jnum.math.Coordinates;
 import jnum.text.StringParser;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
@@ -160,7 +161,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      * @see jnum.SphericalCoordinates#copy(jnum.Coordinate2D)
      */
     @Override
-    public void copy(Coordinate2D coords) {
+    public void copy(Coordinates<? extends Double> coords) {
         super.copy(coords);
         if(coords instanceof PrecessingCoordinates) {
             PrecessingCoordinates precession = (PrecessingCoordinates) coords;
