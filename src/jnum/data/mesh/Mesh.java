@@ -125,7 +125,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 			copy.data = null; 
 			Util.error(this, e);
 		}
-		return copy();
+		return copy;
 	}
 	
 	/**

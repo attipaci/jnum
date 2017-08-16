@@ -635,7 +635,7 @@ public class Matrix extends AbstractMatrix<Double> {
 	@Override
 	public void getColumn(int j, Object buffer) {
 		if(buffer instanceof double[]) getColumn(j, (double[]) buffer);
-		else if(buffer instanceof float[]) getColumn(j, (double[]) buffer);
+		else if(buffer instanceof float[]) getColumn(j, (float[]) buffer);
 		else throw new IllegalArgumentException(" Cannot get " + getClass().getSimpleName() + " column into  " + buffer.getClass().getSimpleName() + ".");
 	}
 	
@@ -668,7 +668,7 @@ public class Matrix extends AbstractMatrix<Double> {
 	@Override
 	public void getRow(int j, Object buffer) {
 		if(buffer instanceof double[]) getRow(j, (double[]) buffer);
-		else if(buffer instanceof float[]) getRow(j, (double[]) buffer);
+		else if(buffer instanceof float[]) getRow(j, (float[]) buffer);
 		else throw new IllegalArgumentException(" Cannot get " + getClass().getSimpleName() + " column into  " + buffer.getClass().getSimpleName() + ".");
 	}
 	
@@ -699,8 +699,8 @@ public class Matrix extends AbstractMatrix<Double> {
 	 */
 	@Override
 	public void setColumn(int j, Object value) throws IllegalArgumentException {		
-		if(value instanceof double[][]) setColumn(j, (double[]) value);
-		else if(value instanceof float[][]) setColumn(j, (float[]) value);
+		if(value instanceof double[]) setColumn(j, (double[]) value);
+		else if(value instanceof float[]) setColumn(j, (float[]) value);
 		else throw new IllegalArgumentException(" Cannot use " + value.getClass().getSimpleName() + " to specify " + getClass().getSimpleName() + " column.");
 	}
 	
@@ -734,8 +734,8 @@ public class Matrix extends AbstractMatrix<Double> {
 	 */
 	@Override
 	public void setRow(int j, Object value) throws IllegalArgumentException {		
-		if(value instanceof double[][]) setRow(j, (double[]) value);
-		else if(value instanceof float[][]) setRow(j, (float[]) value);
+		if(value instanceof double[]) setRow(j, (double[]) value);
+		else if(value instanceof float[]) setRow(j, (float[]) value);
 		else throw new IllegalArgumentException(" Cannot use " + value.getClass().getSimpleName() + " to specify " + getClass().getSimpleName() + " row.");
 	}
 	

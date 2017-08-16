@@ -396,10 +396,11 @@ public class MapProperties extends FitsProperties {
         }
             
         if(underlyingBeam != null) underlyingBeam.editHeader(header, "instrument", underlyingBeamFitsID, fitsUnit);
-        if(smoothing != null) smoothing.editHeader(header, "smoothing", smoothingBeamFitsID, fitsUnit);
-        
-        if(smoothing.isCircular()) c.add(new HeaderCard("SMOOTH", smoothing.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} FWHM (" + displayUnit.name() + ") smoothing.")); 
-
+        if(smoothing != null) {
+            smoothing.editHeader(header, "smoothing", smoothingBeamFitsID, fitsUnit);
+            if(smoothing.isCircular()) c.add(new HeaderCard("SMOOTH", smoothing.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} FWHM (" + displayUnit.name() + ") smoothing.")); 
+        }
+            
         // TODO convert extended filter and corrections to proper Gaussian beams...
         if(!Double.isNaN(filterFWHM)) {
             Gaussian2D filterBeam = new Gaussian2D(filterFWHM);
@@ -420,8 +421,12 @@ public class MapProperties extends FitsProperties {
      
 
     public void merge(MapProperties other) {
-        if(other.smoothing != null) smoothing.encompass(other.smoothing);
-        else if(smoothing == null) smoothing = other.smoothing.copy();       
+        if(smoothing != null) {
+            if(other.smoothing != null) smoothing.encompass(other.smoothing);
+        }
+        else {
+            if(other.smoothing != null) smoothing = other.smoothing.copy();       
+        }
         filterFWHM = Math.min(filterFWHM, other.filterFWHM);
     }
     

@@ -143,12 +143,12 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
     
     
     public synchronized void setData(Object image) {   
-        if(image instanceof double[][]) setData((double[][]) image);
-        else if(image instanceof float[][]) setData((float[][]) image);
-        else if(image instanceof long[][]) setData((long[][]) image);
-        else if(image instanceof int[][]) setData((int[][]) image);
-        else if(image instanceof short[][]) setData((short[][]) image);
-        else if(image instanceof byte[][]) setData((byte[][]) image);
+        if(image instanceof double[][][]) setData((double[][][]) image);
+        else if(image instanceof float[][][]) setData((float[][][]) image);
+        else if(image instanceof long[][][]) setData((long[][][]) image);
+        else if(image instanceof int[][][]) setData((int[][][]) image);
+        else if(image instanceof short[][][]) setData((short[][][]) image);
+        else if(image instanceof byte[][][]) setData((byte[][][]) image);
         else throw new IllegalArgumentException("Cannot set image content to type " + image.getClass().getSimpleName());
     }
     
@@ -365,7 +365,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
 
 
     public static class Double3D extends Cube3D {
-      
+  
         /**
          * 
          */
@@ -411,7 +411,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public double[][][] getData() {
+        public synchronized double[][][] getData() {
             return data;
         }
         
@@ -494,7 +494,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public float[][][] getData() {
+        public synchronized float[][][] getData() {
             return data;
         }
         
@@ -567,7 +567,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public long[][][] getData() {
+        public synchronized long[][][] getData() {
             return data;
         }
         
@@ -632,7 +632,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public int[][][] getData() {
+        public synchronized int[][][] getData() {
             return data;
         }
         
@@ -698,7 +698,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public short[][][] getData() {
+        public synchronized short[][][] getData() {
             return data;
         }
         
@@ -763,7 +763,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public byte[][][] getData() {
+        public synchronized byte[][][] getData() {
             return data;
         }
         

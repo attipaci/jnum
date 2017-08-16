@@ -47,11 +47,6 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
 
 
 
-    /**
-     * Instantiates a new unit with an exponent.
-     */
-    public ExponentUnit() { this(null); }
-
     public ExponentUnit(Unit base) {
         this(base, 1.0);
     }
@@ -93,7 +88,6 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         this.base = base;
         this.exponent = exponent;
         bracketBase = CompoundUnit.class.isAssignableFrom(base.getClass());
-
     }
 
     /* (non-Javadoc)
@@ -240,5 +234,6 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
 
     /** The use slash. */
     private static boolean useSlash = true;
+    
 
 }

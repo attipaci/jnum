@@ -13,6 +13,9 @@
 	[NEW] Parallel now has synchronize() method to provide common 
 	synchronization points among the worker threads.
 
+	[FIX] A bunch of potential bugs found and fixed with the help of
+	FindBugs.
+
 	[FIX] Reinstated standard long FITS header keywords. Problems occur
 	only when trimming comments...
 

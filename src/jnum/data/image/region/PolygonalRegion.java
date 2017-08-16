@@ -113,7 +113,7 @@ public class PolygonalRegion extends Region2D {
                 if(intersect <= j) cross++;
             }
             
-            return cross%2 == 1;
+            return cross%2 != 0;
         }
 
         @Override

@@ -387,8 +387,8 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @param text the text
 	 * @throws ParseException the parse exception
 	 */
-	public void parseISOTimeStamp(String text) throws ParseException {
-		setUTCMillis(isoFormatter.parse(text).getTime());
+	public void parseISOTimeStamp(String text) throws ParseException {  
+	    setUTCMillis(getDateFormat(isoFormat).parse(text).getTime());
 	}
 	
 	/**
@@ -397,7 +397,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the iSO time stamp
 	 */
 	public String getISOTimeStamp() {
-		return isoFormatter.format(getDate());
+	    return getDateFormat(isoFormat).format(getDate());
 	}
 	
 	/**
@@ -407,9 +407,9 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @throws ParseException the parse exception
 	 */
 	public void parseFitsTimeStamp(String text) throws ParseException {
-		// Set the MJD to 0 UTC of the date part...
-		setUTCMillis(fitsDateFormatter.parse(text.substring(0,10)).getTime());
-	
+		// Set the MJD to 0 UTC of the date part...   
+        setUTCMillis(getDateFormat(fitsDateFormat).parse(text.substring(0, fitsDateFormat.length())).getTime());
+	    
 		// Add in the UT time component...
 		if(text.length() > 11) {
 			double UTC = 0.0;
@@ -428,7 +428,8 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 */
 	public String getFitsTimeStamp() {
 		long millis = getUTCMillis();
-		return fitsDateFormatter.format(millis)	+ 'T' + fitsTimeFormat.format(1e-3 * (millis % dayMillis));
+		
+		return getDateFormat(fitsDateFormat).format(getDate()) + 'T' + fitsTimeFormat.format(1e-3 * (millis % dayMillis));
 	}
 	
 	/**
@@ -437,8 +438,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the fits short date
 	 */
 	public String getFitsShortDate() {
-		long millis = getUTCMillis();
-		return fitsDateFormatter.format(millis);
+		return getDateFormat(fitsDateFormat).format(getUTCMillis());
 	}
 	
 	/**
@@ -448,7 +448,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @throws ParseException the parse exception
 	 */
 	public void parseFitsDate(String text) throws ParseException {
-		parseSimpleDate(text, fitsDateFormatter);
+		parseSimpleDate(text, getDateFormat(fitsDateFormat));
 	}
 	
 	/**
@@ -458,7 +458,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @throws ParseException the parse exception
 	 */
 	public void parseSimpleDate(String text) throws ParseException {
-		parseSimpleDate(text, defaultFormatter);
+		parseSimpleDate(text, getDateFormat(defaultFormat));
 	}
 	
 	/**
@@ -478,10 +478,14 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the simple date
 	 */
 	public String getSimpleDate() {
-		return defaultFormatter.format(getDate());
+	    return getDateFormat(defaultFormat).format(getDate());
 	}
 	
-	
+	public final static DateFormat getDateFormat(String formatSpec) {
+	    DateFormat f = new SimpleDateFormat(formatSpec);
+	    f.setTimeZone(utcZone);
+	    return f;
+	}
 	
 	/**
 	 * Gets the TAI millis.
@@ -628,21 +632,20 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	public final static TimeZone UTC = TimeZone.getTimeZone("UTC");
 	
 	/** The iso formatter. */
-	public final static DateFormat isoFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+	public final static String isoFormat = new String("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
 	/** The fits date formatter. */
-	public final static DateFormat fitsDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+	public final static String fitsDateFormat = new String("yyyy-MM-dd");
 	
 	/** The default formatter. */
-	public final static DateFormat defaultFormatter = new SimpleDateFormat("yyyy.MM.dd");
+	public final static String defaultFormat = new String("yyyy.MM.dd");
 	
 	/** The fits time format. */
 	public final static TimeFormat fitsTimeFormat = new TimeFormat(3); 
 	
+	public final static TimeZone utcZone = TimeZone.getTimeZone("UTC");
+	
 	static {
-		isoFormatter.setTimeZone(UTC);
-		fitsDateFormatter.setTimeZone(UTC);
-		defaultFormatter.setTimeZone(UTC);
 		fitsTimeFormat.colons();
 	}
 	

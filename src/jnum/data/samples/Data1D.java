@@ -99,7 +99,7 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     
     @Override
     public final boolean conformsTo(Integer size) {
-        return size() == size;
+        return size().intValue() == size.intValue();
     }
     
     @Override

@@ -729,7 +729,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         // Undo prior corrections if necessary
         if(!properties.isCorrected()) { 
             if(underlyingFWHM == properties.getCorrectingFWHM()) return;
-            else undoFilterCorrect(validator);
+            else undoFilterCorrectBy(validator);
         }
         final double filterC = properties.getFilterCorrectionFactor(underlyingFWHM);
 
@@ -750,11 +750,11 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     
     public void undoFilterCorrect(Data2D reference) {
         double blankingValue = getProperties().getFilterBlanking();
-        undoFilterCorrect(new RangeRestricted2D(reference, new Range(-blankingValue, blankingValue)));
+        undoFilterCorrectBy(new RangeRestricted2D(reference, new Range(-blankingValue, blankingValue)));
     }
     
 
-    public void undoFilterCorrect(final Validating2D validator) {
+    public void undoFilterCorrectBy(final Validating2D validator) {
         if(!properties.isCorrected()) return;
 
         final double iFilterC = 1.0 / properties.getFilterCorrectionFactor(properties.getCorrectingFWHM());

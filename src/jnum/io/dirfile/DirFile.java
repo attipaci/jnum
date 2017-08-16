@@ -130,6 +130,8 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		this.path = path;
 		
 		String endianness = System.getProperty("sun.cpu.endian");
+		if(endianness == null) throw new IllegalStateException("Undefined endianness.");
+		
 		if(endianness != null) Util.info(this, "Native endianness: " + endianness);
 		
 		if(endianness.equalsIgnoreCase("big")) isBigEndian = true;
@@ -158,7 +160,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		if(!super.equals(o)) return false;
 		DirFile file = (DirFile) o;
 		if(isBigEndian != file.isBigEndian) return false;
-		if(path != file.path) return false;
+		if(!Util.equals(path, file.path)) return false;
 		if(!strings.equals(file.strings)) return false;
 		if(!pending.equals(file.pending)) return false;
 		return true;

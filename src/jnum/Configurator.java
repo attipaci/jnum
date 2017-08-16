@@ -136,14 +136,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      */
     @Override
     public boolean equals(Object o) {
-        if(value == null) return o == null;
-        if(o instanceof String) return equals((String) o);
-        else return super.equals(o);
+        if(this == o) return true;
+        if(o == null) return false;
+        if(!(o instanceof Configurator)) return false;
+        Configurator c = (Configurator) o;
+        return Util.equals(c.value, value);
     }
 
-    public boolean equals(String value) {
-        return value.equalsIgnoreCase(this.value);
-    }
     
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
@@ -151,6 +150,11 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     @Override
     public int hashCode() {
         return value.hashCode();
+    }
+    
+
+    public boolean is(String value) {
+        return value.equalsIgnoreCase(this.value);
     }
 
     /* (non-Javadoc)
@@ -521,7 +525,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         if(condition.contains("?")) {
             StringTokenizer pair = new StringTokenizer(condition, "?");
             String conditionKey = pair.nextToken().toLowerCase();
-            if(isConfigured(conditionKey)) if(get(conditionKey).equals(pair.nextToken())) return true;
+            if(isConfigured(conditionKey)) if(get(conditionKey).is(pair.nextToken())) return true;
         }
         else if(isConfigured(condition.toLowerCase())) return true;
 
@@ -1015,30 +1019,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         value = "";
     }
 
-    /*
-	public boolean hasUser(Class<?> c) {
-		return users.contains(c);		
-	}
-
-	public boolean hasUserInstanceOf(Class<?> c) {
-		for(Class<?> user : users) if(c.isAssignableFrom(user)) return true;
-		return false;
-	}
-
-	public void addUser(Class<?> c) {
-		if(users.contains(c)) return;
-		users.add(c);
-	}
-     */
-
-    /**
-     * Adds the user.
-     *
-     * @param o the o
-     */
-    public void addUser(Object o) {
-        addUser(o.getClass());
-    }
+  
 
     /**
      * Intersect.

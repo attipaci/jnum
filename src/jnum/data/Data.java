@@ -91,6 +91,7 @@ TableFormatter.Entries {
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
+        if(o == null) return false;
         if(!getClass().isAssignableFrom(o.getClass())) return false;
         
         @SuppressWarnings("unchecked")

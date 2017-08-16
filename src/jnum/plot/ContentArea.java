@@ -476,9 +476,11 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		toDisplay.scale(scale.x(), scale.y());		// Rescale to image size
 		toDisplay.rotate(rotation);				// Rotate by the desired amount
 		
-		Coordinate2D userOffset = contentLayer.getReferenceCoordinate();
-		if(contentLayer != null) toDisplay.translate(-userOffset.x(), -userOffset.y()); // Move by the desired offset in user coordinates...
-		
+		if(contentLayer != null) {
+		    Coordinate2D userOffset = contentLayer.getReferenceCoordinate();
+		    toDisplay.translate(-userOffset.x(), -userOffset.y()); // Move by the desired offset in user coordinates...
+		}
+		    
 		/*
 		Point2D coordRef = contentLayer.getCoordinateReference();
 		toDisplay.translate(-coordRef.getX(), -coordRef.getY());

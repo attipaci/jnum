@@ -94,6 +94,7 @@ public class AIPSLegacyProjection extends SphericalProjection {
 	 */
 	@Override
 	public final void project(SphericalCoordinates coords, Coordinate2D toProjected) {
+	    if(referenceOffsets == null) throw new IllegalStateException("null reference in " + getClass().getSimpleName());
 		baseProjection.project(coords, toProjected);
 		toProjected.subtractX(referenceOffsets.x());
 		toProjected.subtractY(referenceOffsets.y());
@@ -104,6 +105,7 @@ public class AIPSLegacyProjection extends SphericalProjection {
 	 */
 	@Override
 	public final void deproject(Coordinate2D projected, SphericalCoordinates toCoords) {
+	    if(referenceOffsets == null) throw new IllegalStateException("null reference in " + getClass().getSimpleName());
 		projected.addX(referenceOffsets.x());
 		projected.addY(referenceOffsets.y());
 		baseProjection.deproject(projected, toCoords);		
