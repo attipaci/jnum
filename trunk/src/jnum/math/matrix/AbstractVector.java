@@ -75,10 +75,11 @@ Cloneable, Copiable<AbstractVector<T>> {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	@Override
-	public Object clone() {
-		try { return super.clone(); }
-		catch(Exception e) { return null; }		
+	@SuppressWarnings("unchecked")
+    @Override
+	public AbstractVector<T> clone() {
+		try { return (AbstractVector<T>) super.clone(); }
+		catch(CloneNotSupportedException e) { return null; }		
 	}
 	
 	/* (non-Javadoc)

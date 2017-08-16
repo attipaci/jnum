@@ -361,9 +361,9 @@ public class Expression {
 	 * @return the builtin function value
 	 */
 	protected Object getBuiltinFunctionValue(double x) {
-		char c = op.charAt(0);
-		
-		switch(c) {
+	    if(op == null) return null;
+	    
+		switch(op.charAt(0)) {
 		case 'a' :
 			if(op.equals("abs")) return Math.abs(x);
 			else if(op.equals("asin")) return Math.asin(x);
@@ -425,12 +425,14 @@ public class Expression {
 	 * @return the builtin function value
 	 */
 	protected Object getBuiltinFunctionValue(double x, double y) {
+	    if(op == null) return null;
+	    
 		if(op.equals("max")) return Math.max(x, y);
 		if(op.equals("min")) return Math.min(x, y);
 		if(op.equals("pow")) return Math.pow(x, y);
-		else if(op.equals("hypot")) return ExtraMath.hypot(x, y);
-		else if(op.equals("mod")) return Math.IEEEremainder(x, y);
-		else if(op.equals("atan2")) return Math.atan2(x, y);
+		if(op.equals("hypot")) return ExtraMath.hypot(x, y);
+		if(op.equals("mod")) return Math.IEEEremainder(x, y);
+		if(op.equals("atan2")) return Math.atan2(x, y);
 		throw new UnsupportedOperationException("Undefined operation '" + op + "' for 2 double arguments.");
 	}
 	

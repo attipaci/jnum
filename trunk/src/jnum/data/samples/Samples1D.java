@@ -109,12 +109,12 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
     
     
     public synchronized void setData(Object image) {   
-        if(image instanceof double[][]) setData((double[][]) image);
-        else if(image instanceof float[][]) setData((float[][]) image);
-        else if(image instanceof long[][]) setData((long[][]) image);
-        else if(image instanceof int[][]) setData((int[][]) image);
-        else if(image instanceof short[][]) setData((short[][]) image);
-        else if(image instanceof byte[][]) setData((byte[][]) image);
+        if(image instanceof double[]) setData((double[]) image);
+        else if(image instanceof float[]) setData((float[]) image);
+        else if(image instanceof long[]) setData((long[]) image);
+        else if(image instanceof int[]) setData((int[]) image);
+        else if(image instanceof short[]) setData((short[]) image);
+        else if(image instanceof byte[]) setData((byte[]) image);
         else throw new IllegalArgumentException("Cannot set image content to type " + image.getClass().getSimpleName());
     }
     
@@ -348,7 +348,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
 
         @Override
-        public double[] getData() {
+        public synchronized double[] getData() {
             return data;
         }
         
@@ -422,7 +422,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
       
         @Override
-        public float[] getData() {
+        public synchronized float[] getData() {
             return data;
         }
         
@@ -486,7 +486,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
 
         @Override
-        public long[] getData() {
+        public synchronized long[] getData() {
             return data;
         }
         
@@ -542,7 +542,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
      
         @Override
-        public int[] getData() {
+        public synchronized int[] getData() {
             return data;
         }
         
@@ -598,7 +598,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public short[] getData() {
+        public synchronized short[] getData() {
             return data;
         }
         
@@ -653,7 +653,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public byte[] getData() {
+        public  synchronized byte[] getData() {
             return data;
         }
         

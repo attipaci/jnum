@@ -45,6 +45,7 @@ public class DirTokenizer extends ArrayList<String> implements Iterator<String> 
 	 */
 	@Override
 	public boolean hasNext() {
+	    if(line == null) return false;
 		return i < line.length();
 	}
 	
@@ -56,6 +57,8 @@ public class DirTokenizer extends ArrayList<String> implements Iterator<String> 
 	public String next() {
 		StringBuilder token = new StringBuilder();		
 		boolean isQuote = false;
+		
+		if(line == null) return null;
 		
 		for(; i<line.length(); i++) {
 			char c = line.charAt(i);

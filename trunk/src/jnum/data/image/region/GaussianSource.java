@@ -194,7 +194,7 @@ public class GaussianSource extends CircularRegion {
 
         peak.setValue(Double.parseDouble(parser.nextToken()));
         String next = parser.nextToken();
-        if(next.equals("+-") || next.equals("+/-") || next.equals(Symbol.plusminus)) {
+        if(next.equals("+-") || next.equals("+/-") || next.equals(Symbol.plusminus + "")) {
             peak.setRMS(Double.parseDouble(parser.nextToken()));
             next = parser.nextToken();
         }

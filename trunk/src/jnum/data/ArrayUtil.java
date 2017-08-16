@@ -599,7 +599,7 @@ public final class ArrayUtil {
 				}
 				else throw new ClassCastException("Addition of " + type.getName() + " is not implemented.");
 			}
-			else if(array instanceof Additive){
+			else if(array instanceof Additive[]){
 				@SuppressWarnings("unchecked")
 				Additive<T>[] element = (Additive<T>[]) array;
 				@SuppressWarnings("unchecked")
@@ -1183,7 +1183,7 @@ public final class ArrayUtil {
 				Object[] viewArray = null;
 				for(int i=0; i<array.length; i++) {
 					Object view = viewAs(template, array[i]);
-					if(viewArray == null) Array.newInstance(view.getClass(), array.length);
+					if(viewArray == null) viewArray = (Object[]) Array.newInstance(view.getClass(), array.length);
 					viewArray[i] = view;
 				}
 				return viewArray;
@@ -2661,7 +2661,7 @@ public final class ArrayUtil {
 	 * @throws InstantiationException the instantiation exception
 	 */
 	public static Object parse(String text, Class<?> type) throws ParseException, IllegalAccessException, InstantiationException {
-		text.trim();
+		text = text.trim();
 		
 		// If it's an array, create storage and fill it with the parse elements...
 		if(text.charAt(0) != '{' && text.charAt(text.length()-1) != '}') {
@@ -2761,7 +2761,7 @@ public final class ArrayUtil {
 	 * @throws NumberFormatException the number format exception
 	 */	
 	public static void parse(String text, Object data) throws ParseException, NumberFormatException {
-		text.trim();
+		text = text.trim();
 		if(data instanceof String) {
 			data = text;
 		}

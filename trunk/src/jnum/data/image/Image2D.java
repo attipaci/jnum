@@ -429,7 +429,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public double[][] getData() {
+        public  synchronized double[][] getData() {
             return data;
         }
         
@@ -506,7 +506,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public float[][] getData() {
+        public synchronized float[][] getData() {
             return data;
         }
         
@@ -573,7 +573,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public long[][] getData() {
+        public synchronized long[][] getData() {
             return data;
         }
         
@@ -632,7 +632,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public int[][] getData() {
+        public synchronized int[][] getData() {
             return data;
         }
         
@@ -692,7 +692,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public short[][] getData() {
+        public synchronized short[][] getData() {
             return data;
         }
         

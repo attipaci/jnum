@@ -13,11 +13,13 @@ public class Image2DTest {
 
     public static void main(String[] args) {
         
-        Image2D image = Image2D.createType(Double.class);
-        image.setExecutor(ParallelTask.newDefaultParallelExecutor(4));
-        
-        if(image == null) System.err.println("null image!");
-        
+        Image2D image = Image2D.createType(Double.class);  
+        if(image == null) {
+            System.err.println("null image!");
+            System.exit(1);
+        }
+      
+        image.setExecutor(ParallelTask.newDefaultParallelExecutor(4));   
         image.setSize(4, 3);
         
         image.set(2, 0, 20.0);

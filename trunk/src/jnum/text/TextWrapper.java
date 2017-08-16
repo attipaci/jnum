@@ -340,7 +340,6 @@ public class TextWrapper {
         int nonspaces = i;
         for( ; i<text.length(); i++) if(!isWhiteSpace(text.charAt(i))) nonspaces++;
         
-        text = text.substring(i);
         buf.append(tokens.nextToken());
         
         final String regularSpaces = Util.spaces((size - nonspaces) / (words-1));    

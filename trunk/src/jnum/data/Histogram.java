@@ -141,7 +141,7 @@ public class Histogram implements Cloneable {
 	 *
 	 * @return true, if is empty
 	 */
-	public boolean isEmpty() { return isEmpty(); }
+	public boolean isEmpty() { return bins.isEmpty(); }
 	
 	/**
 	 * Gets the min bin value.

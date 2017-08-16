@@ -104,31 +104,31 @@ public enum ParseType {
 	public synchronized static ParseType get(String value, ParseType lowest) {
 		switch(lowest) {
 		case BOOLEAN :
-			try { Util.parseBoolean(value); }
+			try { Util.parseBoolean(value); break; }
 			catch(NumberFormatException e) { lowest = ParseType.BYTE; }
 		case BYTE :
-			try { Byte.decode(value); }
+			try { Byte.decode(value); break; }
 			catch(NumberFormatException e) { lowest = ParseType.SHORT; }
 		case SHORT :
-			try { Short.decode(value); }
+			try { Short.decode(value); break; }
 			catch(NumberFormatException e) { lowest = ParseType.INT; }
 		case INT :
-			try { Integer.decode(value); }
+			try { Integer.decode(value); break; }
 			catch(NumberFormatException e) { lowest = ParseType.LONG; }
 		case LONG :
-			try { Long.decode(value); }
+			try { Long.decode(value); break; }
 			catch(NumberFormatException e) { lowest = ParseType.FLOAT; }
 		case FLOAT :
-			try { Float.parseFloat(value); }
+			try { Float.parseFloat(value); break; }
 			catch(NumberFormatException e) { lowest = ParseType.DOUBLE; }
 		case DOUBLE :
-			try { Double.parseDouble(value); }
+			try { Double.parseDouble(value); break; }
 			catch(NumberFormatException e) { lowest = ParseType.COMPLEX; }
 		case COMPLEX :
-			try { complex.parse(value); }
-			catch(NumberFormatException e) { lowest = ParseType.STRING; }
+			try { complex.parse(value); break; }
+			catch(NumberFormatException e) { return ParseType.STRING; }
 		case STRING :
-			lowest =  ParseType.STRING;
+			return ParseType.STRING;
 		}
 
 		return lowest;

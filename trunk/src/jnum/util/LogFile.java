@@ -193,6 +193,8 @@ public class LogFile {
 			}
 		});
 		
+		if(matches == null) return;
+		
 		for(File file : matches) {
 			Util.info(this, "Deleting " + file.getPath());
 		}
