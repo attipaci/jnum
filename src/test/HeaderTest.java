@@ -2,9 +2,9 @@ package test;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import nom.tam.fits.BasicHDU;
-import nom.tam.fits.BinaryTableHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
@@ -35,43 +35,44 @@ public class HeaderTest {
 	 * @throws FitsException the fits exception
 	 * @throws FileNotFoundException the file not found exception
 	 */
-	public void addKeys() throws FitsException, FileNotFoundException {
+	public void addKeys() throws IOException, FitsException, FileNotFoundException {
 		float[][] data = new float[10][10];
 		
-		BasicHDU hdu = (BasicHDU) Fits.makeHDU(data);
+		BasicHDU<?> hdu = (BasicHDU<?>) Fits.makeHDU(data);
 		
-		Header header = hdu.getHeader();
-		c.add(new HeaderCard"BOOL1", true, "no. 1.");
-		c.add(new HeaderCard"FLOAT2", 1.0, "no. 2.");
-		c.add(new HeaderCard"STRING3", "hello", "no. 3.");
-		c.add(new HeaderCard"INT4", 4, "no. 4.");
+		Header h = hdu.getHeader();
 		
-		c.add(new HeaderCard"BOOL5", false, "no. 5.");
-		c.add(new HeaderCard"FLOAT6", 2.0, "no. 6.");
-		c.add(new HeaderCard"STRING7", "hello", "no. 7.");
-		c.add(new HeaderCard"INT8", 6, "no. 8.");
+		h.addValue("BOOL1", true, "no. 1.");
+		h.addValue("FLOAT2", 1.0, "no. 2.");
+		h.addValue("STRING3", "hello", "no. 3.");
+		h.addValue("INT4", 4, "no. 4.");
+		
+		h.addValue("BOOL5", false, "no. 5.");
+		h.addValue("FLOAT6", 2.0, "no. 6.");
+		h.addValue("STRING7", "hello", "no. 7.");
+		h.addValue("INT8", 6, "no. 8.");
 	
-		c.add(new HeaderCard"FLOAT2", 2.0, "no. 2. (override)");
+		h.addValue("FLOAT2", 2.0, "no. 2. (override)");
 		
-		c.add(new HeaderCard"BOOL9", true, "no. 9.");
-		c.add(new HeaderCard"FLOAT10", 3.0, "no. 10.");
-		c.add(new HeaderCard"STRING11", "hello", "no. 11.");
-		c.add(new HeaderCard"INT12", 8, "no. 12.");
+		h.addValue("BOOL9", true, "no. 9.");
+		h.addValue("FLOAT10", 3.0, "no. 10.");
+		h.addValue("STRING11", "hello", "no. 11.");
+		h.addValue("INT12", 8, "no. 12.");
 		
-		header.insertComment("Block4");
+		h.insertComment("Block4");
 		
-		c.add(new HeaderCard"BOOL13", false, "no. 13.");
-		c.add(new HeaderCard"FLOAT14", 4.0, "no. 14.");
-		c.add(new HeaderCard"STRING15", "hello", "no. 15.");
-		c.add(new HeaderCard"INT16", 10, "no. 16.");
+		h.addValue("BOOL13", false, "no. 13.");
+		h.addValue("FLOAT14", 4.0, "no. 14.");
+		h.addValue("STRING15", "hello", "no. 15.");
+		h.addValue("INT16", 10, "no. 16.");
 
 		
 		Fits fits = new Fits();
 		fits.addHDU(hdu);
-		
-		BufferedDataOutputStream file = new BufferedDataOutputStream(new FileOutputStream("test.fits"));
-		
-		fits.write(file);		
+			
+		fits.write(new BufferedDataOutputStream(new FileOutputStream("test.fits")));
+
+		fits.close();
 	}
 	
 }
