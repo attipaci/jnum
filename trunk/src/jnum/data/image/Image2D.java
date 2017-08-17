@@ -751,7 +751,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public byte[][] getData() {
+        public synchronized byte[][] getData() {
             return data;
         }
         

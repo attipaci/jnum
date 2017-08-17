@@ -1,12 +1,13 @@
->> Equatorial / Eqcliptic Coordinate parse:
-	- default epoch when converting from...
-	- (generally check conversion epochs...)
-	- null epochs (use or not, and when, and how...)
-
->> FFT parallel division improvements (bitreverse!!!)
+0.20-b1
 
 
+	[NEW] Common Data interface for handling multidimensional data.
 
+	[NEW] New 1D image classes (Data1D, Samples1D, Overlay1D...), which
+	act similarly to their 2D counterparts.
+
+	[NEW] New 3D and 2D+1D image classes that act similarly to their
+	2D counterparts.
 
 	[NEW] Coordinate2D.convertFrom()/To().
 
