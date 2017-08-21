@@ -56,8 +56,11 @@ public class Grid2DPlus<BaseCoordType extends Coordinate2D, SubGridType extends 
     public BaseCoordType getCoordinateInstanceFor(String type) throws InstantiationException, IllegalAccessException {
         return baseGrid.getCoordinateInstanceFor(type);
     }
-    
-    // TODO parse and edit headers...
-    
+
+    @Override
+    public final int dimension() {
+       return 3;
+    }
+   
 
 }

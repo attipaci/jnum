@@ -38,7 +38,7 @@ public interface FastGridAccess<CoordinateType, OffsetType> {
      * @param index the index
      * @param toValue the to value
      */
-    public void valueAt(OffsetType index, CoordinateType toValue);
+    public void coordsAt(OffsetType index, CoordinateType toValue);
     
     /**
      * Index of.

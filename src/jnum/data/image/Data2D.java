@@ -849,7 +849,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         }
         else {
             Gaussian2D antialias = new Gaussian2D(scaleX, scaleY, 0.0);
-            resampleFrom(image, new Stretch2D(scaleX, scaleY), antialias.getBeam(new CartesianGrid2D()), null);
+            resampleFrom(image, new Stretch2D(scaleX, scaleY), antialias.getBeam(new FlatGrid2D()), null);
         }
 
     }
@@ -1150,8 +1150,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
         @Override
         protected void processChunk(int index, int threadCount) {
-            final int sizeX = sizeX();
-            for(int i=index; i<sizeX; i += threadCount) {
+            for(int i=index; i<sizeX(); i += threadCount) {
                 processX(i);
                 Thread.yield();
             }
@@ -1168,7 +1167,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
         @Override
         protected int getTotalOps() {
-            return 3 + sizeX() * sizeY() * getPointOps();
+            return 3 + capacity() * getPointOps();
         }
 
         protected int getPointOps() {

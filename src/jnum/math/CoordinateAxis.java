@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
+import jnum.Unit;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -68,6 +69,8 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	
 	/** The minor tick. */
 	public double majorTick, minorTick; // The actual ticks.
+	
+	public Unit unit = Unit.arbitrary;
 	
 	/**
 	 * Instantiates a new coordinate axis.
@@ -192,6 +195,11 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 * @return true, if is reverse
 	 */
 	public boolean isReverse() { return reverse; }
+	
+	public Unit getUnit() { return unit; }
+	
+	public void setUnit(Unit u) { this.unit = u; }
+	
 	
 	/**
 	 * Format.

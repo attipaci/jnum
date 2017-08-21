@@ -70,8 +70,8 @@ public class GridImageLayer extends BufferedImageLayer {
 	public void setContentArea(ContentArea<?> area) {
 		super.setContentArea(area);
 				
-		area.setXUnit(grid.xUnit);
-		area.setYUnit(grid.yUnit);
+		area.setXUnit(grid.xAxis().getUnit());
+		area.setYUnit(grid.yAxis().getUnit());
 		
 		if(grid instanceof SphericalGrid) area.isAutoAngleX = area.isAutoAngleY = true;
 		

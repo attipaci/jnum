@@ -59,7 +59,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         return stack.get(index);
     }
     
-    protected final ImageType getPlane() { return stack.get(0); }
+    protected ImageType getPlane() { return stack.get(0); }
     
     
     public final void setPlane(int index, ImageType image) {
@@ -229,9 +229,34 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     }
     
    
+    public abstract class ForkZ<ReturnType> extends Task<ReturnType> {           
 
-    
-    
-  
+        @Override
+        protected void processChunk(int index, int threadCount) {
+            for(int i=index; i<sizeZ(); i += threadCount) {
+                processPlane(i);
+                Thread.yield();
+            }
+        }
+
+        protected abstract void processPlane(int i);
+
+        @Override
+        protected int getRevisedChunks(int chunks, int minBlockSize) {
+            return super.getRevisedChunks(getPointOps(), minBlockSize);
+        }
+
+        @Override
+        protected int getTotalOps() {
+            return 3 + capacity() * getPointOps();
+        }
+
+        protected int getPointOps() {
+            return 10;
+        }  
+
+        protected abstract void process(int i, int j);
+    } 
+
     
 }

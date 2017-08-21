@@ -30,11 +30,11 @@ public abstract class Resizable2D1<ImageType extends Data2D & Resizable2D> exten
 
     @Override
     public final ImageType getImage2DInstance(int sizeX, int sizeY) {
-        ImageType image = getImage2DInstance();
+        ImageType image = getPlaneInstance();
         image.setSize(sizeX, sizeY);
         return image;
     }
 
-    public abstract ImageType getImage2DInstance();
+    public abstract ImageType getPlaneInstance();
     
 }

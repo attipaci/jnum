@@ -38,7 +38,7 @@ import jnum.data.FastGridAccess;
 import jnum.data.Grid;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
-import jnum.math.CoordinateSystem;
+import jnum.math.CoordinateAxis;
 import jnum.math.Vector2D;
 import jnum.projection.Projection2D;
 import jnum.util.HashCode;
@@ -53,8 +53,8 @@ import nom.tam.util.Cursor;
  *
  * @param <CoordinateType> the generic type
  */
-public abstract class Grid2D<CoordinateType extends Coordinate2D> implements Grid<CoordinateType, Vector2D>, 
-FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
+public abstract class Grid2D<CoordinateType extends Coordinate2D> extends Grid<CoordinateType, Vector2D> 
+implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8109608722575396734L;
@@ -69,16 +69,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	/** The i22. */
 	private double m11, m12, m21, m22, i11, i12, i21, i22;
 	
-	/** The coordinate system. */
-	private CoordinateSystem coordinateSystem;
-	
-	/** The alt. */
-	protected String alt = ""; // The FITS alternative coordinate system specifier... 
-
-	
-	/** The preferred units (for storing in FITS). */
-	public Unit xUnit, yUnit;
-	
+		
 	
 	/**
 	 * Instantiates a new grid2 d.
@@ -94,8 +85,6 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	    m11 = m22 = i11 = i22 = 1.0;
 	    m12 = m21 = i12 = i21 = 0.0; 
 	    refIndex.zero();
-		xUnit = getDefaultFITSAxisUnit();
-		yUnit = getDefaultFITSAxisUnit();
 	}
 	
 	/* (non-Javadoc)
@@ -158,7 +147,6 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		Grid2D<CoordinateType> copy = clone();
 		copy.projection = projection.copy();
 		copy.refIndex = refIndex.copy();
-		copy.alt = new String(alt);
 		return copy;
 	}
 	
@@ -175,19 +163,6 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	    return grid;
 	}
 	
-	/**
-	 * Gets the coordinate system.
-	 *
-	 * @return the coordinate system
-	 */
-	public CoordinateSystem getCoordinateSystem() { return coordinateSystem; }
-	
-	/**
-	 * Sets the coordinate system.
-	 *
-	 * @param system the new coordinate system
-	 */
-	public void setCoordinateSystem(CoordinateSystem system) { coordinateSystem = system; }
 	
 	/**
 	 * Gets the pixel area.
@@ -421,7 +396,9 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	 * @throws HeaderCardException the header card exception
 	 */
 	@Override
-    public void editHeader(Header header) throws HeaderCardException {		
+    public void editHeader(Header header) throws HeaderCardException {	
+	    String alt = getFitsID();
+	    
 		// TODO 
 		projection.editHeader(header, alt);
 			
@@ -438,18 +415,18 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		if(isReverseY()) { a22 *= -1.0; a12 *= -1.0; }
 						
 		if(m12 == 0.0 && m21 == 0.0) {	
-			c.add(new HeaderCard("CDELT1" + alt, a11/xUnit.value(), "Grid spacing (deg)"));	
-			c.add(new HeaderCard("CDELT2" + alt, a22/yUnit.value(), "Grid spacing (deg)"));		
+			c.add(new HeaderCard("CDELT1" + alt, a11 / xAxis().getUnit().value(), "Grid spacing (deg)"));	
+			c.add(new HeaderCard("CDELT2" + alt, a22 / yAxis().getUnit().value(), "Grid spacing (deg)"));		
 		}
 		else {		
-			c.add(new HeaderCard("CD1_1" + alt, a11 / xUnit.value(), "Transformation matrix element"));
-			c.add(new HeaderCard("CD1_2" + alt, a12 / xUnit.value(), "Transformation matrix element"));
-			c.add(new HeaderCard("CD2_1" + alt, a21 / yUnit.value(), "Transformation matrix element"));
-			c.add(new HeaderCard("CD2_2" + alt, a22 / yUnit.value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD1_1" + alt, a11 / xAxis().getUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD1_2" + alt, a12 / xAxis().getUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD2_1" + alt, a21 / yAxis().getUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD2_2" + alt, a22 / yAxis().getUnit().value(), "Transformation matrix element"));
 		}
 		
-		if(xUnit != Unit.unity) c.add(new HeaderCard("CUNIT1" + alt, xUnit.name(), "Coordinate axis unit."));
-		if(yUnit != Unit.unity) c.add(new HeaderCard("CUNIT2" + alt, yUnit.name(), "Coordinate axis unit."));
+		if(xAxis().getUnit() != Unit.unity) c.add(new HeaderCard("CUNIT1" + alt, xAxis().getUnit().name(), "Coordinate axis unit."));
+		if(yAxis().getUnit() != Unit.unity) c.add(new HeaderCard("CUNIT2" + alt, yAxis().getUnit().name(), "Coordinate axis unit."));
 	    
 		
 	}
@@ -472,12 +449,11 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	 */
 	public abstract CoordinateType getCoordinateInstanceFor(String type) throws InstantiationException, IllegalAccessException;
 	
-	/**
-	 * Gets the default fits axis unit.
-	 *
-	 * @return the default fits axis unit
-	 */
-	public Unit getDefaultFITSAxisUnit() { return Unit.get("pixel"); }
+	public CoordinateAxis xAxis() { return getCoordinateSystem().get(0); }
+	
+	public CoordinateAxis yAxis() { return getCoordinateSystem().get(1); }
+	
+	public Unit getDefaultUnit() { return Unit.unity; }
 	
 	/**
 	 * Parses the header.
@@ -489,6 +465,8 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	 */
 	@Override
     public void parseHeader(Header header) throws InstantiationException, IllegalAccessException {
+	    String alt = getFitsID();
+	    
 		String type = header.getStringValue("CTYPE1" + alt);
 	
 		try { parseProjection(header); }
@@ -497,21 +475,21 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		
 		// Internally keep the transformation matrix unitary 
 		// And have delta carry the pixel sizes...
-		xUnit = header.containsKey("CUNIT1" + alt) ? Unit.get(header.getStringValue("CUNIT1" + alt)) : getDefaultFITSAxisUnit();
-		yUnit = header.containsKey("CUNIT2" + alt) ? Unit.get(header.getStringValue("CUNIT2" + alt)) : getDefaultFITSAxisUnit();
+		xAxis().setUnit(header.containsKey("CUNIT1" + alt) ? Unit.get(header.getStringValue("CUNIT1" + alt)) : getDefaultUnit());
+		yAxis().setUnit(header.containsKey("CUNIT2" + alt) ? Unit.get(header.getStringValue("CUNIT2" + alt)) : getDefaultUnit());
 		
 		if(header.containsKey("CD1_1" + alt) || header.containsKey("CD1_2" + alt) || header.containsKey("CD2_1" + alt) || header.containsKey("CD2_2" + alt)) {
 			// When the CDi_j keys are used the scaling is incorporated into the CDi_j values.
 			// Thus, the deltas are implicitly assumed to be 1...	
-			m11 = header.getDoubleValue("CD1_1" + alt, 1.0) * xUnit.value();
-			m12 = header.getDoubleValue("CD1_2" + alt, 0.0) * xUnit.value();
-			m21 = header.getDoubleValue("CD2_1" + alt, 0.0) * yUnit.value();
-			m22 = header.getDoubleValue("CD2_2" + alt, 1.0) * yUnit.value();	
+			m11 = header.getDoubleValue("CD1_1" + alt, 1.0) * xAxis().getUnit().value();
+			m12 = header.getDoubleValue("CD1_2" + alt, 0.0) * xAxis().getUnit().value();
+			m21 = header.getDoubleValue("CD2_1" + alt, 0.0) * yAxis().getUnit().value();
+			m22 = header.getDoubleValue("CD2_2" + alt, 1.0) * yAxis().getUnit().value();	
 		}	
 		else {
 			// Otherwise, the scaling is set by CDELTi keys...
-			double dx = header.getDoubleValue("CDELT1" + alt, 1.0) * xUnit.value();
-			double dy = header.getDoubleValue("CDELT2" + alt, 1.0) * yUnit.value();
+			double dx = header.getDoubleValue("CDELT1" + alt, 1.0) * xAxis().getUnit().value();
+			double dy = header.getDoubleValue("CDELT2" + alt, 1.0) * yAxis().getUnit().value();
 			
 			// And the transformation is set by the PCi_j keys
 			// Transform then scale...
@@ -547,7 +525,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	 */
 	@Override
 	public String toString() {	
-		return toString(Util.s3, xUnit, yUnit);
+		return toString(Util.s3, xAxis().getUnit(), yAxis().getUnit());
 	}
 	
 	/**
@@ -557,7 +535,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 	 * @return the string
 	 */
 	public String toString(NumberFormat nf) {
-		return toString(nf, xUnit, yUnit);
+		return toString(nf, xAxis().getUnit(), yAxis().getUnit());
 	}
 	
 	/**
@@ -642,26 +620,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 		offset.set(m11 * di + m12 * dj, m21 * di + m22 * dj);
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid#indexOf(java.lang.Object)
-	 */
-	@Override
-    public Vector2D indexOf(CoordinateType value) {
-	    Vector2D v = new Vector2D();
-	    indexOf(value, v);
-	    return v;
-	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid#valueAt(java.lang.Object)
-	 */
-	@Override
-    public CoordinateType valueAt(Vector2D index) {
-	    @SuppressWarnings("unchecked")
-        CoordinateType coords = (CoordinateType) projection.getReference().copy();
-	    valueAt(index, coords);
-	    return coords;
-	}
 	
 	/* (non-Javadoc)
 	 * @see jnum.data.FastGridAccess#indexOf(java.lang.Object, java.lang.Object)
@@ -676,7 +635,7 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
      * @see jnum.data.FastGridAccess#valueAt(java.lang.Object, java.lang.Object)
      */
     @Override
-    public void valueAt(Vector2D index, CoordinateType toValue) {
+    public void coordsAt(Vector2D index, CoordinateType toValue) {
         toOffset(index);
         projection.deproject(index, toValue);
         toIndex(index);
@@ -729,19 +688,6 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
      */
     public void setProjection(Projection2D<CoordinateType> p) { this.projection = p; }
     
-    /**
-     * Gets the fITS alt.
-     *
-     * @return the fITS alt
-     */
-    public final String getFITSAlt() { return alt; }
-    
-    /**
-     * Sets the fITS alt.
-     *
-     * @param ver the new fITS alt
-     */
-    public final void setFITSAlt(String ver) { this.alt = ver; }
     
     /**
      * Gets the index.
@@ -849,14 +795,14 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
     private static Grid2D<?> getGrid2DInstanceFor(String type1, String type2) {
     	// Check if the types conform to projected WCS coordinates, according to Calabretta & Greisen (2002)
     	// If so, return a SphericalGrid, else a regular Cartesian grid.
-    	if(type1 == null || type2 == null) return new CartesianGrid2D();
-    	if(type1.length() < 6 || type2.length() < 6) return new CartesianGrid2D();
+    	if(type1 == null || type2 == null) return new FlatGrid2D();
+    	if(type1.length() < 6 || type2.length() < 6) return new FlatGrid2D();
     
     	StringTokenizer tokens1 = new StringTokenizer(type1.toLowerCase(), "-");    	
-    	if(tokens1.countTokens() != 2) return new CartesianGrid2D(); 
+    	if(tokens1.countTokens() != 2) return new FlatGrid2D(); 
     	
     	StringTokenizer tokens2 = new StringTokenizer(type2.toLowerCase(), "-");
-    	if(tokens2.countTokens() != 2) return new CartesianGrid2D(); 
+    	if(tokens2.countTokens() != 2) return new FlatGrid2D(); 
     		
     	String xtype = tokens1.nextToken();
     	String px = tokens1.nextToken();
@@ -864,28 +810,28 @@ FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
     	String ytype = tokens2.nextToken();
     	String py = tokens2.nextToken();
     		
-    	if(!px.equals(py)) return new CartesianGrid2D();
+    	if(!px.equals(py)) return new FlatGrid2D();
     	
     	if(xtype.equals("ra") && ytype.equals("dec")) return new SphericalGrid();
     	if(xtype.equals("dec") && ytype.equals("ra")) return new SphericalGrid();
     	if(xtype.equals("lon") && ytype.equals("lat")) return new SphericalGrid();
     	if(xtype.equals("lat") && ytype.equals("lon")) return new SphericalGrid();
     	
-    	if(xtype.charAt(0) != ytype.charAt(0)) return new CartesianGrid2D();
+    	if(xtype.charAt(0) != ytype.charAt(0)) return new FlatGrid2D();
     	
     	xtype = xtype.substring(1);
     	ytype = ytype.substring(1);
     	if(xtype.equals("lon") && ytype.equals("lat")) return new SphericalGrid();
     	if(xtype.equals("lat") && ytype.equals("lon")) return new SphericalGrid();
    
-    	if(xtype.charAt(0) != ytype.charAt(0)) return new CartesianGrid2D();
+    	if(xtype.charAt(0) != ytype.charAt(0)) return new FlatGrid2D();
     	
     	xtype = xtype.substring(1);
     	ytype = ytype.substring(1);
     	if(xtype.equals("ln") && ytype.equals("lt")) return new SphericalGrid();
     	if(xtype.equals("lt") && ytype.equals("ln")) return new SphericalGrid();
     	
-    	return new CartesianGrid2D();
+    	return new FlatGrid2D();
     }
 
     

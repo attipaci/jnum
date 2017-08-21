@@ -89,14 +89,14 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	 * @see jnum.data.Grid2D#getDefaultFITSAxisUnit()
 	 */
 	@Override
-	public Unit getDefaultFITSAxisUnit() { return SphericalCoordinates.degree; }
+	public Unit getDefaultUnit() { return SphericalCoordinates.degree; }
 	
 	/* (non-Javadoc)
 	 * @see jnum.data.Grid2D#parseProjection(nom.tam.fits.Header)
 	 */
 	@Override
 	public void parseProjection(Header header) throws HeaderCardException {
-		String type = header.getStringValue("CTYPE1" + getFITSAlt());
+		String type = header.getStringValue("CTYPE1" + getFitsID());
 	
 		try { setProjection(SphericalProjection.forName(type.substring(5, 8))); }
 		catch(Exception e) { Util.error(this, "Unknown projection " + type.substring(5, 8)); }
@@ -110,6 +110,11 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 		Class<? extends SphericalCoordinates> coordClass = SphericalCoordinates.getFITSClass(type);
 		return coordClass.newInstance();
 	}
+
+    @Override
+    public final int dimension() {
+        return 2;
+    }
 
     
 }

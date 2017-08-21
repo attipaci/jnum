@@ -23,17 +23,26 @@
 
 package jnum.data.cube2;
 
+import jnum.data.cube.Index3D;
 import jnum.data.image.Data2D;
 import jnum.data.image.Observation2D;
+import jnum.math.Vector3D;
 
 public class Observation2D1 extends AbstractMap2D1<Observation2D> {
-
-    public Observation2D1(Class<? extends Number> dataType, int flagType) {
+ 
+    public Observation2D1(Class<? extends Number> dataType, Class<? extends Number> weightType, int flagType) {
         super(dataType, flagType);
     }
-
+    
+    
+    public Observation2D1 copy(boolean withContents) {
+        Observation2D1 copy = (Observation2D1) super.clone();
+        for(int k=sizeZ(); --k >= 0; ) copy.setPlane(k, getPlane(k).copy());
+        return copy;
+    }
+    
     @Override
-    public Observation2D getImage2DInstance() { return new Observation2D(getElementType(), getFlagType()); }
+    public Observation2D getPlaneInstance() { return new Observation2D(getElementType(), getElementType(), getFlagType()); }
   
     public Data2D1<Data2D> getWeights() {
         Data2D1<Data2D> weight = new Data2D1<Data2D>() {
@@ -53,6 +62,40 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
         return weight;
     }
     
+    
+    public void accumulate(final Observation2D1 cube, final double weight) {
+        for(int k=sizeZ(); --k >= 0; ) getPlane(k).accumulate(cube.getPlane(k), weight);
+    }
+    
+    
+    public void endAccumulation() {   
+        for(int k=sizeZ(); --k >= 0; ) getPlane(k).endAccumulation();
+    }
+
+
+    public final void mergeAccumulate(final Observation2D1 cube) {
+        super.add(cube);
+        for(int k=sizeZ(); --k >= 0; ) getPlane(k).mergeAccumulate(cube.getPlane(k));
+         
+    }
+    
+
+
+    public final synchronized void accumulateAt(final Vector3D index, final double value, final double gain, final double w, final double time) {
+        accumulateAt((int)Math.round(index.x()), (int)Math.round(index.y()), (int)Math.round(index.z()), value, gain, w, time);
+    }
+
+
+    public final synchronized void accumulateAt(final Index3D index, final double value, final double gain, final double w, final double time) {
+        accumulateAt(index.i(), index.j(), index.k(), value, gain, w, time);
+    }
+
+
+    public final void accumulateAt(final int i, final int j, final int k, final double value, final double gain, double w, final double time) {
+        getPlane(k).accumulateAt(i, j, value, gain, w, time);
+    }
+
+   
     
     
 }
