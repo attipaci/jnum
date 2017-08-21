@@ -47,7 +47,7 @@ public class MapProperties extends FitsProperties {
     private static final long serialVersionUID = 6844342367048765949L;
     
     
-    private Grid2D<?> grid = new CartesianGrid2D();  
+    private Grid2D<?> grid = new FlatGrid2D();  
     
     private Unit displayGridUnit;
     
@@ -280,7 +280,7 @@ public class MapProperties extends FitsProperties {
     public Unit getDefaultGridUnit() {
         Grid2D<?> grid = getGrid();
         if(grid == null) return Unit.get("pixel");
-        return grid.getDefaultFITSAxisUnit();
+        return grid.getDefaultUnit();
     }
     
     public Unit getBeamUnit() {

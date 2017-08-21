@@ -23,30 +23,33 @@
 
 package jnum.data.cube2;
 
+
 import jnum.Unit;
+import jnum.Util;
 import jnum.data.cube.Index3D;
-import jnum.data.image.Flag2D;
 import jnum.data.image.Grid2D;
 import jnum.data.image.Map2D;
 import jnum.data.samples.Grid1D;
 import jnum.math.Coordinate2D;
 
-public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1<MapType> {
-     
-    private Class<? extends Number> dataType = Double.class;
-    private int flagType = Flag2D.TYPE_INT;
-    
-    
-    private Grid2D<Coordinate2D> grid2D;
-    private Grid1D grid1D;
-    private Unit unit;
 
+public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1<MapType> {
+         
+    private MapType mapTemplate;
+  
+    private Class<? extends Number> dataType;
+    private int flagType;
+    
+    private Grid1D grid1D;
+  
     
     public AbstractMap2D1(Class<? extends Number> dataType, int flagType) {
         this.dataType = dataType;
         this.flagType = flagType;
+        mapTemplate = getPlaneInstance();
     }
     
+     
     @Override
     public final Class<? extends Number> getElementType() { return dataType; }
     
@@ -73,23 +76,26 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     
     
     @Override
+    public MapType getPlane() { return mapTemplate; }
+    
+    @Override
     public void addPlane(MapType map) {
         super.addPlane(map);
         
         if(!getStack().isEmpty()) {
-            map.setGrid(getGrid2D());
-            map.setUnit(getUnit());
+            map.setGrid(mapTemplate.getGrid());
+            map.setUnit(mapTemplate.getUnit());
+            map.setCriticalFlags(mapTemplate.getCriticalFlags());
         }
     }
     
     
     public Grid2D<?> getGrid2D() {
-        return grid2D; 
+        return mapTemplate.getGrid(); 
     }
     
-    @SuppressWarnings("unchecked")
     public void setGrid2D(Grid2D<?> grid) {
-        this.grid2D = (Grid2D<Coordinate2D>) grid;
+        mapTemplate.setGrid(grid);
         for(Map2D map : getStack()) map.setGrid(grid);
     }
     
@@ -103,18 +109,17 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     
     @Override
     public Unit getUnit() {
-        return unit;
+        return mapTemplate.getUnit();
     }
     
     @Override
     public void setUnit(Unit u) {
-        this.unit = u;
+        mapTemplate.setUnit(u);
     }
     
     @Override
     public void setUnit(String spec) {
-        getPlane().setUnit(spec);
-        setUnit(getPlane().getUnit());
+        mapTemplate.setUnit(spec);
     }
     
     public Coordinate2D getReference2D() {
@@ -122,16 +127,39 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     }
     
     public void setReference2D(Coordinate2D coords) {
-        grid2D.setReference(coords);
+        mapTemplate.setReference(coords);
         for(Map2D map : getStack()) map.setReference(coords);
     }
     
     public double getReference1D() {
-        return grid1D.getReference();
+        return grid1D.getReference().value();
     }
     
     public void setReference1D(double value) {
         grid1D.setReference(value);
+    }
+    
+    public long getCriticalFlags() { return mapTemplate.getCriticalFlags(); }
+    
+    public void setCriticalFlags(long pattern) {
+        mapTemplate.setCriticalFlags(pattern);
+        for(Map2D map : getStack()) map.setCriticalFlags(pattern);
+    }
+    
+    public final void renew() {
+        mapTemplate.renew();
+        for(Map2D map : getStack()) map.renew();
+    }
+    
+    @Override
+    public String getInfo() {
+        Grid1D gridZ = getGrid1D();
+        Unit specUnit = gridZ.getAxis().getUnit();
+        return getPlane().getInfo() + "\n" +
+                "Spectral: " + sizeZ() + " bins @ " + 
+                Util.s3.format(gridZ.getReference().value() / specUnit.value()) + " with " +
+                Util.s3.format(gridZ.getResolution().value() / specUnit.value()) + " resolution";
+                
     }
    
 }

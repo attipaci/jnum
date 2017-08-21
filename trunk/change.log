@@ -1,5 +1,7 @@
 0.20-b1
 
+	[NEW] {CoordinateAxis} Axes now carry their own units for parsing
+	and formatting.
 
 	[NEW] Common Data interface for handling multidimensional data.
 
@@ -53,6 +55,10 @@
 	really used. Fixed anyway...
 
 	[FIX] {Data2D} mean() was not actually a weighted mean.
+
+	[CODE] Grids read/write FITS headers using the axis units.
+
+	[CODE] Lots of tweaks to Grid classes. More generalized hierarchy.
 
 	[CODE] Vector2D, Vector3D, RealVector and GenericVetor classes now
 	use common superinterfaces that provide interoperability.

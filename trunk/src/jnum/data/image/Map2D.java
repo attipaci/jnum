@@ -100,7 +100,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     protected void init() {
         reuseIndex = new Vector2D();
         properties = getPropertiesInstance();
-        setGrid(new CartesianGrid2D());
+        setGrid(new FlatGrid2D());
     }
     
     

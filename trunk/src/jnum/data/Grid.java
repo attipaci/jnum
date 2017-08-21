@@ -25,8 +25,10 @@ package jnum.data;
 
 import java.io.Serializable;
 
+import jnum.NonConformingException;
 import jnum.fits.FitsHeaderEditing;
 import jnum.fits.FitsHeaderParsing;
+import jnum.math.CoordinateSystem;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -35,66 +37,91 @@ import jnum.fits.FitsHeaderParsing;
  * @param <CoordinateType> the generic type
  * @param <OffsetType> the generic type
  */
-public interface Grid<CoordinateType, OffsetType> extends Serializable, Cloneable, FitsHeaderEditing, FitsHeaderParsing {
+public abstract class Grid<CoordinateType, OffsetType> implements Serializable, Cloneable, FitsHeaderEditing, FitsHeaderParsing {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8132999541122592649L;
+
+    private CoordinateSystem coordinateSystem;
+    
+    private int variant = 0;
+    
+    
+    public final CoordinateSystem getCoordinateSystem() { return coordinateSystem; }
+
+
+    public final void setCoordinateSystem(CoordinateSystem system) {
+        if(system.size() != dimension()) throw new NonConformingException("coordinate system / grid mismatch.");
+        coordinateSystem = system;
+    }
+    
+   
+   
+    public final int getVariant() { return variant; }
+    
+    public final void setVariant(int index) { this.variant = index; }
+    
+
+    protected String getFitsID() {
+        return getVariant() == 0 ? "" : Character.toString((char) ('A' + getVariant()));
+    }
+    
+    
     /**
      * Sets the reference.
      *
      * @param coords the new reference
      */
-    public void setReference(CoordinateType coords);
-    
+    public abstract void setReference(CoordinateType coords);
+
     /**
      * Gets the reference.
      *
      * @return the reference
      */
-    public CoordinateType getReference();
-    
+    public abstract CoordinateType getReference();
+
     /**
      * Sets the reference index.
      *
      * @param index the new reference index
      */
-    public void setReferenceIndex(OffsetType index);
-    
+    public abstract void setReferenceIndex(OffsetType index);
+
     /**
      * Gets the reference index.
      *
      * @return the reference index
      */
-    public OffsetType getReferenceIndex();
-    
+    public abstract OffsetType getReferenceIndex();
+
     /**
      * Sets the resolution.
      *
      * @param delta the new resolution
      */
-    public void setResolution(OffsetType delta);
-    
+    public abstract void setResolution(OffsetType delta);
+
     /**
      * Gets the resolution.
      *
      * @return the resolution
      */
-    public OffsetType getResolution();
-       
-    /**
-     * Value at.
-     *
-     * @param index the index
-     * @return the coordinate type
-     */
-    public CoordinateType valueAt(OffsetType index);
+    public abstract OffsetType getResolution();
+
+
+
+    public abstract void coordsAt(OffsetType index, CoordinateType toValue);
     
-    /**
-     * Index of.
-     *
-     * @param value the value
-     * @return the offset type
-     */
-    public OffsetType indexOf(CoordinateType value);
-    
-  
+    public abstract void indexOf(CoordinateType value, OffsetType toIndex);
  
+
+    public abstract int dimension();
+
+   
+    
+    
+
 }

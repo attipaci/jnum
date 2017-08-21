@@ -349,7 +349,7 @@ public class Observation2D extends Map2D {
 
     @Override
     public double mean() {
-        Fork<WeightedPoint> average = getImage().new AveragingFork() {
+        Fork<WeightedPoint> average = new AveragingFork() {
             private double sum = 0.0, sumw = 0.0;
             @Override
             protected void process(int i, int j) { 
@@ -386,7 +386,7 @@ public class Observation2D extends Map2D {
   
     
     public void accumulate(final Observation2D image, final double weight) {
-        getImage().new Fork<Void>() {
+        new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
                 if(image.isValid(i, j)) accumulateAt(i, j, image.get(i, j).doubleValue(), 1.0, weight * image.weightAt(i, j), image.exposureAt(i, j));
@@ -396,7 +396,7 @@ public class Observation2D extends Map2D {
     
     
     public void endAccumulation() {
-        getImage().new Fork<Void>() {
+        new Fork<Void>() {
             @Override
             protected void process(int i, int j) { endAccumulation(i, j); }
         }.process();
@@ -466,7 +466,7 @@ public class Observation2D extends Map2D {
 
 
     protected double getChi2() {
-        Fork<WeightedPoint> rChi2 = getImage().new AveragingFork() {
+        Fork<WeightedPoint> rChi2 = new AveragingFork() {
             private double chi2 = 0.0;
             private int n = 0;  
             @Override
@@ -488,7 +488,7 @@ public class Observation2D extends Map2D {
 
 
     public void MEM(final double[][] model, final double lambda) {
-        getImage().new Fork<Void>() {
+        new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
                 if(isValid(i, j)) {

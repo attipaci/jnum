@@ -30,12 +30,12 @@ public class ProbabilityDistribution implements Cloneable, Copiable<ProbabilityD
     }
     
     public ProbabilityDistribution(Histogram histogram, Grid1D grid, int paddingFactor) {
-        Range r = new Range(grid.valueAt(histogram.getMinBinValue()), grid.valueAt(histogram.getMaxBinValue()));
+        Range r = new Range(grid.coordAt(histogram.getMinBinValue()), grid.coordAt(histogram.getMaxBinValue()));
         if(paddingFactor > 1.0) r.grow(paddingFactor);
        
         double[] data = getData();
        
-        for(int i=data.length; --i >= 0; ) data[i] = histogram.countsFor(grid.valueAt((double) i));
+        for(int i=data.length; --i >= 0; ) data[i] = histogram.countsFor(grid.coordAt((double) i));
         renormalize();
     }
     

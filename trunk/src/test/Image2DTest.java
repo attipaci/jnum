@@ -1,7 +1,7 @@
 package test;
 
 import jnum.Util;
-import jnum.data.image.CartesianGrid2D;
+import jnum.data.image.FlatGrid2D;
 import jnum.data.image.Gaussian2D;
 import jnum.data.image.Image2D;
 import jnum.data.image.Values2D;
@@ -38,7 +38,7 @@ public class Image2DTest {
         print("backsampled", backsampled);
         
         Gaussian2D psf = new Gaussian2D(1.0);
-        Referenced2D beam = psf.getBeam(new CartesianGrid2D());
+        Referenced2D beam = psf.getBeam(new FlatGrid2D());
         
         print("smoothing beam", beam);
         

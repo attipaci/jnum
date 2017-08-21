@@ -97,8 +97,8 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
      * @see java.lang.Object#clone()
      */
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public Range2D clone() {
+        try { return  (Range2D) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
     
@@ -107,7 +107,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
      */
     @Override
     public Range2D copy() {
-        Range2D copy = (Range2D) clone();
+        Range2D copy = clone();
         if(xRange != null) copy.xRange = xRange.copy();
         if(yRange != null) copy.yRange = yRange.copy();
         return copy;
@@ -372,7 +372,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString() { return "x:" + xRange.toString() + ", y:" + yRange.toString(); }
+    public String toString() { return xRange.toString() + ", " + yRange.toString(); }
     
     /**
      * To string.
@@ -381,7 +381,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
      * @return the string
      */
     public String toString(NumberFormat nf) {
-        return "x:" + xRange.toString(nf) + ", y:" + yRange.toString(nf);
+        return xRange.toString(nf) + ", " + yRange.toString(nf);
     }
     
     /**
