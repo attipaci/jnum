@@ -23,7 +23,9 @@
 
 package jnum.data.cube2;
 
+import jnum.Unit;
 import jnum.data.cube.Index3D;
+import jnum.data.cube.overlay.Overlay3D;
 import jnum.data.image.Data2D;
 import jnum.data.image.Observation2D;
 import jnum.math.Vector3D;
@@ -61,6 +63,63 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
         for(int i=0; i<sizeZ(); i++) weight.addPlane(getPlane(i).getExposures());
         return weight;
     }
+    
+
+    public Overlay3D getNoise() {
+          
+        return new Overlay3D(this) {   
+         
+            @Override
+            public Number get(int i, int j, int k) {
+                return getPlane(k).noiseAt(i, j);
+            }
+
+            @Override
+            public void set(int i, int j, int k, Number value) {
+                super.set(i, j, k, 1.0 / (value.doubleValue() * value.doubleValue()));
+            }    
+            
+            @Override
+            public void add(int i, int j, int k, Number value) {
+                set(i, j, k, get(i, j, k).doubleValue() + value.doubleValue());
+            }
+            
+            @Override
+            protected void setDefaultUnit() { setUnit(Observation2D1.this.getUnit()); }
+        
+
+        };
+       
+    }
+
+    public Overlay3D getSignificance() {
+        return new Overlay3D(this) {
+
+            @Override
+            public Number get(int i, int j, int k) {
+                return getPlane(k).significanceAt(i, j);
+            }
+
+            @Override
+            public void set(int i, int j, int k, Number value) {
+                super.set(i, j, k, value.doubleValue() * getPlane(k).noiseAt(i, j));
+            }  
+            
+            @Override
+            public void add(int i, int j, int k, Number value) {
+                set(i, j, k, get(i, j, k).doubleValue() + value.doubleValue());
+            }    
+        
+            @Override
+            protected void setDefaultUnit() { super.setUnit(Unit.unity); }
+          
+            @Override
+            public void setUnit(Unit u) {
+                throw new UnsupportedOperationException("Cannot change units of S/N image.");
+            }
+        };
+    }
+
     
     
     public void accumulate(final Observation2D1 cube, final double weight) {

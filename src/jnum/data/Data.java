@@ -621,7 +621,11 @@ TableFormatter.Entries {
 
 
 
-
+    public final double level(boolean isRobust) {
+        double level = isRobust ? median() : mean();
+        add(-level);
+        return level;
+    }
     
     
     
@@ -638,7 +642,23 @@ TableFormatter.Entries {
             }  
         }).value();
     }
-
+    
+    public double median() {
+        final double[] temp = getValidSortingArray(false);
+        if(temp.length == 0) return Double.NaN;
+        return Statistics.median(temp, 0, temp.length);      
+    }
+    
+    public double select(double fraction) {
+        if(fraction == 0.0) return getMin().doubleValue();
+        else if(fraction == 1.0) return getMax().doubleValue();
+        
+        final double[] temp = getValidSortingArray(false);
+        if(temp.length == 0) return Double.NaN;
+        return Statistics.select(temp, fraction, 0, temp.length);
+    }
+    
+    
     private double[] getValidSortingArray(final boolean isSquared) {
         final double[] temp = new double[countPoints()];
         if(temp.length == 0) return temp;
@@ -664,22 +684,6 @@ TableFormatter.Entries {
         
         return temp;
     }
-    
-    public double median() {
-        final double[] temp = getValidSortingArray(false);
-        if(temp.length == 0) return Double.NaN;
-        return Statistics.median(temp, 0, temp.length);      
-    }
-    
-    public double select(double fraction) {
-        if(fraction == 0.0) return getMin().doubleValue();
-        else if(fraction == 1.0) return getMax().doubleValue();
-        
-        final double[] temp = getValidSortingArray(false);
-        if(temp.length == 0) return Double.NaN;
-        return Statistics.select(temp, fraction, 0, temp.length);
-    }
-    
     
     public final double getRMS(boolean isRobust) {
         return isRobust ? getRobustRMS() : getRMS();

@@ -76,17 +76,17 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     public final void unflag(Index3D index) { unflag(index.i(), index.j(), index.k()); }
     
     
-    public void addProprietaryUnit(Unit u) {
-        mapTemplate.addProprietaryUnit(u);
-        for(MapType plane : getStack()) plane.addProprietaryUnit(u);
+    public void addLocalUnit(Unit u) {
+        mapTemplate.addLocalUnit(u);
+        for(MapType plane : getStack()) plane.addLocalUnit(u);
     }
     
-    public void addProprietaryUnit(Unit u, String altNames) {
-        Unit.add(u, altNames, mapTemplate.getProprietaryUnits());
-        addProprietaryUnit(u);
+    public void addLocalUnit(Unit u, String altNames) {
+        Unit.add(u, altNames, mapTemplate.getLocalUnits());
+        addLocalUnit(u);
     }
 
-    public final Hashtable<String, Unit> getProprietaryUnits() { return mapTemplate.getProprietaryUnits(); }
+    public final Hashtable<String, Unit> getLocalUnits() { return mapTemplate.getLocalUnits(); }
 
     
     private void applyTemplateTo(MapType map) {
@@ -95,7 +95,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
         map.getProperties().copy(mapTemplate.getProperties());     
         map.setCriticalFlags(mapTemplate.getCriticalFlags());
         
-        for(Unit u : mapTemplate.getProprietaryUnits().values()) map.addProprietaryUnit(u);
+        for(Unit u : mapTemplate.getLocalUnits().values()) map.addLocalUnit(u);
         map.setUnit(mapTemplate.getUnit().name());
     }
     
