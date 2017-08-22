@@ -94,9 +94,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         return copy;
     }
     
-    protected void addProprietaryUnits() {
-        
-    }
+    protected void addLocalUnits() {}
     
    
     

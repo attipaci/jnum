@@ -84,7 +84,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     private Map2D() { 
         init();    
         localUnits = new Hashtable<String, Unit>();
-        addProprietaryUnits();
+        addLocalUnits();
     }
    
     public Map2D(Image2D data, int flagType) {
@@ -104,23 +104,23 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     }
     
     
-    public void addProprietaryUnit(Unit u) {
+    public void addLocalUnit(Unit u) {
         localUnits.put(u.name(), u);
     }
     
-    public void addProprietaryUnit(Unit u, String altNames) {
+    public void addLocalUnit(Unit u, String altNames) {
         Unit.add(u, altNames, localUnits);
-        addProprietaryUnit(u);
+        addLocalUnit(u);
     }
     
 
-    public final Hashtable<String, Unit> getProprietaryUnits() { return localUnits; }
+    public final Hashtable<String, Unit> getLocalUnits() { return localUnits; }
   
     
     
     @Override
     public void setUnit(String spec) {
-        setUnit(spec, getProprietaryUnits());
+        setUnit(spec, getLocalUnits());
     }
 
     @Override
@@ -130,9 +130,9 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     }
 
     
-    protected void addProprietaryUnits() {
-        addProprietaryUnit(properties.getBeamUnit(), "beam, BEAM, Beam, bm, BM, Bm");
-        addProprietaryUnit(getGrid().getPixelAreaUnit(), "pixel, PIXEL, Pixel, pixels, PIXELS, Pixels, pxl, PXL, Pxl");   
+    protected void addLocalUnits() {
+        addLocalUnit(properties.getBeamUnit(), "beam, BEAM, Beam, bm, BM, Bm");
+        addLocalUnit(getGrid().getPixelAreaUnit(), "pixel, PIXEL, Pixel, pixels, PIXELS, Pixels, pxl, PXL, Pxl");   
     }
     
     @Override
@@ -173,10 +173,10 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
        
         copy.localUnits = new Hashtable<String, Unit>(localUnits.size());
         copy.localUnits.putAll(localUnits);
-        addProprietaryUnits();
+        addLocalUnits();
           
         // Replace the copy's list of proprietary units with it own...
-        copy.addProprietaryUnits();
+        copy.addLocalUnits();
         
         // Units might have proprietary components, which aren't easily copied over.
         // Hence, the safest is to re-construct the units of the copy from scratch
@@ -345,12 +345,6 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         return Math.max(1.0, properties.getSmoothing().getArea() / getGrid().getPixelArea());
     }
 
-    
-    public double level(boolean robust) {
-        double level = robust ? median() : mean();
-        add(-level);
-        return level;
-    }
 
     
     public void crop(int imin, int jmin, int imax, int jmax) {
@@ -662,7 +656,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         properties.resetProcessing();
         properties.parseHeader(hdu.getHeader());    
         
-        getImage().read(hdu, getProprietaryUnits());
+        getImage().read(hdu, getLocalUnits());
         
 
         if(!conformsTo(getFlags().sizeX(), getFlags().sizeY())) 
