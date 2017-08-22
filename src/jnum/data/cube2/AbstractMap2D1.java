@@ -24,6 +24,8 @@
 package jnum.data.cube2;
 
 
+import java.util.Hashtable;
+
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.cube.Index3D;
@@ -74,19 +76,45 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     public final void unflag(Index3D index) { unflag(index.i(), index.j(), index.k()); }
     
     
+    public void addProprietaryUnit(Unit u) {
+        mapTemplate.addProprietaryUnit(u);
+        for(MapType plane : getStack()) plane.addProprietaryUnit(u);
+    }
     
-    @Override
-    public MapType getPlane() { return mapTemplate; }
+    public void addProprietaryUnit(Unit u, String altNames) {
+        Unit.add(u, altNames, mapTemplate.getProprietaryUnits());
+        addProprietaryUnit(u);
+    }
+
+    public final Hashtable<String, Unit> getProprietaryUnits() { return mapTemplate.getProprietaryUnits(); }
+
     
+    private void applyTemplateTo(MapType map) {
+        if(mapTemplate == null) return;
+        
+        map.getProperties().copy(mapTemplate.getProperties());     
+        map.setCriticalFlags(mapTemplate.getCriticalFlags());
+        
+        for(Unit u : mapTemplate.getProprietaryUnits().values()) map.addProprietaryUnit(u);
+        map.setUnit(mapTemplate.getUnit().name());
+    }
+    
+
+    public void makeConsistent() {
+        for(MapType map : getStack()) if(map != mapTemplate) applyTemplateTo(map);
+    }
+    
+ 
     @Override
     public void addPlane(MapType map) {
-        super.addPlane(map);
-        
-        if(!getStack().isEmpty()) {
-            map.setGrid(mapTemplate.getGrid());
-            map.setUnit(mapTemplate.getUnit());
-            map.setCriticalFlags(mapTemplate.getCriticalFlags());
-        }
+        applyTemplateTo(map);
+        if(getStack().isEmpty()) mapTemplate = map;
+        super.addPlane(map);  
+    }
+    
+    @Override
+    public MapType getPlane() {
+        return mapTemplate;
     }
     
     

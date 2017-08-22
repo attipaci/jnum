@@ -95,7 +95,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         return copy;
     }
     
-    protected void addProprietaryLocalUnits() {
+    protected void addProprietaryUnits() {
         
     }
     
@@ -139,7 +139,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     }
     
     
-    public synchronized void setData(Object image) {   
+    public void setData(Object image) {   
         if(image instanceof double[][]) setData((double[][]) image);
         else if(image instanceof float[][]) setData((float[][]) image);
         else if(image instanceof long[][]) setData((long[][]) image);

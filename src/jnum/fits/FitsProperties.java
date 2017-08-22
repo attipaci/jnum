@@ -26,6 +26,7 @@ package jnum.fits;
 import java.io.Serializable;
 
 import jnum.Copiable;
+import jnum.CopyCat;
 import jnum.Util;
 import jnum.text.TableFormatter;
 import nom.tam.fits.Header;
@@ -33,7 +34,7 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-public class FitsProperties implements Cloneable, Copiable<FitsProperties>, Serializable, TableFormatter.Entries, 
+public class FitsProperties implements Cloneable, Copiable<FitsProperties>, CopyCat<FitsProperties>, Serializable, TableFormatter.Entries, 
 FitsHeaderEditing, FitsHeaderParsing {
 
     /**
@@ -93,6 +94,19 @@ FitsHeaderEditing, FitsHeaderParsing {
         return true;        
     }
     
+
+    @Override
+    public void copy(FitsProperties template) {
+        creator = template.creator;
+        copyright = template.copyright;
+        fileName = template.fileName;
+        objectName = template.objectName;
+        telescopeName = template.telescopeName;
+        instrumentName = template.instrumentName;
+        observerName = template.observerName;
+        observationDateString = template.observationDateString;
+    }
+
     
     @Override
     public Object clone() {
@@ -186,6 +200,7 @@ FitsHeaderEditing, FitsHeaderParsing {
     
     public static String defaultCreator = "jnum " + Util.getFullVersion();
     public static String defaultCopyright = Util.copyright;
+
 
 
 
