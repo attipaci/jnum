@@ -94,6 +94,24 @@ public class MapProperties extends FitsProperties {
         return super.equals(o);
     }
     
+    @Override
+    public void copy(FitsProperties template) {
+        super.copy(template);
+        if(!(template instanceof MapProperties)) return;
+        
+        MapProperties p = (MapProperties) template;
+        
+        copyProcessingFrom(p);
+        
+        filterFWHM = p.filterFWHM;
+        correctingFWHM = p.correctingFWHM;
+        filterBlanking = p.filterBlanking;
+        
+        grid = p.grid;
+        displayGridUnit = p.displayGridUnit;
+        underlyingBeam = p.underlyingBeam.copy();
+        smoothing = p.smoothing.copy();
+    }
     
     @Override
     public MapProperties copy() {

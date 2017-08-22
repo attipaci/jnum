@@ -108,7 +108,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
     }
     
     
-    public synchronized void setData(Object image) {   
+    public void setData(Object image) {   
         if(image instanceof double[]) setData((double[]) image);
         else if(image instanceof float[]) setData((float[]) image);
         else if(image instanceof long[]) setData((long[]) image);

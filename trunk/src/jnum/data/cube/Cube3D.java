@@ -94,7 +94,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         return copy;
     }
     
-    protected void addProprietaryLocalUnits() {
+    protected void addProprietaryUnits() {
         
     }
     
@@ -142,7 +142,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
     }
     
     
-    public synchronized void setData(Object image) {   
+    public void setData(Object image) {   
         if(image instanceof double[][][]) setData((double[][][]) image);
         else if(image instanceof float[][][]) setData((float[][][]) image);
         else if(image instanceof long[][][]) setData((long[][][]) image);

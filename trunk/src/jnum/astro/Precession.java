@@ -20,8 +20,6 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// TODO precess with proper motion...
-// TODO nutation correction...
 
 
 package jnum.astro;
@@ -32,6 +30,10 @@ import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.util.SimpleMatrix;
+
+
+//TODO precess with proper motion...
+
 
 // TODO: Auto-generated Javadoc
 /**

@@ -25,6 +25,7 @@ package jnum.data.image;
 
 
 import jnum.Util;
+import jnum.fits.FitsProperties;
 import jnum.util.HashCode;
 
 public class ObsProperties extends MapProperties {
@@ -50,6 +51,15 @@ public class ObsProperties extends MapProperties {
         ObsProperties p = (ObsProperties) o;
         if(noiseRescale != p.noiseRescale) return false;
         return super.equals(o);
+    }
+    
+    @Override
+    public void copy(FitsProperties template) {
+        super.copy(template);
+        if(!(template instanceof ObsProperties)) return;
+        
+        ObsProperties p = (ObsProperties) template;
+        noiseRescale = p.noiseRescale;
     }
     
     

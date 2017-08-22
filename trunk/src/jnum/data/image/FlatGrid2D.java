@@ -26,7 +26,6 @@ package jnum.data.image;
 import jnum.fits.FitsToolkit;
 import jnum.math.CartesianSystem;
 import jnum.math.Coordinate2D;
-import jnum.math.CoordinateSystem;
 import jnum.projection.DefaultProjection2D;
 import jnum.projection.Projection2D;
 import nom.tam.fits.Header;
@@ -65,8 +64,6 @@ public class FlatGrid2D extends Grid2D<Coordinate2D> {
 	    if(!(projection instanceof DefaultProjection2D)) throw new IllegalStateException("Generic projections are not allowed here."); 
 	    super.setProjection(projection);
 	}
-	
-	
 	
 	/* (non-Javadoc)
 	 * @see jnum.data.Grid2D#parseProjection(nom.tam.fits.Header)

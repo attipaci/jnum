@@ -111,7 +111,7 @@ public class Grid1D extends CartesianGrid<Scalar> {
     }
     
     public void setReference(double value) {
-        refValue.setValue(value);
+        setReference(new Scalar(value));
     }
     
 
@@ -132,7 +132,7 @@ public class Grid1D extends CartesianGrid<Scalar> {
     }
     
     public void setReferenceIndex(double index) {
-        refIndex.setValue(index);
+        setReferenceIndex(new Scalar(index));
     }
 
     /* (non-Javadoc)
@@ -152,7 +152,7 @@ public class Grid1D extends CartesianGrid<Scalar> {
     }
     
     public void setResolution(double delta) {
-        resolution.setValue(delta);
+        setResolution(new Scalar(delta));
     }
 
     /* (non-Javadoc)
@@ -163,8 +163,7 @@ public class Grid1D extends CartesianGrid<Scalar> {
        return resolution;
     }
 
-  
-
+ 
     @Override
     public void setResolution(int axis, double resolution) {
         if(axis != 0) throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no axis " + axis);
