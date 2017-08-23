@@ -133,19 +133,18 @@ public class EclipticCoordinates extends PrecessingCoordinates {
         defaultCoordinateSystem = new CoordinateSystem("Ecliptic Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Ecliptic Offsets");
 
-        CoordinateAxis longitudeAxis = new CoordinateAxis("Ecliptic Longitude", "ELON", GreekLetter.lambda + "");
+        CoordinateAxis longitudeAxis = createAxis("Ecliptic Longitude", "ELON", GreekLetter.lambda + "", af);
         longitudeAxis.setReverse(true);
-        CoordinateAxis latitudeAxis = new CoordinateAxis("Ecliptic Latitude", "ELAT", GreekLetter.beta + "");
-        CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("Ecliptic Longitude Offset", "dELON", GreekLetter.Delta + " " + GreekLetter.lambda );
+        CoordinateAxis latitudeAxis = createAxis("Ecliptic Latitude", "ELAT", GreekLetter.beta + "", af);
+        CoordinateAxis longitudeOffsetAxis = createAxis("Ecliptic Longitude Offset", "dELON", GreekLetter.Delta + " " + GreekLetter.lambda, null);
         longitudeOffsetAxis.setReverse(true);
-        CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("Ecliptic Latitude Offset", "dELAT", GreekLetter.Delta + " " + GreekLetter.beta);
+        CoordinateAxis latitudeOffsetAxis = createAxis("Ecliptic Latitude Offset", "dELAT", GreekLetter.Delta + " " + GreekLetter.beta, null);
 
         defaultCoordinateSystem.add(longitudeAxis);
         defaultCoordinateSystem.add(latitudeAxis);
         defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
         defaultLocalCoordinateSystem.add(latitudeOffsetAxis);       
 
-        for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
     }
 
 

@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-
 import jnum.Unit;
 import jnum.Util;
 import jnum.Verbosity;
@@ -628,7 +627,6 @@ TableFormatter.Entries {
     }
     
     
-    
     public double mean() {
         return smartForkValid(new ParallelPointOp.Average<Number>() {
             @Override
@@ -644,7 +642,7 @@ TableFormatter.Entries {
     }
     
     public double median() {
-        final double[] temp = getValidSortingArray(false);
+        final double[] temp = getValidSortingArray();
         if(temp.length == 0) return Double.NaN;
         return Statistics.median(temp, 0, temp.length);      
     }
@@ -653,17 +651,18 @@ TableFormatter.Entries {
         if(fraction == 0.0) return getMin().doubleValue();
         else if(fraction == 1.0) return getMax().doubleValue();
         
-        final double[] temp = getValidSortingArray(false);
+        final double[] temp = getValidSortingArray();
         if(temp.length == 0) return Double.NaN;
         return Statistics.select(temp, fraction, 0, temp.length);
     }
     
     
-    private double[] getValidSortingArray(final boolean isSquared) {
-        final double[] temp = new double[countPoints()];
-        if(temp.length == 0) return temp;
+    private double[] getValidSortingArray() {    
+        final double[] sorter = new double[countPoints()];
         
-        loopValid(new PointOp<Number, Integer>() {
+        if(sorter.length == 0) return sorter;
+        
+        loopValid(new PointOp.Simple<Number>() {
             private int k;
             
             @Override
@@ -673,25 +672,26 @@ TableFormatter.Entries {
             
             @Override
             public void process(Number point) {
-                temp[k++] = isSquared ? point.doubleValue() * point.doubleValue() : point.doubleValue();
-            }
-
-            @Override
-            public Integer getResult() {
-                return k;
-            }            
+                sorter[k++] = point.doubleValue();
+            }   
         });
         
-        return temp;
+        
+        return sorter;
     }
     
     public final double getRMS(boolean isRobust) {
         return isRobust ? getRobustRMS() : getRMS();
     }
 
+    public final double getVariance(boolean isRobust) {
+        return isRobust ? getRobustVariance() : getVariance();
+    }
    
-    public double getRMS() {
-        return Math.sqrt(smartForkValid(new ParallelPointOp.Average<Number>() {
+    public double getRMS() { return Math.sqrt(getVariance()); }
+    
+    public double getVariance() {
+        return smartForkValid(new ParallelPointOp.Average<Number>() {
             @Override
             public final double getValue(Number point) {
                 return point.doubleValue() * point.doubleValue();
@@ -701,14 +701,18 @@ TableFormatter.Entries {
             public final double getWeight(Number point) {
                 return 1.0;
             }      
-        }).value());     
+        }).value();     
     }
 
     
-    public double getRobustRMS() {
-        final double[] chi2 = getValidSortingArray(true);
-        if(chi2.length == 0) return 0.0;
-        return Math.sqrt(Statistics.median(chi2) / Statistics.medianNormalizedVariance);    
+    public double getRobustRMS() { return Math.sqrt(getRobustVariance()); }
+    
+    public double getRobustVariance() {
+        final double[] chi2 = getValidSortingArray();
+        if(chi2.length == 0) return Double.NaN;
+        
+        for(int i=chi2.length; --i >= 0; ) chi2[i] *= chi2[i];
+        return Statistics.median(chi2) / Statistics.medianNormalizedVariance;
     }
 
     
@@ -768,6 +772,10 @@ TableFormatter.Entries {
     public final void subtract(final Data<IndexType, PositionType, VectorType> data) {
         addScaled(data, -1.0);
     }
+
+
+  
+
 
     
 

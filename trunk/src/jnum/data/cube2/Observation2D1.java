@@ -23,14 +23,21 @@
 
 package jnum.data.cube2;
 
+import jnum.ExtraMath;
 import jnum.Unit;
+import jnum.data.IndexedObservations;
+import jnum.data.Observations;
+import jnum.data.cube.Data3D;
 import jnum.data.cube.Index3D;
+import jnum.data.cube.Values3D;
 import jnum.data.cube.overlay.Overlay3D;
 import jnum.data.image.Data2D;
+import jnum.data.image.Gaussian2D;
 import jnum.data.image.Observation2D;
 import jnum.math.Vector3D;
+import jnum.parallel.ParallelPointOp;
 
-public class Observation2D1 extends AbstractMap2D1<Observation2D> {
+public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Observations<Data3D>, IndexedObservations<Index3D> {
  
     public Observation2D1(Class<? extends Number> dataType, Class<? extends Number> weightType, int flagType) {
         super(dataType, flagType);
@@ -46,6 +53,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
     @Override
     public Observation2D getPlaneInstance() { return new Observation2D(getElementType(), getElementType(), getFlagType()); }
   
+    @Override
     public Data2D1<Data2D> getWeights() {
         Data2D1<Data2D> weight = new Data2D1<Data2D>() {
             @Override
@@ -55,6 +63,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
         return weight;
     }
     
+    @Override
     public Data2D1<Data2D> getExposures() {
         Data2D1<Data2D> weight = new Data2D1<Data2D>() {
             @Override
@@ -65,6 +74,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
     }
     
 
+    @Override
     public Overlay3D getNoise() {
           
         return new Overlay3D(this) {   
@@ -92,6 +102,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
        
     }
 
+    @Override
     public Overlay3D getSignificance() {
         return new Overlay3D(this) {
 
@@ -127,6 +138,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
     }
     
     
+    @Override
     public void endAccumulation() {   
         for(int k=sizeZ(); --k >= 0; ) getPlane(k).endAccumulation();
     }
@@ -154,7 +166,103 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> {
         getPlane(k).accumulateAt(i, j, value, gain, w, time);
     }
 
+
+    @Override
+    public double noiseAt(Index3D index) {
+        return 1.0 / Math.sqrt(weightAt(index));
+    }
+    
+    public double noiseAt(int i, int j, int k) {
+        return getPlane(k).noiseAt(i, j);
+        
+    }
+    
+    @Override
+    public double weightAt(Index3D index) {
+        return getPlane(index.k()).weightAt(index.i(), index.j());
+    }
+
+    public double weightAt(int i, int j, int k) {
+        return getPlane(k).weightAt(i, j);
+        
+    }
+
+    @Override
+    public double significanceAt(Index3D index) {
+        return getPlane(index.k()).significanceAt(index.i(), index.j());
+    }
+
+    public double significanceAt(int i, int j, int k) {
+        return getPlane(k).significanceAt(i, j);  
+    }
+    
+    
+    @Override
+    public void setNoiseAt(Index3D index, double value) {
+        setWeightAt(index, 1.0 / (value * value));
+    }
+
+
+    @Override
+    public void setWeightAt(Index3D index, double value) {
+        getPlane(index.k()).setWeightAt(index.i(), index.j(), value);
+    }
+
+
+    @Override
+    public double exposureAt(Index3D index) {
+        return getPlane(index.k()).exposureAt(index.i(), index.j());
+    }
+
+    
+    // TODO move to IndexedObservations as default method.
+    public void memCorrect(final Values3D model, final double lambda) {
+        smartFork(new ParallelPointOp.Simple<Index3D>() {
+
+         @Override
+         public void process(Index3D index) {
+             if(isValid(index)) {
+                 final double noise = noiseAt(index);
+                 final double target = model == null ? 0.0 : model.get(index).doubleValue();
+                 final double memValue = ExtraMath.hypot(get(index).doubleValue(), noise) / ExtraMath.hypot(target, noise);
+                 add(index, -Math.signum(get(index).doubleValue()) * lambda * noise * Math.log(memValue));
+             }
+         }            
+        });    
+        
+    }   
    
     
+    public void smooth2D(double FWHM) {
+        for(Observation2D plane : getPlanes()) plane.smooth(FWHM);
+    }
+    
+    public void smooth2DTo(double FWHM) {
+        for(Observation2D plane : getPlanes()) plane.smoothTo(FWHM);
+    }
+    
+    public void smooth2D(Gaussian2D psf) {
+        for(Observation2D plane : getPlanes()) plane.smooth(psf);
+    }
+    
+    public void smooth2DTo(Gaussian2D psf) {
+        for(Observation2D plane : getPlanes()) plane.smoothTo(psf);
+    }
+    
+    public void filterBeamCorrect() {
+        for(Observation2D plane : getPlanes()) plane.filterBeamCorrect();
+    }
+    
+    public void resetFiltering() {
+        for(Observation2D plane : getPlanes()) plane.getProperties().resetFiltering();
+    }
+    
+    public void crop2D(int fromi, int fromj, int toi, int toj) {
+        for(Observation2D plane : getPlanes()) plane.crop(fromi, fromj, toi, toj);
+    }
+    
+    public void crop2D(double fromX, double fromY, double toX, double toY) {
+        for(Observation2D plane : getPlanes()) plane.crop(fromX, fromY, toX, toY);
+    }
     
 }

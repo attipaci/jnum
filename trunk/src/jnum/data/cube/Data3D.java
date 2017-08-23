@@ -543,6 +543,12 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
             }
             
             @Override
+            protected void cleanup() {
+                super.cleanup();
+                op.cleanup();
+            }
+            
+            @Override
             public ReturnType getLocalResult() { return localOp.getResult(); }
             
 
@@ -580,6 +586,12 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
             protected void process(int i, int j, int k) {
                 index.set(i, j, k);
                 localOp.process(index);
+            }
+            
+            @Override
+            protected void cleanup() {
+                super.cleanup();
+                op.cleanup();
             }
             
             @Override

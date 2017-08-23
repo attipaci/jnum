@@ -178,10 +178,10 @@ public class TelescopeCoordinates extends SphericalCoordinates {
         defaultCoordinateSystem = new CoordinateSystem("Telescope Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Telescope Offsets");
 
-        CoordinateAxis crossElevationAxis = new CoordinateAxis("Telescope Cross-elevation", "XEL", "XEL");
-        CoordinateAxis elevationAxis = new CoordinateAxis("Telescope Elevation", "EL", "EL");
-        CoordinateAxis xelOffsetAxis = new CoordinateAxis("Telescioe Cross-elevation Offset", "dXEL", GreekLetter.Delta + " XEL");
-        CoordinateAxis elevationOffsetAxis = new CoordinateAxis("Telescope Elevation Offset", "dEL", GreekLetter.Delta + " EL");
+        CoordinateAxis crossElevationAxis = createAxis("Telescope Cross-elevation", "XEL", "XEL", af);
+        CoordinateAxis elevationAxis = createAxis("Telescope Elevation", "EL", "EL", af);
+        CoordinateAxis xelOffsetAxis = createAxis("Telescioe Cross-elevation Offset", "dXEL", GreekLetter.Delta + " XEL", null);
+        CoordinateAxis elevationOffsetAxis = createAxis("Telescope Elevation Offset", "dEL", GreekLetter.Delta + " EL", null);
         
         defaultCoordinateSystem.add(crossElevationAxis);
         defaultCoordinateSystem.add(elevationAxis);

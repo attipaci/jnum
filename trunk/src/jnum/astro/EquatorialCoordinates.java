@@ -355,17 +355,15 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         defaultCoordinateSystem = new CoordinateSystem("Equatorial Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Equatorial Offsets");
         
-        CoordinateAxis rightAscentionAxis = new CoordinateAxis("Right Ascension", "RA", GreekLetter.alpha + "");
+        CoordinateAxis rightAscentionAxis = createAxis("Right Ascension", "RA", GreekLetter.alpha + "", hf);
         rightAscentionAxis.setReverse(true);
-        rightAscentionAxis.setFormat(hf);
 
-        CoordinateAxis declinationAxis = new CoordinateAxis("Declination", "DEC", GreekLetter.delta + "");
-        declinationAxis.setFormat(af);
-
-        CoordinateAxis rightAscentionOffsetAxis = new CoordinateAxis("Right Ascension Offset", "dRA", GreekLetter.Delta + " " + GreekLetter.alpha);
+        CoordinateAxis declinationAxis = createAxis("Declination", "DEC", GreekLetter.delta + "", af);
+   
+        CoordinateAxis rightAscentionOffsetAxis = createAxis("Right Ascension Offset", "dRA", GreekLetter.Delta + " " + GreekLetter.alpha, null);
         rightAscentionOffsetAxis.setReverse(true);
-    
-        CoordinateAxis declinationOffsetAxis = new CoordinateAxis("Declination Offset", "dDEC", GreekLetter.Delta + " " + GreekLetter.delta);
+         
+        CoordinateAxis declinationOffsetAxis = createAxis("Declination Offset", "dDEC", GreekLetter.Delta + " " + GreekLetter.delta, null);
         
         defaultCoordinateSystem.add(rightAscentionAxis);
         defaultCoordinateSystem.add(declinationAxis);

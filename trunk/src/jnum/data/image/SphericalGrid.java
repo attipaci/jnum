@@ -52,6 +52,12 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 		setCoordinateSystem(new SphericalCoordinates().getCoordinateSystem());
 	}
 	
+	@Override
+    public final Unit xUnit() { return SphericalCoordinates.degree; }
+	
+	@Override
+    public final Unit yUnit() { return SphericalCoordinates.degree; }
+	
 	/**
 	 * Instantiates a new spherical grid.
 	 *
@@ -116,5 +122,4 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
         return 2;
     }
 
-    
 }

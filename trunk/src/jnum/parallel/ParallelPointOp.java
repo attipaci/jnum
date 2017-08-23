@@ -42,7 +42,7 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
     
     public abstract void mergeResult(ReturnType localResult);
     
-    
+    public void cleanup() {}
     
     public abstract static class Simple<PointType> extends ParallelPointOp<PointType, Void> {
 
@@ -51,7 +51,6 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
 
         @Override
         protected void init() {}
-
        
         @Override
         public Void getResult() { return null; }
@@ -133,13 +132,18 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
         
         @Override
         public final void process(PointType point) {
-            ave.add(getValue(point));
-            ave.addWeight(getWeight(point));
+            final double w = getWeight(point);
+            ave.add(w * getValue(point));
+            ave.addWeight(w);
+        }
+        
+        @Override
+        public final void cleanup() {
+            ave.scaleValue(1.0 / ave.weight());
         }
         
         @Override
         public final WeightedPoint getResult() {
-           ave.scaleValue(1.0 / ave.weight());
            return ave;
         }
         

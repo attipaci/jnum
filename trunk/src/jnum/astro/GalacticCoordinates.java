@@ -118,19 +118,18 @@ public class GalacticCoordinates extends CelestialCoordinates {
         defaultCoordinateSystem = new CoordinateSystem("Galactic Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Galactic Offsets");
         
-        CoordinateAxis longitudeAxis = new CoordinateAxis("Galactic Longitude", "GLON", "l");
+        CoordinateAxis longitudeAxis = createAxis("Galactic Longitude", "GLON", "l", af);
         longitudeAxis.setReverse(true);
-        CoordinateAxis latitudeAxis = new CoordinateAxis("Galactic Latitude", "GLAT", "b");
-        CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("Galactic Longitude Offset", "dGLON", GreekLetter.Delta + " l");
+        CoordinateAxis latitudeAxis = createAxis("Galactic Latitude", "GLAT", "b", af);
+        CoordinateAxis longitudeOffsetAxis = createAxis("Galactic Longitude Offset", "dGLON", GreekLetter.Delta + " l", null);
         longitudeOffsetAxis.setReverse(true);
-        CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("Galactic Latitude Offset", "dGLAT", GreekLetter.Delta + " b");
+        CoordinateAxis latitudeOffsetAxis = createAxis("Galactic Latitude Offset", "dGLAT", GreekLetter.Delta + " b", null);
         
         defaultCoordinateSystem.add(longitudeAxis);
         defaultCoordinateSystem.add(latitudeAxis);
         defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
         defaultLocalCoordinateSystem.add(latitudeOffsetAxis);   
-        
-        for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
+
     }
     
     /** The Constant equatorialPole. */

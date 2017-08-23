@@ -673,24 +673,37 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
     }
     
     
+    public static CoordinateAxis createAxis(String longLabel, String shortLabel, String fancyLabel, NumberFormat nf) {
+        CoordinateAxis axis = new CoordinateAxis(longLabel, shortLabel, fancyLabel);
+        axis.setUnit(degree);
+        if(nf != null) axis.setFormat(nf);
+        return axis;
+    }
+
+    /** The Constant degree. */
+    public final static Unit degree = Unit.get("deg");
+    
+    /** The Constant arcmin. */
+    public final static Unit arcmin = Unit.get("arcmin");
+    
+    /** The Constant arcsec. */
+    public final static Unit arcsec = Unit.get("arcsec");
 
     /** The default local coordinate system. */
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
-  
+    
+    
     static {
         defaultCoordinateSystem = new CoordinateSystem("Spherical Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Spherical Offsets");
         
-        CoordinateAxis longitudeAxis = new CoordinateAxis("Latitude", "LAT", GreekLetter.phi + "");
-        longitudeAxis.setFormat(af);
-    
-        CoordinateAxis latitudeAxis = new CoordinateAxis("Longitude", "LON", GreekLetter.theta + "");
-        latitudeAxis.setFormat(af);
-        
-        CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("Longitude Offset", "dLON", GreekLetter.Delta + " " + GreekLetter.phi + "");
-        CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("Latitude Offset", "dLAT", GreekLetter.delta + " " + GreekLetter.theta + "");
-        
+        CoordinateAxis longitudeAxis = createAxis("Latitude", "LAT", GreekLetter.phi + "", af);
+        CoordinateAxis latitudeAxis = createAxis("Longitude", "LON", GreekLetter.theta + "", af);
+         
+        CoordinateAxis longitudeOffsetAxis = createAxis("Longitude Offset", "dLON", GreekLetter.Delta + " " + GreekLetter.phi + "", null);
+        CoordinateAxis latitudeOffsetAxis = createAxis("Latitude Offset", "dLAT", GreekLetter.delta + " " + GreekLetter.theta + "", null);
+           
         defaultCoordinateSystem.add(longitudeAxis);
         defaultCoordinateSystem.add(latitudeAxis);
         
@@ -705,13 +718,5 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
     public final static double angularAccuracy = 1e-12;
 
 
-	/** The Constant degree. */
-	public final static Unit degree = Unit.get("deg");
-	
-	/** The Constant arcmin. */
-	public final static Unit arcmin = Unit.get("arcmin");
-	
-	/** The Constant arcsec. */
-	public final static Unit arcsec = Unit.get("arcsec");
 	
 }
