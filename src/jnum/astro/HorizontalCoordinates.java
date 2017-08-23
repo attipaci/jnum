@@ -254,17 +254,16 @@ public class HorizontalCoordinates extends SphericalCoordinates {
         defaultCoordinateSystem = new CoordinateSystem("Horizontal Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Horizontal Offsets");
 
-        CoordinateAxis azimuthAxis = new CoordinateAxis("Azimuth", "AZ", "Az");
-        CoordinateAxis elevationAxis = new CoordinateAxis("Elevation", "EL", "El");
-        CoordinateAxis azimuthOffsetAxis = new CoordinateAxis("Azimuth Offset", "dAZ", GreekLetter.Delta + " AZ");
-        CoordinateAxis elevationOffsetAxis = new CoordinateAxis("Elevation Offset", "dEL", GreekLetter.Delta + " EL");
+        CoordinateAxis azimuthAxis = createAxis("Azimuth", "AZ", "Az", af);
+        CoordinateAxis elevationAxis = createAxis("Elevation", "EL", "El", af);
+        CoordinateAxis azimuthOffsetAxis = createAxis("Azimuth Offset", "dAZ", GreekLetter.Delta + " AZ", null);
+        CoordinateAxis elevationOffsetAxis = createAxis("Elevation Offset", "dEL", GreekLetter.Delta + " EL", null);
         
         defaultCoordinateSystem.add(azimuthAxis);
         defaultCoordinateSystem.add(elevationAxis);
         defaultLocalCoordinateSystem.add(azimuthOffsetAxis);
         defaultLocalCoordinateSystem.add(elevationOffsetAxis);
-        
-        for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
+
     }
 	
   

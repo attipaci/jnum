@@ -30,6 +30,8 @@ import jnum.ExtraMath;
 import jnum.NonConformingException;
 import jnum.Unit;
 import jnum.Util;
+import jnum.data.IndexedObservations;
+import jnum.data.Observations;
 import jnum.data.Statistics;
 import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
@@ -38,11 +40,12 @@ import jnum.data.image.overlay.Overlay2D;
 import jnum.data.image.overlay.Referenced2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Vector2D;
+import jnum.parallel.ParallelPointOp;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
 
-public class Observation2D extends Map2D {
+public class Observation2D extends Map2D implements Observations<Data2D>, IndexedObservations<Index2D> {
     /**
      * 
      */
@@ -150,6 +153,7 @@ public class Observation2D extends Map2D {
         exposure.setFlags(flags);
     }
 
+    @Override
     public Data2D getWeights() { 
         return weight; 
     }
@@ -164,6 +168,7 @@ public class Observation2D extends Map2D {
         claim(getWeightImage());
     }
 
+    @Override
     public Data2D getExposures() { 
         return exposure;
     }
@@ -178,6 +183,7 @@ public class Observation2D extends Map2D {
         claim(getExposureImage());
     }
 
+    @Override
     public Overlay2D getNoise() {
           
         return new Overlay2D(this) {   
@@ -205,6 +211,7 @@ public class Observation2D extends Map2D {
        
     }
 
+    @Override
     public Overlay2D getSignificance() {
         return new Overlay2D(this) {
 
@@ -298,15 +305,30 @@ public class Observation2D extends Map2D {
         return null;
 
     }
+    
+    @Override
+    public final double weightAt(Index2D index) {
+        return noiseAt(index.i(), index.j());
+    }
 
     public double weightAt(int i, int j) {
         return weight.get(i, j).doubleValue();
+    }
+    
+    @Override
+    public final void setWeightAt(Index2D index, double value) {
+       setWeightAt(index.i(), index.j(), value);
     }
 
     public void setWeightAt(int i, int j, double value) {
         weight.getBasis().set(i, j, value);
     }
 
+    @Override
+    public final double exposureAt(Index2D index) {
+        return exposureAt(index.i(), index.j());
+    }
+    
     public double exposureAt(int i, int j) {
         return exposure.get(i, j).doubleValue();
     }
@@ -315,14 +337,36 @@ public class Observation2D extends Map2D {
         exposure.getBasis().set(i, j, value);
     }
 
+    @Override
+    public final double noiseAt(Index2D index) {
+        return noiseAt(index.i(), index.j());
+    }
+    
     public double noiseAt(int i, int j) { 
         return 1.0 / Math.sqrt(weightAt(i, j));
     }
 
+    @Override
+    public final void setNoiseAt(Index2D index, double value) {
+        setNoiseAt(index.i(), index.j(), value);
+    }
+
+    public void setNoiseAt(int i, int j, double value) {
+        setWeightAt(i, j, 1.0 / (value * value));
+    }
+    
+    @Override
+    public final double significanceAt(Index2D index) {
+        return noiseAt(index.i(), index.j());
+    }
+    
     public double significanceAt(int i, int j) {
         return get(i, j).doubleValue() * Math.sqrt(weightAt(i, j));
     }
 
+    
+  
+  
 
     @Override
     public void discard(int i, int j) {
@@ -395,6 +439,7 @@ public class Observation2D extends Map2D {
     }
     
     
+    @Override
     public void endAccumulation() {
         new Fork<Void>() {
             @Override
@@ -433,7 +478,7 @@ public class Observation2D extends Map2D {
 
 
     public void reweight(boolean robust) {
-        double weightCorrection = 1.0 / (robust ? getRobustChi2() : getChi2());
+        double weightCorrection = 1.0 / getChi2(robust);
         getWeightImage().scale(weightCorrection);
         getProperties().noiseRescaledBy(1.0 / Math.sqrt(weightCorrection)) ;
     }
@@ -447,59 +492,27 @@ public class Observation2D extends Map2D {
 
 
     public double getChi2(boolean robust) {
-        return robust ? getRobustChi2() : getChi2();
+        return robust ? getSignificance().getRobustVariance() : getSignificance().getVariance();
     }
 
+    
+    // TODO Make default method in Observations
+    public void memCorrect(final Values2D model, final double lambda) {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
 
-    protected double getRobustChi2() {
-        float[] chi2 = new float[sizeX() * sizeY()];
-        if(chi2.length == 0) return 0.0;
+         @Override
+         public void process(Index2D index) {
+             if(isValid(index)) {
+                 final double noise = noiseAt(index);
+                 final double target = model == null ? 0.0 : model.get(index).doubleValue();
+                 final double memValue = ExtraMath.hypot(get(index).doubleValue(), noise) / ExtraMath.hypot(target, noise);
+                 add(index, -Math.signum(get(index).doubleValue()) * lambda * noise * Math.log(memValue));
+             }
+         }            
+        });    
+        
+     }   
 
-        int k=0;
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) {
-            final float s2n = (float) significanceAt(i,j);
-            chi2[k++] = s2n * s2n;
-        }
-
-        return k > 0 ? Statistics.median(chi2, 0, k) / Statistics.medianNormalizedVariance : 0.0;   
-    }
-
-
-    protected double getChi2() {
-        Fork<WeightedPoint> rChi2 = new AveragingFork() {
-            private double chi2 = 0.0;
-            private int n = 0;  
-            @Override
-            protected void process(final int i, final int j) {
-                if(isValid(i, j)) {
-                    final double s2n = significanceAt(i,j);
-                    chi2 += s2n * s2n;
-                    n++;
-                }
-            }
-            @Override
-            public WeightedPoint getLocalResult() { return new WeightedPoint(chi2, n); }
-        };
-
-        rChi2.process();
-        return rChi2.getResult().value();
-    }
-
-
-
-    public void MEM(final double[][] model, final double lambda) {
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                if(isValid(i, j)) {
-                    final double noise = noiseAt(i, j);
-                    final double target = model == null ? 0.0 : model[i][j];
-                    final double memValue = ExtraMath.hypot(get(i, j).doubleValue(), noise) / ExtraMath.hypot(target, noise) ;
-                    add(i, j, -Math.signum(get(i, j).doubleValue()) * lambda * noise * Math.log(memValue));
-                }
-            }
-        }.process();
-    }   
 
 
 
@@ -780,5 +793,8 @@ public class Observation2D extends Map2D {
     public final static int TYPE_S2N = 1<<6;
     
     public static String[] typeNames = { "Unknown", "Signal", "Weight", "Exposure", "Noise", "Variance", "S/N" };
+
+
+   
 
 }

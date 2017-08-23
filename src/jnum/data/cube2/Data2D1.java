@@ -52,7 +52,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     public abstract ImageType getImage2DInstance(int sizeX, int sizeY);
    
     
-    public Vector<ImageType> getStack() { return stack; }
+    public Vector<ImageType> getPlanes() { return stack; }
    
     
     public final ImageType getPlane(int index) {

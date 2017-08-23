@@ -129,8 +129,9 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
         
         @Override
         public final void process(PointType point) {
-            ave.add(getValue(point));
-            ave.addWeight(getWeight(point));
+            final double w = getWeight(point);
+            ave.add(w * getValue(point));
+            ave.addWeight(w);
         }
         
         @Override

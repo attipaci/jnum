@@ -121,20 +121,17 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
         defaultCoordinateSystem = new CoordinateSystem("Supergalactic Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Supergalactic Offsets");
 
-        CoordinateAxis longitudeAxis = new CoordinateAxis("Supergalactic Longitude", "SGL", "L");
+        CoordinateAxis longitudeAxis = createAxis("Supergalactic Longitude", "SGL", "L", af);
         longitudeAxis.setReverse(true);
-        CoordinateAxis latitudeAxis = new CoordinateAxis("Supergalactic Latitude", "SGB", "B");
-        CoordinateAxis longitudeOffsetAxis = new CoordinateAxis("Supergalactic Longitude Offset", "dSGL", GreekLetter.Delta + " L");
+        CoordinateAxis latitudeAxis = createAxis("Supergalactic Latitude", "SGB", "B", af);
+        CoordinateAxis longitudeOffsetAxis = createAxis("Supergalactic Longitude Offset", "dSGL", GreekLetter.Delta + " L", null);
         longitudeOffsetAxis.setReverse(true);
-        CoordinateAxis latitudeOffsetAxis = new CoordinateAxis("Supergalactic Latitude", "dSGB", GreekLetter.Delta + " B");
+        CoordinateAxis latitudeOffsetAxis = createAxis("Supergalactic Latitude", "dSGB", GreekLetter.Delta + " B", null);
 
         defaultCoordinateSystem.add(longitudeAxis);
         defaultCoordinateSystem.add(latitudeAxis);
         defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
         defaultLocalCoordinateSystem.add(latitudeOffsetAxis);   
-
-        for(CoordinateAxis axis : defaultCoordinateSystem) axis.setFormat(af);
-
     }
 
 

@@ -1082,6 +1082,12 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
             }
             
             @Override
+            protected void cleanup() {
+                super.cleanup();
+                op.cleanup();
+            }
+            
+            @Override
             public ReturnType getLocalResult() { return localOp.getResult(); }
             
 
@@ -1120,6 +1126,12 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
             protected void process(int i, int j) {
                 index.set(i, j); 
                 localOp.process(index);
+            }
+          
+            @Override
+            protected void cleanup() {
+                super.cleanup();
+                op.cleanup();
             }
             
             @Override

@@ -388,6 +388,10 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 	public boolean isReverseY() { return false; }
 	
 	
+	public Unit xUnit() { return xAxis().getUnit(); }
+	
+	public Unit yUnit() { return yAxis().getUnit(); }
+	
 	/**
 	 * Edits the header.
 	 *
@@ -415,18 +419,18 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 		if(isReverseY()) { a22 *= -1.0; a12 *= -1.0; }
 						
 		if(m12 == 0.0 && m21 == 0.0) {	
-			c.add(new HeaderCard("CDELT1" + alt, a11 / xAxis().getUnit().value(), "Grid spacing (deg)"));	
-			c.add(new HeaderCard("CDELT2" + alt, a22 / yAxis().getUnit().value(), "Grid spacing (deg)"));		
+			c.add(new HeaderCard("CDELT1" + alt, a11 / xUnit().value(), "Grid spacing (" + xUnit().name() + ")"));	
+			c.add(new HeaderCard("CDELT2" + alt, a22 / yUnit().value(), "Grid spacing (" + yUnit().name() + ")"));		
 		}
 		else {		
-			c.add(new HeaderCard("CD1_1" + alt, a11 / xAxis().getUnit().value(), "Transformation matrix element"));
-			c.add(new HeaderCard("CD1_2" + alt, a12 / xAxis().getUnit().value(), "Transformation matrix element"));
-			c.add(new HeaderCard("CD2_1" + alt, a21 / yAxis().getUnit().value(), "Transformation matrix element"));
-			c.add(new HeaderCard("CD2_2" + alt, a22 / yAxis().getUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD1_1" + alt, a11 / xUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD1_2" + alt, a12 / xUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD2_1" + alt, a21 / yUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD2_2" + alt, a22 / yUnit().value(), "Transformation matrix element"));
 		}
 		
-		if(xAxis().getUnit() != Unit.unity) c.add(new HeaderCard("CUNIT1" + alt, xAxis().getUnit().name(), "Coordinate axis unit."));
-		if(yAxis().getUnit() != Unit.unity) c.add(new HeaderCard("CUNIT2" + alt, yAxis().getUnit().name(), "Coordinate axis unit."));
+		if(xUnit() != Unit.unity) c.add(new HeaderCard("CUNIT1" + alt, xUnit().name(), "Coordinate axis unit."));
+		if(yUnit() != Unit.unity) c.add(new HeaderCard("CUNIT2" + alt, yUnit().name(), "Coordinate axis unit."));
 	    
 		
 	}
@@ -481,15 +485,15 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 		if(header.containsKey("CD1_1" + alt) || header.containsKey("CD1_2" + alt) || header.containsKey("CD2_1" + alt) || header.containsKey("CD2_2" + alt)) {
 			// When the CDi_j keys are used the scaling is incorporated into the CDi_j values.
 			// Thus, the deltas are implicitly assumed to be 1...	
-			m11 = header.getDoubleValue("CD1_1" + alt, 1.0) * xAxis().getUnit().value();
-			m12 = header.getDoubleValue("CD1_2" + alt, 0.0) * xAxis().getUnit().value();
-			m21 = header.getDoubleValue("CD2_1" + alt, 0.0) * yAxis().getUnit().value();
-			m22 = header.getDoubleValue("CD2_2" + alt, 1.0) * yAxis().getUnit().value();	
+			m11 = header.getDoubleValue("CD1_1" + alt, 1.0) * xUnit().value();
+			m12 = header.getDoubleValue("CD1_2" + alt, 0.0) * xUnit().value();
+			m21 = header.getDoubleValue("CD2_1" + alt, 0.0) * yUnit().value();
+			m22 = header.getDoubleValue("CD2_2" + alt, 1.0) * yUnit().value();	
 		}	
 		else {
 			// Otherwise, the scaling is set by CDELTi keys...
-			double dx = header.getDoubleValue("CDELT1" + alt, 1.0) * xAxis().getUnit().value();
-			double dy = header.getDoubleValue("CDELT2" + alt, 1.0) * yAxis().getUnit().value();
+			double dx = header.getDoubleValue("CDELT1" + alt, 1.0) * xUnit().value();
+			double dy = header.getDoubleValue("CDELT2" + alt, 1.0) * yUnit().value();
 			
 			// And the transformation is set by the PCi_j keys
 			// Transform then scale...
@@ -525,7 +529,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 	 */
 	@Override
 	public String toString() {	
-		return toString(Util.s3, xAxis().getUnit(), yAxis().getUnit());
+		return toString(Util.s3, xUnit(), yUnit());
 	}
 	
 	/**
@@ -535,7 +539,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 	 * @return the string
 	 */
 	public String toString(NumberFormat nf) {
-		return toString(nf, xAxis().getUnit(), yAxis().getUnit());
+		return toString(nf, xUnit(), yUnit());
 	}
 	
 	/**

@@ -78,7 +78,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     
     public void addLocalUnit(Unit u) {
         mapTemplate.addLocalUnit(u);
-        for(MapType plane : getStack()) plane.addLocalUnit(u);
+        for(MapType plane : getPlanes()) plane.addLocalUnit(u);
     }
     
     public void addLocalUnit(Unit u, String altNames) {
@@ -101,14 +101,14 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     
 
     public void makeConsistent() {
-        for(MapType map : getStack()) if(map != mapTemplate) applyTemplateTo(map);
+        for(MapType map : getPlanes()) if(map != mapTemplate) applyTemplateTo(map);
     }
     
  
     @Override
     public void addPlane(MapType map) {
         applyTemplateTo(map);
-        if(getStack().isEmpty()) mapTemplate = map;
+        if(getPlanes().isEmpty()) mapTemplate = map;
         super.addPlane(map);  
     }
     
@@ -124,7 +124,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     
     public void setGrid2D(Grid2D<?> grid) {
         mapTemplate.setGrid(grid);
-        for(Map2D map : getStack()) map.setGrid(grid);
+        for(Map2D map : getPlanes()) map.setGrid(grid);
     }
     
     public Grid1D getGrid1D() {
@@ -156,7 +156,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     
     public void setReference2D(Coordinate2D coords) {
         mapTemplate.setReference(coords);
-        for(Map2D map : getStack()) map.setReference(coords);
+        for(Map2D map : getPlanes()) map.setReference(coords);
     }
     
     public double getReference1D() {
@@ -171,12 +171,12 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     
     public void setCriticalFlags(long pattern) {
         mapTemplate.setCriticalFlags(pattern);
-        for(Map2D map : getStack()) map.setCriticalFlags(pattern);
+        for(Map2D map : getPlanes()) map.setCriticalFlags(pattern);
     }
     
     public final void renew() {
         mapTemplate.renew();
-        for(Map2D map : getStack()) map.renew();
+        for(Map2D map : getPlanes()) map.renew();
     }
     
     @Override
