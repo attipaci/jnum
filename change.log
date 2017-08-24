@@ -33,6 +33,10 @@
 	with the aim of more versatile, more powerful and cleaner code, that
 	is easier to maintain.
 
+	[TWEAK] SphericalCoordinates now have default coordinate systems that
+	format coordinates in DMS or HMS formats, and offsets in arcseconds 
+	with 3 decimals, by default.
+
 	[TWEAK] {SphericalCoordinates} Parsing now recognizes 2-letter codes
 	in front of coordinates and will attempt an appropriate conversion if
 	possible (or throw an exception if not...)

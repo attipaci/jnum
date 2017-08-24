@@ -108,10 +108,10 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 		if(!Util.equals(grid.projection, projection)) return false;
 		if(!Util.equals(grid.refIndex, refIndex)) return false;
 		
-		if(m11 != grid.m11) return false;
-		if(m12 != grid.m12) return false;
-		if(m21 != grid.m21) return false;
-		if(m22 != grid.m22) return false;
+		if(!Util.equals(m11, grid.m11)) return false;
+		if(!Util.equals(m12, grid.m12)) return false;
+		if(!Util.equals(m21, grid.m21)) return false;
+		if(!Util.equals(m22, grid.m22)) return false;
 		
 		return true;
 	}
@@ -388,9 +388,9 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 	public boolean isReverseY() { return false; }
 	
 	
-	public Unit xUnit() { return xAxis().getUnit(); }
+	public Unit fitsXUnit() { return xAxis().getUnit(); }
 	
-	public Unit yUnit() { return yAxis().getUnit(); }
+	public Unit fitsYUnit() { return yAxis().getUnit(); }
 	
 	/**
 	 * Edits the header.
@@ -419,18 +419,18 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 		if(isReverseY()) { a22 *= -1.0; a12 *= -1.0; }
 						
 		if(m12 == 0.0 && m21 == 0.0) {	
-			c.add(new HeaderCard("CDELT1" + alt, a11 / xUnit().value(), "Grid spacing (" + xUnit().name() + ")"));	
-			c.add(new HeaderCard("CDELT2" + alt, a22 / yUnit().value(), "Grid spacing (" + yUnit().name() + ")"));		
+			c.add(new HeaderCard("CDELT1" + alt, a11 / fitsXUnit().value(), "Grid spacing (" + fitsXUnit().name() + ")"));	
+			c.add(new HeaderCard("CDELT2" + alt, a22 / fitsYUnit().value(), "Grid spacing (" + fitsYUnit().name() + ")"));		
 		}
 		else {		
-			c.add(new HeaderCard("CD1_1" + alt, a11 / xUnit().value(), "Transformation matrix element"));
-			c.add(new HeaderCard("CD1_2" + alt, a12 / xUnit().value(), "Transformation matrix element"));
-			c.add(new HeaderCard("CD2_1" + alt, a21 / yUnit().value(), "Transformation matrix element"));
-			c.add(new HeaderCard("CD2_2" + alt, a22 / yUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD1_1" + alt, a11 / fitsXUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD1_2" + alt, a12 / fitsXUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD2_1" + alt, a21 / fitsYUnit().value(), "Transformation matrix element"));
+			c.add(new HeaderCard("CD2_2" + alt, a22 / fitsYUnit().value(), "Transformation matrix element"));
 		}
 		
-		if(xUnit() != Unit.unity) c.add(new HeaderCard("CUNIT1" + alt, xUnit().name(), "Coordinate axis unit."));
-		if(yUnit() != Unit.unity) c.add(new HeaderCard("CUNIT2" + alt, yUnit().name(), "Coordinate axis unit."));
+		if(fitsXUnit() != Unit.unity) c.add(new HeaderCard("CUNIT1" + alt, fitsXUnit().name(), "Coordinate axis unit."));
+		if(fitsYUnit() != Unit.unity) c.add(new HeaderCard("CUNIT2" + alt, fitsYUnit().name(), "Coordinate axis unit."));
 	    
 		
 	}
@@ -485,15 +485,15 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 		if(header.containsKey("CD1_1" + alt) || header.containsKey("CD1_2" + alt) || header.containsKey("CD2_1" + alt) || header.containsKey("CD2_2" + alt)) {
 			// When the CDi_j keys are used the scaling is incorporated into the CDi_j values.
 			// Thus, the deltas are implicitly assumed to be 1...	
-			m11 = header.getDoubleValue("CD1_1" + alt, 1.0) * xUnit().value();
-			m12 = header.getDoubleValue("CD1_2" + alt, 0.0) * xUnit().value();
-			m21 = header.getDoubleValue("CD2_1" + alt, 0.0) * yUnit().value();
-			m22 = header.getDoubleValue("CD2_2" + alt, 1.0) * yUnit().value();	
+			m11 = header.getDoubleValue("CD1_1" + alt, 1.0) * fitsXUnit().value();
+			m12 = header.getDoubleValue("CD1_2" + alt, 0.0) * fitsXUnit().value();
+			m21 = header.getDoubleValue("CD2_1" + alt, 0.0) * fitsYUnit().value();
+			m22 = header.getDoubleValue("CD2_2" + alt, 1.0) * fitsYUnit().value();	
 		}	
 		else {
 			// Otherwise, the scaling is set by CDELTi keys...
-			double dx = header.getDoubleValue("CDELT1" + alt, 1.0) * xUnit().value();
-			double dy = header.getDoubleValue("CDELT2" + alt, 1.0) * yUnit().value();
+			double dx = header.getDoubleValue("CDELT1" + alt, 1.0) * fitsXUnit().value();
+			double dy = header.getDoubleValue("CDELT2" + alt, 1.0) * fitsYUnit().value();
 			
 			// And the transformation is set by the PCi_j keys
 			// Transform then scale...
@@ -529,7 +529,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 	 */
 	@Override
 	public String toString() {	
-		return toString(Util.s3, xUnit(), yUnit());
+		return toString(Util.s3, xAxis().getUnit(), yAxis().getUnit());
 	}
 	
 	/**
@@ -539,7 +539,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 	 * @return the string
 	 */
 	public String toString(NumberFormat nf) {
-		return toString(nf, xUnit(), yUnit());
+		return toString(nf, xAxis().getUnit(), yAxis().getUnit());
 	}
 	
 	/**

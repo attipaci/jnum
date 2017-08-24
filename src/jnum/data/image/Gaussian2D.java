@@ -103,9 +103,9 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         if(!(other instanceof Gaussian2D)) return false;
       
         Gaussian2D psf = (Gaussian2D) other;
-        if(psf.majorFWHM != majorFWHM) return false;
-        if(psf.minorFWHM != minorFWHM) return false;
-        if(psf.positionAngle != positionAngle) return false;
+        if(!Util.equals(psf.majorFWHM, majorFWHM, 1e-6)) return false;
+        if(!Util.equals(psf.minorFWHM, minorFWHM, 1e-6)) return false;
+        if(!Util.fixedPrecisionEquals(psf.positionAngle, positionAngle, 1e-6)) return false;
         return false;
     }
 
@@ -348,7 +348,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
      *
      * @return true, if is circular
      */
-    public boolean isCircular() { return minorFWHM == majorFWHM; }
+    public boolean isCircular() { return Util.equals(minorFWHM, majorFWHM, 1e-6); }
 
     public final double valueAt(Vector2D v) {
         return valueAt(v.x(), v.y());

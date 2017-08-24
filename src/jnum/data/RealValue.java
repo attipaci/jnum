@@ -26,6 +26,7 @@ package jnum.data;
 import java.io.Serializable;
 
 import jnum.Copiable;
+import jnum.Util;
 import jnum.math.RealMath;
 import jnum.math.ZeroValue;
 import jnum.util.HashCode;
@@ -57,7 +58,7 @@ ZeroValue, RealMath {
         if(!(o instanceof RealValue)) return false;
         
         RealValue real = (RealValue) o;
-        return real.value == value;
+        return Util.equals(real.value, value);
     }
     
     @Override

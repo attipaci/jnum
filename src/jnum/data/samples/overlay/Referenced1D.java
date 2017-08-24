@@ -23,6 +23,7 @@
 
 package jnum.data.samples.overlay;
 
+import jnum.Util;
 import jnum.data.IndexReferenced;
 import jnum.data.samples.Values1D;
 import jnum.fits.FitsToolkit;
@@ -56,7 +57,7 @@ public class Referenced1D extends Overlay1D implements IndexReferenced<Double> {
         if(!(o instanceof Referenced1D)) return false;
         
         Referenced1D r = (Referenced1D) o;
-        if(referenceIndex != r.referenceIndex) return false;
+        if(!Util.equals(referenceIndex, r.referenceIndex, 1e-6)) return false;
         
         return super.equals(o);
     }

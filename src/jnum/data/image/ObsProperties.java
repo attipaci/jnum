@@ -49,7 +49,7 @@ public class ObsProperties extends MapProperties {
         if(!(o instanceof ObsProperties)) return false;
        
         ObsProperties p = (ObsProperties) o;
-        if(noiseRescale != p.noiseRescale) return false;
+        if(!Util.equals(noiseRescale, p.noiseRescale, 1e-6)) return false;
         return super.equals(o);
     }
     

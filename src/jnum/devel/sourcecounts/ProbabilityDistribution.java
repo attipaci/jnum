@@ -49,8 +49,8 @@ public class ProbabilityDistribution implements Cloneable, Copiable<ProbabilityD
         if(!super.equals(o)) return false;
         if(!(o instanceof ProbabilityDistribution)) return false;
         ProbabilityDistribution p = (ProbabilityDistribution) o;
-        if(p.resolution != resolution) return false;
-        if(p.from != from) return false;
+        if(!Util.equals(p.resolution, resolution)) return false;
+        if(!Util.fixedPrecisionEquals(p.from, from, 1e-4 * resolution)) return false;
         if(p.data.length != data.length) return false;
         if(!Util.equals(p.data, data)) return false;
         return true;        
@@ -126,8 +126,8 @@ public class ProbabilityDistribution implements Cloneable, Copiable<ProbabilityD
     
     
     public double getChiSquaredFrom(ProbabilityDistribution other, int nObs) {
-        if(other.resolution != resolution) throw new IllegalArgumentException("Mismatched probability resolution");
-        if(other.from != from || other.size() != size()) throw new IllegalArgumentException("Mismatched probability range");
+        if(!Util.equals(other.resolution, resolution)) throw new IllegalArgumentException("Mismatched probability resolution");
+        if(!Util.fixedPrecisionEquals(other.from, from, 1e-4 * resolution) || other.size() != size()) throw new IllegalArgumentException("Mismatched probability range");
          
         double chi2 = 0.0;
         for(int i=size(); --i >= 0; ) {
