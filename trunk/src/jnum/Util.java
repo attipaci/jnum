@@ -53,7 +53,7 @@ public final class Util {
 
     public final static String version = "0.20-b1";
     
-    public final static String revision = "devel.7";
+    public final static String revision = "devel.8";
     
     public final static String copyright = "(c)2017 Attila Kovacs"; 
     
@@ -572,22 +572,7 @@ public final class Util {
 
   
     
-    /**
-     * Equals.
-     *
-     * @param a the a
-     * @param b the b
-     * @param precision the precision
-     * @return true, if successful
-     */
-    public final static boolean equals(final double a, final double b, final double precision) {
-        if(b == 0.0) {
-            if(Math.abs(a) > precision) return false; 
-        }
-        else if(Math.abs(a / b - 1.0) > precision) return false;
-        return true;
-    }
-
+   
     /**
      * Gets the property.
      *
@@ -824,7 +809,51 @@ public final class Util {
         return new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
     }
+    
+    public final static boolean equals(float a, float b) {
+        return equals(a, b, 1e-6);
+    }
+    
+    public final static boolean equals(float a, double b) {
+        return equals(a, b, 1e-6);
+    }
+    
+    public final static boolean equals(double a, float b) {
+        return equals(a, b, 1e-6);
+    }
+    
+    public final static boolean equals(double a, double b) {
+        return equals(a, b, 1e-10);
+    }
 
+    public final static boolean equals(Float a, Float b) {
+        return equals(a.doubleValue(), b.doubleValue(), 1e-6);
+    }
+    
+    public final static boolean equals(Float a, Double b) {
+        return equals(a.doubleValue(), b.doubleValue(), 1e-6);
+    }
+    
+    public final static boolean equals(Double a, Float b) {
+        return equals(a.doubleValue(), b.doubleValue(), 1e-6);
+    }
+    
+    public final static boolean equals(Double a, Double b) {
+        return equals(a.doubleValue(), b.doubleValue(), 1e-10);
+    }
+    
+    public final static boolean equals(final double a, final double b, final double precision) {
+        if(a == b) return true;
+        if(Math.getExponent(a) == 0) return (Math.abs(a - b) <= precision);     
+        return (Math.abs(a - b) / Math.max(Math.abs(a), Math.abs(b)) <= precision);
+    }
+    
+   
+    public final static boolean fixedPrecisionEquals(final double a, final double b, final double precision) {
+        if(a == b) return true;
+        return (Math.abs(a - b) <= precision);     
+    }
+    
     
     /**
      * Equals.

@@ -25,6 +25,7 @@ package jnum.util;
 import java.util.Map;
 
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.InverseValue;
 
 // TODO: Auto-generated Javadoc
@@ -125,7 +126,7 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         buf.append((bracketBase ? "(" + base.name() + ")" : base.name()) + exponentSymbol);
 
         int iExponent = (int)Math.round(exponent);
-        if(exponent == iExponent) {
+        if(Util.equals(exponent, iExponent)) {
             if(useSlash && iExponent < 0) buf.append(-iExponent);
             else buf.append(iExponent < 0 ? "(" + iExponent + ")" : iExponent);
         }

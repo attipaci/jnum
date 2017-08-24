@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 
 import jnum.Unit;
+import jnum.Util;
 import jnum.text.TimeFormat;
 import jnum.util.HashCode;
 
@@ -74,7 +75,8 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	public boolean equals(Object o) {
 		if(o == this) return true;
 		if(!(o instanceof AstroTime)) return false;
-		return MJD == ((AstroTime) o).MJD;
+		// Check match to 1 ms resolution...
+		return Util.fixedPrecisionEquals(MJD, ((AstroTime) o).MJD, 1e-8);
 	}
 	
 	/* (non-Javadoc)

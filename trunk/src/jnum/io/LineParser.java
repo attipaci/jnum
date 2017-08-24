@@ -45,9 +45,7 @@ public abstract class LineParser {
     
     /** The line number. */
     private int lineNumber = 0;
-    
-    /** The id. */
-    private String id;
+   
     
     /** The parse exceptions. */
     private ArrayList<Exception> parseExceptions = new ArrayList<Exception>();
@@ -114,7 +112,7 @@ public abstract class LineParser {
      * @param e the exception that occurred during parsing.
      */
     protected void handleParseException(Exception e) {
-        Util.warning(this, id + ":" + lineNumber + "> " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        Util.warning(this, "L" + lineNumber + "> " + e.getClass().getSimpleName() + ": " + e.getMessage());
         parseExceptions.add(new Exception("@" + lineNumber + "> " + e.getClass().getSimpleName() + ": " + e.getMessage(), e));
     }
     

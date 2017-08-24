@@ -314,7 +314,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 	 */
 	@Override
 	public String toString() {
-		hf.setDecimals(getDefaultDecimals() + 1);
+		haf.setDecimals(getDefaultDecimals() + 1);
 		return super.toString();	
 	}
 	
@@ -347,7 +347,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 
     
     /** The hf. */
-    private static HourAngleFormat hf = new HourAngleFormat(2);
+    private static HourAngleFormat haf = new HourAngleFormat(2);
     
 
     
@@ -355,15 +355,15 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         defaultCoordinateSystem = new CoordinateSystem("Equatorial Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Equatorial Offsets");
         
-        CoordinateAxis rightAscentionAxis = createAxis("Right Ascension", "RA", GreekLetter.alpha + "", hf);
+        CoordinateAxis rightAscentionAxis = createAxis("Right Ascension", "RA", GreekLetter.alpha + "", haf);
         rightAscentionAxis.setReverse(true);
 
         CoordinateAxis declinationAxis = createAxis("Declination", "DEC", GreekLetter.delta + "", af);
    
-        CoordinateAxis rightAscentionOffsetAxis = createAxis("Right Ascension Offset", "dRA", GreekLetter.Delta + " " + GreekLetter.alpha, null);
+        CoordinateAxis rightAscentionOffsetAxis = createOffsetAxis("Right Ascension Offset", "dRA", GreekLetter.Delta + " " + GreekLetter.alpha);
         rightAscentionOffsetAxis.setReverse(true);
          
-        CoordinateAxis declinationOffsetAxis = createAxis("Declination Offset", "dDEC", GreekLetter.Delta + " " + GreekLetter.delta, null);
+        CoordinateAxis declinationOffsetAxis = createOffsetAxis("Declination Offset", "dDEC", GreekLetter.Delta + " " + GreekLetter.delta);
         
         defaultCoordinateSystem.add(rightAscentionAxis);
         defaultCoordinateSystem.add(declinationAxis);

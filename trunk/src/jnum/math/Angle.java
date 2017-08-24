@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 import jnum.Constant;
 import jnum.Copiable;
+import jnum.Util;
 import jnum.util.HashCode;
 
 // TODO: Auto-generated Javadoc
@@ -99,7 +100,7 @@ Comparable<Angle> {
     public boolean equals(Object o) {
         if(this == o) return true;
         if(!(o instanceof Angle)) return false;
-        return value == ((Angle) o).value;
+        return Util.equals(value, ((Angle) o).value);
     }
     
     /**

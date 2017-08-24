@@ -136,9 +136,9 @@ public class EclipticCoordinates extends PrecessingCoordinates {
         CoordinateAxis longitudeAxis = createAxis("Ecliptic Longitude", "ELON", GreekLetter.lambda + "", af);
         longitudeAxis.setReverse(true);
         CoordinateAxis latitudeAxis = createAxis("Ecliptic Latitude", "ELAT", GreekLetter.beta + "", af);
-        CoordinateAxis longitudeOffsetAxis = createAxis("Ecliptic Longitude Offset", "dELON", GreekLetter.Delta + " " + GreekLetter.lambda, null);
+        CoordinateAxis longitudeOffsetAxis = createOffsetAxis("Ecliptic Longitude Offset", "dELON", GreekLetter.Delta + " " + GreekLetter.lambda);
         longitudeOffsetAxis.setReverse(true);
-        CoordinateAxis latitudeOffsetAxis = createAxis("Ecliptic Latitude Offset", "dELAT", GreekLetter.Delta + " " + GreekLetter.beta, null);
+        CoordinateAxis latitudeOffsetAxis = createOffsetAxis("Ecliptic Latitude Offset", "dELAT", GreekLetter.Delta + " " + GreekLetter.beta);
 
         defaultCoordinateSystem.add(longitudeAxis);
         defaultCoordinateSystem.add(latitudeAxis);

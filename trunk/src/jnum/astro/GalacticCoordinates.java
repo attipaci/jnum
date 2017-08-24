@@ -121,9 +121,9 @@ public class GalacticCoordinates extends CelestialCoordinates {
         CoordinateAxis longitudeAxis = createAxis("Galactic Longitude", "GLON", "l", af);
         longitudeAxis.setReverse(true);
         CoordinateAxis latitudeAxis = createAxis("Galactic Latitude", "GLAT", "b", af);
-        CoordinateAxis longitudeOffsetAxis = createAxis("Galactic Longitude Offset", "dGLON", GreekLetter.Delta + " l", null);
+        CoordinateAxis longitudeOffsetAxis = createOffsetAxis("Galactic Longitude Offset", "dGLON", GreekLetter.Delta + " l");
         longitudeOffsetAxis.setReverse(true);
-        CoordinateAxis latitudeOffsetAxis = createAxis("Galactic Latitude Offset", "dGLAT", GreekLetter.Delta + " b", null);
+        CoordinateAxis latitudeOffsetAxis = createOffsetAxis("Galactic Latitude Offset", "dGLAT", GreekLetter.Delta + " b");
         
         defaultCoordinateSystem.add(longitudeAxis);
         defaultCoordinateSystem.add(latitudeAxis);

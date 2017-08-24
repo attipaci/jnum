@@ -53,10 +53,10 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	}
 	
 	@Override
-    public final Unit xUnit() { return SphericalCoordinates.degree; }
+    public final Unit fitsXUnit() { return SphericalCoordinates.degree; }
 	
 	@Override
-    public final Unit yUnit() { return SphericalCoordinates.degree; }
+    public final Unit fitsYUnit() { return SphericalCoordinates.degree; }
 	
 	/**
 	 * Instantiates a new spherical grid.

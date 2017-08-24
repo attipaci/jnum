@@ -29,6 +29,7 @@ import java.util.List;
 import jnum.data.CubicSpline;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
+import jnum.data.Validating;
 import jnum.data.WeightedPoint;
 import jnum.math.Coordinate3D;
 import jnum.math.Vector3D;
@@ -617,7 +618,40 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     
     
     
-    
+    public Validating<Index3D> getNeighborValidator(final int minNeighbors) {
+        return new Validating<Index3D>() {
+
+            @Override
+            public boolean isValid(Index3D index) {
+                int i = index.i();
+                int j = index.j();
+                int k = index.k();
+                
+                if(!Data3D.this.isValid(i, j, k)) return false;
+
+                int neighbours = -1;    // will iterate over the actual point too, hence the -1...
+
+                final int fromi = Math.max(0, i-1);
+                final int toi = Math.min(sizeX(), i+1);
+                final int fromj = Math.max(0, j-1);
+                final int toj = Math.min(sizeY(), j+1);
+                final int fromk = Math.max(0, k-1);
+                final int tok = Math.min(sizeY(), k+1);
+
+                for(int i1=toi; --i1 >= fromi; ) for(int j1=toj; --j1 >= fromj; ) for(int k1=tok; --k1 >= fromk; )
+                    if(Data3D.this.isValid(i1, j1, k1)) neighbours++;
+
+                return neighbours >= minNeighbors;         
+            }
+
+            @Override
+            public void discard(Index3D index) {
+                Data3D.this.discard(index);
+            }
+
+        };
+    }
+
     
     
     

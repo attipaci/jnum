@@ -48,7 +48,7 @@ public class AIPSLegacyProjection extends SphericalProjection {
 	String fitsID;
 	
 	/** The reference offsets. */
-	Vector2D referenceOffsets;
+	private Vector2D referenceOffsets;
 	
 	
 	/**
@@ -60,8 +60,16 @@ public class AIPSLegacyProjection extends SphericalProjection {
 	 */
 	public AIPSLegacyProjection(SphericalProjection baseProjection, String name, String fitsID) {
 		this.baseProjection = baseProjection;
+		this.referenceOffsets = new Vector2D();
 		this.name = name;
 		this.fitsID = fitsID;
+	}
+	
+	@Override
+    public AIPSLegacyProjection clone() {
+	    AIPSLegacyProjection clone = (AIPSLegacyProjection) super.clone();
+	    clone.referenceOffsets = (Vector2D) referenceOffsets.clone();
+	    return clone;
 	}
 	
 	/* (non-Javadoc)

@@ -26,6 +26,7 @@ package jnum.data;
 
 import java.text.NumberFormat;
 
+import jnum.Util;
 import jnum.math.Division;
 import jnum.math.LinearAlgebra;
 import jnum.math.Multiplicative;
@@ -82,7 +83,7 @@ Accumulating<WeightedPoint>
 		
 		WeightedPoint p = (WeightedPoint) o;
 		if(isExact()) if(!p.isExact()) return false;
-		return weight == p.weight;
+		return Util.equals(weight, p.weight, 1e-6);
 	}
 	
 	/* (non-Javadoc)

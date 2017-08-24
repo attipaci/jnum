@@ -124,9 +124,9 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
         CoordinateAxis longitudeAxis = createAxis("Supergalactic Longitude", "SGL", "L", af);
         longitudeAxis.setReverse(true);
         CoordinateAxis latitudeAxis = createAxis("Supergalactic Latitude", "SGB", "B", af);
-        CoordinateAxis longitudeOffsetAxis = createAxis("Supergalactic Longitude Offset", "dSGL", GreekLetter.Delta + " L", null);
+        CoordinateAxis longitudeOffsetAxis = createOffsetAxis("Supergalactic Longitude Offset", "dSGL", GreekLetter.Delta + " L");
         longitudeOffsetAxis.setReverse(true);
-        CoordinateAxis latitudeOffsetAxis = createAxis("Supergalactic Latitude", "dSGB", GreekLetter.Delta + " B", null);
+        CoordinateAxis latitudeOffsetAxis = createOffsetAxis("Supergalactic Latitude", "dSGB", GreekLetter.Delta + " B");
 
         defaultCoordinateSystem.add(longitudeAxis);
         defaultCoordinateSystem.add(latitudeAxis);

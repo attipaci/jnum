@@ -672,10 +672,17 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         fitsTypes.put(coords.getFITSLatitudeStem().toUpperCase(), coords.getClass());
     }
     
-    
     public static CoordinateAxis createAxis(String longLabel, String shortLabel, String fancyLabel, NumberFormat nf) {
+        return createAxis(longLabel, shortLabel, fancyLabel, degree, nf);
+    }
+    
+    public static CoordinateAxis createOffsetAxis(String longLabel, String shortLabel, String fancyLabel) {
+        return createAxis(longLabel, shortLabel, fancyLabel, arcsec, Util.f3);
+    }
+    
+    public static CoordinateAxis createAxis(String longLabel, String shortLabel, String fancyLabel, Unit unit, NumberFormat nf) {
         CoordinateAxis axis = new CoordinateAxis(longLabel, shortLabel, fancyLabel);
-        axis.setUnit(degree);
+        axis.setUnit(unit == null ? degree : unit);
         if(nf != null) axis.setFormat(nf);
         return axis;
     }
@@ -701,8 +708,8 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         CoordinateAxis longitudeAxis = createAxis("Latitude", "LAT", GreekLetter.phi + "", af);
         CoordinateAxis latitudeAxis = createAxis("Longitude", "LON", GreekLetter.theta + "", af);
          
-        CoordinateAxis longitudeOffsetAxis = createAxis("Longitude Offset", "dLON", GreekLetter.Delta + " " + GreekLetter.phi + "", null);
-        CoordinateAxis latitudeOffsetAxis = createAxis("Latitude Offset", "dLAT", GreekLetter.delta + " " + GreekLetter.theta + "", null);
+        CoordinateAxis longitudeOffsetAxis = createOffsetAxis("Longitude Offset", "dLON", GreekLetter.Delta + " " + GreekLetter.phi + "");
+        CoordinateAxis latitudeOffsetAxis = createOffsetAxis("Latitude Offset", "dLAT", GreekLetter.delta + " " + GreekLetter.theta + "");
            
         defaultCoordinateSystem.add(longitudeAxis);
         defaultCoordinateSystem.add(latitudeAxis);
