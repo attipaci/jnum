@@ -117,7 +117,7 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 	 */
 	public void copy(CoordinateSystem template) {
 		setName(template.getName());
-		for(CoordinateAxis axis : template) add((CoordinateAxis) axis.clone());
+		for(CoordinateAxis axis : template) add(axis.clone());
 	}
 	
 	/**

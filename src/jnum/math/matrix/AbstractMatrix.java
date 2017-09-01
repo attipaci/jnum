@@ -123,9 +123,10 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	@Override
-	public Object clone() {
-		try { return super.clone(); } 
+	@SuppressWarnings("unchecked")
+    @Override
+	public AbstractMatrix<T> clone() {
+		try { return (AbstractMatrix<T>) super.clone(); } 
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
@@ -167,9 +168,8 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	 * @see jnum.CopiableContent#copy(boolean)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public AbstractMatrix<T> copy(boolean withContents) {
-		AbstractMatrix<T> copy = (AbstractMatrix<T>) clone();
+		AbstractMatrix<T> copy = clone();
 		if(getData() == null) return copy;
 		if(withContents) {			
 			try { copy.setData(ArrayUtil.copyOf(getData())); }
@@ -227,9 +227,8 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	 * @see kovacs.math.MatrixAlgebra#dot(java.lang.Object)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public AbstractMatrix<T> dot(AbstractMatrix<? extends T> B) {
-		AbstractMatrix<T> product = (AbstractMatrix<T>) clone();
+		AbstractMatrix<T> product = clone();
 		product.setProduct(this, B);
 		return product;
 	}
@@ -519,9 +518,8 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	 * @param toCol the to col
 	 * @return the patch
 	 */
-	@SuppressWarnings("unchecked")
 	public AbstractMatrix<T> getPatch(int fromRow, int fromCol, int toRow, int toCol) {
-		AbstractMatrix<T> patch = (AbstractMatrix<T>) clone();
+		AbstractMatrix<T> patch = clone();
 		patch.setData(ArrayUtil.subArray(getData(), new int[] { fromRow, toRow }, new int[] { fromCol, toCol }));
 		return patch;
 	}

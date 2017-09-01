@@ -87,8 +87,8 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	public Scalar clone() {
+		try { return (Scalar) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
@@ -323,7 +323,7 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	 */
 	@Override
 	public final Scalar copy() {
-		return (Scalar) clone();
+		return clone();
 	}
 
 	/* (non-Javadoc)
@@ -483,7 +483,10 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 				Object entry = arrayFrom(array[i]);
 				if(realArray == null) {
 					try { realArray = (Object[]) Array.newInstance(entry.getClass(), array.length); }
-					catch(Exception e) { Util.error(Scalar.class, e); }		
+					catch(Exception e) { 
+					    Util.error(Scalar.class, e);
+					    return null;
+					}		
 				}
 				realArray[i] = entry;				
 			}

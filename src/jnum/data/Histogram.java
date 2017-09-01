@@ -57,8 +57,8 @@ public class Histogram implements Cloneable {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	public Histogram clone() {
+		try { return (Histogram) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }		
 	}
 	
@@ -202,7 +202,7 @@ public class Histogram implements Cloneable {
 		if(a.resolution != b.resolution) 
 			throw new IllegalArgumentException("Incompatible bin resolutions");
 		
-		Histogram product = (Histogram) a.clone();
+		Histogram product = a.clone();
 		product.bins = new Hashtable<Integer, Counter>();
 		
 		for(int binA : a.bins.keySet()) for(int binB : b.bins.keySet()) {

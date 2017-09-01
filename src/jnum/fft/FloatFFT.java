@@ -537,7 +537,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         // The spectral power per frequency component.
         final double norm = 1.0 / N;
 
-        for(int i=spectrum.length; --i >= 0; ) spectrum[i] *= norm;
+        if(spectrum != null) for(int i=spectrum.length; --i >= 0; ) spectrum[i] *= norm;
 
         return spectrum;	
     }

@@ -82,8 +82,8 @@ public abstract class Region2D implements Serializable, Cloneable {
 	
 
 	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	public Region2D clone() {
+		try { return (Region2D) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	

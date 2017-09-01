@@ -88,7 +88,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	 * @see kovacs.projection.Projection2D#clone()
 	 */
 	@Override
-	public Object clone() {
+	public SphericalProjection clone() {
 		SphericalProjection clone = (SphericalProjection) super.clone();
 		return clone;
 	}

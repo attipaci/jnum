@@ -70,8 +70,8 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	public Range clone() {
+		try { return (Range) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
@@ -79,7 +79,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @see jnum.Copiable#copy()
 	 */
 	@Override
-	public Range copy() { return (Range) clone(); }
+	public Range copy() { return clone(); }
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

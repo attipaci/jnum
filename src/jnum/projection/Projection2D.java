@@ -52,9 +52,10 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	@SuppressWarnings("unchecked")
+    @Override
+	public Projection2D<CoordinateType> clone() {
+		try { return (Projection2D<CoordinateType>) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
@@ -90,7 +91,7 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	 */
 	@SuppressWarnings("unchecked")
 	public Projection2D<CoordinateType> copy() {
-		Projection2D<CoordinateType> copy = (Projection2D<CoordinateType>) clone();
+		Projection2D<CoordinateType> copy = clone();
 		if(reference != null) copy.reference = (CoordinateType) reference.copy();
 		return copy;
 	}

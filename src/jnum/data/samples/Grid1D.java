@@ -70,8 +70,8 @@ public class Grid1D extends CartesianGrid<Scalar> {
      * @see java.lang.Object#clone()
      */
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public Grid1D clone() {
+        try { return (Grid1D) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
     

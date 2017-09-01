@@ -70,8 +70,8 @@ Multiplicative<CharSpectrum>, Serializable {
     }
     
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public CharSpectrum clone() {
+        try { return (CharSpectrum) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }        
     }
     
@@ -84,7 +84,7 @@ Multiplicative<CharSpectrum>, Serializable {
     
     @Override
     public CharSpectrum copy(boolean withContent) {
-        CharSpectrum copy = (CharSpectrum) clone();
+        CharSpectrum copy = clone();
         copy.fft = new DoubleFFT();
         copy.d = new Complex[d.length];
         if(withContent) copy.copyContent(this);

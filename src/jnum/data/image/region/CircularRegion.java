@@ -106,7 +106,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
      * @see jnum.data.Region#clone()
      */ 
     @Override
-    public Object clone() {
+    public CircularRegion clone() {
         CircularRegion clone = (CircularRegion) super.clone();
         return clone;
     }

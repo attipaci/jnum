@@ -35,7 +35,7 @@ public class ProbabilityDistribution implements Cloneable, Copiable<ProbabilityD
        
         double[] data = getData();
        
-        for(int i=data.length; --i >= 0; ) data[i] = histogram.countsFor(grid.coordAt((double) i));
+        for(int i=data.length; --i >= 0; ) data[i] = histogram.countsFor(grid.coordAt(i));
         renormalize();
     }
     
@@ -57,8 +57,8 @@ public class ProbabilityDistribution implements Cloneable, Copiable<ProbabilityD
     }
     
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public ProbabilityDistribution clone() {
+        try { return (ProbabilityDistribution) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
     
@@ -69,7 +69,7 @@ public class ProbabilityDistribution implements Cloneable, Copiable<ProbabilityD
     
     @Override
     public ProbabilityDistribution copy(boolean withContent) {
-        ProbabilityDistribution copy = (ProbabilityDistribution) clone();
+        ProbabilityDistribution copy = clone();
         if(data != null) {
             if(withContent) copy.data = Util.copyOf(data);
             else copy.data = new double[data.length];

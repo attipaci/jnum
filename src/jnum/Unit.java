@@ -199,8 +199,8 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
      * @see java.lang.Object#clone()
      */
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public Unit clone() {
+        try { return (Unit) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }		
     }
 
@@ -209,7 +209,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
      */
     @Override
     public Unit copy() {
-        Unit u = (Unit) clone();
+        Unit u = clone();
         u.name = new String(name);
         return u;
     }
@@ -256,14 +256,14 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
      */
     private static Unit fetch(String id, Map<String, Unit> baseUnits) throws IllegalArgumentException {		
         Unit u = baseUnits.get(id);
-        if(u != null) return (Unit) u.clone();
+        if(u != null) return u.clone();
 
         if(id.length() < 2) throw new IllegalArgumentException("No such unit: '" + id + "'.");
 
         // Try unit with multiplier...
         u = baseUnits.get(id.substring(1));
         if(u == null) throw new IllegalArgumentException("No such unit: '" + id + "'.");
-        u = (Unit) u.clone();		
+        u = u.clone();		
 
         u.multiplier = getMultiplier(id.charAt(0)) ;
         if(u.multiplier == null) throw new IllegalArgumentException("No unit multiplier: '" + id.charAt(0) + "'.");

@@ -74,8 +74,8 @@ Comparable<Angle> {
      * @see java.lang.Object#clone()
      */
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public Angle clone() {
+        try { return (Angle) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
     
@@ -84,7 +84,7 @@ Comparable<Angle> {
      */
     @Override
     public Angle copy() {
-        return (Angle) clone();
+        return clone();
     }
     
     /* (non-Javadoc)

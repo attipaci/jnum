@@ -104,8 +104,8 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public Object clone() { 
-		try { return super.clone(); }
+	public CoordinateAxis clone() { 
+		try { return (CoordinateAxis) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	

@@ -230,8 +230,8 @@ ViewableAsDoubles, Parser, NumberFormating {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	public Coordinate2D clone() {
+		try { return (Coordinate2D) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
@@ -239,7 +239,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 	 * @see jnum.Copiable#copy()
 	 */
 	@Override
-	public Coordinate2D copy() { return (Coordinate2D) clone(); }
+	public Coordinate2D copy() { return clone(); }
 	
 	/**
 	 * Gets the point2 d.

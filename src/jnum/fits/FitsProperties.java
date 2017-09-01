@@ -109,15 +109,15 @@ FitsHeaderEditing, FitsHeaderParsing {
 
     
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public FitsProperties clone() {
+        try { return (FitsProperties) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
 
 
     @Override
     public FitsProperties copy() {
-        return (FitsProperties) clone();
+        return clone();
     }
 
 

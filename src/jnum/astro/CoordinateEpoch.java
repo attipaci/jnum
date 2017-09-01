@@ -79,7 +79,7 @@ Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public Object clone() {
+	public CoordinateEpoch clone() {
 		try { 
 			CoordinateEpoch clone = (CoordinateEpoch) super.clone(); 
 			clone.immutable = false;
@@ -92,7 +92,7 @@ Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
 	 * @see jnum.Copiable#copy()
 	 */
 	@Override
-	public CoordinateEpoch copy() { return (CoordinateEpoch) clone(); }
+	public CoordinateEpoch copy() { return clone(); }
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
