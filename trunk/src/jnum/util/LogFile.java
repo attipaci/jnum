@@ -107,12 +107,12 @@ public class LogFile {
 		try { 
 		    boolean pass = false;
 		    if(readHeader(in).equals(format)) pass = true;
-		    try { if(in != null) in.close(); } catch(IOException e) {}
+		    try { in.close(); } catch(IOException e) {}
 		    if(pass) return;
 		}
 		catch(IllegalStateException e) { Util.warning(this, e); }
 		finally {
-		    try { if(in != null) in.close(); } catch(IOException e) {}
+		    try { in.close(); } catch(IOException e) {}
 		}
 		
 		// Conflict...

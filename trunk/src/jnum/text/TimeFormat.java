@@ -155,8 +155,10 @@ public class TimeFormat extends AngleFormat {
     protected static final char[] hmsMarks = { 'h', 'm', 's'};
     
     /** The Constant symbolMarker. */
+    @SuppressWarnings("hiding")
     protected static final char[] symbolMarks = { 'h', '\'', '"'};
     
+    @SuppressWarnings("hiding")
     protected static final char[] fancyMarks = { 'h', Symbol.prime, Symbol.doublePrime};
 
 	
@@ -165,21 +167,26 @@ public class TimeFormat extends AngleFormat {
 	public static final int LEVEL_HOUR = AngleFormat.LEVEL_DEGREE;
 	
 	/** The Constant MINUTE. */
-	public static final int LEVEL_MINUTE = AngleFormat.LEVEL_MINUTE;
+	@SuppressWarnings("hiding")
+    public static final int LEVEL_MINUTE = AngleFormat.LEVEL_MINUTE;
 	
 	/** The Constant SECOND. */
-	public static final int LEVEL_SECOND = AngleFormat.LEVEL_SECOND;
+	@SuppressWarnings("hiding")
+    public static final int LEVEL_SECOND = AngleFormat.LEVEL_SECOND;
 	
 	/** The Constant COLONS. */
-	public static final int FORMAT_COLONS = AngleFormat.FORMAT_COLONS;
+	@SuppressWarnings("hiding")
+    public static final int FORMAT_COLONS = AngleFormat.FORMAT_COLONS;
 	
 	/** The Constant HMS. */
 	public static final int FORMAT_HMS = AngleFormat.FORMAT_DMS;
 	
 	/** The Constant SYMBOLS. */
-	public static final int FORMAT_SYMBOLS = AngleFormat.FORMAT_SYMBOLS;
+	@SuppressWarnings("hiding")
+    public static final int FORMAT_SYMBOLS = AngleFormat.FORMAT_SYMBOLS;
 	
-	public static final int FORMAT_FANCY = AngleFormat.FORMAT_FANCY;
+	@SuppressWarnings("hiding")
+    public static final int FORMAT_FANCY = AngleFormat.FORMAT_FANCY;
 
 
 }

@@ -343,6 +343,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     
 	   
     /** The default local coordinate system. */
+    @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
     

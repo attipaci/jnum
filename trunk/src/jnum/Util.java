@@ -53,7 +53,7 @@ public final class Util {
 
     public final static String version = "0.20-b1";
     
-    public final static String revision = "devel.9";
+    public final static String revision = "devel.10";
     
     public final static String copyright = "(c)2017 Attila Kovacs"; 
     
@@ -864,7 +864,7 @@ public final class Util {
      */
     public static boolean equals(Object a, Object b) {
         if(a == null) return b == null;
-        if(b == null) return a == null;	
+        if(b == null) return false;
         return a.equals(b);
     }
    

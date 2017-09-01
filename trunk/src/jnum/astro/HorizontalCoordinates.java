@@ -247,6 +247,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 
     
     /** The default local coordinate system. */
+    @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
   
 	

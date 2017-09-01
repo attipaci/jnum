@@ -1556,6 +1556,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     /**
      * The Enum Multiplier.
      */
+    @SuppressWarnings("hiding")
     public static enum Multiplier {
 
         /** The unity. */
