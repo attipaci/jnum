@@ -44,8 +44,8 @@ ZeroValue, RealMath {
     public RealValue(double x) { this(); setValue(x); }
     
     @Override
-    public Object clone() {
-        try { return super.clone(); }
+    public RealValue clone() {
+        try { return (RealValue) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
     
@@ -68,7 +68,7 @@ ZeroValue, RealMath {
 
     @Override
     public RealValue copy() {
-        return (RealValue) clone();
+        return clone();
     }
     
     

@@ -482,12 +482,11 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
             protected void process(final int i, final int j) {
                 if(!isValid(i, j)) return;  
                 if(validator != null) if(!validator.isValid(i, j)) return;
-                else {
-                    final double w = weight == null ? 1.0 : weight.get(i,  j).doubleValue();
-                    transformer[i][i] = w * get(i, j).doubleValue();
-                    sumw += w;
-                    n++;
-                }
+        
+                final double w = weight == null ? 1.0 : weight.get(i,  j).doubleValue();
+                transformer[i][i] = w * get(i, j).doubleValue();
+                sumw += w;
+                n++;
             }
             @Override
             public WeightedPoint getLocalResult() { return new WeightedPoint(sumw, n); }
@@ -595,7 +594,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     }
     
     public void resample(Vector2D newres) {
-        Map2D clone = (Map2D) clone();
+        Map2D clone = clone();
         
         Vector2D resolution = getResolution();
         setSize((int) Math.ceil(sizeX() * resolution.x() / newres.x()), (int) Math.ceil(sizeY() * resolution.y() / newres.y()));
@@ -723,7 +722,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         // Undo prior corrections if necessary
         if(!properties.isCorrected()) { 
             if(underlyingFWHM == properties.getCorrectingFWHM()) return;
-            else undoFilterCorrectBy(validator);
+            undoFilterCorrectBy(validator);
         }
         final double filterC = properties.getFilterCorrectionFactor(underlyingFWHM);
 

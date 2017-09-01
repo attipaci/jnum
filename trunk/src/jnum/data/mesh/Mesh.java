@@ -107,9 +107,10 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	@SuppressWarnings("unchecked")
+    @Override
+	public Mesh<T> clone() {
+		try { return (Mesh<T>) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
@@ -117,9 +118,8 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	 * @see jnum.Copiable#copy()
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public Mesh<T> copy() {
-		Mesh<T> copy = (Mesh<T>) clone();
+		Mesh<T> copy = clone();
 		try { copy.data = ArrayUtil.copyOf(data); }
 		catch(Exception e) { 
 			copy.data = null; 

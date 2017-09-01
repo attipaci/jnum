@@ -69,8 +69,8 @@ public class Index2D implements Serializable, Cloneable, Copiable<Index2D> {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	public Index2D clone() {
+		try { return (Index2D) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
@@ -78,7 +78,7 @@ public class Index2D implements Serializable, Cloneable, Copiable<Index2D> {
 	 * @see jnum.Copiable#copy()
 	 */
 	@Override
-	public Index2D copy() { return (Index2D) clone(); } 
+	public Index2D copy() { return clone(); } 
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

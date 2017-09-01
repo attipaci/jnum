@@ -60,6 +60,11 @@
 
 	[FIX] {Data2D} mean() was not actually a weighted mean.
 
+	[CODE] More potential bugs found and fixed with the help of Eclipse.
+	(e.g. null pointers, hidden variables). Streamlined to avoud
+	unnecessary casts, tailored clone() return types, unnecessary else
+	statements.
+
 	[CODE] Grids read/write FITS headers using the axis units.
 
 	[CODE] Lots of tweaks to Grid classes. More generalized hierarchy.

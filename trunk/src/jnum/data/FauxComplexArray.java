@@ -72,9 +72,10 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
-	@Override
-	public Object clone() {
-		try { return super.clone(); }
+	@SuppressWarnings("unchecked")
+    @Override
+	public FauxComplexArray<Type> clone() {
+		try { return (FauxComplexArray<Type>) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 
