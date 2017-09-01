@@ -114,6 +114,7 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
 
     
     /** The default local coordinate system. */
+    @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
     

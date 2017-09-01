@@ -75,7 +75,7 @@ public class GeodeticCoordinates extends SphericalCoordinates {
 	 */
 	public GeodeticCoordinates(GeocentricCoordinates geocentric) {
 		setNativeLongitude(geocentric.x());
-		setNativeLatitude(geocentric.y() + X * Math.sin(2.0 * geocentric.y()));
+		setNativeLatitude(geocentric.y() + Z * Math.sin(2.0 * geocentric.y()));
 	}
 	
 	@Override
@@ -104,7 +104,7 @@ public class GeodeticCoordinates extends SphericalCoordinates {
 	public final static double f = 1.0 / 298257.0; // Flattening of Earth (Marik: Csillagaszat)
 	
 	/** The Constant X. */
-	private final static double X = 103132.4 * Unit.deg * (2.0 * f - f*f); // Approximation term for geodesic conversion (Marik: Csillagaszat)
+	private final static double Z = 103132.4 * Unit.deg * (2.0 * f - f*f); // Approximation term for geodesic conversion (Marik: Csillagaszat)
 	
 	/** The Constant NORTH. */
 	public final static int NORTH = 1;

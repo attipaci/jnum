@@ -171,6 +171,7 @@ public class TelescopeCoordinates extends SphericalCoordinates {
     
 
     /** The default local coordinate system. */
+    @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
  
      

@@ -68,12 +68,10 @@ public abstract class Operation {
                 var.setValue(value);
                 return value;
             }
-            
-            else {
-                long value = var.asLong();
-                var.setValue(value + 1L);
-                return value;
-            }
+
+            long value = var.asLong();
+            var.setValue(value + 1L);
+            return value;
         }
     }
     
@@ -91,12 +89,10 @@ public abstract class Operation {
                 var.setValue(value);
                 return value;
             }
-            
-            else {
-                long value = var.asLong();
-                var.setValue(value - 1L);
-                return value;
-            }
+
+            long value = var.asLong();
+            var.setValue(value - 1L);
+            return value;
         }
     }
     

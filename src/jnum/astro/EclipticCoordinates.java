@@ -125,6 +125,7 @@ public class EclipticCoordinates extends PrecessingCoordinates {
 
 
     /** The default local coordinate system. */
+    @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
 

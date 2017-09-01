@@ -111,6 +111,7 @@ public class GalacticCoordinates extends CelestialCoordinates {
 	
 
     /** The default local coordinate system. */
+    @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
       

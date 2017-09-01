@@ -201,10 +201,9 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      */
     public void parse(String line) throws LockedException {
         Entry entry = new Entry(line);
-        if(entry != null) {
-            try { process(entry.key, entry.value); }
-            catch(LockedException e) {}
-        }
+
+        try { process(entry.key, entry.value); }
+        catch(LockedException e) {}
     }
 
 
@@ -1661,7 +1660,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     /**
      * The Class Locator.
      */
-    class Locator {
+    static class Locator {
 
         /** The file name. */
         String fileName;
@@ -1676,7 +1675,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     /**
      * The Class Setting.
      */
-    class Setting {
+    static class Setting {
 
         /** The value. */
         String value;
@@ -1689,7 +1688,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     /**
      * The Class Entry.
      */
-    class Entry {
+    static class Entry {
 
         /** The key. */
         String key;
