@@ -414,7 +414,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
          */
         @Override
         public long getMask() {
-           return (long) 0xFF;
+           return 0xFF;
         }
 
         /* (non-Javadoc)
@@ -484,7 +484,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
          */
         @Override
         public long getMask() {
-           return (long) 0xFFFF;
+           return 0xFFFF;
         }
 
         /* (non-Javadoc)
@@ -553,7 +553,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
          */
         @Override
         public long getMask() {
-           return (long) ~0;
+           return ~0L;
         }
 
         /* (non-Javadoc)

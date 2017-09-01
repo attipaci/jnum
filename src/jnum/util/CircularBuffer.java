@@ -122,7 +122,7 @@ public class CircularBuffer<Type> implements Iterable<Type>, Serializable {
 	 */
 	public final synchronized int size() {
 		if(isFilled) return data.length;
-		else return lastIndex + 1;
+		return lastIndex + 1;
 	}
 	
 	/**

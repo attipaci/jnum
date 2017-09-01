@@ -476,7 +476,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	        }
 	    }
 	    
-	    if(parseCoords == null) parseCoords = (SphericalCoordinates) copy();
+	    if(parseCoords == null) parseCoords = copy();
 	    
 	    parseCoords.parseDirect(parser);
 

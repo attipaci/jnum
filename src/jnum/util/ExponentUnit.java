@@ -215,7 +215,7 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
      */
     @Override
     public ExponentUnit getInverse() {
-        ExponentUnit u = (ExponentUnit) copy();
+        ExponentUnit u = copy();
         u.inverse();
         return u;
     }

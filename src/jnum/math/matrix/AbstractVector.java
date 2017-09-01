@@ -86,9 +86,8 @@ Cloneable, Copiable<AbstractVector<T>> {
 	 * @see jnum.Copiable#copy()
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public AbstractVector<T> copy() {
-		AbstractVector<T> copy = (AbstractVector<T>) clone();
+		AbstractVector<T> copy = clone();
 		try { 
 			copy.setData(ArrayUtil.copyOf(getData())); 
 			return copy;

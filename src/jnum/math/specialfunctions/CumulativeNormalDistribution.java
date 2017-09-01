@@ -120,7 +120,7 @@ public final class CumulativeNormalDistribution {
 		    final double value = (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1.0);	
 		    return refine(value, 1.0 - Q);
 		}
-		else return inverseAt(1.0 - Q);
+		return inverseAt(1.0 - Q);
 	}
 	
 	/**

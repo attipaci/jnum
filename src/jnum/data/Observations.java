@@ -28,4 +28,5 @@ public interface Observations<DataType> extends Uncertainties<DataType>, Exposur
     
     public void endAccumulation();
     
+    
 }

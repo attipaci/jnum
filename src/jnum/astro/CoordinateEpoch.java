@@ -121,7 +121,7 @@ Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
 		double y1 = getJulianYear();
 		double y2 = epoch.getJulianYear();
 		if(Math.abs(y1 - y2) < precision) return 0;
-		else return y1 < y2 ? -1 : 1;
+		return y1 < y2 ? -1 : 1;
 	}
 	
 	/**
@@ -242,7 +242,7 @@ Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
 		else {
 			double year = Double.parseDouble(text);
 			if(year < 1984.0) return new BesselianEpoch(year);
-			else return new JulianEpoch(year);
+			return new JulianEpoch(year);
 		}
 	}
 	

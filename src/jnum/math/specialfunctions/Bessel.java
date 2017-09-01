@@ -124,7 +124,7 @@ public final class Bessel {
 		if(n < 2) {
 			if(n < 0) throw new IllegalArgumentException("No BesselJ of negative kind.");
 			if(n == 0) return J0(x);
-			else return J1(x);
+			return J1(x);
 		}
 		final double ax = Math.abs(x);
 
@@ -228,7 +228,7 @@ public final class Bessel {
 		if(n < 2) {
 			if(n < 0) throw new IllegalArgumentException("No BesselY of negative kind.");
 			if(n == 0) return Y0(x);
-			else return Y1(x);
+			return Y1(x);
 		}
 
 		final double tox=2.0/x;
@@ -287,11 +287,10 @@ public final class Bessel {
 			y*=y;
 			return 1.0+y*(3.5156229+y*(3.0899424+y*(1.2067492+y*(0.2659732+y*(0.360768e-1+y*0.45813e-2)))));
 		} 
-		else {
-			final double y=3.75/ax;
-			return Math.exp(ax)/Math.sqrt(ax)
-					*(0.39894228+y*(0.1328592e-1+y*(0.225319e-2+y*(-0.157565e-2+y*(0.916281e-2+y*(-0.2057706e-1+y*(0.2635537e-1+y*(-0.1647633e-1+y*0.392377e-2))))))));
-		}
+		
+		final double y=3.75/ax;
+		return Math.exp(ax)/Math.sqrt(ax)
+		        *(0.39894228+y*(0.1328592e-1+y*(0.225319e-2+y*(-0.157565e-2+y*(0.916281e-2+y*(-0.2057706e-1+y*(0.2635537e-1+y*(-0.1647633e-1+y*0.392377e-2))))))));
 	}
 
 
@@ -333,7 +332,7 @@ public final class Bessel {
 		if(n < 2) {
 			if(n < 0) throw new IllegalArgumentException("No BesselI of negative kind.");
 			if(n == 0) return I0(x);
-			else return I1(x);
+			return I1(x);
 		}
 		if (x == 0.0) return 0.0;
 
@@ -440,7 +439,7 @@ public final class Bessel {
 		if(n < 2) {
 			if(n < 0) throw new IllegalArgumentException("No BesselK of negative kind.");
 			if(n == 0) return K0(x);
-			else return K1(x);
+			return K1(x);
 		}
 		final double tox = 2.0/x;
 		double bkm = K0(x);

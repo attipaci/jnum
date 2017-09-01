@@ -393,11 +393,10 @@ public final class ArrayUtil {
 			else if(array instanceof boolean[]) return Arrays.copyOfRange((boolean[]) array, start, end);
 			else return Arrays.copyOfRange((Object[]) array, start, end);	
 		}
-		else {
-			Object[] subarray = (Object[]) Array.newInstance( ((Object[]) array)[0].getClass(), end - start);
-			for(int i=start; i<end; i++) subarray[i-start] = subArray(((Object[]) array)[i], from, to, depth+1);
-			return subarray;
-		}		
+		
+		Object[] subarray = (Object[]) Array.newInstance( ((Object[]) array)[0].getClass(), end - start);
+		for(int i=start; i<end; i++) subarray[i-start] = subArray(((Object[]) array)[i], from, to, depth+1);
+		return subarray;		
 	}
 	
 	
@@ -627,7 +626,7 @@ public final class ArrayUtil {
 	    if(array == null) return null;
 	    else if(array instanceof Object[]) { 
 			final Object[] original = (Object[]) array;
-			final Object[] copy = (Object[]) original.clone();	
+			final Object[] copy = original.clone();	
 			for(int i=original.length; --i >= 0; ) copy[i] = original[i] instanceof Copiable ? ((Copiable<?>) original[i]).copy() : copyOf(original[i]);
 			return copy;
 		}
@@ -1188,7 +1187,7 @@ public final class ArrayUtil {
 				}
 				return viewArray;
 			}
-			else throw new IllegalArgumentException(doubles.getClass().getSimpleName() + " cannot be viewed as " + template.getClass().getSimpleName());			
+			throw new IllegalArgumentException(doubles.getClass().getSimpleName() + " cannot be viewed as " + template.getClass().getSimpleName());			
 		}
 	}
 	
@@ -2089,18 +2088,16 @@ public final class ArrayUtil {
 			}
 			return beam;
 		}
-		else {
-			Object[] beam = null;
-			int size = 2*width+1;
-			for(int i=0; i<size; i++) {
-				int d = i - width;
-				Object entry = getGaussianBeam(FWHM, scaling * Math.exp(A*d*d), w, depth+1);
-				if(beam == null) beam = (Object[]) Array.newInstance(entry.getClass(), size);
-				beam[i] = entry;
-			}
-			return beam;		
-		}
 		
+		Object[] beam = null;
+		int size = 2*width+1;
+		for(int i=0; i<size; i++) {
+		    int d = i - width;
+		    Object entry = getGaussianBeam(FWHM, scaling * Math.exp(A*d*d), w, depth+1);
+		    if(beam == null) beam = (Object[]) Array.newInstance(entry.getClass(), size);
+		    beam[i] = entry;
+		}
+		return beam;				
 	}
 	
 	/**

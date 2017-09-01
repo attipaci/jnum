@@ -620,7 +620,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     @Override
     public Object getTableEntry(String name) {
         if(name.equals("depth")) return Math.sqrt(1.0 / weight.mean()) / getUnit().value();
-        else return super.getTableEntry(name);
+        return super.getTableEntry(name);
     }
     
     @Override

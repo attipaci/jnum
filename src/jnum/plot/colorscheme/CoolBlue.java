@@ -47,7 +47,7 @@ public class CoolBlue extends ColorScheme {
 		else if(scaled > 1.0) scaled=1.0;
 	
 		if(scaled < 0.5) return Color.HSBtoRGB(0.75F, 1.0F, 2.0F * (float) scaled);
-		else return Color.HSBtoRGB(0.75F, 2.0F - 2.0F * (float) scaled, 1.0F);
+		return Color.HSBtoRGB(0.75F, 2.0F - 2.0F * (float) scaled, 1.0F);
 	}
 
 	/* (non-Javadoc)

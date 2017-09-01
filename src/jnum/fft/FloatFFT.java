@@ -454,7 +454,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
             for(int i=length; --i >= 0; ) data[i] *= value;
             return;
         }
-        else new PointFork(data, length) {					
+        new PointFork(data, length) {					
                 @Override
                 protected final void process(final float[] data, final int i) {
                     data[i] *= value; 

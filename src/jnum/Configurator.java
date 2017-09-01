@@ -123,7 +123,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     @Override
     @SuppressWarnings("unchecked")
     public Configurator copy() {
-        Configurator copy = (Configurator) clone();
+        Configurator copy = clone();
         copy.branches = new Hashtable<String, Configurator>();
         copy.conditionals = new Hashtable<String, Vector<String>>();
         for(String key : branches.keySet()) copy.branches.put(key, branches.get(key).copy());
@@ -567,10 +567,9 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         //System.err.println("### " + expression);
 
         if(!conditionals.containsKey(expression)) return;
-        else {
-            if(details) System.err.println("[c] " + expression + " > " + conditionals.get(expression));
-            parseAll(conditionals.get(expression));
-        }
+        
+        if(details) System.err.println("[c] " + expression + " > " + conditionals.get(expression));
+        parseAll(conditionals.get(expression));
     }
 
     /**
@@ -891,7 +890,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         else if(branches.containsKey(key)) { 
             Configurator branch = branches.get(key);
             if(arg.length() != branchName.length()) return branch.isBlacklisted(getRemainder(arg, branchName.length() + 1));
-            else return branch.isBlacklisted();
+            return branch.isBlacklisted();
         }
         else return false;
     }
@@ -914,7 +913,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
 
         if(i < key.length()) return key.substring(0, i);
-        else return key;
+        return key;
     }
 
     /**
@@ -926,7 +925,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      */
     private String getRemainder(String key, int from) {
         if(key.length() <= from) return "";
-        else return key.substring(from);	
+        return key.substring(from);	
     }
 
     /**
@@ -1781,7 +1780,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
                     }	
                 }
                 if(foundSeparator) break;
-                else keyBuffer.append(c);
+                keyBuffer.append(c);
             }
 
             // If it's just a key without an argument, then return an entry with an empty argument...

@@ -333,7 +333,7 @@ public class FlexBinaryTable {
 		public void extractKeys() {
 			Cursor<String, HeaderCard> cursor = header.iterator();
 			while(cursor.hasNext()) {
-				HeaderCard card = (HeaderCard) cursor.next();
+				HeaderCard card = cursor.next();
 				if(isColumnKey(card.getKey(), index)) {
 					try { cards.add(new ColumnCard(card, index)); }
 					catch(Exception e) {}
