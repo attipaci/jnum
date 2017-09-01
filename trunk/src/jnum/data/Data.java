@@ -104,9 +104,7 @@ TableFormatter.Entries {
     }
     
 
-    public boolean contentEquals(final Data<IndexType, PositionType, VectorType> data) {
-        if(!(data instanceof Data)) return false;    
-        
+    public boolean contentEquals(final Data<IndexType, PositionType, VectorType> data) {   
         if(!getSizeString().equals(data.getSizeString())) return false;
         
         PointOp.Simple<IndexType> comparison = new PointOp.Simple<IndexType>() {
@@ -267,13 +265,13 @@ TableFormatter.Entries {
     public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op) {
         if(getParallel() < 2) return loop(op);
         if(capacity() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loop(op);
-        else return fork(op);
+        return fork(op);
     }
     
     public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op) {
         if(getParallel() < 2) return loopValid(op);
         if(capacity() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loopValid(op);
-        else return forkValid(op);  
+        return forkValid(op);  
     }
     
      

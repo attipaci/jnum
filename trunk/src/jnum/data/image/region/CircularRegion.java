@@ -208,7 +208,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
             ((AngleFormat) axes.get(1).format).colons();
             return getID() + "\t" + coords.toString() + "  " + Util.f1.format(radius.value()/Unit.arcsec) + " # " + getComment();
         }
-        else return getID() + "\t" + coords.x() + "\t" + coords.y() + "\t" + radius.value() + "\t# " + getComment();
+        return getID() + "\t" + coords.x() + "\t" + coords.y() + "\t" + radius.value() + "\t# " + getComment();
     }
 
   
@@ -226,7 +226,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
             + axes.get(1).format(coords.y()) + ","
             + Util.f3.format(radius.value() / Unit.arcsec) + "\")";
         }
-        else return "circle(" + coords.x() + "," + coords.y() + "," + radius.value() + ")";		
+        return "circle(" + coords.x() + "," + coords.y() + "," + radius.value() + ")";		
     }
 
 
@@ -294,7 +294,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
     }
     
     public Asymmetry2D getAsymmetry(Grid2D<?> grid, Values2D values, double angle, Range radialRange) {
-        Representation r = (Representation) getRepresentation(grid);
+        Representation r = getRepresentation(grid);
         Data2D image = values instanceof Data2D ? (Data2D) values : new Overlay2D(values);
         return r.getAsymmetry2D(image, angle, radialRange);
     }

@@ -337,7 +337,7 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     @Override
     public Object getTableEntry(String name) {
         if(name.equals("size")) return size();
-        else return super.getTableEntry(name);
+        return super.getTableEntry(name);
     }
     
     

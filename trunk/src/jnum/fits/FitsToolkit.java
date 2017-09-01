@@ -379,7 +379,7 @@ public final class FitsToolkit {
         Cursor<String, HeaderCard> cursor = header.iterator();
         
         while(cursor.hasNext()) {
-            HeaderCard card = (HeaderCard) cursor.next();
+            HeaderCard card = cursor.next();
             if(card.getKey().equalsIgnoreCase("HISTORY")) {
                 String comment = card.getComment();
                 if(comment != null) history.add(comment);

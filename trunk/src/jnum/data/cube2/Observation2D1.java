@@ -169,7 +169,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
 
     @Override
     public double noiseAt(Index3D index) {
-        return 1.0 / Math.sqrt(weightAt(index));
+        return getPlane(index.k()).noiseAt(index.i(), index.j());
     }
     
     public double noiseAt(int i, int j, int k) {
@@ -199,7 +199,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
     
     @Override
     public void setNoiseAt(Index3D index, double value) {
-        setWeightAt(index, 1.0 / (value * value));
+        getPlane(index.k()).setNoiseAt(index.i(), index.j(), value);
     }
 
 

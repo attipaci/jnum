@@ -75,20 +75,17 @@ public class LegendrePolynomial implements Function<Double, Double> {
 			}
 		}
 		if(l == m) return pmm;
-		else {
-			double pmmp1 = x * (2*m+1) * pmm;
-			if(l == (m+1)) return pmmp1;
-			else {
-				double pll = Double.NaN;
-				for(int ll = m+2; ll <= l; ll++) {
-					pll = (x * (2*ll-1) * pmmp1 - (ll+m-1) * pmm) / (ll-m);
-					pmm=pmmp1;
-					pmmp1=pll;
-				}
-				return pll;
-			}
-		}
-	}
 
+		double pmmp1 = x * (2*m+1) * pmm;
+		if(l == (m+1)) return pmmp1;
+
+		double pll = Double.NaN;
+		for(int ll = m+2; ll <= l; ll++) {
+		    pll = (x * (2*ll-1) * pmmp1 - (ll+m-1) * pmm) / (ll-m);
+		    pmm=pmmp1;
+		    pmmp1=pll;
+		}
+		return pll;
+	}
 	
 }

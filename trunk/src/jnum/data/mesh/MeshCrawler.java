@@ -147,7 +147,7 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
      */
     public static <T> MeshCrawler<T> createFor(Object array, int depth) {
         if(depth >= ArrayUtil.getRank(array)) return createFor(array);
-        else return new GenericCrawler<T>((Object[]) array, depth);
+        return new GenericCrawler<T>((Object[]) array, depth);
     }
 
     /**
@@ -304,15 +304,14 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
                 else throw new NoSuchElementException("Reached end of iterator range at " + currentIndex + ".");
                 return (T) array[currentIndex];
             }
-            else {
-                try { return child.next(); }
-                catch(NoSuchElementException e) {
-                    if(currentIndex+1 < toIndex) {
-                        setLeadPosition(++currentIndex);
-                        return child.next();
-                    }
-                    else throw e;
+   
+            try { return child.next(); }
+            catch(NoSuchElementException e) {
+                if(currentIndex+1 < toIndex) {
+                    setLeadPosition(++currentIndex);
+                    return child.next();
                 }
+                throw e;
             }
         }
 

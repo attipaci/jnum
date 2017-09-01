@@ -153,7 +153,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Co
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add mesh of different size/shape.");
         
         final MeshCrawler<T> i = iterator();
-        final MeshCrawler<? extends Number> i2 = (MeshCrawler<? extends Number>) o.iterator();
+        final MeshCrawler<? extends Number> i2 = o.iterator();
         
         while(i.hasNext()) {
             i.setCurrent(getSumOf(i.next(), i2.next()));

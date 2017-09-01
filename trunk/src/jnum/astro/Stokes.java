@@ -28,9 +28,11 @@ import java.io.Serializable;
 import jnum.Copiable;
 import jnum.CopyCat;
 import jnum.ExtraMath;
+import jnum.Util;
 import jnum.math.Angle;
 import jnum.math.Inversion;
 import jnum.math.LinearAlgebra;
+import jnum.util.HashCode;
 
 public class Stokes implements LinearAlgebra<Stokes>, Cloneable, Copiable<Stokes>, CopyCat<Stokes>, Inversion, Serializable {
     /**
@@ -38,7 +40,35 @@ public class Stokes implements LinearAlgebra<Stokes>, Cloneable, Copiable<Stokes
      */
     private static final long serialVersionUID = 3607597866105508377L;
 
-    public double N, Q, U, V;
+    private double N, Q, U, V;
+    
+    @Override
+    public int hashCode() { return super.hashCode() ^ HashCode.from(N) ^ HashCode.from(Q) ^ HashCode.from(U) ^ HashCode.from(V); } 
+    
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null) return false;
+        if(!(o instanceof Stokes)) return false;
+        
+        return equalsStokes((Stokes) o);
+    }
+    
+    public boolean equalsStokes(Stokes s) {  
+        if(!Util.equals(N, s.N)) return false;
+        if(!Util.equals(Q, s.Q)) return false;
+        if(!Util.equals(U, s.U)) return false;
+        if(!Util.equals(V, s.V)) return false;
+        return true;    
+    }
+    
+    public final double N() { return N; }
+    
+    public final double Q() { return Q; }
+    
+    public final double U() { return U; }
+    
+    public final double V() { return V; }
 
     public final double I() { return N + P(); }
   
@@ -57,6 +87,7 @@ public class Stokes implements LinearAlgebra<Stokes>, Cloneable, Copiable<Stokes
         this.U = U;
         this.V = V;
     }
+    
 
     public void rotate(double angle) {
         angle *= 2.0;

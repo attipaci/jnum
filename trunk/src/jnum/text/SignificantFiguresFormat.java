@@ -116,13 +116,13 @@ public class SignificantFiguresFormat extends NumberFormat {
 			//int elength = 4+digits; // #.###E-#
 			//int flength = 1+digits-order; // 0.####
 			if(order > -3) return trailingZeroes ? Util.f[digits-order-1] : Util.F[digits-order-1];
-			else return trailingZeroes ? Util.e[digits-1] : Util.E[digits-1] ;
+			return trailingZeroes ? Util.e[digits-1] : Util.E[digits-1] ;
 		}
 		// ###.##
 		// #.####E# or #.####E##
 		else if(order > 9) {
 			if(order > digits+3) return trailingZeroes ? Util.e[digits-1] : Util.E[digits-1];
-			else return trailingZeroes ? Util.f[digits-order-1] : Util.F[digits-order-1];
+			return trailingZeroes ? Util.f[digits-order-1] : Util.F[digits-order-1];
 		}
 		else if(order > digits+2) return trailingZeroes ? Util.e[digits-1] : Util.E[digits-1];
 		else if(order > digits-1) return Util.d[order+1];

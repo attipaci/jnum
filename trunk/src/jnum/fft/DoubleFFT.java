@@ -474,7 +474,7 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
             for(int i=length; --i >= 0; ) data[i] *= value;
             return;
         }
-        else new PointFork(data, length) {			
+        new PointFork(data, length) {			
             @Override
             protected final void process(final double[] data, final int i) {
                 data[i] *= value; 

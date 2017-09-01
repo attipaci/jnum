@@ -320,7 +320,8 @@ public class ComplexFFT extends FFT1D<Complex[]> {
             for(int i=data.length; --i >= 0; ) data[i].scale(value);
             return;
         }
-        else new PointFork(data, data.length) {				
+        
+        new PointFork(data, data.length) {				
             @Override
             protected final void process(final Complex[] data, final int i) {
                 data[i].scale(value); 

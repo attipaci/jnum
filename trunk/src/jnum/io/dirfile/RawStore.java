@@ -136,7 +136,7 @@ public abstract class RawStore<Type extends Number> extends DataStore<Type> {
 	@Override
 	public long length() throws IOException {
 		if(file != null) return file.length() / bytes;
-		else return getFile().length() / bytes;
+		return getFile().length() / bytes;
 	}
 	
 	/**

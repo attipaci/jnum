@@ -249,7 +249,7 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 		@Override
 		public Dimension getPreferredSize() {
 			if(isHorizontal()) return new Dimension(0, size);
-			else return new Dimension(size, 0);
+			return new Dimension(size, 0);
 		}
 	}
 	

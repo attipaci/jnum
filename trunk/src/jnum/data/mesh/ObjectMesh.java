@@ -108,14 +108,14 @@ public class ObjectMesh<T> extends Mesh<T> {
     public void fill(final T x) {
         if(!(x instanceof Copiable)) throw new IllegalArgumentException("filler value must implement Copiable");
         final MeshCrawler<T> i = iterator(); 
-        while(i.hasNext()) i.setNext((T) ((Copiable<T>) x).copy());
+        while(i.hasNext()) i.setNext(((Copiable<T>) x).copy());
     }
     
     @SuppressWarnings("unchecked")
     public void fill(final int[] from, final int[] to, final T x) {
         if(!(x instanceof Copiable)) throw new IllegalArgumentException("filler value must implement Copiable");
         final MeshCrawler<T> i = iterator(from, to);
-        while(i.hasNext()) i.setNext((T) ((Copiable<T>) x).copy());
+        while(i.hasNext()) i.setNext(((Copiable<T>) x).copy());
        
     }
    
