@@ -38,11 +38,19 @@ public class MultiFFTTest {
 	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
+	    DoubleFFT dfftRef = new DoubleFFT(ParallelTask.newDefaultParallelExecutor());
+	    double[] dd = new double[8];
+	    dd[0] = 4;
+	    dfftRef.real2Amplitude(dd);
+	    printSpectrum(dd);
+	    
+	    
 		DoubleFFT dfft = new DoubleFFT.NyquistUnrolledReal(ParallelTask.newDefaultParallelExecutor());
 		double[] ddata = new double[10];
-		ddata[0] = 8;
+		ddata[0] = 4.0;
+		
 		dfft.real2Amplitude(ddata);
-		print(ddata);
+		printSpectrum(ddata);
 		
 		dfft.amplitude2Real(ddata);
 		print(ddata);
@@ -52,10 +60,12 @@ public class MultiFFTTest {
 		fft.setParallel(1);
 		
 		double[][] data = new double[8][10];
-			
-		System.err.println("delta: ");
-			
-		data[6][8] = data.length * (data[0].length-2) / 2;
+				
+		data[0][0] = data.length * (data[0].length-2) / 2;
+		  
+        System.err.println("delta: ");
+        print(data);
+		
 		fft.real2Amplitude(data);
 		//fft.complexForward(data);
 		print(data);
@@ -93,6 +103,18 @@ public class MultiFFTTest {
 			System.out.println(Util.f3.format(data[i]) + "\t");
 		System.out.println();
 	}
+	
+	/**
+     * Prints the.
+     *
+     * @param data the data
+     */
+    public static void printSpectrum(double[] data) {
+        System.out.println();
+        for(int i=0; i<data.length; i+=2) 
+            System.out.println(Util.f3.format(data[i]) + "\t" + data[i+1]);
+        System.out.println();
+    }
 	
 }
 

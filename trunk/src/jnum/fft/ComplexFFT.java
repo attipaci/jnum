@@ -23,6 +23,7 @@
 package jnum.fft;
 
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
 import jnum.ExtraMath;
@@ -56,20 +57,24 @@ public class ComplexFFT extends FFT1D<Complex[]> {
         super(processing);
     }
     
+    @Override
+    final void wipeUnused(final Complex[] data, final int address) {
+        Arrays.fill(data, address, data.length, null);
+    }
     
     @Override
-    protected final void swap(final Complex[] data, final int i, final int j) {
+    final void swap(final Complex[] data, final int i, final int j) {
         Complex temp = data[i]; data[i] = data[j]; data[j] = temp;
     }
+    
+    @Override
+    public final int getPoints(Complex[] data) { return ExtraMath.pow2floor(data.length); }
+      
 
     // 8/16-byte headers (32/64-bit) + 16 byte content... 
     // Assume 64-bit model...
     @Override
     protected final int getPointSize(Complex[] data) { return 32; }
-
-    @Override
-    protected final int getPoints(Complex[] data) { return data.length; }
-
 
     /**
      * Forward.
@@ -376,7 +381,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
      * @see jnum.fft.FFT#addressSizeOf(java.lang.Object)
      */
     @Override
-    final int addressSizeOf(final Complex[] data) { return data.length; }
+    final int addressSizeOf(final Complex[] data) { return getPoints(data); }
 
     /* (non-Javadoc)
      * @see jnum.fft.FFT#getPadded(java.lang.Object, int)

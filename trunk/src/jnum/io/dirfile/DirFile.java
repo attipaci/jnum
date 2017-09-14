@@ -132,7 +132,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		String endianness = System.getProperty("sun.cpu.endian");
 		if(endianness == null) throw new IllegalStateException("Undefined endianness.");
 		
-		if(endianness != null) Util.info(this, "Native endianness: " + endianness);
+		Util.info(this, "Native endianness: " + endianness);
 		
 		if(endianness.equalsIgnoreCase("big")) isBigEndian = true;
 		else if(endianness.equalsIgnoreCase("big")) isBigEndian = false;
@@ -245,7 +245,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 	 * @param spec the spec
 	 * @return the data store
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected DataStore<?> getDataStore(String spec) {
 		StringTokenizer tokens = new StringTokenizer(spec);
 		String name = tokens.nextToken();

@@ -56,9 +56,14 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         super(processing);
     }
 
+    @Override
+    final void wipeUnused(final float[] data, int address) {
+        Arrays.fill(data, address << 1, data.length, Float.NaN);
+    }
+   
 
     @Override
-    protected final void swap(final float[] data, int i, int j) {
+    final void swap(final float[] data, int i, int j) {
         i <<= 1;
         j <<= 1;
         
@@ -66,14 +71,14 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         temp = data[++i]; data[i] = data[++j]; data[j] = temp;
     }
     
+    @Override
+    public int getPoints(float[] data) {
+        return ExtraMath.pow2floor(data.length);
+    }
+    
 
     @Override
     protected final int getPointSize(float[] data) { return 4; }
-
-    @Override
-    protected final int getPoints(float[] data) { return data.length; }
-
-   
 
 
     // Blockbit is the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
@@ -377,12 +382,12 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
      * @param chunks the chunks
      */
     void realTransform(final float[] data, final int addressBits, final boolean isForward) {
-        if(getParallel() < 2) {
-            sequentialRealTransform(data, addressBits, isForward);
-            return;
-        }
-
-        if(isForward) complexTransform(data, addressBits, FORWARD);
+        if(getParallel() < 2) sequentialRealTransform(data, addressBits, isForward);
+        else parallelRealTransform(data, addressBits, isForward);
+    }
+    
+    void parallelRealTransform(final float[] data, final int addressBits, final boolean isForward) {
+        if(isForward) parallelComplexTransform(data, addressBits, FORWARD);
 
         new BlockFork(data, 2<<addressBits) {
             @Override
@@ -398,9 +403,8 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         else {
             data[0] = 0.5F * (d0 + data[1]);
             data[1] = 0.5F * (d0 - data[1]);
-            complexTransform(data, addressBits, BACK);
+            parallelComplexTransform(data, addressBits, BACK);
         }
-
     }
 
     /**
@@ -449,7 +453,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
      * @param value the value
      * @param threads the threads
      */
-    private void scale(final float[] data, final int length, final float value) {
+    protected void scale(final float[] data, final int length, final float value) {
         if(getParallel() < 2) {
             for(int i=length; --i >= 0; ) data[i] *= value;
             return;
@@ -469,7 +473,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
     @Override
     public void real2Amplitude(final float[] data) {
         final int addressBits = getAddressBits(data);
-        final int n = getFFTLength(addressBits);
+        final int n = 2 << addressBits;
         realTransform(data, addressBits, true);
         scale(data, n, 2.0F / n);
     }
@@ -482,19 +486,6 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
     public void amplitude2Real(final float[] data) { 
         realTransform(data, false); 
     }
-
-
-    /**
-     * Gets the FFT length.
-     *
-     * @param addressBits the address bits
-     * @return the FFT length
-     */
-    protected int getFFTLength(final int addressBits) {
-        return 2<<addressBits;
-    }
-
-
 
 
     // Rewritten to skip costly intermediate Complex storage...
@@ -547,7 +538,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
      * @see jnum.fft.FFT#addressSizeOf(java.lang.Object)
      */
     @Override
-    int addressSizeOf(final float[] data) { return data.length>>>1; }
+    final int addressSizeOf(final float[] data) { return getPoints(data) >>> 1; }
 
     /* (non-Javadoc)
      * @see jnum.fft.FFT#getPadded(java.lang.Object, int)
@@ -624,21 +615,24 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         public NyquistUnrolledReal(Parallelizable processing) {
             super(processing);
         }
-
-
-
-        /* (non-Javadoc)
-         * @see jnum.fft.FFT#addressSizeOf(java.lang.Object)
-         */
-        // Ignore the presence of an extra component, used for real transforms...
+        
+        
         @Override
-        int addressSizeOf(final float[] data) { return super.addressSizeOf(data) & ~1; }
-
+        public int getPoints(float[] data) {
+            return ExtraMath.pow2floor(data.length - 2);
+        }
+        
+       
         /* (non-Javadoc)
          * @see jnum.fft.FloatFFT#realTransform(float[], int, boolean, int)
          */
         @Override
-        void realTransform(final float[] data, final int addressBits, final boolean isForward) {
+        void parallelRealTransform(final float[] data, final int addressBits, final boolean isForward) {
+            if(getParallel() < 2)  {
+                sequentialRealTransform(data, addressBits, isForward);
+                return;
+            }
+            
             final int n = 2<<addressBits;
 
             if(!isForward) {
@@ -646,7 +640,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
                 data[n] = data[n+1] = 0.0F;
             }
 
-            super.realTransform(data, addressBits, isForward);
+            super.parallelRealTransform(data, addressBits, isForward);
 
             if(isForward) {
                 data[n] = data[1];
@@ -673,14 +667,13 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
                 data[1] = data[n+1] = 0.0F;
             }
         }
-
-        /* (non-Javadoc)
-         * @see jnum.fft.FloatFFT#getFFTLength(int)
-         */
+        
         @Override
-        protected int getFFTLength(final int addressBits) {
-            return super.getFFTLength(addressBits) + 2;
+        protected final void scale(final float[] data, final int length, final float value) {
+            super.scale(data, length+2, value);
         }
+
+        
     }
 
 

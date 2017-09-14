@@ -16,6 +16,17 @@
 	[NEW] Parallel now has synchronize() method to provide common 
 	synchronization points among the worker threads.
 
+	[FIX] {DoubleFFT} {FloatFFT} Fixed amplitude normalization of Nyquist-
+	unrolled real transforms.
+
+	[FIX] {MultiFFT} Fixes to multidimensional FFT 
+
+	[FIX] {FFT} NyquistUnrolled amplitude scaling now applies to unrolled
+	Nyquist component also.
+
+	[FIX] {FFT} Fixed amplitude normalization for NyquistUnrolled real 
+	transforms.
+
 	[FIX] A bunch of potential bugs found and fixed with the help of
 	FindBugs.
 
@@ -29,9 +40,15 @@
 	super.equals() typically, as it will return false always, unless
 	the two objects are one and the same.
 
+	[CHANGE] {FFT} FFTs now work with oversized arrays, setting 
+	untransformed trailing elements to NaN or null, as appropriate.
+
 	[CHANGE] Complete overhaul of 2D image classes and related classes,
 	with the aim of more versatile, more powerful and cleaner code, that
 	is easier to maintain.
+
+	[TWEAK] {FFT} FFTs now clear away leftover input data when processing
+	oversized arrays.
 
 	[TWEAK] SphericalCoordinates now have default coordinate systems that
 	format coordinates in DMS or HMS formats, and offsets in arcseconds 
