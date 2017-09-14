@@ -117,6 +117,31 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
 
     abstract int getMaxSignificantBitsFor(Type data);
 
+    
+    /**
+     * Complex transform.
+     *
+     * @param data the data
+     * @param isForward the is forward
+     * @param chunks the chunks
+     */
+    public final void complexTransform(final Type data, final boolean isForward) {
+        complexTransform(data, getAddressBits(data), isForward);
+    }
+   
+    /**
+     * Complex transform.
+     *
+     * @param data the data
+     * @param addressBits the address bits
+     * @param isForward the is forward
+     * @param chunks the number of parallel chunks
+     */ 
+    private final void complexTransform(final Type data, final int addressBits, final boolean isForward) {    
+        if(getParallel() == 1) sequentialComplexTransform(data, isForward);
+        else parallelComplexTransform(data, addressBits, isForward);
+    }
+    
 
     /**
      * Sequential complex transform.
@@ -151,36 +176,12 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
             radix4(data, 0, n, isForward, blkbit);
             blkbit += 2;
         }
-    }
-
-
-    /**
-     * Complex transform.
-     *
-     * @param data the data
-     * @param isForward the is forward
-     * @param chunks the chunks
-     */
-    public final void complexTransform(final Type data, final boolean isForward) {
-        complexTransform(data, getAddressBits(data), isForward);
-    }
-
-    protected abstract void swap(Type data, int i, int j);
-    
-    /**
-     * Complex transform.
-     *
-     * @param data the data
-     * @param addressBits the address bits
-     * @param isForward the is forward
-     * @param chunks the number of parallel chunks
-     */	
-    void complexTransform(final Type data, final int addressBits, final boolean isForward) {	
-        if(getParallel() == 1) {
-            sequentialComplexTransform(data, isForward);
-            return;
-        }
         
+        wipeUnused(data, n);
+    }
+  
+   
+    void parallelComplexTransform(final Type data, final int addressBits, final boolean isForward) {	
         // Don't make more chunks than there are processing blocks...
         final int n = 1<<addressBits;    
        
@@ -204,7 +205,16 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
             new Radix4(data, n, blkbit, isForward).process();
             blkbit += 2;
         }
+        
+        wipeUnused(data, n);
     }
+    
+    
+
+    abstract void swap(Type data, int i, int j);
+ 
+
+    abstract void wipeUnused(final Type data, final int address);
 
 
     abstract int addressSizeOf(Type data);
@@ -294,7 +304,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
             }
         }
         
-        protected abstract void process(Type data, int from, int to);
+        protected abstract void process(Type data, int from, int to) throws Exception; 
 
     }
     
@@ -305,11 +315,11 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
         }
 
         @Override
-        protected final void process(final Type data, int from, final int to) {   
+        protected final void process(final Type data, int from, final int to) throws Exception {   
             for( ; from < to; from++) process(data, from);
         }
         
-        protected abstract void process(final Type data, int i);
+        protected abstract void process(final Type data, int i) throws Exception;
     }
 
 
@@ -328,7 +338,9 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
         protected int getBlockSize(int split) { return (super.getBlockSize(split) + 1) & (~1); }
        
         @Override
-        protected void process(final Type data, final int from, final int to) { radix2(data, from, to, isForward, blkbit); }
+        protected void process(final Type data, final int from, final int to) throws Exception { 
+            radix2(data, from, to, isForward, blkbit); 
+        }
     }
 
 
@@ -347,7 +359,9 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
         protected int getBlockSize(int split) { return (super.getBlockSize(split) + 3) & (~3); }
      
         @Override
-        protected void process(final Type data, final int from, final int to) { radix4(data, from, to, isForward, blkbit); }
+        protected void process(final Type data, final int from, final int to) throws Exception { 
+            radix4(data, from, to, isForward, blkbit);    
+        }
     }
 
   

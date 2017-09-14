@@ -23,6 +23,7 @@
 package jnum.fft;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
 import jnum.Copiable;
@@ -61,9 +62,13 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         super(processing);
     }
 
+    @Override
+    final void wipeUnused(final Object[] data, final int address) {
+        Arrays.fill(data, address, data.length, null);
+    }
     
     @Override
-    protected final void swap(final Object[] data, final int i, final int j) {
+    final void swap(final Object[] data, final int i, final int j) {
         Object temp = data[i]; data[i] = data[j]; data[j] = temp;
     }
 
@@ -79,12 +84,12 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     @Override
     protected int getPointSize(Object[] data) { 
         if(data[0] instanceof FourierTransforming) return ((FourierTransforming) data[0]).getPointSize();
-        return ((FFT<Object>) getChildFor(data[0])).getPointSize(data[0]);
+        return ((FFT) getChildFor(data[0])).getPointSize(data[0]);
     }
 
     @Override
     public final int getPoints(Object[] data) {
-        return data.length * ((FFT<Object>) getChildFor(data[0])).getPoints(data);
+        return ExtraMath.pow2floor(data.length) * ((FFT) getChildFor(data[0])).getPoints(data[0]);
     }
 
     /* (non-Javadoc)
@@ -110,7 +115,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
             addressBits -= 2;
         }
 
-        FFT<Object> child = (FFT<Object>) getChildFor(data[0]);
+        FFT child = getChildFor(data[0]);
         ops += child.countFlops(data[0]);
 
         return ops;
@@ -134,7 +139,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     @Override
     // TODO allowing n+1 size in first index....
     int addressSizeOf(Object[] data) {
-        return data.length;
+        return ExtraMath.pow2floor(data.length);
     }
 
     /**
@@ -183,30 +188,18 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      * @param element the new child for
      * @return the child for
      */
-    private synchronized FFT<?> getChildFor(Object element) {
+    private synchronized FFT<?> getChildFor(final Object element) throws FFTTypeException {
         if(element.getClass().equals(reuseType)) return reuseChild;
 
         if(element instanceof float[]) reuseChild = new FloatFFT.NyquistUnrolledReal(this);
         else if(element instanceof double[]) reuseChild = new DoubleFFT.NyquistUnrolledReal(this);
         else if(element instanceof Complex[]) reuseChild = new ComplexFFT(this);
         else if(element instanceof Object[]) reuseChild = new MultiFFT(this);
-        else throw new IllegalArgumentException("Not an FFT object: " + element.getClass().getSimpleName());
+        else throw new FFTTypeException(element.getClass());
 
         reuseType = element.getClass();
 
         return reuseChild;
-    }
-
-
-    /**
-     * Gets the content.
-     *
-     * @param data the data
-     * @return the content
-     */
-    private Object getContent(Object data) {
-        if(data instanceof FauxComplexArray) return ((FauxComplexArray<?>) data).getData();
-        return data;
     }
 
     /* (non-Javadoc)
@@ -215,7 +208,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     @Override
     void sequentialComplexTransform(final Object[] data, final int addressBits, final boolean isForward) {	
         // Perform FFT of each element
-        FFT<?> child = getChildFor(data[0]);
+        FFT child = getChildFor(data[0]);
         child.setTwiddleErrorBits(getTwiddleErrorBits());
 
         // Handle Complex[] arrays by their proper FFT directly...
@@ -226,12 +219,11 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 
         final int n = 1 << addressBits;
 
-        if(child instanceof FFT) 
-            for(int i=n; --i >= 0; ) ((FFT<Object>) child).sequentialComplexTransform(data[i], isForward);
-        else if(data[0] instanceof FourierTransforming) 
-            for(int i=n; --i >= 0; ) ((FourierTransforming) data[i]).complexTransform(isForward);
-
-
+        for(int i=n; --i >= 0; ) {
+            if(data[i] instanceof FourierTransforming) ((FourierTransforming) data[i]).complexTransform(isForward);
+            else child.sequentialComplexTransform(data[i], isForward);   
+        }
+        
         super.sequentialComplexTransform(data, addressBits, isForward);
     }	
 
@@ -239,13 +231,13 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      * @see kovacs.fft.FFT#complexTransform(java.lang.Object, boolean, int)
      */
     @Override
-    void complexTransform(final Object[] data, final int addressBits, final boolean isForward) {
-        final FFT<?> child = getChildFor(data[0]);	
+    void parallelComplexTransform(final Object[] data, final int addressBits, final boolean isForward) {
+        final FFT child = getChildFor(data[0]);	
         child.setTwiddleErrorBits(getTwiddleErrorBits());
 
         // Handle Complex[] arrays by their proper FFT directly...
         if(data instanceof Complex[]) {
-            ((ComplexFFT) child).complexTransform((Complex[]) data, addressBits, isForward);
+            ((ComplexFFT) child).parallelComplexTransform((Complex[]) data, addressBits, isForward);
             return;
         }
 
@@ -259,14 +251,14 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         new PointFork(data, 1<<addressBits) {
             @Override
             public void process(final Object[] data, final int i) {
-                if(child instanceof FFT) ((FFT<Object>) child).complexTransform(data[i], isForward);		
-                else if(data[0] instanceof FourierTransforming) ((FourierTransforming) data[i]).complexTransform(isForward);
+                if(data[i] instanceof FourierTransforming) ((FourierTransforming) data[i]).complexTransform(isForward);
+                else child.complexTransform(data[i], isForward);		 
             }
         }.process();
 
 
 
-        super.complexTransform(data, addressBits, isForward);
+        super.parallelComplexTransform(data, addressBits, isForward);
 
     }
 
@@ -500,7 +492,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      * that implements the {@link Copiable} or {@link CopiableContent} interface.
      * @return an uninitialized object that matches the argument.
      */
-    private Object getMatching(final Object a) {
+    private Object getMatching(final Object a) throws FFTTypeException {
         if(a instanceof float[]) return new float[((float[]) a).length];
         else if(a instanceof double[]) return new double[((double[]) a).length];
         else if(a instanceof CopiableContent) return ((CopiableContent<?>) a).copy(false);
@@ -511,7 +503,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
             for(int i=array.length; --i >= 0; ) matching[i] = getMatching(array[i]);
             return matching;
         }
-        throw new IllegalArgumentException("Cannot create matching object for " + a.getClass().getSimpleName());
+        throw new FFTTypeException(a.getClass());
     }
 
     /**
@@ -519,7 +511,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      *
      * @param a the a
      */
-    private void multiplyByI(final Object a) {
+    private void multiplyByI(final Object a) throws FFTTypeException {
         if(a instanceof ComplexMultiplication) 
             ((ComplexMultiplication<?>) a).multiplyByI();
         else if(a instanceof float[]) {
@@ -543,7 +535,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
             final Object[] array = (Object[]) a;
             for(int i=array.length; --i >= 0; ) multiplyByI(array[i]);
         }	
-        else throw new IllegalArgumentException("Not an FFT object: " + a.getClass().getSimpleName());
+        else throw new FFTTypeException(a.getClass());
     }
 
     /**
@@ -555,7 +547,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      * @param a the second argument of the product
      */
     @SuppressWarnings("unchecked")
-    private <T> void setProduct(final T result, final Complex z, final T a) {
+    private <T> void setProduct(final T result, final Complex z, final T a) throws FFTTypeException {
         if(a instanceof ComplexMultiplication) 
             ((ComplexMultiplication<T>) result).setProduct(z, a);
         else if(a instanceof float[]) {
@@ -589,7 +581,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
             final Object[] R = (Object[]) result;
             for(int i=R.length; --i >= 0; ) setProduct(R[i], z, A[i]);
         }
-        else throw new IllegalArgumentException("Not an FFT object: " + a.getClass().getSimpleName());
+        else throw new FFTTypeException(a.getClass());
     }
 
 
@@ -602,7 +594,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      * @param b the b
      */
     @SuppressWarnings("unchecked")
-    private <T> void setSum(final T result, final T a, final T b) {	
+    private <T> void setSum(final T result, final T a, final T b) throws FFTTypeException {	
         if(a instanceof Additive)
             ((Additive<T>) result).setSum(a, b);
         else if(a instanceof float[]) {
@@ -627,7 +619,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
             final Object[] R = (Object[]) result;
             for(int i=R.length; --i >= 0; ) setSum(R[i], A[i], B[i]);
         }
-        else throw new IllegalArgumentException("Not an FFT object: " + a.getClass().getSimpleName());
+        else throw new FFTTypeException(a.getClass());
     }
 
     /**
@@ -639,7 +631,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      * @param b the b
      */
     @SuppressWarnings({ "unchecked" })
-    private <T> void setDifference(final T result, final T a, final T b) {
+    private <T> void setDifference(final T result, final T a, final T b) throws FFTTypeException {
 
         if(a instanceof Additive)
             ((Additive<T>) result).setDifference(a, b);
@@ -665,18 +657,17 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
             final Object[] R = (Object[]) result;
             for(int i=R.length; --i >= 0; ) setDifference(R[i], A[i], B[i]);
         }
-        else throw new IllegalArgumentException("Not an FFT object: " + a.getClass().getSimpleName());
+        else throw new FFTTypeException(a.getClass());
+    }
+
+    @Override
+    public final void realTransform(final Object[] data, final boolean isForward) {
+        if(getParallel() < 2) sequentialRealTransform(data, isForward);
+        else parallelRealTransform(data, isForward);
     }
 
 
-
-    @Override
-    public void realTransform(final Object[] data, final boolean isForward) {
-        if(getParallel() < 2) {
-            sequentialRealTransform(data, isForward);
-            return;
-        }
-
+    public void parallelRealTransform(final Object[] data, final boolean isForward) throws FFTTypeException {
         final int addressBits = getAddressBits(data);
         final int n = 1 << addressBits;
         final int split = Math.min(getParallel(), n);
@@ -684,21 +675,21 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         // Perform FFT of each element
         final FFT<?> child = getChildFor(data[0]);
         child.setTwiddleErrorBits(getTwiddleErrorBits());
-
         child.setParallel(ExtraMath.roundupRatio(getParallel(), split));
 
-        if(!isForward) super.complexTransform(data, addressBits, FFT.BACK);
+        if(!isForward) super.parallelComplexTransform(data, addressBits, FFT.BACK);
 
         new PointFork(data, data.length) {
             @Override
-            public void process(final Object[] data, final int i) {				
-                if(child instanceof RealFFT) ((RealFFT<Object>) child).realTransform(data[i], isForward);					
+            public void process(final Object[] data, final int i) throws Exception {				
+                if(child instanceof RealFFT) ((RealFFT) child).realTransform(data[i], isForward);					
                 else if(data[0] instanceof FourierTransforming.Real) ((FourierTransforming.Real) data[i]).realTransform(isForward);	
+                else throw new FFTTypeException(data[i].getClass());
             }	
         }.process();
 
 
-        if(isForward) super.complexTransform(data, addressBits, FFT.FORWARD);
+        if(isForward) super.parallelComplexTransform(data, addressBits, FFT.FORWARD);
     }
 
 
@@ -707,21 +698,21 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      * @see kovacs.fft.RealFFT#sequentialRealTransform(java.lang.Object, boolean)
      */
     @Override
-    public void sequentialRealTransform(final Object[] data, final boolean isForward) {
+    public void sequentialRealTransform(final Object[] data, final boolean isForward) throws FFTTypeException {
         final int addressBits = getAddressBits(data);
         final int n = 1 << addressBits;
         // Perform FFT of each element
         final FFT<?> child = getChildFor(data[0]);
         child.setTwiddleErrorBits(getTwiddleErrorBits());
 
+        
         if(!isForward) super.sequentialComplexTransform(data, addressBits, FFT.BACK);
 
-        if(child instanceof RealFFT) 	
-            for(int i=n; --i >= 0; ) ((RealFFT<Object>) child).sequentialRealTransform(data[i], isForward);
-
-        else if(data[0] instanceof FourierTransforming.Real) 
-            for(int i=n; --i >= 0; ) ((FourierTransforming.Real) data[i]).realTransform(isForward);
-
+        for(int i=n; --i >= 0; ) {
+            if(child instanceof RealFFT) ((RealFFT) child).sequentialRealTransform(data[i], isForward);
+            else if(data[i] instanceof FourierTransforming.Real) ((FourierTransforming.Real) data[i]).realTransform(isForward);
+            else throw new FFTTypeException(data[i].getClass());
+        }
 
         if(isForward) super.sequentialComplexTransform(data, addressBits, FFT.FORWARD);
     }
@@ -734,7 +725,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      * @param data the data
      * @param factor the factor
      */
-    public void scale(final Object data, final double factor) {
+    public void scale(final Object data, final double factor) throws IllegalArgumentException {
         if(data instanceof Scalable) ((Scalable) data).scale(factor);
         else if(data instanceof float[]) {
             final float f = (float) factor;
@@ -758,8 +749,8 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
      */
     @Override
     public void real2Amplitude(Object[] data) {
-        realTransform(data, FFT.FORWARD);
-        final double norm = 1.0 / getPoints(data);
+        realTransform(data, FFT.FORWARD);  
+        final double norm = 2.0 / getPoints(data);
         scale(data, norm);
     }	
 

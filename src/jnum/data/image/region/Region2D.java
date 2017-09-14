@@ -152,7 +152,8 @@ public abstract class Region2D implements Serializable, Cloneable {
 	    
 	    public abstract IndexBounds2D getBounds();
 	    
-	    public Vector2D getIndex(Coordinate2D coords) throws IncompatibleTypesException {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        public Vector2D getIndex(Coordinate2D coords) throws IncompatibleTypesException {
 	        Coordinate2D gridCoords = grid.getReference().copy();
             coords.convertTo(gridCoords);
             Vector2D v = new Vector2D();
@@ -161,6 +162,7 @@ public abstract class Region2D implements Serializable, Cloneable {
             return v;
 	    }
 	    
+        @SuppressWarnings({ "unchecked", "rawtypes" })
 	    public Coordinate2D getGridCoords(Vector2D index) {
 	        Vector2D offset = new Vector2D();
             grid.indexToOffset(index, offset);

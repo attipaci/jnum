@@ -49,8 +49,6 @@ public abstract class FFT1D<Type> extends FFT<Type> {
         super(processing);
     }
 
-	
-	
 	/**
 	 * Average power.
 	 *
@@ -108,6 +106,7 @@ public abstract class FFT1D<Type> extends FFT<Type> {
 		if(imageIndex > nyquist) throw new ArrayIndexOutOfBoundsException(imageIndex);
 		return imageIndex;
 	}
+
 	
 	/**
 	 * Bin2 image.
