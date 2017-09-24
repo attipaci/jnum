@@ -58,17 +58,17 @@ public class ComplexFFT extends FFT1D<Complex[]> {
     }
     
     @Override
-    final void wipeUnused(final Complex[] data, final int address) {
+    final void discardFrom(final Complex[] data, final int address) {
         Arrays.fill(data, address, data.length, null);
     }
     
     @Override
     final void swap(final Complex[] data, final int i, final int j) {
-        Complex temp = data[i]; data[i] = data[j]; data[j] = temp;
+        final Complex temp = data[i]; data[i] = data[j]; data[j] = temp;
     }
     
     @Override
-    public final int getPoints(Complex[] data) { return ExtraMath.pow2floor(data.length); }
+    public final int getPoints(Complex[] data) { return Integer.highestOneBit(data.length); }
       
 
     // 8/16-byte headers (32/64-bit) + 16 byte content... 

@@ -109,13 +109,13 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
     
  
     @Override
-    public void setSize(int sizeX, int sizeY, int sizeZ) {
+    public synchronized void setSize(int sizeX, int sizeY, int sizeZ) {
         setDataSize(sizeX, sizeY, sizeZ);
         clearHistory();
         addHistory("new size " + getSizeString());
     }
     
-    public void destroy() {
+    public synchronized void destroy() {
         setDataSize(0, 0, 0);
         clearHistory();
     }
@@ -236,7 +236,10 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         else if(data instanceof short[][][]) cube = Cube3D.createType(Short.class);
         else if(data instanceof byte[][][]) cube = Cube3D.createType(Byte.class);
         
-        if(cube != null) cube.setData(data);
+        if(cube != null) {
+            cube.setData(data);
+            setTransposedData(cube);
+        }
     }
     
     public void setTransposedData(Values3D image) {
@@ -244,7 +247,17 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         paste(new Transposed3D(image), true);
     }
 
-   
+    
+    public Transposed3D getTransposed() {
+        return new Transposed3D(this);
+    }
+    
+    public synchronized void transpose() {
+        silentNextNewData();
+        setTransposedData(getData());
+        addHistory("transposed");
+    }
+    
     
     
     @Override

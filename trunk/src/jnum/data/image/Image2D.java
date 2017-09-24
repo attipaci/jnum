@@ -112,13 +112,13 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     
  
     @Override
-    public void setSize(int sizeX, int sizeY) {
+    public synchronized void setSize(int sizeX, int sizeY) {
         setDataSize(sizeX, sizeY);
         clearHistory();
         addHistory("new size " + getSizeString());
     }
     
-    public void destroy() {
+    public synchronized void destroy() {
         setDataSize(0, 0);
         clearHistory();
     }
@@ -220,21 +220,24 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         recordNewData("byte[][]");
     }
 
-    public void setRowColData(Object data) {
+    public synchronized void setRowColData(Object data) {
         Image2D image = null;
         
         if(data instanceof Values2D) {
             setRowColData((Values2D) data);
             return;
         }
-        else if(data instanceof double[][][]) image = Image2D.createType(Double.class);
-        else if(data instanceof float[][][]) image = Image2D.createType(Float.class);
-        else if(data instanceof long[][][]) image = Image2D.createType(Long.class);
-        else if(data instanceof int[][][]) image = Image2D.createType(Integer.class);
-        else if(data instanceof short[][][]) image = Image2D.createType(Short.class);
-        else if(data instanceof byte[][][]) image = Image2D.createType(Byte.class);
-        
-        if(image != null) image.setData(data);
+        else if(data instanceof double[][]) image = Image2D.createType(Double.class);
+        else if(data instanceof float[][]) image = Image2D.createType(Float.class);
+        else if(data instanceof long[][]) image = Image2D.createType(Long.class);
+        else if(data instanceof int[][]) image = Image2D.createType(Integer.class);
+        else if(data instanceof short[][]) image = Image2D.createType(Short.class);
+        else if(data instanceof byte[][]) image = Image2D.createType(Byte.class);
+             
+        if(image != null) {
+            image.setData(data);
+            setRowColData(image);
+        }
     }
     
     public void setRowColData(Values2D image) {

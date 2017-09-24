@@ -774,6 +774,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         final double istepY = 1.0 / stepY;
 
         new InterpolatingFork() {
+            @SuppressWarnings("null")
             @Override
             protected void process(int i, int j) {
                 if(!isValid(i, j)) return;

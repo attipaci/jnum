@@ -73,8 +73,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
      * @param text the text
      */
     public Vector2D(String text) { super(text); }
-	
-    
+	    
     @Override
     public Vector2D copy() {
         return (Vector2D) super.copy();

@@ -61,18 +61,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     public MultiFFT(Parallelizable processing) {
         super(processing);
     }
-
-    @Override
-    final void wipeUnused(final Object[] data, final int address) {
-        Arrays.fill(data, address, data.length, null);
-    }
     
-    @Override
-    final void swap(final Object[] data, final int i, final int j) {
-        Object temp = data[i]; data[i] = data[j]; data[j] = temp;
-    }
-
-
     @Override
     public MultiFFT clone() {
         MultiFFT clone = (MultiFFT) super.clone();
@@ -82,6 +71,17 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     }
 
     @Override
+    final void discardFrom(final Object[] data, final int address) {
+        Arrays.fill(data, address, data.length, null);
+    }
+    
+    @Override
+    final void swap(final Object[] data, final int i, final int j) {
+        final Object temp = data[i]; data[i] = data[j]; data[j] = temp;
+    }
+
+
+    @Override
     protected int getPointSize(Object[] data) { 
         if(data[0] instanceof FourierTransforming) return ((FourierTransforming) data[0]).getPointSize();
         return ((FFT) getChildFor(data[0])).getPointSize(data[0]);
@@ -89,7 +89,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 
     @Override
     public final int getPoints(Object[] data) {
-        return ExtraMath.pow2floor(data.length) * ((FFT) getChildFor(data[0])).getPoints(data[0]);
+        return Integer.highestOneBit(data.length) * ((FFT) getChildFor(data[0])).getPoints(data[0]);
     }
 
     /* (non-Javadoc)
@@ -139,7 +139,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     @Override
     // TODO allowing n+1 size in first index....
     int addressSizeOf(Object[] data) {
-        return ExtraMath.pow2floor(data.length);
+        return Integer.highestOneBit(data.length);
     }
 
     /**
@@ -256,10 +256,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
             }
         }.process();
 
-
-
         super.parallelComplexTransform(data, addressBits, isForward);
-
     }
 
 
@@ -693,7 +690,6 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     }
 
 
-
     /* (non-Javadoc)
      * @see kovacs.fft.RealFFT#sequentialRealTransform(java.lang.Object, boolean)
      */
@@ -743,7 +739,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         else throw new IllegalArgumentException("Cannot scale: " + data.getClass().getSimpleName());
     }
 
-
+    
     /* (non-Javadoc)
      * @see jnum.fft.RealFFT#real2Amplitude(java.lang.Object)
      */
@@ -754,7 +750,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         scale(data, norm);
     }	
 
-
+    
     /* (non-Javadoc)
      * @see jnum.fft.RealFFT#amplitude2Real(java.lang.Object)
      */
@@ -762,8 +758,5 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     public void amplitude2Real(Object[] data) {	
         realTransform(data, FFT.BACK);
     }
-
-
-  
 
 }
