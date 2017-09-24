@@ -27,13 +27,12 @@ public class FFTTypeException extends IllegalArgumentException {
 
     /**
      * 
+     * 
      */
     private static final long serialVersionUID = 5910952263555752451L;
 
     public FFTTypeException(Class<?> type) {
         super("No FFT for type " + type.getClass().getName());
     }
-
-    
 
 }

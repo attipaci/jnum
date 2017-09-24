@@ -85,13 +85,13 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
     
     
     @Override
-    public void setSize(int size) {
+    public synchronized void setSize(int size) {
         setDataSize(size);
         clearHistory();
         addHistory("new size " + getSizeString());
     }
     
-    public void destroy() { 
+    public synchronized void destroy() { 
         setSize(0); 
         clearHistory();
     }

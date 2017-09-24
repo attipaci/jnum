@@ -65,7 +65,7 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
     }
     
     @Override
-    final void wipeUnused(final double[] data, int address) {
+    final void discardFrom(final double[] data, int address) {
         Arrays.fill(data, address << 1, data.length, Double.NaN);
     }
 
@@ -75,7 +75,7 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
     @Override
     public int getPoints(double[] data) {
-        return ExtraMath.pow2floor(data.length);
+        return Integer.highestOneBit(data.length);
     }
     
     
@@ -647,7 +647,7 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
         
         @Override
         public int getPoints(double[] data) {
-            return ExtraMath.pow2floor(data.length - 2);
+            return Integer.highestOneBit(data.length - 2);
         }
         
      

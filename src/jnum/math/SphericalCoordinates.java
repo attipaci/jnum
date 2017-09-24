@@ -57,25 +57,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	private double cosLat, sinLat;
 		
 	
-	/** The af. */
-	protected static AngleFormat af = new AngleFormat(2);
-	
-
-	
-
-	/**
-	 * Sets the default decimals.
-	 *
-	 * @param decimals the new default decimals
-	 */
-	public static void setDefaultDecimals(int decimals) { af.setDecimals(decimals); }
-	
-	/**
-	 * Gets the default decimals.
-	 *
-	 * @return the default decimals
-	 */
-	public static int getDefaultDecimals() { return af.getDecimals(); }
 	
 	/**
 	 * Gets the FITS longitude stem.
@@ -115,6 +96,20 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @param text the text
 	 */
 	public SphericalCoordinates(String text) { parse(text); }
+		
+	/* (non-Javadoc)
+     * @see jnum.Coordinate2D#copy(jnum.Coordinate2D)
+     */
+    @Override
+    public void copy(Coordinates<? extends Double> coords) {
+        setX(coords.x());
+        setY(coords.y());
+    }
+    
+    @Override
+    public SphericalCoordinates copy() { return (SphericalCoordinates) super.copy(); }
+    
+
 	
 	/**
 	 * Sin lat.
@@ -147,18 +142,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @return the local coordinate system
 	 */
 	public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#copy(jnum.Coordinate2D)
-	 */
-	@Override
-	public void copy(Coordinates<? extends Double> coords) {
-		setX(coords.x());
-		setY(coords.y());
-	}
-	
-	@Override
-    public SphericalCoordinates copy() { return (SphericalCoordinates) super.copy(); }
 	
 	
 	/* (non-Javadoc)
@@ -699,6 +682,26 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
     /** The default local coordinate system. */
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
+
+    /** The af. */
+    protected static AngleFormat af = new AngleFormat(2);
+    
+
+    
+
+    /**
+     * Sets the default decimals.
+     *
+     * @param decimals the new default decimals
+     */
+    public static void setDefaultDecimals(int decimals) { af.setDecimals(decimals); }
+    
+    /**
+     * Gets the default decimals.
+     *
+     * @return the default decimals
+     */
+    public static int getDefaultDecimals() { return af.getDecimals(); }
     
     
     static {

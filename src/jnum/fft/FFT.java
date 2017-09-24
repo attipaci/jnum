@@ -177,7 +177,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
             blkbit += 2;
         }
         
-        wipeUnused(data, n);
+        discardFrom(data, n);
     }
   
    
@@ -206,7 +206,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
             blkbit += 2;
         }
         
-        wipeUnused(data, n);
+        discardFrom(data, n);
     }
     
     
@@ -214,7 +214,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
     abstract void swap(Type data, int i, int j);
  
 
-    abstract void wipeUnused(final Type data, final int address);
+    abstract void discardFrom(final Type data, final int address);
 
 
     abstract int addressSizeOf(Type data);
