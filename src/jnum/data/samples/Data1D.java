@@ -318,7 +318,6 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
         final Samples1D copy = Samples1D.createType(dataType, size());
         
         smartFork(new ParallelPointOp.Simple<Integer>() {
-
             @Override
             public void process(Integer index) {
                copy.set(index, isValid(index) ? get(index) : getBlankingValue());

@@ -299,12 +299,12 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
             final int superBlockSize = threads * blockSize;
              
             for(int offset = i * blockSize; offset < points; offset += superBlockSize) {
-                process(data, offset, Math.min(points, offset + blockSize));
+                processBlock(data, offset, Math.min(points, offset + blockSize));
                 Thread.yield();
             }
         }
         
-        protected abstract void process(Type data, int from, int to) throws Exception; 
+        protected abstract void processBlock(Type data, int from, int to) throws Exception; 
 
     }
     
@@ -315,7 +315,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
         }
 
         @Override
-        protected final void process(final Type data, int from, final int to) throws Exception {   
+        protected final void processBlock(final Type data, int from, final int to) throws Exception {   
             for( ; from < to; from++) process(data, from);
         }
         
@@ -338,7 +338,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
         protected int getBlockSize(int split) { return (super.getBlockSize(split) + 1) & (~1); }
        
         @Override
-        protected void process(final Type data, final int from, final int to) throws Exception { 
+        protected void processBlock(final Type data, final int from, final int to) throws Exception { 
             radix2(data, from, to, isForward, blkbit); 
         }
     }
@@ -359,7 +359,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
         protected int getBlockSize(int split) { return (super.getBlockSize(split) + 3) & (~3); }
      
         @Override
-        protected void process(final Type data, final int from, final int to) throws Exception { 
+        protected void processBlock(final Type data, final int from, final int to) throws Exception { 
             radix4(data, from, to, isForward, blkbit);    
         }
     }

@@ -1,4 +1,31 @@
-0.20-b1
+
+	[TWEAK] Allowing only base units to register into lookup tables. 
+	This way, there is less chance that we end up with strange constructs
+	such as putting a k prefix in front of km/s...
+
+	[CODE] Local unit support moved upstream: Map2D -> Data.
+
+	
+0.20-2	
+
+	[NEW] {Statistics} A host of statistics methods operating on arrays
+	Lists and Iterables, inclusing mean, median, weightedMean, selection
+	variance and rms. Medians and selections here operate on copies, 
+	leaving the ordering of the supplied data unperturbed. When keeping
+	the order is not important, Statistics.Inplace offers more efficient
+	implementations.
+
+	[CHANGE] {Statistics} Funtionality that reorders the supplied data
+	(e.g. medians and selection) have been moved to the Inplace subclass,
+	to make their destructive behaviour more transparent.
+
+	[CODE] Data has generalized mean() and median() methods. Also 
+	similar methods can now take a weight Data object for calculating
+	weighted means and weighted medians. Observation2D and Observation2D1
+	will use the weighted methods always.
+
+
+0.20-1
 
 	[NEW] {CoordinateAxis} Axes now carry their own units for parsing
 	and formatting.

@@ -43,8 +43,8 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
     /** The exponent. */
     private double exponent;
 
-    /** The bracket base. */
-    private boolean bracketBase;
+    /** Should the base be enclosed in brackets? */
+    private boolean isEnclosed;
 
 
 
@@ -88,20 +88,8 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
     public void set(Unit base, double exponent) {
         this.base = base;
         this.exponent = exponent;
-        bracketBase = CompoundUnit.class.isAssignableFrom(base.getClass());
+        isEnclosed = CompoundUnit.class.isAssignableFrom(base.getClass());
     }
-
-    /* (non-Javadoc)
-     * @see jnum.Unit#setMultiplier(jnum.Unit.Multiplier)
-     */
-    @Override
-    public void setMultiplier(Multiplier m) { base.setMultiplier(m); }
-
-    /* (non-Javadoc)
-     * @see jnum.Unit#getMultiplier()
-     */
-    @Override
-    public Multiplier getMultiplier() { return base.getMultiplier(); }
 
     /* (non-Javadoc)
      * @see jnum.Unit#name()
@@ -123,7 +111,7 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
             }
         }
 
-        buf.append((bracketBase ? "(" + base.name() + ")" : base.name()) + exponentSymbol);
+        buf.append((isEnclosed ? "(" + base.name() + ")" : base.name()) + exponentSymbol);
 
         int iExponent = (int)Math.round(exponent);
         if(Util.equals(exponent, iExponent)) {

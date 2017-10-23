@@ -43,6 +43,7 @@ import jnum.Util;
 import jnum.math.Range;
 import jnum.math.Scale;
 import jnum.math.Vector2D;
+import jnum.util.PrefixedUnit;
 
 // TODO: Auto-generated Javadoc
 // TODO
@@ -80,7 +81,7 @@ public abstract class BasicRuler extends JComponent implements PlotSide {
 	private int side = Plot.SIDE_UNDEFINED;
 	
 	/** The unit. */
-	protected Unit unit;
+	protected PrefixedUnit unit;
 	
 	/** The marks. */
 	private TickMarks tickMarks;
@@ -95,7 +96,7 @@ public abstract class BasicRuler extends JComponent implements PlotSide {
 	 * @param edge the edge
 	 */
 	public BasicRuler(int edge) {
-		unit = Unit.unity.copy();
+		unit = new PrefixedUnit(Unit.unity);
 		mainDivisions = new Scale(1);
 		subDivisions = new Scale(10);
 		tickMarks = new TickMarks();
@@ -130,7 +131,8 @@ public abstract class BasicRuler extends JComponent implements PlotSide {
 	 * @param u the new unit
 	 */
 	public final void setUnit(Unit u) { 
-		this.unit = u; 
+		if(u instanceof PrefixedUnit) this.unit = (PrefixedUnit) u;
+		else this.unit = new PrefixedUnit(u);
 		setRange(min, max);
 	}
 	

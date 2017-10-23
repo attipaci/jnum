@@ -26,13 +26,11 @@ package jnum.data.image;
 import java.util.ArrayList;
 import java.util.Map;
 
-import jnum.ExtraMath;
 import jnum.NonConformingException;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.IndexedObservations;
 import jnum.data.Observations;
-import jnum.data.Statistics;
 import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
@@ -40,7 +38,6 @@ import jnum.data.image.overlay.Overlay2D;
 import jnum.data.image.overlay.Referenced2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Vector2D;
-import jnum.parallel.ParallelPointOp;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
@@ -390,36 +387,6 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     }
 
 
-
-    @Override
-    public double mean() {
-        Fork<WeightedPoint> average = new AveragingFork() {
-            private double sum = 0.0, sumw = 0.0;
-            @Override
-            protected void process(int i, int j) { 
-                if(!isValid(i, j)) return;
-                final double w = weightAt(i, j);
-                sum += w * get(i, j).doubleValue();
-                sumw += w;
-            }
-            @Override
-            public WeightedPoint getLocalResult() { return new WeightedPoint(sum, sumw); }
-        };
-
-        average.process();
-        return average.getResult().value(); 
-    }
-
-    @Override
-    public double median() {
-        WeightedPoint[] temp = new WeightedPoint[countPoints()];
-        if(temp.length == 0) return Double.NaN;
-        int n=0;
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) 
-            temp[n++] = new WeightedPoint(get(i, j).doubleValue(), weightAt(i, j));
-        return Statistics.median(temp, 0, n).value();
-    }
-
     @Override
     public void crop(int imin, int jmin, int imax, int jmax) {
         getWeightImage().crop(imin, jmin, imax, jmax);
@@ -490,31 +457,23 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         getProperties().setNoiseRescale(1.0);
     }
 
+    
+    @Override
+    public WeightedPoint getMean() { return getWeightedMean(getWeights()); }
 
+    @Override
+    public WeightedPoint getMedian() { return getWeightedMedian(getWeights()); }
+    
+    // TODO Make default method in Observations
     public double getChi2(boolean robust) {
         return robust ? getSignificance().getRobustVariance() : getSignificance().getVariance();
     }
 
     
     // TODO Make default method in Observations
-    public void memCorrect(final Values2D model, final double lambda) {
-        smartFork(new ParallelPointOp.Simple<Index2D>() {
-
-         @Override
-         public void process(Index2D index) {
-             if(isValid(index)) {
-                 final double noise = noiseAt(index);
-                 final double target = model == null ? 0.0 : model.get(index).doubleValue();
-                 final double memValue = ExtraMath.hypot(get(index).doubleValue(), noise) / ExtraMath.hypot(target, noise);
-                 add(index, -Math.signum(get(index).doubleValue()) * lambda * noise * Math.log(memValue));
-             }
-         }            
-        });    
-        
-     }   
-
-
-
+    public final void memCorrect(final Values2D model, final double lambda) {
+        memCorrect(model, this.getNoise(), lambda);
+    }  
 
 
     @Override
@@ -619,7 +578,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
     @Override
     public Object getTableEntry(String name) {
-        if(name.equals("depth")) return Math.sqrt(1.0 / weight.mean()) / getUnit().value();
+        if(name.equals("depth")) return Math.sqrt(1.0 / weight.getMean().value()) / getUnit().value();
         return super.getTableEntry(name);
     }
     

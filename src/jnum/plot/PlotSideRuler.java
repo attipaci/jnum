@@ -177,9 +177,9 @@ public class PlotSideRuler extends FancyRuler {
 		
 		if(isAutoAngles) {
 			double d = Math.abs(max - min);
-			if(d > 3.0 * Unit.deg) unit = Unit.get("deg");
-			else if(d > 3.0 * Unit.arcmin) unit = Unit.get("arcmin");
-			else unit = Unit.get("arcsec");
+			if(d > 3.0 * Unit.deg) setUnit(Unit.get("deg"));
+			else if(d > 3.0 * Unit.arcmin) setUnit(Unit.get("arcmin"));
+			else setUnit(Unit.get("arcsec"));
 		}
 		
 		super.setRange(min, max);

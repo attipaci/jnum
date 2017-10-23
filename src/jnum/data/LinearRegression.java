@@ -23,6 +23,7 @@
 
 package jnum.data;
 
+
 public class LinearRegression {
 
     private int n = 0;
@@ -64,6 +65,7 @@ public class LinearRegression {
 
     public synchronized double getDenominator() {
         if(isCurrent) return currentDenominator;
+        isCurrent = true;
         return currentDenominator = sumw * sumwxx - sumwx * sumwx;
     }
 
@@ -78,6 +80,13 @@ public class LinearRegression {
         return new DataPoint((sumw * sumwxy - sumwx * sumwy) / delta, delta / sumw);
     }
 
+    public synchronized Coefficients getCoefficients() {
+        Coefficients coeff = new Coefficients();
+        coeff.a = getSlope();
+        coeff.b = getIntercept();
+        return coeff;
+    }
+    
     public double getChi2() {
         // TODO
         return Double.NaN;
@@ -88,4 +97,15 @@ public class LinearRegression {
     public synchronized double getParameterCorrelation() { return -sumwx / Math.sqrt(sumwxx); }
 
    
+    
+    public class Coefficients {
+        DataPoint a, b;
+    }
+    
+    
+    
+  
+    
+    
+    
 }
