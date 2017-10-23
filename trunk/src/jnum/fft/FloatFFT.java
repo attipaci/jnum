@@ -391,7 +391,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
         new BlockFork(data, 2<<addressBits) {
             @Override
-            public void process(final float[] data, final int from, final int to) { loadReal(data, addressBits, from, to, isForward); }
+            public void processBlock(final float[] data, final int from, final int to) { loadReal(data, addressBits, from, to, isForward); }
         }.process();
 
         final float d0 = data[0];

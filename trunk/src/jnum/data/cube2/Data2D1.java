@@ -23,8 +23,8 @@
 
 package jnum.data.cube2;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import jnum.NonConformingException;
 import jnum.data.cube.Index3D;
@@ -46,13 +46,22 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
      */
     
 
-    private Vector<ImageType> stack = new Vector<ImageType>();
+    private ArrayList<ImageType> stack;
     
+    
+    public Data2D1() {
+        stack = new ArrayList<ImageType>();
+    }
+    
+    public Data2D1(int initialPlanesCapacity) {
+        this();
+        stack.ensureCapacity(initialPlanesCapacity);
+    }
     
     public abstract ImageType getImage2DInstance(int sizeX, int sizeY);
    
     
-    public Vector<ImageType> getPlanes() { return stack; }
+    public ArrayList<ImageType> getPlanes() { return stack; }
    
     
     public final ImageType getPlane(int index) {
@@ -77,6 +86,9 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         for(int i=count; --i >= 0 && !stack.isEmpty(); ) stack.remove(stack.size() - 1);
     }
     
+    public void trimToSize() {
+        stack.trimToSize();
+    }
     
     @Override
     public Class<? extends Number> getElementType() { return getPlane().getElementType(); }

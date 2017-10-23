@@ -77,47 +77,30 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     private Vector2D reuseIndex = new Vector2D();
 
 
-    private Hashtable<String, Unit> localUnits;
 
- 
-      
     private Map2D() { 
         init();    
-        localUnits = new Hashtable<String, Unit>();
-        addLocalUnits();
     }
-   
+
     public Map2D(Image2D data, int flagType) {
         this();
         setImage(data);
         createFlags(flagType);
     }
-    
+
     public Map2D(Class<? extends Number> dataType, int flagType) {
         this(Image2D.createType(dataType), flagType);
     }
-    
+
     protected void init() {
         reuseIndex = new Vector2D();
         properties = getPropertiesInstance();
         setGrid(new FlatGrid2D());
+        addProprietaryUnits();
     }
-    
-    
-    public void addLocalUnit(Unit u) {
-        localUnits.put(u.name(), u);
-    }
-    
-    public void addLocalUnit(Unit u, String altNames) {
-        Unit.add(u, altNames, localUnits);
-        addLocalUnit(u);
-    }
-    
 
-    public final Hashtable<String, Unit> getLocalUnits() { return localUnits; }
-  
-    
-    
+
+
     @Override
     public void setUnit(String spec) {
         setUnit(spec, getLocalUnits());
@@ -129,36 +112,54 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         if(getImage() != null) getImage().setUnit(u);
     }
 
-    
-    protected void addLocalUnits() {
-        addLocalUnit(properties.getBeamUnit(), "beam, BEAM, Beam, bm, BM, Bm");
-        addLocalUnit(getGrid().getPixelAreaUnit(), "pixel, PIXEL, Pixel, pixels, PIXELS, Pixels, pxl, PXL, Pxl");   
+
+    protected void addProprietaryUnits() {
+        addLocalUnit(new Unit("beam", Double.NaN) {            
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 7593700995697181741L;
+
+            @Override
+            public double value() { return getProperties().getImageBeamArea(); }
+        }, "beam, BEAM, Beam, bm, BM, Bm");
+
+        addLocalUnit(new Unit("pixel", Double.NaN) {            
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -647302245323576100L;
+
+            @Override
+            public double value() { return getGrid().getPixelArea(); }
+        }, "pixel, PIXEL, Pixel, pixels, PIXELS, Pixels, pxl, PXL, Pxl");   
     }
-    
+
     @Override
     public int hashCode() {
         return super.hashCode() ^ properties.hashCode();
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
         if(!(o instanceof Map2D)) return false;
-              
+
         Map2D map = (Map2D) o;
         if(!Util.equals(properties, map.properties)) return false;
-        
+
         return super.equals(o);
     }
 
     protected MapProperties getPropertiesInstance() { return new MapProperties(); }
 
-  
-    
+
+
     @Override
     public Map2D clone() {
         Map2D clone = (Map2D) super.clone();
         clone.reuseIndex = new Vector2D();
+        clone.addProprietaryUnits();
         return clone;
     }
 
@@ -168,39 +169,33 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     @Override
     public Map2D copy(boolean withContent) {
         Map2D copy = clone();
-           
+
         if(properties != null) copy.properties = properties.copy();   
-       
-        copy.localUnits = new Hashtable<String, Unit>(localUnits.size());
-        copy.localUnits.putAll(localUnits);
-        addLocalUnits();
-          
-        // Replace the copy's list of proprietary units with it own...
-        copy.addLocalUnits();
         
+        // Replace the clone's list of proprietary units with it own...
+        copy.addProprietaryUnits();
+
         // Units might have proprietary components, which aren't easily copied over.
         // Hence, the safest is to re-construct the units of the copy from scratch
         // based on the specification.
         copy.setUnit(getUnit().name());
-          
-        
+
         if(getImage() != null) copy.setImage(getImage().copy(withContent));
         if(getFlags() != null) copy.setFlags(getFlags().copy(withContent));
-  
-        
+
         return copy;
     }
-    
-   
+
+
     public void resetProcessing() {
         getProperties().resetProcessing();
     }
-    
+
     public final void renew() {
         resetProcessing();
         clear();
     }
-    
+
     public boolean isConsistent() {
         if(getImage() == null) return false;
         if(getFlags() == null) return false;
@@ -216,7 +211,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         // TODO size check...
         return null;        
     }
-   
+
 
     @Override
     public final Image2D getImage() { return (Image2D) getBasis(); } 
@@ -250,36 +245,36 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
 
     public final Projection2D<?> getProjection() { return getGrid().getProjection(); }
-    
+
     public final void setProjection(Projection2D<?> projection) { ((Grid2D) getGrid()).setProjection(projection); }
-    
+
 
     public final Coordinate2D getReference() { return getGrid().getReference(); }
 
     public final void setReference(Coordinate2D coords) { ((Grid2D) getGrid()).setReference(coords); } 
-    
-    
+
+
     public final Vector2D getResolution() { return getGrid().getResolution(); }
-  
+
     public final void setResolution(Vector2D delta) { getGrid().setResolution(delta); }
-    
+
     public final void setResolution(double dx, double dy) { getGrid().setResolution(dx, dy); }
-    
-    
+
+
     public final Vector2D getReferenceIndex() { return getGrid().getReferenceIndex(); }
 
     public final void setReferenceIndex(Vector2D v) { getGrid().setReferenceIndex(v); }
-    
 
-   
+
+
     public final Gaussian2D getSmoothing() { return properties.getSmoothing(); }
-    
+
     public final double getBeamArea() { return properties.getImageBeamArea(); }
-    
-     
+
+
     public Class<? extends Coordinate2D> getCoordinateClass() { return getGrid().getReference().getClass(); }
-    
- 
+
+
     @Override
     public void setSize(int sizeX, int sizeY) { 
         getImage().setSize(sizeX, sizeY); 
@@ -292,7 +287,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         super.destroy();
         getImage().destroy();     
     }
-    
+
 
     public void noData() {
         new Fork<Void>() {
@@ -346,7 +341,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     }
 
 
-    
+
     public void crop(int imin, int jmin, int imax, int jmax) {
         getImage().crop(imin, jmin, imax, jmax);
         getFlags().crop(imin, jmin, imax, jmax);
@@ -410,7 +405,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     public final void smooth(Gaussian2D psf) { 
         int stepX = (int)Math.ceil(psf.extentInX()/(5.0 * getGrid().pixelSizeX()));
         int stepY = (int)Math.ceil(psf.extentInY()/(5.0 * getGrid().pixelSizeY()));
- 
+
         fastSmooth(psf.getBeam(getGrid()), stepX, stepY);
     }
 
@@ -427,15 +422,15 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         properties.addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
-   
-    
+
+
     public void filterAbove(double FWHM) {
         filterAbove(FWHM, null);
     }
-    
+
     public void filterAbove(double FWHM, final Validating2D validator) {
         final Map2D extended = copy(true);
-        
+
         // Null out the points that are to be skipped over by the validator...
         if(validator != null) extended.new Fork<Void>() {
             @Override
@@ -443,7 +438,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
                 if(!validator.isValid(i, j)) extended.set(i,  j, 0);
             }
         }.process();
-        
+
         extended.smoothTo(FWHM);
 
         new Fork<Void>() {
@@ -455,7 +450,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
         properties.updateFiltering(FWHM);
     }
-    
+
     public void fftFilterAbove(double FWHM) {
         fftFilterAbove(FWHM, null);
     }
@@ -467,7 +462,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     public void fftFilterAbove(double FWHM, final Validating2D validator) {
         fftFilterAbove(FWHM, validator, null);
     }
-    
+
     public final void fftFilterAbove(double FWHM, final Validating2D validator, final Values2D weight) {
         final int nx = ExtraMath.pow2ceil(sizeX());
         final int ny = ExtraMath.pow2ceil(sizeY());
@@ -482,7 +477,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
             protected void process(final int i, final int j) {
                 if(!isValid(i, j)) return;  
                 if(validator != null) if(!validator.isValid(i, j)) return;
-        
+
                 final double w = weight == null ? 1.0 : weight.get(i,  j).doubleValue();
                 transformer[i][i] = w * get(i, j).doubleValue();
                 sumw += w;
@@ -541,7 +536,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         properties.updateFiltering(FWHM);
     }
 
-    
+
 
     public Transforming<Vector2D> getIndexTransformTo(Map2D map) {
         // See if we can use a faster/simpler Cartesian transform for re-mapping...
@@ -549,13 +544,13 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
             // If both a Cartesian projections, then yes...
             if(getProjection() instanceof DefaultProjection2D)
                 return new CartesianGridTransform2D(getGrid(), map.getGrid());
-            
+
             // Or, if not re-projecting (i.e. using the same projections and
             // referenced to the same position...
             if(map.getGrid().getReference().equals(getGrid().getReference())) 
                 return new CartesianGridTransform2D(getGrid(), map.getGrid());
         }
-        
+
         // Otherwise, go with the full-blown reprojection...
         return new ProjectedIndexTransform2D(getGrid(), map.getGrid());
     }
@@ -578,40 +573,40 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         return antialias == null ? null : antialias.getBeam(getGrid()); 
     }
 
-    
+
     public void resampleFrom(Map2D map) {
         resampleFrom(map, null);
     }
-    
+
     public void resampleFrom(Map2D map, Values2D weight) {
         Referenced2D beam = getAntialiasingBeamImageFor(map);
         resampleFrom(map.getImage(), map.getIndexTransformTo(this), beam, weight);       
         properties.copyProcessingFrom(map.getProperties());
     }
-   
+
     public void resample(double newres) {
         resample(new Vector2D(newres, newres));
     }
-    
+
     public void resample(Vector2D newres) {
         Map2D clone = clone();
-        
+
         Vector2D resolution = getResolution();
         setSize((int) Math.ceil(sizeX() * resolution.x() / newres.x()), (int) Math.ceil(sizeY() * resolution.y() / newres.y()));
-        
+
         setGrid(getGrid().forResolution(resolution));
-        
+
         resampleFrom(clone);        
     }
 
     public DataPoint getAsymmetry(final Vector2D centerIndex, final double angle, final Range radialRange) {    
         return super.getAsymmetry(getGrid(), centerIndex, angle, radialRange);
     }
-    
+
     public Asymmetry2D getAsymmetry2D(Vector2D centerIndex, double angle, Range radialRange) {
         return super.getAsymmetry2D(getGrid(), centerIndex, angle, radialRange);
     }
-    
+
 
     @Override
     public Object getTableEntry(String name) {
@@ -619,33 +614,33 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         else if(name.equals("min")) return getMin().doubleValue() / getUnit().value();
         else if(name.equals("max")) return getMax().doubleValue() / getUnit().value();  
         else if(name.equals("unit")) return getUnit().name();
-        else if(name.equals("mean")) return mean() / getUnit().value();
-        else if(name.equals("median")) return median() / getUnit().value();
+        else if(name.equals("mean")) return getMean().value() / getUnit().value();
+        else if(name.equals("median")) return getMedian().value() / getUnit().value();
         else if(name.equals("rms")) return getRMS(true) / getUnit().value();
         else return properties.getTableEntry(name);
     }
-    
+
 
     @Override
     public Fits createFits(Class<? extends Number> dataType) throws FitsException {
         FitsFactory.setLongStringsEnabled(true);
         FitsFactory.setUseHierarch(true);
-        
+
         Fits fits = new Fits(); 
         ArrayList<BasicHDU<?>> hdus = getHDUs(dataType);
-        
+
         for(int i=0; i<hdus.size(); i++) fits.addHDU(hdus.get(i));
         return fits;
     }
-     
+
 
     public boolean read(BasicHDU<?>[] HDUs) throws Exception {
-        
+
         for(int i=0; i<HDUs.length; i++) if(HDUs[i] instanceof ImageHDU) {
             readData((ImageHDU) HDUs[i]);
             return true;          
         }
-   
+
         return false;
     }
 
@@ -654,9 +649,8 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         // like 'pixel', 'beam'...
         properties.resetProcessing();
         properties.parseHeader(hdu.getHeader());    
-        
+
         getImage().read(hdu, getLocalUnits());
-        
 
         if(!conformsTo(getFlags().sizeX(), getFlags().sizeY())) 
             getFlags().setSize(sizeX(), sizeY());
@@ -664,14 +658,14 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
         validate();
     }
-  
+
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
         ArrayList<BasicHDU<?>> hdus = new ArrayList<BasicHDU<?>>();
-        
+
         ImageHDU hdu = createHDU(dataType);
         editHeader(hdu.getHeader());
         hdus.add(hdu);
-        
+
         return hdus;
     }
 
@@ -699,7 +693,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         String sizeInfo = super.getInfo() + " (" +
                 Util.f1.format(sizeX() * grid.pixelSizeX() / sizeUnit.value()) + " x " + 
                 Util.f1.format(sizeY() * grid.pixelSizeY() / sizeUnit.value()) + " " + sizeUnit.name() + ").";
-        
+
         String info = properties.brief(sizeInfo);
 
         return info;
@@ -708,16 +702,16 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     public void filterBeamCorrect() {
         filterCorrect(getProperties().getUnderlyingBeam().getCircularEquivalentFWHM());
     }
-    
+
     public void filterCorrect(double underlyingFWHM) {
         filterCorrect(underlyingFWHM, this);
     }
-    
+
     public void filterCorrect(double underlyingFWHM, Values2D reference) {
         double blankingValue = getProperties().getFilterBlanking();
         filterCorrectValidated(underlyingFWHM, new RangeRestricted2D(reference, new Range(-blankingValue, blankingValue)));
     }
-    
+
     public void filterCorrectValidated(double underlyingFWHM, final Validating2D validator) {  
         // Undo prior corrections if necessary
         if(!properties.isCorrected()) { 
@@ -736,16 +730,16 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         properties.setCorrectingFWHM(underlyingFWHM);
     }
 
-    
+
     public void undoFilterCorrect() {
         undoFilterCorrect(this);
     }
-    
+
     public void undoFilterCorrect(Data2D reference) {
         double blankingValue = getProperties().getFilterBlanking();
         undoFilterCorrectBy(new RangeRestricted2D(reference, new Range(-blankingValue, blankingValue)));
     }
-    
+
 
     public void undoFilterCorrectBy(final Validating2D validator) {
         if(!properties.isCorrected()) return;
@@ -765,11 +759,11 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     public static Map2D read(Fits fits, int hduIndex) throws Exception {
         return read(fits, hduIndex, Flag2D.TYPE_INT);
     }
-    
+
     public static Map2D read(Fits fits, int hduIndex, int flagType) throws Exception {
         return read(fits, hduIndex, null, flagType);
     }
-    
+
     public static Map2D read(Fits fits, int hduIndex, Hashtable<String, Unit> extraUnits, int flagType) throws Exception {
         Image2D image = Image2D.read(fits, hduIndex, extraUnits);
         Map2D map = new Map2D(image, flagType);
@@ -777,5 +771,5 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         return map;
     }
 
-    
+
 }

@@ -414,7 +414,7 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
         new BlockFork(data, 2<<addressBits) {
             @Override
-            public void process(double[] data, int from, int to) { loadReal(data, addressBits, from, to, isForward); }
+            public void processBlock(double[] data, int from, int to) { loadReal(data, addressBits, from, to, isForward); }
         }.process();
 
         final double d0 = data[0];

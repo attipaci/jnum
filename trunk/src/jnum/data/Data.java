@@ -25,10 +25,12 @@ package jnum.data;
 
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.Verbosity;
@@ -67,6 +69,9 @@ TableFormatter.Entries {
 
     private ArrayList<String> history;
     
+    private Hashtable<String, Unit> localUnits;
+
+
     
     private boolean logNewData;
  
@@ -75,7 +80,7 @@ TableFormatter.Entries {
         setVerbose(false);
         setBlankingValue(Double.NaN);
         setInterpolationType(SPLINE);
-        history = new ArrayList<String>(); 
+        history = new ArrayList<String>();
         setDefaultUnit();
         logNewData = true;
     }
@@ -127,6 +132,12 @@ TableFormatter.Entries {
     public Data<IndexType, PositionType, VectorType> clone() {
         Data<IndexType, PositionType, VectorType> clone = (Data<IndexType, PositionType, VectorType>) super.clone();
         if(history != null) clone.history = (ArrayList<String>) history.clone();
+        
+        if(localUnits != null) {
+            clone.localUnits = new Hashtable<String, Unit>(localUnits.size());
+            clone.localUnits.putAll(localUnits);
+        }
+            
         clone.logNewData = true;
         return clone;
     }
@@ -163,6 +174,25 @@ TableFormatter.Entries {
         history.addAll(entries);
     }
 
+    
+    
+
+    public void addLocalUnit(Unit u) {
+        if(localUnits == null) localUnits = new Hashtable<String, Unit>();
+        u.registerTo(localUnits);
+    }
+
+    public void addLocalUnit(Unit u, String altNames) {
+        if(localUnits == null) localUnits = new Hashtable<String, Unit>();
+        u.registerTo(localUnits, altNames);
+        addLocalUnit(u);
+    }
+
+
+    public Hashtable<String, Unit> getLocalUnits() { return localUnits; }
+
+
+    
 
     public final Number getBlankingValue() {
         return blankingValue;
@@ -619,13 +649,12 @@ TableFormatter.Entries {
 
 
     public final double level(boolean isRobust) {
-        double level = isRobust ? median() : mean();
+        double level = isRobust ? getMedian().value() : getMean().value();
         add(-level);
         return level;
     }
     
-    
-    public double mean() {
+    public WeightedPoint getMean() {
         return smartForkValid(new ParallelPointOp.Average<Number>() {
             @Override
             public final double getValue(Number point) {
@@ -636,13 +665,34 @@ TableFormatter.Entries {
             public final double getWeight(Number point) {
                 return 1.0;
             }  
-        }).value();
+        });
     }
     
-    public double median() {
+    public final WeightedPoint getWeightedMean(final IndexedValues<IndexType> weights) {
+        return smartFork(new ParallelPointOp.Average<IndexType>() {
+            @Override
+            public final double getValue(IndexType index) {
+                return get(index).doubleValue();
+            }
+
+            @Override
+            public final double getWeight(IndexType index) {
+                if(!isValid(index)) return 0.0;
+                return weights.get(index).doubleValue();
+            }  
+        });
+    }
+    
+    public WeightedPoint getMedian() {
         final double[] temp = getValidSortingArray();
-        if(temp.length == 0) return Double.NaN;
-        return Statistics.median(temp, 0, temp.length);      
+        if(temp.length == 0) return new WeightedPoint(Double.NaN, 0.0);
+        return new WeightedPoint(Statistics.Inplace.median(temp, 0, temp.length), temp.length);      
+    }
+    
+    public final WeightedPoint getWeightedMedian(final IndexedValues<IndexType> weights) {   
+        final WeightedPoint[] temp = getValidSortingArray(weights);
+        if(temp.length == 0) return new WeightedPoint(Double.NaN, 0.0);
+        return Statistics.Inplace.median(temp, 0, temp.length);      
     }
     
     public double select(double fraction) {
@@ -651,10 +701,10 @@ TableFormatter.Entries {
         
         final double[] temp = getValidSortingArray();
         if(temp.length == 0) return Double.NaN;
-        return Statistics.select(temp, fraction, 0, temp.length);
+        return Statistics.Inplace.select(temp, fraction, 0, temp.length);
     }
     
-    
+
     private double[] getValidSortingArray() {    
         final double[] sorter = new double[countPoints()];
         
@@ -673,11 +723,33 @@ TableFormatter.Entries {
                 sorter[k++] = point.doubleValue();
             }   
         });
-        
-        
+           
         return sorter;
     }
     
+    private WeightedPoint[] getValidSortingArray(final IndexedValues<IndexType> weights) {    
+        final WeightedPoint[] sorter = new WeightedPoint[countPoints()];
+        
+        if(sorter.length == 0) return sorter;
+        
+        loop(new PointOp.Simple<IndexType>() {
+            private int k;
+            
+            @Override
+            protected void init() {
+                k = 0;
+            }
+            
+            @Override
+            public void process(IndexType index) {
+                if(!isValid(index)) return;
+                sorter[k++] = new WeightedPoint(get(index).doubleValue(), weights.get(index).doubleValue());
+            }   
+        });
+           
+        return sorter;
+    }
+   
     public final double getRMS(boolean isRobust) {
         return isRobust ? getRobustRMS() : getRMS();
     }
@@ -706,11 +778,11 @@ TableFormatter.Entries {
     public double getRobustRMS() { return Math.sqrt(getRobustVariance()); }
     
     public double getRobustVariance() {
-        final double[] chi2 = getValidSortingArray();
-        if(chi2.length == 0) return Double.NaN;
+        final double[] var = getValidSortingArray();
+        if(var.length == 0) return Double.NaN;
         
-        for(int i=chi2.length; --i >= 0; ) chi2[i] *= chi2[i];
-        return Statistics.median(chi2) / Statistics.medianNormalizedVariance;
+        for(int i=var.length; --i >= 0; ) var[i] *= var[i];
+        return Statistics.Inplace.median(var) / Statistics.medianNormalizedVariance;
     }
 
     
@@ -774,6 +846,22 @@ TableFormatter.Entries {
 
   
 
+    
+    // TODO Make default method in Observations
+    public void memCorrect(final IndexedValues<IndexType> model, final IndexedValues<IndexType> noise, final double lambda) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+
+         @Override
+         public void process(IndexType index) {
+             if(isValid(index)) {
+                 final double noiseValue = noise.get(index).doubleValue();
+                 final double target = model == null ? 0.0 : model.get(index).doubleValue();
+                 final double memValue = ExtraMath.hypot(get(index).doubleValue(), noiseValue) / ExtraMath.hypot(target, noiseValue);
+                 add(index, -Math.signum(get(index).doubleValue()) * lambda * noiseValue * Math.log(memValue));
+             }
+         }            
+        });          
+     }  
 
     
 
@@ -838,8 +926,8 @@ TableFormatter.Entries {
         else if(name.equals("size")) return getSizeString();
         else if(name.equals("min")) return getMin().doubleValue();
         else if(name.equals("max")) return getMax().doubleValue();
-        else if(name.equals("mean")) return mean();
-        else if(name.equals("median")) return median();
+        else if(name.equals("mean")) return getMean();
+        else if(name.equals("median")) return getMedian();
         else if(name.equals("rms")) return getRMS(true);
         else return TableFormatter.NO_SUCH_DATA;
     }

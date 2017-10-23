@@ -23,10 +23,10 @@
 
 package jnum.data.cube2;
 
-import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.data.IndexedObservations;
 import jnum.data.Observations;
+import jnum.data.WeightedPoint;
 import jnum.data.cube.Data3D;
 import jnum.data.cube.Index3D;
 import jnum.data.cube.Values3D;
@@ -35,7 +35,7 @@ import jnum.data.image.Data2D;
 import jnum.data.image.Gaussian2D;
 import jnum.data.image.Observation2D;
 import jnum.math.Vector3D;
-import jnum.parallel.ParallelPointOp;
+
 
 public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Observations<Data3D>, IndexedObservations<Index3D> {
  
@@ -55,28 +55,31 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
   
     @Override
     public Data2D1<Data2D> getWeights() {
-        Data2D1<Data2D> weight = new Data2D1<Data2D>() {
+        Data2D1<Data2D> weight = new Data2D1<Data2D>(sizeZ()) {
             @Override
             public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
         };
+        
         for(int i=0; i<sizeZ(); i++) weight.addPlane(getPlane(i).getWeights());
+       
         return weight;
     }
     
     @Override
     public Data2D1<Data2D> getExposures() {
-        Data2D1<Data2D> weight = new Data2D1<Data2D>() {
+        Data2D1<Data2D> exposure = new Data2D1<Data2D>(sizeZ()) {
             @Override
             public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
         };
-        for(int i=0; i<sizeZ(); i++) weight.addPlane(getPlane(i).getExposures());
-        return weight;
+       
+        for(int i=0; i<sizeZ(); i++) exposure.addPlane(getPlane(i).getExposures());
+       
+        return exposure;
     }
     
 
     @Override
-    public Overlay3D getNoise() {
-          
+    public Overlay3D getNoise() {       
         return new Overlay3D(this) {   
          
             @Override
@@ -96,10 +99,8 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
             
             @Override
             protected void setDefaultUnit() { setUnit(Observation2D1.this.getUnit()); }
-        
 
-        };
-       
+        };   
     }
 
     @Override
@@ -214,23 +215,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
         return getPlane(index.k()).exposureAt(index.i(), index.j());
     }
 
-    
-    // TODO move to IndexedObservations as default method.
-    public void memCorrect(final Values3D model, final double lambda) {
-        smartFork(new ParallelPointOp.Simple<Index3D>() {
-
-         @Override
-         public void process(Index3D index) {
-             if(isValid(index)) {
-                 final double noise = noiseAt(index);
-                 final double target = model == null ? 0.0 : model.get(index).doubleValue();
-                 final double memValue = ExtraMath.hypot(get(index).doubleValue(), noise) / ExtraMath.hypot(target, noise);
-                 add(index, -Math.signum(get(index).doubleValue()) * lambda * noise * Math.log(memValue));
-             }
-         }            
-        });    
-        
-    }   
+   
    
     
     public void smooth2D(double FWHM) {
@@ -265,4 +250,18 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
         for(Observation2D plane : getPlanes()) plane.crop(fromX, fromY, toX, toY);
     }
     
+    
+    
+    @Override
+    public WeightedPoint getMean() { return getWeightedMean(getWeights()); }
+
+    @Override
+    public WeightedPoint getMedian() { return getWeightedMedian(getWeights()); }
+    
+   
+    public final void memCorrect(final Values3D model, final double lambda) {
+        memCorrect(model, this.getNoise(), lambda);
+    }  
+
+   
 }

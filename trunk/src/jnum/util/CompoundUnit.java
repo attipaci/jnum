@@ -83,11 +83,15 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		
 		if(factors.isEmpty()) name.append(Unit.unity.name());
 		else for(int i=0; i<factors.size(); i++) {
-			String uName = factors.get(i).name();
-			if(i==0) {
-				if(uName.charAt(0) == '/') name.append("1");
+		    ExponentUnit factor = factors.get(i);
+		    if(factor.getExponent() == 0.0) continue; // Skip factors with zero exponent;
+		    
+			String uName = factor.name();
+			
+			if(uName.charAt(0) == '/') {
+			    if(i==0) name.append("1");
+			    else name.append(" ");
 			}
-			else if(uName.charAt(0) != '/') name.append(" ");
 			if(uName.length() > 0) name.append(uName);
 		}
 		
@@ -159,34 +163,8 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		for(Unit u : factors) product *= u.value();
 		return product;
 	}
+
 	
-	/* (non-Javadoc)
-	 * @see jnum.Unit#setMultiplier(jnum.Unit.Multiplier)
-	 */
-	@Override
-	public void setMultiplier(Multiplier m) { 
-		if(factors.isEmpty()) factors.add(new ExponentUnit(Unit.unity, 1.0));
-		factors.get(0).setMultiplier(m);	
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Unit#getMultiplier()
-	 */
-	@Override
-	public Multiplier getMultiplier() { 
-		if(factors.isEmpty()) return Multiplier.unity;
-		return factors.get(0).getMultiplier();	
-	}
-	
-	
-	
-	/**
-	 * Parses the.
-	 *
-	 * @param spec the spec
-	 */
-	
-	@Override
 	public void parse(String spec) {
 		parse(spec, standardUnits);
 	}

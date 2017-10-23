@@ -301,20 +301,6 @@ public class MapProperties extends FitsProperties {
         return grid.getDefaultUnit();
     }
     
-    public Unit getBeamUnit() {
-        return new Unit("beam", Double.NaN) {            
-            /**
-             * 
-             */
-            private static final long serialVersionUID = 7593700995697181741L;
-
-            @Override
-            public double value() { 
-                return getImageBeamArea();     
-            }
-        };
-    }
-   
     
     public void parseCoordinateInfo(Header header, String alt) throws InstantiationException, IllegalAccessException {
         setGrid(Grid2D.fromHeader(header, alt));

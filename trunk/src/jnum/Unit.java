@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import jnum.util.HashCode;
+import jnum.util.PrefixedUnit;
 
 // TODO: Auto-generated Javadoc
 // TODO Convert to Enum?
@@ -49,19 +50,16 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     // Usage Example:
     //    - To convert degrees to hourAngle : hourAngle = (degrees * Unit.deg) / Unit.hourAngle
 
-    /** The multiplier. */
-    private Multiplier multiplier = Multiplier.unity;
-
     /** The name. */
-    private String name = "";
+    private String name;
 
     /** The value. */
-    private double value = Double.NaN;
+    private double value;
 
     /**
      * Instantiates a new unit.
      */
-    public Unit() {}
+    public Unit() { this(null, Double.NaN); }
 
     public Unit(String name) {
         this(name, Double.NaN);
@@ -77,19 +75,27 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         this.value = value; 
         this.name = name; 
     }
+   
 
-    /**
-     * Instantiates a new unit.
-     *
-     * @param name the name
-     * @param value the value
-     * @param register the register
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
      */
-    public Unit(String name, double value, boolean register) {
-        this(name, value);
-        if(register) register();		
+    @Override
+    public Unit clone() {
+        try { return (Unit) super.clone(); }
+        catch(CloneNotSupportedException e) { return null; }        
     }
 
+    /* (non-Javadoc)
+     * @see jnum.Copiable#copy()
+     */
+    @Override
+    public Unit copy() {
+        Unit u = clone();
+        if(name != null) u.name = new String(name);
+        return u;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -101,7 +107,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         Unit u = (Unit) o;
         if(!u.name().equals(name())) return false;
         if(u.value() != value()) return false;
-        if(!u.multiplier.equals(multiplier)) return false;
+       
         
         return true;
     }
@@ -111,7 +117,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
      */
     @Override
     public int hashCode() {
-        return super.hashCode() ^ name.hashCode() ^ HashCode.from(value) ^ multiplier.hashCode();
+        return super.hashCode() ^ name().hashCode() ^ HashCode.from(value);
     }
 
     /**
@@ -119,20 +125,10 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
      *
      * @return the string
      */
-    public String name() { return multiplier.getLetterCode() + name; }
+    public String name() { return name; }
 
-    /**
-     * Sets the name.
-     *
-     * @param value the new name
-     */
-    public void setName(String value) { name = value; }	
-    /**
-     * Value.
-     *
-     * @return the double
-     */
-    public double value() { return multiplier.value * value; }
+    
+    public double value() { return value; }
 
 
     @Override
@@ -154,72 +150,42 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     public long longValue() {
        return Math.round(value);
     }
-
-    /**
-     * Sets the value.
-     *
-     * @param x the new value
-     */
-    public void setValue(double x) { value = x; }
-
-    /**
-     * Sets the multiplier.
-     *
-     * @param m the new multiplier
-     */
-    public void setMultiplier(Multiplier m) { this.multiplier = m; }
-
-    /**
-     * Multiply by.
-     *
-     * @param m the m
-     */
-    public void multiplyBy(Multiplier m) {
-        setMultiplier(Multiplier.getMultiplier(getMultiplier().value * m.value));	
-    }
-
-    /**
-     * Sets the multiplier for.
-     *
-     * @param value the new multiplier for
-     */
-    public void setMultiplierFor(double value) {
-        multiplyBy(Multiplier.getMultiplier(value));		
-    }
-
-
-    /**
-     * Gets the multiplier.
-     *
-     * @return the multiplier
-     */
-    public Multiplier getMultiplier() { return multiplier; }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    public Unit clone() {
-        try { return (Unit) super.clone(); }
-        catch(CloneNotSupportedException e) { return null; }		
-    }
-
-    /* (non-Javadoc)
-     * @see jnum.Copiable#copy()
-     */
-    @Override
-    public Unit copy() {
-        Unit u = clone();
-        u.name = new String(name);
-        return u;
-    }
+ 
+  
 
     /**
      * Register.
      */
-    public void register() {
-        if(name == null) standardUnits.put("unity", this);
-        else standardUnits.put(name, this);
+    public void register() throws IllegalArgumentException {
+        registerTo(standardUnits);
+    }
+    
+    public void registerTo(Hashtable<String, Unit> lookup) throws IllegalArgumentException {
+        if(name() == null) throw new IllegalArgumentException("Unnamed unit.");
+        
+        // Register only base unit names, not compound names or exponential ones... 
+        if(isBaseType(name())) standardUnits.put(name(), this);
+        else throw new IllegalArgumentException("Not a base unit: " + name());
+    }
+    
+
+    public void registerTo(Hashtable<String, Unit> units, String names) {
+        StringTokenizer values = new StringTokenizer(names, " \t,;");
+        while(values.hasMoreTokens()) {
+            String spec = values.nextToken();
+            if(isBaseType(spec)) units.put(spec, this);
+        }
+    }
+    
+    
+    static boolean isBaseType(String spec) {
+        // Register only base unit names, not compound names or exponential ones... 
+        StringTokenizer parts = new StringTokenizer(spec, " \t*/^(){}[]=");
+        if(parts.countTokens() == 1) {
+            String part = parts.nextToken();
+            if(part.length() == spec.length()) return true;
+        }
+        return false;
     }
 
     /**
@@ -229,7 +195,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
      * @return the unit
      */
     public static Unit get(String id) {
-        return fetch(id, standardUnits);
+        return get(id, standardUnits);
     }
 
     /**
@@ -241,47 +207,15 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
      * @throws IllegalArgumentException the illegal argument exception
      */
     public static Unit get(String id, Map<String, Unit> baseUnits) throws IllegalArgumentException {		
-        if(baseUnits == null) return fetch(id, standardUnits);
-        try { return fetch(id, baseUnits); }
-        catch(IllegalArgumentException e) { return fetch(id, standardUnits); }
+        if(baseUnits == null) return PrefixedUnit.createFrom(id, standardUnits);
+        
+        try { return PrefixedUnit.createFrom(id, baseUnits); }
+        catch(IllegalArgumentException e) { return PrefixedUnit.createFrom(id, standardUnits); }
     }
 
-    /**
-     * Fetch.
-     *
-     * @param id the id
-     * @param baseUnits the base units
-     * @return the unit
-     * @throws IllegalArgumentException the illegal argument exception
-     */
-    private static Unit fetch(String id, Map<String, Unit> baseUnits) throws IllegalArgumentException {		
-        Unit u = baseUnits.get(id);
-        if(u != null) return u.clone();
+    
 
-        if(id.length() < 2) throw new IllegalArgumentException("No such unit: '" + id + "'.");
-
-        // Try unit with multiplier...
-        u = baseUnits.get(id.substring(1));
-        if(u == null) throw new IllegalArgumentException("No such unit: '" + id + "'.");
-        u = u.clone();		
-
-        u.multiplier = getMultiplier(id.charAt(0)) ;
-        if(u.multiplier == null) throw new IllegalArgumentException("No unit multiplier: '" + id.charAt(0) + "'.");
-
-        return u;
-    }
-
-    /**
-     * Parses the.
-     *
-     * @param name the name
-     */
-    public void parse(String name) {
-        Unit u = get(name);
-        this.name = u.name;
-        this.value = u.value;
-        this.multiplier = u.multiplier;
-    }
+  
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -354,39 +288,6 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     public final static double yotta = 1.0e24;  // Y
 
 
-
-    /**
-     * Gets the multiplier.
-     *
-     * @param c the c
-     * @return the multiplier
-     */
-    public static Multiplier getMultiplier(char c) {	
-        switch(c) {
-        case ' ': return Multiplier.unity;
-        case 'd': return Multiplier.deci; // could also be deka
-        case 'c': return Multiplier.centi;
-        case 'm': return Multiplier.milli;
-        case 'u': return Multiplier.micro;
-        case Symbol.mu: return Multiplier.micro;
-        case 'n': return Multiplier.nano;
-        case 'p': return Multiplier.pico;
-        case 'f': return Multiplier.femto;
-        case 'a': return Multiplier.atto;
-        case 'z': return Multiplier.zepto;
-        case 'y': return Multiplier.yocto;
-        case 'h': return Multiplier.hecto;
-        case 'k': return Multiplier.kilo;
-        case 'M': return Multiplier.mega;
-        case 'G': return Multiplier.giga;
-        case 'T': return Multiplier.tera;
-        case 'P': return Multiplier.peta;
-        case 'E': return Multiplier.exa;
-        case 'Z': return Multiplier.zetta;
-        case 'Y': return Multiplier.yotta;
-        default: return null;
-        }
-    }
 
     // Generic Dimensionless units
     /** The Constant percent. */
@@ -1408,23 +1309,24 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     public final static double mpg = mile / gal;
 
 
-
-    public static void add(Unit u, String names, Hashtable<String, Unit> units) {
-        StringTokenizer values = new StringTokenizer(names, " \t,");
-        while(values.hasMoreTokens()) units.put(values.nextToken(), u);
-    }
     
+
     /**
-     * Register.
+     * Register
      *
      * @param value the value
      * @param names the names
      */
     public static void register(double value, String names) {
-        StringTokenizer tokens = new StringTokenizer(names, ",; \t");
-        while(tokens.hasMoreTokens()) new Unit(tokens.nextToken(), value).register();
+        StringTokenizer tokens = new StringTokenizer(names, " \t,;");
+        
+        while(tokens.hasMoreTokens()) {
+            try { new Unit(tokens.nextToken().trim(), value).register(); }
+            catch(IllegalArgumentException e) {}
+        }
     }
 
+   
     /** The Constant unity. */
     public final static Unit arbitrary = new Unit("a.u.", 1.0);
 
@@ -1437,7 +1339,8 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
 
     static {
         register(1.0, "arb.u., a.u., Arb.u, Arb.U., ARB.U., A.U.");
-        register(1.0, "U, uno, count, counts, ct, pixel, pixels, pxl, photon, photons, ph, piece, pcs, unit, adu, bin, SI, 1");
+        register(1.0, "U, uno, count, counts, ct, photon, photons, ph, piece, pcs, unit, adu, bin");
+        register(1.0, "pixel, pixels, pxl");
         register(0.01, "%, percent");
         register(ppm, "ppm");
         register(ppb, "ppb");
@@ -1447,7 +1350,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         register(m, "m, meter, metre, meters, metres, M, METRE, METER, METRES, METERS");
         register(s, "s, sec, second, seconds, (S), SEC, SECOND, SECONDS");
         register(A, "A, amp, ampere");
-        register(K, "K, " + Symbol.degree + "K, oK, kelvin, kelvins, Kelvin, Kelvins, KELVIN, KELVINS");
+        register(K, "K, " + Symbol.degree + "K, kelvin, kelvins, Kelvin, Kelvins, KELVIN, KELVINS");
         register(cd, "cd, candela");
 
         register(rad, "rad, radian, radians, RAD, RADIAN, RADIANS");
@@ -1552,148 +1455,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
 
     }
 
-    // TODO convert to Enum...
-    /**
-     * The Enum Multiplier.
-     */
-    @SuppressWarnings("hiding")
-    public static enum Multiplier {
-
-        /** The unity. */
-        unity ("", 1.0, ""),
-
-        /** The deci. */
-        deci ("d", 0.1, "deci"),
-
-        /** The centi. */
-        centi ("c", 1.0e-2, "centi"),
-
-        /** The milli. */
-        milli ("m", 1.0e-3, "milli"),
-
-        /** The micro. */
-        micro ("u", 1.0e-6, "micro"), 
-
-        /** The nano. */
-        nano ("n", 1.0e-9, "nano"),
-
-        /** The pico. */
-        pico ("p", 1.0e-12, "pico"),
-
-        /** The femto. */
-        femto ("f", 1.0e-15, "femto"), 
-
-        /** The atto. */
-        atto ("a", 1.0e-18, "atto"), 
-
-        /** The zepto. */
-        zepto ("z", 1.0e-21, "zepto"), 
-
-        /** The yocto. */
-        yocto ("y", 1.0e-24, "yocto"), 
-
-        /** The deka. */
-        deka ("dk", 10.0, "deka"),
-
-        /** The hecto. */
-        hecto ("h", 100.0, "hecto"),
-
-        /** The kilo. */
-        kilo ("k", 1.0e3, "kilo"),
-
-        /** The mega. */
-        mega ("M", 1.0e6, "Mega"), 
-
-        /** The giga. */
-        giga ("G", 1.0e9, "Giga"),
-
-        /** The tera. */
-        tera ("T", 1.0e12, "Tera"), 
-
-        /** The peta. */
-        peta ("P", 1.0e15, "Peta"), 
-
-        /** The exa. */
-        exa ("E", 1.0e18, "Exa"),
-
-        /** The zetta. */
-        zetta ("Z", 1.0e21, "Zetta"),
-
-        /** The yotta. */
-        yotta ("Y", 1.0e24, "Yotta");
-
-        /** The value. */
-        final double value;
-
-        /** The letter code. */
-        final String letterCode;
-
-        /** The name. */
-        final String name;
-
-        /**
-         * Instantiates a new multiplier.
-         *
-         * @param c the c
-         * @param multiplier the multiplier
-         * @param name the name
-         */
-        private Multiplier(String c, double multiplier, String name) {
-            this.letterCode = c;
-            this.value = multiplier;
-            this.name = name;
-        }
-
-        /**
-         * Gets the value.
-         *
-         * @return the value
-         */
-        public double getValue() { return value; }
-
-        /**
-         * Gets the letter code.
-         *
-         * @return the letter code
-         */
-        public String getLetterCode() { return letterCode; }
-
-        /**
-         * Gets the name.
-         *
-         * @return the name
-         */
-        public String getName() { return name; }
-
-        /**
-         * Gets the multiplier.
-         *
-         * @param value the value
-         * @return the multiplier
-         */
-        public static Multiplier getMultiplier(double value) {
-            if(value < 1e-21) return yocto;
-            if(value < 1e-18) return zepto;
-            if(value < 1e-15) return atto;
-            if(value < 1e-12) return femto;
-            if(value < 1e-9) return pico;
-            if(value < 1e-6) return nano;
-            if(value < 1e-3) return micro;
-            if(value < 1.0) return milli;
-            if(value < 1e3) return unity;
-            if(value < 1e6) return kilo;
-            if(value < 1e9) return mega;
-            if(value < 1e12) return giga;
-            if(value < 1e15) return tera;
-            if(value < 1e18) return peta;
-            if(value < 1e21) return exa;
-            if(value < 1e24) return zetta;
-            return yotta;
-        }
-
-    }
-
-
+   
 }
 
 

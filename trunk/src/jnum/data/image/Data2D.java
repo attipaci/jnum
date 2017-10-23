@@ -126,7 +126,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
                 transpose.set(j, i, isValid(i, j) ? get(i, j) : getBlankingValue());
             }     
         }.process();
-
+       
         if(getUnit().value() != 1.0) transpose.scale(1.0 / getUnit().value());
 
         return transpose.getData();

@@ -76,17 +76,20 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     public final void unflag(Index3D index) { unflag(index.i(), index.j(), index.k()); }
     
     
+    @Override
     public void addLocalUnit(Unit u) {
         mapTemplate.addLocalUnit(u);
         for(MapType plane : getPlanes()) plane.addLocalUnit(u);
     }
     
+    @Override
     public void addLocalUnit(Unit u, String altNames) {
-        Unit.add(u, altNames, mapTemplate.getLocalUnits());
-        addLocalUnit(u);
+        mapTemplate.addLocalUnit(u, altNames);
+        for(MapType plane : getPlanes()) plane.addLocalUnit(u, altNames);
     }
-
-    public final Hashtable<String, Unit> getLocalUnits() { return mapTemplate.getLocalUnits(); }
+    
+    @Override
+    public Hashtable<String, Unit> getLocalUnits() { return mapTemplate.getLocalUnits(); }
 
     
     private void applyTemplateTo(MapType map) {

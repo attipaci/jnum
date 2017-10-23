@@ -425,6 +425,7 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     }
 
     
+    
     @Override
     public Object getFitsData(Class<? extends Number> dataType) {  
         final Cube3D transpose = Cube3D.createType(dataType, sizeY(), sizeX(), sizeZ());
