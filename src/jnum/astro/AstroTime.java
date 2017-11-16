@@ -39,13 +39,11 @@ import jnum.util.HashCode;
 
 
 
-// TODO: Auto-generated Javadoc
-//	2451545.0 JD = 1 January 2000, 11:58:55.816 UT, or 11:59:27.816 TAI
-//  UTC routines are approximate but consistent (btw. getUTC() and setUTC(), and currentTime())
-//  only UTC <===> (MJD, TT) conversion is approximate...
-//  Use (quadratic) fit to leap? This should give some accuracy for UTC...
 /**
- * The Class AstroTime.
+ *	
+ *  UTC routines are approximate but consistent (btw. getUTC() and setUTC(), and currentTime())
+ *  only UTC <===> (MJD, TT) conversion is approximate...
+ *  Use (quadratic) fit to leap? This should give some accuracy for UTC...
  */
 public class AstroTime implements Serializable, Comparable<AstroTime> {
 	
@@ -168,6 +166,14 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		MJD = getMJD(millis);
 	}
 
+	public void setUTCMillis(double millis) {
+        MJD = getMJD(millis);
+    }
+	
+	public final void setUTC(double utc) {
+	    setUTCMillis(1000.0 * utc);
+	}
+	
 	// UNIX clock measures UTC...
 	/**
 	 * Gets the mjd.
@@ -176,9 +182,14 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the mjd
 	 */
 	public static double getMJD(long millis) {
-		return mjdJ2000 + (double)(millis - millisJ2000 + 1000L * (LeapSeconds.get(millis) - leap2000)) / dayMillis;
+		return MJDJ2000 + (double)(millis - MillisJ2000 + 1000L * (LeapSeconds.get(millis) - Leap2000)) / DayMillis;
+	}
+	
+	public static double getMJD(double millis) {
+	    return MJDJ2000 + (millis - MillisJ2000 + 1000.0 * (LeapSeconds.get((long)millis) - Leap2000)) / DayMillis;
 	}
 
+	
 	/**
 	 * Gets the mjd.
 	 *
@@ -186,6 +197,8 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 */
 	public double getMJD() { return MJD; }
 
+	public double getTCGMJD() { return (getMJD() - EMJD) / (1.0 - LG) + EMJD; }
+	
 	/**
 	 * Sets the mjd.
 	 *
@@ -216,7 +229,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	public double getTT() {
 		return (MJD - (int)Math.floor(MJD)) * Unit.day;
 	}
-
+	
 	/**
 	 * Sets the tt.
 	 *
@@ -248,7 +261,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the tcg
 	 */
 	public double getTCG() {
-		return getTT() + 6.969290134e-10 * (MJD - 43144.5003725) * Unit.day;
+		return getTT() + LG * (MJD - EMJD) * Unit.day;
 	}
 
 	/**
@@ -257,7 +270,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @param TCG the new tcg
 	 */
 	public void setTCG(double TCG) {
-		setTT(TCG - 6.969290134e-10 * (MJD - 43144.5003725) * Unit.day);
+		setTT(TCG - LG * (MJD - EMJD) * Unit.day);
 	}
 
 	
@@ -270,7 +283,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 */
 	
 	public double getTDB() {
-		double g = (357.53 + 0.9856003 * (MJD - 51544.5)) * Unit.deg;
+		double g = (357.53 + 0.9856003 * (MJD - MJDJ2000)) * Unit.deg;
 		return getTT() + 0.001658 * Math.sin(g) + 0.000014 * Math.sin(2.0*g);
 	}
 	
@@ -295,7 +308,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the utc
 	 */
 	public final double getUTC() {
-		return 1e-3 * getUTCMillis() % dayMillis;
+		return 1e-3 * getUTCMillis() % DayMillis;
 	}
 	
 	// Mean Fictive Equatorial Sun's RA in time units (use for calculationg LST)
@@ -312,7 +325,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
     	//return (24110.54841 + 8640184.812866 * Tu + 0.093104 * Tu * Tu) * Unit.s;
     	
 		// From http://www.cv.nrao.edu/~rfisher/Ephemerides/times.html
-		final double T = (MJD - 51544.5) / julianCenturyDays;
+		final double T = (MJD - MJDJ2000) / JulianCenturyDays;
 		return (24110.54841 + T * (8640184.812866 + T * (0.093104 - T * 0.0000062))) * Unit.s;
     }
 	
@@ -390,7 +403,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @throws ParseException the parse exception
 	 */
 	public void parseISOTimeStamp(String text) throws ParseException {  
-	    setUTCMillis(getDateFormat(isoFormat).parse(text).getTime());
+	    setUTCMillis(getDateFormat(ISOFormat).parse(text).getTime());
 	}
 	
 	/**
@@ -399,7 +412,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the iSO time stamp
 	 */
 	public String getISOTimeStamp() {
-	    return getDateFormat(isoFormat).format(getDate());
+	    return getDateFormat(ISOFormat).format(getDate());
 	}
 	
 	/**
@@ -410,7 +423,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 */
 	public void parseFitsTimeStamp(String text) throws ParseException {
 		// Set the MJD to 0 UTC of the date part...   
-        setUTCMillis(getDateFormat(fitsDateFormat).parse(text.substring(0, fitsDateFormat.length())).getTime());
+        setUTCMillis(getDateFormat(FITSDateFormat).parse(text.substring(0, FITSDateFormat.length())).getTime());
 	    
 		// Add in the UT time component...
 		if(text.length() > 11) {
@@ -431,7 +444,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	public String getFitsTimeStamp() {
 		long millis = getUTCMillis();
 		
-		return getDateFormat(fitsDateFormat).format(getDate()) + 'T' + fitsTimeFormat.format(1e-3 * (millis % dayMillis));
+		return getDateFormat(FITSDateFormat).format(getDate()) + 'T' + FITSTimeFormat.format(1e-3 * (millis % DayMillis));
 	}
 	
 	/**
@@ -440,7 +453,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the fits short date
 	 */
 	public String getFitsShortDate() {
-		return getDateFormat(fitsDateFormat).format(getUTCMillis());
+		return getDateFormat(FITSDateFormat).format(getUTCMillis());
 	}
 	
 	/**
@@ -450,7 +463,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @throws ParseException the parse exception
 	 */
 	public void parseFitsDate(String text) throws ParseException {
-		parseSimpleDate(text, getDateFormat(fitsDateFormat));
+		parseSimpleDate(text, getDateFormat(FITSDateFormat));
 	}
 	
 	/**
@@ -460,7 +473,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @throws ParseException the parse exception
 	 */
 	public void parseSimpleDate(String text) throws ParseException {
-		parseSimpleDate(text, getDateFormat(defaultFormat));
+		parseSimpleDate(text, getDateFormat(DefaultFormat));
 	}
 	
 	/**
@@ -480,12 +493,12 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the simple date
 	 */
 	public String getSimpleDate() {
-	    return getDateFormat(defaultFormat).format(getDate());
+	    return getDateFormat(DefaultFormat).format(getDate());
 	}
 	
 	public final static DateFormat getDateFormat(String formatSpec) {
 	    DateFormat f = new SimpleDateFormat(formatSpec);
-	    f.setTimeZone(utcZone);
+	    f.setTimeZone(UTCZone);
 	    return f;
 	}
 	
@@ -496,7 +509,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the TAI millis
 	 */
 	public final static long getTAIMillis(double MJD) {
-		return millisJ2000 + leap2000Millis + (long)((MJD - mjdJ2000) * dayMillis);
+		return MillisJ2000 + leap2000Millis + (long)((MJD - MJDJ2000) * DayMillis);
 	}
 	
 	/**
@@ -506,7 +519,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the TT millis
 	 */
 	public final static long getTTMillis(double MJD) {
-		return getTAIMillis(MJD) + millisTAI2TT;
+		return getTAIMillis(MJD) + MillisTAI2TT;
 	}
 	
 	/**
@@ -516,7 +529,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	 * @return the GPS millis
 	 */
 	public final static long getGPSMillis(double MJD) {
-		return getTAIMillis(MJD) + millisTAI2GPS;
+		return getTAIMillis(MJD) + MillisTAI2GPS;
 	}
 	
 	
@@ -586,69 +599,72 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		return time - Unit.day * Math.floor(time / Unit.day);
 	}
 	
+	// J2000 = JD 2451545.0 = 12 TT, 1 January 2000 = 11:58:55.816 UTC or 11:59:27.816 TAI on 1 January 2000
 	
-	/** The Constant leap2000. */
-	public final static int leap2000 = 32;
+	/** Leap seconds on 1 January 2000 */
+	public final static int Leap2000 = 32;
 	
-	/** The Constant leap2000Millis. */
-	protected final static long leap2000Millis = 1000L * leap2000;
+	/** Leap seconds on 1 January 2000 as milliseconds */
+	protected final static long leap2000Millis = 1000L * Leap2000;
 	
-	/** The Constant millisTAI2TT. */
-	protected final static long millisTAI2TT = 32184L;
+	/** TT - TAI difference in milliseconds */
+	protected final static long MillisTAI2TT = 32184L;
 	
-	/** The Constant millisTAI2GPS. */
-	protected final static long millisTAI2GPS = -19000L;
+	/** GPS - TAI difference in milliseconds. */
+	protected final static long MillisTAI2GPS = -19000L;
 	
-	/** The Constant dayMillis. */
-	protected final static long dayMillis = 86400000L;
+	/** Milliseconds in a day. */
+	protected final static long DayMillis = 86400000L;
 
+	/** UNIX time milliseconds at midnight UTC 1 January 2000 */
+	public final static long Millis0UTC1Jan2000 = 946684800000L;
+	
+	// 
+	/** UNIX time (msec) for J2000 (12h TT, 1 Jan 2000). I.e. 12 UTC 1 Jan 2000 - leap2000 - TAI2TT */
+	public final static long MillisJ2000 = Millis0UTC1Jan2000 + (DayMillis >>> 1) - leap2000Millis - MillisTAI2TT;
+	
+	/** MJD at J2000, i.e. 0 TT, 1 January 2000 */
+	public final static double MJDJ2000 = 51544.5;	// 12 TT 1 January 2000
 		
-	/** The Constant millis0UTC1Jan2000. */
-	public final static long millis0UTC1Jan2000 = 946684800000L;
-	// millis of 2000 UT - leap2000 - tai2tt -> 2000 TT
-	/** The Constant millisJ2000. */
-	public final static long millisJ2000 = millis0UTC1Jan2000 - leap2000Millis - millisTAI2TT; // millis at TT 2000
+	/** Milliseconds per Julian century, i.e. 36525.0 days */
+	protected final static double JulianCenturyMillis = Unit.julianCentury / Unit.ms;
 	
-	/** The Constant mjdJ2000. */
-	public final static double mjdJ2000 = 51544.0;	// 0 TT 1 January 2000
-	
-	/** The Constant mjd0UTC1Jan2000. */
-	public final static double mjd0UTC1Jan2000 = mjdJ2000 + (leap2000Millis + millisTAI2TT) / dayMillis;
-	
-	/** The Constant mjdJ1970. */
-	public final static double mjdJ1970 = 40587.0;
-		
-	/** The Constant julianCenturyMillis. */
-	protected final static double julianCenturyMillis = Unit.julianCentury / Unit.ms;
-	
-	/** The Constant julianCenturyDays. */
-	protected final static double julianCenturyDays = 36525.0;
+	/** Days in a Julian cenruty */
+	protected final static double JulianCenturyDays = 36525.0;
 		
 	/** The TAI to TT offset in seconds. */
-	public final static double TAI2TT = millisTAI2TT * Unit.ms;
+	public final static double TAI2TT = MillisTAI2TT * Unit.ms;
 	
 	/** The GPS to TAI offset in seconds. */
-	public final static double GPS2TAI = millisTAI2GPS * Unit.ms;
+	public final static double GPS2TAI = MillisTAI2GPS * Unit.ms;
+	
+	/** Gravitation time dilation constant, the difference between the advance rate of TT vs TCG */
+	public final static double LG = 6.969290134e-10;
+	
+	/** MJD epoch at which TT and TCG are equal, i.e. TAI 1977-01-01T00:00:00.000 */
+	public final static double EMJD = 43144.0003725;
 	
 	/** The UTC timezone. */
 	public final static TimeZone UTC = TimeZone.getTimeZone("UTC");
 	
-	/** The iso formatter. */
-	public final static String isoFormat = new String("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+	/** The ISO date formatter. */
+	public final static String ISOFormat = new String("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
-	/** The fits date formatter. */
-	public final static String fitsDateFormat = new String("yyyy-MM-dd");
+	/** The FITS date (excluding time) formatter. */
+	public final static String FITSDateFormat = new String("yyyy-MM-dd");
 	
-	/** The default formatter. */
-	public final static String defaultFormat = new String("yyyy.MM.dd");
+	/** The default date formatter. */
+	public final static String DefaultFormat = new String("yyyy.MM.dd");
 	
-	/** The fits time format. */
-	public final static TimeFormat fitsTimeFormat = new TimeFormat(3); 
+	/** The FITS time format. */
+	public final static TimeFormat FITSTimeFormat = new TimeFormat(3); 
 	
-	public final static TimeZone utcZone = TimeZone.getTimeZone("UTC");
+	/** The UTC timezone */
+	public final static TimeZone UTCZone = TimeZone.getTimeZone("UTC");
+	
 	
 	static {
-		fitsTimeFormat.colons();
+		FITSTimeFormat.colons();
 	}
 	
 }

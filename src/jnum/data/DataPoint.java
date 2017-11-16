@@ -144,7 +144,7 @@ public class DataPoint extends WeightedPoint {
 	 * @return the data point[]
 	 */
 	public static DataPoint[] createArray(int size) {
-		DataPoint[] p = new DataPoint[size];
+		final DataPoint[] p = new DataPoint[size];
 		for(int i=size; --i >= 0; ) p[i] = new DataPoint();
 		return p;
 	}

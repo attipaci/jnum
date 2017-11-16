@@ -343,8 +343,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
         final int windowSize = w.length;
         final int stepSize = windowSize >>> 1;
 
-        final Complex[] block = new Complex[ExtraMath.pow2ceil(w.length)];
-        for(int i=block.length; --i >= 0; ) block[i] = new Complex();
+        final Complex[] block = Complex.createArray(ExtraMath.pow2ceil(w.length));
 
         final int nF = block.length >>> 1;
 

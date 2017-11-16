@@ -411,24 +411,24 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
 
 	@Override
-	public final double distanceTo(TrueVector<? extends Double> point) {
+	public final double distanceTo(final TrueVector<? extends Double> point) {
 		return ExtraMath.hypot(point.x() - x(), point.y() - y());
 	}
 	
 	
 	
-	public static Vector2D sumOf(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
+	public final static Vector2D sumOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
         return new Vector2D(a.x() + b.x(), a.y() + b.y());
     }
     
 
-    public static Vector2D differenceOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+    public final static Vector2D differenceOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
         return new Vector2D(a.x() - b.x(), a.y() - b.y());
     }
 
 
 	public static Vector2D[] createArray(int size) {
-		Vector2D[] v = new Vector2D[size];
+		final Vector2D[] v = new Vector2D[size];
 		for(int i=size; --i >= 0; ) v[i] = new Vector2D();
 		return v;
 	}

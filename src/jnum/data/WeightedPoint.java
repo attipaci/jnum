@@ -432,7 +432,7 @@ Accumulating<WeightedPoint>
 	 * @return the weighted point[]
 	 */
 	public static WeightedPoint[] createArray(int size) {
-		WeightedPoint[] p = new WeightedPoint[size];
+		final WeightedPoint[] p = new WeightedPoint[size];
 		for(int i=size; --i >= 0; ) p[i] = new WeightedPoint();
 		return p;
 	}

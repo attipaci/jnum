@@ -34,21 +34,28 @@ import jnum.Util;
 import jnum.io.LineParser;
 import jnum.text.SmartTokenizer;
 
-// TODO: Auto-generated Javadoc
-// Last updated on 27 Mar 2015
-//  -- Historical Leap seconds lookup added and fixed.
-// get latest leap-seconds.list from ftp://time.nist.gov/pub/
-
-// NOTE: Under no circumstances should one query a NIST server more frequently than once every 4 seconds!!!
-
 
 /**
- * The Class LeapSeconds.
+ * Manage and obtain historical leap-second data for time calculations. Before first use, one should load
+ * the historical leap-second data ('leap-seconds.list') using {@link #read(String)} static method. 
+ * The current leap second data is available from:
+ * 
+ *    ftp://time.nist.gov/pub/
+ * or
+ *    https://www.ietf.org/timezones/data/leap-seconds.list
+ *
+ * NOTE: Under no circumstances should one query a NIST server more frequently than once every 4 seconds!!!
+ *
+ * Once the historical data has been loaded, you can retrieve the leap seconds value for any given 
+ * {@link java.util.Date} using the {@link #get(long)} method, or the current value using the 
+ * {@link #getCurrentLeap()} method. The method {@link #isCurrent()} can be used for checking if the current 
+ * leap second value is up-to-date or not.
+ * 
  */
 public final class LeapSeconds {
 	
 	/** The list. */
-	private static ArrayList<LeapEntry> list;
+	private static ArrayList<Datum> list;
 	
 	/** The Constant millis1900. */
 	public final static long millis1900 = -2208988800000L; // "1900-01-01T00:00:00.000" UTC
@@ -66,7 +73,7 @@ public final class LeapSeconds {
 	private static long releaseEpoch = 3676924800L;        // 8 July 2016 -- seconds since 1900
 	
 	/** The expiration epoch. */
-	private static long expirationEpoch = 3707596800L;     // 28 Jun 2017 -- seconds since 1900
+	private static long expirationEpoch = 3739132800L;     // 28 Jul 2017 -- seconds since 1900
 	
 	/** The expiration millis. */
 	private static long expirationMillis = millis1900 + 1000L * expirationEpoch;
@@ -81,21 +88,21 @@ public final class LeapSeconds {
 	private static boolean isVerbose = true;
 	
 	/**
-	 * Gets the current leap.
+	 * Gets the current leap seconds.
 	 *
-	 * @return the current leap
+	 * @return the current leap seconds.
 	 */
 	public static int getCurrentLeap() { return currentLeap; }
 	
 	/**
-	 * Sets the verbose.
+	 * Sets the verbosity for warning messages if the leap-second data is incomplete or out-of-date.
 	 *
-	 * @param value the new verbose
+	 * @param value the new verbosity for warnings.
 	 */
 	public static void setVerbose(boolean value) { isVerbose = value; }
 	
 	/**
-	 * Gets the.
+	 * Gets the leap seconds for a given {@link java.util.Date}
 	 *
 	 * @param timestamp the timestamp
 	 * @return the int
@@ -151,23 +158,32 @@ public final class LeapSeconds {
 	}
 	
 	/**
-	 * Checks if is current.
+	 * Checks if the current leap second value is valid.
 	 *
-	 * @return true, if is current
+	 * @return true, if the current value is valid, false if it's out-dated.
 	 */
 	public static boolean isCurrent() {
 		return System.currentTimeMillis() < expirationMillis;
 	}
 	
 	/**
-	 * Read.
+	 * Read the historical 'leap-seconds.list' data from the specified file.
+	 * 
+	 * The current leap second data is available from:
+	 * 
+	 *    ftp://time.nist.gov/pub/
+	 * or
+	 *    https://www.ietf.org/timezones/data/leap-seconds.list
 	 *
-	 * @param fileName the file name
+	 * NOTE: Under no circumstances should one query a NIST server more frequently than once every 4 seconds!!!
+	 *
+	 *
+	 * @param fileName the The path to the leap-seconds.list data file.
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void read(String fileName) throws IOException {
 			
-		if(list == null) list = new ArrayList<LeapEntry>();
+		if(list == null) list = new ArrayList<Datum>();
 		else list.clear();
 		
 		if(verbose) Util.info(LeapSeconds.class, "Reading leap seconds table from " + fileName);
@@ -189,7 +205,7 @@ public final class LeapSeconds {
             protected boolean parse(String line) throws Exception {
                 if(line.length() < 3) return false;  
                 SmartTokenizer tokens = new SmartTokenizer(line);
-                LeapEntry entry = new LeapEntry();
+                Datum entry = new Datum();
                 entry.timestamp = 1000L * tokens.nextLong() + millis1900;
                 entry.leap = tokens.nextInt();
                 list.add(entry); 
@@ -200,7 +216,7 @@ public final class LeapSeconds {
 	
 		Collections.sort(list);
 		
-		LeapEntry current = list.get(list.size() - 1);
+		Datum current = list.get(list.size() - 1);
 		currentLeap = current.leap;
 		currentSinceMillis = current.timestamp;
 		
@@ -213,15 +229,17 @@ public final class LeapSeconds {
 		}
 		
 	}	
-}
-
-class LeapEntry implements Comparable<LeapEntry> {
-	long timestamp;
-	int leap;
 	
-	@Override
-	public int compareTo(LeapEntry other) {
-		if(timestamp == other.timestamp) return 0;
-		return timestamp < other.timestamp ? -1 : 1;
+	private static class Datum implements Comparable<Datum> {
+	    long timestamp;
+	    int leap;
+	    
+	    @Override
+	    public int compareTo(Datum other) {
+	        if(timestamp == other.timestamp) return 0;
+	        return timestamp < other.timestamp ? -1 : 1;
+	    }
 	}
 }
+
+

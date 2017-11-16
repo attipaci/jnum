@@ -757,7 +757,7 @@ public class Complex extends Vector2D implements
 	 * @return the complex[]
 	 */
 	public static Complex[] createArray(int size) {
-		Complex[] z = new Complex[size];
+		final Complex[] z = new Complex[size];
 		for(int i=size; --i >= 0; ) z[i] = new Complex();
 		return z;
 	}

@@ -1,3 +1,5 @@
+	[FIX] {AstroTime} MJD2000 referece point was off by 1/2 day. Not that
+	it made a difference. Still, it's better to have it right...
 
 	[TWEAK] Allowing only base units to register into lookup tables. 
 	This way, there is less chance that we end up with strange constructs
