@@ -17,7 +17,7 @@ started life inside the **crush** data reduction code
 
 **jnum** is not (yet) a fully stable code. It's API still continues to evolve
 (driven by **crush**), although there are signs of stabilization in many of 
-the Java subpackages within. Also, some parts have clearly got more attention 
+the Java subpackages within. Also, some parts have clearly received more attention 
 through the years as others. The javadoc markup is at best spotty at this 
 point, although classes, methods and arguments are generally named in a 
 self-explanatory manner. 
@@ -43,7 +43,7 @@ least likely to have major API changes...
  * Astronomical coordinate systems and conversions between them, including 
    precession and FITS WCS support (`jnum.astro`).
 
- * Spherical projections and FITS WCS support for these ('jnum.projection')
+ * Spherical projections and FITS WCS support for these (`jnum.projection`)
 
  * Blazing fast, simple, and parallel FFTs -- 1D or multi-dimensional, real
    and complex (`jnum.fft`), and window functions (`jnum.data.WindowFunction`)
@@ -51,9 +51,9 @@ least likely to have major API changes...
  * Generic data cubes (e.g. 1D-3D) via `jnum.data.Data`
 
  * 1D (`jnum.data.samples`), 2D (`jnum.data.image`), and 3D (`jnum.data.cube`,
-   and `jnum.data.cube2`) data objects (`jnum.data`), suppoting FITS I/O, 
-   manipulation (e.g. smoothing, cleaning) and overlays
-   (`jnum.data.*.overlay`)
+   and `jnum.data.cube2`) data objects, suppoting FITS I/O, 
+   manipulation (e.g. arithmetic, resampling, smoothing, deconvolution) and 
+   overlays (`jnum.data.*.overlay`)
 
  * Complex arithmetic (`jnum.math.Complex`)
 
@@ -97,7 +97,7 @@ use additional functionality, including a rethink on parts of the API...
 
  * Dirfile I/O (`jnum.io.dirfile`)
 
- * Easy-to-use customizable messaging support (`jnum.reporting`)
+ * Easy-to-use custom messaging support (`jnum.reporting`)
 
  * A generic framework for bitwise flag management (`jnum.util.Flag`)
 
@@ -109,11 +109,11 @@ Here are the parts that may undergo substantial development, which may
 also change the API significantly.
 
 
- * Matrices (real and complex), with algebra and inversions and decompositions
-   (but no eigenvalues or eigenvectors yet).
+ * Matrices by `jnum.math.matrix` (real and complex), with algebra and 
+   inversions and decompositions (but no eigenvalues or eigenvectors yet).
 
- * Fitting of data (`jnum.data.fitting`). Currently only a downhill simplex
-   method is implemented, althoug there is a decent generic framework that
+ * Fitting of data (`jnum.data.fitting`). Currentlym only a downhill simplex
+   method is implemented, although there is a decent generic framework that
    it is built on...
 
 
