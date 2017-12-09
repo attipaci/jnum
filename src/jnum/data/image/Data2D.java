@@ -155,6 +155,13 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         set(i, j, getBlankingValue());
     }
 
+    public final String toString(Index2D index) {
+        return toString(index.i(), index.j());
+    }
+    
+    public String toString(int i, int j) {
+        return "value=" + Util.S3.format(get(i,j));
+    }
   
 
 

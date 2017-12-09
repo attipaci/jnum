@@ -275,16 +275,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		return contains(range.min) || contains(range.max) || range.contains(this);
 	}
 	
-	/**
-	 * Creates a new range from text specification.
-	 *
-	 * @param text the input text specifying the range. The minimim and maximum values must be separated by one
-	 *     or more colons ':'. E.g. "0.0:1.0" or "0.0:::1.0". 
-	 * @return the new range according to the specification
-	 */
-	public static Range parse(String text) {
-		return parse(text, false);
-	}
+
 	
 	/**
 	 * Includes a real (non-NaN) value in this range, altering its boundaries as necessary.
@@ -315,44 +306,53 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		include(range.max);
 	}
 	
+	
+	/**
+     * Creates a new range from text specification.
+     *
+     * @param text the input text specifying the range. The minimim and maximum values must be separated by one
+     *     or more colons ':'. E.g. "0.0:1.0" or "0.0:::1.0". 
+     * @return the new range according to the specification
+     */
+    public final void parse(String text) {
+        from(text, false);
+    }
+	
 	/**
 	 * Parses a new range from the text input.
 	 *
 	 * @param text the text input specifying the range
 	 * @param isPositive true if the range is for positive only values (allows hyphens as a separator between min and max values 
 	 *     -- otherwise only colon ':' is allowed. E.g. "0.0--1.0" vs the more standard "0.0:1.0").
-	 * @return a new range from the text specification.
 	 */
-	public static Range parse(String text, boolean isPositive) {
-		Range range = new Range();
-			
+	public void parse(String text, boolean isPositive) {		
 		StringTokenizer tokens = new StringTokenizer(text, " \t:" + (isPositive ? "-" : ""));
 		
 		if(tokens.countTokens() == 1) {
 			String spec = tokens.nextToken();
-			if(spec.equals("*")) range.full();
+			if(spec.equals("*")) full();
 			else if(spec.startsWith("<")) {
-				range.min = Double.NEGATIVE_INFINITY;
-				range.max = Double.parseDouble(spec.substring(1));
+				min = Double.NEGATIVE_INFINITY;
+				max = Double.parseDouble(spec.substring(1));
 			}
 			else if(spec.startsWith(">")) {
-				range.min = Double.parseDouble(spec.substring(1));
-				range.max = Double.POSITIVE_INFINITY;
+			    min = Double.parseDouble(spec.substring(1));
+				max = Double.POSITIVE_INFINITY;
 			}
 		}
 		
 		if(tokens.hasMoreTokens()) {	
 			String spec = tokens.nextToken();
-			if(spec.equals("*")) range.min = Double.NEGATIVE_INFINITY;
-			else range.min = Double.parseDouble(spec);
+			if(spec.equals("*")) min = Double.NEGATIVE_INFINITY;
+			else min = Double.parseDouble(spec);
 		}
 		if(tokens.hasMoreTokens()) {
 			String spec = tokens.nextToken();
-			if(spec.equals("*")) range.max = Double.POSITIVE_INFINITY;
-			else range.max = Double.parseDouble(spec);
-		}
-		return range;	
+			if(spec.equals("*")) max = Double.POSITIVE_INFINITY;
+			else max = Double.parseDouble(spec);
+		}	
 	}
+	
 	
 	/**
 	 * Gets the span of real values represented by this range.
@@ -458,6 +458,16 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	    Range c = a.copy();
         c.include(b);
         return c;
+	}
+	
+	public static Range from(String text) {
+	    return from(text, false);
+	}
+	
+	public static Range from(String text, boolean isPositive) {
+	    Range range = new Range();
+	    range.parse(text, isPositive);
+	    return range;
 	}
 	
 }

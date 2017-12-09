@@ -87,6 +87,8 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     public Image2D copy(boolean withContent) {   
         Image2D copy = (Image2D) clone();
         
+        if(id != null) copy.id = new String(id);
+        
         if(capacity() > 0) {
             copy.setSize(sizeX(), sizeY());
             if(withContent) copy.paste(this, true);
@@ -95,11 +97,8 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         return copy;
     }
     
-    protected void addProprietaryUnits() {
-        
-    }
+    protected void addProprietaryUnits() {}
     
-   
     
     @Override
     public Image2D getEmptyImage() { return copy(false); }

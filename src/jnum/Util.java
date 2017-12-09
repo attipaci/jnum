@@ -46,21 +46,20 @@ import jnum.text.TimeFormat;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class Util.
+ * A collection of static utility funtions to use anywhere and everywhere.
  */
 public final class Util {
 
 
     public final static String version = "0.20-3";
     
-    public final static String revision = "devel.1";
+    public final static String revision = "devel.3";
     
     public final static String copyright = "(c)2017 Attila Kovacs"; 
     
     public final static String copyrightEmail = "<attila[AT]sigmyne.com>"; 
 
-  
-    /** The debug. */
+ 
     public static boolean debug = false;
 
     

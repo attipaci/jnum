@@ -1,3 +1,7 @@
+	[FIX] Flagged2D and subclasses (Mapped2D) and Observation2D had a
+	little too zealous point validation and discarding. Now, only the flags
+	are used to mark bad data, which is also faster :-). 
+
 	[FIX] {AstroTime} MJD2000 referece point was off by 1/2 day. Not that
 	it made a difference. Still, it's better to have it right...
 

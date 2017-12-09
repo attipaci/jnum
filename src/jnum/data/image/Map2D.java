@@ -158,7 +158,8 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     @Override
     public Map2D clone() {
         Map2D clone = (Map2D) super.clone();
-        clone.reuseIndex = new Vector2D();
+        clone.reuseIndex = new Vector2D();  
+        // Replace the clone's list of proprietary units with it own...
         clone.addProprietaryUnits();
         return clone;
     }
@@ -171,9 +172,6 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         Map2D copy = clone();
 
         if(properties != null) copy.properties = properties.copy();   
-        
-        // Replace the clone's list of proprietary units with it own...
-        copy.addProprietaryUnits();
 
         // Units might have proprietary components, which aren't easily copied over.
         // Hence, the safest is to re-construct the units of the copy from scratch
@@ -182,7 +180,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
         if(getImage() != null) copy.setImage(getImage().copy(withContent));
         if(getFlags() != null) copy.setFlags(getFlags().copy(withContent));
-
+        
         return copy;
     }
 
@@ -274,6 +272,11 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
     public Class<? extends Coordinate2D> getCoordinateClass() { return getGrid().getReference().getClass(); }
 
+
+    @Override
+    public String toString(int i, int j) {
+        return super.toString(i,j) + " flag=0x" + Long.toHexString(getFlags().get(i,j));
+    }
 
     @Override
     public void setSize(int sizeX, int sizeY) { 
@@ -435,7 +438,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         if(validator != null) extended.new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
-                if(!validator.isValid(i, j)) extended.set(i,  j, 0);
+                if(!validator.isValid(i, j)) extended.clear(i,  j);
             }
         }.process();
 
@@ -444,7 +447,8 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
-                add(i, j, -extended.get(i, j).doubleValue());
+                double X = extended.get(i, j).doubleValue();
+                if(!Double.isNaN(X)) add(i, j, -X);
             }
         }.process();
 
@@ -464,10 +468,10 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     }
 
     public final void fftFilterAbove(double FWHM, final Validating2D validator, final Values2D weight) {
-        final int nx = ExtraMath.pow2ceil(sizeX());
-        final int ny = ExtraMath.pow2ceil(sizeY());
-        final int nx2 = nx>>>1;  
-
+        // Oversized transformer to reduce wrapping effects by copious padding...
+        final int nx = ExtraMath.pow2ceil(sizeX()<<1);
+        final int ny = ExtraMath.pow2ceil(sizeY()<<1);
+ 
         final double[][] transformer = new double[nx][ny+2];
 
         AveragingFork weightedCalc = new AveragingFork() {
@@ -478,9 +482,10 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
                 if(!isValid(i, j)) return;  
                 if(validator != null) if(!validator.isValid(i, j)) return;
 
-                final double w = weight == null ? 1.0 : weight.get(i,  j).doubleValue();
-                transformer[i][i] = w * get(i, j).doubleValue();
-                sumw += w;
+                final double w = (weight == null) ? 1.0 : weight.get(i,  j).doubleValue();
+          
+                transformer[i][j] = w * get(i, j).doubleValue();
+                sumw += w*w;
                 n++;
             }
             @Override
@@ -488,7 +493,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         };
         weightedCalc.process();
 
-        final double avew = weightedCalc.getResult().value();
+        final double avew = Math.sqrt(weightedCalc.getResult().value());
         if(avew <= 0.0) return;
 
         final MultiFFT fft = new MultiFFT(this);
@@ -507,24 +512,23 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
         final double ax = -0.5/(sigmax*sigmax);
         final double ay = -0.5/(sigmay*sigmay);
-
-        for(int fx=nx2; --fx>0; ) {
+   
+        for(int fx=nx; --fx >= 0; ) {
             final double axfx2 = ax*fx*fx;
-            final double[] r1 = transformer[fx];            // The positive frequencies
-            final double[] r2 = transformer[nx - fx - 1];   // The negative frequencies
-
+            final double[] r = transformer[fx];            // The positive frequencies
+        
             // The unrolled real spectrum...
             for(int fy=0; fy <= ny; fy += 2) {
+                // The transfer function (Gaussian taper)
                 final double A = Math.exp(axfx2 + ay*fy*fy);
 
-                r1[fy] *= A;
-                r1[fy+1] *= A;
-
-                r2[fy] *= A;
-                r2[fy+1] *= A;
+                r[fy] *= A;
+                r[fy+1] *= A;
             }
         }
 
+        fft.amplitude2Real(transformer);
+        
         final double norm = -1.0 / avew;
         new Fork<Void>() {
             @Override

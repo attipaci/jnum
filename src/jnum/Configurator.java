@@ -41,6 +41,7 @@ import jnum.fits.FitsHeaderEditing;
 import jnum.fits.FitsToolkit;
 import jnum.io.LineParser;
 import jnum.math.Range;
+import jnum.math.Range2D;
 import jnum.math.Vector2D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
@@ -1150,9 +1151,14 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @return the range
      */
     public Range getRange() {
-        return Range.parse(getValue());		
+        return Range.from(getValue());		
     }
-
+  
+    
+    public Range2D getRange2D() {
+        return Range2D.from(getValue());      
+    }
+    
     /**
      * Gets the range.
      *
@@ -1160,7 +1166,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @return the range
      */
     public Range getRange(boolean nonNegative) {
-        return Range.parse(getValue(), nonNegative);		
+        return Range.from(getValue(), nonNegative);		
     }
 
     /**
@@ -1239,7 +1245,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         for(String entry : list) {
             try { ints.add(Integer.decode(entry)); }
             catch(NumberFormatException e) {
-                Range range = Range.parse(entry, true);
+                Range range = Range.from(entry, true);
                 if(Double.isInfinite(range.min()) || Double.isInfinite(range.max())) throw e;
                 int from = (int)Math.ceil(range.min());
                 int to = (int)Math.floor(range.max());

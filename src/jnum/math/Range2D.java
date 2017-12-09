@@ -27,6 +27,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.text.NumberFormat;
+import java.util.StringTokenizer;
 
 import jnum.Copiable;
 import jnum.Util;
@@ -35,7 +36,7 @@ import jnum.Util;
 /**
  * The Class Range2D.
  */
-public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
+public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scalable {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 7648489968457196160L;
@@ -180,6 +181,12 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
     public void setRange(double xmin, double ymin, double xmax, double ymax) {
         xRange.setRange(xmin, xmax);
         yRange.setRange(ymin, ymax);
+    }
+    
+    @Override
+    public void scale(double factor) {
+        xRange.scale(factor);
+        yRange.scale(factor);
     }
     
     /**
@@ -409,5 +416,34 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable {
         c.include(b);
         return c;
     }
- 
+    
+    public void parse(String text) {
+        parse(text, false);
+    }
+    
+    public void parse(String text, boolean isPositive) {
+        StringTokenizer tokens = new StringTokenizer(text, " \t," + (isPositive ? "-" : ""));
+        int n = tokens.countTokens();
+        
+        if(n == 2) {
+            System.err.println("### parse 2");
+            xRange.parse(tokens.nextToken(), isPositive);
+            yRange.parse(tokens.nextToken(), isPositive);
+        }
+        else if(n == 4) {
+            System.err.println("### parse 4");
+            xRange.parse(tokens.nextToken() + ":" + tokens.nextToken(), isPositive);
+            yRange.parse(tokens.nextToken() + ":" + tokens.nextToken(), isPositive);
+        }
+    }
+    
+    public static Range2D from(String text) {
+        return from(text, false);
+    }
+    
+    public static Range2D from(String text, boolean isPositive) {
+        Range2D range = new Range2D();
+        range.parse(text, isPositive);
+        return range;
+    }
 }

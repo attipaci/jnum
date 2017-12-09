@@ -17,19 +17,18 @@ started life inside the **crush** data reduction code
 
 **jnum** is not (yet) a fully stable code. It's API still continues to evolve
 (driven by **crush**), although there are signs of stabilization in many of 
-the Java subpackages within. Also, some parts have clearly received more attention 
-through the years as others. The javadoc markup is at best spotty at this 
-point, although classes, methods and arguments are generally named in a 
+the Java subpackages within. Also, some parts have clearly received more 
+attention through the years as others. The javadoc markup is at best spotty at 
+this point, although classes, methods and arguments are generally named in a 
 self-explanatory manner. 
 
 There is more work to be done for sure. But, if you are willing to put up with 
-occasional bugs and API changes, you might find it will make scientific Java 
+occasional bugs and API changes, it might just make your scientific Java 
 coding a breeze.
 
 The **jnum** package is dependent on the **nom.tam.fits** packages for
 dealing with FITS files, also on GitHub 
 (https://github.com/nom-tam-fits/nom-tam-fits). 
-
 
 Here is some more detail on the different parts of the package, by the 
 current level of functionality they offer.
@@ -51,7 +50,7 @@ least likely to have major API changes...
  * Generic data cubes (e.g. 1D-3D) via `jnum.data.Data`
 
  * 1D (`jnum.data.samples`), 2D (`jnum.data.image`), and 3D (`jnum.data.cube`,
-   and `jnum.data.cube2`) data objects, suppoting FITS I/O, 
+   and `jnum.data.cube2`) data objects, supporting FITS I/O, 
    manipulation (e.g. arithmetic, resampling, smoothing, deconvolution) and 
    overlays (`jnum.data.*.overlay`)
 
@@ -76,7 +75,8 @@ least likely to have major API changes...
 ### What works OK, but could be improved
 
 Here are the bits that do the job, have been tested quite well, but could
-use additional functionality, including a rethink on parts of the API...
+use additional functionality, including potential rethinking parts of the 
+API...
 
 
  * Support for physical units (`jnum.Unit`).
@@ -112,7 +112,7 @@ also change the API significantly.
  * Matrices by `jnum.math.matrix` (real and complex), with algebra and 
    inversions and decompositions (but no eigenvalues or eigenvectors yet).
 
- * Fitting of data (`jnum.data.fitting`). Currentlym only a downhill simplex
+ * Fitting of data (`jnum.data.fitting`). Currently, only a downhill simplex
    method is implemented, although there is a decent generic framework that
    it is built on...
 

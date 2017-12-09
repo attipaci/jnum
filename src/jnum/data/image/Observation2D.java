@@ -98,29 +98,37 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     @Override
     public Observation2D clone() {
         Observation2D clone = (Observation2D) super.clone();
-        clone.weight = new Flagged2D();
-        clone.exposure = new Flagged2D();
-        
-        clone.setFlags(getFlags());
-        clone.setWeightImage(getWeightImage());
-        clone.setExposureImage(getExposureImage());
+
         return clone;
     }
-    
     
     @Override
     public Observation2D copy() { return (Observation2D) super.copy(); }
     
     @Override
     public Observation2D copy(boolean withContents) {
-        Observation2D copy = (Observation2D) super.copy(withContents);   
-       
+        Observation2D copy = (Observation2D) super.copy(withContents);  
+        
+        copy.weight = new Flagged2D();
+        copy.weight.setFlags(getFlags());
+        copy.exposure = new Flagged2D();
+        copy.exposure.setFlags(getFlags());
+        
+        copy.setWeightImage(getWeightImage());
+        copy.setExposureImage(getExposureImage());
+        
         if(getWeightImage() != null) copy.setWeightImage(getWeightImage().copy(withContents));
         if(getExposureImage() != null) copy.setExposureImage(getExposureImage().copy(withContents));
-        
+
         return copy;
     }
- 
+
+    @Override
+    public String toString(int i, int j) {
+        return super.toString(i, j) + " weight=" + Util.S3.format(weightAt(i, j)) + 
+                " exp=" + Util.S3.format(exposureAt(i, j));
+    }
+    
     @Override
     public boolean isValid(int i, int j) {
         return super.isValid(i, j) && weight.get(i, j).doubleValue() > 0.0;
@@ -360,19 +368,6 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public double significanceAt(int i, int j) {
         return get(i, j).doubleValue() * Math.sqrt(weightAt(i, j));
     }
-
-    
-  
-  
-
-    @Override
-    public void discard(int i, int j) {
-        super.discard(i, j);
-        weight.getBasis().discard(i, j);
-        exposure.getBasis().discard(i, j);
-    }
-
-
 
     @Override
     public void scale(int i, int j, double factor) {
