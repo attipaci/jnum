@@ -82,10 +82,7 @@ public class Flagged2D extends Overlay2D {
 
     @Override
     public void discard(int i, int j) {
-        // Do not discard on the underlying image.
-        // But it's a good idea to clear for add().
-        super.clear(i, j);
-        flag.setBits(i, j, FLAG_DISCARD);
+        clear(i, j);
     }
 
     @Override

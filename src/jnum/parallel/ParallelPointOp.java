@@ -60,7 +60,7 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
     public abstract static class Count<PointType> extends ParallelPointOp<PointType, Long> {
         private long sum = 0L;
        
-        public abstract double getCount(PointType point);
+        public abstract long getCount(PointType point);
            
         @Override
         protected void init() {
@@ -86,7 +86,7 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
     public static class ElementCount<PointType> extends Count<PointType> {
 
         @Override
-        public final double getCount(PointType point) {
+        public final long getCount(PointType point) {
             return 1;
         }
         

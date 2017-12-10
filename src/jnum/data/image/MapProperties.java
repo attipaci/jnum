@@ -266,7 +266,7 @@ public class MapProperties extends FitsProperties {
  
     public void updateFiltering(double FWHM) {
         if(Double.isNaN(filterFWHM)) filterFWHM = FWHM;
-        else filterFWHM = Math.min(filterFWHM, FWHM);       
+        else if(!Double.isNaN(FWHM)) filterFWHM = Math.min(filterFWHM, FWHM);       
     }
     
     

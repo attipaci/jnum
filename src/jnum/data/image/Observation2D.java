@@ -110,16 +110,13 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         Observation2D copy = (Observation2D) super.copy(withContents);  
         
         copy.weight = new Flagged2D();
-        copy.weight.setFlags(getFlags());
-        copy.exposure = new Flagged2D();
-        copy.exposure.setFlags(getFlags());
-        
-        copy.setWeightImage(getWeightImage());
-        copy.setExposureImage(getExposureImage());
-        
+        copy.weight.setFlags(copy.getFlags());
         if(getWeightImage() != null) copy.setWeightImage(getWeightImage().copy(withContents));
-        if(getExposureImage() != null) copy.setExposureImage(getExposureImage().copy(withContents));
-
+        
+        copy.exposure = new Flagged2D();
+        copy.exposure.setFlags(copy.getFlags());
+        if(getWeightImage() != null) copy.setExposureImage(getExposureImage().copy(withContents));
+        
         return copy;
     }
 
@@ -142,7 +139,6 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     }
     
    
-
     @Override
     public void destroy() {
         super.destroy();

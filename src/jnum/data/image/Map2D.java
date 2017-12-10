@@ -45,6 +45,7 @@ import jnum.fft.MultiFFT;
 import jnum.math.Coordinate2D;
 import jnum.math.Range;
 import jnum.math.Vector2D;
+import jnum.parallel.ParallelPointOp;
 import jnum.projection.DefaultProjection2D;
 import jnum.projection.Projection2D;
 import nom.tam.fits.BasicHDU;
@@ -430,6 +431,15 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     public void filterAbove(double FWHM) {
         filterAbove(FWHM, null);
     }
+    
+    public long countFlags(final long pattern) {
+        return smartFork(new ParallelPointOp.Count<Index2D>() {
+            @Override
+            public long getCount(Index2D point) {
+                return isFlagged(point, pattern) ? 1 : 0;
+            }
+        });
+    }
 
     public void filterAbove(double FWHM, final Validating2D validator) {
         final Map2D extended = copy(true);
@@ -438,17 +448,24 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         if(validator != null) extended.new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
-                if(!validator.isValid(i, j)) extended.clear(i,  j);
+                if(!isValid(i, j)) return;
+                
+                if(!validator.isValid(i, j)) {
+                    extended.clear(i, j);
+                    extended.unflag(i, j);
+                }
             }
         }.process();
-
+        
         extended.smoothTo(FWHM);
 
+        final Image2D image = getImage();
+        
         new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
                 double X = extended.get(i, j).doubleValue();
-                if(!Double.isNaN(X)) add(i, j, -X);
+                if(!Double.isNaN(X)) image.add(i, j, -X);   // Subtract from the image directly without affecting flagging...
             }
         }.process();
 
@@ -485,7 +502,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
                 final double w = (weight == null) ? 1.0 : weight.get(i,  j).doubleValue();
           
                 transformer[i][j] = w * get(i, j).doubleValue();
-                sumw += w*w;
+                sumw += w*w;    // Normalize like window functions, by square sum, in line with Parseval's theorem...
                 n++;
             }
             @Override
@@ -493,8 +510,8 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         };
         weightedCalc.process();
 
-        final double avew = Math.sqrt(weightedCalc.getResult().value());
-        if(avew <= 0.0) return;
+        final double rmsw = Math.sqrt(weightedCalc.getResult().value());
+        if(rmsw <= 0.0) return;
 
         final MultiFFT fft = new MultiFFT(this);
         fft.setParallel(getParallel());
@@ -529,11 +546,14 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
         fft.amplitude2Real(transformer);
         
-        final double norm = -1.0 / avew;
+        final double norm = -1.0 / rmsw;
+        final Image2D image = getImage();
+        
         new Fork<Void>() {
             @Override
             public void process(int i, int j) {
-                add(i, j, norm * transformer[i][j]);
+                // Subtract from the image directly without affecting flagging...
+                image.add(i, j, norm * transformer[i][j]);
             }
         }.process();
 
