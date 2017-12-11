@@ -54,7 +54,7 @@ public class MapProperties extends FitsProperties {
    
     private Gaussian2D underlyingBeam;
   
-    private Gaussian2D smoothing;
+    private Gaussian2D smoothingBeam;
     
      
     private double filterFWHM = Double.NaN;
@@ -72,7 +72,7 @@ public class MapProperties extends FitsProperties {
         if(grid != null) hash ^= grid.hashCode();
         if(displayGridUnit != null) hash ^= displayGridUnit.hashCode();
         if(underlyingBeam != null) hash ^= underlyingBeam.hashCode();
-        if(smoothing != null) hash ^= smoothing.hashCode();
+        if(smoothingBeam != null) hash ^= smoothingBeam.hashCode();
         return hash;
     }
     
@@ -89,7 +89,7 @@ public class MapProperties extends FitsProperties {
         if(!Util.equals(grid, p.grid)) return false;
         if(!Util.equals(displayGridUnit, p.displayGridUnit)) return false;
         if(!Util.equals(underlyingBeam, p.underlyingBeam)) return false;
-        if(!Util.equals(smoothing, p.smoothing)) return false;
+        if(!Util.equals(smoothingBeam, p.smoothingBeam)) return false;
         
         return super.equals(o);
     }
@@ -110,7 +110,7 @@ public class MapProperties extends FitsProperties {
         grid = p.grid;
         displayGridUnit = p.displayGridUnit;
         underlyingBeam = p.underlyingBeam.copy();
-        smoothing = p.smoothing.copy();
+        smoothingBeam = p.smoothingBeam.copy();
     }
     
     @Override
@@ -118,7 +118,7 @@ public class MapProperties extends FitsProperties {
         MapProperties copy = (MapProperties) super.copy();
        
         if(underlyingBeam != null) copy.underlyingBeam = underlyingBeam.copy();
-        if(smoothing != null) copy.smoothing = smoothing.copy();   
+        if(smoothingBeam != null) copy.smoothingBeam = smoothingBeam.copy();   
        
         if(grid != null) copy.grid = grid.copy();
         if(displayGridUnit != null) copy.displayGridUnit = displayGridUnit.copy();
@@ -129,7 +129,7 @@ public class MapProperties extends FitsProperties {
     
     public void copyProcessingFrom(MapProperties other) {
         underlyingBeam = other.underlyingBeam == null ? null : other.underlyingBeam.copy();
-        smoothing = other.smoothing == null ? null : other.smoothing.copy();
+        smoothingBeam = other.smoothingBeam == null ? null : other.smoothingBeam.copy();
           
         filterFWHM = other.filterFWHM;
         filterBlanking = other.filterBlanking;
@@ -158,24 +158,24 @@ public class MapProperties extends FitsProperties {
     
     public void setGrid(Grid2D<?> grid) { 
         // Undo the prior pixel smoothing, if any...
-        if(smoothing != null) if(this.grid != null) smoothing.deconvolveWith(getPixelSmoothing());     
+        if(smoothingBeam != null) if(this.grid != null) smoothingBeam.deconvolveWith(getPixelSmoothing());     
         
         this.grid = grid; 
         
         // Apply new pixel smoothing...
-        if(smoothing == null) smoothing = getPixelSmoothing();
-        else smoothing.encompass(getPixelSmoothing());      
+        if(smoothingBeam == null) smoothingBeam = getPixelSmoothing();
+        else smoothingBeam.encompass(getPixelSmoothing());      
     }
 
     public void setResolution(double dx, double dy) { 
         // Undo the prior pixel smoothing, if any...
-        if(smoothing != null) if(this.grid != null) smoothing.deconvolveWith(getPixelSmoothing());      
+        if(smoothingBeam != null) if(this.grid != null) smoothingBeam.deconvolveWith(getPixelSmoothing());      
         
         getGrid().setResolution(dx, dy);
         
         // Apply new pixel smoothing...
-        if(smoothing == null) smoothing = getPixelSmoothing();
-        else smoothing.encompass(getPixelSmoothing());
+        if(smoothingBeam == null) smoothingBeam = getPixelSmoothing();
+        else smoothingBeam.encompass(getPixelSmoothing());
     }
     
     public Gaussian2D getPixelSmoothing() {
@@ -185,7 +185,7 @@ public class MapProperties extends FitsProperties {
     
     
     public void setPixelSmoothing() {
-        smoothing.set(getPixelSmoothing());
+        smoothingBeam.set(getPixelSmoothing());
     }
 
     
@@ -211,16 +211,16 @@ public class MapProperties extends FitsProperties {
     }
     
     
-    public final Gaussian2D getSmoothing() { return smoothing; }
+    public final Gaussian2D getSmoothingBeam() { return smoothingBeam; }
     
 
-    public void setSmoothing(Gaussian2D psf) { 
-        smoothing = psf; 
+    public void setSmoothingBeam(Gaussian2D psf) { 
+        smoothingBeam = psf; 
     }
     
 
     public void setSmoothing(double fwhm) { 
-        smoothing = new Gaussian2D(fwhm);
+        smoothingBeam = new Gaussian2D(fwhm);
     }
     
     public final void addSmoothing(double fwhm) {
@@ -228,31 +228,31 @@ public class MapProperties extends FitsProperties {
     }
     
     public void addSmoothing(Gaussian2D psf) {
-        if(smoothing == null) smoothing = psf;
-        else smoothing.convolveWith(psf);
+        if(smoothingBeam == null) smoothingBeam = psf;
+        else smoothingBeam.convolveWith(psf);
     }
 
 
     public Gaussian2D getImageBeam() {
-        if(underlyingBeam == null) return smoothing;
-        if(smoothing == null) return underlyingBeam;
+        if(underlyingBeam == null) return smoothingBeam;
+        if(smoothingBeam == null) return underlyingBeam;
         
         Gaussian2D beam = new Gaussian2D();
         beam.set(underlyingBeam);
-        beam.convolveWith(smoothing);
+        beam.convolveWith(smoothingBeam);
         
         return beam;
     }
     
     
     public double getImageBeamArea() {
-        return underlyingBeam.getArea() + smoothing.getArea();
+        return underlyingBeam.getArea() + smoothingBeam.getArea();
     }
     
 
     public double getFilterCorrectionFactor(double underlyingFWHM) {
         if(Double.isNaN(filterFWHM)) return 1.0;
-        return 1.0 / (1.0 - (underlyingBeam.getArea() + smoothing.getArea()) / underlyingBeam.getArea() + getFilterArea());
+        return 1.0 / (1.0 - (underlyingBeam.getArea() + smoothingBeam.getArea()) / underlyingBeam.getArea() + getFilterArea());
     }
     
  
@@ -343,14 +343,14 @@ public class MapProperties extends FitsProperties {
     public void parseSmoothingBeam(Header header) {   
         // Use old SMOOTH or new SBMAJ/SBMIN
         if(header.containsKey(smoothingBeamFitsID + "BMAJ")) 
-            smoothing.parseHeader(header, smoothingBeamFitsID, getDefaultGridUnit().value());  
+            smoothingBeam.parseHeader(header, smoothingBeamFitsID, getDefaultGridUnit().value());  
         else {
             double smoothFWHM = FitsToolkit.getCommentedUnitValue(header, "SMOOTH", Double.NaN, getDisplayGridUnit().value());
-            smoothing.set(smoothFWHM);
+            smoothingBeam.set(smoothFWHM);
         }
         
         double pixelSmoothing = Math.sqrt(getGrid().getPixelArea() / Gaussian2D.areaFactor);
-        smoothing.encompass(new Gaussian2D(pixelSmoothing));        
+        smoothingBeam.encompass(new Gaussian2D(pixelSmoothing));        
     }
     
     public void parseFilterBeam(Header header) {
@@ -373,11 +373,11 @@ public class MapProperties extends FitsProperties {
             underlyingBeam.set(FitsToolkit.getCommentedUnitValue(header, "BEAM", Double.NaN, getDisplayGridUnit().value()));
         else if(header.containsKey("BMAJ")) {
             underlyingBeam.parseHeader(header, "", getDefaultGridUnit().value());
-            underlyingBeam.deconvolveWith(smoothing);
+            underlyingBeam.deconvolveWith(smoothingBeam);
         }
         else if(header.containsKey("RESOLUTN")) {
             double resolution = FitsToolkit.getCommentedUnitValue(header, "RESOLUTN", Double.NaN, getDisplayGridUnit().value());
-            underlyingBeam.set(resolution > smoothing.getMajorFWHM() ? Math.sqrt(resolution * resolution - smoothing.getMajorFWHM() * smoothing.getMinorFWHM()) : 0.0);
+            underlyingBeam.set(resolution > smoothingBeam.getMajorFWHM() ? Math.sqrt(resolution * resolution - smoothingBeam.getMajorFWHM() * smoothingBeam.getMinorFWHM()) : 0.0);
         }
         else underlyingBeam.set(0.0);
     
@@ -400,9 +400,9 @@ public class MapProperties extends FitsProperties {
         }
             
         if(underlyingBeam != null) underlyingBeam.editHeader(header, "instrument", underlyingBeamFitsID, fitsUnit);
-        if(smoothing != null) {
-            smoothing.editHeader(header, "smoothing", smoothingBeamFitsID, fitsUnit);
-            if(smoothing.isCircular()) c.add(new HeaderCard("SMOOTH", smoothing.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} FWHM (" + displayUnit.name() + ") smoothing.")); 
+        if(smoothingBeam != null) {
+            smoothingBeam.editHeader(header, "smoothing", smoothingBeamFitsID, fitsUnit);
+            if(smoothingBeam.isCircular()) c.add(new HeaderCard("SMOOTH", smoothingBeam.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} FWHM (" + displayUnit.name() + ") smoothing.")); 
         }
             
         // TODO convert extended filter and corrections to proper Gaussian beams...
@@ -425,11 +425,11 @@ public class MapProperties extends FitsProperties {
      
 
     public void merge(MapProperties other) {
-        if(smoothing != null) {
-            if(other.smoothing != null) smoothing.encompass(other.smoothing);
+        if(smoothingBeam != null) {
+            if(other.smoothingBeam != null) smoothingBeam.encompass(other.smoothingBeam);
         }
         else {
-            if(other.smoothing != null) smoothing = other.smoothing.copy();       
+            if(other.smoothingBeam != null) smoothingBeam = other.smoothingBeam.copy();       
         }
         filterFWHM = Math.min(filterFWHM, other.filterFWHM);
     }
@@ -448,7 +448,7 @@ public class MapProperties extends FitsProperties {
                 super.brief(header) + "\n" +
                 grid.toString(sizeUnit) +
                 "Instrument PSF: " + getUnderlyingBeam().toString(sizeUnit) + " FWHM.\n" +
-                "Applied Smoothing: " + smoothing.toString(sizeUnit) + " FWHM (includes pixelization).\n" +
+                "Applied Smoothing: " + smoothingBeam.toString(sizeUnit) + " FWHM (includes pixelization).\n" +
                 "Image Resolution: " + getImageBeam().toString(sizeUnit) + " FWHM (includes smoothing).\n";
                 
         return info;

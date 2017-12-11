@@ -569,7 +569,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
         getWeightImage().scale(1.0 + getSmoothing().getArea() / replacementPSF.getArea());
 
-        getProperties().setSmoothing(replacementPSF);
+        getProperties().setSmoothingBeam(replacementPSF);
 
     }
 

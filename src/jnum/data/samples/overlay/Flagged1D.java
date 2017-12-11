@@ -79,16 +79,17 @@ public class Flagged1D extends Overlay1D {
     }
     
     @Override
-    public void discard(Integer i) {
-        clear(i);
+    public void clear(Integer i) {
+        super.clear(i);
+        flag.clear(i);
     }
     
     @Override
-    public void clear(Integer i) {
-        flag.set(i, FLAG_DISCARD);
+    public void discard(Integer i) {
         super.clear(i);
+        flag.set(i, FLAG_DISCARD);
     }
-   
+    
     @Override
     public void set(Integer i, Number value) {
         super.set(i, value);

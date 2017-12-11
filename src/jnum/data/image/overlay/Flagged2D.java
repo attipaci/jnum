@@ -86,13 +86,14 @@ public class Flagged2D extends Overlay2D {
 
     @Override
     public void discard(int i, int j) {
-        clear(i, j);
+        super.clear(i, j);
+        flag.set(i, j, FLAG_DISCARD);
     }
 
     @Override
     public void clear(int i, int j) {
         super.clear(i, j);
-        flag.set(i, j, FLAG_DISCARD);
+        flag.clear(i, j);
     }
 
     @Override

@@ -266,7 +266,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
 
 
-    public final Gaussian2D getSmoothing() { return properties.getSmoothing(); }
+    public final Gaussian2D getSmoothing() { return properties.getSmoothingBeam(); }
 
     public final double getBeamArea() { return properties.getImageBeamArea(); }
 
@@ -341,7 +341,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
 
     public double getPointsPerSmoothingBeam() {
-        return Math.max(1.0, properties.getSmoothing().getArea() / getGrid().getPixelArea());
+        return Math.max(1.0, properties.getSmoothingBeam().getArea() / getGrid().getPixelArea());
     }
 
 
@@ -449,11 +449,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
             @Override
             protected void process(int i, int j) {
                 if(!isValid(i, j)) return;
-                
-                if(!validator.isValid(i, j)) {
-                    extended.clear(i, j);
-                    extended.unflag(i, j);
-                }
+                if(!validator.isValid(i, j)) extended.clear(i, j);
             }
         }.process();
         

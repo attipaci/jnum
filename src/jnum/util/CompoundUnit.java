@@ -88,11 +88,16 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		    
 			String uName = factor.name();
 			
+			if(uName.length() == 0) continue;
+		
 			if(uName.charAt(0) == '/') {
-			    if(i==0) name.append("1");
-			    else name.append(" ");
+			    if(i == 0) name.append("1");
 			}
-			if(uName.length() > 0) name.append(uName);
+			else {
+			    if(i != 0) name.append(" ");
+			}
+			
+			name.append(uName);
 		}
 		
 		return new String(name);
