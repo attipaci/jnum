@@ -67,11 +67,11 @@ public class EllipticalSource extends GaussianSource {
         
         if(a > b) {
             setElongation(a, b);
-            getAngle().setValue(angle);
+            getPositionAngle().setValue(angle);
         }
         else {
             setElongation(b, a);
-            getAngle().setValue(angle + Constant.rightAngle);
+            getPositionAngle().setValue(angle + Constant.rightAngle);
         }
     }
 
@@ -106,7 +106,7 @@ public class EllipticalSource extends GaussianSource {
         elongation.exact();
     }
 
-    public DataPoint getAngle() { return angle; }
+    public DataPoint getPositionAngle() { return angle; }
 
 
     public DataPoint getMajorFWHM() { 
@@ -127,14 +127,15 @@ public class EllipticalSource extends GaussianSource {
         minor.scale(1.0 / (1.0 - elongation.value() * elongation.value()));  
         return minor;
     }
-
+    
+    
     @Override
     public void editHeader(Header header, Unit sizeUnit) throws HeaderCardException {
         super.editHeader(header, sizeUnit);
 
         DataPoint major = getMajorFWHM();
         DataPoint minor = getMinorFWHM();
-        DataPoint angle = getAngle();
+        DataPoint angle = getPositionAngle();
 
         boolean hasError = getRadius().weight() > 0.0;
 
@@ -168,7 +169,7 @@ public class EllipticalSource extends GaussianSource {
         major.scale(1.0 / sizeUnit.value());
         minor.scale(1.0 / sizeUnit.value());
 
-        DataPoint angle = getAngle();
+        DataPoint angle = getPositionAngle();
         angle.scale(1.0 / Unit.deg);
 
         info += " (a=" + major.toString(Util.f1) + ", b=" + minor.toString(Util.f1) 
@@ -183,7 +184,7 @@ public class EllipticalSource extends GaussianSource {
     
     @Override
     public Gaussian2D getGaussian2D() {
-        return new Gaussian2D(getMajorFWHM().value(), getMinorFWHM().value(), getAngle().value());
+        return new Gaussian2D(getMajorFWHM().value(), getMinorFWHM().value(), getPositionAngle().value());
     }
     
   
@@ -282,7 +283,7 @@ public class EllipticalSource extends GaussianSource {
 
             DataPoint major = getMajorFWHM();
             DataPoint minor = getMinorFWHM();
-            DataPoint angle = getAngle();
+            DataPoint angle = getPositionAngle();
             
             Unit deg = Unit.get("deg");
             

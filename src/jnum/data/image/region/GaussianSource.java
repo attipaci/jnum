@@ -155,18 +155,33 @@ public class GaussianSource extends CircularRegion {
     }
 
 
-    public void convolveWith(Gaussian2D beam) {
-        Gaussian2D source = getGaussian2D();
-        source.convolveWith(beam);
-        getFWHM().setValue(source.getCircularEquivalentFWHM());
+    public void convolveWith(Gaussian2D psf) {
+        double f = getFWHM().value();
+        getFWHM().setValue(getConvolvedBeam(psf).getCircularEquivalentFWHM());
+        f /= getFWHM().value();
+        getFWHM().scaleWeight(1.0 / (f*f));
+        // TODO propagation of angle errors (EllipticalSource)...
     }
 
-    public void deconvolveWith(Gaussian2D beam) {      
-        Gaussian2D source = getGaussian2D();
-        source.deconvolveWith(beam);
-        getFWHM().setValue(source.getCircularEquivalentFWHM());
+    public void deconvolveWith(Gaussian2D psf) {   
+        double f = getFWHM().value();
+        getFWHM().setValue(getDeconvolvedBeam(psf).getCircularEquivalentFWHM());
+        f /= getFWHM().value();
+        getFWHM().scaleWeight(1.0 / (f*f));
+        // TODO propagation of angle errors (EllipticalSource)...
     }
 
+    public Gaussian2D getConvolvedBeam(Gaussian2D psf) {        
+        Gaussian2D beam = getGaussian2D();
+        beam.convolveWith(psf);
+        return beam;
+    }
+    
+    public Gaussian2D getDeconvolvedBeam(Gaussian2D psf) {        
+        Gaussian2D beam = getGaussian2D();
+        beam.deconvolveWith(psf);
+        return beam;
+    }
     
     
     /* (non-Javadoc)
@@ -225,11 +240,13 @@ public class GaussianSource extends CircularRegion {
 
     }
     
+    public double getBeamArea() {
+        return Gaussian2D.areaFactor * getFWHM().value() * getFWHM().value();
+    }
+    
     public DataPoint getIntegral(double psfArea) {
         DataPoint F = new DataPoint(peak);     
-        F.multiplyBy(getFWHM());
-        F.multiplyBy(getFWHM());    
-        F.scale(Gaussian2D.areaFactor / psfArea);
+        F.scale(getBeamArea() / psfArea);
         return F;
     }
     
@@ -245,10 +262,10 @@ public class GaussianSource extends CircularRegion {
         info.append("  Peak: " + peak + " " + getUnitName() + " (S/N ~ " + Util.f1.format(peak.significance()) + ")\n");
 
         Unit sizeUnit = properties.getDisplayGridUnit();
-        DataPoint I = getIntegral(properties.getImageBeamArea());
+        DataPoint I = getIntegral(properties.getUnderlyingBeam().getArea());
         
         info.append("  Int.: " + I + "\n");
-     
+   
         info.append("  FWHM: " + Util.f1.format(getFWHM().value() / sizeUnit.value()) 
         + (getFWHM().weight() > 0.0 ? " +- " + Util.f1.format(getFWHM().rms() / sizeUnit.value()) : "")
         + " " + sizeUnit.name());
@@ -311,7 +328,6 @@ public class GaussianSource extends CircularRegion {
         
         public final void setPeakFrom(Values2D image) {        
             Vector2D centerIndex = getCenterIndex();
-            
             peak.setValue(image.valueAtIndex(centerIndex.x(), centerIndex.y()));
               
             if(image instanceof Observation2D) peak.setWeight(((Observation2D) image).getWeights().valueAtIndex(centerIndex.x(), centerIndex.y()));

@@ -649,7 +649,7 @@ TableFormatter.Entries {
 
 
     public final double level(boolean isRobust) {
-        double level = isRobust ? getMedian().value() : getMean().value();
+        double level = isRobust ? getMedian().value() : getMean().value(); 
         add(-level);
         return level;
     }

@@ -5,6 +5,13 @@
 	[FIX] {AstroTime} MJD2000 referece point was off by 1/2 day. Not that
 	it made a difference. Still, it's better to have it right...
 
+	[FIX] {EllipticalSource} Better propagation of FWHM errors under
+	convolve/deconvolve.
+
+	[TWEAK] {CricularRegion} Improved adaptation of region to image, now
+	more focused on the main peak, handles negative peaks, and not stalled
+	by too small starting radii.
+
 	[TWEAK] Allowing only base units to register into lookup tables. 
 	This way, there is less chance that we end up with strange constructs
 	such as putting a k prefix in front of km/s...

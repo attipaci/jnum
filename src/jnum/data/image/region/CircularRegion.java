@@ -376,30 +376,39 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         
      
         // Increase the aperture until it captures >98% of the flux
-        public double adaptTo(Values2D image) {      
+        public double adaptTo(Values2D image) {  
             moveTo(image, 0);
-            
+
             IndexBounds2D bounds = getBounds();
             Viewport2D view = new Viewport2D(image, bounds);
                
             double I = view.getSum();
-                 
-            // 20 iterations on 20% increases covers ~40-fold increase in radius
+                
+            double minGrow = Math.min(getGrid().pixelSizeX(), getGrid().pixelSizeY());
+            
+            // 40 iterations on 10% increases covers ~40-fold increase in radius
             // Should be plenty even for a very large pointing source...
-            for(int i=0; i<20; i++) {
-                // A 20% increase in radius is ~40% increase in area.
-                getRadius().scaleValue(1.2);
+            for(int i=0; i<40; i++) {
+                getRadius().add(Math.min(minGrow, 0.1 * getRadius().value()));
                 updateBounds(bounds);
                 view.setBounds(bounds);
                 
                 double I1 = view.getSum();
                 
-                if(I1 <= 1.005 * I) break;
+                // Strickter convergence makes it more sensitive to sidelobe/coma structure.
+                // whereas rougher convergence will concentrate more on the main peak...
                 
+                if(I >= 0) {
+                    if(I1 <= 1.05 * I) break;
+                }
+                else {
+                    if(I1 >= 1.05 * I) break;
+                }
+                    
                 I = I1;
             }
             
-            return I;
+            return I; 
         }
         
         public double adaptTo(Observation2D map) {
@@ -409,14 +418,14 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
       
         
         public void moveToLocalPeak(Values2D image, int sign) {
-            // TODO make sure the radius is at least a few pixels in size...
-              
+            // TODO make sure the radius is at least a few pixels in size...       
             Viewport2D view = getViewer(image);
             Index2D peakIndex = null;
             if(sign == 0) peakIndex = view.indexOfMaxDev();
             else peakIndex = sign < 0 ? view.indexOfMin() : view.indexOfMax();
-            
+              
             Vector2D fracIndex = view.getRefinedPeakIndex(peakIndex);
+            
             fracIndex.addX(view.fromi());
             fracIndex.addY(view.fromj());
             

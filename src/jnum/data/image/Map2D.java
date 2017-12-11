@@ -160,8 +160,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     public Map2D clone() {
         Map2D clone = (Map2D) super.clone();
         clone.reuseIndex = new Vector2D();  
-        // Replace the clone's list of proprietary units with it own...
-        clone.addProprietaryUnits();
+
         return clone;
     }
 
@@ -171,17 +170,19 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     @Override
     public Map2D copy(boolean withContent) {
         Map2D copy = clone();
-
-        if(properties != null) copy.properties = properties.copy();   
-
+        
+        if(properties != null) copy.properties = properties.copy();     
+        
+        // Replace the clone's list of proprietary units with it own...
+        copy.addProprietaryUnits();
+        
         // Units might have proprietary components, which aren't easily copied over.
-        // Hence, the safest is to re-construct the units of the copy from scratch
-        // based on the specification.
+        // Hence, the safest is to re-construct the units of the copy from the specification.
         copy.setUnit(getUnit().name());
-
+        
         if(getImage() != null) copy.setImage(getImage().copy(withContent));
         if(getFlags() != null) copy.setFlags(getFlags().copy(withContent));
-        
+
         return copy;
     }
 
@@ -225,7 +226,6 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         image.setUnit(getUnit());
         image.setParallel(getParallel());
         image.setExecutor(getExecutor());
-        image.validate();
     }
 
     @Override

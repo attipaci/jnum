@@ -96,7 +96,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
         if(mapTemplate == null) return;
         
         map.getProperties().copy(mapTemplate.getProperties());     
-        map.setCriticalFlags(mapTemplate.getCriticalFlags());
+        map.setValidatingFlags(mapTemplate.getValidatingFlags());
         
         for(Unit u : mapTemplate.getLocalUnits().values()) map.addLocalUnit(u);
         map.setUnit(mapTemplate.getUnit().name());
@@ -170,11 +170,11 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
         grid1D.setReference(value);
     }
     
-    public long getCriticalFlags() { return mapTemplate.getCriticalFlags(); }
+    public long getCriticalFlags() { return mapTemplate.getValidatingFlags(); }
     
     public void setCriticalFlags(long pattern) {
-        mapTemplate.setCriticalFlags(pattern);
-        for(Map2D map : getPlanes()) map.setCriticalFlags(pattern);
+        mapTemplate.setValidatingFlags(pattern);
+        for(Map2D map : getPlanes()) map.setValidatingFlags(pattern);
     }
     
     public final void renew() {

@@ -98,7 +98,15 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     @Override
     public Observation2D clone() {
         Observation2D clone = (Observation2D) super.clone();
-
+        
+        // Treat weight and exposure as if their fields were fields at the root of this object...
+        // I.e. make weight and exposure independent in clones always (otherwise, bad things may happen...)
+        clone.weight = new Flagged2D(getFlags());
+        if(getWeightImage() != null) clone.setWeightImage(getWeightImage());
+        
+        clone.exposure = new Flagged2D(getFlags());
+        if(getExposureImage() != null) clone.setExposureImage(getExposureImage());
+        
         return clone;
     }
     
@@ -109,13 +117,11 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public Observation2D copy(boolean withContents) {
         Observation2D copy = (Observation2D) super.copy(withContents);  
         
-        copy.weight = new Flagged2D();
         copy.weight.setFlags(copy.getFlags());
         if(getWeightImage() != null) copy.setWeightImage(getWeightImage().copy(withContents));
         
-        copy.exposure = new Flagged2D();
         copy.exposure.setFlags(copy.getFlags());
-        if(getWeightImage() != null) copy.setExposureImage(getExposureImage().copy(withContents));
+        if(getExposureImage() != null) copy.setExposureImage(getExposureImage().copy(withContents));
         
         return copy;
     }
@@ -128,7 +134,9 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     
     @Override
     public boolean isValid(int i, int j) {
-        return super.isValid(i, j) && weight.get(i, j).doubleValue() > 0.0;
+        if(!super.isValid(i, j)) return false;
+        if(!getWeightImage().isValid(i, j)) return false;
+        return weight.get(i, j).doubleValue() > 0.0;
     }
     
     @Override
@@ -240,7 +248,8 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
             }
         };
     }
-
+    
+   
    
     @Override
     public void setSize(int sizeX, int sizeY) {

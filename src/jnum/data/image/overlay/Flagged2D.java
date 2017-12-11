@@ -31,10 +31,14 @@ import jnum.util.HashCode;
 
 public class Flagged2D extends Overlay2D {
     private Flag2D flag;
-    private long criticalFlags = ~0L;
+    private long validatingFlags = ~0L;
 
     public Flagged2D() {}
 
+    public Flagged2D(Flag2D flag) {
+        setFlags(flag);
+    }
+    
     public Flagged2D(Values2D base, Flag2D flag) {
         super(base);
         setFlags(flag);
@@ -42,7 +46,7 @@ public class Flagged2D extends Overlay2D {
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode() ^ flag.hashCode() ^ HashCode.from(criticalFlags);
+        int hash = super.hashCode() ^ flag.hashCode() ^ HashCode.from(validatingFlags);
         return hash;
     }
 
@@ -52,7 +56,7 @@ public class Flagged2D extends Overlay2D {
         if(!(o instanceof Flagged2D)) return false;
 
         Flagged2D flagged = (Flagged2D) o;
-        if(getCriticalFlags() != flagged.getCriticalFlags()) return false;
+        if(getValidatingFlags() != flagged.getValidatingFlags()) return false;
         if(!Util.equals(flag, flagged.flag)) return false;
 
         return super.equals(o);
@@ -70,13 +74,13 @@ public class Flagged2D extends Overlay2D {
 
     public Flag2D getFlags() { return flag; }
 
-    public void setCriticalFlags(long pattern) { criticalFlags = pattern; }
+    public void setValidatingFlags(long pattern) { validatingFlags = pattern; }
 
-    public final long getCriticalFlags() { return criticalFlags; }
+    public final long getValidatingFlags() { return validatingFlags; }
 
     @Override
     public boolean isValid(int i, int j) {
-        if(isFlagged(i, j, getCriticalFlags())) return false;
+        if(isFlagged(i, j, getValidatingFlags())) return false;
         return super.isValid(i, j);
     }
 
