@@ -50,8 +50,9 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
     private Flagged2D weight;
     private Flagged2D exposure;
-
    
+    public boolean isZeroWeightValid = false;
+    
     public Observation2D(Class<? extends Number> dataType, int flagType) {
         this(dataType, dataType, flagType);
     }
@@ -59,7 +60,8 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public Observation2D(Class<? extends Number> dataType, Class<? extends Number> weightType, int flagType) {
         super(dataType, flagType); 
         setWeightImage(Image2D.createType(weightType));
-        setExposureImage(Image2D.createType(weightType));        
+        setExposureImage(Image2D.createType(weightType));
+        
     }
 
     @Override
@@ -68,7 +70,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         weight = new Flagged2D();
         exposure = new Flagged2D();
     }
-  
+     
     @Override
     public int hashCode() { 
         int hash = super.hashCode();
@@ -88,6 +90,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         
         return super.equals(o);
     }
+   
 
     @Override
     protected ObsProperties getPropertiesInstance() { return new ObsProperties(); }
@@ -135,8 +138,9 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     @Override
     public boolean isValid(int i, int j) {
         if(!super.isValid(i, j)) return false;
-        if(!getWeightImage().isValid(i, j)) return false;
-        return weight.get(i, j).doubleValue() > 0.0;
+        final double w = weight.get(i, j).doubleValue();
+        if(Double.isNaN(w)) return false;
+        return isZeroWeightValid ? w >= 0.0 : w > 0.0;
     }
     
     @Override
@@ -146,7 +150,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         getExposureImage().clear(i, j);
     }
     
-   
+
     @Override
     public void destroy() {
         super.destroy();
@@ -740,7 +744,6 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
         return TYPE_UNKNOWN;
     }
-
 
    
     public final static int TYPE_UNKNOWN = 0;

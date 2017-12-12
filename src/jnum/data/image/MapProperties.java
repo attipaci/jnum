@@ -252,7 +252,7 @@ public class MapProperties extends FitsProperties {
 
     public double getFilterCorrectionFactor(double underlyingFWHM) {
         if(Double.isNaN(filterFWHM)) return 1.0;
-        return 1.0 / (1.0 - (underlyingBeam.getArea() + smoothingBeam.getArea()) / underlyingBeam.getArea() + getFilterArea());
+        return 1.0 / (1.0 - (underlyingBeam.getArea() + smoothingBeam.getArea()) / (underlyingBeam.getArea() + getFilterArea()));
     }
     
  

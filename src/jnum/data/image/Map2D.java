@@ -42,6 +42,7 @@ import jnum.data.image.overlay.Referenced2D;
 import jnum.data.image.transform.CartesianGridTransform2D;
 import jnum.data.image.transform.ProjectedIndexTransform2D;
 import jnum.fft.MultiFFT;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Range;
 import jnum.math.Vector2D;
@@ -273,7 +274,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
     public Class<? extends Coordinate2D> getCoordinateClass() { return getGrid().getReference().getClass(); }
 
-
+    
     @Override
     public String toString(int i, int j) {
         return super.toString(i,j) + " flag=0x" + Long.toHexString(getFlags().get(i,j));
@@ -443,25 +444,37 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
     public void filterAbove(double FWHM, final Validating2D validator) {
         final Map2D extended = copy(true);
-
+        
+        
+        if(extended instanceof Observation2D) {
+            extended.validate();    // Make sure zero weights are flagged...
+            ((Observation2D) extended).isZeroWeightValid = true;
+        }
+        
         // Null out the points that are to be skipped over by the validator...
         if(validator != null) extended.new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
                 if(!isValid(i, j)) return;
-                if(!validator.isValid(i, j)) extended.clear(i, j);
+                if(!validator.isValid(i, j)) {
+                    extended.clear(i, j);
+                    extended.unflag(i, j);
+                }
             }
         }.process();
-        
+           
         extended.smoothTo(FWHM);
-
+       
         final Image2D image = getImage();
+        
+        try { FitsToolkit.write(extended.createFits(Float.class), "post.fits"); }
+        catch(Exception e) {}
         
         new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
-                double X = extended.get(i, j).doubleValue();
-                if(!Double.isNaN(X)) image.add(i, j, -X);   // Subtract from the image directly without affecting flagging...
+                if(!extended.isValid(i, j)) return;
+                image.add(i, j, -extended.get(i, j).doubleValue());   // Subtract from the image directly without affecting flagging...
             }
         }.process();
 
@@ -739,7 +752,7 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
             undoFilterCorrectBy(validator);
         }
         final double filterC = properties.getFilterCorrectionFactor(underlyingFWHM);
-
+     
         new Fork<Void>() {
             @Override
             protected void process(int i, int j) {

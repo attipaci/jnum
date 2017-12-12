@@ -729,7 +729,7 @@ TableFormatter.Entries {
     
     private WeightedPoint[] getValidSortingArray(final IndexedValues<IndexType> weights) {    
         final WeightedPoint[] sorter = new WeightedPoint[countPoints()];
-        
+         
         if(sorter.length == 0) return sorter;
         
         loop(new PointOp.Simple<IndexType>() {

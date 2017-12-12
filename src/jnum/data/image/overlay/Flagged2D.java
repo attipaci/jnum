@@ -27,15 +27,18 @@ import jnum.Util;
 import jnum.data.image.Flag2D;
 import jnum.data.image.Index2D;
 import jnum.data.image.Values2D;
+import jnum.util.FlagBlock;
+import jnum.util.FlagSpace;
 import jnum.util.HashCode;
 
 public class Flagged2D extends Overlay2D {
     private Flag2D flag;
-    private long validatingFlags = ~0L;
+    private long validatingFlags;
 
     public Flagged2D() {}
 
     public Flagged2D(Flag2D flag) {
+        this();
         setFlags(flag);
     }
     
@@ -43,7 +46,7 @@ public class Flagged2D extends Overlay2D {
         super(base);
         setFlags(flag);
     }
-
+    
     @Override
     public int hashCode() {
         int hash = super.hashCode() ^ flag.hashCode() ^ HashCode.from(validatingFlags);
@@ -74,10 +77,12 @@ public class Flagged2D extends Overlay2D {
 
     public Flag2D getFlags() { return flag; }
 
-    public void setValidatingFlags(long pattern) { validatingFlags = pattern; }
+    public void setValidatingFlags(long pattern) { 
+        validatingFlags = pattern; 
+    }
 
     public final long getValidatingFlags() { return validatingFlags; }
-
+    
     @Override
     public boolean isValid(int i, int j) {
         if(isFlagged(i, j, getValidatingFlags())) return false;
@@ -177,9 +182,11 @@ public class Flagged2D extends Overlay2D {
     public void destroy() {
         getFlags().destroy();        
     }
+    
+    public final static FlagSpace.Long flagSpace = new FlagSpace.Long(Flagged2D.class.getSimpleName());
+    public final static FlagBlock<Long> flags = flagSpace.getDefaultFlagBlock(); 
 
-    public final static long FLAG_DISCARD = 1L<<0;
-    public final static long FLAG_OPERATION = 1L<<1;
+    public final static long FLAG_DISCARD = flags.next('X', "discarded").value();
 
     public final static long FLAG_DEFAULT = FLAG_DISCARD;
 
