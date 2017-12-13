@@ -464,11 +464,8 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
         }.process();
            
         extended.smoothTo(FWHM);
-       
+      
         final Image2D image = getImage();
-        
-        try { FitsToolkit.write(extended.createFits(Float.class), "post.fits"); }
-        catch(Exception e) {}
         
         new Fork<Void>() {
             @Override
