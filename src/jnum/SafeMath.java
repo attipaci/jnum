@@ -24,18 +24,22 @@
 package jnum;
 
 
-// TODO: Auto-generated Javadoc
+
 /**
- * The Class SafeMath.
+ * A collection of math functions that are tolerant to rounding errors. The tolerance is designed to accomodate
+ * typical rounding errors propagated through a moderate number of single-precision floating point operations
+ * to the arguments
  */
 public final class SafeMath {
 
-	// Safe asin and acos for when rounding errors make values fall outside of -1:1 range.
+	
 	/**
-	 * Asin.
+	 * Safe asin and for when rounding errors might push the argument just outside the legal -1:1 range.
+	 * Values within the tolerance (1e-5) of the limits will return the limit values (+/- Pi/2).
+	 * 
 	 *
-	 * @param value the value
-	 * @return the double
+	 * @param value the argument, usually in the -1:1 range.
+	 * @return the inverse sin() function of the argument, or NaN if the argument is invalid.
 	 */
 	public final static double asin(final double value) {
 		if(value < -1.0) return value < minusOnePlus ? Double.NaN : -Constant.rightAngle;
@@ -44,10 +48,11 @@ public final class SafeMath {
 	}
 	
 	/**
-	 * Acos.
+	 * Safe acos and for when rounding errors might push the argument just outside the legal -1:1 range.
+	 * Values within the tolerance (1e-5) of the limits will return the limit values (0 or Pi).
 	 *
-	 * @param value the value
-	 * @return the double
+	 * @param value the argument, usually in the -1:1 range.
+     * @return the inverse cos() function of the argument, or NaN if the argument is invalid.
 	 */
 	public final static double acos(final double value) {
 		if(value < -1.0) return value < minusOnePlus ? Double.NaN : Math.PI;
@@ -56,10 +61,11 @@ public final class SafeMath {
 	}
 	
 	/**
-	 * Sqrt.
+	 * Safe square root near 0.0, when rounding errors might push the argment just below zero.
+	 * Values within the tolerance (1e-5) below 0.0 will return 0.0
 	 *
-	 * @param value the value
-	 * @return the double
+	 * @param value the argument
+	 * @return the square root, or NaN if the argument is negative and inconsistent with 0.0.
 	 */
 	public final static double sqrt(final double value) {
 		if(value < 0.0) return value < minusOnePlus ? Double.NaN : 0.0;

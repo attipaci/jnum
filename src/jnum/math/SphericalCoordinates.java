@@ -488,9 +488,8 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 */
 	@Override
 	public double distanceTo(SphericalCoordinates point) {
-		double sindTheta = Math.sin(point.y() - y());
-		double sindPhi = Math.sin(point.x() - x());
-		return 2.0 * SafeMath.asin(Math.sqrt(sindTheta * sindTheta + cosLat * point.cosLat * sindPhi * sindPhi));
+	    final double c = sinLat * point.sinLat + cosLat * point.cosLat * Math.cos(x() - point.x());
+	    return Math.atan2(Math.sqrt(1.0 - c*c),  c);
 	}
 
 	/* (non-Javadoc)

@@ -12,6 +12,9 @@
 
 	[FIX] {EllipticalSource} Better propagation of FWHM errors under
 	convolve/deconvolve.
+	
+	[TWEAK] {SphericalCoordinates} distanceTo() method switched to simpler,
+	faster, and better formula.
 
 	[TWEAK] {CricularRegion} Improved adaptation of region to image, now
 	more focused on the main peak, handles negative peaks, and not stalled
