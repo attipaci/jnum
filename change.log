@@ -3,6 +3,9 @@
 	[BUG] {MapProperties} getFilterCorrectionFactor() was totally botched
 	due to a missing set of brackets.
 
+	[BUG] {SphericalCoordinates} distanceTo() method had an arithmetic 
+	error in haversine formula.
+
 	[FIX] Flagged2D and subclasses (Mapped2D) and Observation2D had a
 	little too zealous point validation and discarding. Now, only the flags
 	are used to mark bad data, which is also faster :-). 
@@ -13,10 +16,11 @@
 	[FIX] {EllipticalSource} Better propagation of FWHM errors under
 	convolve/deconvolve.
 	
-	[TWEAK] {SphericalCoordinates} distanceTo() method switched to simpler,
-	faster, and better formula.
+	[TWEAK] {SphericalCoordinates} New distanceTo() formulae for fast
+	and precise distance calculation everywhere (using the law of cosines
+	or the Vincenty formula, depending on the distance itself).
 
-	[TWEAK] {CricularRegion} Improved adaptation of region to image, now
+	[TWEAK] {CircularRegion} Improved adaptation of region to image, now
 	more focused on the main peak, handles negative peaks, and not stalled
 	by too small starting radii.
 

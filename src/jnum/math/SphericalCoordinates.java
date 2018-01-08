@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.util.Hashtable;
 
 import jnum.Constant;
+import jnum.ExtraMath;
 import jnum.SafeMath;
 import jnum.Unit;
 import jnum.Util;
@@ -488,8 +489,16 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 */
 	@Override
 	public double distanceTo(SphericalCoordinates point) {
-	    final double c = sinLat * point.sinLat + cosLat * point.cosLat * Math.cos(x() - point.x());
-	    return Math.atan2(Math.sqrt(1.0 - c*c),  c);
+	    double cosdl = cosLat * point.cosLat + sinLat * point.sinLat;
+	    double c = sinLat * point.sinLat + cosLat * point.cosLat * cosdl;
+	    
+	    // The simplest formula (law of cosines) is good for intermediate distances...
+	    if(c > -0.9) if(c < 0.9) return Math.acos(c);
+	
+	    // Otherwise, Vincenty formula for better precision near and antipolar...
+	    double sindl = sinLat * point.cosLat - cosLat * point.sinLat;
+	    double s = ExtraMath.hypot(point.cosLat * sindl, cosLat * point.sinLat - sinLat * point.cosLat * cosdl);    
+	    return Math.atan2(s,  c);
 	}
 
 	/* (non-Javadoc)
