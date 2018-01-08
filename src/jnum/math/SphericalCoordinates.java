@@ -489,15 +489,14 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 */
 	@Override
 	public double distanceTo(SphericalCoordinates point) {
-	    double cosdl = Math.cos(point.x() - x());
-	    double c = sinLat * point.sinLat + cosLat * point.cosLat * cosdl;
+	    final double cosphi2cosdl = point.cosLat * Math.cos(point.x() - x());
+	    final double c = sinLat * point.sinLat + cosLat * cosphi2cosdl;
 	    
 	    // The simplest formula (law of cosines) is good for intermediate distances...
-	    if(c > -0.9) if(c < 0.9) return Math.acos(c);
+	    if(c < 0.9) if(c > -0.9) return Math.acos(c);
 	
 	    // Otherwise, Vincenty formula for better precision near and antipolar...
-	    double s = ExtraMath.hypot(point.cosLat * Math.sin(point.x() - x()), cosLat * point.sinLat - sinLat * point.cosLat * cosdl);    
-	    return Math.atan2(s,  c);
+	    return Math.atan2(ExtraMath.hypot(point.cosLat * Math.sin(point.x() - x()), cosLat * point.sinLat - sinLat * cosphi2cosdl),  c);
 	}
 
 	/* (non-Javadoc)
