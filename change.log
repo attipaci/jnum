@@ -1,5 +1,12 @@
 0.20-3
 
+	[BUG] {ParallelPointOp} ParallelPointOp was not interchangeable with
+	PointOp, resulting in unpredictable behavior in smart forks (which
+	process in parallel or in loop, depending on the number of elements
+	to be processed). It really only affected ParallelPointOp.Average,
+	which in turn was called by Data[...].getMean() and 
+	Data[...].getVariance() methods. Fixed.
+
 	[BUG] {MapProperties} getFilterCorrectionFactor() was totally botched
 	due to a missing set of brackets.
 

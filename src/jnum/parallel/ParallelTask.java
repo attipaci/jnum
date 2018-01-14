@@ -276,6 +276,8 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		// Clear the interrupt status for reuse...
 		isInterrupted = false;
 		
+		cleanup();
+		
 		// Wrap up, if an exception occurs, record it if not prior exception is recorded already...
 		try { wrapup(); }
 		catch(Exception e) { if(exception == null) exception = e; }
@@ -301,10 +303,9 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 	    return processor.synchronizeThread();
 	}
 	
-	/**
-	 * Cleanup.
-	 */
-	protected void cleanup() {}
+	protected void cleanup() {
+	    
+	}
 	
 	/**
 	 * Wrapup.
@@ -313,7 +314,6 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		isAlive = false;
 		isComplete = true;
 		notifyAll();
-		cleanup();
 	}
 		
 	/**

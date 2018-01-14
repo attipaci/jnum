@@ -208,45 +208,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-    /*
-	protected String resolve(String value) {
-		if(!value.contains("{#")) return value;
-
-		StringBuffer resolved = new StringBuffer();
-
-		int from = value.indexOf("{#");
-		int to = from;
-		resolved.append(value, 0, from);
-
-		System.err.println("### from " + from);
-
-		while(from >= 0) {
-			to = value.indexOf("}", from);
-			System.err.println("### from " + from);
-			if(to < 0) {
-				// If no closing bracket, then just quote the rest as literal, including
-				// the opening bracket...
-				System.err.println("### unclosed!");
-				resolved.append(value, from, value.length());
-				return new String(resolved);
-			}
-			String key = value.substring(from + 2, to);
-
-			System.err.println("### resolving " + key);
-
-			if(key.length() > 0) if(isConfigured(key)) {
-				String substitute = get(key).getValue();
-				System.err.println("### substitute " + substitute);
-				if(substitute != null) resolved.append(substitute);
-			}
-
-			from = value.indexOf("{#", to);
-		}
-		resolved.append(value, to + 1, value.length());
-		return new String(resolved);
-	}
-     */
-
     /**
      * Unalias.
      *

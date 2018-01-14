@@ -422,12 +422,6 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
             }
             
             @Override
-            protected void cleanup() {
-                super.cleanup();
-                op.cleanup();
-            }
-            
-            @Override
             public ReturnType getLocalResult() { return localOp.getResult(); }
             
 
@@ -463,13 +457,7 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
             protected void processElementAt(int i) {
                 localOp.process(i);
             }
-            
-            @Override
-            protected void cleanup() {
-                super.cleanup();
-                op.cleanup();
-            }
-            
+                 
             @Override
             public ReturnType getLocalResult() { return localOp.getResult(); }
             

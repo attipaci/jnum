@@ -101,7 +101,7 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
             sum = 0.0;
         }
         
-        public abstract double getValue(PointType point);
+        protected abstract double getValue(PointType point);
         
         @Override
         public final void process(PointType point) {
@@ -123,9 +123,9 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
             ave = new WeightedPoint();
         }
         
-        public abstract double getValue(PointType point);
+        protected abstract double getValue(PointType point);
         
-        public abstract double getWeight(PointType point);
+        protected abstract double getWeight(PointType point);
         
         @Override
         public final void process(PointType point) {

@@ -1074,7 +1074,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     
     @Override
     public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
-      
+        
         Fork<ReturnType> fork = new Fork<ReturnType>() {
             private ParallelPointOp<Number, ReturnType> localOp;
             
@@ -1088,13 +1088,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
             protected void process(int i, int j) {
                 if(isValid(i, j)) localOp.process(get(i, j));
             }
-            
-            @Override
-            protected void cleanup() {
-                super.cleanup();
-                op.cleanup();
-            }
-            
+              
             @Override
             public ReturnType getLocalResult() { return localOp.getResult(); }
             
@@ -1136,12 +1130,6 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
                 localOp.process(index);
             }
           
-            @Override
-            protected void cleanup() {
-                super.cleanup();
-                op.cleanup();
-            }
-            
             @Override
             public ReturnType getLocalResult() { return localOp.getResult(); }
             
