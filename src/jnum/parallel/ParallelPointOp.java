@@ -24,6 +24,7 @@
 package jnum.parallel;
 
 
+import jnum.PointOp;
 import jnum.data.WeightedPoint;
 
 public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<PointType, ReturnType> {

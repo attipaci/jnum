@@ -27,6 +27,7 @@ import java.util.List;
 
 import jnum.Constant;
 import jnum.ExtraMath;
+import jnum.PointOp;
 import jnum.Util;
 import jnum.data.DataPoint;
 import jnum.data.Transforming;
@@ -43,7 +44,6 @@ import jnum.math.Range;
 import jnum.math.Vector2D;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
-import jnum.parallel.PointOp;
 import jnum.util.HashCode;
 
 

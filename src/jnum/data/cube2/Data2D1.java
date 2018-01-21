@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jnum.NonConformingException;
+import jnum.PointOp;
 import jnum.data.cube.Index3D;
 import jnum.data.cube.Data3D;
 import jnum.data.image.Data2D;
-import jnum.parallel.PointOp;
 
 public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     

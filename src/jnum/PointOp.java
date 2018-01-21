@@ -21,7 +21,7 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.parallel;
+package jnum;
 
 import jnum.data.WeightedPoint;
 

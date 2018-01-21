@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import jnum.ExtraMath;
+import jnum.PointOp;
 import jnum.Unit;
 import jnum.Util;
 import jnum.Verbosity;
@@ -39,7 +40,6 @@ import jnum.math.Range;
 import jnum.parallel.ParallelObject;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
-import jnum.parallel.PointOp;
 import jnum.text.TableFormatter;
 import jnum.util.CompoundUnit;
 import nom.tam.fits.Fits;

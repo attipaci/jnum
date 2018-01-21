@@ -26,6 +26,7 @@ package jnum.data.cube;
 
 import java.util.List;
 
+import jnum.PointOp;
 import jnum.data.CubicSpline;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
@@ -35,7 +36,6 @@ import jnum.math.Coordinate3D;
 import jnum.math.Vector3D;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
-import jnum.parallel.PointOp;
 
 
 

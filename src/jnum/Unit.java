@@ -1037,6 +1037,9 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
 
     /** The Constant ft. */
     public final static double ft = foot;
+    
+    /** The Constant kft. */
+    public final static double kft = kilo * ft;
 
     /** The Constant yard. */
     public final static double yard = 0.9144 * m;

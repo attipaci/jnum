@@ -25,6 +25,7 @@ package jnum.data.samples;
 
 import java.util.List;
 
+import jnum.PointOp;
 import jnum.data.CubicSpline;
 import jnum.data.Data;
 import jnum.data.DataCrawler;
@@ -32,7 +33,6 @@ import jnum.data.WeightedPoint;
 import jnum.data.samples.overlay.Overlay1D;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
-import jnum.parallel.PointOp;
 import jnum.text.TableFormatter;
 import jnum.util.HashCode;
 
