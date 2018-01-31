@@ -53,9 +53,9 @@ public final class Util {
 
     public final static String version = "0.20-3";
     
-    public final static String revision = "beta";
+    public final static String revision = "";
     
-    public final static String copyright = "(c)2017 Attila Kovacs"; 
+    public final static String copyright = "(c)2018 Attila Kovacs"; 
     
     public final static String copyrightEmail = "<attila[AT]sigmyne.com>"; 
 
