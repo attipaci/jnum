@@ -49,62 +49,35 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Configurator.
- */
 public class Configurator implements Serializable, Cloneable, Copiable<Configurator>, FitsHeaderEditing {
 
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = 5040150005828567005L;
-
-    /** The root. */
+    
     private Configurator root;
-
-    /** The value. */
+    
     private String value;
-
-    /** The is enabled. */
+    public int serialNo;
+    
     public boolean isEnabled = false;
-
-    /** The is locked. */
     public boolean isLocked = false;
-
-    /** The was used. */
     public boolean wasUsed = false;
 
-    /** The index. */
-    public int serialNo;
 
-    /** The branches. */
     public Hashtable<String, Configurator> branches = new Hashtable<String, Configurator>();
-
-    /** The conditionals. */
     public Hashtable<String, Vector<String>> conditionals = new Hashtable<String, Vector<String>>();
 
-    /** The counter. */
     private static int counter = 0;	
 
-    /** The silent. */
     public static boolean silent = false;
-
-    /** The verbose. */
     public static boolean verbose = false;
-
-    /** The details. */
     public static boolean details = false;
 
 
-    /**
-     * Instantiates a new configurator.
-     */
+
     public Configurator() { root = this; }
 
-    /**
-     * Instantiates a new configurator.
-     *
-     * @param root the root
-     */
+    
     public Configurator(Configurator root) { this.root = root; }
 
     /* (non-Javadoc)
@@ -116,11 +89,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         catch(CloneNotSupportedException e) { return null; }
     }
 
-    /**
-     * Copy.
-     *
-     * @return the configurator
-     */
+
     @Override
     @SuppressWarnings("unchecked")
     public Configurator copy() {
@@ -167,12 +136,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return value;		
     }
 
-    /**
-     * Parses the.
-     *
-     * @param lines the lines
-     * @return the list
-     */
+
     public List<String> parseAll(List<String> lines) {
         ArrayList<String> exceptions = new ArrayList<String>();
 
@@ -184,22 +148,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return exceptions.isEmpty() ? null : exceptions;
     }
 
-    /**
-     * Parses the silent.
-     *
-     * @param line the line
-     */
+
     public void parseSilent(String line) {
         try { parse(line); }
         catch(LockedException e) {}
     }
 
-    /**
-     * Parses the.
-     *
-     * @param line the line
-     * @throws LockedException the locked exception
-     */
+
     public void parse(String line) throws LockedException {
         Entry entry = new Entry(line);
 
@@ -208,12 +163,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-    /**
-     * Unalias.
-     *
-     * @param key the key
-     * @return the string
-     */
     private String unalias(String key) {
         String branchName = getBranchName(key);
         String unaliased = branchName;
@@ -232,12 +181,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return unaliased;
     }
 
-    /**
-     * Unaliased key.
-     *
-     * @param key the key
-     * @return the string
-     */
+
     private String unaliasedKey(String key) {
         key = unalias(key.toLowerCase());
         int pos = 0;
@@ -252,14 +196,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return key;
     }
 
-    /**
-     * Resolve.
-     *
-     * @param argument the argument
-     * @param marker the marker
-     * @param endmarker the endmarker
-     * @return the string
-     */
+
     private String resolve(String argument, String marker, String endmarker) {
         int last = 0;
 
@@ -298,13 +235,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return new String(resolved);
     }
 
-    /**
-     * Gets the property.
-     *
-     * @param name the name
-     * @param marker the marker
-     * @return the property
-     */
+
     private String getProperty(String name, String marker) {
         if(marker.charAt(0) != '{') return null;
         char c = marker.charAt(1);
@@ -321,34 +252,18 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-    /**
-     * Gets the property.
-     *
-     * @param name the name
-     * @return the property
-     */
+
     public String getProperty(String name) {
         return containsKey(name) ? get(name).getValue() : null;		
     }
 
-    /**
-     * Process silent.
-     *
-     * @param key the key
-     * @param argument the argument
-     */
+
     public void processSilent(String key, String argument) {
         try { process(key, argument); }
         catch(LockedException e) {}
     }
 
-    /**
-     * Process.
-     *
-     * @param key the key
-     * @param argument the argument
-     * @throws LockedException the locked exception
-     */
+
     public void process(String key, String argument) throws LockedException {	
         String substitute = unalias(key);
 
@@ -408,14 +323,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-    /**
-     * Sets the.
-     *
-     * @param branchName the branch name
-     * @param key the key
-     * @param argument the argument
-     * @throws LockedException the locked exception
-     */
+
     private void set(String branchName, String key, String argument) throws LockedException {
         setCondition(key, argument);
         Configurator branch = branches.containsKey(branchName) ? branches.get(branchName) : new Configurator(root);
@@ -430,12 +338,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         branches.put(branchName, branch);		
     }
 
-    /**
-     * Adds the condition.
-     *
-     * @param condition the condition
-     * @param setting the setting
-     */
+
     private void addCondition(String condition, String setting) {
         //System.err.println("@@@ " + condition + " : " + setting);
 
@@ -475,12 +378,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-    /**
-     * Checks if is satisfied.
-     *
-     * @param condition the condition
-     * @return true, if is satisfied
-     */
+
     private boolean isSatisfied(String condition) {
         // If the conditional key is already defined, then simply parse the argument of the condition
         if(condition.contains("?")) {
@@ -493,12 +391,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return false;
     }
 
-    /**
-     * Gets the list.
-     *
-     * @param argument the argument
-     * @return the list
-     */
+
     private List<String> getList(String argument) {
         ArrayList<String> list = new ArrayList<String>();
         StringTokenizer tokens = new StringTokenizer(argument, " \t,");
@@ -507,22 +400,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-    /**
-     * Sets the condition.
-     *
-     * @param key the key
-     * @param value the value
-     */
+
     public void setCondition(String key, String value) {
         setCondition(key);
         setCondition(key + "?" + value.toLowerCase());
     }
 
-    /**
-     * Sets the condition.
-     *
-     * @param expression the new condition
-     */
+
     public void setCondition(String expression) {
         //expression.toLowerCase();
         //System.err.println("### " + expression);
@@ -533,22 +417,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         parseAll(conditionals.get(expression));
     }
 
-    /**
-     * Forget silent.
-     *
-     * @param arg the arg
-     */
+
     public void forgetSilent(String arg) {
         try { forget(arg); }
         catch(LockedException e) {}
     }
 
-    /**
-     * Forget.
-     *
-     * @param arg the arg
-     * @throws LockedException the locked exception
-     */
+
     public void forget(String arg) throws LockedException {
 
         if(arg.equals("blacklist")) {
@@ -582,12 +457,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-    /**
-     * Recall.
-     *
-     * @param arg the arg
-     * @throws LockedException the locked exception
-     */
+
     public void recall(String arg) throws LockedException {
         String branchName = getBranchName(arg);
 
@@ -611,12 +481,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-    /**
-     * Removes the.
-     *
-     * @param arg the arg
-     * @throws LockedException the locked exception
-     */
+
     public void remove(String arg) throws LockedException {
         String branchName = getBranchName(arg);
 
@@ -644,11 +509,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-    /**
-     * Purge.
-     *
-     * @param arg the arg
-     */
+
     public void purge(String arg) {
         String branchName = getBranchName(arg);
 
@@ -674,22 +535,14 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     }
 
-    /**
-     * Gets the removed.
-     *
-     * @return the removed
-     */
+ 
     public Configurator getRemoved() {
         if(!branches.containsKey("removed")) branches.put("removed", new Configurator(root));
         return branches.get("removed");
     }
 
 
-    /**
-     * Restore.
-     *
-     * @param arg the arg
-     */
+ 
     public void restore(String arg) {
         String branchName = getBranchName(arg);
 
@@ -726,12 +579,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-    /**
-     * Blacklist.
-     *
-     * @param arg the arg
-     * @throws LockedException the locked exception
-     */
+
     public void blacklist(String arg) throws LockedException {		
         String branchName = getBranchName(arg);
         String key = unaliasedKey(branchName);
@@ -748,12 +596,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }	
 
-    /**
-     * Whitelist.
-     *
-     * @param arg the arg
-     * @throws LockedException the locked exception
-     */
+
     public void whitelist(String arg) throws LockedException {
         String branchName = getBranchName(arg);
 
@@ -778,41 +621,25 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-    /**
-     * Checks if is blacklisted.
-     *
-     * @return true, if is blacklisted
-     */
+
     public boolean isBlacklisted() {
         return isLocked & !isEnabled;
     }
 
-    /**
-     * Blacklist.
-     *
-     * @throws LockedException the locked exception
-     */
+
     public void blacklist() throws LockedException {
         if(isLocked) if(!isBlacklisted()) throw new LockedException("Cannot blacklist locked option.");
         isEnabled = false;
         isLocked = true;
     }
 
-    /**
-     * Whitelist.
-     *
-     * @throws LockedException the locked exception
-     */
+
     public void whitelist() throws LockedException {
         if(isLocked) if(!isBlacklisted()) throw new LockedException("Cannot whitelist locked option.");
         isLocked = false;
     }
 
-    /**
-     * Relock.
-     *
-     * @param argument the argument
-     */
+
     public void relock(String argument) {
         if(!isBlacklisted()) {
             value = argument;
@@ -820,30 +647,19 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-    /**
-     * Lock.
-     *
-     * @param argument the argument
-     */
+
     public void lock(String argument) {
         if(isBlacklisted()) return;
         if(!argument.isEmpty()) if(!isLocked) value = argument;
         isLocked = true;
     }
 
-    /**
-     * Unlock.
-     */
+
     public void unlock() {
         if(!isBlacklisted()) isLocked = false;
     }
 
-    /**
-     * Checks if is blacklisted.
-     *
-     * @param arg the arg
-     * @return true, if is blacklisted
-     */
+
     public boolean isBlacklisted(String arg) {
         String branchName = getBranchName(arg);
         String key = unaliasedKey(branchName);
@@ -857,12 +673,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
     // Looks for first period outside of square brackets (used for conditions)...
-    /**
-     * Gets the branch name.
-     *
-     * @param key the key
-     * @return the branch name
-     */
     private String getBranchName(String key) {
         int i=0;
         int open = 0;
@@ -877,24 +687,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return key;
     }
 
-    /**
-     * Gets the remainder.
-     *
-     * @param key the key
-     * @param from the from
-     * @return the remainder
-     */
+
     private String getRemainder(String key, int from) {
         if(key.length() <= from) return "";
         return key.substring(from);	
     }
 
-    /**
-     * Gets the.
-     *
-     * @param key the key
-     * @return the configurator
-     */
+
     public Configurator get(String key) {
         String branchName = getBranchName(key);
         if(branchName.length() == key.length()) return branches.get(unaliasedKey(key));
@@ -902,12 +701,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         else return null;
     }
 
-    /**
-     * Gets the exact.
-     *
-     * @param key the key
-     * @return the exact
-     */
+ 
     public Configurator getExact(String key) {
         String branchName = getBranchName(key);
         if(branchName.length() == key.length()) return branches.get(key);
@@ -915,12 +709,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         else return null;		
     }
 
-    /**
-     * Contains key.
-     *
-     * @param key the key
-     * @return true, if successful
-     */
+
     public boolean containsKey(String key) {
         String branchName = getBranchName(key);
         String unaliased = unaliasedKey(branchName);
@@ -929,12 +718,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return branches.get(unaliased).containsKey(getRemainder(key, branchName.length() + 1));
     }
 
-    /**
-     * Contains exact.
-     *
-     * @param key the key
-     * @return true, if successful
-     */
+
     public boolean containsExact(String key) {
         String branchName = getBranchName(key);
         if(!branches.containsKey(branchName)) return false;
@@ -942,12 +726,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return branches.get(branchName).containsExact(getRemainder(key, branchName.length() + 1));
     }
 
-    /**
-     * Checks if is configured.
-     *
-     * @param key the key
-     * @return true, if is configured
-     */
+
     public boolean isConfigured(String key) {
         if(!containsKey(key)) return false;
         Configurator option = get(key);
@@ -956,12 +735,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return option.value != null;
     }	
 
-    /**
-     * Map value to.
-     *
-     * @param branchName the branch name
-     * @throws LockedException the locked exception
-     */
+
     public void mapValueTo(String branchName) throws LockedException {
         if(value != null) if(value.length() > 0) {
             if(containsKey(branchName)) {
@@ -980,12 +754,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
   
-
-    /**
-     * Intersect.
-     *
-     * @param options the options
-     */
     public void intersect(Configurator options) {
         for(String key : getKeys(false)) {
             if(!options.containsKey(key)) purge(key);
@@ -999,12 +767,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
     // TODO Difference conditionals and blacklists too...
-    /**
-     * Difference.
-     *
-     * @param options the options
-     * @return the configurator
-     */
     public Configurator difference(Configurator options) {
         Configurator difference = new Configurator(root);
 
@@ -1022,66 +784,36 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-
-    /**
-     * Gets the value.
-     *
-     * @return the value
-     */
     public String getValue() {
         return root.resolve(resolve(getRawValue(), "{?", "}"), "{?", "}"); 
     }
 
-    /**
-     * Gets the raw value.
-     *
-     * @return the raw value
-     */
+  
     public String getRawValue() {
         return value;
     }
 
-    /**
-     * Gets the double.
-     *
-     * @return the double
-     */
+
     public double getDouble() {
         return Double.parseDouble(getValue());
     }
 
-    /**
-     * Gets the float.
-     *
-     * @return the float
-     */
+
     public float getFloat() {
         return Float.parseFloat(getValue());
     }
 
-    /**
-     * Gets the int.
-     *
-     * @return the int
-     */
+
     public int getInt() {
         return Integer.decode(getValue());
     }
 
-    /**
-     * Gets the boolean.
-     *
-     * @return the boolean
-     */
+
     public boolean getBoolean() {
         return Util.parseBoolean(getValue());
     }
 
-    /**
-     * Gets the sign represented by the value.
-     *
-     * @return the sign value.
-     */	
+
     public int getSign() {
         String value = getValue().toLowerCase();
         if(value.equals("+")) return 1;
@@ -1097,22 +829,31 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return Double.compare(Double.parseDouble(value), 0.0);
     }
 
-    /**
-     * Gets the path.
-     *
-     * @return the path
-     */
+
     public String getPath() {
         return Util.getSystemPath(getValue());
     }
 
-    /**
-     * Gets the range.
-     *
-     * @return the range
-     */
+
     public Range getRange() {
         return Range.from(getValue());		
+    }
+    
+    public Range getRange(double scaling) {
+        Range r = getRange();
+        r.scale(scaling);
+        return r;
+    }
+   
+    
+    public Range getRange(boolean isNonNegative) {
+        return Range.from(getValue(), isNonNegative);     
+    }
+    
+    public Range getRange(boolean isNonNegative, double scaling) {
+        Range r = getRange(isNonNegative);
+        r.scale(scaling);
+        return r;
     }
   
     
@@ -1120,31 +861,24 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return Range2D.from(getValue());      
     }
     
-    /**
-     * Gets the range.
-     *
-     * @param nonNegative the non negative
-     * @return the range
-     */
-    public Range getRange(boolean nonNegative) {
-        return Range.from(getValue(), nonNegative);		
+    public Range2D getRange2D(double scaling) {
+        Range2D r = getRange2D();
+        r.scale(scaling);
+        return r;
     }
+    
 
-    /**
-     * Gets the vector2 d.
-     *
-     * @return the vector2 d
-     */
     public Vector2D getVector2D() {
         return new Vector2D(getValue());		
     }
 
+    public Vector2D getVector2D(double scaling) {
+       Vector2D v = getVector2D();
+       v.scale(scaling);
+       return v;
+    }
+    
 
-    /**
-     * Gets the list.
-     *
-     * @return the list
-     */
     public List<String> getList() {
         ArrayList<String> list = new ArrayList<String>();
         StringTokenizer tokens = new StringTokenizer(getValue(), " \t,");
@@ -1152,11 +886,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return list;
     }
 
-    /**
-     * Gets the lower case list.
-     *
-     * @return the lower case list
-     */
+
     public List<String> getLowerCaseList() {
         ArrayList<String> list = new ArrayList<String>();
         StringTokenizer tokens = new StringTokenizer(getValue(), " \t,");
@@ -1164,11 +894,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return list;		
     }
 
-    /**
-     * Gets the doubles.
-     *
-     * @return the doubles
-     */
+
     public List<Double> getDoubles() {
         List<String> list = getList();
         ArrayList<Double> doubles = new ArrayList<Double>(list.size());	
@@ -1179,11 +905,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return doubles;
     }
 
-    /**
-     * Gets the floats.
-     *
-     * @return the floats
-     */
+
     public List<Float> getFloats() {
         List<String> list = getList();
         ArrayList<Float> floats = new ArrayList<Float>(list.size());	
@@ -1195,11 +917,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
     // Also takes ranges...
-    /**
-     * Gets the integers.
-     *
-     * @return the integers
-     */
     public List<Integer> getIntegers() {
         List<String> list = getList();
         ArrayList<Integer> ints = new ArrayList<Integer>(list.size());	
@@ -1216,12 +933,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return ints;
     }
 
-    /**
-     * Gets the keys.
-     *
-     * @param includeBlacklisted the include blacklisted
-     * @return the keys
-     */
+
     public List<String> getKeys(boolean includeBlacklisted) {
         ArrayList<String> keys = new ArrayList<String>();
         for(String branchName : branches.keySet()) {
@@ -1233,11 +945,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return keys;
     }
 
-    /**
-     * Gets the forgotten keys.
-     *
-     * @return the forgotten keys
-     */
+
     public List<String> getForgottenKeys() {
         ArrayList<String> keys = new ArrayList<String>();
         for(String branchName : branches.keySet()) {
@@ -1248,11 +956,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return keys;		
     }
 
-    /**
-     * Gets the blacklist.
-     *
-     * @return the blacklist
-     */
+
     public List<String> getBlacklist() {
         ArrayList<String> keys = new ArrayList<String>();
         for(String branchName : branches.keySet()) {
@@ -1264,12 +968,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-    /**
-     * Gets the conditional list for.
-     *
-     * @param keyPattern the key pattern
-     * @return the conditional list for
-     */
     public List<String> getConditionalListFor(String keyPattern) {
 
         if(keyPattern != null) {
@@ -1315,13 +1013,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
 
-
-    /**
-     * Gets the conditions.
-     *
-     * @param isBracketed the is bracketed
-     * @return the conditions
-     */
     public Hashtable<String, Vector<String>> getConditions(boolean isBracketed) {
         Hashtable<String, Vector<String>> conditions = new Hashtable<String, Vector<String>>();
         for(String key : conditionals.keySet()) {
@@ -1337,12 +1028,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-
-    /**
-     * Gets the time ordered keys.
-     *
-     * @return the time ordered keys
-     */
     public List<String> getTimeOrderedKeys() {		
         List<String> keys = getKeys(false);	
         Collections.sort(keys,
@@ -1358,45 +1043,26 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return keys;
     }
 
-    /**
-     * Gets the alphabetical keys.
-     *
-     * @param includeBlacklisted the include blacklisted
-     * @return the alphabetical keys
-     */
+
     public List<String> getAlphabeticalKeys(boolean includeBlacklisted) {
         List<String> keys = getKeys(includeBlacklisted);
         Collections.sort(keys);
         return keys;
     }
 
-    /**
-     * Prints the.
-     *
-     * @param out the out
-     */
+
     public void print(PrintStream out) {
         poll(null, out, "#");
     }
 
-    /**
-     * Poll.
-     *
-     * @param pattern the pattern
-     */
+
     public void poll(String pattern) {
         poll(pattern, System.out, "");
         pollForgotten(pattern, System.out, "");
         System.out.println();
     }
 
-    /**
-     * Poll.
-     *
-     * @param pattern the pattern
-     * @param out the out
-     * @param prefix the prefix
-     */
+
     public void poll(String pattern, PrintStream out, String prefix) {
 
         if(pattern != null) {
@@ -1444,13 +1110,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         out.println(prefix + " --------------------------------------------------------------------");
     }
 
-    /**
-     * Poll forgotten.
-     *
-     * @param pattern the pattern
-     * @param out the out
-     * @param prefix the prefix
-     */
+
     public void pollForgotten(String pattern, PrintStream out, String prefix) {
 
         if(pattern != null) {
@@ -1485,23 +1145,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         out.println(prefix + " --------------------------------------------------------------------");
     }
 
-    /**
-     * Poll blacklist.
-     *
-     * @param pattern the pattern
-     */
+
     public void pollBlacklist(String pattern) {
         pollBlacklist(pattern, System.out, "");
         System.out.println();
     }
 
-    /**
-     * Poll blacklist.
-     *
-     * @param pattern the pattern
-     * @param out the out
-     * @param prefix the prefix
-     */
+
     public void pollBlacklist(String pattern, PrintStream out, String prefix) {
 
         if(pattern != null) {
@@ -1527,23 +1177,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         out.println(prefix + " --------------------------------------------------------------------");
     }
 
-    /**
-     * Poll conditions.
-     *
-     * @param pattern the pattern
-     */
+
     public void pollConditions(String pattern) {
         pollConditions(pattern, System.out, "");
         System.out.println();
     }
 
-    /**
-     * Poll conditions.
-     *
-     * @param pattern the pattern
-     * @param out the out
-     * @param prefix the prefix
-     */
+
     public void pollConditions(String pattern, PrintStream out, String prefix) {
 
         if(pattern != null) {
@@ -1577,12 +1217,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         out.println(prefix + " --------------------------------------------------------------------");
     }
 
-    /**
-     * Read config.
-     *
-     * @param fileName the file name
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
+
     public void readConfig(String fileName) throws IOException {
         File configFile = new File(fileName);
         if(configFile.exists()) {
@@ -1624,77 +1259,42 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }	
 
 
-    /**
-     * The Class Locator.
-     */
     static class Locator {
-
-        /** The file name. */
         String fileName;
-
-        /** The location index. */
         int locationIndex;
-
-        /** The last modified. */
         long lastModified;
     }
 
-    /**
-     * The Class Setting.
-     */
+
     static class Setting {
-
-        /** The value. */
         String value;
-
-        /** The locator. */
         Locator locator;
     }
 
 
-    /**
-     * The Class Entry.
-     */
     static class Entry {
 
-        /** The key. */
         String key;
 
-        /** The value. */
         String value;		// TODO change to Setting...
 
-        /**
-         * Instantiates a new entry.
-         */
+
         public Entry() {}
 
-        /**
-         * Instantiates a new entry.
-         *
-         * @param key the key
-         * @param value the value
-         */
+
         public Entry(String key, String value) {
             this();
             this.key = key;
             this.value = value;
         }
 
-        /**
-         * Instantiates a new entry.
-         *
-         * @param line the line
-         */
+
         public Entry (String line) {
             this();
             parse(line);
         }
 
-        /**
-         * Checks if is command.
-         *
-         * @return true, if is command
-         */
+
         public boolean isCommand() {
             key = key.toLowerCase();
             if(key.endsWith("forget")) return true;
@@ -1709,11 +1309,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
             return false;
         }
 
-        /**
-         * Parses the.
-         *
-         * @param line the line
-         */
+ 
         public void parse(String line) {
             final StringBuffer keyBuffer = new StringBuffer();
 
