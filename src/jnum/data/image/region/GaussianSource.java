@@ -394,7 +394,7 @@ public class GaussianSource extends CircularRegion {
             data.new Entry("dpeak", peak.rms(), unitName);
             data.new Entry("peakS2N", peak.significance(), "");
 
-            DataPoint F = GaussianSource.this.getIntegral(properties.getImageBeamArea());
+            DataPoint F = GaussianSource.this.getIntegral(properties.getUnderlyingBeam().getArea());
 
             data.new Entry("int", F.value(), unitName);
             data.new Entry("dint", F.rms(), unitName);

@@ -53,7 +53,7 @@ public final class Util {
 
     public final static String version = "0.20-3";
     
-    public final static String revision = "update.1";
+    public final static String revision = "update.2";
     
     public final static String copyright = "(c)2018 Attila Kovacs"; 
     
