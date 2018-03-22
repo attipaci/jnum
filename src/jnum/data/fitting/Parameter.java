@@ -26,7 +26,6 @@ import java.text.NumberFormat;
 
 import jnum.Util;
 import jnum.data.DataPoint;
-import jnum.data.WeightedPoint;
 import jnum.math.Range;
 
 
@@ -115,12 +114,17 @@ public class Parameter extends DataPoint implements Penalty {
 	    this(name, value, range); 
 	    setStepSize(stepSize); 
 	}
+	
+	@Override
+    public Parameter clone() {
+	    return (Parameter) super.clone();
+	}
 
 	/* (non-Javadoc)
 	 * @see jnum.data.WeightedPoint#copy()
 	 */
 	@Override
-    public WeightedPoint copy() {
+    public Parameter copy() {
 	    Parameter copy = (Parameter) super.copy();
 	    if(name != null) copy.name = new String(name);
 	    if(range != null) copy.range = range.copy();

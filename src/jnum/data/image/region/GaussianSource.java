@@ -232,12 +232,10 @@ public class GaussianSource extends CircularRegion {
         //c.add(new HeaderCard("SRCINT", F.value(), "Source integrated flux."));
         //c.add(new HeaderCard("SRCIERR", F.rms(), "Integrated flux error."));
 
-        c.add(new HeaderCard("SRCFWHM", getFWHM().value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source FWHM."));
-       
-        if(getRadius().weight() > 0.0) {
-            c.add(new HeaderCard("SRCWERR", getFWHM().rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") FWHM error."));
+        if(!getFWHM().isNaN()) {
+            c.add(new HeaderCard("SRCFWHM", getFWHM().value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source FWHM."));
+            if(getFWHM().weight() > 0.0) c.add(new HeaderCard("SRCWERR", getFWHM().rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") FWHM error."));
         }
-
     }
     
     public double getBeamArea() {

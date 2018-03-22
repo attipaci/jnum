@@ -42,7 +42,6 @@ import jnum.data.image.overlay.Referenced2D;
 import jnum.data.image.transform.CartesianGridTransform2D;
 import jnum.data.image.transform.ProjectedIndexTransform2D;
 import jnum.fft.MultiFFT;
-import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Range;
 import jnum.math.Vector2D;
@@ -323,7 +322,6 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
 
         return Math.ceil((1.0 + area/beamArea) * iPointsPerBeam);
     }
-
 
 
     public Number nearestToOffset(double dx, double dy) {

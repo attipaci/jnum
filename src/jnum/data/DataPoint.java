@@ -60,6 +60,16 @@ public class DataPoint extends WeightedPoint {
 		super(template);
 	}
 	
+	@Override
+    public DataPoint clone() {
+	    return (DataPoint) super.clone();
+	}
+	
+	@Override
+    public DataPoint copy() {
+        return (DataPoint) super.copy();
+    }
+	
 	/**
 	 * Rms.
 	 *

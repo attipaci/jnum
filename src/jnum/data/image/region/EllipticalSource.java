@@ -141,18 +141,20 @@ public class EllipticalSource extends GaussianSource {
 
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         
-        c.add(new HeaderCard("SRCMAJ", major.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source major axis."));
-        if(hasError) {
-            c.add(new HeaderCard("SRCMAJER", major.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") major axis error."));
+        if(!major.isNaN()) {
+            c.add(new HeaderCard("SRCMAJ", major.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source major axis."));
+            if(hasError) c.add(new HeaderCard("SRCMAJER", major.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") major axis error."));
         }
 
-        c.add(new HeaderCard("SRCMIN", minor.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source minor axis."));
-        if(hasError) {
-            c.add(new HeaderCard("SRCMINER", minor.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") minor axis error."));
+        if(!minor.isNaN()) {
+            c.add(new HeaderCard("SRCMIN", minor.value() / sizeUnit.value(), "(" + sizeUnit.name() + ") source minor axis."));
+            if(hasError) c.add(new HeaderCard("SRCMINER", minor.rms() / sizeUnit.value(), "(" + sizeUnit.name() + ") minor axis error."));
         }
 
-        c.add(new HeaderCard("SRCPA", angle.value() / Unit.deg, "(deg) source position angle."));
-        c.add(new HeaderCard("SRCPAERR", angle.rms() / Unit.deg, "(deg) source angle error."));
+        if(!angle.isNaN()) {
+            c.add(new HeaderCard("SRCPA", angle.value() / Unit.deg, "(deg) source position angle."));
+            c.add(new HeaderCard("SRCPAERR", angle.rms() / Unit.deg, "(deg) source angle error."));
+        }
     }
 
 

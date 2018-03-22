@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -51,9 +51,9 @@ import jnum.text.TimeFormat;
 public final class Util {
 
 
-    public final static String version = "0.20-3";
+    public final static String version = "0.20-4";
     
-    public final static String revision = "update.2";
+    public final static String revision = "";
     
     public final static String copyright = "(c)2018 Attila Kovacs"; 
     

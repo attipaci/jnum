@@ -72,6 +72,16 @@ Accumulating<WeightedPoint>
 	}
 	
 	
+	@Override
+    public WeightedPoint clone() {
+	    return (WeightedPoint) super.clone();
+	}
+	
+	@Override
+    public WeightedPoint copy() {
+	    return (WeightedPoint) super.copy();
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

@@ -1,3 +1,9 @@
+0.20-4
+
+	[FIX] NaN values from source fitting no longer written to the FITS
+	neader where they can produce unhandled exceptions...
+
+
 0.20-3
 
 	[BUG] {ParallelPointOp} ParallelPointOp was not interchangeable with
