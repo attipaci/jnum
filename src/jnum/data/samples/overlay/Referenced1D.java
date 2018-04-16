@@ -24,32 +24,39 @@
 package jnum.data.samples.overlay;
 
 import jnum.Util;
-import jnum.data.IndexReferenced;
+import jnum.data.ReferencedValues;
+import jnum.data.samples.Index1D;
+import jnum.data.samples.Offset1D;
 import jnum.data.samples.Values1D;
 import jnum.fits.FitsToolkit;
-import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-public class Referenced1D extends Overlay1D implements IndexReferenced<Double> {
-    private double referenceIndex;
+public class Referenced1D extends Overlay1D implements ReferencedValues<Index1D, Offset1D> {
+    private Offset1D referenceIndex;
 
-    public Referenced1D() {}
+    public Referenced1D() { this(null); }
 
     public Referenced1D(Values1D values) {
         super(values);
+        referenceIndex = new Offset1D();
     }
     
     public Referenced1D(Values1D values, double refIndex) {
         this(values);
         setReferenceIndex(refIndex);
     }
+    
+    public Referenced1D(Values1D values, Offset1D refIndex) {
+        this(values);
+        setReferenceIndex(refIndex);
+    }
 
     
     @Override
-    public int hashCode() { return super.hashCode() ^ HashCode.from(referenceIndex); }
+    public int hashCode() { return super.hashCode() ^ referenceIndex.hashCode(); }
     
     @Override
     public boolean equals(Object o) {
@@ -57,29 +64,33 @@ public class Referenced1D extends Overlay1D implements IndexReferenced<Double> {
         if(!(o instanceof Referenced1D)) return false;
         
         Referenced1D r = (Referenced1D) o;
-        if(!Util.equals(referenceIndex, r.referenceIndex, 1e-6)) return false;
+        if(!Util.equals(referenceIndex.x(), r.referenceIndex.x(), 1e-6)) return false;
         
-        return super.equals(o);
+        return true;
     }
 
     @Override
-    public Double getReferenceIndex() { return referenceIndex; }
+    public Offset1D getReferenceIndex() { return referenceIndex; }
+    
+    public void setReferenceIndex(double value) {
+        referenceIndex.set(value);
+    }
     
     @Override
-    public void setReferenceIndex(Double index) { this.referenceIndex = index; }
+    public void setReferenceIndex(Offset1D index) { this.referenceIndex = index; }
 
     @Override
     public void editHeader(Header header) throws HeaderCardException {
         super.editHeader(header);
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        c.add(new HeaderCard("CRPIX1", referenceIndex + 1.0, "The reference x coordinate in SI units."));
+        c.add(new HeaderCard("CRPIX1", referenceIndex.get() + 1.0, "The reference x coordinate in SI units."));
         
     }
     
     @Override
     public void parseHeader(Header header) {
         super.parseHeader(header);
-        referenceIndex = header.getDoubleValue("CRPIX1", 1.0) - 1.0;
+        referenceIndex.set(header.getDoubleValue("CRPIX1", 1.0) - 1.0);
     }
     
 }

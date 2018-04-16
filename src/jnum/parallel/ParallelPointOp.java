@@ -30,14 +30,15 @@ import jnum.data.WeightedPoint;
 public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<PointType, ReturnType> {
    
     @Override
-    public ParallelPointOp<PointType, ReturnType> clone() {
+    protected ParallelPointOp<PointType, ReturnType> clone() {
         return (ParallelPointOp<PointType, ReturnType>) super.clone();
     }
       
+    @Override
     public ParallelPointOp<PointType, ReturnType> newInstance() {
         ParallelPointOp<PointType, ReturnType> clone = clone();
         clone.reset();
-        return clone();
+        return clone;
     }
 
     

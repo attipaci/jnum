@@ -1,6 +1,7 @@
 package jnum.data.image.overlay;
 
 import jnum.Util;
+import jnum.data.Data;
 import jnum.data.image.Data2D;
 import jnum.data.image.Values2D;
 import jnum.parallel.Parallelizable;
@@ -122,6 +123,12 @@ public class Overlay2D extends Data2D {
     @Override
     public final int compare(Number a, Number b) {
         return values.compare(a, b);
+    }
+
+    @Override
+    public Object getUnderlyingData() {
+        if(values instanceof Data) return ((Data<?>) values).getUnderlyingData();
+        return getImage().getUnderlyingData();
     }
 
 }

@@ -26,11 +26,12 @@ package jnum.data.image;
 
 import jnum.ExtraMath;
 import jnum.data.FlagCompanion;
+import jnum.data.Resizable;
 import jnum.math.Coordinate2D;
 
 
 
-public class Flag2D extends FlagCompanion<Index2D> implements Resizable2D {
+public class Flag2D extends FlagCompanion<Index2D> implements Resizable<Index2D> {
 
     /**
      * 
@@ -71,6 +72,10 @@ public class Flag2D extends FlagCompanion<Index2D> implements Resizable2D {
     public Image2D getData() { return data; }
       
     @Override
+    public final void setSize(Index2D size) {
+        setSize(size.i(), size.j());
+    }
+    
     public void setSize(int sizeX, int sizeY) {
         data.setSize(sizeX, sizeY);
     }

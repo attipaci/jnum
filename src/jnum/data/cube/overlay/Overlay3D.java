@@ -24,6 +24,7 @@
 package jnum.data.cube.overlay;
 
 import jnum.Util;
+import jnum.data.Data;
 import jnum.data.cube.Data3D;
 import jnum.data.cube.Values3D;
 import jnum.parallel.Parallelizable;
@@ -132,6 +133,10 @@ public class Overlay3D extends Data3D {
         return values.compare(a, b);
     }
 
-  
+    @Override
+    public Object getUnderlyingData() {
+        if(values instanceof Data) return ((Data<?>) values).getUnderlyingData();
+        return getCube().getUnderlyingData();
+    }  
     
 }

@@ -87,12 +87,12 @@ public class Viewport1D extends Overlay1D implements Resizable1D {
     
     
     @Override
-    public boolean isValid(Integer i) {
+    public boolean isValid(int i) {
         return super.isValid(i + i0);
     }
 
     @Override
-    public void discard(Integer i) {
+    public void discard(int i) {
         super.discard(i + i0);
     }
 
@@ -101,23 +101,23 @@ public class Viewport1D extends Overlay1D implements Resizable1D {
      * Safe even if underlying object is resized...
      */
     @Override
-    public final Integer size() {
+    public final int size() {
         return Math.max(0, Math.min(size, super.size() - i0));
     }
 
 
     @Override
-    public final Number get(Integer i) {
+    public final Number get(int i) {
         return super.get(i + i0);
     }
 
     @Override
-    public final void set(Integer i, Number value) {
+    public final void set(int i, Number value) {
         super.set(i + i0, value);
     }
     
     @Override
-    public final void add(Integer i, Number value) {
+    public final void add(int i, Number value) {
         super.add(i + i0, value);
     }
 

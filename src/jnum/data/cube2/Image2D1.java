@@ -49,7 +49,13 @@ public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializ
         return image;
     }
     
-
+    
+    @Override
+    public void cropXY(int fromi, int fromj, int toi, int toj) {
+        for(Image2D plane : getPlanes()) plane.crop(fromi, fromj, toi, toj);
+    }
+    
+    
     public static class Double2D1 extends Image2D1 {
         /**
          * 

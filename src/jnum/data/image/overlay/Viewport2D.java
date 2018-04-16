@@ -23,12 +23,12 @@
 
 package jnum.data.image.overlay;
 
+import jnum.data.Resizable;
 import jnum.data.image.Index2D;
 import jnum.data.image.IndexBounds2D;
-import jnum.data.image.Resizable2D;
 import jnum.data.image.Values2D;
 
-public class Viewport2D extends Overlay2D implements Resizable2D { 
+public class Viewport2D extends Overlay2D implements Resizable<Index2D> { 
     private int i0;
     private int j0;
     
@@ -105,6 +105,10 @@ public class Viewport2D extends Overlay2D implements Resizable2D {
     }
     
     @Override
+    public final void setSize(Index2D size) {
+        setSize(size.i(), size.j());
+    }
+    
     public void setSize(int sizeX, int sizeY) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -26,17 +26,21 @@ package jnum.data.samples;
 import java.util.List;
 
 import jnum.PointOp;
+import jnum.Util;
 import jnum.data.CubicSpline;
-import jnum.data.Data;
 import jnum.data.DataCrawler;
+import jnum.data.RegularData;
+import jnum.data.SplineSet;
+import jnum.data.Validating;
 import jnum.data.WeightedPoint;
 import jnum.data.samples.overlay.Overlay1D;
+import jnum.data.samples.overlay.Referenced1D;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
 import jnum.text.TableFormatter;
 import jnum.util.HashCode;
 
-public abstract class Data1D extends Data<Integer, Double, Double> implements Values1D, TableFormatter.Entries {
+public abstract class Data1D extends RegularData<Index1D, Offset1D> implements Values1D, TableFormatter.Entries {
 
     private CubicSpline reuseSpline;
     
@@ -54,13 +58,24 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
         return hash;
     }
 
+    @Override
+    public Index1D getIndexInstance() { return new Index1D(); }
+    
+    @Override
+    public Offset1D getVectorInstance() { return new Offset1D(); }
      
     @Override
-    public final Integer copyOfIndex(Integer index) { return index; }
+    public final Index1D copyOfIndex(Index1D index) { return index.copy(); }
 
     
-    public Samples1D getEmptySamples() {
+    @Override
+    public Samples1D newImage() {
         return Samples1D.createType(getElementType(), size());
+    }
+    
+    @Override
+    public Samples1D newImage(Index1D size, Class<? extends Number> elementType) {
+        return Samples1D.createType(getElementType(), size.i());
     }
 
     public Samples1D getSamples() {
@@ -90,6 +105,11 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     }
 
     
+    @Override
+    public final int dimension() { return 1; }
+    
+    @Override
+    public final Index1D getSize() { return new Index1D(size()); }
     
     @Override
     public final int capacity() { return size(); }
@@ -98,39 +118,84 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     public String getSizeString() { return size() + ""; }
     
     @Override
-    public final boolean conformsTo(Integer size) {
-        return size().intValue() == size.intValue();
+    public final String toString(Index1D index) {
+        return toString(index.i());
+    }
+    
+    public String toString(int i) {
+        return "[" + i + "]=" + Util.S3.format(get(i));
+    }
+  
+    
+    @Override
+    public final boolean conformsTo(Index1D size) {
+        return conformsTo(size.i());
+    }
+    
+    public boolean conformsTo(int size) {
+        return size() == size;
     }
     
     @Override
-    public boolean containsIndex(Integer i) {
+    public final boolean containsIndex(Index1D index) {
+        return containsIndex(index.i());
+    }
+    
+    @Override
+    public final boolean containsIndex(Offset1D index) {
+        return containsIndex((int) Math.round(index.x()));
+    }
+    
+    public boolean containsIndex(int i) {
         if(i < 0) return false;
         if(i >= size()) return false;
         return true;
     }
     
     @Override
-    public final Number getValid(final Integer i, final Number defaultValue) {
+    public final Number getValid(final Index1D i, final Number defaultValue) {
+        return getValid(i.i(), defaultValue);
+    }
+    
+    public final Number getValid(final int i, final Number defaultValue) {
         if(!isValid(i)) return defaultValue;
         return get(i);
     }
 
+    @Override
+    public final void set(Index1D index, Number value) { set(index.i(), value); }
     
     @Override
-    public void clear(Integer i) { set(i, 0); }
+    public final void add(Index1D index, Number value) { add(index.i(), value); }
+    
+    @Override
+    public final Number get(Index1D index) { return get(index.i()); }
+    
+    @Override
+    public final void clear(Index1D index) { clear(index.i()); }
+    
+    public void clear(int i) { set(i, 0); }
 
     @Override
-    public void discard(Integer i) {
+    public final void discard(Index1D index) { discard(index.i()); }
+    
+    @Override
+    public void discard(int i) {
         set(i, getBlankingValue());
     }
     
     @Override
-    public boolean isValid(Integer i) {
+    public final boolean isValid(Index1D index) { return isValid(index.i()); }
+        
+    @Override
+    public boolean isValid(int i) {
         return isValid(get(i));
     }
     
     @Override
-    public void scale(Integer i, double factor) {
+    public void scale(Index1D index, double factor) { scale(index.i(), factor); }
+    
+    public void scale(int i, double factor) {
         set(i, get(i).doubleValue() * factor);
     }
     
@@ -152,10 +217,21 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
         if(report) addHistory("pasted new content: " + source.getSizeString());
     }
     
-    @Override
-    public double valueAtIndex(Double ic) { return valueAtIndex(ic, null); }
+
     
-    public double valueAtIndex(Double ic, CubicSpline spline) {
+    @Override
+    public double valueAtIndex(Offset1D ic, SplineSet<Offset1D> splines) { return valueAtIndex(ic.x(), splines.getSpline(0)); }
+    
+    @Override
+    public double valueAtIndex(Index1D numerator, Index1D denominator, SplineSet<Offset1D> splines) { 
+        return valueAtIndex((double) numerator.i() / denominator.i(), splines.getSpline(0)); 
+    }
+    
+    @Override
+    public double valueAtIndex(double ic) { return valueAtIndex(ic, null); }
+    
+    
+    public double valueAtIndex(double ic, CubicSpline spline) {
         // The nearest data point (i,j)
         final int i = (int) Math.round(ic);
         if(i < 0) return Double.NaN;
@@ -178,7 +254,10 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     }
     
     @Override
-    public Number nearestValueAtIndex(Double ic) {
+    public final Number nearestValueAtIndex(Offset1D ic) { return nearestValueAtIndex(ic.x()); }
+
+    
+    public Number nearestValueAtIndex(double ic) {
         int i = (int) Math.round(ic);
         if(!containsIndex(i)) return Double.NaN;
         return get(i);
@@ -186,7 +265,11 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     
     // Bilinear interpolation
     @Override
-    public double linearAtIndex(Double ic) {        
+    public final double linearAtIndex(Offset1D ic) {
+        return linearAtIndex(ic.x());
+    }
+    
+    public double linearAtIndex(double ic) {        
         final int i = (int)Math.floor(ic);
         final double di = ic - i;
 
@@ -210,7 +293,11 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     
 
     @Override
-    public double quadraticAtIndex(Double ic) {
+    public final double quadraticAtIndex(Offset1D ic) {
+        return quadraticAtIndex(ic.x());
+    }
+    
+    public double quadraticAtIndex(double ic) {
         // Find the nearest data point (i)
         final int i = (int)Math.round(ic);
      
@@ -233,13 +320,17 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
 
     
     @Override
-    public final double splineAtIndex(final Double ic) {
+    public final double splineAtIndex(final Offset1D ic, SplineSet<Offset1D> splines) {
+        return splineAtIndex(ic.x(), splines.getSpline(0));
+    }
+    
+    public final double splineAtIndex(final double ic) {
         synchronized(reuseSpline) { return splineAtIndex(ic, reuseSpline); }
     }
 
 
     // Performs a bicubic spline interpolation...
-    public double splineAtIndex(final Double ic, CubicSpline spline) {   
+    public double splineAtIndex(final double ic, CubicSpline spline) {   
         spline.centerOn(ic);
 
      
@@ -285,61 +376,77 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
 
     
     @Override
-    public Samples1D getCropped(Integer imin, Integer imax) {
-        Samples1D cropped = getEmptySamples();
+    public final Samples1D getCropped(Index1D imin, Index1D imax) {
+        return getCropped(imin.i(), imax.i());
+    }
+    
+    public Samples1D getCropped(int imin, int imax) {
+        Samples1D cropped = newImage();
 
         final int fromi = Math.max(0, imin);
         final int toi = Math.min(imax, size()-1);     
 
         cropped.setSize(imax-imin+1);
 
-        for(int i=fromi, i1=fromi-imin; i<=toi; i++, i1++)
-            cropped.set(i1, get(i));
+        for(int i=fromi, i1=fromi-imin; i<=toi; i++, i1++) cropped.set(i1, get(i));
 
         return cropped;
     }   
     
-
+  
+  
     @Override
-    public void despike(double level) {
-        // TODO Auto-generated method stub
-        
+    public int getPointSmoothOps(int beamPoints, int interpolationType) {
+        return 16 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
 
+    
+    @Override
+    public Referenced1D getNeighbors() {
+        final double[] neighbourData = { 1, 0, 1 };
+
+        final Samples1D neighbourImage = Samples1D.createType(getElementType());
+        neighbourImage.setData(neighbourData);
+
+        return new Referenced1D(neighbourImage, 1.0);
+    }
+    
+    @Override
+    public Validating<Index1D> getNeighborValidator(final int minNeighbors) {
+        return new Validating<Index1D>() {
+
+            @Override
+            public boolean isValid(Index1D index) {
+                int i = index.i();
+                
+                if(!Data1D.this.isValid(i)) return false;
+
+                int neighbours = -1;    // will iterate over the actual point too, hence the -1...
+
+                final int fromi = Math.max(0, i-1);
+                final int toi = Math.min(size(), i+1);
+
+                for(int i1=toi; --i1 >= fromi; )
+                    if(Data1D.this.isValid(i1)) neighbours++;
+
+                return neighbours >= minNeighbors;         
+            }
+
+            @Override
+            public void discard(Index1D index) {
+                Data1D.this.discard(index);
+            }
+        };
+    }
+    
+  
     @Override
     public String getInfo() {
-        return "Sample size: " + size() + " bins.";
+        return "Sample size: " + getSize() + " bins.";
     }
 
     
-    
-    @Override
-    public Object getFitsData(Class<? extends Number> dataType) {  
-        final Samples1D copy = Samples1D.createType(dataType, size());
-        
-        smartFork(new ParallelPointOp.Simple<Integer>() {
-            @Override
-            public void process(Integer index) {
-               copy.set(index, isValid(index) ? get(index) : getBlankingValue());
-            }
-            
-        });
-       
-        if(getUnit().value() != 1.0) copy.scale(1.0 / getUnit().value());
-
-        return copy.getData();
-    }
-
-    
-    
-    
-    @Override
-    public Object getTableEntry(String name) {
-        if(name.equals("size")) return size();
-        return super.getTableEntry(name);
-    }
-    
-    
+   
     
     @Override
     public DataCrawler<Number> iterator() {
@@ -390,24 +497,26 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     
     
     @Override
-    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op) {
-        for(int i=size(); --i >= 0; ) if(isValid(i)) op.process(get(i));
+    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index1D from, Index1D to) {
+        for(int i=to.i(); --i >= from.i(); ) if(isValid(i)) op.process(get(i));
         return op.getResult();
     }
     
-    @Override
-    public <ReturnType> ReturnType loop(final PointOp<Integer, ReturnType> op) {
-        for(int i=size(); --i >= 0; ) {
-            op.process(i);
+    @Override  
+    public <ReturnType> ReturnType loop(final PointOp<Index1D, ReturnType> op, Index1D from, Index1D to) {
+        final Index1D index = new Index1D();
+        for(int i=to.i(); --i >= from.i(); ) {
+            index.set(i);
+            op.process(index);
             if(op.exception != null) return null;
         }
         return op.getResult();
     }
     
     @Override
-    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
+    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, Index1D from, Index1D to) {
       
-        Fork<ReturnType> fork = new Fork<ReturnType>() {
+        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
             private ParallelPointOp<Number, ReturnType> localOp;
             
             @Override
@@ -442,29 +551,32 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     }
     
     @Override
-    public <ReturnType> ReturnType fork(final ParallelPointOp<Integer, ReturnType> op) {
+    public <ReturnType> ReturnType fork(final ParallelPointOp<Index1D, ReturnType> op, Index1D from, Index1D to) {
       
-        Fork<ReturnType> fork = new Fork<ReturnType>() {
-            private ParallelPointOp<Integer, ReturnType> localOp;
+        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
+            private ParallelPointOp<Index1D, ReturnType> localOp;
+            private Index1D index;
             
             @Override
             public void init() {
                 super.init();
+                index = new Index1D();
                 localOp = op.newInstance();
             }
             
             @Override
             protected void processElementAt(int i) {
-                localOp.process(i);
+                index.set(i); 
+                localOp.process(index);
             }
-                 
+          
             @Override
             public ReturnType getLocalResult() { return localOp.getResult(); }
             
 
             @Override
             public ReturnType getResult() { 
-                ParallelPointOp<Integer, ReturnType> globalOp = op.newInstance();
+                ParallelPointOp<Index1D, ReturnType> globalOp = op.newInstance();
                 
                 for(ParallelTask<ReturnType> worker : getWorkers()) {
                     globalOp.mergeResult(worker.getLocalResult());
@@ -477,35 +589,42 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
         fork.process();
         return fork.getResult();
     }
-    
-
 
     
     
     
     
 
-    public abstract class Loop<ReturnType> {
+    public abstract class Loop<ReturnType> extends AbstractLoop<ReturnType> {
+        public Loop() {}
+        
+        public Loop(Index1D from, Index1D to) { super(from, to); }
+        
+        @Override
         public ReturnType process() {
-            for(int i=size(); --i >= 0; ) process(i);
+            for(int i=to.i(); --i >= from.i(); ) process(i);
             return getResult();
         }
 
         protected abstract void process(int i);
 
+        @Override
         protected ReturnType getResult() { return null; }
     }
 
     
 
-    public abstract class Fork<ReturnType> extends Task<ReturnType> {           
-
+    public abstract class Fork<ReturnType> extends AbstractFork<ReturnType> {           
+        
+        public Fork() { }
+        
+        public Fork(Index1D from, Index1D to) { super(from, to); }
+        
+        public Fork(int from, int to) { super(new Index1D(from), new Index1D(to)); }
+        
         @Override
         protected void processChunk(int index, int threadCount) {
-            final int sizeX = size();
-            for(int i=index; i<sizeX; i += threadCount) {
-                processElementAt(i);
-            }
+            for(int i=from.i() + index; i<to.i(); i += threadCount) processElementAt(i);
         }
 
 
@@ -531,6 +650,10 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
 
 
     public abstract class AveragingFork extends Fork<WeightedPoint> {
+        public AveragingFork() {}
+        
+        public AveragingFork(int from, int to) { super(from, to); }
+        
         @Override
         public WeightedPoint getResult() {
             WeightedPoint ave = new WeightedPoint();      
@@ -541,19 +664,8 @@ public abstract class Data1D extends Data<Integer, Double, Double> implements Va
     }
 
 
-    public abstract class InterpolatingFork extends Fork<Void> {
-        private CubicSpline spline;
-
-        @Override
-        protected void init() { spline = new CubicSpline(); }
-
-
-        public final CubicSpline getSpline() { return spline; }
-    }   
-
-
-
    
+
 
     
 }

@@ -32,9 +32,15 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
     
     @SuppressWarnings("unchecked")
     @Override
-    public PointOp<PointType, ReturnType> clone() {
+    protected PointOp<PointType, ReturnType> clone() {
         try { return (PointOp<PointType, ReturnType>) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
+    }
+    
+    public PointOp<PointType, ReturnType> newInstance() {
+        PointOp<PointType, ReturnType> clone = clone();
+        clone.reset();
+        return clone();
     }
     
     public final void reset() {

@@ -23,14 +23,16 @@
 
 package jnum.data.image.overlay;
 
-import jnum.data.IndexReferenced;
+import jnum.data.ReferencedValues;
+import jnum.data.image.Index2D;
 import jnum.data.image.Values2D;
 import jnum.math.Coordinate2D;
+import jnum.math.Vector2D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
-public class Referenced2D extends Overlay2D implements IndexReferenced<Coordinate2D> {
-    private Coordinate2D referenceIndex;
+public class Referenced2D extends Overlay2D implements ReferencedValues<Index2D, Vector2D> {
+    private Vector2D referenceIndex;
 
     public Referenced2D() {}
 
@@ -38,7 +40,7 @@ public class Referenced2D extends Overlay2D implements IndexReferenced<Coordinat
         super(values);
     }
     
-    public Referenced2D(Values2D values, Coordinate2D refIndex) {
+    public Referenced2D(Values2D values, Vector2D refIndex) {
         this(values);
         setReferenceIndex(refIndex);
     }
@@ -59,10 +61,10 @@ public class Referenced2D extends Overlay2D implements IndexReferenced<Coordinat
     }
 
     @Override
-    public Coordinate2D getReferenceIndex() { return referenceIndex; }
+    public Vector2D getReferenceIndex() { return referenceIndex; }
     
     @Override
-    public void setReferenceIndex(Coordinate2D index) { this.referenceIndex = index; }
+    public void setReferenceIndex(Vector2D index) { this.referenceIndex = index; }
 
     @Override
     public void editHeader(Header header) throws HeaderCardException {
@@ -78,5 +80,9 @@ public class Referenced2D extends Overlay2D implements IndexReferenced<Coordinat
         referenceIndex.subtractY(1.0);
         
     }
-    
+
+
+
+
+   
 }

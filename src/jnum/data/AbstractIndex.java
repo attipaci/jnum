@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -21,21 +21,39 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.samples;
-
-import jnum.data.IndexedValues;
+package jnum.data;
 
 
-public interface Values1D extends IndexedValues<Index1D>, Validating1D {
-  
-    public int size();
+public abstract class AbstractIndex<T extends AbstractIndex<T>> implements Index<T> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1273849343052525336L;
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public T clone() {
+        try { return (T) super.clone(); }
+        catch(CloneNotSupportedException e) { return null; }
+    }
     
-    public Number get(int i);
+    @Override
+    public T copy() {
+        return clone();
+    }
+
+    @Override
+    public void reverseTo(T other) {
+        int last = dimension()-1;
+        for(int i=last+1; --i >= 0; ) other.setValue(last-i, getValue(i));
+    }
     
-    public void add(int i, Number value);
+    @Override
+    public T getReversed() {
+        T reversed = clone();
+        reverseTo(reversed);
+        return reversed;
+    }
     
-    public void set(int i, Number value);
     
-    public double valueAtIndex(double ic);    
-       
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,24 +26,25 @@ package jnum.data.cube;
 
 import java.util.List;
 
+
 import jnum.PointOp;
+import jnum.Util;
 import jnum.data.CubicSpline;
-import jnum.data.Data;
 import jnum.data.DataCrawler;
+import jnum.data.RegularData;
+import jnum.data.SplineSet;
 import jnum.data.Validating;
 import jnum.data.WeightedPoint;
-import jnum.math.Coordinate3D;
+import jnum.data.cube.overlay.Referenced3D;
 import jnum.math.Vector3D;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
 
 
 
-public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> implements Values3D {
+public abstract class Data3D extends RegularData<Index3D, Vector3D> implements Values3D {
 
-    private InterpolatorData reuseIpolData;
 
-    
 
     // TODO 3D methods
     /*
@@ -54,17 +55,16 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
      * - level()
      */
     
-    
-    @Override
-    public Data3D clone() {
-        Data3D clone = (Data3D) super.clone();
-        clone.reuseIpolData = new InterpolatorData();
-        return clone;
-    }
    
     
-    public Cube3D getEmptyCube() {
+    @Override
+    public Cube3D newImage() {
         return Cube3D.createType(getElementType(), sizeX(), sizeY(), sizeZ());
+    }
+    
+    @Override
+    public Cube3D newImage(Index3D size, Class<? extends Number> elementType) {
+        return Cube3D.createType(getElementType(), size.i(), size.j(), size.k());
     }
 
     public Cube3D getCube() {
@@ -94,19 +94,34 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     }
     
     @Override
-    public Index3D copyOfIndex(Index3D index) { return new Index3D(index.i(), index.j(), index.k()); }
+    public final Index3D getIndexInstance() { return new Index3D(); }
     
-   
     @Override
-    public int capacity() {  
+    public final Vector3D getVectorInstance() { return new Vector3D(); }
+    
+    @Override
+    public final Index3D getSize() { return new Index3D(sizeX(), sizeY(), sizeZ()); }
+    
+    @Override
+    public final Index3D copyOfIndex(Index3D index) { return new Index3D(index.i(), index.j(), index.k()); }
+    
+    @Override
+    public final int dimension() { return 3; }
+    
+    @Override
+    public final int capacity() {  
         return sizeX() * sizeY() * sizeZ(); 
     }
     
     @Override
-    public Index3D size() {
-        return new Index3D(sizeX(), sizeY(), sizeZ());
+    public final String toString(Index3D index) {
+        return toString(index.i(), index.j(), index.k());
     }
-    
+        
+    public String toString(int i, int j, int k) {
+        return "[" + i + ", " + j + "," + k + "]=" + Util.S3.format(get(i,j, k));
+    }
+   
     
     @Override
     public String getSizeString() { return sizeX() + "x" + sizeY() + "x" + sizeZ(); }
@@ -171,16 +186,24 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     public void scale(int i, int j, int k, double factor) {
         set(i, j, k, get(i, j, k).doubleValue() * factor);
     }
-
-    
-    
+   
     @Override
     public double valueAtIndex(double ic, double jc, double kc) {
         return valueAtIndex(ic, jc, kc, null);
     }
     
+
+    @Override
+    public final double valueAtIndex(Vector3D index, SplineSet<Vector3D> splines) {
+        return valueAtIndex(index.x(), index.y(), index.z(), splines);
+    }
     
-    public double valueAtIndex(double ic, double jc, double kc, InterpolatorData ipolData) {
+    @Override
+    public final double valueAtIndex(Index3D numerator, Index3D denominator, SplineSet<Vector3D> splines) {
+        return valueAtIndex((double) numerator.i() / denominator.i(), (double) numerator.j() / denominator.j(), (double) numerator.k() / denominator.k(), splines);
+    }
+    
+    public double valueAtIndex(double ic, double jc, double kc, SplineSet<Vector3D> splines) {
         // The nearest data point (i,j)
         final int i = (int) Math.round(ic);
         if(i < 0) return Double.NaN;
@@ -201,38 +224,30 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
         switch(getInterpolationType()) {
         case NEAREST : return get(i, j, k).doubleValue();
         case LINEAR : return linearAtIndex(ic, jc, kc);
-        case QUADRATIC : return quadraticAt(ic, jc, kc);
-        case SPLINE : return ipolData == null ? splineAtIndex(ic, jc, kc) : splineAtIndex(ic, jc, kc, ipolData);
+        case QUADRATIC : return quadraticAtIndex(ic, jc, kc);
+        case SPLINE : return splines == null ? splineAtIndex(ic, jc, kc) : splineAtIndex(ic, jc, kc, splines);
         }
 
         return Double.NaN;
         
     }
     
+
+
     @Override
-    public final double valueAtIndex(Coordinate3D index) {
-        return valueAtIndex(index.x(), index.y(), index.z(), null);
+    public final Number nearestValueAtIndex(Vector3D index) {
+        return nearestValueAtIndex(index.x(), index.y(), index.z());
     }
     
-    public final double valueAtIndex(Coordinate3D index, InterpolatorData ipolData) {
-        return valueAtIndex(index.x(), index.y(), index.z(), ipolData);
-    }
-    
-    
-    @Override
-    public final Number nearestValueAtIndex(Coordinate3D index) {
-        return nearestValueTo(index.x(), index.y(), index.z());
-    }
-    
-    public Number nearestValueTo(double ic, double jc, double kc) {
+    public Number nearestValueAtIndex(double ic, double jc, double kc) {
         return get((int) Math.round(ic), (int) Math.round(jc), (int) Math.round(kc));
     }
     
+
     @Override
-    public final double linearAtIndex(Coordinate3D index) {
+    public final double linearAtIndex(Vector3D index) {
         return linearAtIndex(index.x(), index.y(), index.z());
     }
-    
    
     public double linearAtIndex(double ic, double jc, double kc) {
         int i0 = (int)Math.floor(ic);
@@ -261,46 +276,51 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
         // ~90 ops
     }
     
-    
     @Override
-    public final double quadraticAtIndex(Coordinate3D index) {
-        return quadraticAt(index.x(), index.y(), index.z());
+    public final double quadraticAtIndex(Vector3D index) {
+        return quadraticAtIndex(index.x(), index.y(), index.z());
     }
-    
-    public double quadraticAt(double ic, double jc, double kc) {
+
+
+    public double quadraticAtIndex(double ic, double jc, double kc) {
         // TODO
         throw new UnsupportedOperationException("Not implemented.");
     }
-    
-    @Override
-    public final double splineAtIndex(Coordinate3D index) {
-        return splineAtIndex(index.x(), index.y(), index.z());
-    }
+   
     
     public double splineAtIndex(double ic, double jc, double kc) {
         synchronized(reuseIpolData) { return splineAtIndex(ic, jc, kc, reuseIpolData); }
     }
     
-    public double splineAtIndex(double ic, double jc, double kc, InterpolatorData ipolData) {
-        ipolData.centerOn(ic, jc, kc);
+    @Override
+    public final double splineAtIndex(Vector3D index, SplineSet<Vector3D> splines) {
+        return splineAtIndex(index.x(), index.y(), index.z(), splines);
+    }
+    
+    public double splineAtIndex(double ic, double jc, double kc, SplineSet<Vector3D> splines) {
+        splines.centerOn(ic, jc, kc);
 
-        final int fromi = Math.max(0, ipolData.splineX.minIndex());
-        final int toi = Math.min(sizeX(), ipolData.splineX.maxIndex());
-
-        final int fromj = Math.max(0, ipolData.splineY.minIndex());
-        final int toj = Math.min(sizeY(), ipolData.splineY.maxIndex());
+        final CubicSpline splineX = splines.getSpline(0);
+        final CubicSpline splineY = splines.getSpline(1);
+        final CubicSpline splineZ = splines.getSpline(2);
         
-        final int fromk = Math.max(0, ipolData.splineZ.minIndex());
-        final int tok = Math.min(sizeZ(), ipolData.splineZ.maxIndex());
+        final int fromi = Math.max(0, splineX.minIndex());
+        final int toi = Math.min(sizeX(), splineX.maxIndex());
+
+        final int fromj = Math.max(0, splineY.minIndex());
+        final int toj = Math.min(sizeY(), splineY.maxIndex());
+        
+        final int fromk = Math.max(0, splineZ.minIndex());
+        final int tok = Math.min(sizeZ(), splineZ.maxIndex());
   
         // Do the spline convolution...
         double sum = 0.0, sumw = 0.0;
         for(int i=toi; --i >= fromi; ) {
-            final double wx = ipolData.splineX.coefficientAt(i);
+            final double wx = splineX.coefficientAt(i);
             for(int j=toj; --j >= fromj; ) {
-                final double wxy = wx * ipolData.splineY.coefficientAt(j);
+                final double wxy = wx * splineY.coefficientAt(j);
                 for(int k=tok; --k >= fromk; ) if(isValid(i, j, k)) {
-                    final double w = wxy * ipolData.splineZ.coefficientAt(k);         
+                    final double w = wxy * splineZ.coefficientAt(k);         
                     sum += w * get(i, j, k).doubleValue();
                     sumw += w;
                 }
@@ -312,10 +332,14 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
         // ~800 ops...
     }
     
-    public final double splineAt(Index3D index, InterpolatorData ipolData) {
-        return splineAtIndex(index.i(), index.j(), index.k(), ipolData);
+    public final double splineAt(Index3D index, SplineSet<Vector3D> splines) {
+        return splineAtIndex(index.i(), index.j(), index.k(), splines);
     }
     
+    @Override
+    public int getPointSmoothOps(int beamPoints, int interpolationType) {
+        return 36 + beamPoints * (16 + getInterpolationOps(interpolationType));
+    }
     
 
     @Override
@@ -329,6 +353,11 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
         return 1;
     }
 
+    @Override
+    public final boolean containsIndex(Vector3D index) {
+        return containsIndex(index.x(), index.y(), index.z());        
+    }
+    
     @Override
     public final boolean containsIndex(Index3D index) {
         return containsIndex(index.i(), index.j(), index.k());        
@@ -391,7 +420,7 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     }
     
     protected Cube3D getCropped(int imin, int jmin, int kmin, int imax, int jmax, int kmax) {
-        Cube3D cropped = getEmptyCube();
+        Cube3D cropped = newImage();
 
         final int fromi = Math.max(0, imin);
         final int fromj = Math.max(0, jmin);
@@ -412,37 +441,27 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
 
 
 
-    
-    
+
     @Override
-    public void despike(double level) {
-        // TODO Auto-generated method stub
+    public Referenced3D getNeighbors() {
+        final double[][][] neighbourData = {
+                {{ 0.3, 0.5, 0.3 }, { 0.5, 1.0, 0.5 }, { 0.3, 0.5, 0.3 }},
+                {{ 0.5, 1.0, 0.5 }, { 1.0, 0.0, 1.0 }, { 0.5, 1.0, 0.5 }},
+                {{ 0.3, 0.5, 0.3 }, { 0.5, 1.0, 0.5 }, { 0.3, 0.5, 0.3 }}
+        };
+
+        final Cube3D neighbourImage = Cube3D.createType(getElementType());
+        neighbourImage.setData(neighbourData);
+
+        return new Referenced3D(neighbourImage, new Vector3D(1.0, 1.0, 1.0));
     }
 
+    
+    
     @Override
     public String getInfo() {
         return "Datacube Size: " + getSizeString() + " voxels.";
     }
-
-    
-    
-    @Override
-    public Object getFitsData(Class<? extends Number> dataType) {  
-        final Cube3D transpose = Cube3D.createType(dataType, sizeY(), sizeX(), sizeZ());
-        
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j, int k) {
-                transpose.set(k, j, i, isValid(i, j, k) ? get(i, j, k) : getBlankingValue());
-            }     
-        }.process();
-
-        if(getUnit().value() != 1.0) transpose.scale(1.0 / getUnit().value());
-
-        return transpose.getData();
-    }
-
-  
     
     
     @Override
@@ -510,16 +529,16 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     
 
     @Override
-    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op) {
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) for(int k=sizeY(); --k >= 0; )
+    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index3D from, Index3D to) {
+        for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) for(int k=to.k(); --k >= from.k(); )
             if(isValid(i, j, k)) op.process(get(i, j, k));
         return op.getResult();
     }
     
     @Override
-    public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op) {
+    public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op, Index3D from, Index3D to) {
         final Index3D index = new Index3D();
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) for(int k=sizeY(); --k >= 0; ) {
+        for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) for(int k=to.k(); --k >= from.k(); ) {
             index.set(i,  j,  k);
             op.process(index);
             if(op.exception != null) return null;
@@ -528,9 +547,9 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     }
     
     @Override
-    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
+    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, Index3D from, Index3D to) {
       
-        Fork<ReturnType> fork = new Fork<ReturnType>() {
+        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
             private ParallelPointOp<Number, ReturnType> localOp;
             
             @Override
@@ -565,9 +584,9 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     }
     
     @Override
-    public <ReturnType> ReturnType fork(final ParallelPointOp<Index3D, ReturnType> op) {
+    public <ReturnType> ReturnType fork(final ParallelPointOp<Index3D, ReturnType> op, Index3D from, Index3D to) {
       
-        Fork<ReturnType> fork = new Fork<ReturnType>() {
+        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
             private ParallelPointOp<Index3D, ReturnType> localOp;
             private Index3D index;
             
@@ -607,6 +626,7 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     
     
     
+    @Override
     public Validating<Index3D> getNeighborValidator(final int minNeighbors) {
         return new Validating<Index3D>() {
 
@@ -644,53 +664,49 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    public static class InterpolatorData {
+
+    public abstract class Loop<ReturnType> extends AbstractLoop<ReturnType> {
+         
+        public Loop() {}
         
-        public CubicSpline splineX, splineY, splineZ;
+        public Loop(Index3D from, Index3D to) { super(from, to); }
         
-        public InterpolatorData() {
-            splineX = new CubicSpline();
-            splineY = new CubicSpline();
-            splineZ = new CubicSpline();
-        }
-   
-        public void centerOn(double deltax, double deltay, double deltaz) {
-            splineX.centerOn(deltaz);
-            splineY.centerOn(deltaz);
-            splineZ.centerOn(deltaz);
+  
+        @Override
+        public ReturnType process() {
+            for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) for(int k=to.k(); --k >= from.k(); ) 
+                process(i, j, k);
+            return getResult();
         }
 
-    }
-    
-    
-    
-    
-    
-    
-    public abstract class Fork<ReturnType> extends Task<ReturnType> {
+        protected abstract void process(int i, int j, int k);
 
         @Override
+        protected ReturnType getResult() { return null; }
+    }
+
+    
+       
+    public abstract class Fork<ReturnType> extends AbstractFork<ReturnType> {
+            
+        public Fork() {}
+        
+        public Fork(Index3D from, Index3D to) { super(from, to); }
+        
+        @Override
         protected void processChunk(int index, int threadCount) {
-            final int sizeX = sizeX();
-            for(int i=index; i<sizeX; i += threadCount) {
+            for(int i=from.i() + index; i<to.i(); i += threadCount) {
                 processX(i);
                 Thread.yield();
             }
         }
 
         protected void processX(int i) {
-            for(int j=sizeY(); --j >= 0; ) process(i, j);
+            for(int j=to.j(); --j >= from.j(); ) process(i, j);
         }
         
         protected void process(int i, int j) {
-            for(int k=sizeY(); --k >= 0; ) process(i, j, k);
+            for(int k=to.k(); --k >= from.k(); ) process(i, j, k);
         }
 
         
@@ -712,24 +728,13 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
 
        
     }
-    
-    
-
-    public abstract class Loop<ReturnType> {
-        public ReturnType process() {
-            for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) for(int k=sizeZ(); --k >= 0; ) 
-                process(i, j, k);
-            return getResult();
-        }
-
-        protected abstract void process(int i, int j, int k);
-
-        protected ReturnType getResult() { return null; }
-    }
-
 
 
     public abstract class AveragingFork extends Fork<WeightedPoint> {
+        public AveragingFork() {}
+        
+        public AveragingFork(Index3D from, Index3D to) { super(from, to); }
+        
         @Override
         public WeightedPoint getResult() {
             WeightedPoint ave = new WeightedPoint();      
@@ -740,17 +745,5 @@ public abstract class Data3D extends Data<Index3D, Coordinate3D, Vector3D> imple
     }
 
 
-    public abstract class InterpolatingFork extends Fork<Void> {
-        private InterpolatorData ipolData;
-
-        @Override
-        protected void init() { ipolData = new InterpolatorData(); }
-
-        public final InterpolatorData getInterpolatorData() { return ipolData; }
-    }   
-
-
-
-   
     
 }

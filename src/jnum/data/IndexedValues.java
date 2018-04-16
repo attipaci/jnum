@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -25,7 +25,11 @@ package jnum.data;
 
 public interface IndexedValues<IndexType> extends Values {
 
-    public IndexType size();
+    public int capacity();
+    
+    public int dimension();
+    
+    public IndexType getSize();
     
     public Number get(IndexType index);
     
@@ -33,4 +37,20 @@ public interface IndexedValues<IndexType> extends Values {
     
     public void set(IndexType index, Number value);
     
+    public IndexType getIndexInstance();
+    
+    public abstract IndexType copyOfIndex(IndexType index);
+    
+    public abstract boolean conformsTo(IndexType size);
+         
+    public boolean conformsTo(IndexedValues<IndexType> data);
+    
+    public abstract String getSizeString();
+    
+    public abstract boolean containsIndex(IndexType index);
+    
+    public abstract void clear(IndexType index);
+    
+    public abstract void scale(IndexType index, double factor);
+      
 }

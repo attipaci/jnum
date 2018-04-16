@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -28,5 +28,7 @@ public interface IndexReferenced<IndexType> {
     public void setReferenceIndex(IndexType index);
     
     public IndexType getReferenceIndex();
+    
+    
     
 }

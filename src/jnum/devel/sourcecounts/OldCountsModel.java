@@ -86,7 +86,7 @@ public abstract class OldCountsModel implements Parametric<Double> {
         model = new CharSpectrum(new double[hiresModel.length]);
         model.noData();
         sources = new CharSpectrum[templates.length];
-        for(int i=0; i<sources.length; i++) sources[i] = new CharSpectrum(model.size());
+        for(int i=0; i<sources.length; i++) sources[i] = new CharSpectrum(model.getSize());
     }
 
     
@@ -325,7 +325,7 @@ public abstract class OldCountsModel implements Parametric<Double> {
     }
 
     public double getReducedChi2() {
-        return getChi2() / (s2nHistogram.size() - fitList.size());           
+        return getChi2() / (s2nHistogram.size() - fitList.getSize());           
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,20 +26,17 @@ package jnum.data.image;
 import java.util.List;
 
 import jnum.Constant;
-import jnum.ExtraMath;
 import jnum.PointOp;
 import jnum.Util;
 import jnum.data.DataPoint;
-import jnum.data.Transforming;
+import jnum.data.RegularData;
+import jnum.data.SplineSet;
 import jnum.data.Validating;
-import jnum.data.Data;
 import jnum.data.DataCrawler;
 import jnum.data.CubicSpline;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Referenced2D;
-import jnum.data.image.overlay.Viewport2D;
 import jnum.data.image.transform.Stretch2D;
-import jnum.math.Coordinate2D;
 import jnum.math.Range;
 import jnum.math.Vector2D;
 import jnum.parallel.ParallelPointOp;
@@ -54,15 +51,8 @@ import jnum.util.HashCode;
  * @author pumukli
  *
  */
-public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> implements Values2D {
+public abstract class Data2D extends RegularData<Index2D, Vector2D> implements Values2D {
 
-
-    private InterpolatorData reuseIpolData;
-
-
-    protected Data2D() {
-        reuseIpolData = new InterpolatorData();
-    }
 
     @Override
     public int hashCode() {
@@ -71,21 +61,33 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         return hash;
     }
 
-      
+    
     @Override
-    public Data2D clone() {
-        Data2D clone = (Data2D) super.clone();
-        clone.reuseIpolData = new InterpolatorData();
-        return clone;
-    }
+    public Index2D getIndexInstance() { return new Index2D(); }
+    
+    @Override
+    public Vector2D getVectorInstance() { return new Vector2D(); }
+    
 
+    @Override
+    public final int dimension() { return 2; }
+    
+    @Override
+    public Index2D getSize() { return new Index2D(sizeX(), sizeY()); }
+    
     @Override
     public final Index2D copyOfIndex(Index2D index) { return new Index2D(index.i(), index.j()); }
-
     
-    public Image2D getEmptyImage() {
+    @Override
+    public Image2D newImage() {
         return Image2D.createType(getElementType(), sizeX(), sizeY());
     }
+    
+    @Override
+    public Image2D newImage(Index2D size, Class<? extends Number> elementType) {
+        return Image2D.createType(getElementType(), size.i(), size.j());
+    }
+   
 
     public Image2D getImage() {
         return getImage(getElementType(), getBlankingValue());
@@ -112,26 +114,8 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
         return image;
     }
-
-
-  
-
-    @Override
-    public Object getFitsData(Class<? extends Number> dataType) {  
-        final Image2D transpose = Image2D.createType(dataType, sizeY(), sizeX());
-        
-        new Fork<Void>() {
-            @Override
-            protected void process(int i, int j) {
-                transpose.set(j, i, isValid(i, j) ? get(i, j) : getBlankingValue());
-            }     
-        }.process();
-       
-        if(getUnit().value() != 1.0) transpose.scale(1.0 / getUnit().value());
-
-        return transpose.getData();
-    }
-
+   
+ 
   
     @Override
     public String getSizeString() { return sizeX() + "x" + sizeY(); }
@@ -148,19 +132,19 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         return isValid(get(i,j));
     }
 
-
    
     @Override
     public void discard(int i, int j) {
         set(i, j, getBlankingValue());
     }
 
+    @Override
     public final String toString(Index2D index) {
         return toString(index.i(), index.j());
     }
     
     public String toString(int i, int j) {
-        return "value=" + Util.S3.format(get(i,j));
+        return "[" + i + ", " + j + "]=" + Util.S3.format(get(i,j));
     }
   
 
@@ -195,11 +179,6 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     @Override
     public final void discard(Index2D index) { discard(index.i(), index.j()); }
 
-    @Override
-    public Index2D size() {
-        return new Index2D(sizeX(), sizeY());
-    }
-    
     @Override
     public int capacity() {
         return sizeX() * sizeY();
@@ -253,7 +232,8 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         return true;
     }
 
-    public final boolean containsIndex(Coordinate2D index) {
+    @Override
+    public final boolean containsIndex(Vector2D index) {
         return containsIndex(index.x(), index.y());
     }
     
@@ -271,8 +251,10 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         return getCropped(from.i(), from.j(), to.i(), to.j());
     }
     
+    
+    // TODO generalize and parallelize...
     protected Image2D getCropped(int imin, int jmin, int imax, int jmax) {
-        Image2D cropped = getEmptyImage();
+        Image2D cropped = newImage();
 
         final int fromi = Math.max(0, imin);
         final int fromj = Math.max(0, jmin);
@@ -371,47 +353,18 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         return asym;
     }
 
-
-
+  
     @Override
-    public void despike(double threshold) {
-        despike(threshold, null);
-    }
-
-    public synchronized void despike(final double significance, final Values2D noiseWeight) {
+    public Referenced2D getNeighbors() {
         final double[][] neighbourData = {{ 0.5, 1, 0.5 }, { 1, 0, 1 }, { 0.5, 1, 0.5 }};
 
         final Image2D neighbourImage = Image2D.createType(getElementType());
         neighbourImage.setData(neighbourData);
 
-        final Referenced2D neighbours = new Referenced2D(neighbourImage, new Coordinate2D(1.0, 1.0));
-
-        new Fork<Void>() {  
-            private WeightedPoint point, surrounding;
-            @Override
-            protected void init() {
-                point = new WeightedPoint();
-                surrounding = new WeightedPoint();
-            }
-            @Override
-            protected void process(final int i, final int j) {
-                if(!isValid(i, j)) return;
-
-                point.setValue(get(i, j).doubleValue());
-                point.setWeight(noiseWeight == null ? 1.0 : noiseWeight.get(i, j).doubleValue());
-
-                getSmoothedValueAtIndex(i, j, neighbours, noiseWeight, surrounding);
-
-                point.subtract(surrounding);
-
-                if(DataPoint.significanceOf(point) > significance) discard(i, j);             
-            }
-        }.process();
-
-        addHistory("despiked at " + Util.S3.format(significance));
+        return new Referenced2D(neighbourImage, new Vector2D(1.0, 1.0));
     }
 
-
+    
 
 
     public Vector2D getRefinedPeakIndex(Index2D peakIndex) {
@@ -470,17 +423,17 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
 
 
+    @Override
+    public double valueAtIndex(Vector2D index, SplineSet<Vector2D> splines) {
+        return valueAtIndex(index.x(), index.y(), splines);
+    }
 
     @Override
-    public double valueAtIndex(Coordinate2D index) {
-        return valueAtIndex(index.x(), index.y(), null);
+    protected double valueAtIndex(Index2D numerator, Index2D denominator, SplineSet<Vector2D> splines) {
+        return valueAtIndex((double) numerator.i() / denominator.i(), (double) numerator.j() / denominator.j(), splines);
     }
 
-
-    public double valueAtIndex(Coordinate2D index, InterpolatorData ipolData) {
-        return valueAtIndex(index.x(), index.y(), ipolData);
-    }
-
+    
 
     @Override
     public double valueAtIndex(double ic, double jc) {
@@ -488,7 +441,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
 
 
-    public double valueAtIndex(double ic, double jc, InterpolatorData ipolData) {  
+    public double valueAtIndex(double ic, double jc, SplineSet<Vector2D> splines) {  
         // The nearest data point (i,j)
         final int i = (int) Math.round(ic);
         final int j = (int) Math.round(jc);
@@ -502,14 +455,14 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         case NEAREST : return get(i, j).doubleValue();
         case LINEAR : return linearAtIndex(ic, jc);
         case QUADRATIC : return quadraticAtIndex(ic, jc);
-        case SPLINE : return ipolData == null ? splineAtIndex(ic, jc) : splineAtIndex(ic, jc, ipolData);
+        case SPLINE : return splines == null ? splineAtIndex(ic, jc) : splineAtIndex(ic, jc, splines);
         }
 
         return Double.NaN;
     }
 
     @Override
-    public Number nearestValueAtIndex(Coordinate2D index) {
+    public Number nearestValueAtIndex(Vector2D index) {
         return nearestValueAtIndex(index.x(), index.y());
     }
     
@@ -518,7 +471,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
     
     @Override
-    public final double linearAtIndex(Coordinate2D index) { return linearAtIndex(index.x(), index.y()); }
+    public final double linearAtIndex(Vector2D index) { return linearAtIndex(index.x(), index.y()); }
 
     // Bilinear interpolation
     public double linearAtIndex(double ic, double jc) {        
@@ -559,7 +512,7 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     
     
     @Override
-    public final double quadraticAtIndex(Coordinate2D index) { return quadraticAtIndex(index.x(), index.y()); }
+    public final double quadraticAtIndex(Vector2D index) { return quadraticAtIndex(index.x(), index.y()); }
 
 
     // Interpolate (linear at edges, quadratic otherwise)   
@@ -606,21 +559,21 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
     
     
-    @Override
-    public final double splineAtIndex(Coordinate2D index) { return splineAtIndex(index.x(), index.y()); }
-
-
     public double splineAtIndex(final double ic, final double jc) {
         synchronized(reuseIpolData) { return splineAtIndex(ic, jc, reuseIpolData); }
     }
 
+    @Override
+    public final double splineAtIndex(Vector2D index, SplineSet<Vector2D> splines) { 
+        return splineAtIndex(index.x(), index.y(), splines); 
+    }
  
     // Performs a bicubic spline interpolation...
-    public double splineAtIndex(final double ic, final double jc, InterpolatorData ipolData) {   
-        ipolData.centerOn(ic, jc);
+    public double splineAtIndex(final double ic, final double jc, SplineSet<Vector2D> splines) {   
+        splines.centerOn(ic, jc);
 
-        final CubicSpline splineX = ipolData.splineX;
-        final CubicSpline splineY = ipolData.splineY;
+        final CubicSpline splineX = splines.getSpline(0);
+        final CubicSpline splineY = splines.getSpline(1);
 
         final int fromi = Math.max(0, splineX.minIndex());
         final int toi = Math.min(sizeX(), splineX.maxIndex());
@@ -657,194 +610,12 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
 
 
-    public synchronized void smooth(Referenced2D beam) {
-        paste(getSmoothed(beam, null, null), false);
-        addHistory("smoothed");
-    }
-
     
-    public synchronized void fastSmooth(Referenced2D beam, int stepX, int stepY) {
-        paste(getFastSmoothed(beam, stepX, stepY, null, null), false);
-        addHistory("smoothed (fast method)");
-    }
-
-    // TODO make generic...
-    protected final void getSmoothedValueAtIndex(final Coordinate2D index, final Referenced2D beam, Values2D weight, WeightedPoint result) {    
-        getSmoothedValueAtIndex(index.x(), index.y(), beam, weight, result);
-    }
     
-
-
-    // Beam fitting: I' = C * sum(wBI) / sum(wB2)
-    // I(x) = I -> I' = I -> C = sum(wB2) / sum(wB)
-    // I' = sum(wBI)/sum(wB)
-    // rms = Math.sqrt(1 / sum(wB))
-    protected void getSmoothedValueAtIndex(final double i, final double j, final Referenced2D beam, Values2D weight, WeightedPoint result) {    
-        final double i0 = i - beam.getReferenceIndex().x();
-        final int fromi = Math.max(0, (int) Math.ceil(i0));
-        final int toi = Math.min(sizeX(), (int)Math.floor(i0) + beam.sizeX());
-
-        final double j0 = j - beam.getReferenceIndex().y();
-        final int fromj = Math.max(0, (int) Math.ceil(j0));
-        final int toj = Math.min(sizeY(), (int)Math.floor(j0) + beam.sizeY());
-
-        double sum = 0.0, sumw = 0.0;
-
-        for(int i1=toi; --i1 >= fromi; ) for(int j1=toj; --j1 >= fromj; ) if(isValid(i1, j1)) {
-            final double w = (weight == null ? 1.0 : weight.get(i1, j1).doubleValue());
-            final double wB = w * beam.valueAtIndex(i1-i0, j1-j0);
-            sum += wB * get(i1, j1).doubleValue();
-            sumw += Math.abs(wB);   
-        }
-
-        result.setValue(sum / sumw);
-        result.setWeight(sumw);   
-
-    }
-
-    // TODO make abstract in Data
+    @Override
     public int getPointSmoothOps(int beamPoints, int interpolationType) {
         return 25 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
-
-
-    // TODO make generic with Value2D --> IndexedValues<Index2D>
-    public final Image2D getSmoothed(final Referenced2D beam, final Values2D weight, final Values2D smoothedWeights) {
-        final Image2D convolved = getEmptyImage();
-
-        new Fork<Void>() {
-            private WeightedPoint result;
-            @Override
-            protected void init() {
-                super.init();
-                result = new WeightedPoint();
-            }
-            @Override
-            protected void process(int i, int j) {            
-                if(!isValid(i, j)) return;
-                getSmoothedValueAtIndex(i, j, beam, weight, result);    
-                convolved.set(i, j, result.value());
-                if(smoothedWeights != null) smoothedWeights.set(i, j, result.weight());
-            }
-            @Override
-            protected int getPointOps() {
-                return 5 + getPointSmoothOps(beam.sizeX() * beam.sizeY(), NEAREST);
-            }
-        }.process();
-
-        return convolved;
-    }
-
-
-    // TODO Try make this generic...
-    // Do the convolution proper at the specified intervals (step) only, and interpolate (quadratic) inbetween
-    public Image2D getFastSmoothed(final Referenced2D beam, final int stepX, final int stepY, final Values2D weight, final Values2D smoothedWeights) {
-        if(stepX * stepY == 1) return getSmoothed(beam, weight, smoothedWeights);
-
-        final int nx = ExtraMath.roundupRatio(sizeX(), stepX);
-        final int ny = ExtraMath.roundupRatio(sizeY(), stepY);
-
-
-        final Image2D coarseSignal = Image2D.createType(getElementType());
-        final Image2D coarseWeight = (smoothedWeights == null) ? null : Image2D.createType(weight.getElementType());
-
-        coarseSignal.setSize(nx, ny);
-        if(coarseWeight != null) coarseWeight.setSize(nx, ny);
-
-        coarseSignal.new Fork<Void>() {
-            WeightedPoint result;
-
-            @Override
-            public void init() {
-                super.init();
-                result = new WeightedPoint();
-            }
-
-            @Override
-            protected void process(int i, int j) {
-                getSmoothedValueAtIndex(i * stepX, j * stepY, beam, weight, result);
-                coarseSignal.set(i, j, result.value());
-                if(coarseWeight != null) coarseWeight.set(i, j, result.weight());
-                if(result.weight() <= 0.0) coarseSignal.discard(i, j);
-            }   
-
-            @Override
-            protected int getPointOps() {
-                return 5 + getPointSmoothOps(beam.sizeX() * beam.sizeY() / (stepX * stepY), NEAREST);
-            }
-        }.process();
-
-
-        final Image2D convolved = getEmptyImage();
-
-        final double istepX = 1.0 / stepX;
-        final double istepY = 1.0 / stepY;
-
-        new InterpolatingFork() {
-            @SuppressWarnings("null")
-            @Override
-            protected void process(int i, int j) {
-                if(!isValid(i, j)) return;
-
-                final double i1 = i * istepX;
-                final double j1 = j * istepY;
-                final double value = coarseSignal.valueAtIndex(i1, j1, getInterpolatorData());
-
-                if(!Double.isNaN(value)) {      
-                    convolved.set(i, j, value);
-                    if(smoothedWeights != null) smoothedWeights.set(i, j, coarseWeight.valueAtIndex(i1, j1, getInterpolatorData()));
-                }
-                else {
-                    convolved.discard(i, j);
-                    if(smoothedWeights != null) smoothedWeights.set(i, j, 0);
-                } 
-            }
-            @Override
-            protected int getPointOps() {
-                return 9 + (smoothedWeights == null ? 1 : 2) * getInterpolationOps();
-            }
-        }.process();
-
-        return convolved;
-    }
-
-
-    // TODO make generic
-    public Image2D clean(final Referenced2D beam, final double gain, final double threshold) { 
-        Image2D clean = getEmptyImage();
-
-        final int maxComponents = (int) Math.ceil(countPoints() / gain);         
-        int components = 0;
-
-        final Coordinate2D beamCenterIndex = beam.getReferenceIndex();
-
-        Index2D peakIndex = indexOfMaxDev();
-        double peakValue = get(peakIndex).doubleValue();
-
-        Coordinate2D offset = new Coordinate2D();
-
-        while(Math.abs(peakValue) > threshold && components < maxComponents) { 
-            final double componentValue = gain * peakValue;
-            offset.set(peakIndex.i() - beamCenterIndex.x(), peakIndex.j() - beamCenterIndex.y());
-
-            addPatchAt(offset, beam, -componentValue);
-            clean.add(peakIndex, componentValue);
-
-            components++;
-
-            peakIndex = indexOfMaxDev();
-            peakValue = get(peakIndex).doubleValue();
-        }
-
-        // Scale cleaned components by the beam area...
-        clean.scale(beam.getAbsSum());
-
-        addHistory("cleaned away " + components + " components.");
-        clean.addHistory("created with " + components + " clean components.");
-
-        return clean;
-    }
-
 
 
     // TODO make generic
@@ -862,95 +633,8 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
     }
 
-    // TODO make generic
-    public synchronized void resampleFrom(final Data2D image, final Transforming<Vector2D> toSourceIndex, final Referenced2D beam, final Values2D weight) {
 
-        new InterpolatingFork() {
-            private Vector2D index;
-            private WeightedPoint smoothedValue;
-
-            @Override
-            protected void init() { 
-                super.init();
-                index = new Vector2D();
-                smoothedValue = new WeightedPoint();
-            }
-
-            @Override
-            protected void process(int i, int j) {
-                index.set(i, j);
-                toSourceIndex.transform(index);
-
-                if(!image.containsIndex(index)) {
-                    discard(i, j);
-                }
-                else if(beam == null) {
-                    double value = image.valueAtIndex(index, getInterpolatorData());
-                    if(java.lang.Double.isNaN(value)) discard(i, j);
-                    else set(i, j, value);
-                }
-                else {
-                    image.getSmoothedValueAtIndex(index.x(), index.y(), beam, weight, smoothedValue);          
-                    if(smoothedValue.weight() > 0.0) set(i, j, smoothedValue.value());
-                    else discard(i, j);
-                }
-            }
-            @Override
-            protected int getPointOps() {
-                return 5 + (beam == null ? getInterpolationOps() : getPointSmoothOps(beam.sizeX() * beam.sizeY(), getInterpolationType()));
-            }
-        }.process();
-
-        clearHistory();
-        addHistory("resampled " + getSizeString() + " from " + image.getSizeString());
-    }
-
-
-    // TODO make generic or else Data2D abstract
-    public void addPatchAt(Coordinate2D index, Values2D patch, double scaling) {
-        final int imin = Math.max(0, (int) Math.floor(index.x()));
-        final int jmin = Math.max(0, (int) Math.floor(index.y()));
-        final int imax = Math.min(sizeX(), (int) Math.ceil(index.x()) + patch.sizeX());
-        final int jmax = Math.min(sizeY(), (int) Math.ceil(index.y()) + patch.sizeY());
-
-        for(int i=imax; --i >= imin; ) for(int j=jmax; --j >= jmin; ) {
-            double patchValue = patch.valueAtIndex(i - index.x(), j - index.y());
-            if(!Double.isNaN(patchValue)) add(i, j, scaling * patchValue);
-        }
-    }
-
-
-    // TODO make generic or else Data2D abstract
-    public void addParallelPatchAt(final Coordinate2D index, final Values2D patch, final double scaling) {
-        int imin = Math.max(0, (int) Math.floor(index.x()));
-        int jmin = Math.max(0, (int) Math.floor(index.y()));
-        int imax = Math.min(sizeX(), patch.sizeX() + (int) Math.floor(index.x()));
-        int jmax = Math.min(sizeY(), patch.sizeY() + (int) Math.floor(index.y()));
-
-        final Viewport2D view = new Viewport2D(this, imin, jmin, imax, jmax);
-        view.new Fork<Void>() {
-
-            @Override
-            protected void process(int i, int j) {
-                double patchValue = patch.valueAtIndex(i + view.fromi() - index.x(), j + view.fromj() - index.y());
-                if(!Double.isNaN(patchValue)) add(i, j, scaling * patchValue);
-            }
-
-            @Override
-            public int getPointOps() { return 11 + getInterpolationOps(); }
-
-        }.process();
-
-    }
-
-    // TODO make Data abstract...
-    public void discardIsolated(final int minNeighbors) { 
-        if(minNeighbors < 1) return;   // Nothing to do...
-        validate(getNeighborValidator(minNeighbors));
-    }
-
-
-
+    @Override
     public Validating<Index2D> getNeighborValidator(final int minNeighbors) {
         return new Validating<Index2D>() {
 
@@ -1052,8 +736,8 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     
 
     @Override
-    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op) {
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) {
+    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index2D from, Index2D to) {
+        for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) if(isValid(i, j)) {
             op.process(get(i, j));
             if(op.exception != null) return null;
         }
@@ -1061,9 +745,9 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     }
     
     @Override
-    public <ReturnType> ReturnType loop(final PointOp<Index2D, ReturnType> op) {
+    public <ReturnType> ReturnType loop(final PointOp<Index2D, ReturnType> op, Index2D from, Index2D to) {
         final Index2D index = new Index2D();
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) {
+        for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) {
             index.set(i, j);
             op.process(index);
             if(op.exception != null) return null;
@@ -1073,9 +757,9 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     
     
     @Override
-    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
+    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, Index2D from, Index2D to) {
         
-        Fork<ReturnType> fork = new Fork<ReturnType>() {
+        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
             private ParallelPointOp<Number, ReturnType> localOp;
             
             @Override
@@ -1111,9 +795,9 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
     
 
     @Override
-    public <ReturnType> ReturnType fork(final ParallelPointOp<Index2D, ReturnType> op) {
+    public <ReturnType> ReturnType fork(final ParallelPointOp<Index2D, ReturnType> op, Index2D from, Index2D to) {
       
-        Fork<ReturnType> fork = new Fork<ReturnType>() {
+        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
             private ParallelPointOp<Index2D, ReturnType> localOp;
             private Index2D index;
             
@@ -1154,18 +838,21 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
 
 
-    public abstract class Fork<ReturnType> extends Task<ReturnType> {           
-
+    public abstract class Fork<ReturnType> extends AbstractFork<ReturnType> {                   
+        public Fork() {}
+        
+        public Fork(Index2D from, Index2D to) { super(from, to); }
+        
         @Override
         protected void processChunk(int index, int threadCount) {
-            for(int i=index; i<sizeX(); i += threadCount) {
+            for(int i=from.i() + index; i < to.i(); i += threadCount) {
                 processX(i);
                 Thread.yield();
             }
         }
 
         protected void processX(int i) {
-            for(int j=sizeY(); --j >= 0; ) process(i, j);
+            for(int j=to.j(); --j >= from.j(); ) process(i, j);
         }
 
         @Override
@@ -1188,20 +875,29 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
 
 
 
-    public abstract class Loop<ReturnType> {
+    public abstract class Loop<ReturnType> extends AbstractLoop<ReturnType> {     
+        public Loop() {}
+        
+        public Loop(Index2D from, Index2D to) { super(from, to); }
 
+        @Override
         public ReturnType process() {
-            for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) process(i, j);
+            for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) process(i, j);
             return getResult();
         }
 
         protected abstract void process(int i, int j);
 
+        @Override
         protected ReturnType getResult() { return null; }
     }
 
 
     public abstract class AveragingFork extends Fork<WeightedPoint> {
+        public AveragingFork() {}
+        
+        public AveragingFork(Index2D from, Index2D to) { super(from, to); }
+        
         @Override
         public WeightedPoint getResult() {
             WeightedPoint ave = new WeightedPoint();      
@@ -1211,33 +907,6 @@ public abstract class Data2D extends Data<Index2D, Coordinate2D, Vector2D> imple
         }
     }
 
-
-    public abstract class InterpolatingFork extends Fork<Void> {
-        private InterpolatorData ipolData;
-
-        @Override
-        protected void init() { ipolData = new InterpolatorData(); }
-
-
-        public final InterpolatorData getInterpolatorData() { return ipolData; }
-    }   
-
-
-
-    public static class InterpolatorData {
-        CubicSpline splineX, splineY;
-
-        public InterpolatorData() {
-            splineX = new CubicSpline();
-            splineY = new CubicSpline();
-        }
-
-        public void centerOn(double deltax, double deltay) {
-            splineX.centerOn(deltax);
-            splineY.centerOn(deltay);
-        }
-
-    }
 
 
 

@@ -29,6 +29,6 @@ public class InvertedValidator1D extends Overlay1D {
     public InvertedValidator1D(Values1D base) { super(base); }
     
     @Override
-    public boolean isValid(Integer i) { return !super.isValid(i); }
+    public boolean isValid(int i) { return !super.isValid(i); }
     
 }

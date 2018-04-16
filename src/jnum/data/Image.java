@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -21,21 +21,12 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.samples;
+package jnum.data;
 
-import jnum.data.IndexedValues;
+import java.io.Serializable;
 
+import jnum.CopiableContent;
 
-public interface Values1D extends IndexedValues<Index1D>, Validating1D {
-  
-    public int size();
-    
-    public Number get(int i);
-    
-    public void add(int i, Number value);
-    
-    public void set(int i, Number value);
-    
-    public double valueAtIndex(double ic);    
-       
+public interface Image<IndexType extends Index<IndexType>> extends Resizable<IndexType>, Serializable, CopiableContent<Image<? extends IndexType>> {
+
 }

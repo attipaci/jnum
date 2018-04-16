@@ -24,16 +24,16 @@
 package jnum.data.image;
 
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
 import jnum.Constant;
-import jnum.CopiableContent;
 import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.DataPoint;
+import jnum.data.Image;
+import jnum.data.ReferencedValues;
 import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
@@ -67,7 +67,7 @@ import nom.tam.fits.ImageHDU;
  * @param <ImageType>
  * @param <ElementType>
  */
-public class Map2D extends Flagged2D implements Resizable2D, Serializable, CopiableContent<Map2D> {
+public class Map2D extends Flagged2D implements Image<Index2D> {
     /**
      * 
      */
@@ -280,6 +280,10 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     }
 
     @Override
+    public final void setSize(Index2D size) {
+        setSize(size.i(), size.j());
+    }
+  
     public void setSize(int sizeX, int sizeY) { 
         getImage().setSize(sizeX, sizeY); 
         getFlags().setSize(sizeX, sizeY);
@@ -406,22 +410,24 @@ public class Map2D extends Flagged2D implements Resizable2D, Serializable, Copia
     }
 
     public final void smooth(Gaussian2D psf) { 
-        int stepX = (int)Math.ceil(psf.extentInX()/(5.0 * getGrid().pixelSizeX()));
-        int stepY = (int)Math.ceil(psf.extentInY()/(5.0 * getGrid().pixelSizeY()));
+        Index2D step = new Index2D(
+                (int)Math.ceil(psf.extentInX()/(5.0 * getGrid().pixelSizeX())),
+                (int)Math.ceil(psf.extentInY()/(5.0 * getGrid().pixelSizeY()))
+        );
 
-        fastSmooth(psf.getBeam(getGrid()), stepX, stepY);
+        fastSmooth(psf.getBeam(getGrid()), step);
     }
 
 
     @Override
-    public void smooth(Referenced2D beam) {
+    public void smooth(ReferencedValues<Index2D, Vector2D> beam) {
         super.smooth(beam);
         properties.addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
     @Override
-    public void fastSmooth(Referenced2D beam, int stepX, int stepY) {
-        super.fastSmooth(beam, stepX, stepY);
+    public void fastSmooth(ReferencedValues<Index2D, Vector2D> beam, Index2D step) {
+        super.fastSmooth(beam, step);
         properties.addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 

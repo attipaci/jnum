@@ -1,6 +1,7 @@
 package jnum.data.samples.overlay;
 
 import jnum.Util;
+import jnum.data.Data;
 import jnum.data.samples.Data1D;
 import jnum.data.samples.Values1D;
 import jnum.parallel.Parallelizable;
@@ -62,17 +63,17 @@ public class Overlay1D extends Data1D {
     }
     
     @Override
-    public boolean isValid(Integer i) {
+    public boolean isValid(int i) {
         return values.isValid(i);
     }
 
     @Override
-    public void discard(Integer i) {
+    public void discard(int i) {
         values.discard(i);
     }
     
     @Override
-    public void clear(Integer i) {
+    public void clear(int i) {
         values.set(i, 0);
     }
 
@@ -85,22 +86,22 @@ public class Overlay1D extends Data1D {
      * Safe even if underlying object is resized...
      */
     @Override
-    public Integer size() {
+    public int size() {
         return values == null ? 0 : values.size();
     }
 
     @Override
-    public Number get(Integer i) {
+    public Number get(int i) {
         return values.get(i);
     }
 
     @Override
-    public void set(Integer i, Number value) {
+    public void set(int i, Number value) {
         values.set(i, value);
     }
     
     @Override
-    public void add(Integer i, Number value) {
+    public void add(int i, Number value) {
         values.add(i, value);
     }
     
@@ -120,9 +121,14 @@ public class Overlay1D extends Data1D {
     }
    
     @Override
-    public double valueAtIndex(Double i) {
+    public double valueAtIndex(double i) {
         return values.valueAtIndex(i);
     }
     
-   
+    @Override
+    public Object getUnderlyingData() {
+        if(values instanceof Data) return ((Data<?>) values).getUnderlyingData();
+        return getSamples().getUnderlyingData();
+    }
+    
 }

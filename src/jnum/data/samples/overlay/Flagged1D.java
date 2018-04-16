@@ -73,31 +73,31 @@ public class Flagged1D extends Overlay1D {
     public final long getCriticalFlags() { return criticalFlags; }
     
     @Override
-    public boolean isValid(Integer i) {
+    public boolean isValid(int i) {
         if(isFlagged(i, getCriticalFlags())) return false;
         return super.isValid(i);
     }
     
     @Override
-    public void clear(Integer i) {
+    public void clear(int i) {
         super.clear(i);
         flag.clear(i);
     }
     
     @Override
-    public void discard(Integer i) {
+    public void discard(int i) {
         super.clear(i);
         flag.set(i, FLAG_DISCARD);
     }
     
     @Override
-    public void set(Integer i, Number value) {
+    public void set(int i, Number value) {
         super.set(i, value);
         unflag(i);
     }
     
     @Override
-    public void add(Integer i, Number value) {
+    public void add(int i, Number value) {
         super.add(i, value);
         unflag(i);
     }
@@ -146,7 +146,7 @@ public class Flagged1D extends Overlay1D {
     
     protected void createFlags(int flagType) {
         Flag1D flags = new Flag1D(flagType);
-        flags.setSize(size());
+        flags.setSize(getSize());
         setFlags(flags);
         initFlags();
     }

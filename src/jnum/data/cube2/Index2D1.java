@@ -9,6 +9,12 @@ public class Index2D1 extends Index2D {
     private static final long serialVersionUID = -4733216886398716571L;
     int k;
     
+    public Index2D1() { this(0, 0, 0); }
+    
+    public Index2D1(int i, int j, int k) {
+        super(i, j);
+        setK(k);
+    }
 
     @Override
     public Index2D1 copy() { return (Index2D1) super.copy(); } 

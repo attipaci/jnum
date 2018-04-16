@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -29,8 +29,8 @@ import jnum.CopiableContent;
 import jnum.Util;
 import jnum.parallel.ParallelObject;
 
-public abstract class FlagCompanion<IndexType> extends ParallelObject implements Cloneable, Serializable,
-CopiableContent<FlagCompanion<IndexType>> {
+public abstract class FlagCompanion<IndexType extends Index<IndexType>> extends ParallelObject implements Cloneable, Serializable,
+CopiableContent<FlagCompanion<? extends IndexType>> {
     /**
      * 
      */
@@ -59,9 +59,7 @@ CopiableContent<FlagCompanion<IndexType>> {
         return true;
     }
     
-    
-    
-    public final IndexType size() { return getData().size(); }
+    public final IndexType size() { return getData().getSize(); }
     
     public final int capacity() { return getData().capacity(); }
 
@@ -70,7 +68,7 @@ CopiableContent<FlagCompanion<IndexType>> {
     }
     
     public final boolean conformsTo(IndexedValues<IndexType> data) {
-        return conformsTo(data.size());
+        return conformsTo(data.getSize());
     }
     
     public final boolean conformsTo(FlagCompanion<IndexType> flags) {
@@ -88,7 +86,7 @@ CopiableContent<FlagCompanion<IndexType>> {
     }
 
     
-    public abstract Data<IndexType, ?, ?> getData();
+    public abstract Data<IndexType> getData();
     
     public final Class<? extends Number> getElementType() { return getData().getElementType(); }
     

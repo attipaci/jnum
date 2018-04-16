@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -21,21 +21,25 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.samples;
+package jnum.data;
 
-import jnum.data.IndexedValues;
+import jnum.math.Coordinates;
 
-
-public interface Values1D extends IndexedValues<Index1D>, Validating1D {
-  
-    public int size();
+public class SplineSet<VectorType extends Coordinates<? extends Number>> {
+    private CubicSpline[] splines;
     
-    public Number get(int i);
+    public SplineSet(int dim) {
+        splines = new CubicSpline[dim];
+        for(int i=dim; --i >=0; ) splines[i] = new CubicSpline();
+    }
     
-    public void add(int i, Number value);
+    public void centerOn(VectorType offset) {
+        for(int i=splines.length; --i >= 0; ) splines[i].centerOn(offset.getComponent(i).doubleValue());
+    }
     
-    public void set(int i, Number value);
+    public void centerOn(double ... offsets) {
+        for(int i=splines.length; --i >= 0; ) splines[i].centerOn(offsets[i]);
+    }
     
-    public double valueAtIndex(double ic);    
-       
+    public CubicSpline getSpline(int index) { return splines[index]; }
 }

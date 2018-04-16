@@ -32,6 +32,7 @@ import jnum.ExtraMath;
 import jnum.SafeMath;
 import jnum.Unit;
 import jnum.Util;
+import jnum.data.ReferencedValues;
 import jnum.data.image.overlay.Referenced2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
@@ -325,12 +326,18 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
 
     // TODO proper 2D Gaussian equivalent beams...
     // for now we just assume amimuthal symmetry...
-    public void setEquivalent(Values2D beam, Coordinate2D pixelSize) {
+    public void setEquivalent(final ReferencedValues<Index2D, Vector2D> beam, Coordinate2D pixelSize) {
         // Smoothing beams are generally small, so no need to parallelize...
         double I = 0.0;
-        for(int i=beam.sizeX(); --i >= 0; ) for(int j=beam.sizeY(); --j >= 0; ) if(beam.isValid(i, j)) {
-            I += Math.abs(beam.get(i, j).doubleValue());
-        }     
+        Index2D size = beam.getSize();
+        Index2D index = new Index2D();
+        
+        for(int i=size.i(); --i >= 0; ) for(int j=size.j(); --j >= 0; ) {
+            index.set(i,  j);
+            if(!beam.isValid(index)) continue;
+            I += Math.abs(beam.get(index).doubleValue());
+        }
+
         setArea(I * pixelSize.x() * pixelSize.y());
     }
 
@@ -601,7 +608,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
     }
 
 
-    public static Gaussian2D getEquivalent(Values2D beam, Coordinate2D pixelSize) {
+    public static Gaussian2D getEquivalent(ReferencedValues<Index2D, Vector2D> beam, Coordinate2D pixelSize) {
         Gaussian2D psf = new Gaussian2D();
         psf.setEquivalent(beam, pixelSize);
         return psf;
@@ -668,7 +675,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
             image.set(i, j, Math.exp(A1*v.x()*v.x() + A2*v.y()*v.y()));
         }
             
-        return new Referenced2D(image, new Coordinate2D(0.5 * (sizeX - 1), 0.5 * (sizeY - 1)));
+        return new Referenced2D(image, new Vector2D(0.5 * (sizeX - 1), 0.5 * (sizeY - 1)));
     }
 
 

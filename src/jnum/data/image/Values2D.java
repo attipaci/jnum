@@ -27,7 +27,6 @@ import jnum.data.IndexedValues;
 
 public interface Values2D extends IndexedValues<Index2D>, Validating2D {
     
-  
     public int sizeX();
     
     public int sizeY();
@@ -38,8 +37,6 @@ public interface Values2D extends IndexedValues<Index2D>, Validating2D {
     
     public void set(int i, int j, Number value);
     
-    public double valueAtIndex(double i, double j);
-   
- 
- 
+    public double valueAtIndex(double ic, double jc);
+    
 }

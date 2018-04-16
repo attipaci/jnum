@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -23,19 +23,11 @@
 
 package jnum.data.samples;
 
-import jnum.data.IndexedValues;
+import jnum.data.Validating;
 
+public interface Validating1D extends Validating<Index1D> {
 
-public interface Values1D extends IndexedValues<Index1D>, Validating1D {
-  
-    public int size();
+    public boolean isValid(int i);
     
-    public Number get(int i);
-    
-    public void add(int i, Number value);
-    
-    public void set(int i, Number value);
-    
-    public double valueAtIndex(double ic);    
-       
+    public void discard(int i);
 }

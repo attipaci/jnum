@@ -44,7 +44,7 @@ public class RangeRestricted1D extends Overlay1D {
     
     
     @Override
-    public boolean isValid(Integer i) {
+    public boolean isValid(int i) {
         if(!validRange.contains(get(i).doubleValue())) return false;
         return super.isValid(i);
     }

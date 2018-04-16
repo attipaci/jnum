@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -20,22 +20,14 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+package jnum.data;
 
-package jnum.data.samples;
+import jnum.math.Coordinates;
 
-import jnum.data.IndexedValues;
-
-
-public interface Values1D extends IndexedValues<Index1D>, Validating1D {
-  
-    public int size();
+public interface ReferencedValues<IndexType, ReferenceType extends Coordinates<? extends Number>> extends IndexedValues<IndexType>, IndexReferenced<ReferenceType>, Validating<IndexType> {
+ 
+    public double valueAtIndex(ReferenceType index);
     
-    public Number get(int i);
+    public double valueAtIndex(ReferenceType index, SplineSet<ReferenceType> splines);
     
-    public void add(int i, Number value);
-    
-    public void set(int i, Number value);
-    
-    public double valueAtIndex(double ic);    
-       
 }

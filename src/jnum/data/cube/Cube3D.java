@@ -23,13 +23,12 @@
 
 package jnum.data.cube;
 
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
-import jnum.CopiableContent;
 import jnum.Unit;
 import jnum.Util;
+import jnum.data.Image;
 import jnum.data.cube.overlay.Transposed3D;
 import jnum.fits.FitsToolkit;
 import nom.tam.fits.Fits;
@@ -47,7 +46,7 @@ import nom.tam.util.Cursor;
  * @author pumukli
  *
  */
-public abstract class Cube3D extends Data3D implements Resizable3D, Serializable, CopiableContent<Cube3D> {    
+public abstract class Cube3D extends Data3D implements Image<Index3D> {    
        
     /**
      * 
@@ -99,16 +98,18 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
    
     
     @Override
-    public Cube3D getEmptyCube() { return copy(false); }
+    public Cube3D newImage() { return copy(false); }
     
     public String getID() { return id; }
     
     public void setID(String id) { this.id = id; }
    
     
-    
- 
     @Override
+    public synchronized void setSize(Index3D size) {
+        setSize(size.i(), size.j(), size.k());
+    }
+    
     public synchronized void setSize(int sizeX, int sizeY, int sizeZ) {
         setDataSize(sizeX, sizeY, sizeZ);
         clearHistory();
@@ -121,11 +122,6 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
     }
     
     protected abstract void setDataSize(int sizeX, int sizeY, int sizeZ);
-
-   
-    public abstract Object getData();
-     
-  
 
 
     public void setData(final Values3D values) {
@@ -254,7 +250,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
     
     public synchronized void transpose() {
         silentNextNewData();
-        setTransposedData(getData());
+        setTransposedData(getUnderlyingData());
         addHistory("transposed");
     }
     
@@ -267,7 +263,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
     protected synchronized void crop(int imin, int jmin, int kmin, int imax, int jmax, int kmax) {
         addHistory("cropped " + imin + "," + jmin + "," + kmin + " : " + imax + "," + jmax + "," + kmax);
         silentNextNewData();
-        setData(getCropped(imin, jmin, kmin, imax, jmax, kmax).getData());
+        setData(getCropped(imin, jmin, kmin, imax, jmax, kmax).getUnderlyingData());
     }
 
 
@@ -422,7 +418,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public synchronized double[][][] getData() {
+        public synchronized double[][][] getUnderlyingData() {
             return data;
         }
         
@@ -505,7 +501,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public synchronized float[][][] getData() {
+        public synchronized float[][][] getUnderlyingData() {
             return data;
         }
         
@@ -578,7 +574,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public synchronized long[][][] getData() {
+        public synchronized long[][][] getUnderlyingData() {
             return data;
         }
         
@@ -643,7 +639,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public synchronized int[][][] getData() {
+        public synchronized int[][][] getUnderlyingData() {
             return data;
         }
         
@@ -709,7 +705,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public synchronized short[][][] getData() {
+        public synchronized short[][][] getUnderlyingData() {
             return data;
         }
         
@@ -774,7 +770,7 @@ public abstract class Cube3D extends Data3D implements Resizable3D, Serializable
         }
 
         @Override
-        public synchronized byte[][][] getData() {
+        public synchronized byte[][][] getUnderlyingData() {
             return data;
         }
         

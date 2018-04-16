@@ -23,13 +23,12 @@
 
 package jnum.data.image;
 
-import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
-import jnum.CopiableContent;
 import jnum.Unit;
 import jnum.Util;
+import jnum.data.Image;
 import jnum.data.image.overlay.Transposed2D;
 import jnum.fits.FitsToolkit;
 import nom.tam.fits.Fits;
@@ -47,7 +46,7 @@ import nom.tam.util.Cursor;
  * @author pumukli
  *
  */
-public abstract class Image2D extends Data2D implements Resizable2D, Serializable, CopiableContent<Image2D> {    
+public abstract class Image2D extends Data2D implements Image<Index2D> {    
     /**
      * 
      */
@@ -101,16 +100,18 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     
     
     @Override
-    public Image2D getEmptyImage() { return copy(false); }
+    public Image2D newImage() { return copy(false); }
     
     public String getID() { return id; }
     
     public void setID(String id) { this.id = id; }
    
     
-    
- 
     @Override
+    public final synchronized void setSize(Index2D size) {
+        setSize(size.i(), size.j());
+    }
+ 
     public synchronized void setSize(int sizeX, int sizeY) {
         setDataSize(sizeX, sizeY);
         clearHistory();
@@ -123,8 +124,6 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     }
     
     protected abstract void setDataSize(int sizeX, int sizeY);
-
-    public abstract Object getData();
 
     public void setData(final Values2D values) {
         setSize(values.sizeX(), values.sizeY());
@@ -250,7 +249,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     
     public synchronized void transpose() {
         silentNextNewData();
-        setRowColData(getData());
+        setRowColData(getUnderlyingData());
         addHistory("transposed");
     }
     
@@ -279,15 +278,15 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
     public synchronized Image2D getRowColImage(Class<? extends Number> dataType) {
         Image2D result = Image2D.createType(dataType);
         if(result == null) throw new IllegalArgumentException("Unsupported data type: " + dataType.getSimpleName());
-        result.setRowColData(getData());
+        result.setRowColData(getUnderlyingData());
         return result;
     }
 
 
-    protected synchronized void crop(int imin, int jmin, int imax, int jmax) {
+    public synchronized void crop(int imin, int jmin, int imax, int jmax) {
         addHistory("cropped " + imin + "," + jmin + " : " + imax + "," + jmax);
         silentNextNewData();
-        setData(getCropped(imin, jmin, imax, jmax).getData());
+        setData(getCropped(imin, jmin, imax, jmax).getUnderlyingData());
     }
 
 
@@ -389,6 +388,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         return image;
     }
 
+    
 
     public static class Double2D extends Image2D {
         /**
@@ -431,7 +431,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public  synchronized double[][] getData() {
+        public  synchronized double[][] getUnderlyingData() {
             return data;
         }
         
@@ -462,6 +462,8 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
             if(Double.isNaN(value.doubleValue())) return false;
             return super.isValid(value);
         }
+
+       
 
     }
     
@@ -508,7 +510,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public synchronized float[][] getData() {
+        public synchronized float[][] getUnderlyingData() {
             return data;
         }
         
@@ -575,7 +577,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public synchronized long[][] getData() {
+        public synchronized long[][] getUnderlyingData() {
             return data;
         }
         
@@ -634,7 +636,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public synchronized int[][] getData() {
+        public synchronized int[][] getUnderlyingData() {
             return data;
         }
         
@@ -694,7 +696,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public synchronized short[][] getData() {
+        public synchronized short[][] getUnderlyingData() {
             return data;
         }
         
@@ -753,7 +755,7 @@ public abstract class Image2D extends Data2D implements Resizable2D, Serializabl
         }
 
         @Override
-        public synchronized byte[][] getData() {
+        public synchronized byte[][] getUnderlyingData() {
             return data;
         }
         

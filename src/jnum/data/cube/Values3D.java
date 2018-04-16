@@ -40,8 +40,6 @@ public interface Values3D extends IndexedValues<Index3D>, Validating3D {
     public void set(int i, int j, int k, Number value);
     
     public double valueAtIndex(double i, double j, double k);
-    
    
- 
  
 }

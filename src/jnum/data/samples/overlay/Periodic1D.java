@@ -55,17 +55,17 @@ public class Periodic1D extends Overlay1D {
     }
     
     @Override
-    public boolean isValid(Integer i) {
+    public boolean isValid(int i) {
         return super.isValid(toBaseIndex(i));
     }
 
     @Override
-    public void discard(Integer i) {
+    public void discard(int i) {
         super.discard(toBaseIndex(i));
     }
 
     @Override
-    public Integer size() {
+    public int size() {
         return Integer.MAX_VALUE;
     }
 
@@ -75,22 +75,22 @@ public class Periodic1D extends Overlay1D {
     
 
     @Override
-    public Number get(Integer i) {
+    public Number get(int i) {
         return super.get(toBaseIndex(i));
     }
 
     @Override
-    public void set(Integer i, Number value) {
+    public void set(int i, Number value) {
         super.set(toBaseIndex(i), value);
     }
     
     @Override
-    public void add(Integer i, Number value) {
+    public void add(int i, Number value) {
         super.add(toBaseIndex(i), value);
     }
 
     @Override
-    public double valueAtIndex(Double i) {
+    public double valueAtIndex(double i) {
         return super.valueAtIndex(toBaseIndex(i));
     }
     

@@ -52,11 +52,9 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
     private String id;
     
-    public abstract Object getData();
     
     protected abstract void setDataSize(int size);
-    
-
+   
     
     public String getID() { return id; }
     
@@ -81,7 +79,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
     }
 
     @Override
-    public Samples1D getEmptySamples() { return copy(false); }
+    public Samples1D newImage() { return copy(false); }
     
     
     @Override
@@ -194,7 +192,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
     protected synchronized void crop(int imin, int imax) {
         addHistory("cropped " + imin + " : " + imax);
         silentNextNewData();
-        setData(getCropped(imin, imax).getData());
+        setData(getCropped(imin, imax).getUnderlyingData());
     }
 
 
@@ -205,7 +203,6 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         this.crop(r[0], r[1]);
     }
 
-    
     
     @Override
     protected void editHeader(Header header) throws HeaderCardException {          
@@ -342,13 +339,13 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Integer size() {
+        public final int size() {
             return data == null ? 0 : data.length;
         }
 
 
         @Override
-        public synchronized double[] getData() {
+        public synchronized double[] getUnderlyingData() {
             return data;
         }
         
@@ -360,17 +357,17 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Number get(Integer i) {
+        public final Number get(int i) {
             return data[i];
         }
 
         @Override
-        public final void set(Integer i, Number value) {
+        public final void set(int i, Number value) {
             data[i] = value.doubleValue();
         }
         
         @Override
-        public final void add(Integer i, Number value) {
+        public final void add(int i, Number value) {
            data[i] += value.doubleValue();
         }
             
@@ -416,13 +413,13 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Integer size() {
+        public final int size() {
             return data == null ? 0 : data.length;
         }
 
       
         @Override
-        public synchronized float[] getData() {
+        public synchronized float[] getUnderlyingData() {
             return data;
         }
         
@@ -433,17 +430,17 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Number get(Integer i) {
+        public final Number get(int i) {
             return data[i];
         }
 
         @Override
-        public final void set(Integer i, Number value) {
+        public final void set(int i, Number value) {
             data[i] = value.floatValue();
         }
         
         @Override
-        public final void add(Integer i, Number value) {
+        public final void add(int i, Number value) {
            data[i] += value.floatValue();
         }
         
@@ -480,13 +477,13 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Integer size() {
+        public final int size() {
             return data == null ? 0 : data.length;
         }
 
 
         @Override
-        public synchronized long[] getData() {
+        public synchronized long[] getUnderlyingData() {
             return data;
         }
         
@@ -497,17 +494,17 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Number get(Integer i) {
+        public final Number get(int i) {
             return data[i];
         }
 
         @Override
-        public final void set(Integer i, Number value) {
+        public final void set(int i, Number value) {
             data[i] = value.longValue();
         }
         
         @Override
-        public final void add(Integer i, Number value) {
+        public final void add(int i, Number value) {
            data[i] += value.longValue();
         }
         
@@ -536,13 +533,13 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Integer size() {
+        public final int size() {
             return data == null ? 0 : data.length;
         }
 
      
         @Override
-        public synchronized int[] getData() {
+        public synchronized int[] getUnderlyingData() {
             return data;
         }
         
@@ -553,17 +550,17 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Number get(Integer i) {
+        public final Number get(int i) {
             return data[i];
         }
 
         @Override
-        public final void set(Integer i, Number value) {
+        public final void set(int i, Number value) {
             data[i] = value.intValue();
         }
 
         @Override
-        public final void add(Integer i, Number value) {
+        public final void add(int i, Number value) {
            data[i] += value.intValue();
         }
            
@@ -593,12 +590,12 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Integer size() {
+        public final int size() {
             return data == null ? 0 : data.length;
         }
 
         @Override
-        public synchronized short[] getData() {
+        public synchronized short[] getUnderlyingData() {
             return data;
         }
         
@@ -609,17 +606,17 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Number get(Integer i) {
+        public final Number get(int i) {
             return data[i];
         }
 
         @Override
-        public final void set(Integer i, Number value) {
+        public final void set(int i, Number value) {
             data[i] = value.shortValue();
         }
         
         @Override
-        public final void add(Integer i, Number value) {
+        public final void add(int i, Number value) {
            data[i] += value.shortValue();
         }
         
@@ -648,12 +645,12 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public final Integer size() {
+        public final int size() {
             return data == null ? 0 : data.length;
         }
 
         @Override
-        public  synchronized byte[] getData() {
+        public  synchronized byte[] getUnderlyingData() {
             return data;
         }
         
@@ -664,24 +661,18 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public Number get(Integer i) {
+        public Number get(int i) {
             return data[i];
         }
 
         @Override
-        public void set(Integer i, Number value) {
+        public void set(int i, Number value) {
             data[i] = value.byteValue();
         }
         
         @Override
-        public void add(Integer i, Number value) {
+        public void add(int i, Number value) {
            data[i] += value.byteValue();
-        }
-
-        @Override
-        public boolean containsIndex(Integer index) {
-            // TODO Auto-generated method stub
-            return false;
         }
 
        

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -51,8 +51,8 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.fits.ImageHDU;
 import nom.tam.util.Cursor;
 
-public abstract class Data<IndexType, PositionType, VectorType> extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, 
-TableFormatter.Entries {
+public abstract class Data<IndexType extends Index<IndexType>>
+extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter.Entries {
 
     static {
         Locale.setDefault(Locale.US);
@@ -70,6 +70,8 @@ TableFormatter.Entries {
     private ArrayList<String> history;
     
     private Hashtable<String, Unit> localUnits;
+    
+
 
 
     
@@ -79,7 +81,6 @@ TableFormatter.Entries {
     public Data() { 
         setVerbose(false);
         setBlankingValue(Double.NaN);
-        setInterpolationType(SPLINE);
         history = new ArrayList<String>();
         setDefaultUnit();
         logNewData = true;
@@ -99,7 +100,7 @@ TableFormatter.Entries {
         if(!getClass().isAssignableFrom(o.getClass())) return false;
         
         @SuppressWarnings("unchecked")
-        Data<IndexType, PositionType, VectorType> data = (Data<IndexType, PositionType, VectorType>) o;
+        Data<IndexType> data = (Data<IndexType>) o;
              
         if(getInterpolationType() != data.getInterpolationType()) return false;
         if(!Util.equals(getBlankingValue(), data.getBlankingValue())) return false;
@@ -109,7 +110,7 @@ TableFormatter.Entries {
     }
     
 
-    public boolean contentEquals(final Data<IndexType, PositionType, VectorType> data) {   
+    public boolean contentEquals(final Data<IndexType> data) {   
         if(!getSizeString().equals(data.getSizeString())) return false;
         
         PointOp.Simple<IndexType> comparison = new PointOp.Simple<IndexType>() {
@@ -129,16 +130,17 @@ TableFormatter.Entries {
     
     @SuppressWarnings("unchecked")
     @Override
-    public Data<IndexType, PositionType, VectorType> clone() {
-        Data<IndexType, PositionType, VectorType> clone = (Data<IndexType, PositionType, VectorType>) super.clone();
+    public Data<IndexType> clone() {
+        Data<IndexType> clone = (Data<IndexType>) super.clone();
         if(history != null) clone.history = (ArrayList<String>) history.clone();
         
         if(localUnits != null) {
             clone.localUnits = new Hashtable<String, Unit>(localUnits.size());
             clone.localUnits.putAll(localUnits);
         }
-            
+         
         clone.logNewData = true;
+        
         return clone;
     }
    
@@ -283,66 +285,74 @@ TableFormatter.Entries {
     @Override
     public abstract DataCrawler<Number> iterator();
  
-    public abstract <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op);
+    public final <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op) {
+        return loop(op, getIndexInstance(), getSize());
+    }
     
-    public abstract <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op);
+    public final <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op) {
+        return loopValid(op, getIndexInstance(), getSize());
+    }
     
-    public abstract <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op);
+    public abstract <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
     
-    public abstract <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op);
+    public abstract <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op, IndexType from, IndexType to);
     
-      
+    
+    public final <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op) {
+        return fork(op, getIndexInstance(), getSize());
+    }
+    
+    public final <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
+        return forkValid(op, getIndexInstance(), getSize());
+    }
+    
+    public abstract <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
+    
+    public abstract <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to);
+   
     public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op) {
-        if(getParallel() < 2) return loop(op);
-        if(capacity() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loop(op);
-        return fork(op);
+        return smartFork(op, getIndexInstance(), getSize());
+    }
+    
+    public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to) {
+        if(getParallel() < 2) return loop(op, from, to);
+        IndexType span = getIndexInstance();
+        span.setDifference(to, from);
+        if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loop(op, from, to);
+        return fork(op, from, to);
     }
     
     public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op) {
-        if(getParallel() < 2) return loopValid(op);
-        if(capacity() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loopValid(op);
-        return forkValid(op);  
+        return smartForkValid(op, getIndexInstance(), getSize());
     }
     
+    public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to) {
+        if(getParallel() < 2) return loopValid(op, from, to);
+        IndexType span = getIndexInstance();
+        span.setDifference(to, from);
+        if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loopValid(op, from, to);
+        return forkValid(op, from, to);  
+    }
+    
+    
+    /**
+     * 
+     * @return a instance of the index type, initialized to zeroes.
+     */
      
-    public abstract IndexType copyOfIndex(IndexType index);
-        
-    public abstract int capacity();
+    @Override
+    public final boolean conformsTo(IndexedValues<IndexType> data) { return conformsTo(data.getSize()); }
+
     
-    public abstract boolean conformsTo(IndexType size);
-         
-    public final boolean conformsTo(IndexedValues<IndexType> data) { return conformsTo(data.size()); }
-    
-    public abstract String getSizeString();
-    
-    public abstract boolean containsIndex(IndexType index);
-         
     public abstract Number getValid(final IndexType index, final Number defaultValue);
     
     public abstract boolean isValid(IndexType index);
     
     public abstract void discard(IndexType index);
     
-    public abstract void clear(IndexType index);
-    
-    public abstract void scale(IndexType index, double factor);
-    
-    public abstract double valueAtIndex(PositionType index);
-    
-    public abstract Number nearestValueAtIndex(PositionType index);
-    
-    public abstract double linearAtIndex(PositionType index);
-    
-    public abstract double quadraticAtIndex(PositionType index);
-    
-    public abstract double splineAtIndex(PositionType index);
-    
-    public abstract Data<IndexType, PositionType, VectorType> getCropped(IndexType from, IndexType to);
-    
-
-    protected final int getInterpolationOps() { return getInterpolationOps(getInterpolationType()); }
-    
-    protected abstract int getInterpolationOps(int type);
+    public abstract String toString(IndexType index);
+   
+   
     
     public final void clear() {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
@@ -413,7 +423,7 @@ TableFormatter.Entries {
         });
     }
    
-    public final void paste(final Data<IndexType, PositionType, VectorType> source, boolean report) {
+    public final void paste(final Data<IndexType> source, boolean report) {
         if(source == this) return;
 
         source.smartFork(new ParallelPointOp.Simple<IndexType>() {
@@ -816,7 +826,7 @@ TableFormatter.Entries {
     }
     
     
-    public final void add(final Data<IndexType, PositionType, VectorType> data) {
+    public final void add(final Data<IndexType> data) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
             public void process(IndexType index) {
@@ -828,7 +838,7 @@ TableFormatter.Entries {
     }
 
 
-    public final void addScaled(final Data<IndexType, PositionType, VectorType> data, final double scaling) {
+    public final void addScaled(final Data<IndexType> data, final double scaling) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
             public void process(IndexType index) {
@@ -839,7 +849,7 @@ TableFormatter.Entries {
         addHistory("added scaled " + getClass().getSimpleName() + " (" + scaling + "x).");
     }
 
-    public final void subtract(final Data<IndexType, PositionType, VectorType> data) {
+    public final void subtract(final Data<IndexType> data) {
         addScaled(data, -1.0);
     }
 
@@ -862,9 +872,9 @@ TableFormatter.Entries {
          }            
         });          
      }  
-
     
-
+   
+    public abstract Object getUnderlyingData();
        
     public Fits createFits(Class<? extends Number> dataType) throws FitsException {
         FitsFactory.setLongStringsEnabled(true);
@@ -881,9 +891,8 @@ TableFormatter.Entries {
         return hdu;
     }
     
-    
+   
     public abstract Object getFitsData(Class<? extends Number> dataType);
-
    
     
     protected void editHeader(Header header) throws HeaderCardException {
@@ -931,23 +940,33 @@ TableFormatter.Entries {
         else if(name.equals("rms")) return getRMS(true);
         else return TableFormatter.NO_SUCH_DATA;
     }
-  
+   
+    
     
     public abstract class AbstractLoop<ReturnType> {
-
+        protected IndexType from, to;
+        
+        public AbstractLoop() { this(getIndexInstance(), getSize()); }
+        
+        public AbstractLoop(IndexType from, IndexType to) { 
+            this.from = from;
+            this.to = to;
+        }
+        
         public abstract ReturnType process();
 
         protected ReturnType getResult() { return null; }
     }
 
-
-    
-    public final static int NEAREST = 0;
-    public final static int LINEAR = 1;
-    public final static int QUADRATIC = 2;
-    public final static int SPLINE = 3;
-    
-   
-
-
+    public abstract class AbstractFork<ReturnType> extends Task<ReturnType> {
+        protected IndexType from, to;
+        
+        public AbstractFork() { this(getIndexInstance(), getSize()); }
+        
+        public AbstractFork(IndexType from, IndexType to) { 
+            this.from = from;
+            this.to = to;
+        }
+    }
+  
 }

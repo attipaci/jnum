@@ -23,8 +23,17 @@
 
 package jnum.data.cube;
 
-public class Index3D {
+import jnum.ExtraMath;
+import jnum.NonConformingException;
+import jnum.data.AbstractIndex;
+import jnum.math.TrueVector;
 
+public class Index3D extends AbstractIndex<Index3D> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2705961475758088763L;
+    
     private int i, j, k;
     
     public Index3D() { this(0, 0, 0); }
@@ -55,5 +64,99 @@ public class Index3D {
     
     public final void setK(final int value) {
         k = value;
+    }
+
+    @Override
+    public void multiplyBy(Index3D factor) {
+        i *= factor.i();
+        j *= factor.j();
+        k *= factor.k();
+    }
+
+    @Override
+    public void setProduct(Index3D a, Index3D b) {
+        i = a.i() * b.i();
+        j = a.j() * b.j();
+        k = a.k() * b.k();
+    }
+
+    @Override
+    public void setRatio(Index3D numerator, Index3D denominator) {
+        i = ExtraMath.roundupRatio(numerator.i(), denominator.i());
+        j = ExtraMath.roundupRatio(numerator.j(), denominator.j());
+        k = ExtraMath.roundupRatio(numerator.k(), denominator.k());
+    }
+
+    @Override
+    public void modulo(Index3D argument) {
+        i %= argument.i();
+        j %= argument.j();
+        k %= argument.k();
+    }
+
+    @Override
+    public int getVolume() {
+        return i * j * k;
+    }
+    
+    @Override
+    public int dimension() {
+        return 3;
+    }
+
+    @Override
+    public int getValue(int dim) throws IndexOutOfBoundsException {
+        switch(dim) {
+        case 0 : return i;
+        case 1 : return j;
+        case 2 : return k;
+        }
+        throw new IndexOutOfBoundsException(Integer.toString(dim));
+    }
+
+    @Override
+    public void setValue(int dim, int value) throws IndexOutOfBoundsException {
+        switch(dim) {
+        case 0 : i = value; break;
+        case 1 : j = value; break;
+        case 2 : k = value; break;        
+        default: throw new IndexOutOfBoundsException(Integer.toString(dim));
+        }
+    }
+
+    @Override
+    public void add(Index3D o) {
+        i += o.i;
+        j += o.j;
+        k += o.k;
+    }
+
+    @Override
+    public void subtract(Index3D o) {
+        i -= o.i;
+        j -= o.j;
+        k -= o.k;
+    }
+
+    @Override
+    public void setSum(Index3D a, Index3D b) {
+        i = a.i + b.i;
+        j = a.j + b.j;
+        k = a.k + b.k;
+    }
+
+    @Override
+    public void setDifference(Index3D a, Index3D b) {
+        i = a.i - b.i;
+        j = a.j - b.j;
+        k = a.k - b.k;
+    }
+
+    @Override
+    public void toVector(TrueVector<Double> v) throws NonConformingException {  
+        if(v.size() != dimension()) throw new NonConformingException("Size mismatch " + v.size() + " vs. " + dimension());  
+        v.setComponent(0, (double) i);
+        v.setComponent(1, (double) j);
+        v.setComponent(3, (double) k);
     }
 }

@@ -31,6 +31,7 @@ import jnum.Unit;
 import jnum.Util;
 import jnum.data.IndexedObservations;
 import jnum.data.Observations;
+import jnum.data.ReferencedValues;
 import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
@@ -481,22 +482,22 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
 
     @Override
-    public void smooth(Referenced2D beam) {
+    public void smooth(ReferencedValues<Index2D, Vector2D> beam) {
         Image2D smoothWeights = getWeightImage().copy(false);
-
-        setImage(getSmoothed(beam, weight, smoothWeights));
-        setExposureImage(exposure.getSmoothed(beam, weight, null));
+        
+        setImage((Image2D) getSmoothed(beam, weight, smoothWeights));
+        setExposureImage((Image2D) exposure.getSmoothed(beam, weight, null));
         setWeightImage(smoothWeights);
 
         getProperties().addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
     @Override
-    public void fastSmooth(Referenced2D beam, int stepX, int stepY) {
+    public void fastSmooth(ReferencedValues<Index2D, Vector2D> beam, Index2D step) {
         Image2D smoothWeights = getWeightImage().copy(false);
-
-        setImage(getFastSmoothed(beam, stepX, stepY, weight, smoothWeights));
-        setExposureImage(exposure.getFastSmoothed(beam, stepX, stepY, weight, null));
+        
+        setImage((Image2D) getFastSmoothed(beam, step, weight, smoothWeights));
+        setExposureImage((Image2D) exposure.getFastSmoothed(beam, step, weight, null));
         setWeightImage(smoothWeights);
       
         getProperties().addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
@@ -550,7 +551,8 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         Gaussian2D psf = getProperties().getImageBeam();
 
         final Data2D s2n = getSignificance();
-        final Image2D cleanS2N = s2n.clean(psf.getBeam(getGrid()), gain, significanceThreshold);
+        final Referenced2D beam = psf.getBeam(getGrid());
+        final Image2D cleanS2N = (Image2D) s2n.clean(beam, beam.getReferenceIndex(), gain, significanceThreshold);
 
         if(replacementPSF == null) {
             replacementPSF = psf.copy();

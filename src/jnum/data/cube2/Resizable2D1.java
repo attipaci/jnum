@@ -23,18 +23,39 @@
 
 package jnum.data.cube2;
 
+import jnum.data.Resizable;
+import jnum.data.cube.Index3D;
 import jnum.data.image.Data2D;
-import jnum.data.image.Resizable2D;
+import jnum.data.image.Index2D;
 
-public abstract class Resizable2D1<ImageType extends Data2D & Resizable2D> extends Data2D1<ImageType> {
+public abstract class Resizable2D1<ImageType extends Data2D & Resizable<Index2D>> extends Data2D1<ImageType> {
 
     @Override
     public final ImageType getImage2DInstance(int sizeX, int sizeY) {
         ImageType image = getPlaneInstance();
-        image.setSize(sizeX, sizeY);
+        image.setSize(new Index2D(sizeX, sizeY));
         return image;
     }
 
     public abstract ImageType getPlaneInstance();
+    
+    public abstract void cropXY(int fromi, int fromj, int toi, int toj);
+    
+    
+    
+    public final void crop(Index3D from, Index3D to) {
+        crop(from.i(), from.j(), from.k(), to.i(), to.j(), to.k());
+    }
+    
+    public final void crop(int fromi, int fromj, int fromk, int toi, int toj, int tok) {
+        cropZ(fromk, tok);
+        cropXY(fromi, fromj, toi, toj);
+    }
+    
+    public final void cropXY(Index2D from, Index2D to) {
+        cropXY(from.i(), from.j(), to.i(), to.j());
+    }
+    
+    
     
 }

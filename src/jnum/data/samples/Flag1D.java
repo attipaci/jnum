@@ -25,8 +25,7 @@ package jnum.data.samples;
 
 import jnum.data.FlagCompanion;
 
-
-public class Flag1D extends FlagCompanion<Integer> implements Resizable1D {   
+public class Flag1D extends FlagCompanion<Index1D> implements Resizable1D {   
     /**
      * 
      */
@@ -62,17 +61,51 @@ public class Flag1D extends FlagCompanion<Integer> implements Resizable1D {
     public Flag1D copy() { return copy(true); }
     
     
-    @Override
-    public void setSize(int size) {
-        data.setSize(size);
-    }
-    
+   
     
     public void destroy() { data.destroy(); }
     
   
     @Override
     public final Samples1D getData() { return data; }
+    
+    
+    public final void setSize(Index1D size) {
+        setSize(size.i());
+    }
+    
+    @Override
+    public void setSize(int size) {
+        data.setSize(size);
+    }
+    
+
+
+    public final long get(int i) { return data.get(i).longValue(); }
+   
+    public final void set(int i, long value) { data.set(i, value); }
+
+    public final void setBits(int i, long pattern) {
+        data.set(i, data.get(i).longValue() | pattern);
+    }
+
+    public final void clearBits(int i, long pattern) {
+        data.set(i, 0L);
+    }
+    
+    public final boolean isClear(int i, long pattern) {
+        return (data.get(i).longValue() & pattern) == 0L;
+    }
+  
+    public final void clear(int i) {
+        data.set(i, 0L);
+    }
+
+    
+    public final boolean isClear(int i) {
+        return data.get(i).longValue() == 0L;
+    }
+
         
 
 
