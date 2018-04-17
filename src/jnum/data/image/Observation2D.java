@@ -49,8 +49,8 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
      */
     private static final long serialVersionUID = -5595106427134511945L;
 
-    private Flagged2D weight;
-    private Flagged2D exposure;
+    private Image2D weight;
+    private Image2D exposure;
    
     public boolean isZeroWeightValid = false;
     
@@ -62,21 +62,13 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         super(dataType, flagType); 
         setWeightImage(Image2D.createType(weightType));
         setExposureImage(Image2D.createType(weightType));
-        
-    }
-
-    @Override
-    protected void init() {    
-        super.init();
-        weight = new Flagged2D();
-        exposure = new Flagged2D();
     }
      
     @Override
     public int hashCode() { 
         int hash = super.hashCode();
-        hash ^= weight.hashCode();
-        hash ^= exposure.hashCode();
+        if(weight != null) hash ^= weight.hashCode();
+        if(exposure != null) hash ^= exposure.hashCode();
         return hash;
     }
     
@@ -98,21 +90,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
     @Override
     public ObsProperties getProperties() { return (ObsProperties) super.getProperties(); }
-    
-    @Override
-    public Observation2D clone() {
-        Observation2D clone = (Observation2D) super.clone();
-        
-        // Treat weight and exposure as if their fields were fields at the root of this object...
-        // I.e. make weight and exposure independent in clones always (otherwise, bad things may happen...)
-        clone.weight = new Flagged2D(getFlags());
-        if(getWeightImage() != null) clone.setWeightImage(getWeightImage());
-        
-        clone.exposure = new Flagged2D(getFlags());
-        if(getExposureImage() != null) clone.setExposureImage(getExposureImage());
-        
-        return clone;
-    }
+
     
     @Override
     public Observation2D copy() { return (Observation2D) super.copy(); }
@@ -121,19 +99,15 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public Observation2D copy(boolean withContents) {
         Observation2D copy = (Observation2D) super.copy(withContents);  
         
-        copy.weight.setFlags(copy.getFlags());
-        if(getWeightImage() != null) copy.setWeightImage(getWeightImage().copy(withContents));
-        
-        copy.exposure.setFlags(copy.getFlags());
-        if(getExposureImage() != null) copy.setExposureImage(getExposureImage().copy(withContents));
+        if(weight != null) copy.weight = weight.copy(withContents);
+        if(exposure != null) copy.exposure = exposure.copy(withContents);
         
         return copy;
     }
 
     @Override
     public String toString(int i, int j) {
-        return super.toString(i, j) + " weight=" + Util.S3.format(weightAt(i, j)) + 
-                " exp=" + Util.S3.format(exposureAt(i, j));
+        return super.toString(i, j) + " weight=" + Util.S3.format(weightAt(i, j)) + " exp=" + Util.S3.format(exposureAt(i, j));
     }
     
     @Override
@@ -147,8 +121,15 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     @Override
     public void clear(int i, int j) {
         super.clear(i, j);
-        getWeightImage().clear(i, j);
-        getExposureImage().clear(i, j);
+        weight.clear(i, j);
+        exposure.clear(i, j);
+    }
+    
+    @Override
+    public void discard(int i, int j) {
+        super.discard(i, j);
+        weight.clear(i, j);
+        exposure.clear(i, j);
     }
     
 
@@ -159,42 +140,43 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         getExposureImage().destroy();
     }
 
-    
-    @Override
-    public void setFlags(Flag2D flags) {
-        super.setFlags(flags);
-        weight.setFlags(flags);
-        exposure.setFlags(flags);
-    }
 
     @Override
-    public Data2D getWeights() { 
-        return weight; 
+    public Flagged2D getWeights() { 
+        return new Flagged2D(weight, getFlags()) {
+            @Override
+            public boolean isValid(int i, int j) { return Observation2D.this.isValid(i, j); }
+            @Override
+            public void discard(int i, int j) { Observation2D.this.discard(i, j); }
+        };
     }
     
     public Image2D getWeightImage() {
-        return (Image2D) weight.getBasis();
+        return weight;
     }
 
     public void setWeightImage(Image2D image) { 
-        weight.setBasis(image == null ? Image2D.createType(getElementType()) : image); 
+        weight = (image == null) ? Image2D.createType(getElementType()) : image;
         claim(weight);
-        claim(getWeightImage());
     }
 
     @Override
-    public Data2D getExposures() { 
-        return exposure;
+    public Flagged2D getExposures() { 
+        return new Flagged2D(exposure, getFlags()) {
+            @Override
+            public boolean isValid(int i, int j) { return Observation2D.this.isValid(i, j); }
+            @Override
+            public void discard(int i, int j) { Observation2D.this.discard(i, j); }
+        };
     }
     
     public Image2D getExposureImage() {
-        return (Image2D) exposure.getBasis();
+        return exposure;
     }
 
     public void setExposureImage(Image2D image) {  
-        exposure.setBasis(image == null ? Image2D.createType(getElementType()) : image); 
+        exposure = (image == null) ? Image2D.createType(getElementType()) : image; 
         claim(exposure);
-        claim(getExposureImage());
     }
 
     @Override
@@ -219,10 +201,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
             
             @Override
             protected void setDefaultUnit() { setUnit(Observation2D.this.getUnit()); }
-        
-
         };
-       
     }
 
     @Override
@@ -255,27 +234,13 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     }
     
    
-   
     @Override
     public void setSize(int sizeX, int sizeY) {
         super.setSize(sizeX, sizeY);
-        getWeightImage().setSize(sizeX, sizeY);
-        getExposureImage().setSize(sizeX, sizeY);
-    }
-
-
-    @Override
-    public void setUnit(Unit u) {
-        super.setUnit(u);
         
-        if(weight != null) {
-            weight.setUnit(u);
-            if(getWeightImage() != null) getWeightImage().setUnit(u);
-        }
-        if(exposure != null) {
-            exposure.setUnit(u);
-            if(getExposureImage() != null) getExposureImage().setUnit(u);
-        }      
+        // Create brand new images, so that setSize on a clone does not change the original...
+        setWeightImage(Image2D.createType(getWeightImage().getElementType(), sizeX, sizeY));
+        setExposureImage(Image2D.createType(getExposureImage().getElementType(), sizeX, sizeY));
     }
 
     
@@ -283,14 +248,8 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public void setParallel(int n) {
         super.setParallel(n);
         
-        if(weight != null) {
-            weight.setParallel(n);
-            if(getWeightImage() != null) getWeightImage().setParallel(n);
-        }
-        if(exposure != null) {
-            exposure.setParallel(n);
-            if(getExposureImage() != null) getExposureImage().setParallel(n);
-        }
+        if(weight != null) weight.setParallel(n);
+        if(exposure != null) exposure.setParallel(n);
     }
 
     @Override
@@ -336,7 +295,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     }
 
     public void setWeightAt(int i, int j, double value) {
-        weight.getBasis().set(i, j, value);
+        weight.set(i, j, value);
     }
 
     @Override
@@ -349,7 +308,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     }
 
     public void setExposureAt(int i, int j, double value) {
-        exposure.getBasis().set(i, j, value);
+        exposure.set(i, j, value);
     }
 
     @Override
@@ -464,10 +423,10 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
     
     @Override
-    public WeightedPoint getMean() { return getWeightedMean(getWeights()); }
+    public WeightedPoint getMean() { return getWeightedMean(weight); }
 
     @Override
-    public WeightedPoint getMedian() { return getWeightedMedian(getWeights()); }
+    public WeightedPoint getMedian() { return getWeightedMedian(weight); }
     
     // TODO Make default method in Observations
     public double getChi2(boolean robust) {
@@ -486,7 +445,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         Image2D smoothWeights = getWeightImage().copy(false);
         
         setImage((Image2D) getSmoothed(beam, refIndex, weight, smoothWeights));
-        setExposureImage((Image2D) exposure.getSmoothed(beam, refIndex, weight, null));
+        setExposureImage((Image2D) getExposures().getSmoothed(beam, refIndex, weight, null));
         setWeightImage(smoothWeights);
 
         getProperties().addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
@@ -497,7 +456,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         Image2D smoothWeights = getWeightImage().copy(false);
         
         setImage((Image2D) getFastSmoothed(beam, refIndex, step, weight, smoothWeights));
-        setExposureImage((Image2D) exposure.getFastSmoothed(beam, refIndex, step, weight, null));
+        setExposureImage((Image2D) getExposures().getFastSmoothed(beam, refIndex, step, weight, null));
         setWeightImage(smoothWeights);
       
         getProperties().addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
@@ -528,13 +487,13 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
     public void resampleFrom(Observation2D map) {
         Referenced2D beam = getAntialiasingBeamImageFor(map);
-
+        
         Transforming<Vector2D> toSourceIndex = getIndexTransformTo(map);
-
-        getImage().resampleFrom(map.getImage(), toSourceIndex, beam, getWeights());
-        getExposureImage().resampleFrom(map.getExposures(), toSourceIndex, beam, getWeights());
+        
+        resampleFrom(map, toSourceIndex, beam, weight);        
+        getExposureImage().resampleFrom(map.getExposures(), toSourceIndex, beam, weight);
         getWeightImage().resampleFrom(map.getWeights(), toSourceIndex, beam, null);
-
+        
         getProperties().copyProcessingFrom(map.getProperties());
     }
 
@@ -584,7 +543,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
     @Override
     public Object getTableEntry(String name) {
-        if(name.equals("depth")) return Math.sqrt(1.0 / weight.getMean().value()) / getUnit().value();
+        if(name.equals("depth")) return Math.sqrt(1.0 / getWeights().getMean().value()) / getUnit().value();
         return super.getTableEntry(name);
     }
     
@@ -592,7 +551,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {   
         ArrayList<BasicHDU<?>> hdus = super.getHDUs(dataType);
   
-        BasicHDU<?> hdu = exposure.createHDU(dataType);
+        BasicHDU<?> hdu = getExposures().createHDU(dataType);
         FitsToolkit.setName(hdu, "Exposure");
         editHeader(hdu.getHeader());
         hdus.add(hdu);

@@ -53,6 +53,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
     private ArrayList<ImageType> stack;
 
+    
 
     public Data2D1() {
         stack = new ArrayList<ImageType>();
@@ -63,6 +64,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         stack.ensureCapacity(initialPlanesCapacity);
     }
 
+  
     public abstract ImageType getImage2DInstance(int sizeX, int sizeY);
     
     

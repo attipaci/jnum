@@ -117,6 +117,7 @@ public abstract class AbstractIndex<T extends AbstractIndex<T>> implements Index
        return toString(",");
     }
     
+    @Override
     public String toString(String separator) {
         StringBuffer buf = new StringBuffer();
         for(int i=0; i<dimension(); i++) buf.append((i > 0 ? separator : "") + getValue(i));

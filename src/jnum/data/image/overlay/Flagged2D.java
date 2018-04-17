@@ -47,6 +47,7 @@ public class Flagged2D extends Overlay2D {
         setFlags(flag);
     }
     
+    
     @Override
     public int hashCode() {
         int hash = super.hashCode() ^ flag.hashCode() ^ HashCode.from(validatingFlags);
@@ -69,11 +70,14 @@ public class Flagged2D extends Overlay2D {
     @Override
     public void setParallel(int threads) {
         super.setParallel(threads);
-        flag.setParallel(threads);
+        if(flag != null) flag.setParallel(threads);
     }
 
 
-    public void setFlags(Flag2D flag) { this.flag = flag; }
+    public void setFlags(Flag2D flag) {
+        this.flag = flag; 
+        this.flag.setParallel(getParallel());
+    }
 
     public Flag2D getFlags() { return flag; }
 

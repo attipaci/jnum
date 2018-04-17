@@ -49,7 +49,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
     @Override
     public String getInfo() {
-        return "Data Size: " + getSizeString();
+        return "Data Size: " + getSizeString() + " elements.";
     }
     
     @Override
@@ -291,7 +291,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
     public synchronized void resampleFrom(final RegularData<IndexType, VectorType> image, final Transforming<VectorType> toSourceIndex, 
             final RegularData<IndexType, VectorType> beam, final VectorType refIndex, final IndexedValues<IndexType> weight) {
-        
+           
         Interpolation interpolation = new Interpolation() {
             private VectorType v;
             private WeightedPoint smoothedValue;

@@ -162,7 +162,6 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     public Map2D clone() {
         Map2D clone = (Map2D) super.clone();
         clone.reuseIndex = new Vector2D();  
-
         return clone;
     }
 
@@ -289,9 +288,9 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     }
   
     public void setSize(int sizeX, int sizeY) { 
-        getImage().setSize(sizeX, sizeY); 
-        getFlags().setSize(sizeX, sizeY);
-        initFlags();
+        // Create brand new images, so that setSize on a clone does not change the original...
+        setImage(Image2D.createType(getElementType(), sizeX, sizeY));
+        createFlags(getFlags().getType());
     }
 
     @Override
@@ -620,7 +619,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
 
     public void resampleFrom(Map2D map, Values2D weight) {
         Referenced2D beam = getAntialiasingBeamImageFor(map);
-        resampleFrom(map.getImage(), map.getIndexTransformTo(this), beam, weight);       
+        resampleFrom(map, map.getIndexTransformTo(this), beam, weight);       
         properties.copyProcessingFrom(map.getProperties());
     }
 
@@ -629,14 +628,15 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     }
 
     public void resample(Vector2D newres) {
-        Map2D clone = clone();
-
+        Map2D orig = clone();
+        orig.properties = (MapProperties) properties.clone();
+        
         Vector2D resolution = getResolution();
+        
         setSize((int) Math.ceil(sizeX() * resolution.x() / newres.x()), (int) Math.ceil(sizeY() * resolution.y() / newres.y()));
-
-        setGrid(getGrid().forResolution(resolution));
-
-        resampleFrom(clone);        
+        setGrid(orig.getGrid().forResolution(newres));
+        
+        resampleFrom(orig);        
     }
 
     public DataPoint getAsymmetry(final Vector2D centerIndex, final double angle, final Range radialRange) {    
