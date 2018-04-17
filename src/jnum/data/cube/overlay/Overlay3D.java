@@ -134,9 +134,9 @@ public class Overlay3D extends Data3D {
     }
 
     @Override
-    public Object getUnderlyingData() {
-        if(values instanceof Data) return ((Data<?>) values).getUnderlyingData();
-        return getCube().getUnderlyingData();
+    public Object getCore() {
+        if(values instanceof Data) return ((Data<?>) values).getCore();
+        return getCube().getCore();
     }  
     
 }

@@ -31,10 +31,9 @@ import jnum.data.CubicSpline;
 import jnum.data.DataCrawler;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
-import jnum.data.Validating;
 import jnum.data.WeightedPoint;
 import jnum.data.samples.overlay.Overlay1D;
-import jnum.data.samples.overlay.Referenced1D;
+import jnum.math.IntRange;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
 import jnum.text.TableFormatter;
@@ -113,9 +112,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     
     @Override
     public final int capacity() { return size(); }
-    
-    @Override
-    public String getSizeString() { return size() + ""; }
+
     
     @Override
     public final String toString(Index1D index) {
@@ -127,12 +124,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     }
   
     
-    @Override
-    public final boolean conformsTo(Index1D size) {
-        return conformsTo(size.i());
-    }
-    
-    public boolean conformsTo(int size) {
+    public final boolean conformsTo(int size) {
         return size() == size;
     }
     
@@ -364,33 +356,25 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     }
 
     
-    public int[] getIndexRange() {
+    public IntRange getIndexRange() {
         int min = size(), max = -1;
         for(int i=size(); --i >= 0; ) if(isValid(i)) {
             if(i < min) min = i;
             if(i > max) max = i;
             break;
         }
-        return max > min ? new int[] { min, max } : null;
+        return max > min ? new IntRange(min, max) : null;
     }
 
     
+    @SuppressWarnings("cast")
     @Override
     public final Samples1D getCropped(Index1D imin, Index1D imax) {
-        return getCropped(imin.i(), imax.i());
+        return (Samples1D) getCropped(imin, imax);
     }
     
     public Samples1D getCropped(int imin, int imax) {
-        Samples1D cropped = newImage();
-
-        final int fromi = Math.max(0, imin);
-        final int toi = Math.min(imax, size()-1);     
-
-        cropped.setSize(imax-imin+1);
-
-        for(int i=fromi, i1=fromi-imin; i<=toi; i++, i1++) cropped.set(i1, get(i));
-
-        return cropped;
+        return getCropped(new Index1D(imin), new Index1D(imax));
     }   
     
   
@@ -398,45 +382,6 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     @Override
     public int getPointSmoothOps(int beamPoints, int interpolationType) {
         return 16 + beamPoints * (16 + getInterpolationOps(interpolationType));
-    }
-
-    
-    @Override
-    public Referenced1D getNeighbors() {
-        final double[] neighbourData = { 1, 0, 1 };
-
-        final Samples1D neighbourImage = Samples1D.createType(getElementType());
-        neighbourImage.setData(neighbourData);
-
-        return new Referenced1D(neighbourImage, 1.0);
-    }
-    
-    @Override
-    public Validating<Index1D> getNeighborValidator(final int minNeighbors) {
-        return new Validating<Index1D>() {
-
-            @Override
-            public boolean isValid(Index1D index) {
-                int i = index.i();
-                
-                if(!Data1D.this.isValid(i)) return false;
-
-                int neighbours = -1;    // will iterate over the actual point too, hence the -1...
-
-                final int fromi = Math.max(0, i-1);
-                final int toi = Math.min(size(), i+1);
-
-                for(int i1=toi; --i1 >= fromi; )
-                    if(Data1D.this.isValid(i1)) neighbours++;
-
-                return neighbours >= minNeighbors;         
-            }
-
-            @Override
-            public void discard(Index1D index) {
-                Data1D.this.discard(index);
-            }
-        };
     }
     
   

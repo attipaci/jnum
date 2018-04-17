@@ -30,13 +30,16 @@ import jnum.NonConformingException;
 import jnum.PointOp;
 import jnum.data.cube.Index3D;
 import jnum.data.CubicSpline;
+import jnum.data.Referenced;
 import jnum.data.SplineSet;
-import jnum.data.ReferencedValues;
+import jnum.data.RegularData;
 import jnum.data.Statistics;
 import jnum.data.cube.Data3D;
 import jnum.data.image.Data2D;
 import jnum.data.image.Image2D;
-
+import jnum.data.samples.Index1D;
+import jnum.data.samples.Offset1D;
+import jnum.math.IntRange;
 import jnum.math.Vector3D;
 
 public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
@@ -183,7 +186,8 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     }
 
     
-    public Data2D1<Data2D> getUnderlyingData() {
+    @Override
+    public Data2D1<Data2D> getCore() {
         Data2D1<Data2D> data = new Data2D1<Data2D>(sizeZ()) {
             @Override
             public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
@@ -206,20 +210,33 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     }
 
     public void autoCropZ() {
-        int[] zRange = getZIndexRange();
-        if(zRange == null) return; 
-        cropZ(zRange[0], zRange[1]);
+        IntRange z = getZIndexRange();
+        if(z == null) return; 
+        cropZ((int)z.min(), (int) z.max());
     }
     
+    public final synchronized void smoothZ(Referenced<Index1D, Offset1D> beam) {
+        smoothZ(beam.getData(), beam.getReferenceIndex().value());
+    }
     
+    public final synchronized void smoothZ(RegularData<Index1D, Offset1D> beam, Offset1D refIndex) {
+        smoothZ(beam, refIndex.value());
+    }
     
-    public synchronized void smoothZ(ReferencedValues<Index3D, Vector3D> beam) {
+    public synchronized void smoothZ(RegularData<Index1D, Offset1D> beam, double refIndex) {
         // TODO
         addHistory("z-smoothed");
     }
 
+    public final synchronized void fastSmoothZ(Referenced<Index1D, Offset1D> beam, int step) {
+        fastSmoothZ(beam.getData(), beam.getReferenceIndex().value(), step);        
+    }
     
-    public synchronized void fastSmoothZ(ReferencedValues<Index3D, Vector3D> beam, int step) {
+    public final synchronized void fastSmoothZ(RegularData<Index1D, Offset1D> beam, Offset1D refIndex, int step) {
+        fastSmoothZ(beam, refIndex, step);
+    }
+    
+    public synchronized void fastSmoothZ(RegularData<Index1D, Offset1D> beam, double refIndex, int step) {
         // TODO
         addHistory("z-smoothed (fast method)");
     }

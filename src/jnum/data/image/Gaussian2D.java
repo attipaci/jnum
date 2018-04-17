@@ -32,7 +32,7 @@ import jnum.ExtraMath;
 import jnum.SafeMath;
 import jnum.Unit;
 import jnum.Util;
-import jnum.data.ReferencedValues;
+import jnum.data.Data;
 import jnum.data.image.overlay.Referenced2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
@@ -326,19 +326,8 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
 
     // TODO proper 2D Gaussian equivalent beams...
     // for now we just assume amimuthal symmetry...
-    public void setEquivalent(final ReferencedValues<Index2D, Vector2D> beam, Coordinate2D pixelSize) {
-        // Smoothing beams are generally small, so no need to parallelize...
-        double I = 0.0;
-        Index2D size = beam.getSize();
-        Index2D index = new Index2D();
-        
-        for(int i=size.i(); --i >= 0; ) for(int j=size.j(); --j >= 0; ) {
-            index.set(i,  j);
-            if(!beam.isValid(index)) continue;
-            I += Math.abs(beam.get(index).doubleValue());
-        }
-
-        setArea(I * pixelSize.x() * pixelSize.y());
+    public void setEquivalent(final Data<Index2D> beam, Coordinate2D pixelSize) {
+        setArea(beam.getAbsSum() * pixelSize.x() * pixelSize.y());
     }
 
 
@@ -608,7 +597,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
     }
 
 
-    public static Gaussian2D getEquivalent(ReferencedValues<Index2D, Vector2D> beam, Coordinate2D pixelSize) {
+    public static Gaussian2D getEquivalent(Data<Index2D> beam, Coordinate2D pixelSize) {
         Gaussian2D psf = new Gaussian2D();
         psf.setEquivalent(beam, pixelSize);
         return psf;

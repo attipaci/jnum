@@ -26,6 +26,7 @@ package jnum.data.cube2;
 import java.io.Serializable;
 
 import jnum.data.image.Image2D;
+import jnum.data.image.Index2D;
 
 public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializable {
     /**
@@ -51,8 +52,8 @@ public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializ
     
     
     @Override
-    public void cropXY(int fromi, int fromj, int toi, int toj) {
-        for(Image2D plane : getPlanes()) plane.crop(fromi, fromj, toi, toj);
+    public void cropXY(Index2D from, Index2D to) {
+        for(Image2D plane : getPlanes()) plane.crop(from, to);
     }
     
     

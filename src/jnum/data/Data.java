@@ -343,6 +343,10 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     @Override
     public final boolean conformsTo(IndexedValues<IndexType> data) { return conformsTo(data.getSize()); }
 
+    @Override
+    public final boolean conformsTo(IndexType size) {
+        return getSize().equals(size);
+    }
     
     public abstract Number getValid(final IndexType index, final Number defaultValue);
     
@@ -442,6 +446,7 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     public abstract void despike(double level);
       
     public abstract String getInfo();
+    
     
       
     public int countPoints() {
@@ -874,7 +879,7 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
      }  
     
    
-    public abstract Object getUnderlyingData();
+    public abstract Object getCore();
        
     public Fits createFits(Class<? extends Number> dataType) throws FitsException {
         FitsFactory.setLongStringsEnabled(true);

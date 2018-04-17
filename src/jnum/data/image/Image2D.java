@@ -31,6 +31,7 @@ import jnum.Util;
 import jnum.data.Image;
 import jnum.data.image.overlay.Transposed2D;
 import jnum.fits.FitsToolkit;
+import jnum.math.IntRange;
 import nom.tam.fits.Fits;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
@@ -249,7 +250,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     
     public synchronized void transpose() {
         silentNextNewData();
-        setRowColData(getUnderlyingData());
+        setRowColData(getCore());
         addHistory("transposed");
     }
     
@@ -278,29 +279,27 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     public synchronized Image2D getRowColImage(Class<? extends Number> dataType) {
         Image2D result = Image2D.createType(dataType);
         if(result == null) throw new IllegalArgumentException("Unsupported data type: " + dataType.getSimpleName());
-        result.setRowColData(getUnderlyingData());
+        result.setRowColData(getCore());
         return result;
     }
 
 
-    public synchronized void crop(int imin, int jmin, int imax, int jmax) {
-        addHistory("cropped " + imin + "," + jmin + " : " + imax + "," + jmax);
+    public synchronized void crop(Index2D from, Index2D to) {
+        addHistory("cropped " + from + " : " + to);
         silentNextNewData();
-        setData(getCropped(imin, jmin, imax, jmax).getUnderlyingData());
+        setData(getCropped(from, to).getCore());
     }
 
 
     public void autoCrop() {
-        int[] xRange = getXIndexRange();
-        if(xRange == null) return; 
+        IntRange x = getXIndexRange();
+        if(x == null) return; 
 
-        int[] yRange = getYIndexRange();
-        if(yRange == null) return;
+        IntRange y = getYIndexRange();
+        if(y == null) return;
 
-        this.crop(xRange[0], yRange[0], xRange[1], yRange[1]);
+        this.crop(new Index2D((int)x.min(), (int)y.min()), new Index2D((int)x.max(), (int)y.max()));
     }
-
-     
   
 
     @Override
@@ -431,7 +430,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         }
 
         @Override
-        public  synchronized double[][] getUnderlyingData() {
+        public  synchronized double[][] getCore() {
             return data;
         }
         
@@ -510,7 +509,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         }
 
         @Override
-        public synchronized float[][] getUnderlyingData() {
+        public synchronized float[][] getCore() {
             return data;
         }
         
@@ -577,7 +576,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         }
 
         @Override
-        public synchronized long[][] getUnderlyingData() {
+        public synchronized long[][] getCore() {
             return data;
         }
         
@@ -636,7 +635,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         }
 
         @Override
-        public synchronized int[][] getUnderlyingData() {
+        public synchronized int[][] getCore() {
             return data;
         }
         
@@ -696,7 +695,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         }
 
         @Override
-        public synchronized short[][] getUnderlyingData() {
+        public synchronized short[][] getCore() {
             return data;
         }
         
@@ -755,7 +754,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         }
 
         @Override
-        public synchronized byte[][] getUnderlyingData() {
+        public synchronized byte[][] getCore() {
             return data;
         }
         

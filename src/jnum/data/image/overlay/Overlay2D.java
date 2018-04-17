@@ -126,9 +126,9 @@ public class Overlay2D extends Data2D {
     }
 
     @Override
-    public Object getUnderlyingData() {
-        if(values instanceof Data) return ((Data<?>) values).getUnderlyingData();
-        return getImage().getUnderlyingData();
+    public Object getCore() {
+        if(values instanceof Data) return ((Data<?>) values).getCore();
+        return getImage().getCore();
     }
 
 }

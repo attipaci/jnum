@@ -112,13 +112,6 @@ public class Index2D extends AbstractIndex<Index2D> {
      */
     public final int j() { return j; }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return i + "," + j;
-    }
 
     @Override
     public void multiplyBy(Index2D factor) {
@@ -200,5 +193,6 @@ public class Index2D extends AbstractIndex<Index2D> {
         v.setComponent(0, (double) i);
         v.setComponent(1, (double) j);
     }
+
 
 }

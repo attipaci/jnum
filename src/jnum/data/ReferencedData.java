@@ -20,14 +20,39 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
+
 package jnum.data;
 
-import jnum.math.Coordinates;
+import jnum.math.TrueVector;
 
-public interface ReferencedValues<IndexType, ReferenceType extends Coordinates<? extends Number>> extends IndexedValues<IndexType>, IndexReferenced<ReferenceType>, Validating<IndexType> {
- 
-    public double valueAtIndex(ReferenceType index);
+public class ReferencedData<IndexType extends Index<IndexType>, VectorType extends TrueVector<Double>>
+implements Referenced<IndexType, VectorType> {
+    public RegularData<IndexType, VectorType> data;
+    public VectorType refIndex;
     
-    public double valueAtIndex(ReferenceType index, SplineSet<ReferenceType> splines);
+    public ReferencedData() { this(null, null); }
     
+    public ReferencedData(RegularData<IndexType, VectorType> data, VectorType refIndex) {
+        setData(data);
+        setReferenceIndex(refIndex);
+    }
+    
+    @Override
+    public RegularData<IndexType, VectorType> getData() {
+        return data;
+    }
+    
+    public void setData(RegularData<IndexType, VectorType> data) {
+        this.data = data;
+    }
+    
+    @Override
+    public VectorType getReferenceIndex() {
+        return refIndex;
+    }
+    
+    @Override
+    public void setReferenceIndex(VectorType index) {
+        this.refIndex = index;
+    }   
 }

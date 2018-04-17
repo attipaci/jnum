@@ -31,6 +31,7 @@ import jnum.Util;
 import jnum.data.Image;
 import jnum.data.cube.overlay.Transposed3D;
 import jnum.fits.FitsToolkit;
+import jnum.math.IntRange;
 import nom.tam.fits.Fits;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
@@ -250,7 +251,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
     
     public synchronized void transpose() {
         silentNextNewData();
-        setTransposedData(getUnderlyingData());
+        setTransposedData(getCore());
         addHistory("transposed");
     }
     
@@ -260,28 +261,27 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
     public final synchronized Cube3D getCube() { return copy(true); }
     
 
-    protected synchronized void crop(int imin, int jmin, int kmin, int imax, int jmax, int kmax) {
-        addHistory("cropped " + imin + "," + jmin + "," + kmin + " : " + imax + "," + jmax + "," + kmax);
+    protected synchronized void crop(Index3D from, Index3D to) {
+        addHistory("cropped " + from + " : " + to);
         silentNextNewData();
-        setData(getCropped(imin, jmin, kmin, imax, jmax, kmax).getUnderlyingData());
+        setData(getCropped(from, to).getCore());
     }
 
 
     public void autoCrop() {
-        int[] xRange = getXIndexRange();
-        if(xRange == null) return; 
+        IntRange x = getXIndexRange();
+        if(x == null) return; 
 
-        int[] yRange = getYIndexRange();
-        if(yRange == null) return;
+        IntRange y = getYIndexRange();
+        if(y == null) return;
         
-        int[] zRange = getZIndexRange();
-        if(zRange == null) return;
+        IntRange z = getZIndexRange();
+        if(z == null) return;
 
-        this.crop(xRange[0], yRange[0], zRange[0], xRange[1], yRange[1], zRange[1]);
+        this.crop(new Index3D((int)x.min(), (int)y.min(), (int)z.min()), new Index3D((int)x.max(), (int)y.max(), (int)z.max()));
     }
 
-     
-  
+       
 
     @Override
     protected void editHeader(Header header) throws HeaderCardException {          
@@ -418,7 +418,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         }
 
         @Override
-        public synchronized double[][][] getUnderlyingData() {
+        public synchronized double[][][] getCore() {
             return data;
         }
         
@@ -501,7 +501,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         }
 
         @Override
-        public synchronized float[][][] getUnderlyingData() {
+        public synchronized float[][][] getCore() {
             return data;
         }
         
@@ -574,7 +574,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         }
 
         @Override
-        public synchronized long[][][] getUnderlyingData() {
+        public synchronized long[][][] getCore() {
             return data;
         }
         
@@ -639,7 +639,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         }
 
         @Override
-        public synchronized int[][][] getUnderlyingData() {
+        public synchronized int[][][] getCore() {
             return data;
         }
         
@@ -705,7 +705,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         }
 
         @Override
-        public synchronized short[][][] getUnderlyingData() {
+        public synchronized short[][][] getCore() {
             return data;
         }
         
@@ -770,7 +770,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         }
 
         @Override
-        public synchronized byte[][][] getUnderlyingData() {
+        public synchronized byte[][][] getCore() {
             return data;
         }
         

@@ -55,9 +55,9 @@ public class Offset1D implements TrueVector<Double> {
         return true;
     }
     
-    public double get() { return x; }
+    public double value() { return x; }
     
-    public void set(double value) { this.x = value; } 
+    public void setValue(double value) { this.x = value; } 
     
     @Override
     public final int size() { return 1; }

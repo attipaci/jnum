@@ -28,13 +28,14 @@ import java.io.Serializable;
 import jnum.Copiable;
 import jnum.NonConformingException;
 import jnum.math.Additive;
+import jnum.math.Metric;
 import jnum.math.Modulus;
 import jnum.math.Multiplicative;
 import jnum.math.Ratio;
 import jnum.math.TrueVector;
 
 public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copiable<T> ,
-    Additive<T>, Multiplicative<T>, Ratio<T, T>, Modulus<T>{
+    Additive<T>, Multiplicative<T>, Ratio<T, T>, Modulus<T>, Metric<T> {
     
     public int getVolume();
     
@@ -44,10 +45,30 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
     
     public void setValue(int dim, int value) throws IndexOutOfBoundsException;
     
+    public void fill(int value);
+    
+    public void zero(); // fill(0);
+    
+    /**
+     * 
+     * @param dim the component dimension.
+     * @return the incremented index component in the selected dimension.
+     */
+    public int increment(int dim);
+    
+    /**
+     * 
+     * @param dim the component dimension.
+     * @return the decremented index component in the selected dimension.
+     */
+    public int decrement(int dim);
+    
     public void reverseTo(T other);
     
     public T getReversed();
     
     public void toVector(TrueVector<Double> v) throws NonConformingException; 
+    
+    public String toString(String separator);
     
 }

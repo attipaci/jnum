@@ -33,9 +33,8 @@ import jnum.data.CubicSpline;
 import jnum.data.DataCrawler;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
-import jnum.data.Validating;
 import jnum.data.WeightedPoint;
-import jnum.data.cube.overlay.Referenced3D;
+import jnum.math.IntRange;
 import jnum.math.Vector3D;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
@@ -123,12 +122,7 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     }
    
     
-    @Override
-    public String getSizeString() { return sizeX() + "x" + sizeY() + "x" + sizeZ(); }
-    
-    @Override
-    public final boolean conformsTo(Index3D size) { return conformsTo(size.i(), size.j(), size.k()); }
-    
+        
     public boolean conformsTo(int sizeX, int sizeY, int sizeZ) {
         if(sizeX() != sizeX) return false;
         if(sizeY() != sizeY) return false;
@@ -384,79 +378,47 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         return true;
     }
     
-    public int[] getXIndexRange() {
+    public IntRange getXIndexRange() {
         int min = sizeX(), max = -1;
         for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) for(int k=sizeZ(); --k >= 0; ) if(isValid(i, j, k)) {
             if(i < min) min = i;
             if(i > max) max = i;
             break;
         }
-        return max > min ? new int[] { min, max } : null;
+        return max > min ? new IntRange(min, max) : null;
     }
 
-    public int[] getYIndexRange() {
+    public IntRange getYIndexRange() {
         int min = sizeY(), max = -1;
         for(int j=sizeY(); --j >= 0; ) for(int i=sizeX(); --i >= 0; ) for(int k=sizeZ(); --k >= 0; ) if(isValid(i, j, k)) {
             if(j < min) min = j;
             if(j > max) max = j;
             break;
         }
-        return max > min ? new int[] { min, max } : null;
+        return max > min ? new IntRange(min, max) : null;
     }
 
-    public int[] getZIndexRange() {
+    public IntRange getZIndexRange() {
         int min = sizeY(), max = -1;
         for(int j=sizeY(); --j >= 0; ) for(int i=sizeX(); --i >= 0; ) for(int k=sizeZ(); --k >= 0; ) if(isValid(i, j, k)) {
             if(j < min) min = j;
             if(j > max) max = j;
             break;
         }
-        return max > min ? new int[] { min, max } : null;
+        return max > min ? new IntRange(min, max) : null;
     }
     
+    @SuppressWarnings("cast")
     @Override
     public final Cube3D getCropped(Index3D from, Index3D to) {
-        return getCropped(from.i(), from.j(), from.k(), to.i(), to.j(), to.k());
+        return (Cube3D) getCropped(from, to);
     }
     
-    protected Cube3D getCropped(int imin, int jmin, int kmin, int imax, int jmax, int kmax) {
-        Cube3D cropped = newImage();
-
-        final int fromi = Math.max(0, imin);
-        final int fromj = Math.max(0, jmin);
-        final int fromk = Math.max(0, kmin);
-        final int toi = Math.min(imax, sizeX()-1);
-        final int toj = Math.min(jmax, sizeY()-1); 
-        final int tok = Math.min(kmax, sizeZ()-1); 
-
-        cropped.setSize(imax-imin+1, jmax-jmin+1, kmax-kmin+1);
-
-        for(int i=fromi, i1=fromi-imin; i<=toi; i++, i1++) 
-            for(int j=fromj, j1=fromj-jmin; j<=toj; j++, j1++) 
-                for(int k=fromk, k1=fromk-kmin; k<=tok; k++, k1++) 
-                    cropped.set(i1, j1, k1, get(i, j, k));
-
-        return cropped;
+    public Cube3D getCropped(int imin, int jmin, int kmin, int imax, int jmax, int kmax) {
+       return getCropped(new Index3D(imin, jmin, kmin), new Index3D(imax, jmax, kmax));
     }   
 
 
-
-
-    @Override
-    public Referenced3D getNeighbors() {
-        final double[][][] neighbourData = {
-                {{ 0.3, 0.5, 0.3 }, { 0.5, 1.0, 0.5 }, { 0.3, 0.5, 0.3 }},
-                {{ 0.5, 1.0, 0.5 }, { 1.0, 0.0, 1.0 }, { 0.5, 1.0, 0.5 }},
-                {{ 0.3, 0.5, 0.3 }, { 0.5, 1.0, 0.5 }, { 0.3, 0.5, 0.3 }}
-        };
-
-        final Cube3D neighbourImage = Cube3D.createType(getElementType());
-        neighbourImage.setData(neighbourData);
-
-        return new Referenced3D(neighbourImage, new Vector3D(1.0, 1.0, 1.0));
-    }
-
-    
     
     @Override
     public String getInfo() {
@@ -623,44 +585,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         return fork.getResult();
     }
     
-    
-    
-    
-    @Override
-    public Validating<Index3D> getNeighborValidator(final int minNeighbors) {
-        return new Validating<Index3D>() {
-
-            @Override
-            public boolean isValid(Index3D index) {
-                int i = index.i();
-                int j = index.j();
-                int k = index.k();
-                
-                if(!Data3D.this.isValid(i, j, k)) return false;
-
-                int neighbours = -1;    // will iterate over the actual point too, hence the -1...
-
-                final int fromi = Math.max(0, i-1);
-                final int toi = Math.min(sizeX(), i+1);
-                final int fromj = Math.max(0, j-1);
-                final int toj = Math.min(sizeY(), j+1);
-                final int fromk = Math.max(0, k-1);
-                final int tok = Math.min(sizeY(), k+1);
-
-                for(int i1=toi; --i1 >= fromi; ) for(int j1=toj; --j1 >= fromj; ) for(int k1=tok; --k1 >= fromk; )
-                    if(Data3D.this.isValid(i1, j1, k1)) neighbours++;
-
-                return neighbours >= minNeighbors;         
-            }
-
-            @Override
-            public void discard(Index3D index) {
-                Data3D.this.discard(index);
-            }
-
-        };
-    }
-
     
     
     

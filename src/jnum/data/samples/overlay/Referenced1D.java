@@ -24,7 +24,8 @@
 package jnum.data.samples.overlay;
 
 import jnum.Util;
-import jnum.data.ReferencedValues;
+import jnum.data.Referenced;
+import jnum.data.RegularData;
 import jnum.data.samples.Index1D;
 import jnum.data.samples.Offset1D;
 import jnum.data.samples.Values1D;
@@ -34,7 +35,7 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-public class Referenced1D extends Overlay1D implements ReferencedValues<Index1D, Offset1D> {
+public class Referenced1D extends Overlay1D implements Referenced<Index1D, Offset1D> {
     private Offset1D referenceIndex;
 
     public Referenced1D() { this(null); }
@@ -73,7 +74,7 @@ public class Referenced1D extends Overlay1D implements ReferencedValues<Index1D,
     public Offset1D getReferenceIndex() { return referenceIndex; }
     
     public void setReferenceIndex(double value) {
-        referenceIndex.set(value);
+        referenceIndex.setValue(value);
     }
     
     @Override
@@ -83,14 +84,19 @@ public class Referenced1D extends Overlay1D implements ReferencedValues<Index1D,
     public void editHeader(Header header) throws HeaderCardException {
         super.editHeader(header);
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        c.add(new HeaderCard("CRPIX1", referenceIndex.get() + 1.0, "The reference x coordinate in SI units."));
+        c.add(new HeaderCard("CRPIX1", referenceIndex.value() + 1.0, "The reference x coordinate in SI units."));
         
     }
     
     @Override
     public void parseHeader(Header header) {
         super.parseHeader(header);
-        referenceIndex.set(header.getDoubleValue("CRPIX1", 1.0) - 1.0);
+        referenceIndex.setValue(header.getDoubleValue("CRPIX1", 1.0) - 1.0);
+    }
+
+    @Override
+    public RegularData<Index1D, Offset1D> getData() {
+        return this;
     }
     
 }

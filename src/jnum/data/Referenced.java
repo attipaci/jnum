@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of crush.
@@ -21,32 +21,16 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.cube2;
+package jnum.data;
 
-import jnum.data.Resizable;
-import jnum.data.cube.Index3D;
-import jnum.data.image.Data2D;
-import jnum.data.image.Index2D;
+import jnum.math.TrueVector;
 
-public abstract class Resizable2D1<ImageType extends Data2D & Resizable<Index2D>> extends Data2D1<ImageType> {
-
-    @Override
-    public final ImageType getImage2DInstance(int sizeX, int sizeY) {
-        ImageType image = getPlaneInstance();
-        image.setSize(new Index2D(sizeX, sizeY));
-        return image;
-    }
-
-    public abstract ImageType getPlaneInstance();
-      
+public interface Referenced<IndexType extends Index<IndexType>, VectorType extends TrueVector<Double>> {
     
-    public final void crop(Index3D from, Index3D to) {
-        cropZ(from.k(), to.k());
-        cropXY(new Index2D(from.i(), from.j()), new Index2D(to.i(), to.j()));
-        
-    }
-   
-    public abstract void cropXY(Index2D from, Index2D to);
+    public RegularData<IndexType, VectorType> getData();
     
+    public VectorType getReferenceIndex();
+    
+    public void setReferenceIndex(VectorType index);
     
 }

@@ -23,7 +23,8 @@
 
 package jnum.data.cube.overlay;
 
-import jnum.data.ReferencedValues;
+import jnum.data.Referenced;
+import jnum.data.RegularData;
 import jnum.data.cube.Index3D;
 import jnum.data.cube.Values3D;
 import jnum.math.Coordinate3D;
@@ -31,7 +32,7 @@ import jnum.math.Vector3D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
-public class Referenced3D extends Overlay3D implements ReferencedValues<Index3D, Vector3D> {
+public class Referenced3D extends Overlay3D implements Referenced<Index3D, Vector3D> {
     private Vector3D referenceIndex;
 
     public Referenced3D() {}
@@ -83,6 +84,11 @@ public class Referenced3D extends Overlay3D implements ReferencedValues<Index3D,
         referenceIndex.subtractX(-1.0);
         referenceIndex.subtractY(-1.0);
         referenceIndex.subtractZ(-1.0);
+    }
+
+    @Override
+    public RegularData<Index3D, Vector3D> getData() {
+        return this;
     }
     
 

@@ -31,7 +31,7 @@ import jnum.Unit;
 import jnum.Util;
 import jnum.data.IndexedObservations;
 import jnum.data.Observations;
-import jnum.data.ReferencedValues;
+import jnum.data.RegularData;
 import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
@@ -393,10 +393,10 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
 
     @Override
-    public void crop(int imin, int jmin, int imax, int jmax) {
-        getWeightImage().crop(imin, jmin, imax, jmax);
-        getExposureImage().crop(imin, jmin, imax, jmax);
-        super.crop(imin, jmin, imax, jmax);
+    public synchronized void crop(Index2D from, Index2D to) {
+        getWeightImage().crop(from, to);
+        getExposureImage().crop(from, to);
+        super.crop(from, to);
     }
 
   
@@ -482,22 +482,22 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
 
     @Override
-    public void smooth(ReferencedValues<Index2D, Vector2D> beam) {
+    public void smooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex) {
         Image2D smoothWeights = getWeightImage().copy(false);
         
-        setImage((Image2D) getSmoothed(beam, weight, smoothWeights));
-        setExposureImage((Image2D) exposure.getSmoothed(beam, weight, null));
+        setImage((Image2D) getSmoothed(beam, refIndex, weight, smoothWeights));
+        setExposureImage((Image2D) exposure.getSmoothed(beam, refIndex, weight, null));
         setWeightImage(smoothWeights);
 
         getProperties().addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
     @Override
-    public void fastSmooth(ReferencedValues<Index2D, Vector2D> beam, Index2D step) {
+    public void fastSmooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex, Index2D step) {
         Image2D smoothWeights = getWeightImage().copy(false);
         
-        setImage((Image2D) getFastSmoothed(beam, step, weight, smoothWeights));
-        setExposureImage((Image2D) exposure.getFastSmoothed(beam, step, weight, null));
+        setImage((Image2D) getFastSmoothed(beam, refIndex, step, weight, smoothWeights));
+        setExposureImage((Image2D) exposure.getFastSmoothed(beam, refIndex, step, weight, null));
         setWeightImage(smoothWeights);
       
         getProperties().addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));

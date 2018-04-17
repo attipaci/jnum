@@ -31,12 +31,10 @@ import jnum.Util;
 import jnum.data.DataPoint;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
-import jnum.data.Validating;
 import jnum.data.DataCrawler;
 import jnum.data.CubicSpline;
 import jnum.data.WeightedPoint;
-import jnum.data.image.overlay.Referenced2D;
-import jnum.data.image.transform.Stretch2D;
+import jnum.math.IntRange;
 import jnum.math.Range;
 import jnum.math.Vector2D;
 import jnum.parallel.ParallelPointOp;
@@ -116,11 +114,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     }
    
  
-  
-    @Override
-    public String getSizeString() { return sizeX() + "x" + sizeY(); }
-
-
     @Override
     public final boolean isValid(Index2D index) {
         return isValid(index.i(), index.j());
@@ -185,11 +178,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     }
 
   
-    @Override
-    public boolean conformsTo(Index2D size) {
-        return conformsTo(size.i(), size.j());
-    }
-  
     public boolean conformsTo(int sizeX, int sizeY) {
         if(sizeX() != sizeX) return false;
         if(sizeY() != sizeY) return false;
@@ -197,25 +185,24 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     }
 
 
-
-    public int[] getXIndexRange() {
+    public IntRange getXIndexRange() {
         int min = sizeX(), max = -1;
         for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) {
             if(i < min) min = i;
             if(i > max) max = i;
             break;
         }
-        return max > min ? new int[] { min, max } : null;
+        return max > min ? new IntRange(min, max) : null;
     }
 
-    public int[] getYIndexRange() {
+    public IntRange getYIndexRange() {
         int min = sizeY(), max = -1;
         for(int j=sizeY(); --j >= 0; ) for(int i=sizeX(); --i >= 0; ) if(isValid(i, j)) {
             if(j < min) min = j;
             if(j > max) max = j;
             break;
         }
-        return max > min ? new int[] { min, max } : null;
+        return max > min ? new IntRange(min, max) : null;
     }
 
     
@@ -244,31 +231,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         if(j >= sizeY()-0.5) return false;
         return true;
     }
-
-
-    @Override
-    public final Image2D getCropped(Index2D from, Index2D to) {
-        return getCropped(from.i(), from.j(), to.i(), to.j());
-    }
-    
-    
-    // TODO generalize and parallelize...
-    protected Image2D getCropped(int imin, int jmin, int imax, int jmax) {
-        Image2D cropped = newImage();
-
-        final int fromi = Math.max(0, imin);
-        final int fromj = Math.max(0, jmin);
-        final int toi = Math.min(imax, sizeX()-1);
-        final int toj = Math.min(jmax, sizeY()-1);      
-
-        cropped.setSize(imax-imin+1, jmax-jmin+1);
-
-        for(int i=fromi, i1=fromi-imin; i<=toi; i++, i1++) for(int j=fromj, j1=fromj-jmin; j<=toj; j++, j1++) 
-            cropped.set(i1, j1, get(i, j));
-
-        return cropped;
-    }   
-
 
    
     @Override
@@ -353,20 +315,8 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         return asym;
     }
 
+ 
   
-    @Override
-    public Referenced2D getNeighbors() {
-        final double[][] neighbourData = {{ 0.5, 1, 0.5 }, { 1, 0, 1 }, { 0.5, 1, 0.5 }};
-
-        final Image2D neighbourImage = Image2D.createType(getElementType());
-        neighbourImage.setData(neighbourData);
-
-        return new Referenced2D(neighbourImage, new Vector2D(1.0, 1.0));
-    }
-
-    
-
-
     public Vector2D getRefinedPeakIndex(Index2D peakIndex) {
         final int i = peakIndex.i();
         final int j = peakIndex.j();
@@ -392,34 +342,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
             throw new IllegalStateException("Index argument does not mark a peak.");
 
         return new Vector2D(i + di, j + dj);
-    }
-
-    
-    
-    public Vector2D getCentroidIndex() {
-        final Vector2D centroid = new Vector2D();
-
-        new Loop<Void>() {
-            private double sumw = 0.0;
-
-            @Override
-            protected void process(int i, int j) {
-                if(!isValid(i, j)) return; 
-
-                double w = Math.abs(get(i,j).doubleValue());
-                centroid.addX(w * i);
-                centroid.addY(w * j);
-                sumw += w;
-            }
-
-            @Override
-            public Void getResult() {
-                centroid.scale(1.0 / sumw);
-                return null;
-            }        
-        }.process();
-
-        return centroid;
     }
 
 
@@ -618,56 +540,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     }
 
 
-    // TODO make generic
-    public void resampleFrom(final Data2D image) {
-        double scaleX = (double) image.sizeX() / sizeX();
-        double scaleY = (double) image.sizeY() / sizeY();
-
-        if(scaleX <= 1.0 && scaleY <= 1.0) {
-            resampleFrom(image, new Stretch2D(scaleX, scaleY), null, null);
-        }
-        else {
-            Gaussian2D antialias = new Gaussian2D(scaleX, scaleY, 0.0);
-            resampleFrom(image, new Stretch2D(scaleX, scaleY), antialias.getBeam(new FlatGrid2D()), null);
-        }
-
-    }
-
-
-    @Override
-    public Validating<Index2D> getNeighborValidator(final int minNeighbors) {
-        return new Validating<Index2D>() {
-
-            @Override
-            public boolean isValid(Index2D index) {
-                int i = index.i();
-                int j = index.j();
-                
-                if(!Data2D.this.isValid(i, j)) return false;
-
-                int neighbours = -1;    // will iterate over the actual point too, hence the -1...
-
-                final int fromi = Math.max(0, i-1);
-                final int toi = Math.min(sizeX(), i+1);
-                final int fromj = Math.max(0, j-1);
-                final int toj = Math.min(sizeY(), j+1);
-
-                for(int i1=toi; --i1 >= fromi; ) for(int j1=toj; --j1 >= fromj; ) 
-                    if(Data2D.this.isValid(i1, j1)) neighbours++;
-
-                return neighbours >= minNeighbors;         
-            }
-
-            @Override
-            public void discard(Index2D index) {
-                Data2D.this.discard(index);
-            }
-
-        };
-    }
-
-
-
 
 
     @Override
@@ -677,15 +549,13 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         else return super.getTableEntry(name);
     }
 
-
-
-
     @Override
     public String getInfo() {
         return "Image Size: " + getSizeString() + " pixels.";
     }
     
     
+    // TODO generalize....
     @Override
     public DataCrawler<Number> iterator() {
         return new DataCrawler<Number>() {

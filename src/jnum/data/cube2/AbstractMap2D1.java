@@ -28,9 +28,12 @@ import java.util.Hashtable;
 
 import jnum.Unit;
 import jnum.Util;
+import jnum.data.Referenced;
+import jnum.data.RegularData;
 import jnum.data.cube.Index3D;
 import jnum.data.image.Gaussian2D;
 import jnum.data.image.Grid2D;
+import jnum.data.image.Index2D;
 import jnum.data.image.Map2D;
 import jnum.data.image.Validating2D;
 import jnum.data.samples.Grid1D;
@@ -39,7 +42,7 @@ import jnum.math.Vector2D;
 import jnum.math.Vector3D;
 
 
-public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1<MapType> {
+public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1<MapType> implements Referenced<Index3D, Vector3D> {
 
     private MapType mapTemplate;
 
@@ -81,8 +84,8 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
 
 
     @Override
-    public void cropXY(int fromi, int fromj, int toi, int toj) {
-        for(Map2D plane : getPlanes()) plane.crop(fromi, fromj, toi, toj);
+    public void cropXY(Index2D from, Index2D to) {
+        for(Map2D plane : getPlanes()) plane.crop(from, to);
     }
     
     
@@ -191,22 +194,15 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
         mapTemplate.renew();
         for(Map2D map : getPlanes()) map.renew();
     }
-
+    
+  
     public final void crop(Vector3D from, Vector3D to) {
-        crop(from.x(), from.y(), from.z(), to.x(), to.y(), to.z());
-    }
-
-    public final void crop(double fromX, double fromY, double fromZ, double toX, double toY, double toZ) {
-        cropZ(fromZ, toZ);
-        cropXY(fromX, fromY, toX, toY);
+        cropZ(from.z(), to.z());
+        cropXY(new Vector2D(from.x(), from.y()), new Vector2D(to.x(), to.y()));
     }
     
-    public final void cropXY(Vector2D from, Vector2D to) {
-        cropXY(from.x(), from.y(), to.x(), to.y());
-    }
-    
-    public void cropXY(double fromX, double fromY, double toX, double toY) {
-        for(Map2D plane : getPlanes()) plane.crop(fromX, fromY, toX, toY);
+    public void cropXY(Vector2D from, Vector2D to) {
+        for(Map2D plane : getPlanes()) plane.crop(from, to);
     }
     
     public void cropZ(double fromZ, double toZ) {
@@ -255,6 +251,29 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     // TODO filterZAbove(fwhm), filterZAbove(fwhm, validator)
 
 
+    @Override
+    public Vector3D getReferenceIndex() { 
+        Vector3D refIndex = new Vector3D();
+        Vector2D ref2D = getGrid2D().getReferenceIndex();
+        
+        refIndex.setX(ref2D.x());
+        refIndex.setY(ref2D.y());
+        refIndex.setZ(getGrid1D().getReferenceIndex().getValue());
+        
+        return refIndex;
+    }
+    
+    @Override
+    public void setReferenceIndex(Vector3D refIndex) { 
+        Vector2D ref2D = getGrid2D().getReferenceIndex();
+        
+        ref2D.setX(refIndex.x());
+        ref2D.setY(refIndex.y());
+        getGrid1D().getReferenceIndex().setValue(refIndex.z());
+    }  
+    
+    @Override
+    public RegularData<Index3D, Vector3D> getData() { return this; }
     
     @Override
     public String getInfo() {

@@ -23,7 +23,8 @@
 
 package jnum.data.image.overlay;
 
-import jnum.data.ReferencedValues;
+import jnum.data.Referenced;
+import jnum.data.RegularData;
 import jnum.data.image.Index2D;
 import jnum.data.image.Values2D;
 import jnum.math.Coordinate2D;
@@ -31,7 +32,7 @@ import jnum.math.Vector2D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
-public class Referenced2D extends Overlay2D implements ReferencedValues<Index2D, Vector2D> {
+public class Referenced2D extends Overlay2D implements Referenced<Index2D, Vector2D> {
     private Vector2D referenceIndex;
 
     public Referenced2D() {}
@@ -81,8 +82,9 @@ public class Referenced2D extends Overlay2D implements ReferencedValues<Index2D,
         
     }
 
-
-
-
+    @Override
+    public RegularData<Index2D, Vector2D> getData() {
+        return this;
+    }
    
 }

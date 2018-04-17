@@ -33,7 +33,8 @@ import jnum.Unit;
 import jnum.Util;
 import jnum.data.DataPoint;
 import jnum.data.Image;
-import jnum.data.ReferencedValues;
+import jnum.data.Referenced;
+import jnum.data.RegularData;
 import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
@@ -43,6 +44,7 @@ import jnum.data.image.transform.CartesianGridTransform2D;
 import jnum.data.image.transform.ProjectedIndexTransform2D;
 import jnum.fft.MultiFFT;
 import jnum.math.Coordinate2D;
+import jnum.math.IntRange;
 import jnum.math.Range;
 import jnum.math.Vector2D;
 import jnum.parallel.ParallelPointOp;
@@ -67,7 +69,7 @@ import nom.tam.fits.ImageHDU;
  * @param <ImageType>
  * @param <ElementType>
  */
-public class Map2D extends Flagged2D implements Image<Index2D> {
+public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index2D, Vector2D> {
     /**
      * 
      */
@@ -260,8 +262,10 @@ public class Map2D extends Flagged2D implements Image<Index2D> {
     public final void setResolution(double dx, double dy) { getGrid().setResolution(dx, dy); }
 
 
+    @Override
     public final Vector2D getReferenceIndex() { return getGrid().getReferenceIndex(); }
 
+    @Override
     public final void setReferenceIndex(Vector2D v) { getGrid().setReferenceIndex(v); }
 
 
@@ -349,40 +353,42 @@ public class Map2D extends Flagged2D implements Image<Index2D> {
 
 
 
-    public void crop(int imin, int jmin, int imax, int jmax) {
-        getImage().crop(imin, jmin, imax, jmax);
-        getFlags().crop(imin, jmin, imax, jmax);
+    public synchronized void crop(Index2D from, Index2D to) {
+        getImage().crop(from, to);
+        getFlags().crop(from, to);
 
         Vector2D refIndex = getGrid().getReferenceIndex();
 
-        refIndex.subtractX(imin);
-        refIndex.subtractY(jmin);
+        refIndex.subtractX(from.i());
+        refIndex.subtractY(from.j());
     }
 
-    public final void crop(double dXmin, double dYmin, double dXmax, double dYmax) {
-        if(dXmin > dXmax) { double temp = dXmin; dXmin = dXmax; dXmax=temp; }
-        if(dYmin > dYmax) { double temp = dYmin; dYmin = dYmax; dYmax=temp; }
+    public final void crop(Vector2D from, Vector2D to) {
+        if(from.x() > to.x()) { double temp = from.x(); from.setX(to.x()); to.setX(temp); }
+        if(from.y() > to.y()) { double temp = from.y(); from.setY(to.y()); to.setY(temp); }
 
         Unit sizeUnit = properties.getDisplayGridUnit();
+        
+        Vector2D d = Vector2D.differenceOf(to, from);
 
-        if(isVerbose()) Util.info(this, "Will crop to " + ((dXmax - dXmin)/sizeUnit.value()) + "x" + ((dYmax - dYmin)/sizeUnit.value()) + " " + sizeUnit.name() + ".");
+        if(isVerbose()) Util.info(this, "Will crop to " + d.x()/sizeUnit.value() + "x" + d.y()/sizeUnit.value() + " " + sizeUnit.name() + ".");
 
-        Index2D c1 = getIndexOfOffset(new Vector2D(dXmin, dYmin));
-        Index2D c2 = getIndexOfOffset(new Vector2D(dXmax, dYmax));
+        Index2D c1 = getIndexOfOffset(from);
+        Index2D c2 = getIndexOfOffset(to);
 
-        crop(c1.i(), c1.j(), c2.i(), c2.j());
+        crop(new Index2D(c1.i(), c1.j()), new Index2D(c2.i(), c2.j()));
     }
 
 
     public final void autoCrop() {
-        int[] hRange = getXIndexRange();
-        if(hRange == null) return; 
+        IntRange x = getXIndexRange();
+        if(x == null) return; 
 
-        int[] vRange = getYIndexRange();
-        if(vRange == null) return;
+        IntRange y = getYIndexRange();
+        if(y == null) return;
 
-        if(isVerbose()) Util.info(this, "Auto-cropping: " + (hRange[1] - hRange[0] + 1) + "x" + (vRange[1] - vRange[0] + 1));
-        this.crop(hRange[0], vRange[0], hRange[1], vRange[1]);
+        if(isVerbose()) Util.info(this, "Auto-cropping: " + (x.span() + 1) + "x" + (y.span() + 1));
+        this.crop(new Index2D((int) x.min(), (int) y.min()), new Index2D((int) x.max(), (int) y.max()));
     }
 
 
@@ -420,14 +426,14 @@ public class Map2D extends Flagged2D implements Image<Index2D> {
 
 
     @Override
-    public void smooth(ReferencedValues<Index2D, Vector2D> beam) {
-        super.smooth(beam);
+    public void smooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex) {
+        super.smooth(beam, refIndex);
         properties.addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
     @Override
-    public void fastSmooth(ReferencedValues<Index2D, Vector2D> beam, Index2D step) {
-        super.fastSmooth(beam, step);
+    public void fastSmooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex, Index2D step) {
+        super.fastSmooth(beam, refIndex, step);
         properties.addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
@@ -803,6 +809,11 @@ public class Map2D extends Flagged2D implements Image<Index2D> {
         Map2D map = new Map2D(image, flagType);
         map.parseHeader(fits.getHDU(hduIndex).getHeader());
         return map;
+    }
+
+    @Override
+    public RegularData<Index2D, Vector2D> getData() {
+        return this;
     }
 
 

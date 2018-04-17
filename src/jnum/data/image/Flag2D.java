@@ -115,8 +115,8 @@ public class Flag2D extends FlagCompanion<Index2D> implements Resizable<Index2D>
 
 
 
-    public void crop(int imin, int jmin, int imax, int jmax) {
-        data.crop(imin, jmin, imax, jmax);
+    public void crop(Index2D from, Index2D to) {
+        data.crop(from, to);
     }
 
  

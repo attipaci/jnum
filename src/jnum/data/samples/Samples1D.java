@@ -30,6 +30,7 @@ import java.util.Map;
 import jnum.CopiableContent;
 import jnum.Unit;
 import jnum.fits.FitsToolkit;
+import jnum.math.IntRange;
 import nom.tam.fits.Fits;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
@@ -192,15 +193,15 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
     protected synchronized void crop(int imin, int imax) {
         addHistory("cropped " + imin + " : " + imax);
         silentNextNewData();
-        setData(getCropped(imin, imax).getUnderlyingData());
+        setData(getCropped(imin, imax).getCore());
     }
 
 
     public void autoCrop() {
-        int[] r = getIndexRange();
+        IntRange r = getIndexRange();
         if(r == null) return; 
 
-        this.crop(r[0], r[1]);
+        this.crop((int) r.min(), (int) r.max());
     }
 
     
@@ -345,7 +346,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
 
         @Override
-        public synchronized double[] getUnderlyingData() {
+        public synchronized double[] getCore() {
             return data;
         }
         
@@ -419,7 +420,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
       
         @Override
-        public synchronized float[] getUnderlyingData() {
+        public synchronized float[] getCore() {
             return data;
         }
         
@@ -483,7 +484,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
 
         @Override
-        public synchronized long[] getUnderlyingData() {
+        public synchronized long[] getCore() {
             return data;
         }
         
@@ -539,7 +540,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
      
         @Override
-        public synchronized int[] getUnderlyingData() {
+        public synchronized int[] getCore() {
             return data;
         }
         
@@ -595,7 +596,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public synchronized short[] getUnderlyingData() {
+        public synchronized short[] getCore() {
             return data;
         }
         
@@ -650,7 +651,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         }
 
         @Override
-        public  synchronized byte[] getUnderlyingData() {
+        public  synchronized byte[] getCore() {
             return data;
         }
         

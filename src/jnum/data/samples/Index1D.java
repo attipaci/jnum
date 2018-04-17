@@ -45,14 +45,6 @@ public class Index1D extends AbstractIndex<Index1D> {
     
     public int i() { return i; }
     
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return Integer.toString(i);
-    }
 
     @Override
     public void multiplyBy(Index1D factor) {

@@ -23,6 +23,7 @@
 
 package jnum.data;
 
+import jnum.util.HashCode;
 
 public abstract class AbstractIndex<T extends AbstractIndex<T>> implements Index<T> {
     /**
@@ -30,6 +31,28 @@ public abstract class AbstractIndex<T extends AbstractIndex<T>> implements Index
      */
     private static final long serialVersionUID = -1273849343052525336L;
 
+    
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode() ^ HashCode.from(dimension());
+        for(int i=dimension(); --i >= 0; ) hash ^= HashCode.from(getValue(i));
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof Index)) return false;
+        
+        Index<?> index = (Index<?>) o;
+        if(index.dimension() != dimension()) return false;
+        
+        for(int i=dimension(); --i >= 0; ) if(index.getValue(i) != getValue(i)) return false;
+        
+        return true;        
+    }
+   
+    
     @SuppressWarnings("unchecked")
     @Override
     public T clone() {
@@ -55,5 +78,49 @@ public abstract class AbstractIndex<T extends AbstractIndex<T>> implements Index
         return reversed;
     }
     
+    @Override
+    public double distanceTo(T index) {
+        long sum = 0;
+        
+        for(int i=dimension(); --i >= 0; ) {
+            int d = index.getValue(i) - getValue(i);
+            sum += d*d;
+        }
+        
+        return Math.sqrt(sum);
+    }
+    
+    @Override
+    public void fill(int value) {
+        for(int i=dimension(); --i >= 0; ) setValue(i, value);
+    }
+    
+    @Override
+    public int increment(int index) {
+        int i = getValue(index);
+        setValue(index, ++i);
+        return i;
+    }
+    
+    @Override
+    public int decrement(int index) {
+        int i = getValue(index);
+        setValue(index, --i);
+        return i;
+    }
+    
+    @Override
+    public void zero() { fill(0); }
+    
+    @Override
+    public String toString() {
+       return toString(",");
+    }
+    
+    public String toString(String separator) {
+        StringBuffer buf = new StringBuffer();
+        for(int i=0; i<dimension(); i++) buf.append((i > 0 ? separator : "") + getValue(i));
+        return new String(buf);
+    }
     
 }

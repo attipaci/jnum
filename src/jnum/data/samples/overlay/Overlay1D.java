@@ -126,9 +126,9 @@ public class Overlay1D extends Data1D {
     }
     
     @Override
-    public Object getUnderlyingData() {
-        if(values instanceof Data) return ((Data<?>) values).getUnderlyingData();
-        return getSamples().getUnderlyingData();
+    public Object getCore() {
+        if(values instanceof Data) return ((Data<?>) values).getCore();
+        return getSamples().getCore();
     }
     
 }
