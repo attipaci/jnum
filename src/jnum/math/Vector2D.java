@@ -37,49 +37,49 @@ import jnum.math.matrix.Matrix;
  */
 public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 7319941007342696348L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 7319941007342696348L;
 
-	/**
-	 * Instantiates a new 2D vector.
-	 */
-	public Vector2D() {}
+    /**
+     * Instantiates a new 2D vector.
+     */
+    public Vector2D() {}
 
-	/**
-	 * Instantiates a new 2D vector.
-	 *
-	 * @param X the x
-	 * @param Y the y
-	 */
-	public Vector2D(double X, double Y) { super(X, Y); }
+    /**
+     * Instantiates a new 2D vector.
+     *
+     * @param X the x
+     * @param Y the y
+     */
+    public Vector2D(double X, double Y) { super(X, Y); }
 
-	/**
-	 * Instantiates a new 2D vector.
-	 *
-	 * @param template the template
-	 */
-	public Vector2D(Vector2D template) { super(template); }
+    /**
+     * Instantiates a new 2D vector.
+     *
+     * @param template the template
+     */
+    public Vector2D(Vector2D template) { super(template); }
 
-	/**
-	 * Instantiates a new 2D vector.
-	 *
-	 * @param point the point
-	 */
-	public Vector2D(Point2D point) { super(point); }
-	
-	/**
+    /**
+     * Instantiates a new 2D vector.
+     *
+     * @param point the point
+     */
+    public Vector2D(Point2D point) { super(point); }
+
+    /**
      * Instantiates a new 2D vector.
      *
      * @param text the text
      */
     public Vector2D(String text) { super(text); }
-	    
+
     @Override
     public Vector2D copy() {
         return (Vector2D) super.copy();
     }
-   
-    
+
+
     /**
      * Length.
      *
@@ -87,17 +87,17 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
      */
     public final double length() { return ExtraMath.hypot(x(), y()); }
 
-	
-	/**
-	 * Absolute value (radius) of the complex number. Same as {@link jnum.math.Vector2D#length()}.
-	 *
-	 * @return the absolute
-	 * @see jnum.math.Vector2D#length()
-	 */
-	@Override
-	public final double abs() { return length(); }
-	
-	   /**
+
+    /**
+     * Absolute value (radius) of the complex number. Same as {@link jnum.math.Vector2D#length()}.
+     *
+     * @return the absolute
+     * @see jnum.math.Vector2D#length()
+     */
+    @Override
+    public final double abs() { return length(); }
+
+    /**
      * Norm.
      *
      * @return the double
@@ -105,7 +105,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     @Override
     public final double absSquared() { return x() * x() + y() * y(); }
 
- 
+
     /**
      * Angle.
      *
@@ -115,93 +115,93 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
         if(isNull()) return Double.NaN;
         return Math.atan2(y(), x());
     }
-    
 
-	public final PolarVector2D polar() { return new PolarVector2D(length(), angle()); }
-	
-	
-	
-	
-		
-	/**
-	 * Adds the.
-	 *
-	 * @param v the v
-	 */
-	@Override
-	public final void add(final TrueVector<? extends Double> v) { addX(v.x()); addY(v.y()); }
-	
-	/**
-	 * Subtract.
-	 *
-	 * @param v the v
-	 */
-	@Override
-	public final void subtract(final TrueVector<? extends Double> v) { subtractX(v.x()); subtractY(v.y()); }
-	
-	/**
-	 * Adds the multiple of.
-	 *
-	 * @param vector the vector
-	 * @param factor the factor
-	 */
-	@Override
-	public final void addScaled(final TrueVector<? extends Double> vector, final double factor) {
-		addX(factor * vector.x());
-		addY(factor * vector.y());
-	}
-	
-	/**
-	 * Sets the multiple of.
-	 *
-	 * @param v the v
-	 * @param factor the factor
-	 */
-	public final void setMultipleOf(final TrueVector<? extends Double> v, final double factor) {
-		set(factor * v.x(), factor * v.y());
-	}
-	
 
-	/**
-	 * Scale.
-	 *
-	 * @param value the value
-	 */
-	@Override
-	public final void scale(final double value) { scaleX(value); scaleY(value); }    
+    public final PolarVector2D polar() { return new PolarVector2D(length(), angle()); }
 
-	/**
-	 * Rotate.
-	 *
-	 * @param alpha the alpha
-	 */
-	public final void rotate(final double alpha) {
-		final double sinA = Math.sin(alpha);
-		final double cosA = Math.cos(alpha);
-		set(x() * cosA - y() * sinA, x() * sinA + y() * cosA);
-	}
-	
-	
-	/**
-	 * Rotate.
-	 *
-	 * @param theta the theta
-	 */
-	public final void rotate(Angle theta) {
-	    set(x() * theta.cos() - y() * theta.sin(), x() * theta.sin() + y() * theta.cos());
-	}
-	
-	/**
-	 * Derotate.
-	 *
-	 * @param theta the theta
-	 */
-	public final void derotate(Angle theta) {
+
+
+
+
+    /**
+     * Adds the.
+     *
+     * @param v the v
+     */
+    @Override
+    public final void add(final TrueVector<? extends Double> v) { addX(v.x()); addY(v.y()); }
+
+    /**
+     * Subtract.
+     *
+     * @param v the v
+     */
+    @Override
+    public final void subtract(final TrueVector<? extends Double> v) { subtractX(v.x()); subtractY(v.y()); }
+
+    /**
+     * Adds the multiple of.
+     *
+     * @param vector the vector
+     * @param factor the factor
+     */
+    @Override
+    public final void addScaled(final TrueVector<? extends Double> vector, final double factor) {
+        addX(factor * vector.x());
+        addY(factor * vector.y());
+    }
+
+    /**
+     * Sets the multiple of.
+     *
+     * @param v the v
+     * @param factor the factor
+     */
+    public final void setMultipleOf(final TrueVector<? extends Double> v, final double factor) {
+        set(factor * v.x(), factor * v.y());
+    }
+
+
+    /**
+     * Scale.
+     *
+     * @param value the value
+     */
+    @Override
+    public final void scale(final double value) { scaleX(value); scaleY(value); }    
+
+    /**
+     * Rotate.
+     *
+     * @param alpha the alpha
+     */
+    public final void rotate(final double alpha) {
+        final double sinA = Math.sin(alpha);
+        final double cosA = Math.cos(alpha);
+        set(x() * cosA - y() * sinA, x() * sinA + y() * cosA);
+    }
+
+
+    /**
+     * Rotate.
+     *
+     * @param theta the theta
+     */
+    public final void rotate(Angle theta) {
+        set(x() * theta.cos() - y() * theta.sin(), x() * theta.sin() + y() * theta.cos());
+    }
+
+    /**
+     * Derotate.
+     *
+     * @param theta the theta
+     */
+    public final void derotate(Angle theta) {
         set(x() * theta.cos() + y() * theta.sin(), y() * theta.cos() - x() * theta.sin());
     }
-	
-	
-	/**
+
+
+    /**
      * Sets the sum.
      *
      * @param a the a
@@ -211,7 +211,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     public final void setSum(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
         set(a.x() + b.x(), a.y() + b.y());      
     }
-    
+
     /**
      * Sets the difference.
      *
@@ -222,7 +222,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     public final void setDifference(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
         set(a.x() - b.x(), a.y() - b.y());      
     }
-    
+
     /**
      * Sets the.
      *
@@ -236,173 +236,173 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
         case '-' : setDifference(a, b); break;
         default: throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " operation: '" + op + "'.");
         }
-        
+
     }
-    
-	
-	/**
-	 * Sets the polar.
-	 *
-	 * @param r the r
-	 * @param angle the angle
-	 */
-	public void setPolar(double r, double angle) {
-		set(r * Math.cos(angle), r * Math.sin(angle));
-	}
-	
-	/**
-	 * Sets the unit vector at.
-	 *
-	 * @param angle the new unit vector at
-	 */
-	public void setUnitVectorAt(double angle) {
-		set(Math.cos(angle), Math.sin(angle));
-	}
+
+
+    /**
+     * Sets the polar.
+     *
+     * @param r the r
+     * @param angle the angle
+     */
+    public void setPolar(double r, double angle) {
+        set(r * Math.cos(angle), r * Math.sin(angle));
+    }
+
+    /**
+     * Sets the unit vector at.
+     *
+     * @param angle the new unit vector at
+     */
+    public void setUnitVectorAt(double angle) {
+        set(Math.cos(angle), Math.sin(angle));
+    }
 
 
 
-	/**
-	 * Cos angle.
-	 *
-	 * @return the double
-	 */
-	public final double cosAngle() {
-		return ExtraMath.cos(x(), y());
-	}
-	
-	/**
-	 * Sin angle.
-	 *
-	 * @return the double
-	 */
-	public final double sinAngle() {
-		return ExtraMath.sin(x(), y());
-	}
-	
-	/**
-	 * Tan angle.
-	 *
-	 * @return the double
-	 */
-	public final double tanAngle() {
-		return ExtraMath.tan(x(), y());
-	}
-	
-	/**
-	 * Normalize.
-	 *
-	 * @throws IllegalStateException the illegal state exception
-	 */
-	@Override
-	public final void normalize() throws IllegalStateException { 
-		if(isNull()) throw new IllegalStateException("Null Vector");
-		scale(1.0 / absSquared()); 
-	}
+    /**
+     * Cos angle.
+     *
+     * @return the double
+     */
+    public final double cosAngle() {
+        return ExtraMath.cos(x(), y());
+    }
+
+    /**
+     * Sin angle.
+     *
+     * @return the double
+     */
+    public final double sinAngle() {
+        return ExtraMath.sin(x(), y());
+    }
+
+    /**
+     * Tan angle.
+     *
+     * @return the double
+     */
+    public final double tanAngle() {
+        return ExtraMath.tan(x(), y());
+    }
+
+    /**
+     * Normalize.
+     *
+     * @throws IllegalStateException the illegal state exception
+     */
+    @Override
+    public final void normalize() throws IllegalStateException { 
+        if(isNull()) throw new IllegalStateException("Null Vector");
+        scale(1.0 / absSquared()); 
+    }
 
 
-	/**
-	 * Invert.
-	 */
-	@Override
-	public final void invert() { scale(-1.0); }	
-
-	
-	@Override
-	public void reflectOn(final TrueVector<? extends Double> v) {
-	    Vector2D ortho = copy();
-	    ortho.orthogonalizeTo(v);
-	    addScaled(ortho, -2.0);        
-	}
-	
-	@Override
-	public final void projectOn(final TrueVector<? extends Double> v) {
-	    double scaling = dot(v) / v.abs();
-	    copy(v);
-	    scale(scaling);
-	}
-	
-
-	/**
-	 * Math.
-	 *
-	 * @param op the op
-	 * @param v the v
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public void math(char op, TrueVector<? extends Double> v) throws IllegalArgumentException {
-		switch(op) {
-		case '+': add(v); break;
-		case '-': subtract(v); break;
-		default: throw new IllegalArgumentException("Illegal Operation: " + op);
-		}
-	}
+    /**
+     * Invert.
+     */
+    @Override
+    public final void invert() { scale(-1.0); }	
 
 
-	
-	/**
-	 * Math.
-	 *
-	 * @param op the op
-	 * @param b the b
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public void math(char op, double b) throws IllegalArgumentException {
-		switch(op) {
-		case '*': scaleX(b); break;
-		case '/': scaleX(1.0/b); break;
-		default: throw new IllegalArgumentException("Illegal Operation: " + op);	    
-		}
-	}
+    @Override
+    public void reflectOn(final TrueVector<? extends Double> v) {
+        Vector2D ortho = copy();
+        ortho.orthogonalizeTo(v);
+        addScaled(ortho, -2.0);        
+    }
+
+    @Override
+    public final void projectOn(final TrueVector<? extends Double> v) {
+        double scaling = dot(v) / v.abs();
+        copy(v);
+        scale(scaling);
+    }
 
 
-	
+    /**
+     * Math.
+     *
+     * @param op the op
+     * @param v the v
+     * @throws IllegalArgumentException the illegal argument exception
+     */
+    public void math(char op, TrueVector<? extends Double> v) throws IllegalArgumentException {
+        switch(op) {
+        case '+': add(v); break;
+        case '-': subtract(v); break;
+        default: throw new IllegalArgumentException("Illegal Operation: " + op);
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#getValue(int)
-	 */
-	@Override
-	public double getValue(int field) throws NoSuchFieldException {
-		switch(field) {
-		case LENGTH: return length();
-		case NORM: return absSquared();
-		case ANGLE: return angle();
-		default: return super.getValue(field);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#setValue(int, double)
-	 */
-	@Override
-	public void setValue(int field, double value) throws NoSuchFieldException {
-		switch(field) {
-		case LENGTH: scale(value/length()); break;
-		case NORM: scale(Math.sqrt(value/absSquared())); break;
-		case ANGLE: rotate(value - angle()); break;
-		default: super.setValue(field, value);
-		}
-	}
-	
+
+
+    /**
+     * Math.
+     *
+     * @param op the op
+     * @param b the b
+     * @throws IllegalArgumentException the illegal argument exception
+     */
+    public void math(char op, double b) throws IllegalArgumentException {
+        switch(op) {
+        case '*': scaleX(b); break;
+        case '/': scaleX(1.0/b); break;
+        default: throw new IllegalArgumentException("Illegal Operation: " + op);	    
+        }
+    }
+
+
+
+
+    /* (non-Javadoc)
+     * @see jnum.Coordinate2D#getValue(int)
+     */
+    @Override
+    public double getValue(int field) throws NoSuchFieldException {
+        switch(field) {
+        case LENGTH: return length();
+        case NORM: return absSquared();
+        case ANGLE: return angle();
+        default: return super.getValue(field);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see jnum.Coordinate2D#setValue(int, double)
+     */
+    @Override
+    public void setValue(int field, double value) throws NoSuchFieldException {
+        switch(field) {
+        case LENGTH: scale(value/length()); break;
+        case NORM: scale(Math.sqrt(value/absSquared())); break;
+        case ANGLE: rotate(value - angle()); break;
+        default: super.setValue(field, value);
+        }
+    }
+
 
     @Override
     public AbstractMatrix<Double> asRowVector() { 
         return new Matrix(new double[][] {{ x(), y() }});
     }
-    
+
 
     @Override
     public AbstractMatrix<Double> asColumnVector() {
         return new Matrix(new double[][] { {x()}, {y()} });
     }
-    
-  
+
+
     @Override
     public final Double dot(Coordinates<? extends Double> v) throws NonConformingException {
         if(v.size() != 2) throw new NonConformingException("dot product with vector of different size.");
         return x() * v.getComponent(0) + y() * v.getComponent(1);
     }
 
-    
+
 
     @Override
     public void orthogonalizeTo(TrueVector<? extends Double> v) {
@@ -410,45 +410,59 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     }
 
 
-	@Override
-	public final double distanceTo(final TrueVector<? extends Double> point) {
-		return ExtraMath.hypot(point.x() - x(), point.y() - y());
-	}
-	
-	
-	
-	public final static Vector2D sumOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+    @Override
+    public final double distanceTo(final TrueVector<? extends Double> point) {
+        return ExtraMath.hypot(point.x() - x(), point.y() - y());
+    }
+
+
+    @Override
+    public void fill(Double value) {
+        setX(value);
+        setY(value);
+    }
+
+    @Override
+    public void setValues(Double... values) {
+        for(int i=values.length; --i >= 0; ) setComponent(i, values[i]);
+    }
+
+
+
+
+
+    public final static Vector2D sumOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
         return new Vector2D(a.x() + b.x(), a.y() + b.y());
     }
-    
+
 
     public final static Vector2D differenceOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
         return new Vector2D(a.x() - b.x(), a.y() - b.y());
     }
 
 
-	public static Vector2D[] createArray(int size) {
-		final Vector2D[] v = new Vector2D[size];
-		for(int i=size; --i >= 0; ) v[i] = new Vector2D();
-		return v;
-	}
-	
-	
-	
-
-	/** The Constant LENGTH. */
-	public static final int LENGTH = 2;
-	
-	/** The Constant NORM. */
-	public static final int NORM = 3;
-	
-	/** The Constant ANGLE. */
-	public static final int ANGLE = 4;
-	
-	/** The Constant NaN. */
-	public static final Vector2D NaN = new Vector2D(Double.NaN, Double.NaN);
+    public static Vector2D[] createArray(int size) {
+        final Vector2D[] v = new Vector2D[size];
+        for(int i=size; --i >= 0; ) v[i] = new Vector2D();
+        return v;
+    }
 
 
 
-	
+
+    /** The Constant LENGTH. */
+    public static final int LENGTH = 2;
+
+    /** The Constant NORM. */
+    public static final int NORM = 3;
+
+    /** The Constant ANGLE. */
+    public static final int ANGLE = 4;
+
+    /** The Constant NaN. */
+    public static final Vector2D NaN = new Vector2D(Double.NaN, Double.NaN);
+
+
+
+
 }

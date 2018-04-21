@@ -24,6 +24,8 @@
 package jnum.math.matrix;
 
 
+import java.util.Arrays;
+
 import jnum.math.Coordinates;
 import jnum.math.Inversion;
 import jnum.math.TrueVector;
@@ -277,6 +279,18 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
         if(size() != a.size() || size() != b.size()) throw new IllegalArgumentException("different size vectors.");
 
         for(int i=size(); --i >= 0; ) component[i] = a.getComponent(i) - b.getComponent(i);
+    }
+
+    @Override
+    public void fill(Double value) {
+        Arrays.fill(component, value);
+    }
+
+    @Override
+    public void setValues(Double... values) {
+        if(component != null) if(component.length != values.length) component = null;
+        if(component == null) component = new double[values.length];
+        for(int i=values.length; --i >= 0; ) component[i] = values[i];
     }
 
 

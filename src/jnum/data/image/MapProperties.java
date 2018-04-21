@@ -185,7 +185,7 @@ public class MapProperties extends FitsProperties {
     
     
     public void setPixelSmoothing() {
-        smoothingBeam.set(getPixelSmoothing());
+        smoothingBeam.copy(getPixelSmoothing());
     }
 
     
@@ -238,7 +238,7 @@ public class MapProperties extends FitsProperties {
         if(smoothingBeam == null) return underlyingBeam;
         
         Gaussian2D beam = new Gaussian2D();
-        beam.set(underlyingBeam);
+        beam.copy(underlyingBeam);
         beam.convolveWith(smoothingBeam);
         
         return beam;

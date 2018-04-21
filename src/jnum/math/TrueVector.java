@@ -27,16 +27,20 @@ import jnum.math.matrix.AbstractMatrix;
 
 public interface TrueVector<T> extends Coordinates<T>, AbsoluteValue, Normalizable, Inversion, Metric<TrueVector<? extends T>>, LinearAlgebra<TrueVector<? extends T>> {
      
-    public T dot(Coordinates<? extends T> v);
+    public T dot(Coordinates<? extends T> v); // TODO default method.
     
-    public void orthogonalizeTo(TrueVector<? extends T> v);
+    public void orthogonalizeTo(TrueVector<? extends T> v); // TODO default method.
     
-    public void projectOn(final TrueVector<? extends T> v) ;
+    public void projectOn(final TrueVector<? extends T> v); // TODO default method.
     
-    public void reflectOn(final TrueVector<? extends T> v) ;
+    public void reflectOn(final TrueVector<? extends T> v); // TODO default method. 
     
-    public AbstractMatrix<T> asRowVector();
+    public AbstractMatrix<T> asRowVector(); // TODO default method.
    
-    public AbstractMatrix<T> asColumnVector();
+    public AbstractMatrix<T> asColumnVector(); // TODO default method.
+    
+    public void fill(T value); // TODO default method.
+    
+    public void setValues(T ... values); // TODO default method.
     
 }

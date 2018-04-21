@@ -200,6 +200,19 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
     
     
 
+    @Override
+    public void fill(Double value) {
+        setX(value);
+        setY(value);
+        setZ(value);
+    }
+
+    @Override
+    public void setValues(Double... values) {
+        for(int i=values.length; --i >= 0; ) setComponent(i, values[i]);
+    }
+    
+
     public static Vector3D sumOf(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
         return new Vector3D(a.x() + b.x(), a.y() + b.y(), a.z() + b.z());
     }
@@ -216,5 +229,6 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
         return v;
     }
   
+    
     
 }

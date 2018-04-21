@@ -140,6 +140,17 @@ public class Offset1D implements TrueVector<Double> {
     @Override
     public void reflectOn(TrueVector<? extends Double> v) {}
 
+
+    @Override
+    public final void fill(Double value) {
+        setValue(value);
+    }
+
+    @Override
+    public void setValues(Double... values) {
+        setComponent(0, values[0]);
+    }
+    
     @Override
     public AbstractMatrix<Double> asRowVector() {
         return new Matrix(new double[][] {{ x }});

@@ -25,6 +25,7 @@
 package jnum.math.matrix;
 
 import java.lang.reflect.*;
+import java.util.Arrays;
 
 import jnum.Copiable;
 import jnum.Util;
@@ -334,6 +335,16 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 		}
 		
 	}
+
+    @Override
+    public void fill(T value) {
+        Arrays.fill(component, value);
+    }
+
+    @Override
+    public void setValues(T... values) {
+        component = values;
+    }
 	
 
 }

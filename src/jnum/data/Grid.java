@@ -37,7 +37,8 @@ import jnum.math.CoordinateSystem;
  * @param <CoordinateType> the generic type
  * @param <OffsetType> the generic type
  */
-public abstract class Grid<CoordinateType, OffsetType> implements Serializable, Cloneable, FitsHeaderEditing, FitsHeaderParsing {
+public abstract class Grid<CoordinateType, OffsetType> implements Serializable, Cloneable,
+FitsHeaderEditing, FitsHeaderParsing {
 
     /**
      * 

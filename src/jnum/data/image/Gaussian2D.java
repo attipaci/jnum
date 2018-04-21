@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -28,6 +28,7 @@ import java.text.NumberFormat;
 
 import jnum.Constant;
 import jnum.Copiable;
+import jnum.CopyCat;
 import jnum.ExtraMath;
 import jnum.SafeMath;
 import jnum.Unit;
@@ -52,7 +53,7 @@ import nom.tam.util.Cursor;
 /**
  * The Class Gaussian2D.
  */
-public class Gaussian2D implements Serializable, Cloneable, Copiable<Gaussian2D>, Scalable, 
+public class Gaussian2D implements Serializable, Cloneable, Copiable<Gaussian2D>, CopyCat<Gaussian2D>, Scalable, 
 Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D>, Ratio<Gaussian2D, Gaussian2D> {
 
     /** The Constant serialVersionUID. */
@@ -163,7 +164,8 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
      *
      * @param psf the psf
      */
-    public final void set(Gaussian2D psf) {
+    @Override
+    public final void copy(Gaussian2D psf) {
         majorFWHM = psf.majorFWHM;
         minorFWHM = psf.minorFWHM;
         positionAngle = psf.positionAngle;
@@ -672,7 +674,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
     /** The Constant areaFactor to convert from FWHM^2 to beam integral. */
     public final static double areaFactor = Constant.twoPi / (Constant.sigmasInFWHM * Constant.sigmasInFWHM);
    
-    /** The fwhm2size. */
+    /** The equivalent area lateral square size to a Gaussian beam with FWHM. */
     public static double fwhm2size = Math.sqrt(areaFactor);   
 
 

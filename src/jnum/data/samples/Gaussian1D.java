@@ -28,7 +28,7 @@ import java.text.NumberFormat;
 
 import jnum.Constant;
 import jnum.Copiable;
-
+import jnum.CopyCat;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.Data;
@@ -41,7 +41,7 @@ import jnum.math.Scalable;
 import jnum.util.HashCode;
 
 
-public class Gaussian1D implements Serializable, Cloneable, Copiable<Gaussian1D>, Scalable, 
+public class Gaussian1D implements Serializable, Cloneable, Copiable<Gaussian1D>, CopyCat<Gaussian1D>, Scalable, 
 Multiplication<Gaussian1D>, Division<Gaussian1D>, Product<Gaussian1D, Gaussian1D>, Ratio<Gaussian1D, Gaussian1D> {
     /**
      * 
@@ -89,7 +89,8 @@ Multiplication<Gaussian1D>, Division<Gaussian1D>, Product<Gaussian1D, Gaussian1D
         this.FWHM = value;
     }
 
-    public final void set(Gaussian1D psf) {
+    @Override
+    public final void copy(Gaussian1D psf) {
         FWHM = psf.FWHM;
     }
 

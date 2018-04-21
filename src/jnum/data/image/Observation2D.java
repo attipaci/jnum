@@ -113,7 +113,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     @Override
     public boolean isValid(int i, int j) {
         if(!super.isValid(i, j)) return false;
-        final double w = weight.get(i, j).doubleValue();
+        final double w = weightAt(i, j);
         if(Double.isNaN(w)) return false;
         return isZeroWeightValid ? w >= 0.0 : w > 0.0;
     }
@@ -151,7 +151,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         };
     }
     
-    public Image2D getWeightImage() {
+    public final Image2D getWeightImage() {
         return weight;
     }
 
@@ -170,7 +170,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         };
     }
     
-    public Image2D getExposureImage() {
+    public final Image2D getExposureImage() {
         return exposure;
     }
 
@@ -285,7 +285,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         return noiseAt(index.i(), index.j());
     }
 
-    public double weightAt(int i, int j) {
+    public final double weightAt(int i, int j) {
         return weight.get(i, j).doubleValue();
     }
     
@@ -303,7 +303,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         return exposureAt(index.i(), index.j());
     }
     
-    public double exposureAt(int i, int j) {
+    public final double exposureAt(int i, int j) {
         return exposure.get(i, j).doubleValue();
     }
 
@@ -535,7 +535,6 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         getWeightImage().scale(1.0 + getSmoothing().getArea() / replacementPSF.getArea());
 
         getProperties().setSmoothingBeam(replacementPSF);
-
     }
 
 
