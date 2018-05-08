@@ -1,3 +1,30 @@
+0.21-1
+
+	Overview
+	======================================================================
+	This version of jnum provides even more generalized implementation for
+	1D-3D (and beyond!) data structures, including cropping, smoothing,
+	resampling, and FITS writing. It also fixes problems and weaknesses
+	in the prior release.
+	======================================================================
+
+
+	[NEW] {Data} Several new Data-related classes introduced to provide
+	more generalizations from Data2D to any regularly spaced data 
+	(RegularData), including cropping, smoothing, filtering, re-sampling,
+	cleaning and FITS writing.
+
+	[NEW] {Data} Simplified general typing with single type parameter
+	(IndexType), and RegularData with additional VectorType.
+
+	[FIX] {Observation2D} Simpler structure helps solve tricky cloning 
+	problems, which still occurred.
+
+	[TWEAK] Cleaner ParallelTask process(...) hierarchy all based on
+	a single non-final method.
+
+
+
 0.20-4
 
 	[FIX] NaN values from source fitting no longer written to the FITS

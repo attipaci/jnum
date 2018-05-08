@@ -97,10 +97,20 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
      * @param threadCount the thread count
      * @throws Exception the exception
      */
-    public synchronized void process(int chunks) throws Exception {    
+    public final synchronized void process(int chunks) throws Exception {    
         process(chunks, null);
     }
     
+    
+    /**
+     * Process.
+     *
+     * @param pool the pool
+     * @throws Exception the exception
+     */
+    public final void process(ThreadPoolExecutor pool) throws Exception {
+        process(pool.getCorePoolSize(), pool);
+    }
     
     /**
      * Process.
@@ -136,18 +146,8 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
         postProcess();
     }
    
-    /**
-     * Process.
-     *
-     * @param pool the pool
-     * @throws Exception the exception
-     */
-    public void process(ThreadPoolExecutor pool) throws Exception {
-        process(pool.getCorePoolSize(), pool);
-    }
+   
     
-
-
 	/**
 	 * Submit.
 	 *
@@ -469,4 +469,6 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		
 	}
 
+	
+	
 }

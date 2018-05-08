@@ -50,6 +50,20 @@ public abstract class ParallelObject implements Cloneable, Parallelizable {
 
     @Override
     public final int getParallel() {
+        /*
+        if(parallelism == 1) return 1;
+        
+        final StackTraceElement[] trace = new Throwable().getStackTrace();
+        boolean isSubTask = false;
+        
+        for(int i=0; i<trace.length; i++) if(trace[i].getClassName().equals(ParallelTask.class.getName())) {
+            isSubTask = true;
+            break;
+        }    
+        
+        return isSubTask ? 1 : parallelism;
+        */
+        
         return parallelism;
     }
 
@@ -79,11 +93,11 @@ public abstract class ParallelObject implements Cloneable, Parallelizable {
     public abstract class Task<ReturnType> extends ParallelTask<ReturnType> {           
 
         public void process() {
-            process(getParallel());
+            process(getParallel(), getExecutor());
         }
         
         @Override
-        public void process(int threads) { 
+        public void process(int threads, ExecutorService executor) { 
             try { super.process(threads, executor); }
             catch(Exception e) { Util.error(this, e); }
         }     

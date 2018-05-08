@@ -607,9 +607,12 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
 
     @Override
     public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index2D from, Index2D to) {
-        for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) if(isValid(i, j)) {
-            op.process(get(i, j));
-            if(op.exception != null) return null;
+        for(int i=to.i(); --i >= from.i(); ) {
+            for(int j=to.j(); --j >= from.j(); ) if(isValid(i, j)) {
+                op.process(get(i, j));
+                if(op.exception != null) return null;
+            }
+            Thread.yield();
         }
         return op.getResult();
     }
@@ -617,10 +620,13 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     @Override
     public <ReturnType> ReturnType loop(final PointOp<Index2D, ReturnType> op, Index2D from, Index2D to) {
         final Index2D index = new Index2D();
-        for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) {
-            index.set(i, j);
-            op.process(index);
-            if(op.exception != null) return null;
+        for(int i=to.i(); --i >= from.i(); ) {
+            for(int j=to.j(); --j >= from.j(); ) {
+                index.set(i, j);
+                op.process(index);
+                if(op.exception != null) return null;
+            }
+            Thread.yield();
         }
         return op.getResult();
     }

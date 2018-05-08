@@ -53,7 +53,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
     private ArrayList<ImageType> stack;
 
-    
+
 
     public Data2D1() {
         stack = new ArrayList<ImageType>();
@@ -64,11 +64,11 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         stack.ensureCapacity(initialPlanesCapacity);
     }
 
-  
+
     public abstract ImageType getImage2DInstance(int sizeX, int sizeY);
-    
-    
-    
+
+
+
     public ArrayList<ImageType> getPlanes() { return stack; }
 
 
@@ -115,7 +115,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     public int compare(Number a, Number b) {
         return getPlane().compare(a, b);
     }
-    
+
 
     @Override
     public int sizeX() { return stack.isEmpty() ? 0 : getPlane().sizeX(); }
@@ -125,7 +125,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
     @Override
     public int sizeZ() { return stack.size(); }
- 
+
 
     public void setSize(int sizeX, int sizeY, int sizeZ) {
         stack.clear();
@@ -187,27 +187,27 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         return getPlane((int) Math.round(k)).get((int) Math.round(i), (int) Math.round(j));   
     }
 
-    
+
     @Override
     public Data2D1<Data2D> getCore() {
         Data2D1<Data2D> data = new Data2D1<Data2D>(sizeZ()) {
             @Override
             public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
         };
-        
+
         for(int i=0; i<sizeZ(); i++) data.addPlane(getPlane(i).getImage());
-       
+
         return data;
     }
-    
-   
+
+
     public void cropZ(int fromk, int tok) {
         fromk = Math.max(0, fromk);
         tok = Math.min(sizeZ() -1, tok);
-        
+
         ArrayList<ImageType> planes = new ArrayList<ImageType>(tok - fromk + 1);
         for(int k = fromk; k <= tok; k++) planes.add(getPlane(k));
-        
+
         setPlanes(planes);
     }
 
@@ -216,15 +216,15 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         if(z == null) return; 
         cropZ((int)z.min(), (int) z.max());
     }
-    
+
     public final synchronized void smoothZ(Referenced<Index1D, Offset1D> beam) {
         smoothZ(beam.getData(), beam.getReferenceIndex().value());
     }
-    
+
     public final synchronized void smoothZ(RegularData<Index1D, Offset1D> beam, Offset1D refIndex) {
         smoothZ(beam, refIndex.value());
     }
-    
+
     public synchronized void smoothZ(RegularData<Index1D, Offset1D> beam, double refIndex) {
         // TODO
         addHistory("z-smoothed");
@@ -233,18 +233,18 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     public final synchronized void fastSmoothZ(Referenced<Index1D, Offset1D> beam, int step) {
         fastSmoothZ(beam.getData(), beam.getReferenceIndex().value(), step);        
     }
-    
+
     public final synchronized void fastSmoothZ(RegularData<Index1D, Offset1D> beam, Offset1D refIndex, int step) {
         fastSmoothZ(beam, refIndex, step);
     }
-    
+
     public synchronized void fastSmoothZ(RegularData<Index1D, Offset1D> beam, double refIndex, int step) {
         // TODO
         addHistory("z-smoothed (fast method)");
     }
-    
-    
-    
+
+
+
     public Data2D getSumZ() { return getSumZ(0, sizeZ()); }
 
     public Data2D getSumZ(int fromZ, int toZ) {
@@ -267,7 +267,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
         return sum;
     }
-    
+
 
     public Data2D getAverageZ() {
         return getAverageZ(0, sizeZ());
@@ -294,15 +294,15 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
                 sum.scale(i, j, 1.0 / n);
             }
         }.process();
-        
+
         return sum;   
     }
 
     public Data2D getMedianZ() {
         return getMedianZ(0, sizeZ());
     }
-    
-    
+
+
     public Data2D getMedianZ(int fromZ, int toZ) {
         final int fromk = Math.max(0, fromZ);
         final int tok = Math.min(sizeZ(), toZ);
@@ -313,7 +313,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
         sum.new Fork<Void>() {
             private double[] sorter;
-            
+
             @Override
             public void init() {
                 super.init();
@@ -342,7 +342,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         final CubicSpline splineX = splines.getSpline(0);
         final CubicSpline splineY = splines.getSpline(1);
         final CubicSpline splineZ = splines.getSpline(2);
-        
+
         final int fromi = Math.max(0, splineX.minIndex());
         final int toi = Math.min(sizeX(), splineX.maxIndex());
 
@@ -378,10 +378,13 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     @Override
     public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op, Index3D from, Index3D to) {
         final Index3D index = new Index3D();
-        for(int k=to.k(); --k >= from.k(); ) for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) {
-            index.set(i, j, k);
-            op.process(index);
-            if(op.exception != null) return null;
+        for(int k=to.k(); --k >= from.k(); ) {
+            for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) {
+                index.set(i, j, k);
+                op.process(index);
+                if(op.exception != null) return null;
+            }
+            Thread.yield();
         }
         return op.getResult();
     }
@@ -389,8 +392,11 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
     @Override
     public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index3D from, Index3D to) {
-        for(int k=to.k(); --k >= from.k(); ) for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); )
-            if(isValid(i, j, k)) op.process(get(i, j, k));
+        for(int k=to.k(); --k >= from.k(); ) {
+            for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); )
+                if(isValid(i, j, k)) op.process(get(i, j, k));
+            Thread.yield();
+        }
         return op.getResult();
     }
 
