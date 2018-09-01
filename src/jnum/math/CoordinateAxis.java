@@ -44,7 +44,7 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	private static final long serialVersionUID = 7273239690459736139L;
 
 	/** The label. */
-    private String longLabel;
+    private String label;
 	
 	/** The short label. */
 	private String shortLabel;
@@ -97,7 +97,7 @@ public class CoordinateAxis implements Serializable, Cloneable {
 		defaults();
 		setShortLabel(shortLabel);
 		setFancyLabel(fancyLabel); 
-		setLongLabel(longLabel); 
+		setLabel(longLabel); 
 	}
 	
 	/* (non-Javadoc)
@@ -123,7 +123,7 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 *
 	 * @param text the new label
 	 */
-	public void setLongLabel(String text) { longLabel = text; }
+	public void setLabel(String text) { label = text; }
 	
 	/**
 	 * Sets the short label.
@@ -144,21 +144,21 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	 *
 	 * @return the label
 	 */
-	public String getLongLabel() { return longLabel; }
+	public String getLabel() { return label; }
 	
 	/**
 	 * Gets the short label.
 	 *
 	 * @return the short label
 	 */
-	public String getShortLabel() { return shortLabel == null ? getLongLabel() : shortLabel; }
+	public String getShortLabel() { return shortLabel == null ? getLabel() : shortLabel; }
 	
 	/**
 	 * Gets the fancy label.
 	 *
 	 * @return the fancy label
 	 */
-	public String getFancyLabel() { return fancyLabel == null ? getLongLabel() : fancyLabel; }
+	public String getFancyLabel() { return fancyLabel == null ? getLabel() : fancyLabel; }
 
 	/**
 	 * Sets the format.

@@ -260,7 +260,7 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     
     
     public void setUnit(String spec) {
-        setUnit(spec, null);
+        setUnit(spec, getLocalUnits());
     }
 
     public void setUnit(String spec, Map<String, Unit> extraBaseUnits) {

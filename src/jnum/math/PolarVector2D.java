@@ -59,6 +59,12 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	 */
 	public PolarVector2D(PolarVector2D template) { super(template); }
 
+	
+    @Override
+    public PolarVector2D copy() {
+        return (PolarVector2D) super.copy();
+    }
+	
 	/* (non-Javadoc)
 	 * @see jnum.Coordinate2D#isNull()
 	 */
@@ -191,6 +197,12 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 		}
 	}
 
+	
+    public static PolarVector2D[] copyOf(PolarVector2D[] array) {
+        PolarVector2D[] copy = new PolarVector2D[array.length];
+        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        return copy;
+    }
 
 	/**
 	 * To string.

@@ -370,7 +370,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     @SuppressWarnings("cast")
     @Override
     public final Samples1D getCropped(Index1D imin, Index1D imax) {
-        return (Samples1D) getCropped(imin, imax);
+        return (Samples1D) getCropped(imin.i(), imax.i());
     }
     
     public Samples1D getCropped(int imin, int imax) {

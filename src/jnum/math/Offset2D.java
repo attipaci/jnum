@@ -30,13 +30,13 @@ import jnum.Util;
  * The Class Offset2D.
  */
 public class Offset2D extends Vector2D {
-    
+
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -2072131491069589417L;
-    
+
     /** The reference. */
     private Coordinate2D reference;
-    
+
     /**
      * Instantiates a new offset 2 D.
      *
@@ -45,7 +45,7 @@ public class Offset2D extends Vector2D {
     public Offset2D(Coordinate2D reference) {
         this.reference = reference;
     }
-    
+
     /**
      * Instantiates a new offset 2 D.
      *
@@ -56,7 +56,7 @@ public class Offset2D extends Vector2D {
         this(reference);
         copy(offset);
     }
-    
+
     /* (non-Javadoc)
      * @see jnum.math.Coordinate2D#equals(java.lang.Object)
      */
@@ -68,25 +68,32 @@ public class Offset2D extends Vector2D {
         if(!Util.equals(offset.getCoordinateClass(), getCoordinateClass())) return false;
         return super.equals(o);
     }
-    
+
     /* (non-Javadoc)
      * @see jnum.math.Coordinate2D#hashCode()
      */
     @Override
     public int hashCode() { return super.hashCode() ^ reference.hashCode(); }
-    
+
     /**
      * Gets the coordinate class.
      *
      * @return the coordinate class
      */
     public Class<?> getCoordinateClass() { return reference.getClass(); }
-    
+
     /**
      * Gets the reference.
      *
      * @return the reference
      */
     public Coordinate2D getReference() { return reference; }
-    
+
+
+    public static Vector2D[] copyOf(Vector2D[] array) {
+        Vector2D[] copy = new Vector2D[array.length];
+        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        return copy;
+    }
+
 }

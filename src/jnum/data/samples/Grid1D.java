@@ -40,12 +40,17 @@ public class Grid1D extends CartesianGrid<Scalar> {
     
     /** The resolution. */
     private Scalar refIndex, refValue, resolution;
-  
+    
     public Grid1D() {
         super(1);
         refIndex = new Scalar();
         refValue = new Scalar();
         resolution = new Scalar();
+    }
+    
+    public Grid1D(int axisIndexFromOne) {
+        this();
+        setFirstAxisIndex(axisIndexFromOne);
     }
     
     public final CoordinateAxis getAxis() { return getCoordinateSystem().get(0); }

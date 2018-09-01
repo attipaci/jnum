@@ -54,6 +54,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
    
     public boolean isZeroWeightValid = false;
     
+    
     public Observation2D(Class<? extends Number> dataType, int flagType) {
         this(dataType, dataType, flagType);
     }

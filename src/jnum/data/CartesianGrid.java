@@ -99,8 +99,7 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
             
             c.add(new HeaderCard("CTYPE" + spec, axis.getShortLabel(), id + " name"));
             if(axis.getUnit() != null) c.add(new HeaderCard("CUNIT" + spec, axis.getUnit().name(), id + " unit"));
-            c.add(new HeaderCard("CDELT" + spec, getResolution(i), id + " spacing."));
-            
+            c.add(new HeaderCard("CDELT" + spec, getResolution(i) / axis.getUnit().value(), id + " spacing."));        
         }
         
     }

@@ -40,11 +40,12 @@ import jnum.data.samples.Grid1D;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import jnum.math.Vector3D;
+import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCardException;
 
 
 public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1<MapType> implements Referenced<Index3D, Vector3D> {
 
-    private MapType mapTemplate;
 
     private Class<? extends Number> dataType;
     private int flagType;
@@ -55,9 +56,10 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     public AbstractMap2D1(Class<? extends Number> dataType, int flagType) {
         this.dataType = dataType;
         this.flagType = flagType;
-        mapTemplate = getPlaneInstance();
+        grid1D = new Grid1D(3);
+        setDefaultUnit();
     }
-
+   
 
     @Override
     public final Class<? extends Number> getElementType() { return dataType; }
@@ -91,55 +93,42 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     
     @Override
     public void addLocalUnit(Unit u) {
-        mapTemplate.addLocalUnit(u);
+        getPlaneTemplate().addLocalUnit(u);
         for(MapType plane : getPlanes()) plane.addLocalUnit(u);
     }
 
     @Override
     public void addLocalUnit(Unit u, String altNames) {
-        mapTemplate.addLocalUnit(u, altNames);
+        getPlaneTemplate().addLocalUnit(u, altNames);
         for(MapType plane : getPlanes()) plane.addLocalUnit(u, altNames);
     }
 
     @Override
-    public Hashtable<String, Unit> getLocalUnits() { return mapTemplate.getLocalUnits(); }
-
-
-    private void applyTemplateTo(MapType map) {
-        if(mapTemplate == null) return;
-
-        map.getProperties().copy(mapTemplate.getProperties());     
-        map.setValidatingFlags(mapTemplate.getValidatingFlags());
-
-        for(Unit u : mapTemplate.getLocalUnits().values()) map.addLocalUnit(u);
-        map.setUnit(mapTemplate.getUnit().name());
-    }
-
-
-    public void makeConsistent() {
-        for(MapType map : getPlanes()) if(map != mapTemplate) applyTemplateTo(map);
-    }
+    public Hashtable<String, Unit> getLocalUnits() { return getPlaneTemplate().getLocalUnits(); }
 
 
     @Override
-    public void addPlane(MapType map) {
-        applyTemplateTo(map);
-        if(getPlanes().isEmpty()) mapTemplate = map;
-        super.addPlane(map);  
-    }
+    protected void applyTemplateTo(MapType map) {
+        super.applyTemplateTo(map);
+        
+        MapType template = getPlaneTemplate();
+        
+        if(template == null) return;
 
-    @Override
-    public MapType getPlane() {
-        return mapTemplate;
+        map.getProperties().copy(template.getProperties());     
+        map.setValidatingFlags(template.getValidatingFlags());
+
+        for(Unit u : template.getLocalUnits().values()) map.addLocalUnit(u);
+        map.setUnit(template.getUnit().name());
     }
 
 
     public Grid2D<?> getGrid2D() {
-        return mapTemplate.getGrid();
+        return getPlaneTemplate().getGrid();
     }
 
     public void setGrid2D(Grid2D<?> grid) {
-        mapTemplate.setGrid(grid);
+        getPlaneTemplate().setGrid(grid);
         for(Map2D map : getPlanes()) map.setGrid(grid);
     }
 
@@ -148,30 +137,19 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     }
 
     public void setGrid1D(Grid1D grid) {
+        grid.setFirstAxisIndex(3);
         this.grid1D = grid;
     }
 
-    @Override
-    public Unit getUnit() {
-        return mapTemplate.getUnit();
-    }
 
-    @Override
-    public void setUnit(Unit u) {
-        mapTemplate.setUnit(u);
-    }
-
-    @Override
-    public void setUnit(String spec) {
-        mapTemplate.setUnit(spec);
-    }
-
+    
+    
     public Coordinate2D getReference2D() {
-        return getPlane().getReference();
+        return getPlaneTemplate().getReference();
     }
 
     public void setReference2D(Coordinate2D coords) {
-        mapTemplate.setReference(coords);
+        getPlaneTemplate().setReference(coords);
         for(Map2D map : getPlanes()) map.setReference(coords);
     }
 
@@ -183,15 +161,15 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
         grid1D.setReference(value);
     }
 
-    public long getCriticalFlags() { return mapTemplate.getValidatingFlags(); }
+    public long getCriticalFlags() { return getPlaneTemplate().getValidatingFlags(); }
 
     public void setCriticalFlags(long pattern) {
-        mapTemplate.setValidatingFlags(pattern);
+        getPlaneTemplate().setValidatingFlags(pattern);
         for(Map2D map : getPlanes()) map.setValidatingFlags(pattern);
     }
 
     public final void renew() {
-        mapTemplate.renew();
+        getPlaneTemplate().renew();
         for(Map2D map : getPlanes()) map.renew();
     }
     
@@ -247,6 +225,11 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
         for(Map2D plane : getPlanes()) plane.getProperties().resetFiltering();
     }
     
+    public void resetProcessing() {
+        for(Map2D plane : getPlanes()) plane.resetProcessing();
+    }
+
+    
     // TODO smoothZ(fwhm), smoothZTo(fwhm)
     // TODO filterZAbove(fwhm), filterZAbove(fwhm, validator)
 
@@ -279,10 +262,19 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     public String getInfo() {
         Grid1D gridZ = getGrid1D();
         Unit specUnit = gridZ.getAxis().getUnit();
-        return getPlane().getInfo() + "\n" +
+        return getPlaneTemplate().getInfo() + "\n" +
                 "Spectral: " + sizeZ() + " bins @ " + 
                 Util.s3.format(gridZ.getReference().value() / specUnit.value()) + " with " +
                 Util.s3.format(gridZ.getResolution().value() / specUnit.value()) + " resolution";
+    }
+    
+    
+    @Override
+    protected void editHeader(Header header) throws HeaderCardException {   
+        grid1D.editHeader(header);
+        MapType representative = sizeZ() > 0 ? getPlane(0) : getPlaneTemplate();
+        representative.getProperties().editHeader(header);    
+        super.editHeader(header);
     }
 
 }

@@ -605,14 +605,18 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	public static Class<? extends SphericalCoordinates> getFITSClass(String spec) {	
 	    if(fitsTypes == null) registerTypes();
 	    
-	    if(spec.length() > 4) spec = spec.substring(0, 4);
-	    if(spec.length() < 4) {
-	        StringBuffer buf = new StringBuffer(4);
-	        buf.append(spec);
-	        while(buf.length() < 4) buf.append('-');
-	        spec = new String(buf);
-	    }
-	  
+	    StringBuffer buf = new StringBuffer(4);
+	    int l = Math.min(4, spec.length());
+	    int i;
+	    
+        for(i=0; i<l; i++) {
+            char c = spec.charAt(i);
+            if(c == '-') break;
+            buf.append(spec.charAt(i));
+        }
+        for(; i<4; i++) buf.append('-');
+        spec = new String(buf);
+	       
 		Class<? extends SphericalCoordinates> coordClass = fitsTypes.get(spec.toUpperCase());
 		if(coordClass == null) throw new IllegalArgumentException("Unknown Coordinate Definition " + spec);
 		return coordClass;

@@ -305,6 +305,12 @@ ViewableAsDoubles, Parser, NumberFormating {
         }
     }
     
+    public static Coordinate3D[] copyOf(Coordinate3D[] array) {
+        Coordinate3D[] copy = new Coordinate3D[array.length];
+        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        return copy;
+    }
+    
 
     public static final int X = 0;    
     public static final int Y = 1;

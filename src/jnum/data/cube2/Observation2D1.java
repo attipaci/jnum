@@ -39,9 +39,12 @@ import jnum.math.Vector3D;
 
 
 public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Observations<Data3D>, IndexedObservations<Index3D> {
+    private Class<? extends Number> weightType;
+    
     
     public Observation2D1(Class<? extends Number> dataType, Class<? extends Number> weightType, int flagType) {
         super(dataType, flagType);
+        this.weightType = weightType;
     }
 
 
@@ -52,14 +55,16 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
     }
 
     @Override
-    public Observation2D getPlaneInstance() { return new Observation2D(getElementType(), getElementType(), getFlagType()); }
+    public Observation2D newPlaneInstance() { 
+        return new Observation2D(getElementType(), weightType == null ? getElementType() : weightType, getFlagType()); 
+    }
 
 
     @Override
     public Data2D1<Data2D> getWeights() {
         Data2D1<Data2D> weight = new Data2D1<Data2D>(sizeZ()) {
             @Override
-            public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
+            public Data2D newPlaneInstance() { return null; }
         };
 
         for(int i=0; i<sizeZ(); i++) weight.addPlane(getPlane(i).getWeights());
@@ -71,7 +76,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
     public Data2D1<Data2D> getExposures() {
         Data2D1<Data2D> exposure = new Data2D1<Data2D>(sizeZ()) {
             @Override
-            public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
+            public Data2D newPlaneInstance() { return null; }
         };
 
         for(int i=0; i<sizeZ(); i++) exposure.addPlane(getPlane(i).getExposures());
@@ -148,20 +153,18 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
 
 
     public final void mergeAccumulate(final Observation2D1 cube) {
-        super.add(cube);
         for(int k=sizeZ(); --k >= 0; ) getPlane(k).mergeAccumulate(cube.getPlane(k));
-
     }
 
 
 
     public final synchronized void accumulateAt(final Vector3D index, final double value, final double gain, final double w, final double time) {
-        accumulateAt((int)Math.round(index.x()), (int)Math.round(index.y()), (int)Math.round(index.z()), value, gain, w, time);
+        getPlane((int)Math.round(index.z())).accumulateAt((int)Math.round(index.x()), (int)Math.round(index.y()), value, gain, w, time);
     }
 
 
     public final synchronized void accumulateAt(final Index3D index, final double value, final double gain, final double w, final double time) {
-        accumulateAt(index.i(), index.j(), index.k(), value, gain, w, time);
+        getPlane(index.k()).accumulateAt(index.i(), index.j(), value, gain, w, time);
     }
 
 
@@ -230,7 +233,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
 
         if(tok < fromk) return null;
 
-        final Observation2D ave = getPlane().copy(false);
+        final Observation2D ave = getPlaneTemplate().copy(false);
 
         new ForkZ<Void>(fromk, tok) {
             @Override
@@ -245,6 +248,12 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
 
         return ave;
     }
+    
+    @Override
+    public Observation2D getMedianZ() { 
+        return getAverageZ(0, sizeZ());
+    }
+
 
     @Override
     public Observation2D getMedianZ(int fromZ, int toZ) {
@@ -253,7 +262,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
 
         if(tok < fromk) return null;
 
-        final Observation2D median = getPlaneInstance();
+        final Observation2D median = createPlane();
 
         median.new Fork<Void>() {
             private WeightedPoint[] sorter;

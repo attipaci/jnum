@@ -411,7 +411,7 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     @SuppressWarnings("cast")
     @Override
     public final Cube3D getCropped(Index3D from, Index3D to) {
-        return (Cube3D) getCropped(from, to);
+        return (Cube3D) getCropped(from.i(), from.j(), from.k(), to.i(), to.j(), to.k());
     }
 
     public Cube3D getCropped(int imin, int jmin, int kmin, int imax, int jmax, int kmax) {

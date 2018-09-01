@@ -107,10 +107,11 @@ public class MapProperties extends FitsProperties {
         correctingFWHM = p.correctingFWHM;
         filterBlanking = p.filterBlanking;
         
-        grid = p.grid;
-        displayGridUnit = p.displayGridUnit;
-        underlyingBeam = p.underlyingBeam.copy();
-        smoothingBeam = p.smoothingBeam.copy();
+        if(p.grid != null) grid = p.grid.copy();
+        if(p.displayGridUnit != null) displayGridUnit = p.displayGridUnit.copy();
+       
+        if(p.underlyingBeam != null) underlyingBeam = p.underlyingBeam.copy();
+        if(p.smoothingBeam != null) smoothingBeam = p.smoothingBeam.copy();
     }
     
     @Override
@@ -382,8 +383,7 @@ public class MapProperties extends FitsProperties {
         else underlyingBeam.set(0.0);
     
     }
-    
-
+        
     @Override
     public void editHeader(Header header) throws HeaderCardException {   
         editCoordinateInfo(header);

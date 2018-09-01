@@ -81,8 +81,16 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
 
 
 
-    private Map2D() { 
-        init();    
+    private Map2D() {
+        reuseIndex = new Vector2D();
+        properties = getPropertiesInstance();
+        setGrid(new FlatGrid2D());        
+    }
+    
+    @Override
+    public void setDefaultUnit() {
+        addProprietaryUnits();   
+        super.setDefaultUnit();
     }
 
     public Map2D(Image2D data, int flagType) {
@@ -95,26 +103,11 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
         this(Image2D.createType(dataType), flagType);
     }
 
-    protected void init() {
-        reuseIndex = new Vector2D();
-        properties = getPropertiesInstance();
-        setGrid(new FlatGrid2D());
-        addProprietaryUnits();
-    }
-
-
-
-    @Override
-    public void setUnit(String spec) {
-        setUnit(spec, getLocalUnits());
-    }
-
     @Override
     public void setUnit(Unit u) {
         super.setUnit(u);
         if(getImage() != null) getImage().setUnit(u);
     }
-
 
     protected void addProprietaryUnits() {
         addLocalUnit(new Unit("beam", Double.NaN) {            
@@ -718,7 +711,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
 
 
     @Override
-    protected void editHeader(Header header) throws HeaderCardException {  
+    public void editHeader(Header header) throws HeaderCardException {  
         properties.editHeader(header);   
         super.editHeader(header);
     }

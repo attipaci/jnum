@@ -66,7 +66,7 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 	 */
 	@Override
 	public boolean add(CoordinateAxis axis) {
-	    if(contains(axis.getShortLabel()) || contains(axis.getLongLabel()) || contains(axis.getFancyLabel()))
+	    if(contains(axis.getShortLabel()) || contains(axis.getLabel()) || contains(axis.getFancyLabel()))
 	        throw new IllegalArgumentException(getClass().getName() + " already has axis '" + axis.getShortLabel());
 		return super.add(axis);
 	}
@@ -76,7 +76,7 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 	 */
 	@Override
 	public void add(int index, CoordinateAxis axis) {
-		if(contains(axis.getShortLabel()) || contains(axis.getLongLabel()) || contains(axis.getFancyLabel()))
+		if(contains(axis.getShortLabel()) || contains(axis.getLabel()) || contains(axis.getFancyLabel()))
 		    throw new IllegalArgumentException(getClass().getName() + " already has axis '" + axis.getShortLabel());
 		super.add(index, axis);
 	}
@@ -148,7 +148,7 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 	 */
 	public boolean contains(String name) {
 		for(CoordinateAxis axis : this) {
-		    if(axis.getLongLabel().equals(name)) return true;
+		    if(axis.getLabel().equals(name)) return true;
 		    if(axis.getFancyLabel().equals(name)) return true;
 		    if(axis.getShortLabel().equals(name)) return true;
 		}
@@ -165,7 +165,7 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 	public CoordinateAxis getAxis(String name) {
 		for(int i=size(); --i >= 0; ) {
 		    if(get(i).getShortLabel().equals(name)) return get(i);
-		    if(get(i).getLongLabel().equals(name)) return get(i);
+		    if(get(i).getLabel().equals(name)) return get(i);
 		    if(get(i).getFancyLabel().equals(name)) return get(i);
 		}
 		return null;

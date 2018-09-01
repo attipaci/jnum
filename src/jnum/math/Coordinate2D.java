@@ -586,6 +586,12 @@ ViewableAsDoubles, Parser, NumberFormating {
         default: throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no component " + index);
         }
     }
+    
+    public static Coordinate2D[] copyOf(Coordinate2D[] array) {
+        Coordinate2D[] copy = new Coordinate2D[array.length];
+        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        return copy;
+    }
 	
 	
 	/** The Constant X. */

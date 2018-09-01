@@ -30,23 +30,35 @@ import jnum.data.image.Index2D;
 
 public abstract class Resizable2D1<ImageType extends Data2D & Resizable<Index2D>> extends Data2D1<ImageType> {
 
-    @Override
-    public final ImageType getImage2DInstance(int sizeX, int sizeY) {
-        ImageType image = getPlaneInstance();
-        image.setSize(new Index2D(sizeX, sizeY));
-        return image;
-    }
-
-    public abstract ImageType getPlaneInstance();
-      
     
+    @Override
+    protected void applyTemplateTo(ImageType image) {
+        image.setSize(new Index2D(sizeX(), sizeY()));
+        super.applyTemplateTo(image);
+    }
+    
+
     public final void crop(Index3D from, Index3D to) {
         cropZ(from.k(), to.k());
         cropXY(new Index2D(from.i(), from.j()), new Index2D(to.i(), to.j()));
-        
     }
    
-    public abstract void cropXY(Index2D from, Index2D to);
+    public void setSize(int sizeX, int sizeY, int sizeZ) {
+        destroy();
+        setSizeZ(sizeZ);
+        setSizeXY(sizeX, sizeY);
+    }
     
+    public void setSizeXY(int sizeX, int sizeY) {
+        setSizeXY(new Index2D(sizeX, sizeY));
+    }
+        
+    public void setSizeXY(Index2D sizeXY) { 
+        getPlaneTemplate().setSize(sizeXY);
+        for(int k=sizeZ(); --k >= 0; ) getPlane(k).setSize(sizeXY);
+        addHistory("XY-size: " + getPlaneTemplate().getSizeString());
+    }
+
+    public abstract void cropXY(Index2D from, Index2D to);
     
 }

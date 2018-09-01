@@ -21,9 +21,10 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.image;
+package jnum.data.cube2;
 
 import jnum.data.CartesianGrid;
+import jnum.data.image.Grid2D;
 import jnum.math.Coordinate2D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
@@ -37,6 +38,18 @@ public class Grid2DPlus<BaseCoordType extends Coordinate2D, SubGridType extends 
     private Grid2D<BaseCoordType> baseGrid;
     private SubGridType subGrid;
     
+    public Grid2DPlus() {}
+    
+    public Grid2DPlus(Grid2D<BaseCoordType> grid2D) {
+        this();
+        setBaseGrid(grid2D);
+    }
+    
+    public Grid2DPlus(Grid2D<BaseCoordType> grid2D, SubGridType grid1D) {
+        this(grid2D);
+        setSubGrid(grid1D);
+    }
+    
     public Grid2D<BaseCoordType> getBaseGrid() { return baseGrid; }
     
     public void setBaseGrid(Grid2D<BaseCoordType> grid) {
@@ -45,7 +58,10 @@ public class Grid2DPlus<BaseCoordType extends Coordinate2D, SubGridType extends 
     
     public SubGridType getSubGrid() { return subGrid; }
     
-    public void setSubGrid(SubGridType grid) { this.subGrid = grid; }
+    public void setSubGrid(SubGridType grid) {
+        grid.setFirstAxisIndex(3);
+        this.subGrid = grid; 
+    }
     
     @Override
     public void parseProjection(Header header) throws HeaderCardException {

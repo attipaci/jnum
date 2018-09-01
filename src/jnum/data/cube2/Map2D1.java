@@ -35,7 +35,8 @@ public class Map2D1 extends AbstractMap2D1<Map2D> {
     }
     
     @Override
-    public Map2D getPlaneInstance() { return new Map2D(getElementType(), getFlagType()); }
+    public Map2D newPlaneInstance() { 
+        return new Map2D(getElementType(), getFlagType()); 
+    }
  
-
 }

@@ -25,9 +25,11 @@ package jnum.data.cube2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import jnum.NonConformingException;
 import jnum.PointOp;
+import jnum.Unit;
 import jnum.data.cube.Index3D;
 import jnum.data.CubicSpline;
 import jnum.data.Referenced;
@@ -50,11 +52,10 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
      * 
      */
 
-
+    private ImageType template;
     private ArrayList<ImageType> stack;
-
-
-
+    
+      
     public Data2D1() {
         stack = new ArrayList<ImageType>();
     }
@@ -63,20 +64,71 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         this();
         stack.ensureCapacity(initialPlanesCapacity);
     }
+    
+    @Override
+    public void addLocalUnit(Unit u, String altNames) {
+        super.addLocalUnit(u, altNames);
+        if(template != null) template.addLocalUnit(u, altNames);
+    }
+    
+    @Override
+    public void addLocalUnit(Unit u) {
+        super.addLocalUnit(u);
+        if(template != null) template.addLocalUnit(u);
+    }
+    
+    @Override
+    public void setUnit(String name) {
+        if(template == null) super.setUnit(name);
+        else {
+            template.setUnit(name);
+            super.setUnit(template.getUnit());
+        }
+    }
+    
+    @Override
+    public void setUnit(Unit u) {
+        super.setUnit(u);
+        if(template != null) template.setUnit(u);
+    }
+    
+    public abstract ImageType newPlaneInstance();
+    
+    public final ImageType createPlane() {
+        ImageType plane = newPlaneInstance();
+        applyTemplateTo(plane);
+        return plane;        
+    }
+    
+    public ImageType getPlaneTemplate() { 
+        if(template == null) {
+            template = newPlaneInstance();
+            Map<String, Unit> localUnits = getLocalUnits();
+            if(localUnits != null) for(Unit u : localUnits.values()) template.addLocalUnit(u);
+            template.setUnit(getUnit());
+        }
+        return template;    
+    }
+    
+    
+    protected void applyTemplateTo(ImageType image) {
+        Map<String, Unit> templateLocalUnits = getPlaneTemplate().getLocalUnits();
+        if(templateLocalUnits != null) for(Unit u : templateLocalUnits.values()) image.addLocalUnit(u);
+        image.setUnit(template.getUnit().name());
+    }
+
+    public void makeConsistent() {
+        for(ImageType image : getPlanes()) if(image != template) applyTemplateTo(image);
+    }
 
 
-    public abstract ImageType getImage2DInstance(int sizeX, int sizeY);
-
-
-
+    
     public ArrayList<ImageType> getPlanes() { return stack; }
 
 
     public final ImageType getPlane(int index) {
         return stack.get(index);
     }
-
-    protected ImageType getPlane() { return stack.get(0); }
 
 
     public final void setPlane(int index, ImageType image) {
@@ -87,6 +139,9 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         if(!stack.isEmpty()) if(image.sizeX() != sizeX() || image.sizeY() != sizeY()) 
             throw new NonConformingException("irregular stack addition.");
 
+        if(stack.isEmpty()) template = image;
+        else applyTemplateTo(image);
+        
         stack.add(image);
     }
 
@@ -99,48 +154,56 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     }
 
     @Override
-    public Class<? extends Number> getElementType() { return getPlane().getElementType(); }
+    public Class<? extends Number> getElementType() { return getPlaneTemplate().getElementType(); }
 
     @Override
     public Number getLowestCompareValue() {
-        return getPlane().getLowestCompareValue();
+        return getPlaneTemplate().getLowestCompareValue();
     }
 
     @Override
     public Number getHighestCompareValue() {
-        return getPlane().getHighestCompareValue();
+        return getPlaneTemplate().getHighestCompareValue();
     }
 
     @Override
     public int compare(Number a, Number b) {
-        return getPlane().compare(a, b);
+        return getPlaneTemplate().compare(a, b);
     }
 
 
     @Override
-    public int sizeX() { return stack.isEmpty() ? 0 : getPlane().sizeX(); }
+    public int sizeX() { return getPlaneTemplate().sizeX(); }
 
     @Override
-    public int sizeY() { return stack.isEmpty() ? 0 : getPlane().sizeY(); }
+    public int sizeY() { return getPlaneTemplate().sizeY(); }
 
     @Override
     public int sizeZ() { return stack.size(); }
 
 
-    public void setSize(int sizeX, int sizeY, int sizeZ) {
-        stack.clear();
-        stack.ensureCapacity(sizeZ);
-        for(int k=sizeZ; --k >= 0; ) stack.add(getImage2DInstance(sizeX, sizeY));
+    public void setSizeZ(int sizeZ) {
+        getPlanes().clear();
+        if(sizeZ > 0) {       
+            getPlanes().ensureCapacity(sizeZ);
+            for(int k=sizeZ; --k >= 0; ) addPlane(createPlane());
+            addHistory("Z-size: " + sizeZ);
+        }
+        else addHistory("Set null size.");
     }
-
+    
+    public final void destroy() { setSizeZ(0); }
+    
     public void setPlanes(ImageType[] planes) {
         stack.clear();
         for(int i=0; i<planes.length; i++) addPlane(planes[i]);
+        addHistory("Set " + planes.length + "planes.");
     }
 
     public void setPlanes(List<ImageType> planes) {
         stack.clear();
         for(int i=0; i<planes.size(); i++) addPlane(planes.get(i));
+        addHistory("Set " + planes.size() + "planes.");
     }
 
 
@@ -189,10 +252,10 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
 
     @Override
-    public Data2D1<Data2D> getCore() {
-        Data2D1<Data2D> data = new Data2D1<Data2D>(sizeZ()) {
+    public Data2D1<Image2D> getCore() {
+        Data2D1<Image2D> data = new Data2D1<Image2D>(sizeZ()) {
             @Override
-            public Data2D getImage2DInstance(int sizeX, int sizeY) { return null; }
+            public Image2D newPlaneInstance() { return null; }
         };
 
         for(int i=0; i<sizeZ(); i++) data.addPlane(getPlane(i).getImage());
@@ -235,7 +298,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     }
 
     public final synchronized void fastSmoothZ(RegularData<Index1D, Offset1D> beam, Offset1D refIndex, int step) {
-        fastSmoothZ(beam, refIndex, step);
+        fastSmoothZ(beam, refIndex.value(), step);
     }
 
     public synchronized void fastSmoothZ(RegularData<Index1D, Offset1D> beam, double refIndex, int step) {
@@ -436,6 +499,6 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         }  
 
     } 
-
-
+    
+ 
 }

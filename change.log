@@ -1,3 +1,21 @@
+0.22-a1
+
+	[NEW] New array creation static methods for Coordinate2D/3D and
+	subclasses. 
+
+	[FIX] AbstractMap2D1 now includes the FITS coordinate header info.
+
+	[FIX] Fixes and improvements to 2D+1D initialization, templates, and 
+	units handling.
+
+	[FIX] Identifying spherical / celestial coordinate systems based on
+	FITS CTYPE keyword did not deal well with some non-standard 
+	definitions (e.g. 'RA-XXX' instead of 'RA--XXX'). Fixed.
+
+	[FIX] MapProperties.copy(template) was neither a fully independent copy
+	nor did it deal with null fields. Both issues fixed.
+
+
 0.21-1
 
 	Overview

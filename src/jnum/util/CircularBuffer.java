@@ -262,22 +262,6 @@ public class CircularBuffer<Type> implements Iterable<Type>, Serializable {
 	}
 	
 	/**
-	 * Lock.
-	 *
-	 * @throws InterruptedException the interrupted exception
-	 */
-	public synchronized void lock() throws InterruptedException {
-		wait();
-	}
-	
-	/**
-	 * Release.
-	 */
-	public synchronized void release() {
-		notifyAll();
-	}
-	
-	/**
 	 * Reverse iterator.
 	 *
 	 * @return the iterator

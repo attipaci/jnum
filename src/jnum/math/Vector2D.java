@@ -448,7 +448,12 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     }
 
 
-
+    public static Vector2D[] copyOf(Vector2D[] array) {
+        Vector2D[] copy = new Vector2D[array.length];
+        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        return copy;
+    }
+    
 
     /** The Constant LENGTH. */
     public static final int LENGTH = 2;

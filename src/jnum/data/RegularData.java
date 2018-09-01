@@ -33,11 +33,12 @@ import jnum.parallel.ParallelPointOp;
 public abstract class RegularData<IndexType extends Index<IndexType>, VectorType extends TrueVector<Double>> extends Data<IndexType> {
     protected SplineSet<VectorType> reuseIpolData;
 
+
     public RegularData() {
         reuseIpolData = new SplineSet<VectorType>(dimension());
         setInterpolationType(SPLINE);
     }
-
+    
     @SuppressWarnings("unchecked")
     @Override
     public RegularData<IndexType, VectorType> clone() {
