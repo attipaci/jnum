@@ -107,7 +107,6 @@ public abstract class Flag<Type extends Number> implements Serializable {
     public boolean equals(Object o) {
         if(this == o) return true;
         if(!(o instanceof Flag)) return false;
-        if(!super.equals(o)) return false;
         
         Flag<?> f = (Flag<?>) o;
         if(f.value() != value()) return false;

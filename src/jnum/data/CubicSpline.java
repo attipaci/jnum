@@ -64,7 +64,7 @@ public class CubicSpline implements Serializable {
 	public boolean equals(Object o) {
 		if(o == this) return true;
 		if(!(o instanceof CubicSpline)) return false;
-		if(!super.equals(o)) return false;
+
 		CubicSpline spline = (CubicSpline) o;
 		if(centerIndex != spline.centerIndex) return false;
 		return true;

@@ -402,8 +402,10 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		@Override
 		public boolean equals(Object o) {
 			if(o == this) return true;
-			if(!super.equals(o)) return false;
-			return Arrays.equals(data, ((FauxComplexArray.Float) o).data);
+			if(!(o instanceof FauxComplexArray.Float)) return false;
+			
+			FauxComplexArray.Float array = (FauxComplexArray.Float) o;
+			return Arrays.equals(data, array.data);
 		}
 		
 		
@@ -502,8 +504,10 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		@Override
 		public boolean equals(Object o) {
 			if(o == this) return true;
-			if(!super.equals(o)) return false;
-			return Arrays.equals(data, ((FauxComplexArray.Double) o).data);
+			if(!(o instanceof FauxComplexArray.Double)) return false;
+			
+			FauxComplexArray.Double array = (FauxComplexArray.Double) o;
+			return Arrays.equals(data, array.data);
 		}
 		
 		/* (non-Javadoc)

@@ -63,7 +63,7 @@ public abstract class DataStore<Type extends Number> implements Serializable {
 	public boolean equals(Object o) {
 		if(o == this) return true;
 		if(!(o instanceof DataStore)) return false;
-		if(!super.equals(o)) return false;
+		
 		DataStore<?> store = (DataStore<?>) o;
 		if(name.equals(store.name)) return true;
 		return false;

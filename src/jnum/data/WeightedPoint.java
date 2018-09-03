@@ -515,6 +515,4 @@ Accumulating<WeightedPoint>
 		exact();
 	}
 
-   
-	
 }

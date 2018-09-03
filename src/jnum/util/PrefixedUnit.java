@@ -44,7 +44,7 @@ public class PrefixedUnit extends Unit {
         
         PrefixedUnit u = (PrefixedUnit) o;
         if(!u.multiplier.equals(multiplier)) return false;
-        return super.equals(o);
+        return true;
     }
     
 

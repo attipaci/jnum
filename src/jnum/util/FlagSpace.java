@@ -102,7 +102,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     public boolean equals(Object o) {
         if(this == o) return true;
         if(!(o instanceof FlagSpace)) return false;
-        if(!super.equals(o)) return false;
+
         FlagSpace<?> f = (FlagSpace<?>) o;
         if(!f.name.equals(name)) return false;
         return true;

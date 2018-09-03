@@ -53,8 +53,9 @@ public class Asymmetry2D implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object o) {
+	    if(o == this) return true;
 		if(!(o instanceof Asymmetry2D)) return false;
-		if(!super.equals(o)) return false;
+		
 		Asymmetry2D asym = (Asymmetry2D) o;
 		if(!Util.equals(x, asym.x)) return false;
 		if(!Util.equals(y, asym.y)) return false;

@@ -77,8 +77,6 @@ FitsHeaderEditing, FitsHeaderParsing {
     public boolean equals(Object o) {
         if(this == o) return true;
         if(!(o instanceof FitsProperties)) return false;
-        if(!super.equals(o)) return false;
-        
         
         FitsProperties p = (FitsProperties) o;
         

@@ -55,7 +55,7 @@ public class AstroSystem implements Serializable {
 	public boolean equals(Object o) {
 		if(o == this) return true;
 		if(!(o instanceof AstroSystem)) return false;
-		if(!super.equals(o)) return false;
+
 		AstroSystem a = (AstroSystem) o;
 		if(a.system == null) return false;
 		return a.system.equals(system); 

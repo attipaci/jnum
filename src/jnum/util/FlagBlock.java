@@ -80,7 +80,7 @@ public class FlagBlock<Type extends Number> implements Serializable {
     public boolean equals(Object o) {
         if(o == this) return true;
         if(!(o instanceof FlagBlock)) return false;
-        if(!super.equals(o)) return false;
+
         FlagBlock<?> r = (FlagBlock<?>) o;
         if(r.mask != mask) return false;
         if(r.nextBit != nextBit) return false;
