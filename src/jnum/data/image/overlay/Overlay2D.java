@@ -1,8 +1,11 @@
 package jnum.data.image.overlay;
 
+import jnum.Copiable;
+import jnum.CopiableContent;
 import jnum.Util;
 import jnum.data.Data;
 import jnum.data.image.Data2D;
+import jnum.data.image.Image2D;
 import jnum.data.image.Values2D;
 import jnum.parallel.Parallelizable;
 
@@ -29,7 +32,7 @@ import jnum.parallel.Parallelizable;
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-public class Overlay2D extends Data2D {
+public class Overlay2D extends Data2D implements CopiableContent<Overlay2D> {
     private Values2D values;
   
     public Overlay2D() {}
@@ -55,6 +58,24 @@ public class Overlay2D extends Data2D {
         return super.equals(o);
     }
    
+    @Override
+    public Overlay2D copy() {
+        return copy(true);
+    }
+    
+    @Override
+    public Overlay2D copy(boolean withContent) {
+        Overlay2D copy = (Overlay2D) clone();
+        if(values != null) {
+            if(values instanceof CopiableContent) copy.values = (Values2D) ((CopiableContent<?>) values).copy(withContent);
+            else if(withContent) {
+                if(values instanceof Copiable) copy.values = (Values2D) ((Copiable<?>) values).copy();
+                else Image2D.createType(values.getElementType(), values.sizeX(), values.sizeY());
+            }
+            else copy.values = new Overlay2D(values).getImage();
+        }
+        return copy;
+    }
    
     public Values2D getBasis() { return values; }
     

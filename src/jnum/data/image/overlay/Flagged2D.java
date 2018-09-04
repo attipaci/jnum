@@ -23,10 +23,13 @@
 
 package jnum.data.image.overlay;
 
+import java.util.concurrent.ExecutorService;
+
 import jnum.Util;
 import jnum.data.image.Flag2D;
 import jnum.data.image.Index2D;
 import jnum.data.image.Values2D;
+import jnum.parallel.ParallelPointOp;
 import jnum.util.FlagBlock;
 import jnum.util.FlagSpace;
 import jnum.util.HashCode;
@@ -65,6 +68,18 @@ public class Flagged2D extends Overlay2D {
 
         return super.equals(o);
     }
+    
+    @Override
+    public Flagged2D copy() {
+        return (Flagged2D) super.copy();
+    }
+    
+    @Override
+    public Flagged2D copy(boolean withContent) {
+        Flagged2D copy = (Flagged2D) super.copy(withContent);
+        if(flag != null) copy.flag = flag.copy(withContent);
+        return copy;
+    }
 
 
     @Override
@@ -73,10 +88,16 @@ public class Flagged2D extends Overlay2D {
         if(flag != null) flag.setParallel(threads);
     }
 
+    @Override
+    public void setExecutor(ExecutorService executor) {
+        super.setExecutor(executor);
+        if(flag != null) flag.setExecutor(executor);
+    }
 
     public void setFlags(Flag2D flag) {
         this.flag = flag; 
         this.flag.setParallel(getParallel());
+        this.flag.setExecutor(getExecutor());
     }
 
     public Flag2D getFlags() { return flag; }
@@ -177,6 +198,17 @@ public class Flagged2D extends Overlay2D {
         initFlags();
     }
 
+    
+    public long countFlags(final long pattern) {
+        return smartFork(new ParallelPointOp.Count<Index2D>() {
+            @Override
+            public long getCount(Index2D point) {
+                return isFlagged(point, pattern) ? 1 : 0;
+            }
+        });
+    }
+
+    
 
     protected void initFlags() {
         getFlags().fill(FLAG_DEFAULT);
@@ -185,6 +217,11 @@ public class Flagged2D extends Overlay2D {
 
     public void destroy() {
         getFlags().destroy();        
+    }
+    
+    @Override
+    public String toString(int i, int j) {
+        return super.toString(i,j) + " flag=0x" + Long.toHexString(getFlags().get(i,j));
     }
     
     public final static FlagSpace.Long flagSpace = new FlagSpace.Long(Flagged2D.class.getSimpleName());
