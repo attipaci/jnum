@@ -33,7 +33,6 @@ import jnum.data.image.Gaussian2D;
 import jnum.data.image.Grid2D;
 import jnum.data.image.IndexBounds2D;
 import jnum.data.image.Map2D;
-import jnum.data.image.MapProperties;
 import jnum.data.image.Values2D;
 import jnum.data.image.overlay.Viewport2D;
 import jnum.fits.FitsToolkit;
@@ -162,8 +161,7 @@ public class EllipticalSource extends GaussianSource {
     public String pointingInfo(Map2D map) {
         String info = super.pointingInfo(map);
 
-        MapProperties properties = map.getProperties();
-        Unit sizeUnit = properties.getDisplayGridUnit();
+        Unit sizeUnit = map.getDisplayGridUnit();
 
         DataPoint major = getMajorFWHM();
         DataPoint minor = getMinorFWHM();
@@ -280,8 +278,8 @@ public class EllipticalSource extends GaussianSource {
 
 
         @Override
-        public DataTable getData(MapProperties properties, Unit sizeUnit) {
-            DataTable data = super.getData(properties, sizeUnit);
+        public DataTable getData(Map2D map, Unit sizeUnit) {
+            DataTable data = super.getData(map, sizeUnit);
 
             DataPoint major = getMajorFWHM();
             DataPoint minor = getMinorFWHM();

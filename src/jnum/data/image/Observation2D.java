@@ -52,6 +52,9 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     private Image2D weight;
     private Image2D exposure;
    
+    
+    private double noiseRescale = 1.0;
+    
     public boolean isZeroWeightValid = false;
     
     
@@ -84,15 +87,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         
         return super.equals(o);
     }
-   
-
-    @Override
-    protected ObsProperties getPropertiesInstance() { return new ObsProperties(); }
-
-    @Override
-    public ObsProperties getProperties() { return (ObsProperties) super.getProperties(); }
-
-    
+       
     @Override
     public Observation2D copy() { return (Observation2D) super.copy(); }
     
@@ -104,6 +99,24 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         if(exposure != null) copy.exposure = exposure.copy(withContents);
         
         return copy;
+    }
+    
+    public void copyProcessingFrom(Observation2D template) {
+        super.copyProcessingFrom(template);
+        noiseRescale = template.noiseRescale;        
+    }
+    
+    @Override
+    public void resetProcessing() {
+        super.resetProcessing();
+        noiseRescale = 1.0;
+    }
+    
+    @Override
+    public String getInfo() {
+        return super.getInfo() +
+                (noiseRescale == 1.0 ? "" : 
+                    "Noise Re-scaling: " + Util.f2.format(noiseRescale) + "x (from image variance).\n"); 
     }
 
     @Override
@@ -253,33 +266,6 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         if(exposure != null) exposure.setParallel(n);
     }
 
-    @Override
-    public boolean isConsistent() {
-        if(!super.isConsistent()) return false;
-        
-        if(weight == null) return false;
-        if(exposure == null) return false;
-        
-        if(!weight.conformsTo(getImage())) return false;
-        if(!exposure.conformsTo(getImage())) return false;
-        return true;
-    }
-
-
-    @Override
-    public String diagnoseInconsistency() {
-        String value = super.diagnoseInconsistency();
-        if(value != null) return value;
-
-        if(weight == null) return "null weight";
-        if(exposure == null) return "null exposure";
-        
-        if(!weight.conformsTo(getImage())) return "weight size mismatch";
-        if(!exposure.conformsTo(getImage())) return "exposure size mismatch";
-        
-        return null;
-
-    }
     
     @Override
     public final double weightAt(Index2D index) {
@@ -412,15 +398,20 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public void reweight(boolean robust) {
         double weightCorrection = 1.0 / getChi2(robust);
         getWeightImage().scale(weightCorrection);
-        getProperties().noiseRescaledBy(1.0 / Math.sqrt(weightCorrection)) ;
+        noiseRescale *= 1.0 / Math.sqrt(weightCorrection);
     }
 
 
     public void unscaleWeights() {
-        double noiseRescale = getProperties().getNoiseRescale();
         getWeightImage().scale(1.0/(noiseRescale * noiseRescale));
-        getProperties().setNoiseRescale(1.0);
+        noiseRescale = 1.0;
     }
+    
+    public final double getNoiseRescale() { return noiseRescale; }
+    
+    public void setNoiseRescale(double value) { noiseRescale = value; }
+    
+    public void noiseRescaleBy(double factor) { noiseRescale *= factor; }
 
     
     @Override
@@ -449,7 +440,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         setExposureImage((Image2D) getExposures().getSmoothed(beam, refIndex, weight, null));
         setWeightImage(smoothWeights);
 
-        getProperties().addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
+        addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
     @Override
@@ -460,7 +451,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         setExposureImage((Image2D) getExposures().getFastSmoothed(beam, refIndex, step, weight, null));
         setWeightImage(smoothWeights);
       
-        getProperties().addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
+        addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
    
@@ -495,7 +486,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         getExposureImage().resampleFrom(map.getExposures(), toSourceIndex, beam, weight);
         getWeightImage().resampleFrom(map.getWeights(), toSourceIndex, beam, null);
         
-        getProperties().copyProcessingFrom(map.getProperties());
+        copyProcessingFrom(map);
     }
 
     @Override
@@ -508,7 +499,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
 
     public void clean(double gain, double significanceThreshold, Gaussian2D replacementPSF) {
-        Gaussian2D psf = getProperties().getImageBeam();
+        Gaussian2D psf = getImageBeam();
 
         final Data2D s2n = getSignificance();
         final Referenced2D beam = psf.getBeam(getGrid());
@@ -519,7 +510,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
             replacementPSF.scale(0.5);
         }
 
-        replacementPSF.deconvolveWith(getProperties().getPixelSmoothing());
+        replacementPSF.deconvolveWith(getPixelSmoothing());
 
         // Smooth to replacementResolution;
         cleanS2N.smooth(replacementPSF.getBeam(getGrid()));
@@ -533,9 +524,9 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
             }
         }.process();
 
-        getWeightImage().scale(1.0 + getSmoothing().getArea() / replacementPSF.getArea());
+        getWeightImage().scale(1.0 + getSmoothingBeam().getArea() / replacementPSF.getArea());
 
-        getProperties().setSmoothingBeam(replacementPSF);
+        setSmoothingBeam(replacementPSF);
     }
 
 

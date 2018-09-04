@@ -115,7 +115,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
         
         if(template == null) return;
 
-        map.getProperties().copy(template.getProperties());     
+        map.copyPropertiesFrom(template);     
         map.setValidatingFlags(template.getValidatingFlags());
 
         for(Unit u : template.getLocalUnits().values()) map.addLocalUnit(u);
@@ -222,7 +222,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
 
 
     public void resetFiltering() {
-        for(Map2D plane : getPlanes()) plane.getProperties().resetFiltering();
+        for(Map2D plane : getPlanes()) plane.resetFiltering();
     }
     
     public void resetProcessing() {
@@ -273,7 +273,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     protected void editHeader(Header header) throws HeaderCardException {   
         grid1D.editHeader(header);
         MapType representative = sizeZ() > 0 ? getPlane(0) : getPlaneTemplate();
-        representative.getProperties().editHeader(header);    
+        representative.editHeader(header);    
         super.editHeader(header);
     }
 

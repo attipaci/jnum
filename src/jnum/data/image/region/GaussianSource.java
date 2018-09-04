@@ -34,7 +34,6 @@ import jnum.data.DataPoint;
 import jnum.data.image.Gaussian2D;
 import jnum.data.image.Grid2D;
 import jnum.data.image.Map2D;
-import jnum.data.image.MapProperties;
 import jnum.data.image.Observation2D;
 import jnum.data.image.Values2D;
 import jnum.data.image.overlay.Viewport2D;
@@ -126,31 +125,31 @@ public class GaussianSource extends CircularRegion {
     public void setCorrected(boolean value) { isCorrected = value; }
 
 
-    public double getCorrectionFactor(MapProperties properties) {	
+    public double getCorrectionFactor(Map2D map) {	
         double correction = 1.0;	
 
         // Correct for filtering.
         // Consider that only the tip of the source might escape the filter...
-        if(!properties.isFiltered()) return 1.0;
+        if(!map.isFiltered()) return 1.0;
 
-        double filterFraction = properties.isFilterBlanked() ? Math.min(1.0, properties.getFilterBlanking() / peak.significance()) : 1.0;
-        double filtering = 1.0 - 1.0 / properties.getFilterCorrectionFactor(getFWHM().value());
+        double filterFraction = map.isFilterBlanked() ? Math.min(1.0, map.getFilterBlanking() / peak.significance()) : 1.0;
+        double filtering = 1.0 - 1.0 / map.getFilterCorrectionFactor(getFWHM().value());
         correction *= 1.0 / (1.0 - filtering * filterFraction);
 
         return correction;
     }
 
 
-    public void correct(MapProperties properties) {	
+    public void correct(Map2D map) {	
         if(isCorrected) throw new IllegalStateException("Source is already corrected.");
-        peak.scale(getCorrectionFactor(properties));
+        peak.scale(getCorrectionFactor(map));
         isCorrected = true;
     }
 
 
-    public void uncorrect(MapProperties properties) {
+    public void uncorrect(Map2D map) {
         if(!isCorrected) throw new IllegalStateException("Source is already uncorrected.");
-        peak.scale(1.0 / getCorrectionFactor(properties));
+        peak.scale(1.0 / getCorrectionFactor(map));
         isCorrected = false;
     }
 
@@ -252,15 +251,13 @@ public class GaussianSource extends CircularRegion {
     
     
     public String pointingInfo(Map2D map) {
-       
-        MapProperties properties = map.getProperties();
-        
+          
         StringBuffer info = new StringBuffer();
         //info.append("  [" + getID() + "]\n");
         info.append("  Peak: " + peak + " " + getUnitName() + " (S/N ~ " + Util.f1.format(peak.significance()) + ")\n");
 
-        Unit sizeUnit = properties.getDisplayGridUnit();
-        DataPoint I = getIntegral(properties.getUnderlyingBeam().getArea());
+        Unit sizeUnit = map.getDisplayGridUnit();
+        DataPoint I = getIntegral(map.getUnderlyingBeam().getArea());
         
         info.append("  Int.: " + I + "\n");
    
@@ -385,7 +382,7 @@ public class GaussianSource extends CircularRegion {
        
         
 
-        public DataTable getData(MapProperties properties, Unit sizeUnit) {
+        public DataTable getData(Map2D properties, Unit sizeUnit) {
             DataTable data = new DataTable();
 
             data.new Entry("peak", peak.value(), unitName);

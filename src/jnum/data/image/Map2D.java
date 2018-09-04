@@ -24,6 +24,7 @@
 package jnum.data.image;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -32,9 +33,9 @@ import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.DataPoint;
-import jnum.data.Image;
 import jnum.data.Referenced;
 import jnum.data.RegularData;
+import jnum.data.Resizable;
 import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
@@ -43,20 +44,24 @@ import jnum.data.image.overlay.Referenced2D;
 import jnum.data.image.transform.CartesianGridTransform2D;
 import jnum.data.image.transform.ProjectedIndexTransform2D;
 import jnum.fft.MultiFFT;
+import jnum.fits.FitsProperties;
+import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.IntRange;
 import jnum.math.Range;
 import jnum.math.Vector2D;
-import jnum.parallel.ParallelPointOp;
 import jnum.projection.DefaultProjection2D;
 import jnum.projection.Projection2D;
+import jnum.util.HashCode;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.FitsFactory;
 import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.fits.ImageHDU;
+import nom.tam.util.Cursor;
 
 
 
@@ -69,21 +74,43 @@ import nom.tam.fits.ImageHDU;
  * @param <ImageType>
  * @param <ElementType>
  */
-public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index2D, Vector2D> {
+public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable, Referenced<Index2D, Vector2D> {
     /**
      * 
      */
     private static final long serialVersionUID = -2684430958862706671L;
+    
 
-    private MapProperties properties;
+    private transient Vector2D reuseIndex = new Vector2D();
 
-    private Vector2D reuseIndex = new Vector2D();
 
+
+    private FitsProperties fitsProperties;
+    
+    
+    private Grid2D<?> grid = new FlatGrid2D();  
+    
+    private Unit displayGridUnit;
+    
+   
+    private Gaussian2D underlyingBeam;
+  
+    private Gaussian2D smoothingBeam;
+    
+     
+    private double filterFWHM = Double.NaN;
+  
+    private double correctingFWHM = Double.NaN; 
+    
+    
+    private double filterBlanking = Double.POSITIVE_INFINITY;
+    
+    
 
 
     private Map2D() {
         reuseIndex = new Vector2D();
-        properties = getPropertiesInstance();
+        fitsProperties = new FitsProperties();
         setGrid(new FlatGrid2D());        
     }
     
@@ -117,7 +144,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
             private static final long serialVersionUID = 7593700995697181741L;
 
             @Override
-            public double value() { return getProperties().getImageBeamArea(); }
+            public double value() { return getImageBeamArea(); }
         }, "beam, BEAM, Beam, bm, BM, Bm");
 
         addLocalUnit(new Unit("pixel", Double.NaN) {            
@@ -133,7 +160,13 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
 
     @Override
     public int hashCode() {
-        return super.hashCode() ^ properties.hashCode();
+        int hash = super.hashCode() ^ HashCode.from(filterFWHM) ^ HashCode.from(correctingFWHM) ^ HashCode.from(filterBlanking);
+        if(fitsProperties != null) hash ^= fitsProperties.hashCode();
+        if(grid != null) hash ^= grid.hashCode();
+        if(displayGridUnit != null) hash ^= displayGridUnit.hashCode();
+        if(underlyingBeam != null) hash ^= underlyingBeam.hashCode();
+        if(smoothingBeam != null) hash ^= smoothingBeam.hashCode();
+        return hash;
     }
 
     @Override
@@ -142,14 +175,19 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
         if(!(o instanceof Map2D)) return false;
 
         Map2D map = (Map2D) o;
-        if(!Util.equals(properties, map.properties)) return false;
+        if(!Util.equals(fitsProperties, map.fitsProperties)) return false;
 
+        if(!Util.equals(filterFWHM, map.filterFWHM)) return false;
+        if(!Util.equals(correctingFWHM, map.correctingFWHM)) return false;
+        if(!Util.equals(filterBlanking, map.filterBlanking)) return false;
+        
+        if(!Util.equals(grid, map.grid)) return false;
+        if(!Util.equals(displayGridUnit, map.displayGridUnit)) return false;
+        if(!Util.equals(underlyingBeam, map.underlyingBeam)) return false;
+        if(!Util.equals(smoothingBeam, map.smoothingBeam)) return false;
+        
         return super.equals(o);
     }
-
-    protected MapProperties getPropertiesInstance() { return new MapProperties(); }
-
-
 
     @Override
     public Map2D clone() {
@@ -163,9 +201,16 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
 
     @Override
     public Map2D copy(boolean withContent) {
-        Map2D copy = clone();
+        Map2D copy = (Map2D) super.copy(withContent);
         
-        if(properties != null) copy.properties = properties.copy();     
+        if(fitsProperties != null) copy.fitsProperties = fitsProperties.copy();   
+    
+        if(underlyingBeam != null) copy.underlyingBeam = underlyingBeam.copy();
+        if(smoothingBeam != null) copy.smoothingBeam = smoothingBeam.copy();   
+       
+        if(grid != null) copy.grid = grid.copy();
+        if(displayGridUnit != null) copy.displayGridUnit = displayGridUnit.copy();
+
         
         // Replace the clone's list of proprietary units with it own...
         copy.addProprietaryUnits();
@@ -173,39 +218,372 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
         // Units might have proprietary components, which aren't easily copied over.
         // Hence, the safest is to re-construct the units of the copy from the specification.
         copy.setUnit(getUnit().name());
-        
-        if(getImage() != null) copy.setImage(getImage().copy(withContent));
-        if(getFlags() != null) copy.setFlags(getFlags().copy(withContent));
-
+  
         return copy;
     }
 
+    public void copyProcessingFrom(Map2D other) {
+        underlyingBeam = other.underlyingBeam == null ? null : other.underlyingBeam.copy();
+        smoothingBeam = other.smoothingBeam == null ? null : other.smoothingBeam.copy();
+          
+        filterFWHM = other.filterFWHM;
+        filterBlanking = other.filterBlanking;
+        
+        correctingFWHM = other.correctingFWHM;
+    }
+    
+    public void copyPropertiesFrom(Map2D template) {
+        fitsProperties = template.fitsProperties == null ? null : template.fitsProperties.copy();
+    
+        copyProcessingFrom(template);
+        
+        filterFWHM = template.filterFWHM;
+        correctingFWHM = template.correctingFWHM;
+        filterBlanking = template.filterBlanking;
+        
+        if(template.grid != null) grid = template.grid.copy();
+        if(template.displayGridUnit != null) displayGridUnit = template.displayGridUnit.copy();
+       
+        if(template.underlyingBeam != null) underlyingBeam = template.underlyingBeam.copy();
+        if(template.smoothingBeam != null) smoothingBeam = template.smoothingBeam.copy();
+    }
+    
+    public FitsProperties getFitsProperties() { return fitsProperties; }
+    
+    public void setFitsProperties(FitsProperties p) { this.fitsProperties = p; }
 
     public void resetProcessing() {
-        getProperties().resetProcessing();
+        if(fitsProperties != null) fitsProperties.resetProcessing();
+        resetSmoothing();
+        resetFiltering();
+    }
+    
+    
+    public void resetSmoothing() {
+        setPixelSmoothing(); 
+    }
+    
+    public void resetFiltering() {
+        setFiltering(Double.NaN);
+        setCorrectingFWHM(Double.NaN);
+        setFilterBlanking(Double.NaN);
     }
 
     public final void renew() {
         resetProcessing();
         clear();
     }
-
-    public boolean isConsistent() {
-        if(getImage() == null) return false;
-        if(getFlags() == null) return false;
-        if(properties == null) return false;
-        // TODO size check...
-        return true;
+    
+    
+    public final Grid2D<?> getGrid() { return grid; }
+    
+    public void setGrid(Grid2D<?> grid) { 
+        // Undo the prior pixel smoothing, if any...
+        if(smoothingBeam != null) if(this.grid != null) smoothingBeam.deconvolveWith(getPixelSmoothing());     
+        
+        this.grid = grid; 
+        
+        // Apply new pixel smoothing...
+        if(smoothingBeam == null) smoothingBeam = getPixelSmoothing();
+        else smoothingBeam.encompass(getPixelSmoothing());      
     }
 
-    public String diagnoseInconsistency() {
-        if(getImage() == null) return "null image";
-        if(getFlags() == null) return "null flags";
-        if(properties == null) return "null properties";
-        // TODO size check...
-        return null;        
+    
+    public final Vector2D getResolution() { return getGrid().getResolution(); }
+
+    public final void setResolution(Vector2D delta) { getGrid().setResolution(delta); }
+    
+    public void setResolution(double dx, double dy) { 
+        // Undo the prior pixel smoothing, if any...
+        if(smoothingBeam != null) if(this.grid != null) smoothingBeam.deconvolveWith(getPixelSmoothing());      
+        
+        getGrid().setResolution(dx, dy);
+        
+        // Apply new pixel smoothing...
+        if(smoothingBeam == null) smoothingBeam = getPixelSmoothing();
+        else smoothingBeam.encompass(getPixelSmoothing());
+    }
+    
+        
+    public final double getPixelArea() { return getGrid().getPixelArea(); } 
+
+    
+
+    public Class<? extends Coordinate2D> getCoordinateClass() { return getGrid().getReference().getClass(); }
+
+    
+    public final Coordinate2D getReference() { return getGrid().getReference(); }
+    
+    
+    public final void setReference(Coordinate2D coords) { ((Grid2D) getGrid()).setReference(coords); } 
+
+
+
+    @Override
+    public final Vector2D getReferenceIndex() { return getGrid().getReferenceIndex(); }
+
+    @Override
+    public final void setReferenceIndex(Vector2D v) { getGrid().setReferenceIndex(v); }
+
+    
+
+    public final Projection2D<?> getProjection() { return getGrid().getProjection(); }
+    
+    public final void setProjection(Projection2D<?> projection) { ((Grid2D) getGrid()).setProjection(projection); }
+
+    
+    
+ 
+    public final Gaussian2D getUnderlyingBeam() { return underlyingBeam; }
+    
+
+    public void setUnderlyingBeam(Gaussian2D psf) { 
+        underlyingBeam = psf; 
+    }
+    
+
+    public void setUnderlyingBeam(double fwhm) { 
+        underlyingBeam = new Gaussian2D(fwhm);     
+    }
+    
+    
+
+    public Gaussian2D getPixelSmoothing() {
+        Vector2D resolution = grid.getResolution();      
+        return new Gaussian2D(resolution.x() / Gaussian2D.fwhm2size, resolution.y() / Gaussian2D.fwhm2size, 0.0);
+    }
+    
+    
+    public void setPixelSmoothing() {
+        smoothingBeam.copy(getPixelSmoothing());
+    }
+    
+    
+    public final Gaussian2D getSmoothingBeam() { return smoothingBeam; }
+    
+
+    public void setSmoothingBeam(Gaussian2D psf) { 
+        smoothingBeam = psf; 
+    }
+    
+
+    public void setSmoothing(double fwhm) { 
+        smoothingBeam = new Gaussian2D(fwhm);
+    }
+    
+    public final void addSmoothing(double fwhm) {
+        addSmoothing(new Gaussian2D(fwhm));
+    }
+    
+    public void addSmoothing(Gaussian2D psf) {
+        if(smoothingBeam == null) smoothingBeam = psf;
+        else smoothingBeam.convolveWith(psf);
     }
 
+    
+   
+    
+
+    public Gaussian2D getImageBeam() {
+        if(underlyingBeam == null) return smoothingBeam;
+        if(smoothingBeam == null) return underlyingBeam;
+        
+        Gaussian2D beam = new Gaussian2D();
+        beam.copy(underlyingBeam);
+        beam.convolveWith(smoothingBeam);
+        
+        return beam;
+    }
+    
+    
+    public double getImageBeamArea() {
+        return underlyingBeam.getArea() + smoothingBeam.getArea();
+    }
+    
+
+    public double getFilterCorrectionFactor(double underlyingFWHM) {
+        if(Double.isNaN(filterFWHM)) return 1.0;
+        return 1.0 / (1.0 - (underlyingBeam.getArea() + smoothingBeam.getArea()) / (underlyingBeam.getArea() + getFilterArea()));
+    }
+    
+ 
+    public boolean isFiltered() { return Double.isNaN(filterFWHM); }
+    
+    public final double getFilterFWHM() { return filterFWHM; }
+    
+    public final double getFilterArea() { return Gaussian2D.areaFactor * filterFWHM * filterFWHM; }
+    
+    public void setFiltering(double FWHM) { this.filterFWHM = FWHM; }
+ 
+    public void updateFiltering(double FWHM) {
+        if(Double.isNaN(filterFWHM)) filterFWHM = FWHM;
+        else if(!Double.isNaN(FWHM)) filterFWHM = Math.min(filterFWHM, FWHM);       
+    }
+    
+    
+    public boolean isCorrected() { return Double.isNaN(correctingFWHM); }
+    
+    public double getCorrectingFWHM() { return correctingFWHM; }
+    
+    public void setCorrectingFWHM(double value) { this.correctingFWHM = value; }
+ 
+    
+    public boolean isFilterBlanked() { return !Double.isInfinite(filterBlanking); }
+    
+    public double getFilterBlanking() { return filterBlanking; }
+    
+    public void setFilterBlanking(double value) { this.filterBlanking = value; } 
+    
+  
+    public void setDisplayGridUnit(Unit u) {
+        displayGridUnit = u;
+    }
+    
+
+    public final Unit getDisplayGridUnit() {
+        if(displayGridUnit != null) return displayGridUnit;
+        return getDefaultGridUnit();
+    }
+    
+
+    public Unit getDefaultGridUnit() {
+        Grid2D<?> grid = getGrid();
+        if(grid == null) return Unit.get("pixel");
+        return grid.getDefaultUnit();
+    }
+    
+    
+    public void parseCoordinateInfo(Header header, String alt) throws InstantiationException, IllegalAccessException {
+        setGrid(Grid2D.fromHeader(header, alt));
+    }
+    
+    public void editCoordinateInfo(Header header) throws HeaderCardException {
+        if(grid != null) grid.editHeader(header);
+    }
+    
+    
+    @Override
+    public void parseHeader(Header header) {               
+        try { parseCoordinateInfo(header, ""); }
+        catch(Exception e) { Util.warning(this, e); }
+          
+        parseCorrectedBeam(header);
+        parseSmoothingBeam(header);
+        parseFilterBeam(header);
+        
+        // The underlying beam must be parsed after the smoothing because it may rely on the smoothing
+        // value in some cases...
+        parseUnderlyingBeam(header);
+               
+        // The image data unit must be parsed after the instrument beam (underlying + smoothing)
+        // and the coordinate grid are established as it may contain 'beam' or 'pixel' type units.
+        super.parseHeader(header);       
+    }
+
+    public void parseCorrectedBeam(Header header) {
+        // Use old CORRETN or new CBMAJ/CBMIN
+        if(header.containsKey(correctedBeamFitsID + "BMAJ")) {
+            Gaussian2D correctingBeam = new Gaussian2D();
+            correctingBeam.parseHeader(header, correctedBeamFitsID, getDefaultGridUnit().value());
+            correctingFWHM = correctingBeam.getCircularEquivalentFWHM();        
+        }
+        else correctingFWHM = FitsToolkit.getCommentedUnitValue(header, "CORRECTN", Double.NaN, getDisplayGridUnit().value());
+    
+    }
+    
+    public void parseSmoothingBeam(Header header) {   
+        // Use old SMOOTH or new SBMAJ/SBMIN
+        if(header.containsKey(smoothingBeamFitsID + "BMAJ")) 
+            smoothingBeam.parseHeader(header, smoothingBeamFitsID, getDefaultGridUnit().value());  
+        else {
+            double smoothFWHM = FitsToolkit.getCommentedUnitValue(header, "SMOOTH", Double.NaN, getDisplayGridUnit().value());
+            smoothingBeam.set(smoothFWHM);
+        }
+        
+        double pixelSmoothing = Math.sqrt(getGrid().getPixelArea() / Gaussian2D.areaFactor);
+        smoothingBeam.encompass(new Gaussian2D(pixelSmoothing));        
+    }
+    
+    public void parseFilterBeam(Header header) {
+        // Use old EXTFILTR or new XBMAJ, XBMIN
+        if(header.containsKey(filterBeamFitsID + "BMAJ")) {
+            Gaussian2D extFilterBeam = new Gaussian2D();
+            extFilterBeam.parseHeader(header, filterBeamFitsID, getDefaultGridUnit().value());
+            filterFWHM = extFilterBeam.getCircularEquivalentFWHM();
+        }
+        filterFWHM = FitsToolkit.getCommentedUnitValue(header, "EXTFLTR", Double.NaN, getDisplayGridUnit().value());
+    }
+    
+    public void parseUnderlyingBeam(Header header) {
+        // Use new IBMAJ/IBMIN if available
+        // Otherwise calculate it based on BMAJ, BMIN
+        // Else, use old BEAM, or calculate based on old RESOLUTN
+        if(header.containsKey(underlyingBeamFitsID + "BMAJ")) 
+            underlyingBeam.parseHeader(header, underlyingBeamFitsID, getDefaultGridUnit().value());
+        else if(header.containsKey("BEAM")) 
+            underlyingBeam.set(FitsToolkit.getCommentedUnitValue(header, "BEAM", Double.NaN, getDisplayGridUnit().value()));
+        else if(header.containsKey("BMAJ")) {
+            underlyingBeam.parseHeader(header, "", getDefaultGridUnit().value());
+            underlyingBeam.deconvolveWith(smoothingBeam);
+        }
+        else if(header.containsKey("RESOLUTN")) {
+            double resolution = FitsToolkit.getCommentedUnitValue(header, "RESOLUTN", Double.NaN, getDisplayGridUnit().value());
+            underlyingBeam.set(resolution > smoothingBeam.getMajorFWHM() ? Math.sqrt(resolution * resolution - smoothingBeam.getMajorFWHM() * smoothingBeam.getMinorFWHM()) : 0.0);
+        }
+        else underlyingBeam.set(0.0);
+    
+    }
+        
+    @Override
+    public void editHeader(Header header) throws HeaderCardException {   
+        editCoordinateInfo(header);
+        
+        Gaussian2D psf = getImageBeam();
+        Unit fitsUnit = getDefaultGridUnit();
+        Unit displayUnit = getDisplayGridUnit();
+        
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        
+        if(psf != null) {
+            psf.editHeader(header, "image", "", fitsUnit);
+            if(psf.isCircular()) c.add(new HeaderCard("RESOLUTN", psf.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} Effective image FWHM (" + displayUnit.name() + ").")); 
+        }
+            
+        if(underlyingBeam != null) underlyingBeam.editHeader(header, "instrument", underlyingBeamFitsID, fitsUnit);
+        if(smoothingBeam != null) {
+            smoothingBeam.editHeader(header, "smoothing", smoothingBeamFitsID, fitsUnit);
+            if(smoothingBeam.isCircular()) c.add(new HeaderCard("SMOOTH", smoothingBeam.getCircularEquivalentFWHM() / displayUnit.value(), "{Deprecated} FWHM (" + displayUnit.name() + ") smoothing.")); 
+        }
+            
+        // TODO convert extended filter and corrections to proper Gaussian beams...
+        if(!Double.isNaN(filterFWHM)) {
+            Gaussian2D filterBeam = new Gaussian2D(filterFWHM);
+            filterBeam.editHeader(header, "Extended Structure Filter", "X", fitsUnit);
+        }
+        
+        if(!Double.isNaN(correctingFWHM)) {
+            Gaussian2D correctionBeam = new Gaussian2D(correctingFWHM);
+            correctionBeam.editHeader(header, "Peak Corrected", "C", fitsUnit);
+        }
+            
+        c.add(new HeaderCard("SMTHRMS", true, "Is the Noise (RMS) image smoothed?"));
+        
+        super.editHeader(header);
+        
+        
+    }
+     
+
+    public void mergeProperties(Map2D other) {
+        if(smoothingBeam != null) {
+            if(other.smoothingBeam != null) smoothingBeam.encompass(other.smoothingBeam);
+        }
+        else {
+            if(other.smoothingBeam != null) smoothingBeam = other.smoothingBeam.copy();       
+        }
+        filterFWHM = Math.min(filterFWHM, other.filterFWHM);
+    }
+    
 
     @Override
     public final Image2D getImage() { return (Image2D) getBasis(); } 
@@ -230,50 +608,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     }
 
 
-    public MapProperties getProperties() { return properties; }
 
-    public final Grid2D<?> getGrid() { return properties.getGrid(); }
-
-    public void setGrid(Grid2D<?> grid) { properties.setGrid(grid); }
-
-
-    public final Projection2D<?> getProjection() { return getGrid().getProjection(); }
-
-    public final void setProjection(Projection2D<?> projection) { ((Grid2D) getGrid()).setProjection(projection); }
-
-
-    public final Coordinate2D getReference() { return getGrid().getReference(); }
-
-    public final void setReference(Coordinate2D coords) { ((Grid2D) getGrid()).setReference(coords); } 
-
-
-    public final Vector2D getResolution() { return getGrid().getResolution(); }
-
-    public final void setResolution(Vector2D delta) { getGrid().setResolution(delta); }
-
-    public final void setResolution(double dx, double dy) { getGrid().setResolution(dx, dy); }
-
-
-    @Override
-    public final Vector2D getReferenceIndex() { return getGrid().getReferenceIndex(); }
-
-    @Override
-    public final void setReferenceIndex(Vector2D v) { getGrid().setReferenceIndex(v); }
-
-
-
-    public final Gaussian2D getSmoothing() { return properties.getSmoothingBeam(); }
-
-    public final double getBeamArea() { return properties.getImageBeamArea(); }
-
-
-    public Class<? extends Coordinate2D> getCoordinateClass() { return getGrid().getReference().getClass(); }
-
-    
-    @Override
-    public String toString(int i, int j) {
-        return super.toString(i,j) + " flag=0x" + Long.toHexString(getFlags().get(i,j));
-    }
 
     @Override
     public final void setSize(Index2D size) {
@@ -301,7 +636,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     }
 
 
-    public double countBeams() { return getArea() / properties.getImageBeamArea(); }
+    public double countBeams() { return getArea() / getImageBeamArea(); }
 
 
     public double getArea() { return countPoints() * getGrid().getPixelArea(); }
@@ -310,10 +645,10 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     // source from an extended source...
     // Similarly 9 points per beam are necessary for 2-D...
     public double countIndependentPoints(double area) {
-        double smoothArea = getSmoothing().getArea();
-        double filterFWHM = properties.getFilterFWHM();
+        double smoothArea = getSmoothingBeam().getArea();
+        double filterFWHM = getFilterFWHM();
         double filterArea = Gaussian2D.areaFactor * filterFWHM * filterFWHM;
-        double beamArea = properties.getImageBeamArea();
+        double beamArea = getImageBeamArea();
 
         // Account for the filtering correction.
         double eta = 1.0;
@@ -340,7 +675,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
 
 
     public double getPointsPerSmoothingBeam() {
-        return Math.max(1.0, properties.getSmoothingBeam().getArea() / getGrid().getPixelArea());
+        return Math.max(1.0, getSmoothingBeam().getArea() / getGrid().getPixelArea());
     }
 
 
@@ -359,7 +694,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
         if(from.x() > to.x()) { double temp = from.x(); from.setX(to.x()); to.setX(temp); }
         if(from.y() > to.y()) { double temp = from.y(); from.setY(to.y()); to.setY(temp); }
 
-        Unit sizeUnit = properties.getDisplayGridUnit();
+        Unit sizeUnit = getDisplayGridUnit();
         
         Vector2D d = Vector2D.differenceOf(to, from);
 
@@ -398,8 +733,8 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     }
 
     public final void smoothTo(Gaussian2D psf) {
-        if(getSmoothing().isEncompassing(psf)) return;
-        psf.deconvolveWith(getSmoothing());
+        if(getSmoothingBeam().isEncompassing(psf)) return;
+        psf.deconvolveWith(getSmoothingBeam());
         smooth(psf);
     }
 
@@ -420,13 +755,13 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     @Override
     public void smooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex) {
         super.smooth(beam, refIndex);
-        properties.addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
+        addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
     @Override
     public void fastSmooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex, Index2D step) {
         super.fastSmooth(beam, refIndex, step);
-        properties.addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
+        addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
 
@@ -435,15 +770,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
         filterAbove(FWHM, null);
     }
     
-    public long countFlags(final long pattern) {
-        return smartFork(new ParallelPointOp.Count<Index2D>() {
-            @Override
-            public long getCount(Index2D point) {
-                return isFlagged(point, pattern) ? 1 : 0;
-            }
-        });
-    }
-
+  
     public void filterAbove(double FWHM, final Validating2D validator) {
         final Map2D extended = copy(true);
         
@@ -477,7 +804,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
             }
         }.process();
 
-        properties.updateFiltering(FWHM);
+        updateFiltering(FWHM);
     }
 
     public void fftFilterAbove(double FWHM) {
@@ -565,7 +892,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
             }
         }.process();
 
-        properties.updateFiltering(FWHM);
+        updateFiltering(FWHM);
     }
 
 
@@ -590,8 +917,8 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     public final Gaussian2D getAntialiasingBeamFor(Map2D map) {
         // TODO incorporate rotation at reference...
 
-        Gaussian2D mapSmoothing = map.getSmoothing();
-        Gaussian2D pixelization = properties.getPixelSmoothing();
+        Gaussian2D mapSmoothing = map.getSmoothingBeam();
+        Gaussian2D pixelization = getPixelSmoothing();
         if(mapSmoothing == null) return pixelization;
         else if(mapSmoothing.isEncompassing(pixelization)) return null;
 
@@ -613,7 +940,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     public void resampleFrom(Map2D map, Values2D weight) {
         Referenced2D beam = getAntialiasingBeamImageFor(map);
         resampleFrom(map, map.getIndexTransformTo(this), beam, weight);       
-        properties.copyProcessingFrom(map.getProperties());
+        copyProcessingFrom(map);
     }
 
     public void resample(double newres) {
@@ -622,7 +949,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
 
     public void resample(Vector2D newres) {
         Map2D orig = clone();
-        orig.properties = (MapProperties) properties.clone();
+        orig.fitsProperties = fitsProperties.clone();
         
         Vector2D resolution = getResolution();
         
@@ -650,7 +977,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
         else if(name.equals("mean")) return getMean().value() / getUnit().value();
         else if(name.equals("median")) return getMedian().value() / getUnit().value();
         else if(name.equals("rms")) return getRMS(true) / getUnit().value();
-        else return properties.getTableEntry(name);
+        else return fitsProperties.getTableEntry(name);
     }
 
 
@@ -680,8 +1007,8 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     protected void readData(ImageHDU hdu) throws Exception {
         // Read the properties first as they may provide new dynamic units...
         // like 'pixel', 'beam'...
-        properties.resetProcessing();
-        properties.parseHeader(hdu.getHeader());    
+        resetProcessing();
+        parseHeader(hdu.getHeader());    
 
         getImage().read(hdu, getLocalUnits());
 
@@ -704,36 +1031,23 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
 
 
     @Override
-    protected void parseHeader(Header header) {
-        properties.parseHeader(header);
-        super.parseHeader(header);
-    }
-
-
-    @Override
-    public void editHeader(Header header) throws HeaderCardException {  
-        properties.editHeader(header);   
-        super.editHeader(header);
-    }
-
-
-    @Override
     public String getInfo() {      
         Grid2D<?> grid = getGrid();
 
-        Unit sizeUnit = properties.getDisplayGridUnit();
+        Unit sizeUnit = getDisplayGridUnit();
 
-        String sizeInfo = super.getInfo() + " (" +
+        return super.getInfo() + " (" +
                 Util.f1.format(sizeX() * grid.pixelSizeX() / sizeUnit.value()) + " x " + 
-                Util.f1.format(sizeY() * grid.pixelSizeY() / sizeUnit.value()) + " " + sizeUnit.name() + ").";
+                Util.f1.format(sizeY() * grid.pixelSizeY() / sizeUnit.value()) + " " + sizeUnit.name() + ")." +
+                grid.toString(sizeUnit) +
+                "Instrument PSF: " + getUnderlyingBeam().toString(sizeUnit) + " FWHM.\n" +
+                "Applied Smoothing: " + smoothingBeam.toString(sizeUnit) + " FWHM (includes pixelization).\n" +
+                "Image Resolution: " + getImageBeam().toString(sizeUnit) + " FWHM (includes smoothing).\n";
 
-        String info = properties.brief(sizeInfo);
-
-        return info;
     }
 
     public void filterBeamCorrect() {
-        filterCorrect(getProperties().getUnderlyingBeam().getCircularEquivalentFWHM());
+        filterCorrect(getUnderlyingBeam().getCircularEquivalentFWHM());
     }
 
     public void filterCorrect(double underlyingFWHM) {
@@ -741,17 +1055,17 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     }
 
     public void filterCorrect(double underlyingFWHM, Values2D reference) {
-        double blankingValue = getProperties().getFilterBlanking();
+        double blankingValue = getFilterBlanking();
         filterCorrectValidated(underlyingFWHM, new RangeRestricted2D(reference, new Range(-blankingValue, blankingValue)));
     }
 
     public void filterCorrectValidated(double underlyingFWHM, final Validating2D validator) {  
         // Undo prior corrections if necessary
-        if(!properties.isCorrected()) { 
-            if(underlyingFWHM == properties.getCorrectingFWHM()) return;
+        if(!isCorrected()) { 
+            if(underlyingFWHM == getCorrectingFWHM()) return;
             undoFilterCorrectBy(validator);
         }
-        final double filterC = properties.getFilterCorrectionFactor(underlyingFWHM);
+        final double filterC =getFilterCorrectionFactor(underlyingFWHM);
      
         new Fork<Void>() {
             @Override
@@ -760,7 +1074,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
             }
         }.process();
 
-        properties.setCorrectingFWHM(underlyingFWHM);
+        setCorrectingFWHM(underlyingFWHM);
     }
 
 
@@ -769,15 +1083,15 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     }
 
     public void undoFilterCorrect(Data2D reference) {
-        double blankingValue = getProperties().getFilterBlanking();
+        double blankingValue = getFilterBlanking();
         undoFilterCorrectBy(new RangeRestricted2D(reference, new Range(-blankingValue, blankingValue)));
     }
 
 
     public void undoFilterCorrectBy(final Validating2D validator) {
-        if(!properties.isCorrected()) return;
+        if(!isCorrected()) return;
 
-        final double iFilterC = 1.0 / properties.getFilterCorrectionFactor(properties.getCorrectingFWHM());
+        final double iFilterC = 1.0 / getFilterCorrectionFactor(getCorrectingFWHM());
 
         new Fork<Void>() {
             @Override
@@ -786,7 +1100,7 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
             }
         }.process();
 
-        properties.setCorrectingFWHM(Double.NaN);
+        setCorrectingFWHM(Double.NaN);
     }
 
     public static Map2D read(Fits fits, int hduIndex) throws Exception {
@@ -808,6 +1122,13 @@ public class Map2D extends Flagged2D implements Image<Index2D>, Referenced<Index
     public RegularData<Index2D, Vector2D> getData() {
         return this;
     }
+
+    
+    
+    private final static String underlyingBeamFitsID = "I";
+    private final static String smoothingBeamFitsID = "S";
+    private final static String correctedBeamFitsID = "C";
+    private final static String filterBeamFitsID = "X";
 
 
 }
