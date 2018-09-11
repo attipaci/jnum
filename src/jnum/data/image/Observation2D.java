@@ -372,6 +372,9 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
 
     public final void mergeAccumulate(final Observation2D image) {
         super.add(image);
+
+        mergePropertiesFrom(image);
+        
         getWeightImage().add(image.getWeights());
         getExposureImage().add(image.getExposures());
     }

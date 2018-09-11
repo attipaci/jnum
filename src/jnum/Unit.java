@@ -91,9 +91,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
      */
     @Override
     public Unit copy() {
-        Unit u = clone();
-        if(name != null) u.name = new String(name);
-        return u;
+        return clone();
     }
     
     /* (non-Javadoc)

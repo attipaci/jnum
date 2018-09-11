@@ -2307,9 +2307,9 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(double[][] data, NumberFormat df) {
-		String text = new String();
-		for(int i=0; i<data.length; i++) text += toString(data[i], df) + "\n";
-		return text;
+		StringBuffer text = new StringBuffer();
+		for(int i=0; i<data.length; i++) text.append(toString(data[i], df) + "\n");
+		return new String(text);
 	}
 
 	/**
@@ -2321,12 +2321,12 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(double[] data, NumberFormat df, String separator) { 
-		String text = new String();
+		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
-			text += df.format(data[i]); 
-			if(i < data.length-1) text += separator;
+			text.append(df.format(data[i])); 
+			if(i < data.length-1) text.append(separator);
 		}
-		return text;
+		return new String(text);
 	}	
 	
 	
@@ -2366,9 +2366,9 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(float[][] data, NumberFormat df) {
-		String text = new String();
-		for(int i=0; i<data.length; i++) text += toString(data[i], df) + "\n";
-		return text;
+		StringBuffer text = new StringBuffer();
+		for(int i=0; i<data.length; i++) text.append(toString(data[i], df) + "\n");
+		return new String(text);
 	}
 
 	/**
@@ -2380,12 +2380,12 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(float[] data, NumberFormat df, String separator) { 
-		String text = new String();
+		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
-			text += df.format(data[i]); 
-			if(i < data.length-1) text += separator;
+			text.append(df.format(data[i])); 
+			if(i < data.length-1) text.append(separator);
 		}
-		return text;
+		return new String(text);
 	}	
 	
 	/**
@@ -2416,12 +2416,12 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(NumberFormating[] data, NumberFormat nf, String separator) { 
-		String text = new String();
+		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
-			text += data[i].toString(nf); 
-			if(i < data.length-1) text += separator;
+			text.append(data[i].toString(nf)); 
+			if(i < data.length-1) text.append(separator);
 		}
-		return text;
+		return new String(text);
 	}	
 
 	/**
@@ -2440,9 +2440,9 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(NumberFormating[][] data, NumberFormat nf) {
-		String text = new String();
-		for(int i=0; i<data.length; i++) text += toString(data[i], nf) + "\n";
-		return text;
+		StringBuffer text = new StringBuffer();
+		for(int i=0; i<data.length; i++) text.append(toString(data[i], nf) + "\n");
+		return new String(text);
 	}
 	
 	/**
@@ -2463,12 +2463,12 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(Object[] data, String separator) { 
-		String text = new String();
+		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
-			text += data[i].toString(); 
-			if(i < data.length-1) text += separator;
+			text.append(data[i].toString()); 
+			if(i < data.length-1) text.append(separator);
 		}
-		return text;
+		return new String(text);
 	}	
 	
 	/**
@@ -2478,9 +2478,9 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(Object[][] data) {
-		String text = new String();
-		for(int i=0; i<data.length; i++) text += toString(data[i]) + "\n";
-		return text;
+		StringBuffer text = new StringBuffer();
+		for(int i=0; i<data.length; i++) text.append(toString(data[i]) + "\n");
+		return new String(text);
 	}
 	
 	/**
@@ -2503,12 +2503,13 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(int[] data, String separator) { 
-		String text = "{";
+		StringBuffer text = new StringBuffer("{");
 		for(int i=0; i<data.length; i++) {
-			text += data[i];
-			if(i < data.length-1) text += separator;
+			text.append(data[i]);
+			if(i < data.length-1) text.append(separator);
 		}
-		return text + "}";
+		text.append("}");
+		return new String(text);
 	}
 	
 	/**
@@ -2531,12 +2532,12 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(int[] data, NumberFormat df, String separator) { 
-		String text = new String();
+		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
-			text += df.format(data[i]); 
-			if(i < data.length-1) text += separator;
+			text.append(df.format(data[i])); 
+			if(i < data.length-1) text.append(separator);
 		}
-		return text;
+		return new String(text);
 	}	
 	
 	/**
@@ -2546,9 +2547,9 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(int[][] data) {
-		String text = new String();
-		for(int i=0; i<data.length; i++) text += toString(data[i]) + "\n";
-		return text;
+		StringBuffer text = new StringBuffer();
+		for(int i=0; i<data.length; i++) text.append(toString(data[i]) + "\n");
+		return new String(text);
 	}
 	
 	
@@ -2560,9 +2561,9 @@ public final class ArrayUtil {
 	 * @return the string
 	 */
 	public static String toString(int[][] data, NumberFormat df) {
-		String text = new String();
-		for(int i=0; i<data.length; i++) text += toString(data[i], df) + "\n";
-		return text;
+		StringBuffer text = new StringBuffer();
+		for(int i=0; i<data.length; i++) text.append(toString(data[i], df) + "\n");
+		return new String(text);
 	}
 	
 	// TODO generic toString() representations:

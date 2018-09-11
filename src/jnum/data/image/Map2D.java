@@ -25,7 +25,6 @@ package jnum.data.image;
 
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import jnum.Constant;
@@ -55,8 +54,6 @@ import jnum.projection.Projection2D;
 import jnum.util.HashCode;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
-import nom.tam.fits.FitsException;
-import nom.tam.fits.FitsFactory;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -211,7 +208,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         if(grid != null) copy.grid = grid.copy();
         if(displayGridUnit != null) copy.displayGridUnit = displayGridUnit.copy();
 
-        
         // Replace the clone's list of proprietary units with it own...
         copy.addProprietaryUnits();
         
@@ -247,6 +243,16 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         if(template.underlyingBeam != null) underlyingBeam = template.underlyingBeam.copy();
         if(template.smoothingBeam != null) smoothingBeam = template.smoothingBeam.copy();
     }
+    
+    public void mergePropertiesFrom(Map2D other) {
+        if(other.smoothingBeam != null) {
+            if(smoothingBeam != null) smoothingBeam.encompass(other.smoothingBeam);
+            else smoothingBeam = other.smoothingBeam.copy();       
+        }
+        filterFWHM = Math.min(filterFWHM, other.filterFWHM);
+        // TODO more?...
+    }
+    
     
     public FitsProperties getFitsProperties() { return fitsProperties; }
     
@@ -568,22 +574,10 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
             
         c.add(new HeaderCard("SMTHRMS", true, "Is the Noise (RMS) image smoothed?"));
         
-        super.editHeader(header);
-        
-        
+        super.editHeader(header);   
     }
      
-
-    public void mergeProperties(Map2D other) {
-        if(smoothingBeam != null) {
-            if(other.smoothingBeam != null) smoothingBeam.encompass(other.smoothingBeam);
-        }
-        else {
-            if(other.smoothingBeam != null) smoothingBeam = other.smoothingBeam.copy();       
-        }
-        filterFWHM = Math.min(filterFWHM, other.filterFWHM);
-    }
-    
+  
 
     @Override
     public final Image2D getImage() { return (Image2D) getBasis(); } 
@@ -981,18 +975,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
     }
 
 
-    @Override
-    public Fits createFits(Class<? extends Number> dataType) throws FitsException {
-        FitsFactory.setLongStringsEnabled(true);
-        FitsFactory.setUseHierarch(true);
-
-        Fits fits = new Fits(); 
-        ArrayList<BasicHDU<?>> hdus = getHDUs(dataType);
-
-        for(int i=0; i<hdus.size(); i++) fits.addHDU(hdus.get(i));
-        return fits;
-    }
-
 
     public boolean read(BasicHDU<?>[] HDUs) throws Exception {
 
@@ -1019,15 +1001,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         validate();
     }
 
-    public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
-        ArrayList<BasicHDU<?>> hdus = new ArrayList<BasicHDU<?>>();
-
-        ImageHDU hdu = createHDU(dataType);
-        editHeader(hdu.getHeader());
-        hdus.add(hdu);
-
-        return hdus;
-    }
 
 
     @Override

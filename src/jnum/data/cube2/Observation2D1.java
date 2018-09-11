@@ -24,6 +24,8 @@
 package jnum.data.cube2;
 
 
+import java.util.ArrayList;
+
 import jnum.Unit;
 import jnum.data.IndexedObservations;
 import jnum.data.Observations;
@@ -35,7 +37,10 @@ import jnum.data.cube.Values3D;
 import jnum.data.cube.overlay.Overlay3D;
 import jnum.data.image.Data2D;
 import jnum.data.image.Observation2D;
+import jnum.fits.FitsToolkit;
 import jnum.math.Vector3D;
+import nom.tam.fits.BasicHDU;
+import nom.tam.fits.FitsException;
 
 
 public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Observations<Data3D>, IndexedObservations<Index3D> {
@@ -305,7 +310,30 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
 
     public final void memCorrect(final Values3D model, final double lambda) {
         memCorrect(model, this.getNoise(), lambda);
-    }  
+    } 
+    
+    
+    @Override
+    public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {   
+        ArrayList<BasicHDU<?>> hdus = super.getHDUs(dataType);
+  
+        BasicHDU<?> hdu = getExposures().createHDU(dataType);
+        FitsToolkit.setName(hdu, "Exposure");
+        editHeader(hdu.getHeader());
+        hdus.add(hdu);
+        
+        hdu = getNoise().createHDU(dataType);
+        editHeader(hdu.getHeader());
+        FitsToolkit.setName(hdu, "Noise");
+        hdus.add(hdu);
+
+        hdu = getSignificance().createHDU(dataType);
+        FitsToolkit.setName(hdu, "S/N");
+        editHeader(hdu.getHeader());
+        hdus.add(hdu);
+
+        return hdus;
+    }
 
 
 }

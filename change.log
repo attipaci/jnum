@@ -15,6 +15,10 @@
 	[FIX] MapProperties.copy(template) was neither a fully independent copy
 	nor did it deal with null fields. Both issues fixed.
 
+	[CODE] copy() keeps, rather then reinstantiates, String references.
+	Java Strings are non-mutable objects, and non-mutables do not need
+	to be deep copied.
+
 	[CODE] Removed super.equals() calls in classes derived directly from 
 	Object since it only checks for identity.
 

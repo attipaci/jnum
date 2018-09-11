@@ -42,6 +42,7 @@ import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
 import jnum.text.TableFormatter;
 import jnum.util.CompoundUnit;
+import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.FitsFactory;
@@ -885,10 +886,20 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
         FitsFactory.setLongStringsEnabled(true);
         FitsFactory.setUseHierarch(true);
         Fits fits = new Fits(); 
+        
+        ArrayList<BasicHDU<?>> hdus = getHDUs(dataType);
+
+        for(int i=0; i<hdus.size(); i++) fits.addHDU(hdus.get(i));
+        
         fits.addHDU(createHDU(dataType));
         return fits;
     }
     
+    public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
+        ArrayList<BasicHDU<?>> hdus = new ArrayList<BasicHDU<?>>();
+        hdus.add(createHDU(dataType));
+        return hdus;
+    }
 
     public final ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException {  
         ImageHDU hdu = (ImageHDU) Fits.makeHDU(getFitsData(dataType));

@@ -126,7 +126,6 @@ public class Parameter extends DataPoint implements Penalty {
 	@Override
     public Parameter copy() {
 	    Parameter copy = (Parameter) super.copy();
-	    if(name != null) copy.name = new String(name);
 	    if(range != null) copy.range = range.copy();
 	    return copy;
 	}

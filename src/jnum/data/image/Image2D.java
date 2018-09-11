@@ -87,8 +87,6 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     public Image2D copy(boolean withContent) {   
         Image2D copy = (Image2D) clone();
         
-        if(id != null) copy.id = new String(id);
-        
         if(capacity() > 0) {
             copy.setSize(sizeX(), sizeY());
             if(withContent) copy.paste(this, true);
