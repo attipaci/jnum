@@ -94,10 +94,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     @SuppressWarnings("unchecked")
     public Configurator copy() {
         Configurator copy = clone();
+        
         copy.branches = new Hashtable<String, Configurator>();
-        copy.conditionals = new Hashtable<String, Vector<String>>();
         for(String key : branches.keySet()) copy.branches.put(key, branches.get(key).copy());
+        
+        copy.conditionals = new Hashtable<String, Vector<String>>();
         for(String key : conditionals.keySet()) copy.conditionals.put(key, (Vector<String>) conditionals.get(key).clone());
+        
         return copy;
     }
 

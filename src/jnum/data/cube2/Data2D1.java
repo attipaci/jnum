@@ -69,7 +69,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     @Override
     public Data2D1<ImageType> clone() {
         Data2D1<ImageType> clone = (Data2D1<ImageType>) super.clone();
-        if(stack != null) clone.stack = new ArrayList<ImageType>(stack);
+        if(stack != null) clone.stack = (ArrayList<ImageType>) stack.clone();
         return clone;
     }
     

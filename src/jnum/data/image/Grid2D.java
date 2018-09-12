@@ -408,8 +408,8 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 			
 		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 	
-		c.add(new HeaderCard("CRPIX1" + alt, refIndex.x() + 1, "Reference grid position"));
-		c.add(new HeaderCard("CRPIX2" + alt, refIndex.y() + 1, "Reference grid position"));
+		c.add(new HeaderCard("CRPIX1" + alt, refIndex.x() + 1, "Reference grid index"));
+		c.add(new HeaderCard("CRPIX2" + alt, refIndex.y() + 1, "Reference grid index"));
 		
 		projection.getReference().editHeader(header, "CRVAL", alt);	
 

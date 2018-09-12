@@ -51,11 +51,22 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
     public int getFirstAxisIndex() { return firstAxis; }
 
     public void setFirstAxisIndex(int countedFromOne) { this.firstAxis = countedFromOne; }
+   
     
+    public abstract double getResolution(int axis);
   
     public abstract void setResolution(int axis, double resolution);
     
-    public abstract double getResolution(int axis);
+    
+    public abstract double getReferenceIndex(int axis);
+    
+    public abstract void setReferenceIndex(int axis, double value);
+    
+    
+    public abstract double getReferenceValue(int axis);
+    
+    public abstract void setReferenceValue(int axis, double value);
+   
     
 
     public void indexToValue(CoordinateType index) { coordsAt(index, index); }
@@ -71,16 +82,17 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
         for(int i=0; i<system.size(); i++) {
             CoordinateAxis axis = system.get(i);
             int index = firstAxis + i;
-            String spec = index + alt;
+            String id = index + alt;
             
-            if(header.containsKey("CTYPE" + spec)) axis.setShortLabel(header.getStringValue("CTYPE" + spec));
+            if(header.containsKey("CTYPE" + id)) axis.setShortLabel(header.getStringValue("CTYPE" + id));
             else axis.setShortLabel("Axis " + index);
             
-            if(header.containsKey("CUNIT" + spec)) axis.setUnit(Unit.get(header.getStringValue("CUNIT" + spec)));
-            else axis.setUnit(Unit.unity);
-            
-            if(header.containsKey("CDELT" + spec)) setResolution(i, header.getDoubleValue("CDELT" + spec) * axis.getUnit().value());    
-            else setResolution(i, axis.getUnit().value());
+            if(header.containsKey("CUNIT" + id)) axis.setUnit(Unit.get(header.getStringValue("CUNIT" + id)));
+            else axis.setUnit(Unit.unity);         
+                   
+            setReferenceIndex(i, header.getDoubleValue("CRPIX" + id, 1.0) - 1.0);    
+            setReferenceValue(i, header.getDoubleValue("CRVAL" + id, 0.0) * axis.getUnit().value());
+            setResolution(i, header.getDoubleValue("CDELT" + id, 1.0) * axis.getUnit().value());         
         }
       
     }
@@ -88,18 +100,20 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
     @Override
     public void editHeader(Header header) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        String alt = getVariant() == 0 ? "" : Character.toString((char) ('A' + getVariant()));
+        String alt = getFitsID();
         
         CoordinateSystem system = getCoordinateSystem();
         for(int i=0; i<system.size(); i++) {
             CoordinateAxis axis = system.get(i);
             int index = firstAxis + i;
-            String spec = index + alt;
-            String id = "Axis-" + index;
+            String id = index + alt;
+            String name = "Axis-" + index;
             
-            c.add(new HeaderCard("CTYPE" + spec, axis.getShortLabel(), id + " name"));
-            if(axis.getUnit() != null) c.add(new HeaderCard("CUNIT" + spec, axis.getUnit().name(), id + " unit"));
-            c.add(new HeaderCard("CDELT" + spec, getResolution(i) / axis.getUnit().value(), id + " spacing."));        
+            c.add(new HeaderCard("CTYPE" + id, axis.getShortLabel(), name + " name"));
+            if(axis.getUnit() != null) c.add(new HeaderCard("CUNIT" + id, axis.getUnit().name(), name + " unit")); 
+            c.add(new HeaderCard("CRPIX" + id, getReferenceIndex(i) + 1, name + " reference grid index (1-based)"));
+            c.add(new HeaderCard("CRVAL" + id, getReferenceValue(i), name + " value at reference index"));
+            c.add(new HeaderCard("CDELT" + id, getResolution(i) / axis.getUnit().value(), name + " spacing."));            
         }
         
     }
@@ -183,6 +197,26 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
         public int dimension() {
             return refIndex.length;
         }
+
+        @Override
+        public double getReferenceIndex(int axis) {
+            return refIndex[axis];
+        }
+
+        @Override
+        public void setReferenceIndex(int axis, double value) {
+           refIndex[axis] = value;
+        }
+
+        @Override
+        public double getReferenceValue(int axis) {
+            return refValue[axis];
+        }
+
+        @Override
+        public void setReferenceValue(int axis, double value) {
+            refValue[axis] = value;
+        }
         
     }
     
@@ -265,6 +299,26 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
         @Override
         public int dimension() {
             return refIndex.length;
+        }
+
+        @Override
+        public double getReferenceIndex(int axis) {
+            return refIndex[axis];
+        }
+
+        @Override
+        public void setReferenceIndex(int axis, double value) {
+            refIndex[axis] = (float) value;
+        }
+
+        @Override
+        public double getReferenceValue(int axis) {
+            return refValue[axis];
+        }
+
+        @Override
+        public void setReferenceValue(int axis, double value) {
+            refValue[axis] = (float) value;
         }
         
     }

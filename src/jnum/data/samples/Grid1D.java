@@ -181,6 +181,24 @@ public class Grid1D extends CartesianGrid<Scalar> {
         return resolution.value();
     }
 
+    @Override
+    public double getReferenceIndex(int axis) {
+        return axis == 0 ? refIndex.value() : Double.NaN;
+    }
 
-   
+    @Override
+    public void setReferenceIndex(int axis, double value) {
+        if(axis == 0) refIndex.setValue(value);
+    }
+
+    @Override
+    public double getReferenceValue(int axis) {
+       return axis == 0 ? refValue.value() : Double.NaN;
+    }
+
+    @Override
+    public void setReferenceValue(int axis, double value) {
+        if(axis == 0) refValue.setValue(value);
+    }
+
 }

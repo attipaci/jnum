@@ -63,6 +63,14 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
     }
     
 	
+	@SuppressWarnings("unchecked")
+    @Override
+    public CompoundUnit clone() {
+	    CompoundUnit clone = (CompoundUnit) super.clone();
+	    if(factors != null) clone.factors = (ArrayList<ExponentUnit>) factors.clone();
+	    return clone;
+	}
+	
 	/* (non-Javadoc)
 	 * @see jnum.Unit#copy()
 	 */

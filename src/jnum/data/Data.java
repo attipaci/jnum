@@ -886,10 +886,8 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
         Fits fits = new Fits(); 
         
         ArrayList<BasicHDU<?>> hdus = getHDUs(dataType);
-
         for(int i=0; i<hdus.size(); i++) fits.addHDU(hdus.get(i));
-        
-        fits.addHDU(createHDU(dataType));
+
         return fits;
     }
     
