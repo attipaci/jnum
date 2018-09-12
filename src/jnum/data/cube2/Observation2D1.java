@@ -52,11 +52,9 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
         this.weightType = weightType;
     }
 
-
+    @Override
     public Observation2D1 copy(boolean withContents) {
-        Observation2D1 copy = (Observation2D1) super.clone();
-        for(int k=sizeZ(); --k >= 0; ) copy.setPlane(k, getPlane(k).copy());
-        return copy;
+        return (Observation2D1) super.copy(withContents);
     }
 
     @Override
@@ -143,8 +141,6 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
             }
         };
     }
-
-
 
     public void accumulate(final Observation2D1 cube, final double weight) {
         for(int k=sizeZ(); --k >= 0; ) getPlane(k).accumulate(cube.getPlane(k), weight);

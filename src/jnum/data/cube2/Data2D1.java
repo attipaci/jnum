@@ -65,6 +65,14 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         stack.ensureCapacity(initialPlanesCapacity);
     }
     
+    @SuppressWarnings("unchecked")
+    @Override
+    public Data2D1<ImageType> clone() {
+        Data2D1<ImageType> clone = (Data2D1<ImageType>) super.clone();
+        if(stack != null) clone.stack = new ArrayList<ImageType>(stack);
+        return clone;
+    }
+    
     @Override
     public void addLocalUnit(Unit u, String altNames) {
         super.addLocalUnit(u, altNames);

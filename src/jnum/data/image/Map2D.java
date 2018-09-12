@@ -1011,7 +1011,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
 
         return super.getInfo() + " (" +
                 Util.f1.format(sizeX() * grid.pixelSizeX() / sizeUnit.value()) + " x " + 
-                Util.f1.format(sizeY() * grid.pixelSizeY() / sizeUnit.value()) + " " + sizeUnit.name() + ")." +
+                Util.f1.format(sizeY() * grid.pixelSizeY() / sizeUnit.value()) + " " + sizeUnit.name() + ").\n" +
                 grid.toString(sizeUnit) +
                 "Instrument PSF: " + getUnderlyingBeam().toString(sizeUnit) + " FWHM.\n" +
                 "Applied Smoothing: " + smoothingBeam.toString(sizeUnit) + " FWHM (includes pixelization).\n" +

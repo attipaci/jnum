@@ -61,6 +61,14 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     }
    
 
+    @SuppressWarnings("unchecked")
+    public AbstractMap2D1<MapType> copy(boolean withContents) {
+        AbstractMap2D1<MapType> copy = (AbstractMap2D1<MapType>) super.clone();        
+        for(int k=sizeZ(); --k >= 0; ) copy.setPlane(k, (MapType) getPlane(k).copy(withContents));
+        return copy;
+    }
+    
+    
     @Override
     public final Class<? extends Number> getElementType() { return dataType; }
 
@@ -222,10 +230,12 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
 
 
     public void resetFiltering() {
+        if(getPlaneTemplate() != null) getPlaneTemplate().resetFiltering();
         for(Map2D plane : getPlanes()) plane.resetFiltering();
     }
     
     public void resetProcessing() {
+        if(getPlaneTemplate() != null) getPlaneTemplate().resetProcessing();
         for(Map2D plane : getPlanes()) plane.resetProcessing();
     }
 
