@@ -23,8 +23,15 @@
 
 package jnum.data.samples;
 
+import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import jnum.Configurator;
 import jnum.PointOp;
 import jnum.Util;
 import jnum.data.CubicSpline;
@@ -33,7 +40,9 @@ import jnum.data.RegularData;
 import jnum.data.SplineSet;
 import jnum.data.WeightedPoint;
 import jnum.data.samples.overlay.Overlay1D;
+import jnum.math.CoordinateAxis;
 import jnum.math.IntRange;
+import jnum.math.Range;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
 import jnum.text.TableFormatter;
@@ -390,6 +399,151 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         return "Sample size: " + getSize() + " bins.";
     }
 
+    public void writeASCIITable(String corePath, Grid1D grid, String yName) throws FileNotFoundException {
+        String fileName = corePath + ".dat";
+
+        PrintWriter out = new PrintWriter(new FileOutputStream(fileName));
+        StringTokenizer header = new StringTokenizer(getInfo(), "\n");
+
+        while(header.hasMoreTokens()) out.println("# " + header.nextToken());
+           
+        out.println("#");
+        out.println("# " + getASCIITableHeader(grid, yName));
+  
+        for(int i=0; i<size(); i++) out.println(getASCIITableEntry(i, grid));
+        
+        out.flush();
+        out.close();
+        
+        Util.notify(this, "Written " + fileName);
+    }
+    
+    protected String getASCIITableHeader(Grid1D grid, String yName) {
+        return getXLabel(grid) + "\t" + getYLabel(yName);
+    }
+        
+    protected String getASCIITableEntry(int index, Grid1D grid) {
+        if(grid == null) return (index+1) + "";
+        
+        
+        
+        return Util.S6.format(grid.coordAt(index) / grid.getAxis().unit.value()) + "\t" +
+            Util.S6.format(get(index).doubleValue() / getUnit().value());
+    }
+
+    public String getXLabel(Grid1D grid) {
+        if(grid == null) return "Sample #";
+
+        CoordinateAxis axis = grid.getAxis();
+        String xLabel = axis.getLabel();
+        if(axis.getUnit() != null) xLabel += " (" + axis.getUnit().name() + ")";
+        
+        return xLabel;
+    }
+    
+    public String getYLabel(String name) {
+        String yLabel = name;
+        if(getUnit() != null) yLabel += " (" + getUnit().name() + ")";
+        return yLabel;
+    }
+     
+    public void gnuplot(String coreName, Grid1D grid, String yName, String gnuplotCommand, Configurator pngOptions, Configurator epsOptions, boolean show) throws IOException {
+        String plotName = coreName + ".plt";
+        PrintWriter plot = new PrintWriter(new FileOutputStream(plotName));
+                      
+        // Save & disable the default plot terminal while setting up the plot command...
+        plot.println("set term push");
+        plot.println("set term unknown");
+        
+        createGnuplot(plot, coreName, grid, yName, gnuplotCommand, pngOptions, epsOptions);
+        plot.println();
+           
+        if(epsOptions != null) gnuplotEPS(plot, coreName);
+        if(pngOptions != null) gnuplotPNG(plot, coreName, pngOptions);
+
+        // Re-enable the default plot terminal
+        plot.println("set out");
+        plot.println("set term pop");
+        
+        // Plot onto default terminal if requested.
+        plot.println((show ? "" : "#")  + "replot");
+        plot.close();
+        
+        Util.notify(this, "Written " + plotName);
+
+        if(gnuplotCommand == null) gnuplotCommand = "gnuplot";
+        else gnuplotCommand = Util.getSystemPath(gnuplotCommand);
+
+        Runtime runtime = Runtime.getRuntime();
+        runtime.exec(gnuplotCommand + " -p " + plotName);
+    }
+    
+    protected void createGnuplot(PrintWriter plot, String coreName, Grid1D grid, String yName, String gnuplotCommand, Configurator pngOptions, Configurator epsOptions) throws IOException {       
+        Range xRange = new Range(0, size()-1);  
+        if(grid != null) {
+            xRange = new Range(grid.coordAt(0), grid.coordAt(size()-1));
+            xRange.scale(1.0 / grid.getAxis().unit.value());
+        }
+       
+        if(yName == null) yName = "Value";
+        
+        plot.println("set xla '" + getXLabel(grid) + "'");
+        plot.println("set yla '" + getYLabel(yName) + "'");
+
+        if(grid != null) {
+            plot.println("set xtics nomirror");
+            plot.println("set x2tics nomirror");
+        }
+        
+        Range yRange = getRange();
+        yRange.scale(1.0 / getUnit().value());
+        
+        yRange.grow(1.05);   // some y-padding...    
+
+        plot.println("set xra [" + xRange.min() + ":" + xRange.max() + "]");
+        plot.println("set x2ra [1:" + size() + "]");
+        plot.println("set yra [" + yRange.min() + ":" + yRange.max() + "]");
+        
+        plot.println("plot \\");
+        plot.print("'" + coreName + ".dat' using 1:2 notitle with histep lt 1 pt 5 lw 1");
+    }
+    
+
+    private void gnuplotEPS(PrintWriter plot, String coreName) {
+        plot.println("set term post eps enh col sol 18");
+        plot.println("set out '" + coreName + ".eps'");
+        plot.println("replot");
+
+        plot.println("print 'Written " + coreName + ".eps'");
+        Util.notify(this, "Written " + coreName + ".eps"); 
+    }
+
+    private void gnuplotPNG(PrintWriter plot, String coreName, Configurator pngOptions) {
+        boolean isTransparent = false;
+        int bgColor = Color.WHITE.getRGB();
+        if(pngOptions.isConfigured("bg")) {
+            String spec = pngOptions.get("bg").getValue().toLowerCase();
+            if(spec.equals("transparent")) isTransparent = true;
+            else bgColor = Color.getColor(spec).getRGB(); 
+        }
+
+        int sizeX = 640;
+        int sizeY = 480;
+        if(pngOptions.isConfigured("size")) {
+            String spec = pngOptions.get("size").getValue();
+            StringTokenizer tokens = new StringTokenizer(spec, "xX*:, ");
+            sizeX = sizeY = Integer.parseInt(tokens.nextToken());
+            if(tokens.hasMoreTokens()) sizeY = Integer.parseInt(tokens.nextToken());                
+        }
+
+        plot.println("set term pngcairo enhanced color " + (isTransparent ? "" : "no") + "transparent" +
+                " background '#" + Integer.toHexString(bgColor).substring(2) + "' fontscale 1.0" + 
+                " butt size " + sizeX + "," + sizeY);
+        plot.println("set out '" + coreName + ".png'");
+        plot.println("replot");
+        plot.println("print 'Written " + coreName + ".png'");   
+        Util.notify(this, "Written " + coreName + ".png");
+    }
     
    
     
@@ -535,6 +689,9 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         return fork.getResult();
     }
 
+    
+    
+    
     
     
     

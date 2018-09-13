@@ -104,13 +104,14 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
        
         @Override
         protected void init() {
-            sum = 0.0;
+            sum = Double.NaN;
         }
         
         protected abstract double getValue(PointType point);
         
         @Override
         public final void process(PointType point) {
+            if(Double.isNaN(sum)) sum = 0.0;
             sum += getValue(point);
         }
         

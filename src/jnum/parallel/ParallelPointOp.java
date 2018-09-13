@@ -95,23 +95,24 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
     }
     
     public abstract static class Sum<PointType> extends ParallelPointOp<PointType, Double> {
-        private double sum = 0.0;
+        private double sum = Double.NaN;
        
         @Override
         protected void init() {
-            sum = 0.0;
+            sum = Double.NaN;
         }
         
         protected abstract double getValue(PointType point);
         
         @Override
         public final void process(PointType point) {
+            if(Double.isNaN(sum)) sum = 0.0;
             sum += getValue(point);
         }
 
         @Override
         public final void mergeResult(Double localSum) {
-            sum += localSum;
+            if(!localSum.isNaN()) sum += localSum;
         }
         
         @Override

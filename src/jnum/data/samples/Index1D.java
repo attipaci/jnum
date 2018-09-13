@@ -98,13 +98,13 @@ public class Index1D extends AbstractIndex<Index1D> {
 
     @Override
     public int getValue(int dim) throws IndexOutOfBoundsException {
-       if(i == 0) return i;
+       if(dim == 0) return i;
        throw new IndexOutOfBoundsException(Integer.toString(dim));
     }
 
     @Override
     public void setValue(int dim, int value) {
-        if(i == 0) i = value;
+        if(dim == 0) i = value;
         else throw new IndexOutOfBoundsException(Integer.toString(dim));
     }
 

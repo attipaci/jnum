@@ -297,6 +297,8 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
     }
 
 
+    
+    
     @Override
     public WeightedPoint getMean() { return getWeightedMean(getWeights()); }
 

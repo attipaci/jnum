@@ -41,6 +41,7 @@ import jnum.data.image.Data2D;
 import jnum.data.image.Image2D;
 import jnum.data.samples.Index1D;
 import jnum.data.samples.Offset1D;
+import jnum.data.samples.Samples1D;
 import jnum.math.IntRange;
 import jnum.math.Vector3D;
 
@@ -405,6 +406,14 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         return sum;   
     }
 
+    
+
+    public Samples1D getZSamples() {
+        Samples1D z = Samples1D.createType(getElementType(), sizeZ());
+        z.setUnit(getUnit());
+        for(int k=sizeZ(); --k >= 0; ) z.set(k, getPlane(k).getSum());
+        return z;
+    }
 
     @Override
     public double splineAtIndex(double ic, double jc, double kc, SplineSet<Vector3D> splines) {
