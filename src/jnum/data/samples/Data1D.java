@@ -447,26 +447,28 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         return yLabel;
     }
      
-    public void gnuplot(String coreName, Grid1D grid, String yName, String gnuplotCommand, Configurator pngOptions, Configurator epsOptions, boolean show) throws IOException {
+    public void gnuplot(String coreName, Grid1D grid, String yName, String gnuplotCommand, Configurator options) throws IOException {
         String plotName = coreName + ".plt";
         PrintWriter plot = new PrintWriter(new FileOutputStream(plotName));
                       
         // Save & disable the default plot terminal while setting up the plot command...
         plot.println("set term push");
-        plot.println("set term unknown");
+        plot.println("set term dumb");
         
-        createGnuplot(plot, coreName, grid, yName, gnuplotCommand, pngOptions, epsOptions);
+        createGnuplot(plot, coreName, grid, yName, gnuplotCommand, options);
         plot.println();
            
-        if(epsOptions != null) gnuplotEPS(plot, coreName);
-        if(pngOptions != null) gnuplotPNG(plot, coreName, pngOptions);
-
+        if(options != null) {
+            if(options.isConfigured("eps")) gnuplotEPS(plot, coreName);
+            if(options.isConfigured("png")) gnuplotPNG(plot, coreName, options.get("png"));
+        }
+            
         // Re-enable the default plot terminal
         plot.println("set out");
         plot.println("set term pop");
         
         // Plot onto default terminal if requested.
-        plot.println((show ? "" : "#")  + "replot");
+        plot.println((options.isConfigured("show") ? "" : "#")  + "replot");
         plot.close();
         
         Util.notify(this, "Written " + plotName);
@@ -478,7 +480,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         runtime.exec(gnuplotCommand + " -p " + plotName);
     }
     
-    protected void createGnuplot(PrintWriter plot, String coreName, Grid1D grid, String yName, String gnuplotCommand, Configurator pngOptions, Configurator epsOptions) throws IOException {       
+    protected void createGnuplot(PrintWriter plot, String coreName, Grid1D grid, String yName, String gnuplotCommand, Configurator options) throws IOException {       
         Range xRange = new Range(0, size()-1);  
         if(grid != null) {
             xRange = new Range(grid.coordAt(0), grid.coordAt(size()-1));
@@ -502,10 +504,17 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
 
         plot.println("set xra [" + xRange.min() + ":" + xRange.max() + "]");
         plot.println("set x2ra [1:" + size() + "]");
-        plot.println("set yra [" + yRange.min() + ":" + yRange.max() + "]");
+        plot.println("set yra [" + yRange.min() + ":" + yRange.max() + "]");   
+        
+        String style = options.isConfigured("style") ? options.get("style").getValue() : "histep";
+        
+        if(options.isConfigured("lt")) plot.println("set style line 1 lt " + options.get("lt").getInt());
+        if(options.isConfigured("lw")) plot.println("set style line 1 lw " + options.get("lw").getDouble());
+        if(options.isConfigured("pt")) plot.println("set style line 1 pt " + options.get("pt").getInt());
+        if(options.isConfigured("ps")) plot.println("set style line 1 ps " + options.get("ps").getDouble());
         
         plot.println("plot \\");
-        plot.print("'" + coreName + ".dat' using 1:2 notitle with histep lt 1 pt 5 lw 1");
+        plot.print("'" + coreName + ".dat' using 1:2 notitle with " + style);
     }
     
 
