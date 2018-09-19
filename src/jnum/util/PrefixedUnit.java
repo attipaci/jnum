@@ -40,7 +40,7 @@ public class PrefixedUnit extends Unit {
     public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null) return false;
-        if(!(o instanceof PrefixedUnit)) return false;
+        if(!o.getClass().equals(getClass())) return false;
         
         PrefixedUnit u = (PrefixedUnit) o;
         if(!u.multiplier.equals(multiplier)) return false;

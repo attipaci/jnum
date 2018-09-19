@@ -190,7 +190,6 @@ public class Flagged2D extends Overlay2D {
     public final boolean isUnflagged(int i, int j, long pattern) { return flag.isClear(i, j, pattern); }
 
 
-
     protected void createFlags(int flagType) {
         Flag2D flags = new Flag2D(flagType);
         flags.setSize(sizeX(), sizeY());
@@ -208,15 +207,15 @@ public class Flagged2D extends Overlay2D {
         });
     }
 
-    
-
     protected void initFlags() {
         getFlags().fill(FLAG_DEFAULT);
     }
 
 
+    @Override
     public void destroy() {
-        getFlags().destroy();        
+        super.destroy();
+        getFlags().destroy();
     }
     
     @Override

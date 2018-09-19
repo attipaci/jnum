@@ -151,5 +151,9 @@ public class Overlay2D extends Data2D implements CopiableContent<Overlay2D> {
         if(values instanceof Data) return ((Data<?>) values).getCore();
         return getImage().getCore();
     }
+    
+    public void destroy() {
+        if(getBasis() instanceof Image2D) ((Image2D) getBasis()).destroy();
+    }
 
 }

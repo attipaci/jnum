@@ -594,15 +594,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         image.setExecutor(getExecutor());
     }
 
-    @Override
-    public void setFlags(Flag2D flags) { 
-        super.setFlags(flags);
-        flags.setParallel(getParallel());
-        flags.setExecutor(getExecutor());
-    }
-
-
-
 
     @Override
     public final void setSize(Index2D size) {
@@ -613,12 +604,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         // Create brand new images, so that setSize on a clone does not change the original...
         setImage(Image2D.createType(getElementType(), sizeX, sizeY));
         createFlags(getFlags().getType());
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        getImage().destroy();     
     }
 
 

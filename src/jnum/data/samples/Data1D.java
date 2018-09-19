@@ -458,10 +458,8 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         createGnuplot(plot, coreName, grid, yName, gnuplotCommand, options);
         plot.println();
            
-        if(options != null) {
-            if(options.isConfigured("eps")) gnuplotEPS(plot, coreName);
-            if(options.isConfigured("png")) gnuplotPNG(plot, coreName, options.get("png"));
-        }
+        if(options.isConfigured("eps")) gnuplotEPS(plot, coreName);
+        if(options.isConfigured("png")) gnuplotPNG(plot, coreName, options.get("png"));
             
         // Re-enable the default plot terminal
         plot.println("set out");
