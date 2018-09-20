@@ -650,9 +650,11 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	/** The ISO date formatter. */
 	public final static String ISOFormat = new String("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
+	   /** The ISO date formatter. */
+    public final static String FITSFormat = new String("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	/** The FITS date (excluding time) formatter. */
 	public final static String FITSDateFormat = new String("yyyy-MM-dd");
-	
+		
 	/** The default date formatter. */
 	public final static String DefaultFormat = new String("yyyy.MM.dd");
 	
