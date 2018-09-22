@@ -455,7 +455,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	            parser.skip(3);
 	            parser.skipWhiteSpaces();
 	            
-	            try { parseCoords = parseClass.newInstance(); }
+	            try { parseCoords = parseClass.getConstructor().newInstance(); }
 	            catch(Exception e) { Util.warning(this, e); }
 	        }
 	    }

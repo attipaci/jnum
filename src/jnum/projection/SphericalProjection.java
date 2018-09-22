@@ -24,6 +24,7 @@
 
 package jnum.projection;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 
 import jnum.Constant;
@@ -542,12 +543,16 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	 *
 	 * @param name the name
 	 * @return the spherical projection
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws SecurityException 
+	 * @throws IllegalArgumentException 
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	public static SphericalProjection forName(String name) throws InstantiationException, IllegalAccessException {
+	public static SphericalProjection forName(String name) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Class<? extends SphericalProjection> projectionClass = registry.get(name);
-		if(projectionClass != null) return projectionClass.newInstance();
+		if(projectionClass != null) return projectionClass.getConstructor().newInstance();
 		throw new InstantiationException("No projection " + name + " in registry.");
 	}
 

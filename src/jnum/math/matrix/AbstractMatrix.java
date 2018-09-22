@@ -608,9 +608,8 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	public void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException {
 	    // TODO need to update parseposition...
 	    try { setData(ArrayUtil.parse(text.substring(pos.getIndex()), getType())); }
-		catch(IllegalAccessException e) { Util.error(this, e); }
-		catch(InstantiationException e) { Util.error(this, e); }
 		catch(ParseException e) { throw new NumberFormatException(e.getMessage()); }
+	    catch(Exception e) { Util.error(this, e); }
 	}
 
 	

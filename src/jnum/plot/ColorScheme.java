@@ -25,6 +25,7 @@
 package jnum.plot;
 
 import java.awt.Color;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 
 import jnum.plot.colorscheme.BBLike;
@@ -75,12 +76,16 @@ public abstract class ColorScheme {
 	 *
 	 * @param name the name
 	 * @return the instance for
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws SecurityException 
+	 * @throws IllegalArgumentException 
 	 * @throws IllegalAccessException the illegal access exception
 	 * @throws InstantiationException the instantiation exception
 	 */
-	public static ColorScheme getInstanceFor(String name) throws IllegalAccessException, InstantiationException {
+	public static ColorScheme getInstanceFor(String name) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		name = name.toLowerCase();
-		return schemes.containsKey(name) ? schemes.get(name).newInstance() : null;
+		return schemes.containsKey(name) ? schemes.get(name).getConstructor().newInstance() : null;
 	}
 	
 	/** The schemes. */

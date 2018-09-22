@@ -22,6 +22,10 @@
 	[FIX] MapProperties.copy(template) was neither a fully independent copy
 	nor did it deal with null fields. Both issues fixed.
 
+	[CODE] Java 11+ compatobility: Class.newInstance() is deprecated in 
+	Java 11. Updated source to use Class.getConstructor().newInstance() 
+	instead.
+
 	[CODE] copy() keeps, rather then reinstantiates, String references.
 	Java Strings are non-mutable objects, and non-mutables do not need
 	to be deep copied.

@@ -23,6 +23,7 @@
 package jnum.data.image;
 
 import java.awt.geom.AffineTransform;
+import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
@@ -450,8 +451,12 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 	 * @return the coordinate instance for
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws SecurityException 
+	 * @throws IllegalArgumentException 
 	 */
-	public abstract CoordinateType getCoordinateInstanceFor(String type) throws InstantiationException, IllegalAccessException;
+	public abstract CoordinateType getCoordinateInstanceFor(String type) throws Exception;
 	
 	public CoordinateAxis xAxis() { return getCoordinateSystem().get(0); }
 	
@@ -468,7 +473,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 	 * @throws IllegalAccessException the illegal access exception
 	 */
 	@Override
-    public void parseHeader(Header header) throws InstantiationException, IllegalAccessException {
+    public void parseHeader(Header header) throws Exception {
 	    String alt = getFitsID();
 	    
 		String type = header.getStringValue("CTYPE1" + alt);
@@ -782,7 +787,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
      * @throws InstantiationException the instantiation exception
      * @throws IllegalAccessException the illegal access exception
      */
-    public static Grid2D<?> fromHeader(Header header, String alt) throws InstantiationException, IllegalAccessException {
+    public static Grid2D<?> fromHeader(Header header, String alt) throws Exception {
     	Grid2D<?> grid = getGrid2DInstanceFor(header.getStringValue("CTYPE1" + alt), header.getStringValue("CTYPE2" + alt));  
     	grid.parseHeader(header);
     	return grid;

@@ -459,7 +459,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
     }
     
     
-    public void parseCoordinateInfo(Header header, String alt) throws InstantiationException, IllegalAccessException {
+    public void parseCoordinateInfo(Header header, String alt) throws Exception {
         setGrid(Grid2D.fromHeader(header, alt));
     }
     

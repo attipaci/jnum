@@ -85,7 +85,7 @@ public class FlatGrid2D extends Grid2D<Coordinate2D> {
 	 * @see kovacs.data.Grid2D#parseHeader(nom.tam.fits.Header)
 	 */
 	@Override
-	public void parseHeader(Header header) throws InstantiationException, IllegalAccessException {
+	public void parseHeader(Header header) throws Exception {
 		super.parseHeader(header);
 		
 		String alt = getFitsID();

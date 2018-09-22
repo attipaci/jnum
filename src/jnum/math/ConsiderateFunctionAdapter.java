@@ -60,12 +60,11 @@ public class ConsiderateFunctionAdapter<ArgType, ReturnType> implements Function
 	@Override
 	public synchronized ReturnType valueAt(ArgType parms) {
 		try { 
-			ReturnType value = returnType.newInstance(); 
+			ReturnType value = returnType.getConstructor().newInstance(); 
 			function.evaluate(parms, value);
 			return value;
 		}
-		catch(InstantiationException e) { Util.error(this, e); }
-		catch(IllegalAccessException e) { Util.error(this, e); }
+		catch(Exception e) { Util.error(this, e); }
 		
 		return null;
 	}	

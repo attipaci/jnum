@@ -138,7 +138,7 @@ public class AstroSystem implements Serializable {
 	 */
 	public SphericalCoordinates getCoordinateInstance() {
 		if(system == null) return null;
-		try { return system.newInstance(); } 
+		try { return system.getConstructor().newInstance(); } 
 		catch(Exception e) { return null; }
 	}
 	
@@ -173,7 +173,7 @@ public class AstroSystem implements Serializable {
 	public SphericalCoordinates getCoordinateInstance(String id) {
 		Class<? extends SphericalCoordinates> coordType = getCoordinateClass(id);
 		if(coordType == null) return null;
-		try { return coordType.newInstance(); } 
+		try { return coordType.getConstructor().newInstance(); } 
 		catch(Exception e) { return null; }
 	}
 	

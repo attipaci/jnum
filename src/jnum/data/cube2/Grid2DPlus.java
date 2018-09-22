@@ -69,7 +69,7 @@ public class Grid2DPlus<BaseCoordType extends Coordinate2D, SubGridType extends 
     }
     
     @Override
-    public BaseCoordType getCoordinateInstanceFor(String type) throws InstantiationException, IllegalAccessException {
+    public BaseCoordType getCoordinateInstanceFor(String type) throws Exception {
         return baseGrid.getCoordinateInstanceFor(type);
     }
 

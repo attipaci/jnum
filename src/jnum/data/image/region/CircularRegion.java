@@ -24,6 +24,8 @@
 package jnum.data.image.region;
 
 
+import java.lang.reflect.InvocationTargetException;
+
 import jnum.ExtraMath;
 import jnum.IncompatibleTypesException;
 import jnum.Unit;
@@ -111,9 +113,9 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         return clone;
     }
 
-    public void convertTo(Class<? extends Coordinate2D> coordinateClass) throws IncompatibleTypesException, InstantiationException, IllegalAccessException { 
+    public void convertTo(Class<? extends Coordinate2D> coordinateClass) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException { 
         Coordinate2D converted;
-        converted = coordinateClass.newInstance();
+        converted = coordinateClass.getConstructor().newInstance();
         coords.convertTo(converted);
         coords = converted;
     }
@@ -242,7 +244,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
     public void parseCrush(StringParser parser) throws Exception {
         setID(parser.nextToken());
         
-        Coordinate2D coords = getCoordinateClass().newInstance();
+        Coordinate2D coords = getCoordinateClass().getConstructor().newInstance();
         coords.parse(parser);
         setCoordinates(coords);
         
@@ -254,7 +256,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
 
    
     public void parseDS9(StringParser parser) throws Exception {	
-        Coordinate2D coords = getCoordinateClass().newInstance();
+        Coordinate2D coords = getCoordinateClass().getConstructor().newInstance();
 
         boolean isCircle = parser.nextToken().equalsIgnoreCase("circle");
 

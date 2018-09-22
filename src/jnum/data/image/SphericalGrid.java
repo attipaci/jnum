@@ -22,6 +22,8 @@
  ******************************************************************************/
 package jnum.data.image;
 
+import java.lang.reflect.InvocationTargetException;
+
 import jnum.Unit;
 import jnum.Util;
 import jnum.math.SphericalCoordinates;
@@ -112,9 +114,9 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	 * @see jnum.data.Grid2D#getCoordinateInstanceFor(java.lang.String)
 	 */
 	@Override
-	public SphericalCoordinates getCoordinateInstanceFor(String type) throws InstantiationException, IllegalAccessException {
+	public SphericalCoordinates getCoordinateInstanceFor(String type) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Class<? extends SphericalCoordinates> coordClass = SphericalCoordinates.getFITSClass(type);
-		return coordClass.newInstance();
+		return coordClass.getConstructor().newInstance();
 	}
 
     @Override

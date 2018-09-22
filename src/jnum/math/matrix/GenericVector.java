@@ -110,7 +110,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @return the t
 	 */
 	public T newEntry() {
-		try { return type.newInstance(); }
+		try { return type.getConstructor().newInstance(); }
 		catch(Exception e) {
 			Util.error(this, e);
 			return null;

@@ -37,6 +37,7 @@ package jnum.data;
 // 27.06.07 Tested except regrid, smooth stretch 
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.text.*;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -274,10 +275,14 @@ public final class ArrayUtil {
 	 * Initialize.
 	 *
 	 * @param data the data
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws SecurityException 
+	 * @throws IllegalArgumentException 
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	public static void initialize(Object data) throws InstantiationException, IllegalAccessException {	
+	public static void initialize(Object data) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {	
 		initialize(data, getClass(data));
 	}
 	
@@ -290,7 +295,7 @@ public final class ArrayUtil {
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	public static void initialize(Object data, int[] from, int[] to) throws InstantiationException, IllegalAccessException {	
+	public static void initialize(Object data, int[] from, int[] to) throws Exception {	
 		initialize(data, getClass(data), from, to);
 	}
 	
@@ -299,14 +304,18 @@ public final class ArrayUtil {
 	 *
 	 * @param data the data
 	 * @param type the type
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws SecurityException 
+	 * @throws IllegalArgumentException 
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	private static void initialize(Object data, Class<?> type) throws InstantiationException, IllegalAccessException {	
+	private static void initialize(Object data, Class<?> type) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {	
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
 			if(data instanceof Object[][]) for(int i=array.length; --i >= 0; ) initialize(array[i], type);
-			else for(int i=array.length; --i >= 0; ) array[i] = type.newInstance();
+			else for(int i=array.length; --i >= 0; ) array[i] = type.getConstructor().newInstance();
 		}
 	}
 
@@ -317,10 +326,14 @@ public final class ArrayUtil {
 	 * @param type the type
 	 * @param from the from
 	 * @param to the to
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws SecurityException 
+	 * @throws IllegalArgumentException 
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	private static void initialize(Object data, Class<?> type, int[] from, int[] to) throws InstantiationException, IllegalAccessException {	
+	private static void initialize(Object data, Class<?> type, int[] from, int[] to) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {	
 		initialize(data, type, from, to, 0);
 	}
 	
@@ -332,16 +345,20 @@ public final class ArrayUtil {
 	 * @param from the from
 	 * @param to the to
 	 * @param depth the depth
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws SecurityException 
+	 * @throws IllegalArgumentException 
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	private static void initialize(Object data, Class<?> type, int[] from, int[] to, int depth) throws InstantiationException, IllegalAccessException {	
+	private static void initialize(Object data, Class<?> type, int[] from, int[] to, int depth) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {	
 		if(data instanceof Object[]) {
 			final int start = from[depth];
 			final int end = to[depth];
 			Object[] array = (Object[]) data;
 			if(data instanceof Object[][]) for(int i=start; i<end; i++) initialize(array[i], type, from, to, depth+1);
-			else for(int i=start; i < end; i++) array[i] = type.newInstance();
+			else for(int i=start; i < end; i++) array[i] = type.getConstructor().newInstance();
 		}
 	}
 	
@@ -693,7 +710,7 @@ public final class ArrayUtil {
 			else {
 				Class<?> type = subarray[0].getClass();
 				for(int i=start; i<end; i++) {
-					try { subarray[i] = type.newInstance(); }
+					try { subarray[i] = type.getConstructor().newInstance(); }
 					catch(Exception e) { subarray[i] = null; }
 				}
 			}			
@@ -816,7 +833,7 @@ public final class ArrayUtil {
 			else {
 				Object[] subarray = (Object[]) array;
 				for(int i=start; i<end; i++) {
-					try { subarray[i] = type.newInstance(); } 
+					try { subarray[i] = type.getConstructor().newInstance(); } 
 					catch (Exception e) { throw new IllegalArgumentException("array fill error: " + e.getMessage()); } 
 				}
 			}
@@ -1167,12 +1184,15 @@ public final class ArrayUtil {
 	 * @param doubles the doubles
 	 * @return the object
 	 * @throws ClassCastException the class cast exception
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws SecurityException 
 	 * @throws InstantiationException the instantiation exception
 	 * @throws IllegalAccessException the illegal access exception
 	 */
-	public static Object viewAs(ViewableAsDoubles template, Object doubles) throws ClassCastException, InstantiationException, IllegalAccessException {
+	public static Object viewAs(ViewableAsDoubles template, Object doubles) throws ClassCastException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		try {			
-			ViewableAsDoubles view = template.getClass().newInstance();
+			ViewableAsDoubles view = template.getClass().getConstructor().newInstance();
 			view.createFromDoubles(doubles);
 			return view;
 		}
@@ -2655,10 +2675,14 @@ public final class ArrayUtil {
 	 * @param type the type
 	 * @return the object
 	 * @throws ParseException the parse exception
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws SecurityException 
+	 * @throws IllegalArgumentException 
 	 * @throws IllegalAccessException the illegal access exception
 	 * @throws InstantiationException the instantiation exception
 	 */
-	public static Object parse(String text, Class<?> type) throws ParseException, IllegalAccessException, InstantiationException {
+	public static Object parse(String text, Class<?> type) throws ParseException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		text = text.trim();
 		
 		// If it's an array, create storage and fill it with the parse elements...
@@ -2737,7 +2761,7 @@ public final class ArrayUtil {
 				else throw new IllegalArgumentException("Cannot parse arrays of " + type.getName());
 			}
 			else if(Parser.class.isAssignableFrom(type)) {
-				Parser element = (Parser) type.newInstance();
+				Parser element = (Parser) type.getConstructor().newInstance();
 				element.parse(text, new ParsePosition(0));
 				return element;
 			}
