@@ -713,6 +713,10 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
      */
     public static int getDefaultDecimals() { return af.getDecimals(); }
     
+    public static double zeroToTwoPi(double value) {
+        value = Math.IEEEremainder(value, Constant.twoPi);
+        return value >= 0 ? value : value + Constant.twoPi;
+    }
     
     static {
         defaultCoordinateSystem = new CoordinateSystem("Spherical Coordinates");

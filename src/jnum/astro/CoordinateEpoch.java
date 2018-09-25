@@ -237,8 +237,10 @@ Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
 	 * @throws NumberFormatException the number format exception
 	 */
 	public static CoordinateEpoch forString(String text) throws NumberFormatException {
-		if(text.charAt(0) == 'B') return new BesselianEpoch(Double.parseDouble(text.substring(1)));
-		else if(text.charAt(0) == 'J') return new JulianEpoch(Double.parseDouble(text.substring(1)));
+	    char first = text.charAt(0);
+	    
+		if(first == 'B' || first == 'b') return new BesselianEpoch(Double.parseDouble(text.substring(1)));
+		else if(first == 'J' || first == 'j') return new JulianEpoch(Double.parseDouble(text.substring(1)));
 		else {
 			double year = Double.parseDouble(text);
 			if(year < 1984.0) return new BesselianEpoch(year);

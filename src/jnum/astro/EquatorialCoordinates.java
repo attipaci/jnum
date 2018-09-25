@@ -149,18 +149,18 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     }
     	
 	/**
-	 * Ra.
+	 * Right ascension in the 0 -- 2pi range.
 	 *
 	 * @return the double
 	 */
-	public final double RA() { return longitude(); }
+	public final double RA() { return zeroToTwoPi(longitude()); }
 
 	/**
-	 * Right ascension.
+	 * Right ascension in the 0 -- 2pi range.
 	 *
 	 * @return the double
 	 */
-	public final double rightAscension() { return longitude(); }
+	public final double rightAscension() { return RA(); }
 
 	/**
 	 * Dec.
@@ -174,7 +174,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 	 *
 	 * @return the double
 	 */
-	public final double declination() { return latitude(); }
+	public final double declination() { return DEC(); }
 
 	/**
 	 * Sets the ra.
