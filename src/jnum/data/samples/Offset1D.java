@@ -129,6 +129,11 @@ public class Offset1D implements TrueVector<Double> {
     public void setDifference(TrueVector<? extends Double> a, TrueVector<? extends Double> b) { x = a.x() + b.x(); }
 
     @Override
+    public void multiplyByComponents(Coordinates<? extends Double> v) {
+        x *= v.x();
+    }
+    
+    @Override
     public Double dot(Coordinates<? extends Double> v) { return x * v.x(); }
 
     @Override
@@ -160,5 +165,7 @@ public class Offset1D implements TrueVector<Double> {
     public AbstractMatrix<Double> asColumnVector() {
         return new Matrix(new double[][] {{ x }});
     }
+
+   
 
 }

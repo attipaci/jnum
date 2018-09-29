@@ -40,6 +40,7 @@ import java.util.Vector;
 import jnum.fits.FitsHeaderEditing;
 import jnum.fits.FitsToolkit;
 import jnum.io.LineParser;
+import jnum.math.Coordinate2D;
 import jnum.math.Range;
 import jnum.math.Range2D;
 import jnum.math.Vector2D;
@@ -53,12 +54,12 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     private static final long serialVersionUID = 5040150005828567005L;
-    
+
     private Configurator root;
-    
+
     private String value;
     public int serialNo;
-    
+
     public boolean isEnabled = false;
     public boolean isLocked = false;
     public boolean wasUsed = false;
@@ -77,7 +78,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     public Configurator() { root = this; }
 
-    
+
     public Configurator(Configurator root) { this.root = root; }
 
     /* (non-Javadoc)
@@ -94,13 +95,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     @SuppressWarnings("unchecked")
     public Configurator copy() {
         Configurator copy = clone();
-        
+
         copy.branches = new Hashtable<String, Configurator>();
         for(String key : branches.keySet()) copy.branches.put(key, branches.get(key).copy());
-        
+
         copy.conditionals = new Hashtable<String, Vector<String>>();
         for(String key : conditionals.keySet()) copy.conditionals.put(key, (Vector<String>) conditionals.get(key).clone());
-        
+
         return copy;
     }
 
@@ -116,7 +117,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return Util.equals(c.value, value);
     }
 
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -124,7 +125,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     public int hashCode() {
         return value.hashCode();
     }
-    
+
 
     public boolean is(String value) {
         return value.equalsIgnoreCase(this.value);
@@ -415,7 +416,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         //System.err.println("### " + expression);
 
         if(!conditionals.containsKey(expression)) return;
-        
+
         if(details) System.err.println("[c] " + expression + " > " + conditionals.get(expression));
         parseAll(conditionals.get(expression));
     }
@@ -538,14 +539,14 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     }
 
- 
+
     public Configurator getRemoved() {
         if(!branches.containsKey("removed")) branches.put("removed", new Configurator(root));
         return branches.get("removed");
     }
 
 
- 
+
     public void restore(String arg) {
         String branchName = getBranchName(arg);
 
@@ -704,7 +705,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         else return null;
     }
 
- 
+
     public Configurator getExact(String key) {
         String branchName = getBranchName(key);
         if(branchName.length() == key.length()) return branches.get(key);
@@ -756,7 +757,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         value = "";
     }
 
-  
+
     public void intersect(Configurator options) {
         for(String key : getKeys(false)) {
             if(!options.containsKey(key)) purge(key);
@@ -791,7 +792,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return root.resolve(resolve(getRawValue(), "{?", "}"), "{?", "}"); 
     }
 
-  
+
     public String getRawValue() {
         return value;
     }
@@ -841,44 +842,64 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     public Range getRange() {
         return Range.from(getValue());		
     }
-    
+
     public Range getRange(double scaling) {
         Range r = getRange();
         r.scale(scaling);
         return r;
     }
-   
-    
+
+
     public Range getRange(boolean isNonNegative) {
         return Range.from(getValue(), isNonNegative);     
     }
-    
+
     public Range getRange(boolean isNonNegative, double scaling) {
         Range r = getRange(isNonNegative);
         r.scale(scaling);
         return r;
     }
-  
-    
+
+
     public Range2D getRange2D() {
         return Range2D.from(getValue());      
     }
-    
+
     public Range2D getRange2D(double scaling) {
         Range2D r = getRange2D();
         r.scale(scaling);
         return r;
     }
-    
+
 
     public Vector2D getVector2D() {
         return new Vector2D(getValue());		
     }
 
     public Vector2D getVector2D(double scaling) {
-       Vector2D v = getVector2D();
-       v.scale(scaling);
-       return v;
+        Vector2D v = getVector2D();
+        v.scale(scaling);
+        return v;
+    }
+
+    public Vector2D getDimension2D() {
+        StringTokenizer tokens = new StringTokenizer(getValue(), " \t,:xX");
+        Vector2D v = new Vector2D();
+        v.setX(Double.parseDouble(tokens.nextToken()));
+        v.setY(tokens.hasMoreTokens() ? Double.parseDouble(tokens.nextToken()) : v.x());
+        return v;
+    }
+
+    public Vector2D getDimension2D(double scaling) {
+        Vector2D v = getDimension2D();
+        v.scale(scaling);
+        return v;
+    }
+
+    public Vector2D getDimension2D(Coordinate2D scaling) {
+        Vector2D v = getDimension2D();
+        v.multiplyByComponents(scaling);
+        return v;
     }
     
 
@@ -1239,7 +1260,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     public void editHeader(Header header) throws HeaderCardException {
 
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        
+
         // Add all active configuration keys...
         for(String key : getAlphabeticalKeys(false)) {
             Configurator option = get(key);
@@ -1312,7 +1333,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
             return false;
         }
 
- 
+
         public void parse(String line) {
             final StringBuffer keyBuffer = new StringBuffer();
 

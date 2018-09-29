@@ -200,7 +200,7 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	
     public static PolarVector2D[] copyOf(PolarVector2D[] array) {
         PolarVector2D[] copy = new PolarVector2D[array.length];
-        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
         return copy;
     }
 

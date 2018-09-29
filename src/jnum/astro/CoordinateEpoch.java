@@ -227,7 +227,6 @@ Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
 	public void parseHeader(Header header, String alt) {
 		year = header.getDoubleValue("EQUINOX" + alt, this instanceof BesselianEpoch ? 1950.0 : 2000.0);
 	}
-	
 
 	/**
 	 * For string.

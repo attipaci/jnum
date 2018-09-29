@@ -149,6 +149,11 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public final void setComponent(int i, T x) { component[i] = x; }
+
+    @Override
+    public synchronized void multiplyByComponents(Coordinates<? extends T> v) { 
+        for(int i=component.length; --i >= 0; ) component[i].multiplyBy(v.getComponent(i));
+    }
 	
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractVector#dot(kovacs.math.AbstractVector)

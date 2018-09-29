@@ -764,7 +764,7 @@ public class Complex extends Vector2D implements
 	
     public static Complex[] copyOf(Complex[] array) {
         Complex[] copy = new Complex[array.length];
-        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
         return copy;
     }
 	

@@ -394,14 +394,20 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     public AbstractMatrix<Double> asColumnVector() {
         return new Matrix(new double[][] { {x()}, {y()} });
     }
+    
+    @Override
+    public final void multiplyByComponents(Coordinates<? extends Double> v) throws NonConformingException {
+        if(v.size() != 2) throw new NonConformingException("dot product with vector of different size.");
+        scaleX(v.x());
+        scaleY(v.y());
+    }
 
 
     @Override
     public final Double dot(Coordinates<? extends Double> v) throws NonConformingException {
         if(v.size() != 2) throw new NonConformingException("dot product with vector of different size.");
-        return x() * v.getComponent(0) + y() * v.getComponent(1);
+        return x() * v.x() + y() * v.y();
     }
-
 
 
     @Override
@@ -450,7 +456,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
     public static Vector2D[] copyOf(Vector2D[] array) {
         Vector2D[] copy = new Vector2D[array.length];
-        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
         return copy;
     }
     

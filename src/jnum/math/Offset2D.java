@@ -92,7 +92,7 @@ public class Offset2D extends Vector2D {
 
     public static Vector2D[] copyOf(Vector2D[] array) {
         Vector2D[] copy = new Vector2D[array.length];
-        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
         return copy;
     }
 

@@ -394,6 +394,8 @@ ViewableAsDoubles, Parser, NumberFormating {
 	public void parse(StringParser parser) throws NumberFormatException, IllegalArgumentException {
 	    boolean isBracketed = false;
 	    
+	    zero();
+	    
 	    parser.skipWhiteSpaces();
 	       
 	    if(parser.peek() == '(') {
@@ -589,7 +591,7 @@ ViewableAsDoubles, Parser, NumberFormating {
     
     public static Coordinate2D[] copyOf(Coordinate2D[] array) {
         Coordinate2D[] copy = new Coordinate2D[array.length];
-        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
         return copy;
     }
 	

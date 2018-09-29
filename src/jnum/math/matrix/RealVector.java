@@ -134,6 +134,11 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
         for(int i = size(); --i >= 0; ) component[i] = coords.getComponent(i);
     }
     
+    @Override
+    public void multiplyByComponents(Coordinates<? extends Double> v) {
+        for(int i=size(); --i >= 0; ) component[i] *= v.getComponent(i);
+    }
+    
     /* (non-Javadoc)
      * @see kovacs.math.AbstractVector#dot(kovacs.math.AbstractVector)
      */

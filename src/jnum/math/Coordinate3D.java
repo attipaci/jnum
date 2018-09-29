@@ -120,6 +120,12 @@ ViewableAsDoubles, Parser, NumberFormating {
 
     public final void subtractZ(final double value) { this.z -= value; }
     
+    
+    public final void scaleX(double factor) { x *= factor; }
+    
+    public final void scaleY(double factor) { y *= factor; }
+    
+    public final void scaleZ(double factor) { z *= factor; }
 	
     @Override
     public String toString(NumberFormat nf) {
@@ -307,7 +313,7 @@ ViewableAsDoubles, Parser, NumberFormating {
     
     public static Coordinate3D[] copyOf(Coordinate3D[] array) {
         Coordinate3D[] copy = new Coordinate3D[array.length];
-        for(int i=array.length; --i >= 0; ) copy[i] = array[i].copy();
+        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
         return copy;
     }
     

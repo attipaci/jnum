@@ -310,6 +310,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
         memCorrect(model, this.getNoise(), lambda);
     } 
     
+
     
     @Override
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {   
@@ -333,5 +334,5 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
         return hdus;
     }
 
-
+    
 }

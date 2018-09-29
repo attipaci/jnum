@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.zip.GZIPOutputStream;
 
 import jnum.Unit;
 import jnum.Util;
@@ -327,17 +328,23 @@ public final class FitsToolkit {
     }
      */
 
-    /**
-     * Write.
-     *
-     * @param fits the fits
-     * @param fileName the file name
-     * @throws FitsException the fits exception
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
     public static void write(Fits fits, String fileName) throws FitsException, IOException {
-        BufferedDataOutputStream stream = new BufferedDataOutputStream(new FileOutputStream(fileName));
+        write(fits, fileName, false);
+    }
 
+    public static void writeGZIP(Fits fits, String fileName) throws FitsException, IOException {
+        write(fits, fileName, true);
+    }
+
+    public static void write(Fits fits, String fileName, boolean gzip) throws FitsException, IOException {
+        BufferedDataOutputStream stream = null;
+        
+        if(gzip) {
+            if(!fileName.endsWith("gz")) fileName = fileName + ".gz";
+            stream = new BufferedDataOutputStream(new GZIPOutputStream(new FileOutputStream(fileName)));
+        }
+        else stream = new BufferedDataOutputStream(new FileOutputStream(fileName));
+            
         try { 
             fits.write(stream); 
             Util.notify(fits, "Written " + fileName);
@@ -346,7 +353,8 @@ public final class FitsToolkit {
         finally { stream.close(); }   
     }
 
- 
+    
+    
     public static void addHistory(Header header, List<String> history) throws HeaderCardException {
         Cursor<String, HeaderCard> c = endOf(header);
         for(String entry : history) addHistory(c, entry);

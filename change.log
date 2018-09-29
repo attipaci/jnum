@@ -1,9 +1,15 @@
-0.22-a1
+0.22-b1
+
+	[NEW] {TrueVector+} New method multiplyByComponents(v) for component-
+	by-component multiplication.
 
 	[NEW] {Data1D} plot generation via gnuplot.
 
 	[NEW] New array creation static methods for Coordinate2D/3D and
 	subclasses. 
+
+	[FIX] {TrueVector+} static copyOf(array[]) methods did not deal with
+	null elements properly. Fixed.
 
 	[FIX] {Index1D} get/setValue() bad check on dimension fixed. 
 

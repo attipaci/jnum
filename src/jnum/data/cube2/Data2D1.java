@@ -36,6 +36,7 @@ import jnum.data.Referenced;
 import jnum.data.SplineSet;
 import jnum.data.RegularData;
 import jnum.data.Statistics;
+import jnum.data.WeightedPoint;
 import jnum.data.cube.Data3D;
 import jnum.data.image.Data2D;
 import jnum.data.image.Image2D;
@@ -408,12 +409,26 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
     
 
-    public Samples1D getZSamples() {
+    public Samples1D getZSumSamples() {
         Samples1D z = Samples1D.createType(getElementType(), sizeZ());
         z.setUnit(getUnit());
         for(int k=sizeZ(); --k >= 0; ) z.set(k, getPlane(k).getSum());
         return z;
     }
+    
+    public Samples1D[] getZMeanSamples() {
+        Samples1D mean = Samples1D.createType(getElementType(), sizeZ());
+        Samples1D weight = Samples1D.createType(getElementType(), sizeZ());
+        mean.setUnit(getUnit());
+        weight.setUnit(getUnit());
+        for(int k=sizeZ(); --k >= 0; ) {
+            WeightedPoint p = getPlane(k).getMean();
+            mean.set(k, p.value());
+            weight.set(k, p.weight());
+        }
+        return new Samples1D[] { mean, weight };
+    }
+    
 
     @Override
     public double splineAtIndex(double ic, double jc, double kc, SplineSet<Vector3D> splines) {

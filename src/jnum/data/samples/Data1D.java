@@ -399,7 +399,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         return "Sample size: " + getSize() + " bins.";
     }
 
-    public void writeASCIITable(String corePath, Grid1D grid, String yName) throws FileNotFoundException {
+    public void writeASCIITable(String corePath, Grid1D grid, String yName, String nanValue) throws FileNotFoundException {
         String fileName = corePath + ".dat";
 
         PrintWriter out = new PrintWriter(new FileOutputStream(fileName));
@@ -409,8 +409,8 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
            
         out.println("#");
         out.println("# " + getASCIITableHeader(grid, yName));
-  
-        for(int i=0; i<size(); i++) out.println(getASCIITableEntry(i, grid));
+            
+        for(int i=0; i<size(); i++)  out.println(getASCIITableEntry(i, grid, nanValue));
         
         out.flush();
         out.close();
@@ -419,16 +419,19 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     }
     
     protected String getASCIITableHeader(Grid1D grid, String yName) {
-        return getXLabel(grid) + "\t" + getYLabel(yName);
+        return getXLabel(grid) + "\t" + getYLabel(yName) + "\tflag";
     }
         
-    protected String getASCIITableEntry(int index, Grid1D grid) {
+    protected String getASCIITableEntry(int index, Grid1D grid, String nanValue) {
         if(grid == null) return (index+1) + "";
         
-        
-        
+        double value = get(index).doubleValue();        
+        String sValue = Double.isNaN(value) ? nanValue : Util.S6.format(value / getUnit().value());
+         
         return Util.S6.format(grid.coordAt(index) / grid.getAxis().unit.value()) + "\t" +
-            Util.S6.format(get(index).doubleValue() / getUnit().value());
+            sValue + "\t" +
+            (Double.isNaN(value) ? "1" : "0"
+        );
     }
 
     public String getXLabel(Grid1D grid) {
@@ -455,7 +458,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         plot.println("set term push");
         plot.println("set term dumb");
         
-        createGnuplot(plot, coreName, grid, yName, gnuplotCommand, options);
+        createGnuplot(plot, coreName, grid, yName, options);
         plot.println();
            
         if(options.isConfigured("eps")) gnuplotEPS(plot, coreName);
@@ -478,22 +481,26 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         runtime.exec(gnuplotCommand + " -p " + plotName);
     }
     
-    protected void createGnuplot(PrintWriter plot, String coreName, Grid1D grid, String yName, String gnuplotCommand, Configurator options) throws IOException {       
+    protected void createGnuplot(PrintWriter plot, String coreName, Grid1D grid, String yName, Configurator options) throws IOException {       
+        configGnuplot(plot, coreName, grid, yName, options);     
+        plot.println("plot\\\n" + getPlotCommand(coreName));
+    }
+        
+    protected void configGnuplot(PrintWriter plot, String coreName, Grid1D grid, String yName, Configurator options) throws IOException {       
         Range xRange = new Range(0, size()-1);  
         if(grid != null) {
             xRange = new Range(grid.coordAt(0), grid.coordAt(size()-1));
             xRange.scale(1.0 / grid.getAxis().unit.value());
-        }
-       
-        if(yName == null) yName = "Value";
-        
-        plot.println("set xla '" + getXLabel(grid) + "'");
-        plot.println("set yla '" + getYLabel(yName) + "'");
-
-        if(grid != null) {
+            plot.println("delta = " + (grid.getResolution().value() / grid.getAxis().unit.value()));
             plot.println("set xtics nomirror");
             plot.println("set x2tics nomirror");
         }
+        else plot.println("delta = 1.0");
+        
+        if(yName == null) yName = "Value";
+        
+        plot.println("set xla '" + getXLabel(grid) + "'");
+        plot.println("set yla '" + getYLabel(yName) + "'");        
         
         Range yRange = getRange();
         yRange.scale(1.0 / getUnit().value());
@@ -502,17 +509,20 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
 
         plot.println("set xra [" + xRange.min() + ":" + xRange.max() + "]");
         plot.println("set x2ra [1:" + size() + "]");
-        plot.println("set yra [" + yRange.min() + ":" + yRange.max() + "]");   
-        
-        String style = options.isConfigured("style") ? options.get("style").getValue() : "histep";
+        //plot.println("set yra [" + yRange.min() + ":" + yRange.max() + "]");   
         
         if(options.isConfigured("lt")) plot.println("set style line 1 lt " + options.get("lt").getInt());
         if(options.isConfigured("lw")) plot.println("set style line 1 lw " + options.get("lw").getDouble());
         if(options.isConfigured("pt")) plot.println("set style line 1 pt " + options.get("pt").getInt());
         if(options.isConfigured("ps")) plot.println("set style line 1 ps " + options.get("ps").getDouble());
         
-        plot.println("plot \\");
-        plot.print("'" + coreName + ".dat' using 1:2 notitle with " + style);
+        String style = options.isConfigured("style") ? options.get("style").getValue() : "points";
+        plot.println("set style data " + style);  
+    }
+    
+    
+    protected String getPlotCommand(String coreName) {
+        return "'" + coreName + ".dat' using 1:2 notitle";        
     }
     
 
