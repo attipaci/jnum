@@ -426,12 +426,10 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
         int n = tokens.countTokens();
         
         if(n == 2) {
-            //System.err.println("### parse 2");
             xRange.parse(tokens.nextToken(), isPositive);
             yRange.parse(tokens.nextToken(), isPositive);
         }
         else if(n == 4) {
-            //System.err.println("### parse 4");
             xRange.parse(tokens.nextToken() + ":" + tokens.nextToken(), isPositive);
             yRange.parse(tokens.nextToken() + ":" + tokens.nextToken(), isPositive);
         }

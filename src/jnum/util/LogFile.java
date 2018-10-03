@@ -336,8 +336,6 @@ public class LogFile {
 			labels.add(label);
 		}
 		
-		//for(String label : labels) System.err.println("### label: " + label);
-		
 		String line = null;
 		while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') {
 			tokens = new StringTokenizer(line);

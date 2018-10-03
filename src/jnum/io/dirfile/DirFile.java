@@ -102,7 +102,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 			Util.info(store, "Length: " + store.length());
 			
 			for(int i=from; i<to; i+=step) {
-				System.err.println(i + "\t" + store.get(i));				
+				Util.info(data, i + "\t" + store.get(i));				
 			}
 		
 		}

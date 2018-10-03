@@ -1,5 +1,10 @@
 0.22-b1
 
+	[NEW] New class astro.SunPosition for calculating the Sun's position
+	with the 5th order approximation described by the Astronomical Almanac 
+	2010, and adopted by JPL ephemeris. Should be good to within an
+	arcminute over a few centuries...
+
 	[NEW] {TrueVector+} New method multiplyByComponents(v) for component-
 	by-component multiplication.
 
@@ -8,6 +13,16 @@
 	[NEW] New array creation static methods for Coordinate2D/3D and
 	subclasses. 
 
+	[FIX] Classes where equals() tested for approximate floating point 
+	equality did not have hashCode methods that would match. In fact, it
+	is not trivial to have hashCode that would match. Therefore, reverting
+	to equals(Object) that check for exact equality. (That does not exclude
+	the possibility of another method providing approximate equality 
+	checking...)
+
+	[FIX] {AstroTime} LST calculation had a rate flaw, as it was advancing
+	at the same rate as UT from midnight. Fixed. 
+	
 	[FIX] {TrueVector+} static copyOf(array[]) methods did not deal with
 	null elements properly. Fixed.
 

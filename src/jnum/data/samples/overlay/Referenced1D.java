@@ -23,13 +23,13 @@
 
 package jnum.data.samples.overlay;
 
-import jnum.Util;
 import jnum.data.Referenced;
 import jnum.data.RegularData;
 import jnum.data.samples.Index1D;
 import jnum.data.samples.Offset1D;
 import jnum.data.samples.Values1D;
 import jnum.fits.FitsToolkit;
+import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -57,7 +57,7 @@ public class Referenced1D extends Overlay1D implements Referenced<Index1D, Offse
 
     
     @Override
-    public int hashCode() { return super.hashCode() ^ referenceIndex.hashCode(); }
+    public int hashCode() { return super.hashCode() ^ HashCode.from(referenceIndex.x()); }
     
     @Override
     public boolean equals(Object o) {
@@ -65,7 +65,7 @@ public class Referenced1D extends Overlay1D implements Referenced<Index1D, Offse
         if(!(o instanceof Referenced1D)) return false;
         
         Referenced1D r = (Referenced1D) o;
-        if(!Util.equals(referenceIndex.x(), r.referenceIndex.x(), 1e-6)) return false;
+        if(referenceIndex.x() != r.referenceIndex.x()) return false;
         
         return true;
     }

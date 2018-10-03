@@ -2014,10 +2014,7 @@ public final class ArrayUtil {
 
 		int[] beamSize = getShape(beam);
 		int dimensions = size.length;
-
-		//System.err.println(toString(beamSize));
-		//System.err.println(toString(getShape(smoothed)));
-		
+	
 		int[] delta = new int[dimensions];
 		int[] n = new int[dimensions];
 		int[] beginning = new int[dimensions];	
@@ -2044,10 +2041,7 @@ public final class ArrayUtil {
 					to[i] = Math.min(from[i] + beamSize[i] - beginning[i], size[i]);
 					n[i] = to[i] - from[i];					
 				}
-
-				//System.err.println(toString(from) + " -> " + toString(to) + " : " + toString(beginning) + " : " + toString(n));
-				
-				
+		
 				// Copy the relevant bits into the patch.
 				arraycopy(weightedSignal, from, weightedSignalPatch, beginning, n);
 				arraycopy(weights, from, weightsPatch, beginning, n);

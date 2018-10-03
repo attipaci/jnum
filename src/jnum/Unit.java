@@ -995,7 +995,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     public final static double earthRadius = Rearth;
 
     /** The Constant AU. */
-    public final static double AU = 149.6e6 * km;
+    public final static double AU = 149597870700.0 * Unit.m;
 
     /** The Constant lightYear. */
     public final static double lightYear = 299792459.0 * year;

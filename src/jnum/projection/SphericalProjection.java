@@ -175,9 +175,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		}
 	
 		phi = Math.IEEEremainder(phi, twoPI);
-		
-		//System.err.println(Util.f2.format(phi/Unit.deg) + ", " + Util.f2.format(theta/Unit.deg));
-		
+			
 		getOffsets(theta, phi, toProjected);
 	}
 	
@@ -285,8 +283,6 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		}
 		
 		if(solutions == 0) throw new IllegalArgumentException("No solutions for celestial pole.");
-		
-		//System.err.println(solutions + " solution(s)");
 		
 		if(SphericalCoordinates.equalAngles(Math.abs(reference.y()), rightAngle)) 
 			celestialPole.setX(reference.x());

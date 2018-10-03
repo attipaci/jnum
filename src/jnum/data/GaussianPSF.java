@@ -68,6 +68,12 @@ Product<GaussianPSF<? extends V>, GaussianPSF<? extends V>>, Ratio<GaussianPSF<?
         this.axes = fwhms;
     }
     
+    public V getFWHM() { return axes; }
+    
+    public double getFWHM(int index) {
+        return axes.getComponent(index);
+    }
+    
     public void setPositionAngles(double ... angles) {
         this.angles = angles;
     }

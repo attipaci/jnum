@@ -67,7 +67,7 @@ Multiplication<Gaussian1D>, Division<Gaussian1D>, Product<Gaussian1D, Gaussian1D
         if(!(other instanceof Gaussian1D)) return false;
       
         Gaussian1D psf = (Gaussian1D) other;
-        if(!Util.equals(psf.FWHM, FWHM, 1e-6)) return false;
+        if(psf.FWHM != FWHM) return false;
         
         return false;
     }

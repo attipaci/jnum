@@ -23,7 +23,6 @@
 
 package jnum.data.samples;
 
-import jnum.Util;
 import jnum.math.Coordinates;
 import jnum.math.TrueVector;
 import jnum.math.matrix.AbstractMatrix;
@@ -50,7 +49,7 @@ public class Offset1D implements TrueVector<Double> {
         if(!(o instanceof Offset1D)) return false;
         
         Offset1D r = (Offset1D) o;
-        if(!Util.equals(x, r.x, 1e-6)) return false;
+        if(x != r.x) return false;
         
         return true;
     }

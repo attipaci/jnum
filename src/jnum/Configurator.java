@@ -176,7 +176,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
             Configurator alias = getExact("alias." + branchName);
             if(alias.isEnabled) {
                 unaliased = alias.value;
-                if(details) System.err.println("<a> '" + branchName + "' -> '" + unaliased + "'");
+                if(details) Util.detail(this, "<a> '" + branchName + "' -> '" + unaliased + "'");
             }
         }
 
@@ -297,7 +297,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         else if(key.equals("replace")) for(String name : getList(argument)) restore(name);
         else if(key.equals("config")) {
             try { readConfig(Util.getSystemPath(argument)); }
-            catch(IOException e) { System.err.println("WARNING! Configuration file '" + argument + "' no found."); }
+            catch(IOException e) { Util.warning(this, "Configuration file '" + argument + "' no found."); }
         }
         else if(key.equals("poll")) {
             poll(argument.length() > 0 ? unaliasedKey(argument) : null);
@@ -310,7 +310,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
         else {
             String branchName = getBranchName(key);
-            if(details) System.err.println("<.> " + branchName);
+            if(details) Util.detail(this, "<.> " + branchName);
 
             if(branchName.equals("*")) {
                 for(String name : new ArrayList<String>(branches.keySet())) process(name + key.substring(1), argument);				
@@ -333,7 +333,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         Configurator branch = branches.containsKey(branchName) ? branches.get(branchName) : new Configurator(root);
         if(key.length() == branchName.length()) {
             if(branch.isLocked) throw new LockedException("Cannot change option '" + key + "'");
-            if(details) System.err.println("<=> " + argument);
+            if(details) Util.detail(this, "<=> " + argument);
             branch.value = argument;
             branch.isEnabled = true;
             branch.serialNo = counter++; // Update the serial index for the given key...
@@ -344,8 +344,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     private void addCondition(String condition, String setting) {
-        //System.err.println("@@@ " + condition + " : " + setting);
-
         if(isSatisfied(condition)) parseSilent(setting); 
 
         else {
@@ -412,12 +410,9 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     public void setCondition(String expression) {
-        //expression.toLowerCase();
-        //System.err.println("### " + expression);
-
         if(!conditionals.containsKey(expression)) return;
 
-        if(details) System.err.println("[c] " + expression + " > " + conditionals.get(expression));
+        if(details) Util.detail(this, "[c] " + expression + " > " + conditionals.get(expression));
         parseAll(conditionals.get(expression));
     }
 
@@ -506,7 +501,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
                 else if(key.equals("removed")) return;
                 else {
                     if(branch.isLocked) throw new LockedException("Cannot remove branch '" + key + "'");
-                    if(details) System.err.println("<rm> " + key); 
+                    if(details) Util.detail(this, "<rm> " + key); 
                     getRemoved().branches.put(key, branches.remove(key));
                 }
             }
@@ -531,7 +526,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
                 Configurator branch = branches.get(key);
                 if(arg.length() != branchName.length()) branch.purge(getRemainder(arg, branchName.length() + 1));
                 else {
-                    if(details) System.err.println("<pg> " + key); 
+                    if(details) Util.detail(this, "<pg> " + key); 
                     branches.remove(key);
                 }
             }
@@ -564,7 +559,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
                     Hashtable<String, Configurator> removedBranches = getRemoved().branches;
 
                     if(!removedBranches.containsKey(key)) return;			
-                    if(details) System.err.println("<r> " + key);
+                    if(details) Util.detail(this, "<r> " + key);
 
                     Configurator removedBranch = removedBranches.remove(key);			
                     branches.put(key, removedBranch);
@@ -594,7 +589,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
             Configurator branch = branches.get(key);
             if(arg.length() != branchName.length()) branch.blacklist(getRemainder(arg, branchName.length() + 1));
             else {
-                if(details) System.err.println("<b> " + key);
+                if(details) Util.detail(this, "<b> " + key);
                 branch.blacklist();
             }
         }
@@ -618,7 +613,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
                 Configurator branch = branches.get(key);
                 if(arg.length() != branchName.length()) branch.whitelist(getRemainder(arg, branchName.length() + 1));
                 else {
-                    if(details) System.err.println("<w> " + key);
+                    if(details) Util.detail(this, "<w> " + key);
                     branch.whitelist();
                 }
             }

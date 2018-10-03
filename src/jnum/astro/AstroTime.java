@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -33,7 +33,6 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 
 import jnum.Unit;
-import jnum.Util;
 import jnum.text.TimeFormat;
 import jnum.util.HashCode;
 
@@ -73,8 +72,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	public boolean equals(Object o) {
 		if(o == this) return true;
 		if(!(o instanceof AstroTime)) return false;
-		// Check match to 1 ms resolution...
-		return Util.fixedPrecisionEquals(MJD, ((AstroTime) o).MJD, 1e-8);
+		return MJD == ((AstroTime) o).MJD;
 	}
 	
 	/* (non-Javadoc)
@@ -311,60 +309,42 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		return 1e-3 * getUTCMillis() % DayMillis;
 	}
 	
-	// Mean Fictive Equatorial Sun's RA in time units (use for calculationg LST)
+	
     /**
-	 * Gets the mean fictive equatorial sun time.
+	 * Gets the Greenwich Mean Solar Time (GMST) at UT1 = 0h, i.e. the Mean Solar RA in time units (use for calculationg LST)
 	 *
-	 * @return the mean fictive equatorial sun time
+	 * @return the Greenwich Mean Solar Time (GMST). 
 	 */	
-	// GMST at UT1 = 0
 	public final double getGMST0() {
 		// Ratio of mLST to UT1 = 0.997269566329084 − 5.8684×10−11T + 5.9×10−15T², 
 		// where T is the number of Julian centuries of 36525 days each that have elapsed since JD 2451545.0 (J2000).[1]
-    	//final double Tu = (MJD - mjdJ2000 + 0.5) / julianCenturyDays;
-    	//return (24110.54841 + 8640184.812866 * Tu + 0.093104 * Tu * Tu) * Unit.s;
     	
 		// From http://www.cv.nrao.edu/~rfisher/Ephemerides/times.html
 		final double T = (MJD - MJDJ2000) / JulianCenturyDays;
 		return (24110.54841 + T * (8640184.812866 + T * (0.093104 - T * 0.0000062))) * Unit.s;
+		
+		
     }
 	
 	// Greenwich Sidereal Time
-	/**
-	 * Gets the gst.
-	 *
-	 * @return the gst
-	 */
-	public final double getGMST() {
-		return getGMST(0.0);
-	}
+
 	
 	/**
-	 * Gets the gmst.
+	 * Gets the Greenwich Mean Sidereal Time
 	 *
-	 * @param dUT1 the d u t1
-	 * @return the gmst
+	 * @param dUT1     (s) UT1 - UT time difference (-0.5s < dUT1 < 0.5s)  
+	 * @return         (s) the GMST
 	 */
 	public final double getGMST(double dUT1) {
-		return getGMST0() + getUTC() + dUT1;
+		return getGMST0() + dSTdUT * (getUTC() + dUT1);    // ~366.242189 / 365.242189
 	}
 	
 	/**
-	 * Gets the lst.
-	 *
-	 * @param longitude the longitude
-	 * @return the lst
-	 */
-	public final double getLMST(double longitude) {
-		return getLMST(longitude, 0.0);
-	}
-	
-	/**
-	 * Gets the lmst.
-	 *
-	 * @param longitude the longitude
-	 * @param dUT1 the d u t1
-	 * @return the lmst
+	 * Gets the Local Mean Sidereal Time
+	 * 
+	 * @param longitude    (radian) The geodetic longitude of the observer
+	 * @param dUT1         (s) UT1 - UT time difference (-0.5s < dUT1 < 0.5s)
+	 * @return             (s) the LMST
 	 */
 	public final double getLMST(double longitude, double dUT1) {
 		double LST = Math.IEEEremainder(getGMST(dUT1) + longitude / Unit.timeAngle, Unit.day);
@@ -630,7 +610,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	protected final static double JulianCenturyMillis = Unit.julianCentury / Unit.ms;
 	
 	/** Days in a Julian cenruty */
-	protected final static double JulianCenturyDays = 36525.0;
+	public final static double JulianCenturyDays = 36525.0;
 		
 	/** The TAI to TT offset in seconds. */
 	public final static double TAI2TT = MillisTAI2TT * Unit.ms;
@@ -664,6 +644,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	/** The UTC timezone */
 	public final static TimeZone UTCZone = TimeZone.getTimeZone("UTC");
 	
+	public final static double dSTdUT = 1.0 + Unit.day / Unit.year;
 	
 	static {
 		FITSTimeFormat.colons();

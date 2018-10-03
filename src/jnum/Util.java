@@ -51,9 +51,9 @@ import jnum.text.TimeFormat;
 public final class Util {
 
 
-    public final static String version = "0.22-b1";
+    public final static String version = "0.22-1";
     
-    public final static String revision = "";
+    public final static String revision = "devel.1";
     
     public final static String copyright = "(c)2018 Attila Kovacs"; 
     
@@ -809,37 +809,6 @@ public final class Util {
 
     }
     
-    public final static boolean equals(float a, float b) {
-        return equals(a, b, 1e-6);
-    }
-    
-    public final static boolean equals(float a, double b) {
-        return equals(a, b, 1e-6);
-    }
-    
-    public final static boolean equals(double a, float b) {
-        return equals(a, b, 1e-6);
-    }
-    
-    public final static boolean equals(double a, double b) {
-        return equals(a, b, 1e-10);
-    }
-
-    public final static boolean equals(Float a, Float b) {
-        return equals(a.doubleValue(), b.doubleValue(), 1e-6);
-    }
-    
-    public final static boolean equals(Float a, Double b) {
-        return equals(a.doubleValue(), b.doubleValue(), 1e-6);
-    }
-    
-    public final static boolean equals(Double a, Float b) {
-        return equals(a.doubleValue(), b.doubleValue(), 1e-6);
-    }
-    
-    public final static boolean equals(Double a, Double b) {
-        return equals(a.doubleValue(), b.doubleValue(), 1e-10);
-    }
     
     public final static boolean equals(final double a, final double b, final double precision) {
         if(a == b) return true;

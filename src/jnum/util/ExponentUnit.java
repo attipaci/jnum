@@ -169,8 +169,6 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
      * @throws IllegalArgumentException the illegal argument exception
      */
     public static ExponentUnit get(String id, Map<String, Unit> baseUnits) throws IllegalArgumentException {
-        //System.err.println("### fetching: '" + id + "'");
-
         for(String marker : parseExponentSymbols) {
             if(id.contains(marker)) return get(id, id.indexOf(marker), baseUnits);
         }

@@ -304,7 +304,6 @@ public class AngleFormat extends NumberFormat {
 	       
 	        // Top level parse errors will throw an exception....
 	        if(Double.isNaN(angle)) {
-	            //System.err.println("### top '" + source.substring(from, to) + "'");
 	            angle = Double.parseDouble(source.substring(pos.getIndex(), to)) * getUnit(level);
 	            if(angle < 0.0) {
 	                angle *= -1.0;
@@ -315,7 +314,6 @@ public class AngleFormat extends NumberFormat {
 	        // Sub-level parse error assume complete...
 	        else {
 	            try {
-	                //System.err.println("### sub '" + source.substring(from, to) + "'");
 	                angle += Double.parseDouble(source.substring(pos.getIndex(), to)) * getUnit(level);
 	                pos.setIndex(to + 1);
 	            }

@@ -176,8 +176,6 @@ public class Scale extends ArrayList<Scale.Division> implements Cloneable {
 	public void update(double setmin, double setmax) {
 		range.setRange(setmin, setmax);
 		
-		//System.err.println("### ScaleDivisions: setting range " + range);
-		
 		if(isCustom()) return;
 		
 		clear();
