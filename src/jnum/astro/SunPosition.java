@@ -36,11 +36,11 @@ public final class SunPosition {
      */
     public static double eclipticLongitudeAt(double MJD) {
         final double g = meanAnomalyAt(MJD);
-        return L2000 + dLdJD * (MJD - AstroTime.MJDJ2000) + A1 * Math.sin(g) + A2 * Math.sin(2.0 * g);
+        return (280.460 + 0.9856474 * (MJD - AstroTime.MJDJ2000) + 1.915 * Math.sin(g) + 0.020 * Math.sin(2.0 * g)) * Unit.deg;
     }
     
     private static double meanAnomalyAt(double MJD) {
-        return g2000 + dgdJD * (MJD - AstroTime.MJDJ2000);
+        return (357.528 + 0.9856003 * (MJD - AstroTime.MJDJ2000)) * Unit.deg;
     }
     
     public static double distanceAt(double MJD) {
@@ -80,18 +80,11 @@ public final class SunPosition {
         return eq;
     }
   
-    public final static double L2000 = 280.460 * Unit.deg;
-    public final static double dLdJD = 0.9856474 * Unit.deg;
     
-    public final static double g2000 = 357.528 * Unit.deg;
-    public final static double dgdJD = 0.9856003 * Unit.deg;
-    
-    public final static double epsCoeff[] = {
+    private final static double epsCoeff[] = {
             23 * Unit.deg + 26 * Unit.arcmin + 21.406 * Unit.arcsec,
             -46.836769 * Unit.arcsec, -0.0001831 * Unit.arcsec, 0.00200340 * Unit.arcsec, 
             -5.76e-7 * Unit.arcsec, -4.34e-8 * Unit.arcsec
     };
-    
-    public final static double A1 = 1.915 * Unit.deg;
-    public final static double A2 = 0.020 * Unit.deg;
+
 }
