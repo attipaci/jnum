@@ -51,9 +51,9 @@ import jnum.text.TimeFormat;
 public final class Util {
 
 
-    public final static String version = "0.22-b2";
+    public final static String version = "0.22-1";
     
-    public final static String revision = "beta";
+    public final static String revision = "";
     
     public final static String copyright = "(c)2018 Attila Kovacs"; 
     
