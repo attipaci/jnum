@@ -107,13 +107,15 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
             CoordinateAxis axis = system.get(i);
             int index = firstAxis + i;
             String id = index + alt;
+            
             String name = "Axis-" + index;
+            String unitName = "(" +  axis.getUnit().name() + ") ";
             
             c.add(new HeaderCard("CTYPE" + id, axis.getShortLabel(), name + " name"));
             if(axis.getUnit() != null) c.add(new HeaderCard("CUNIT" + id, axis.getUnit().name(), name + " unit"));
             c.add(new HeaderCard("CRPIX" + id, getReferenceIndex(i) + 1.0, name + " reference grid index (1-based)"));
-            c.add(new HeaderCard("CRVAL" + id, getReferenceValue(i), name + " value at reference index"));
-            c.add(new HeaderCard("CDELT" + id, getResolution(i) / axis.getUnit().value(), name + " spacing."));            
+            c.add(new HeaderCard("CRVAL" + id, getReferenceValue(i) / axis.getUnit().value(), unitName + name + " value at reference index"));
+            c.add(new HeaderCard("CDELT" + id, getResolution(i) / axis.getUnit().value(), unitName + name + " spacing."));            
         }
         
     }

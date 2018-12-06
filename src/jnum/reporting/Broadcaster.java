@@ -55,7 +55,7 @@ public class Broadcaster extends Reporter {
     }
     
     /**
-     * Adds the.
+     * Adds the specified reporter for processing messages.
      *
      * @param r the r
      */
@@ -64,18 +64,25 @@ public class Broadcaster extends Reporter {
     }
     
     /**
-     * Contains.
+     * Remove all reporters from the broadcasting... 
+     */
+    public void clear() {
+        reporters.clear();
+    }
+    
+    /**
+     * Check if a given Reporter object is already being used for processing messages.
      *
      * @param r the r
-     * @return true, if successful
+     * @return true, if the specified Reporter is already included.
      */
     public boolean contains(Reporter r) { return reporters.contains(r); }
     
     /**
-     * Contains.
+     * Check if a Reporter with the given String ID is already being used for processing messages.
      *
-     * @param id the id
-     * @return true, if successful
+     * @param id the id of the Reporter to check
+     * @return true, if a reporter with the specified ID is already included.
      */
     public boolean contains(String id) { return reporters.containsKey(id); }
     
