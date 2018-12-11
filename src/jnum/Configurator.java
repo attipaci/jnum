@@ -117,6 +117,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return Util.equals(c.value, value);
     }
 
+    public void clear() {
+        branches.clear();
+        conditionals.clear();
+        value = null;
+        serialNo = 0;
+        isEnabled = isLocked = wasUsed = false;
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()

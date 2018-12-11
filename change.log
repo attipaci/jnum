@@ -1,4 +1,19 @@
-0.22-b1
+0.22-2
+
+	[NEW] Configurator has new method clear() that resets the Configurator
+	object to its initial empty state.
+
+	[BUG] Fix FITS CRVAL header value not being cast into the proper units
+ 	for Cartesian coordinates (such as the spectral axis for HIRMES
+	spectral cubes) and instead being written in the natural (SI) units.
+
+	[API] Broadcaster add(Reporter) & remove(String) methods now return
+	The Reporter object that is replaced or was removed, or null if
+	there was no existing Reporter in use that mathes the argument.
+
+	[DOC] Add proper Javadoc to Reporter class.
+
+0.22-1
 
 	[NEW] New class astro.SunPosition for calculating the Sun's position
 	with the 5th order approximation described by the Astronomical Almanac 

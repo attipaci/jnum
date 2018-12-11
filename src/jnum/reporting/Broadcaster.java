@@ -59,8 +59,8 @@ public class Broadcaster extends Reporter {
      *
      * @param r the r
      */
-    public synchronized void add(Reporter r) {
-        reporters.put(r.getID(), r);
+    public synchronized Reporter add(Reporter r) {
+        return reporters.put(r.getID(), r);
     }
     
     /**

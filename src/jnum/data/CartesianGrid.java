@@ -108,10 +108,10 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
             int index = firstAxis + i;
             String id = index + alt;
             
-            String name = "Axis-" + index;
-            String unitName = "(" +  axis.getUnit().name() + ") ";
+            String name = axis.getShortLabel();
+            String unitName = (axis.getUnit() == Unit.unity) ? "" : "(" +  axis.getUnit().name() + ") ";
             
-            c.add(new HeaderCard("CTYPE" + id, axis.getShortLabel(), name + " name"));
+            c.add(new HeaderCard("CTYPE" + id, name, "Axis type"));
             if(axis.getUnit() != null) c.add(new HeaderCard("CUNIT" + id, axis.getUnit().name(), name + " unit"));
             c.add(new HeaderCard("CRPIX" + id, getReferenceIndex(i) + 1.0, name + " reference grid index (1-based)"));
             c.add(new HeaderCard("CRVAL" + id, getReferenceValue(i) / axis.getUnit().value(), unitName + name + " value at reference index"));
