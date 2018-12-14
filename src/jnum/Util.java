@@ -44,7 +44,6 @@ import jnum.text.SignificantFiguresFormat;
 import jnum.text.TimeFormat;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * A collection of static utility funtions to use anywhere and everywhere.
  */
@@ -53,7 +52,7 @@ public final class Util {
 
     public final static String version = "0.22-2";
     
-    public final static String revision = "devel.6";
+    public final static String revision = "devel.7";
     
     public final static String copyright = "(c)2018 Attila Kovacs"; 
     
@@ -414,6 +413,9 @@ public final class Util {
      * @return the system path
      */
     public static String getSystemPath(String spec) {
+        if(spec == null) return ".";
+        if(spec.length() == 0) return ".";
+        
         
         String homes = System.getProperty("user.home");
 
