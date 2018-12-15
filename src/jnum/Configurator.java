@@ -49,7 +49,23 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-
+/**
+ * 
+ * A configuration engine for programs, that manages hierarchical configurations and conditional settings.
+ * <p>
+ * 
+ * Specific configuration options are nodes/endpoints on an option tree. Each node/endpoint can have a string value set,
+ * and may have branches of related sub-options stemming from it. It also can host its own list of conditional
+ * settings.
+ * <p>
+ * 
+ * See README.syntax in CRUSH (or on the CRUSH website) for details on the option syntax, and features. 
+ *
+ * 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Configurator implements Serializable, Cloneable, Copiable<Configurator>, FitsHeaderEditing {
 
 
@@ -73,7 +89,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     public static boolean silent = false;
     public static boolean verbose = false;
     public static boolean details = false;
-
 
 
     public Configurator() { root = this; }
@@ -117,6 +132,9 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return Util.equals(c.value, value);
     }
 
+    /**
+     * Resets this configuration branch back to its default state: disabled, unlocked, no value set, no branches, no conditionals. 
+     */
     public void clear() {
         branches.clear();
         conditionals.clear();
@@ -134,7 +152,18 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
+    /**
+     * Checks if the option is enabled and it's value matches the argument in a case insensitive comparison.
+     * 
+     * 
+     * @param value     The string value to be checked for.
+     * @return          <code>true</code> if the option is enabled and its value matches the argument in a case-insensitive comparison.
+     *                  Otherwise, <code>false</code>.
+     *                  
+     * @see #hasOption(String);
+     */
     public boolean is(String value) {
+        if(!isEnabled) return false;
         return value.equalsIgnoreCase(this.value);
     }
 
@@ -147,25 +176,75 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return value;		
     }
 
-
-    public List<String> parseAll(List<String> lines) {
-        ArrayList<String> exceptions = new ArrayList<String>();
+    /**
+     * Parses a list or confifuration entries (lines) in order.
+     * 
+     * 
+     * @param lines     The ordered list of configuration lines
+     * @return          A list of parse exceptions that occurred along the way.
+     * 
+     * @see #parse(String)
+     */
+    public List<Exception> parseAll(List<String> lines) {
+        ArrayList<Exception> exceptions = new ArrayList<Exception>();
 
         for(String line : lines) {
             try { parse(line); }
-            catch(LockedException e) { exceptions.add(e.getMessage()); }
+            catch(Exception e) { exceptions.add(e); }
         }
 
         return exceptions.isEmpty() ? null : exceptions;
     }
 
-
-    public void parseSilent(String line) {
+    
+    /**
+     * Set an option that is encapsulated by the corresponding single line of configuration entry such as would be
+     * found in a configuration file.
+     * 
+     * <p>
+     * It works just like {@link #parse(String)} but instead of throwing a {@link LockedException}, it simply returns 
+     * <code>true</code> or <code>false</code> depending whether the option was successfully set, or else
+     * blocked by an existing lock.
+     * 
+     * The argument is expected to be a &lt;key&gt;[=][&lt;value&gt;] pair with the separator being any number of '=' characters or
+     * white spaces following the the &lt;key&gt; argument. E.g.
+     * 
+     * <pre> 
+     *  key1=2.0
+     *  key1.subkey = A string value
+     *  key2 1,2,A,B
+     * </pre>
+     *
+     * <p>
+     * A conditional construct (or a chain of conditionals) may precede a single key/value setting. E.g.:
+     * 
+     * <pre>
+     *   [condition] key1 = 3.0
+     *   [cond1] key2.[cond2] mypath = /home/johndoe
+     * <pre>
+     * 
+     * 
+     * @param line  The option specification as a &lt;key&gt;[=][&lt;value&gt;]. E.g. "faint" or "datapath=/home/data/".
+     * @return      <code>true</code> if the option was successfully applied, or <code>false</code> if an existing lock on 
+     *              &lt;key&gt; prevented setting a new value.
+     *      
+     * @see #parse(String)
+     */
+    public boolean setOption(String line) {
         try { parse(line); }
-        catch(LockedException e) {}
+        catch(LockedException e) { return false; }
+        return true;
     }
 
 
+    /**
+     * Parses a single configuration line/entry which as a <code>key[=]value</code> pair, possibly preceded by a conditional.
+     * 
+     * @param line              The configuration as a signle line of input, such as in a config file.
+     * @throws LockedException  If the configuration could not be changes as requested due to an existing lock.
+     * 
+     * @see #setOption(String)
+     */
     public void parse(String line) throws LockedException {
         Entry entry = new Entry(line);
 
@@ -180,7 +259,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
         // Check if the requested key branch is aliased. If so, process as such...
         if(containsExact("alias." + branchName)) {
-            Configurator alias = getExact("alias." + branchName);
+            Configurator alias = exactOption("alias." + branchName);
             if(alias.isEnabled) {
                 unaliased = alias.value;
                 if(details) Util.detail(this, "<a> '" + branchName + "' -> '" + unaliased + "'");
@@ -263,18 +342,51 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-
-    public String getProperty(String name) {
-        return containsKey(name) ? get(name).getValue() : null;		
+    /**
+     * Similar to <code>option(key).getValue()</code> except that it will not result in a {@link NullPointerException} if the
+     * named option does not exists in the branches of this <code>Configurator</code> object. Instead, it will simply return
+     * <code>null</code> for names not (yet) defined.
+     * 
+     * 
+     * @param key   The option key (or alias) under the configuration branch represented by this object whose value to retrieve. 
+     * @return      The value of the specified option under this configuration branch, or <code>null</code> if the
+     *              specified key has not been set, or is not enabled, or has no value associated to it.
+     *              
+     * @see #getValue()
+     */
+    public String getProperty(String key) {
+        return hasOption(key) ? option(key).getValue() : null;		
     }
 
-
-    public void processSilent(String key, String argument) {
+    /**
+     * Same as {@link #process(String, String)} except that it does not throw a {@link LockedException} but rather it
+     * returns a <code>boolean</code> indicator whether or not the arguments were successfully processed.
+     * 
+     * @param key       The option key to set.
+     * @param argument  The value associated with the above key.
+     * 
+     * @return          <code>true</code> if the option was successfully set (added or replaced), or <code>false</code>
+     *                  if the option was not set due to an existing lock.
+     *                  
+     * @see #process(String, String)
+     */
+    public boolean processSilent(String key, String argument) {
         try { process(key, argument); }
-        catch(LockedException e) {}
+        catch(LockedException e) { return false; }
+        return true;
     }
 
 
+    /**
+     * Adds or replaces a key/value pair in this configuration branch.
+     * 
+     * @param key       The option key to set.
+     * @param argument  The value associated with the above key.
+     * 
+     * @throws LockedException      If the specified key was locked preventing changes to it.               
+     *                  
+     * @see #processSilent(String, String)
+     */
     public void process(String key, String argument) throws LockedException {	
         String substitute = unalias(key);
 
@@ -304,7 +416,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         else if(key.equals("replace")) for(String name : getList(argument)) restore(name);
         else if(key.equals("config")) {
             try { readConfig(Util.getSystemPath(argument)); }
-            catch(IOException e) { Util.warning(this, "Configuration file '" + argument + "' no found."); }
+            catch(IOException e) { Util.warning(this, "Configuration file '" + argument + "' not found."); }
         }
         else if(key.equals("poll")) {
             poll(argument.length() > 0 ? unaliasedKey(argument) : null);
@@ -336,7 +448,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     private void set(String branchName, String key, String argument) throws LockedException {
-        setCondition(key, argument);
+        activateCondition(key, argument);
         Configurator branch = branches.containsKey(branchName) ? branches.get(branchName) : new Configurator(root);
         if(key.length() == branchName.length()) {
             if(branch.isLocked) throw new LockedException("Cannot change option '" + key + "'");
@@ -351,7 +463,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     private void addCondition(String condition, String setting) {
-        if(isSatisfied(condition)) parseSilent(setting); 
+        if(isSatisfied(condition)) setOption(setting); 
 
         else {
             Vector<String> list = conditionals.containsKey(condition) ? conditionals.get(condition) : new Vector<String>();
@@ -393,9 +505,9 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         if(condition.contains("?")) {
             StringTokenizer pair = new StringTokenizer(condition, "?");
             String conditionKey = pair.nextToken().toLowerCase();
-            if(isConfigured(conditionKey)) if(get(conditionKey).is(pair.nextToken())) return true;
+            if(hasOption(conditionKey)) if(option(conditionKey).is(pair.nextToken())) return true;
         }
-        else if(isConfigured(condition.toLowerCase())) return true;
+        else if(hasOption(condition.toLowerCase())) return true;
 
         return false;
     }
@@ -409,27 +521,67 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-
-    public void setCondition(String key, String value) {
-        setCondition(key);
-        setCondition(key + "?" + value.toLowerCase());
+    /**
+     * Activates a condition <code>key</code> with the associated <code>value</code>. As a result conditional settings
+     * on both <code>[key]</code> or <code>[key?value]</code> will be activated. (The former is a condition on the
+     * existence of <code>key</code>, while the second is a condition restricted to <code>key</code> being set to
+     * a specific <code>value</code>.
+     * 
+     * 
+     * @param key       The condition key that is activated
+     * @param value     The value with which <code>key</code> is activated.
+     * 
+     * @see #activateCondition(String)
+     */
+    private void activateCondition(String key, String value) {
+        activateCondition(key);
+        activateCondition(key + "?" + value.toLowerCase());
     }
 
-
-    public void setCondition(String expression) {
+    /**
+     * Activates a condition. Any conditional settings defined so far will be activated if the body of their
+     * conditionals (the String literal between the square brackets) is matched to the <code>expression</code> argument.
+     * The match has to be exact (case sensitive) for an option to be activated as a result.
+     * 
+     * @param expression    The literal conditional expression that has to be matched for an exiting conditional
+     *                      option to get activated.
+     */
+    public void activateCondition(String expression) {
         if(!conditionals.containsKey(expression)) return;
 
         if(details) Util.detail(this, "[c] " + expression + " > " + conditionals.get(expression));
         parseAll(conditionals.get(expression));
     }
 
-
-    public void forgetSilent(String arg) {
-        try { forget(arg); }
-        catch(LockedException e) {}
+    /**
+     * Like {@link #forget(String)} but without throwing a {@link LockedException}. Instead, it returns a
+     * <code>boolean</code> to indicate whether the operation was successful or not.
+     * 
+     * @param key   The option <code>key</code> under this configuration branch to unset.
+     * 
+     * @return      <code>true</code> if the specified option was successfully unset, or <code>false</code> if
+     *              an existing lock prevented the operation.
+     *              
+     * @see #forget(String)
+     */
+    public boolean forgetSilent(String key) {
+        try { forget(key); }
+        catch(LockedException e) { return false; }
+        return true;
     }
 
-
+    /**
+     * Forgets (unsets) the specified option under this configuration branch. The forgotten options can be
+     * recalled to its prior state as long as no new value is set for it.
+     * 
+     * @param key   The option <code>key</code> under this configuration branch to unset.
+     * 
+     * @return      <code>true</code> if the specified option was successfully unset, or <code>false</code> if
+     *              an existing lock prevented the operation.
+     *              
+     * @see #forgetSilent(String)
+     * @see #recall(String)
+     */
     public void forget(String arg) throws LockedException {
 
         if(arg.equals("blacklist")) {
@@ -463,7 +615,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
     }
 
-
+    
     public void recall(String arg) throws LockedException {
         String branchName = getBranchName(arg);
 
@@ -481,7 +633,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
                     if(option.isLocked) throw new LockedException("Cannot recall option '" + key + "'");
                     option.isEnabled = true;
                     option.serialNo = counter++;
-                    setCondition(arg, option.value);
+                    activateCondition(arg, option.value);
                 }
             }
         }
@@ -699,19 +851,36 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return key.substring(from);	
     }
 
-
-    public Configurator get(String key) {
+    /**
+     * Returns the Configurator brack for a given CRUSH option, which may be an alias. Same as {@link get(String)} just with 
+     * a more obvious name...
+     * 
+     * @param name  The option name or alias...     
+     * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
+     * 
+     * @see #exactOption(String)
+     */
+    public Configurator option(String key) {
         String branchName = getBranchName(key);
         if(branchName.length() == key.length()) return branches.get(unaliasedKey(key));
-        else if(branches.containsKey(branchName)) return branches.get(branchName).get(getRemainder(key, branchName.length() + 1));
+        else if(branches.containsKey(branchName)) return branches.get(branchName).option(getRemainder(key, branchName.length() + 1));
         else return null;
     }
 
 
-    public Configurator getExact(String key) {
+    /**
+     * Returns the Configurator brack for a given CRUSH option. Same as {@link get(String)} just with 
+     * a more obvious name...
+     * 
+     * @param name  The exact option name, NOT an alias.
+     * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
+     * 
+     * @see #option(String)
+     */
+    public Configurator exactOption(String key) {
         String branchName = getBranchName(key);
         if(branchName.length() == key.length()) return branches.get(key);
-        else if(branches.containsKey(branchName)) return branches.get(branchName).get(getRemainder(key, branchName.length() + 1));
+        else if(branches.containsKey(branchName)) return branches.get(branchName).option(getRemainder(key, branchName.length() + 1));
         else return null;		
     }
 
@@ -733,9 +902,18 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-    public boolean isConfigured(String key) {
+    /**
+     * Checks if a specific option key was set and is active. Same as {@link #isConfigured(String)} just with a more
+     * obvious name...
+     * 
+     * 
+     * @param name  The name of the option <tt>key</tt>.
+     * @return      <tt>true</tt> if the option is explicitly set and is active, or <tt>false</tt> otherwise.
+     * 
+     */
+    public boolean hasOption(String key) {
         if(!containsKey(key)) return false;
-        Configurator option = get(key);
+        Configurator option = option(key);
         if(!option.isEnabled) return false;
         option.wasUsed = true;
         return option.value != null;
@@ -745,7 +923,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     public void mapValueTo(String branchName) throws LockedException {
         if(value != null) if(value.length() > 0) {
             if(containsKey(branchName)) {
-                Configurator branch = get(branchName);
+                Configurator branch = option(branchName);
                 if(branch.isLocked) {
                     value = null;	// clear the value...
                     throw new LockedException("Cannot map value to '" + branchName + "'");
@@ -764,8 +942,8 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         for(String key : getKeys(false)) {
             if(!options.containsKey(key)) purge(key);
             else {
-                Configurator option = get(key);
-                Configurator other = options.get(key);
+                Configurator option = option(key);
+                Configurator other = options.option(key);
                 if(option.isEnabled && !other.isEnabled) option.isEnabled = false;
                 else if(!option.value.equals(other.value)) option.isEnabled = false;
             }
@@ -777,13 +955,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         Configurator difference = new Configurator(root);
 
         for(String key : getKeys(false)) {
-            if(!options.containsKey(key)) difference.parseSilent(key + " " + get(key).value);
+            if(!options.containsKey(key)) difference.setOption(key + " " + option(key).value);
             else {
-                Configurator option = get(key);
-                Configurator other = options.get(key);
+                Configurator option = option(key);
+                Configurator other = options.option(key);
 
-                if(option.isEnabled && !other.isEnabled) difference.parseSilent(key + " " + get(key).value);
-                else if(!option.value.equals(other.value)) difference.parseSilent(key + " " + get(key).value);
+                if(option.isEnabled && !other.isEnabled) difference.setOption(key + " " + option(key).value);
+                else if(!option.value.equals(other.value)) difference.setOption(key + " " + option(key).value);
             }
         }
         return difference;
@@ -1060,8 +1238,8 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
                 new Comparator<String>() {
             @Override
             public int compare(String key1, String key2) {
-                int i1 = get(key1).serialNo;
-                int i2 = get(key2).serialNo;
+                int i1 = option(key1).serialNo;
+                int i2 = option(key2).serialNo;
                 if(i1 == i2) return 0;
                 return i1 > i2 ? 1 : -1;
             }
@@ -1106,7 +1284,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         for(String key : getAlphabeticalKeys(true)) {
             if(pattern != null) if(!key.startsWith(pattern)) continue;
 
-            Configurator option = get(key);
+            Configurator option = option(key);
             if(option.isBlacklisted()) {
                 out.println("  [" + key + "] --- (blacklisted)");
             }
@@ -1161,7 +1339,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
             if(pattern != null) if(!key.startsWith(pattern)) continue;
 
             out.print("   (" + key);
-            String value = get(key).value;
+            String value = option(key).value;
             if(value.length() > 0) out.print(" = " + value);
             out.print(")");
             if(isBlacklisted(key)) out.print(" --blacklisted--");
@@ -1251,7 +1429,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
             new LineParser() {
                 @Override
-                public boolean parse(String line) { parseSilent(line); return true; }
+                public boolean parse(String line) { setOption(line); return true; }
             }.read(configFile);
         }
         else throw new FileNotFoundException(fileName);
@@ -1265,7 +1443,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
         // Add all active configuration keys...
         for(String key : getAlphabeticalKeys(false)) {
-            Configurator option = get(key);
+            Configurator option = option(key);
             if(option.isEnabled) FitsToolkit.addLongHierarchKey(c, key, option.value);
         }
 

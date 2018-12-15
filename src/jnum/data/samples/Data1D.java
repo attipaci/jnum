@@ -461,15 +461,15 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         createGnuplot(plot, coreName, grid, yName, options);
         plot.println();
            
-        if(options.isConfigured("eps")) gnuplotEPS(plot, coreName);
-        if(options.isConfigured("png")) gnuplotPNG(plot, coreName, options.get("png"));
+        if(options.hasOption("eps")) gnuplotEPS(plot, coreName);
+        if(options.hasOption("png")) gnuplotPNG(plot, coreName, options.option("png"));
             
         // Re-enable the default plot terminal
         plot.println("set out");
         plot.println("set term pop");
         
         // Plot onto default terminal if requested.
-        plot.println((options.isConfigured("show") ? "" : "#")  + "replot");
+        plot.println((options.hasOption("show") ? "" : "#")  + "replot");
         plot.close();
         
         Util.notify(this, "Written " + plotName);
@@ -511,12 +511,12 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         plot.println("set x2ra [1:" + size() + "]");
         //plot.println("set yra [" + yRange.min() + ":" + yRange.max() + "]");   
         
-        if(options.isConfigured("lt")) plot.println("set style line 1 lt " + options.get("lt").getInt());
-        if(options.isConfigured("lw")) plot.println("set style line 1 lw " + options.get("lw").getDouble());
-        if(options.isConfigured("pt")) plot.println("set style line 1 pt " + options.get("pt").getInt());
-        if(options.isConfigured("ps")) plot.println("set style line 1 ps " + options.get("ps").getDouble());
+        if(options.hasOption("lt")) plot.println("set style line 1 lt " + options.option("lt").getInt());
+        if(options.hasOption("lw")) plot.println("set style line 1 lw " + options.option("lw").getDouble());
+        if(options.hasOption("pt")) plot.println("set style line 1 pt " + options.option("pt").getInt());
+        if(options.hasOption("ps")) plot.println("set style line 1 ps " + options.option("ps").getDouble());
         
-        String style = options.isConfigured("style") ? options.get("style").getValue() : "points";
+        String style = options.hasOption("style") ? options.option("style").getValue() : "points";
         plot.println("set style data " + style);  
     }
     
@@ -538,16 +538,16 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     private void gnuplotPNG(PrintWriter plot, String coreName, Configurator pngOptions) {
         boolean isTransparent = false;
         int bgColor = Color.WHITE.getRGB();
-        if(pngOptions.isConfigured("bg")) {
-            String spec = pngOptions.get("bg").getValue().toLowerCase();
+        if(pngOptions.hasOption("bg")) {
+            String spec = pngOptions.option("bg").getValue().toLowerCase();
             if(spec.equals("transparent")) isTransparent = true;
             else bgColor = Color.getColor(spec).getRGB(); 
         }
 
         int sizeX = 640;
         int sizeY = 480;
-        if(pngOptions.isConfigured("size")) {
-            String spec = pngOptions.get("size").getValue();
+        if(pngOptions.hasOption("size")) {
+            String spec = pngOptions.option("size").getValue();
             StringTokenizer tokens = new StringTokenizer(spec, "xX*:, ");
             sizeX = sizeY = Integer.parseInt(tokens.nextToken());
             if(tokens.hasMoreTokens()) sizeY = Integer.parseInt(tokens.nextToken());                
