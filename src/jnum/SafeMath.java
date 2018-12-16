@@ -28,18 +28,23 @@ package jnum;
 /**
  * A collection of math functions that are tolerant to rounding errors. The tolerance is designed to accomodate
  * typical rounding errors propagated through a moderate number of single-precision floating point operations
- * to the arguments
+ * to the arguments.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
  */
 public final class SafeMath {
 
 	
 	/**
-	 * Safe asin and for when rounding errors might push the argument just outside the legal -1:1 range.
+	 * Safe version of {@link Math#asin(double)} for when rounding errors might push the argument just outside
+	 * the legal -1:1 range.
 	 * Values within the tolerance (1e-5) of the limits will return the limit values (+/- Pi/2).
 	 * 
 	 *
 	 * @param value the argument, usually in the -1:1 range.
-	 * @return the inverse sin() function of the argument, or NaN if the argument is invalid.
+	 * @return the inverse sin() function of the argument, or {@link Double#NaN} if the argument is invalid.
+	 * 
+	 * @see Math#asin(double)
 	 */
 	public final static double asin(final double value) {
 		if(value < -1.0) return value < minusOnePlus ? Double.NaN : -Constant.rightAngle;
@@ -48,11 +53,14 @@ public final class SafeMath {
 	}
 	
 	/**
-	 * Safe acos and for when rounding errors might push the argument just outside the legal -1:1 range.
+	 * Safe version of {@link Math#acos(double)} for when rounding errors might push the argument just outside 
+	 * the legal -1:1 range.
 	 * Values within the tolerance (1e-5) of the limits will return the limit values (0 or Pi).
 	 *
 	 * @param value the argument, usually in the -1:1 range.
-     * @return the inverse cos() function of the argument, or NaN if the argument is invalid.
+     * @return the inverse cos() function of the argument, or {@link Double#NaN} if the argument is invalid.
+     * 
+     * @see Math#acos(double)
 	 */
 	public final static double acos(final double value) {
 		if(value < -1.0) return value < minusOnePlus ? Double.NaN : Math.PI;
@@ -61,24 +69,26 @@ public final class SafeMath {
 	}
 	
 	/**
-	 * Safe square root near 0.0, when rounding errors might push the argment just below zero.
+	 * Safe version of {@link Math#sqrt(double)} near 0.0, when rounding errors might push the argment just below zero.
 	 * Values within the tolerance (1e-5) below 0.0 will return 0.0
 	 *
 	 * @param value the argument
-	 * @return the square root, or NaN if the argument is negative and inconsistent with 0.0.
+	 * @return the square root, or {@link Double#NaN} if the argument is negative and inconsistent with 0.0.
+	 * 
+	 * @see Math#sqrt(double)
 	 */
 	public final static double sqrt(final double value) {
 		if(value < 0.0) return value < minusOnePlus ? Double.NaN : 0.0;
 		return Math.sqrt(value);
 	}
 	
-	/** The Constant epsilon. */
-	private final static double epsilon = 1e-5;			// The maximum tolerated rounding error assuming float precision.
+	/** Floating point relative precision. */
+	private final static double floatPrecision = 1e-5;			// The maximum tolerated rounding error assuming float precision.
 	
-	/** The Constant onePlus. */
-	private final static double onePlus = 1.0 + epsilon;
+	/** 1 plus the tolerated floating point rounding error. */
+	private final static double onePlus = 1.0 + floatPrecision;
 	
-	/** The Constant minusOnePlus. */
+	/** the negative of 1 plus the tolerated floating point rounding error */
 	private final static double minusOnePlus = -onePlus;
 
 }

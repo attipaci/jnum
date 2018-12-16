@@ -51,11 +51,11 @@ import nom.tam.util.Cursor;
 
 /**
  * 
- * A configuration engine for programs, that manages hierarchical configurations and conditional settings.
+ * A configuration engine for programs that supports hierarchical configurations and conditional settings.
  * <p>
  * 
- * Specific configuration options are nodes/endpoints on an option tree. Each node/endpoint can have a string value set,
- * and may have branches of related sub-options stemming from it. It also can host its own list of conditional
+ * Specific configuration options are nodes/endpoints on an option tree. Each node/endpoint can have a string value,
+ * and may have further branches of related sub-options stemming from it. It also can host its own list of conditional
  * settings.
  * <p>
  * 
@@ -859,6 +859,8 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
      * 
      * @see #exactOption(String)
+     * @see #hasOption(String)
+     * @see #containsKey(String)
      */
     public Configurator option(String key) {
         String branchName = getBranchName(key);
@@ -876,6 +878,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
      * 
      * @see #option(String)
+     * @see #containsExact(String)
      */
     public Configurator exactOption(String key) {
         String branchName = getBranchName(key);
@@ -884,7 +887,21 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         else return null;		
     }
 
-
+    /**
+     * Checks if the specified configuration option or alias exists under this configuration branch. It does not check whether or
+     * not the option is enabled. It merely checks for existence, even if in a disabled state.
+     * <p>
+     * 
+     * If you also want to check to see if the option is <i>enabled</i> beyond just <i>existence</i>, you should
+     * use {@link #hasOption(String)} instead.
+     *
+     * @param key   The option key or alias to look for in this configuration branch.
+     * @return      <code>true</code> if the key exists (even if disabled!), or <code>false</code> otherwise.
+     * 
+     * @see #containsExact(String)
+     * @see #hasOption(String)
+     * 
+     */
     public boolean containsKey(String key) {
         String branchName = getBranchName(key);
         String unaliased = unaliasedKey(branchName);
@@ -893,7 +910,21 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return branches.get(unaliased).containsKey(getRemainder(key, branchName.length() + 1));
     }
 
-
+    /**
+     * Checks if the specified configuration option (not alias!) exists under this configuration branch. 
+     * It does not check whether or not the option is enabled. It merely checks for existence, even if in a disabled state.
+     * <p>
+     * 
+     * If you also want to check to see if the option is <i>enabled</i> beyond just <i>existence</i>, you should
+     * use {@link #hasOption(String)} instead.
+     *
+     * @param key   The exact option key (not alias!) to look for in this configuration branch.
+     * @return      <code>true</code> if the key exists (even if disabled!), or <code>false</code> otherwise.
+     * 
+     * @see #containsKey(String)
+     * @see #hasOption(String)
+     * 
+     */
     public boolean containsExact(String key) {
         String branchName = getBranchName(key);
         if(!branches.containsKey(branchName)) return false;
@@ -903,12 +934,17 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     /**
-     * Checks if a specific option key was set and is active. Same as {@link #isConfigured(String)} just with a more
-     * obvious name...
+     * Checks if a specific option key was set and is active in this condifuration branch. 
+     * Similar to {@link #containsKey(String)} but checks that the option is <i>enabled</i> as well as <i>existence</i>.
      * 
      * 
-     * @param name  The name of the option <tt>key</tt>.
-     * @return      <tt>true</tt> if the option is explicitly set and is active, or <tt>false</tt> otherwise.
+     * @param name  The option <tt>key</tt> or alias to check under this configuration branch.
+     * @return      <tt>true</tt> if the option <i>exists</i> and is <i>enabled</i>, or <tt>false</tt> otherwise.
+     * 
+     * @see #containsKey(String)
+     * @see #containsExact(String)
+     * @see #option(String)
+     * @see #exactOption(String)
      * 
      */
     public boolean hasOption(String key) {
@@ -968,36 +1004,176 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-    public String getValue() {
-        return root.resolve(resolve(getRawValue(), "{?", "}"), "{?", "}"); 
-    }
-
-
-    public String getRawValue() {
+    /**
+     * Returns the literal value for this configuration point.
+     * 
+     * @return  The literal {@link String} value associated with this configuration point.
+     * 
+     * @see #getValue()
+     */
+    public String getLiteral() {
         return value;
     }
+    
+    /**
+     * Returns the resolved value for this configuration point. Dynamic references to other options are resolved
+     * at call time, and are substituted as literal. 
+     * <p>
+     * 
+     * Suppose this configuration point is set to the literal value: "<code>/home/{?user}/data</code>", and
+     * <code>user</code> is set to "<code>johndoe</code>" when this method is called. Accordingly, the
+     * call will make the requested substitution and return:
+     * 
+     * <pre>
+     *   /home/johndoe/data
+     * </pre>
+     * <p>
+     * 
+     * @return  The value associated to this configuration point, with dynamic references to other options
+     *          resolved and substituted as needed.
+     *          
+     * @see #getLiteral()
+     * @see #getBoolean()
+     * @see #getSign()
+     * @see #getInt()
+     * @see #getDouble()
+     * @see #getFloat()
+     * @see #getList()
+     * @see #getIntegers()
+     * @see #getDoubles()
+     * @see #getFloats()
+     * @see #getVector2D()
+     * @see #getDimension2D()
+     * @see #getRange()
+     * @see #getRange2D()
+     * @see #getPath()
+     */
+    public String getValue() {
+        return root.resolve(resolve(getLiteral(), "{?", "}"), "{?", "}"); 
+    }
 
-
-    public double getDouble() {
+    /**
+     * Returns the value associated with this configuration point as a double-precision number.
+     * 
+     * @return                          The double-precision value at this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as a double-precision number value.
+     * 
+     * @see #getValue()
+     * @see #getFloat()
+     * @see #getInt()
+     * @see #getBoolean()
+     * @see #getSign()
+     * @see #getDoubles()
+     * @see #getVector2D()
+     * @see #getRange()
+     * @see #getRange2D()
+     * 
+     */
+    public double getDouble() throws NumberFormatException {
         return Double.parseDouble(getValue());
     }
 
 
-    public float getFloat() {
+    /**
+     * Returns the value associated with this configuration point as a single-precision floating point number.
+     * 
+     * @return                          The single-precision value at this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as a single-precision number value.
+     * 
+     * @see #getValue()
+     * @see #getDouble()
+     * @see #getInt()
+     * @see #getBoolean()
+     * @see #getSign()
+     * @see #getFloats()
+     * @see #getVector2D()
+     * @see #getRange()
+     * @see #getRange2D()
+     * 
+     */
+    public float getFloat() throws NumberFormatException {
         return Float.parseFloat(getValue());
     }
 
 
-    public int getInt() {
+    /**
+     * Returns the value associated with this configuration point as an integer value. That parse rules of 
+     * {@link Integer#decode(String)} are applied. I.e., the underlying string  value may be decimal (e.g. 1234), 
+     * hex (e.g. 0xa0c7), binary (0b1001101), or octal (0777). 
+     * <p>
+     * 
+     * A note of warning: you should avoid decimals starting with 0 (e.g. 0123 for decimal 123) as they will 
+     * be interpreted as octal values.
+     * 
+     * @return                          The integer value at this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as an integer number value.
+     * 
+     * @see #getValue()
+     * @see #getDouble()
+     * @see #getFloat()
+     * @see #getBoolean()
+     * @see #getSign()
+     * @see #getIntegers()
+     * @see #getVector2D()
+     * @see #getRange()
+     * @see #getRange2D()
+     * 
+     */
+    public int getInt() throws NumberFormatException {
         return Integer.decode(getValue());
     }
 
 
-    public boolean getBoolean() {
+    /**
+     * Returns the value associated with this configuration point as a <code>boolean</code> value.
+     * See {@link Util#parseBoolean(String)} for acceptable string representations that can be
+     * intrerpreted as appropriate <code>boolean</code> values.
+     *  
+     *  The
+     * underlying String may be representing a boolean is several ways, with little or no sensitivity to
+     * case (see {@link Util#parseBoolean(String)}, such as "true" or "False", "T" or "F", "yes" or "NO",
+     * "Y", or "N", "ON", or "Off", "enabled" or "DISABLED", or "1" or "0".
+     * 
+     * @return                          The boolean value at this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as a boolean value.
+     * 
+     * @see #getValue()
+     * @see #getSign()
+     * @see #getDouble()
+     * @see #getFloat()
+     * @see #getInt()
+     * @see #getVector2D()
+     * @see #getRange()
+     * @see #getRange2D()
+     * 
+     */
+    public boolean getBoolean() throws NumberFormatException {
         return Util.parseBoolean(getValue());
     }
 
-
+    /**
+     * Returns the value associated with this configuration point as a sign (1 or -1, 0). The
+     * underlying String may be representing the sign in different ways:
+     * <p>
+     * 
+     * <b>positive</b>: "+", "pos", "positive", "plus", "1", "325", "0.0333", "1.406e-27" <br>
+     * <b>negative</b>: "-", "neg", "negative", "minus", "-1", "-325", "-0.0333", "-1.406e-27" <br>
+     * <b>indeterminate</b>: "*", "any", "0", "0.0" <br>
+     * 
+     * 
+     * @return                          1 for positive, -1 for negative and 0 for indeterminate.
+     * @throws NumberFormatException    If the value could not be interpreted as a sign.
+     * 
+     * @see #getValue()
+     * @see #getSign()
+     * @see #getDouble()
+     * @see #getFloat()
+     * @see #getInt()
+     * @see #getVector2D()
+     * @see #getRange()
+     * @see #getRange2D()
+     * 
+     */
     public int getSign() {
         String value = getValue().toLowerCase();
         if(value.equals("+")) return 1;
@@ -1014,54 +1190,193 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
+    /**
+     * Returns the path associated to this configuration point as a {@link String}. The underlying specification may
+     * contain shorthands (such as "~" for the user's home folder), references to other configuration values (static
+     * or dynamic), to environment variables, or Java properties. Both "/" and the Windows style "\" can be used
+     * as a path separator to allow platform-independent parsing. 
+     * <p>
+     * 
+     * See {@link #getValue()} for how references are
+     * resolved, or {@link Util#getSystemPath(String)} for additional information on how paths are parsed.
+     * 
+     * 
+     * @return  The full proper path constructed from the value of this configuration point as a String.
+     * 
+     * @see #getValue()
+     * @see Util#getSystemPath(String)
+     */
     public String getPath() {
         return Util.getSystemPath(getValue());
     }
 
 
-    public Range getRange() {
+    /**
+     * Returns the value associated with this configuration point as a real-valued range.
+     * 
+     * @return                          The real-valued range represented by this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as real-valued range value.
+     * 
+     * @see Range
+     * @see #getValue()
+     * @see #getRange(double)
+     * @see #getRange(boolean)
+     * @see #getRange(boolean, double)
+     * 
+     */
+    public Range getRange() throws NumberFormatException {
         return Range.from(getValue());		
     }
 
-    public Range getRange(double scaling) {
+    /**
+     * Returns the value associated with this configuration point as a real-valued range scaled by the
+     * specified scaling factor argument.
+     * 
+     * 
+     * @param scaling                   The factor by which the range shall be scaled (e.g. a {@link Unit} cast) before return.
+     * @return                          The real-valued range represented by this configuration point, scaled by the argument.
+     * @throws NumberFormatException    If the value could not be parsed as real-valued range value.
+     * 
+     * @see Range
+     * @see #getValue()
+     * @see #getRange(boolean)
+     * @see #getRange(boolean, double)
+     * 
+     */
+    public Range getRange(double scaling) throws NumberFormatException {
         Range r = getRange();
         r.scale(scaling);
         return r;
     }
 
+    
 
-    public Range getRange(boolean isNonNegative) {
+    /**
+     * Returns the value associated with this configuration point as a real-valued range, with the argument
+     * specifying the signedness of the expected range. If <code>isNonNegative</code> is <code>true</code> the
+     * any dashes '-' are interpreted as min/max separators rather than negative signs. If <code>isNonNegative</code>
+     * is <code>false</code> then only colon(s) ':' can separate the min/max limits.
+     * 
+     * @param isNonNegative             whether the parsed range is expected to be a strictly non-negative range.
+     * @return                          The real-valued range represented by this configuration point, scaled by the argument.
+     * @throws NumberFormatException    If the value could not be parsed as real-valued range.
+     * 
+     * @see Range
+     * @see #getValue()
+     * @see #getRange(double)
+     * @see #getRange(boolean, double)
+     * 
+     */
+    public Range getRange(boolean isNonNegative) throws NumberFormatException {
         return Range.from(getValue(), isNonNegative);     
     }
 
-    public Range getRange(boolean isNonNegative, double scaling) {
+    
+    /**
+     * Returns the value associated with this configuration point as a real-valued range, with the first argument
+     * specifying the signedness of the expected range, and the second argument specifying a scaling factor, such
+     * as a unit conversion.
+     * 
+     * 
+     * @param isNonNegative     whether the parsed range is expected to be a strictly non-negative range.
+     * @param scaling           The factor by which the range shall be scaled (e.g. a {@link Unit} cast) before return.
+     * @return                  The real-valued range represented by this configuration point, scaled by the argument.
+     * 
+     * @see Range
+     * @see #getValue()
+     * @see #getRange()
+     * @see #getRange(boolean)
+     * @see #getRange(double)
+     */
+    public Range getRange(boolean isNonNegative, double scaling) throws NumberFormatException {
         Range r = getRange(isNonNegative);
         r.scale(scaling);
         return r;
     }
 
 
-    public Range2D getRange2D() {
+    /**
+     * Returns the value associated with this configuration point as a 2D range of values.
+     * 
+     * @return                          The 2D range represented by this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as a 2D range.
+     * 
+     * @see Range2D
+     * @see #getValue()
+     * @see #getRange2D(double)
+     * 
+     */
+    public Range2D getRange2D() throws NumberFormatException {
         return Range2D.from(getValue());      
     }
 
-    public Range2D getRange2D(double scaling) {
+    /**
+     * Returns the value associated with this configuration point as a 2D range of values, scaled by the
+     * specified factor (such as a Unit conversion).
+     * 
+     * @param scaling                   The factor by which the 2D range shall be scaled (e.g. a {@link Unit} cast) before return.
+     * @return                          The 2D range represented by this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as 2D range range.
+     * 
+     * @see Range2D
+     * @see #getValue()
+     * @see #getRange2D()
+     * 
+     */
+    public Range2D getRange2D(double scaling) throws NumberFormatException {
         Range2D r = getRange2D();
         r.scale(scaling);
         return r;
     }
 
-
+    /**
+     * Returns the value associated with this configuration point as a 2D vector.
+     * 
+     * @return                          The 2D vector represented by this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as 2D vector.
+     * 
+     * @see Vector2D
+     * @see #getValue()
+     * @see #getVector2D(double)
+     * 
+     */
     public Vector2D getVector2D() {
         return new Vector2D(getValue());		
     }
 
+    /**
+     * Returns the value associated with this configuration point as a 2D vector, scaled by the the argument 
+     * (e.g. for a unit conversion).
+     * 
+     * @param scaling                   The factor by which the 2D vector shall be scaled (e.g. a {@link Unit} cast) before return.
+     * @return                          The 2D vector represented by this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as 2D vector.
+     * 
+     * @see Vector2D
+     * @see #getValue()
+     * @see #getVector2D()
+     * 
+     */
     public Vector2D getVector2D(double scaling) {
         Vector2D v = getVector2D();
         v.scale(scaling);
         return v;
     }
 
+    
+    /**
+     * Returns the value associated with this configuration point as a 2D dimension. It is similar to {@link getVector2D()} except 
+     * with slightly different parsing rules, accepting 'x' or 'X' as separator (as well as commas or spaces), e.g. "142.1x87.3".
+     * 
+     * @return                          The 2D dimension represented by this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as 2D dimension.
+     * 
+     * @see Vector2D
+     * @see #getValue()
+     * @see #getDimension2D(double)
+     * @see #getDimension2D(Coordinate2D)
+     * 
+     */
     public Vector2D getDimension2D() {
         StringTokenizer tokens = new StringTokenizer(getValue(), " \t,:xX");
         Vector2D v = new Vector2D();
@@ -1070,19 +1385,63 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return v;
     }
 
+    /**
+     * Returns the value associated with this configuration point as a 2D dimension, scaled by the argument (e.g. for a unit 
+     * conversion). It is similar to {@link getVector2D(double)} except with slightly different parsing rules, accepting 
+     * 'x' or 'X' as separator (as well as commas or spaces), e.g. "142.1x87.3".
+     * 
+     * @param scaling                   The factor by which the 2D dimension shall be scaled (e.g. a {@link Unit} cast) before return.
+     * @return                          The 2D dimension represented by this configuration point, scaled by the argument.
+     * @throws NumberFormatException    If the value could not be parsed as 2D dimension.
+     * 
+     * @see Vector2D
+     * @see #getValue(double)
+     * @see #getDimension2D()
+     * @see #getDimension2D(Coordinate2D)
+     * 
+     */
     public Vector2D getDimension2D(double scaling) {
         Vector2D v = getDimension2D();
         v.scale(scaling);
         return v;
     }
 
+    
+
+    /**
+     * Returns the value associated with this configuration point as a 2D dimension, scaled component-wise by the 2D
+     * argument. The underlying parsing is similar to that of {@link getVector2D(double)}, but also accepting 
+     * 'x' or 'X' as separator (as well as commas or spaces), e.g. "142.1x87.3".
+     * 
+     * @param scaling                   The 2D component-wise scalars to apply before return.
+     * @return                          The 2D dimension represented by this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as 2D dimension.
+     * 
+     * @see Vector2D
+     * @see #getValue(double)
+     * @see #getDimension2D()
+     * @see #getDimension2D(double)
+     * 
+     */
     public Vector2D getDimension2D(Coordinate2D scaling) {
         Vector2D v = getDimension2D();
         v.multiplyByComponents(scaling);
         return v;
     }
     
-
+    /**
+     * Returns the value associated with this configuration points as a list of words that were separated by spaces, 
+     * commas, and/or tabs.
+     * 
+     * @return      The value at this configuration point, split into word list
+     * 
+     * @see #getValue()
+     * @see #getLowerCaseList()
+     * @see #getDoubles()
+     * @see #getFloats()
+     * @see #getIntegers()
+     * 
+     */
     public List<String> getList() {
         ArrayList<String> list = new ArrayList<String>();
         StringTokenizer tokens = new StringTokenizer(getValue(), " \t,");
@@ -1090,7 +1449,20 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return list;
     }
 
-
+    
+    /**
+     * Returns the value associated with this configuration points as a list of lower-case words that were separated by spaces, 
+     * commas, and/or tabs.
+     * 
+     * @return      The value at this configuration point, split into word list in lower-case.
+     * 
+     * @see #getValue()
+     * @see #getList()
+     * @see #getDoubles()
+     * @see #getFloats()
+     * @see #getIntegers()
+     * 
+     */
     public List<String> getLowerCaseList() {
         ArrayList<String> list = new ArrayList<String>();
         StringTokenizer tokens = new StringTokenizer(getValue(), " \t,");
@@ -1099,7 +1471,20 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-    public List<Double> getDoubles() {
+    /**
+     * Returns the value associated with this configuration points as a list of double-precision values that were separated by spaces, 
+     * commas, and/or tabs.
+     * 
+     * @return                          The list of double-precision values represented by the string value at this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as a list of double-precision values.
+     * 
+     * @see #getValue()
+     * @see #getList()
+     * @see #getFloats()
+     * @see #getIntegers()
+     * 
+     */
+    public List<Double> getDoubles() throws NumberFormatException {
         List<String> list = getList();
         ArrayList<Double> doubles = new ArrayList<Double>(list.size());	
         for(String entry : list) {
@@ -1110,6 +1495,19 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
+    /**
+     * Returns the value associated with this configuration points as a list of single-precision floating point values that 
+     * were separated by spaces, commas, and/or tabs.
+     * 
+     * @return                          The list of single-precision values represented by the string value at this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as a list of floating point values.
+     * 
+     * @see #getValue()
+     * @see #getList()
+     * @see #getDoubles()
+     * @see #getIntegers()
+     * 
+     */
     public List<Float> getFloats() {
         List<String> list = getList();
         ArrayList<Float> floats = new ArrayList<Float>(list.size());	
@@ -1120,7 +1518,19 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return floats;
     }
 
-    // Also takes ranges...
+    /**
+     * Returns the value associated with this configuration points as a list of integer values that were separated by spaces, 
+     * commas, and/or tabs. The parse rules of {@link Integer#decode(String)} are applied.
+     * 
+     * @return                          The list of integer values represented by the string value at this configuration point.
+     * @throws NumberFormatException    If the value could not be parsed as a list of integer values.
+     * 
+     * @see #getValue()
+     * @see #getList()
+     * @see #getDoubles()
+     * @see #getFloats()
+     * 
+     */
     public List<Integer> getIntegers() {
         List<String> list = getList();
         ArrayList<Integer> ints = new ArrayList<Integer>(list.size());	
@@ -1137,7 +1547,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return ints;
     }
 
-
+    
     public List<String> getKeys(boolean includeBlacklisted) {
         ArrayList<String> keys = new ArrayList<String>();
         for(String branchName : branches.keySet()) {
@@ -1157,7 +1567,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
             if(!option.isEnabled) if(option.value != null) if(option.value.length() > 0) keys.add(branchName);
             for(String key : option.getForgottenKeys()) keys.add(branchName + "." + key);			
         }		
-        return keys;		
+        return keys;
     }
 
 

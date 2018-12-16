@@ -44,32 +44,19 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 
-// TODO: Auto-generated Javadoc
 //Add parsing
 
-/**
- * The Class Coordinate2D.
- */
+
 public class Coordinate2D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate2D>, 
 ViewableAsDoubles, Parser, NumberFormating {
 	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3978373428597134906L;
 
-	/** The y. */
 	private double x, y;
 
-	/**
-	 * Instantiates a new coordinate2 d.
-	 */
 	public Coordinate2D() {}
 	
-	/**
-     * Instantiates a new coordinate2 d.
-     *
-     * @param X the x
-     * @param Y the y
-     */
+
     public Coordinate2D(double X, double Y) { 
         this();
         set(X, Y);  
@@ -79,28 +66,14 @@ ViewableAsDoubles, Parser, NumberFormating {
         this(v.x(), v.y());
     }
 	
-	/**
-	 * Instantiates a new coordinate2 d.
-	 *
-	 * @param point the point
-	 */
+
 	public Coordinate2D(Point2D point) { this(point.getX(), point.getY()); }
 	
 
-	/**
-	 * Instantiates a new coordinate2 d.
-	 *
-	 * @param template the template
-	 */
 	public Coordinate2D(Coordinate2D template) { this(template.x, template.y); }
 	
 
-    /**
-     * Instantiates a new coordinate2 d.
-     *
-     * @param text the text
-     */
-    public Coordinate2D(String text) { parse(text); }
+    public Coordinate2D(String text) throws NumberFormatException { parse(text); }
 
 
 
@@ -112,13 +85,6 @@ ViewableAsDoubles, Parser, NumberFormating {
 		return equals(o, 0.0);
 	}
 	
-	/**
-	 * Equals.
-	 *
-	 * @param o the o
-	 * @param precision the precision
-	 * @return true, if successful
-	 */
 	public boolean equals(Object o, double precision) {
 		if(o == this) return true;
 		if(!(o instanceof Coordinate2D)) return false;
@@ -138,83 +104,34 @@ ViewableAsDoubles, Parser, NumberFormating {
         setY(other.y());
     }
 	
-	
 
-	
-	// Access methods...
-	/**
-	 * Gets the x.
-	 *
-	 * @return the x
-	 */
+
 	@Override
     public final Double x() { return x; }
 	
-	/**
-	 * Gets the y.
-	 *
-	 * @return the y
-	 */
 	@Override
     public final Double y() { return y; }
 	
 	@Override
     public final Double z() { return 0.0; }
 	
-	/**
-	 * Sets the x.
-	 *
-	 * @param value the new x
-	 */
+
 	public void setX(final double value) { x = value; }
 	
-	/**
-	 * Sets the y.
-	 *
-	 * @param value the new y
-	 */
+
 	public void setY(final double value) { y = value; }
 	
-	/**
-	 * Adds the x.
-	 *
-	 * @param value the value
-	 */
 	public void addX(final double value) { x += value; }
 	
-	/**
-	 * Adds the y.
-	 *
-	 * @param value the value
-	 */
+
 	public void addY(final double value) { y += value; }
 	
-	/**
-	 * Subtract x.
-	 *
-	 * @param value the value
-	 */
 	public void subtractX(final double value) { x -= value; }
 	
-	/**
-	 * Subtract y.
-	 *
-	 * @param value the value
-	 */
 	public void subtractY(final double value) { y -= value; }
 	
-	/**
-	 * Scale x.
-	 *
-	 * @param value the value
-	 */
 	public final void scaleX(final double value) { x *= value; }
 	
-	/**
-	 * Scale y.
-	 *
-	 * @param value the value
-	 */
 	public final void scaleY(final double value) { y *= value; }
 	
 	
@@ -241,101 +158,52 @@ ViewableAsDoubles, Parser, NumberFormating {
 	@Override
 	public Coordinate2D copy() { return clone(); }
 	
-	/**
-	 * Gets the point2 d.
-	 *
-	 * @return the point2 d 
-	 */
 	public Point2D getPoint2D() {
 		return new Point2D.Double(x, y);
 	}
 	
-	/**
-	 * To point2 d.
-	 *
-	 * @param point the point
-	 */
 	public void toPoint2D(Point2D point) {
 		point.setLocation(x, y);
 	}
 	
-	/**
-	 * From point2 d.
-	 *
-	 * @param point the point
-	 */
+
 	public void fromPoint2D(Point2D point) {
 		set(point.getX(), point.getY());
 	}
 	
-	/**
-	 * Sets the.
-	 *
-	 * @param X the x
-	 * @param Y the y
-	 */
 	public void set(final double X, final double Y) { setX(X); setY(Y); }
 
-	/**
-	 * Invert x.
-	 */
 	public void invertX() { x *= -1.0; }
 	
-	/**
-	 * Invert y.
-	 */
 	public void invertY() { y *= -1.0; }
 	
-	/**
-	 * Zero.
-	 */
 	public void zero() { x = y = 0.0; }
 
-	/**
-	 * Checks if is null.
-	 *
-	 * @return true, if is null
-	 */
+	
 	public boolean isNull() { 
 		if(x != 0.0) return false;
 		if(y != 0.0) return false; 
 		return true;
 	}	
 
-	/**
-	 * Na n.
-	 */
+
 	public void NaN() { x = Double.NaN; y = Double.NaN; }
 
-	/**
-	 * Checks if is na n.
-	 *
-	 * @return true, if is na n
-	 */
+
 	public final boolean isNaN() { 
 		if(Double.isNaN(x)) return true;
 		if(Double.isNaN(y)) return true;
 		return false;
 	}
 	
-	/**
-	 * Checks if is infinite.
-	 *
-	 * @return true, if is infinite
-	 */
+
 	public final boolean isInfinite() { 
 		if(Double.isInfinite(x)) return true;
 		if(Double.isInfinite(y)) return true;
 		return false;
 	}
 
-	/**
-	 * Weighted average with.
-	 *
-	 * @param w1 the w1
-	 * @param coord the coord
-	 * @param w2 the w2
-	 */
+
 	public final void weightedAverageWith(double w1, final Coordinate2D coord, double w2) {
 		final double isumw = 1.0 / (w1 + w2);
 		w1 *= isumw; w2 *= isumw;
@@ -347,13 +215,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 	    parse(spec, new ParsePosition(0));
 	}
 
-	/**
-	 * Parses the.
-	 *
-	 * @param text the text
-	 * @throws NumberFormatException the number format exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	@Override
 	public final void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException {
 	    parse(new StringParser(text, pos));
@@ -389,9 +251,8 @@ ViewableAsDoubles, Parser, NumberFormating {
 	 * 
 	 * @param parser  The string parsing helper object.
 	 * @throws NumberFormatException
-	 * @throws IllegalArgumentException
 	 */
-	public void parse(StringParser parser) throws NumberFormatException, IllegalArgumentException {
+	public void parse(StringParser parser) throws NumberFormatException {
 	    boolean isBracketed = false;
 	    
 	    zero();
@@ -416,12 +277,6 @@ ViewableAsDoubles, Parser, NumberFormating {
 	    setY(Double.parseDouble(token));
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param nf the nf
-	 * @return the string
-	 */
 	@Override
 	public String toString(NumberFormat nf) {
 		return "(" + nf.format(x) + "," + nf.format(y) + ")";
@@ -435,12 +290,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 		return "(" + x + "," + y + ")";
 	}
 	
-	/**
-	 * Creates the from doubles.
-	 *
-	 * @param array the array
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	@Override
 	public final void createFromDoubles(Object array) throws IllegalArgumentException {
 		if(!(array instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
@@ -450,12 +300,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 		y = components[1];
 	}
 
-	/**
-	 * View as doubles.
-	 *
-	 * @param view the view
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	@Override
 	public final void viewAsDoubles(Object view) throws IllegalArgumentException {
 		if(!(view instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
@@ -465,24 +310,12 @@ ViewableAsDoubles, Parser, NumberFormating {
 		components[1] = y;
 	}
 	
-	/**
-	 * View as doubles.
-	 *
-	 * @return the object
-	 */
 	@Override
 	public final Object viewAsDoubles() {
 		return new double[] { x, y };		
 	}
 	
 	
-	/**
-	 * Gets the value.
-	 *
-	 * @param field the field
-	 * @return the value
-	 * @throws NoSuchFieldException the no such field exception
-	 */
 	public double getValue(int field) throws NoSuchFieldException {
 		switch(field) {
 		case X: return x;
@@ -491,13 +324,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 		}
 	}
 	
-	/**
-	 * Sets the value.
-	 *
-	 * @param field the field
-	 * @param value the value
-	 * @throws NoSuchFieldException the no such field exception
-	 */
+
 	public void setValue(int field, double value) throws NoSuchFieldException {
 		switch(field) {
 		case X: x = value; break;
@@ -507,13 +334,6 @@ ViewableAsDoubles, Parser, NumberFormating {
 	}
 	
 	
-	/**
-	 * Edits the.
-	 *
-	 * @param cursor the cursor
-	 * @param alt the alt
-	 * @throws HeaderCardException the header card exception
-	 */
 	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
 	    Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 		c.add(new HeaderCard(keyStem + "1" + alt, x, "The reference x coordinate in SI units."));
@@ -521,36 +341,17 @@ ViewableAsDoubles, Parser, NumberFormating {
 	}
 	
 
-	/**
-	 * Parses the.
-	 *
-	 * @param header the header
-	 * @param alt the alt
-	 */
 	public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
 		x = header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x());
 		y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param coords the coords
-	 * @param unit the unit
-	 * @return the string
-	 */
+
 	public static String toString(Coordinate2D coords, Unit unit) {
 		return toString(coords, unit, 3);
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param coords the coords
-	 * @param unit the unit
-	 * @param decimals the decimals
-	 * @return the string
-	 */
+
 	public static String toString(Coordinate2D coords, Unit unit, int decimals) {
 		return Util.f[decimals].format(coords.x / unit.value()) +  ", " 
 			+ Util.f[decimals].format(coords.y / unit.value()) + " " + unit.name();
@@ -595,11 +396,9 @@ ViewableAsDoubles, Parser, NumberFormating {
         return copy;
     }
 	
-	
-	/** The Constant X. */
+
 	public static final int X = 0;
 	
-	/** The Constant Y. */
 	public static final int Y = 1;
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,28 +24,15 @@ package jnum;
 
 import jnum.math.specialfunctions.ErrorFunction;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ExtraMath.
- */
+
 public final class ExtraMath {
 
-	/**
-	 * Square.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public final static double square(final double x) {
 		return x*x;
 	}
 	
-	/**
-	 * Cube.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public final static double cube(final double x) {
 		return x*x*x;
 	}
@@ -53,69 +40,26 @@ public final class ExtraMath {
 
 	// Inverse hyperbolic functions from:
 	// http://www.devx.com/vb2themax/Tip/19026
-	/**
-	 * Asinh.
-	 *
-	 * @param value the value
-	 * @return the double
-	 */
 	public final static double asinh(final double value) {
 		return Math.log(value + Math.sqrt(value * value + 1.0));
 	}
 	
-	/**
-	 * Acosh.
-	 *
-	 * @param value the value
-	 * @return the double
-	 */
 	public final static double acosh(final double value) {
 		return Math.log(value + Math.sqrt(value * value - 1.0));
 	}
 	
-	/**
-	 * Atanh.
-	 *
-	 * @param value the value
-	 * @return the double
-	 */
 	public final static double atanh(final double value) {
 		return acoth(1.0 / value);
 	}
 	
-	/**
-	 * Acoth.
-	 *
-	 * @param value the value
-	 * @return the double
-	 */
 	public final static double acoth(final double value) {	
 		return 0.5 * Math.log((value + 1.0) / (value - 1.0));
 	}
 		
-	/**
-	 * Sinc.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
 	public final static double sinc(final double x) { return x == 0.0 ? 1.0 : Math.sin(x) / x; }
 
-	/**
-	 * Log2.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
 	public final static double log2(final double x) { return Math.log(x) * Constant.ilog2; }
 
-	/**
-	 * Tan.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the double
-	 */
 	public final static double tan(final double x, final double y) {
 		if(x == 0.0) {
 			if(y == 0.0) return Double.NaN;
@@ -124,24 +68,10 @@ public final class ExtraMath {
 		return y / x;
 	}
 
-	/**
-	 * Cos.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the double
-	 */
 	public final static double cos(final double x, final double y) {
 		return x / ExtraMath.hypot(x,  y);
 	}
 
-	/**
-	 * Sin.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the double
-	 */
 	public final static double sin(final double x, final double y) {
 		return y / ExtraMath.hypot(x,  y);
 	}
@@ -150,8 +80,10 @@ public final class ExtraMath {
 	/**
 	 * Error function.
 	 *
-	 * @param x the x
-	 * @return the double
+	 * @param x the argument
+	 * @return the value of the error function at the specified argument.
+	 * 
+	 * @see #ierf(double)
 	 */
 	public final static double erf(final double x) {
 		return ErrorFunction.at(x);
@@ -160,8 +92,10 @@ public final class ExtraMath {
 	/**
 	 * Inverse error function.
 	 *
-	 * @param y the y
-	 * @return the double
+	 * @param y the error function value
+	 * @return the value at which the error function produces the specified value
+	 * 
+	 * @see #erf(double)
 	 */
 	public final static double ierf(final double y) {
 		return ErrorFunction.inverseAt(y);
@@ -170,9 +104,11 @@ public final class ExtraMath {
 	/**
 	 * Sum of squares.
 	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the double
+	 * @param a the first of two values
+	 * @param b the second value
+	 * @return a*a + b*b
+	 * 
+	 * @see #sumSquares(double, double, double)
 	 */
 	public final static double sumSquares(final double a, final double b) {
 		return a*a + b*b;
@@ -181,21 +117,27 @@ public final class ExtraMath {
 	/**
 	 * Sum of squares.
 	 *
-	 * @param a the a
-	 * @param b the b
-	 * @param c the c
-	 * @return the double
+	 * @param a the first of three values
+	 * @param b the second value
+	 * @param c the third value
+	 * @return a*a + b*b + c*c
+	 * 
+	 * @see #sumSquares(double, double)
 	 */
 	public final static double sumSquares(final double a, final double b, final double c) {
 		return a*a + b*b + c*c;
 	}
 
 	/**
-	 * Hypot.
+	 * A quck and dirty hypot function, i.e. sqrt(a*a + b*b), and calculated as such. It is less computationally intensive than 
+	 * {@link Math#hypot(double, double)}, at the cost that it may overgflow.
 	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the double
+	 * @param a the first of two values
+	 * @param b the second value
+	 * @return sqrt(a*a + b*b)
+	 * 
+	 * @see Math#hypot(double, double)
+	 * @see #hypot(double, double, double)
 	 */
 	public final static double hypot(final double a, final double b) {
 		return Math.sqrt(a*a + b*b);
@@ -203,62 +145,39 @@ public final class ExtraMath {
 	
 	
 	/**
-	 * Add three arguments in quadrature, without overflow.
+	 * Add three arguments in quadrature, i.e. sqrt(a*a + b*b + c*c), and calculated as such. 
 	 *
-	 * @param a the a
-	 * @param b the b
-	 * @param c the c
-	 * @return the double
+	 * @param a the first of three values
+	 * @param b the second value
+	 * @param c the third value
+	 * @return sqrt(a*a + b*b + c*c)
+	 * 
+	 * @see #hypot(double, double)
 	 */
 	public final static double hypot(final double a, final double b, final double c) {
 		return Math.sqrt(a*a + b*b + c*c);
 	}
 
-	/**
-	 * Log2floor.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public final static int log2floor(final int value) {		
 		return 31 - Integer.numberOfLeadingZeros(value);
 	}
 	
-	/**
-	 * Log2floor.
-	 *
-	 * @param value the value
-	 * @return the long
-	 */
+
 	public final static int log2floor(final long value) {	
 	    return 63 - Long.numberOfLeadingZeros(value);
 	}
-	/**
-	 * Log2ceil.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public final static int log2ceil(final int value) {
 		return 32 - Integer.numberOfLeadingZeros(value-1);
 	}
 	
-	/**
-	 * Log2ceil.
-	 *
-	 * @param value the value
-	 * @return the long
-	 */
+
 	public final static int log2ceil(final long value) {
 	    return 64 - Long.numberOfLeadingZeros(value-1L);
 	}
 
-	/**
-	 * Log2round.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public final static int log2round(final int value) {
 		int pfloor = log2floor(value);
 		int floor = 1<<pfloor;
@@ -267,12 +186,6 @@ public final class ExtraMath {
 		return (double) value / floor < (double)(floor << 1) / value ? pfloor : pfloor + 1;
 	}
 	
-	/**
-	 * Log2round.
-	 *
-	 * @param value the value
-	 * @return the long
-	 */
 	public final static int log2round(final long value) {
 		int pfloor = log2floor(value);
 		long floor = 1L << pfloor;
@@ -281,97 +194,43 @@ public final class ExtraMath {
 		return (double) value / floor < (double)(floor << 1) / value ? pfloor : pfloor + 1;
 	}
 
-	/**
-	 * Pow2floor.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public final static int pow2floor(final int value) { return Integer.highestOneBit(value); }
 	
-	/**
-	 * Pow2floor.
-	 *
-	 * @param value the value
-	 * @return the long
-	 */
+
 	public final static long pow2floor(final long value) { return Long.highestOneBit(value); }
 
-	/**
-	 * Pow2ceil.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public final static int pow2ceil(final int value) { 
 	    int floor = pow2floor(value);
 	    return value == floor ? floor : floor << 1;
 	}
 	
-	/**
-	 * Pow2ceil.
-	 *
-	 * @param value the value
-	 * @return the long
-	 */
+
 	public final static long pow2ceil(final long value) {
 	    long floor = pow2floor(value);
         return value == floor ? floor : floor << 1;
 	}
 
-	/**
-	 * Pow2round.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public final static int pow2round(final int value) { return 1 << log2round(value); }
 	
-	/**
-	 * Pow2round.
-	 *
-	 * @param value the value
-	 * @return the long
-	 */
+
 	public final static long pow2round(final long value) { return 1L << log2round(value); }
 
-	
-	/**
-	 * Roundup ratio.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the int
-	 */
+
 	public final static int roundupRatio(int a, int b) { return (a + b - 1) / b; }
 	
-	/**
-	 * Roundup ratio.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the long
-	 */
+
 	public final static long roundupRatio(long a, long b) { return (a + b - 1L) / b; }
 	
-	/**
-	 * Return the standardized angle (between -Pi and Pi) for a given input angle.
-	 *
-	 * @param angle the angle
-	 * @return an angle between -Pi and Pi.
-	 */
+
 	public final static double standardAngle(final double angle) {
 	    if(angle > -Math.PI) if(angle <= Math.PI) return angle;
 		return Math.IEEEremainder(angle, Constant.twoPi);
 	}
 
 	
-	 /**
- 	 * Fibonacci.
- 	 *
- 	 * @param n the n
- 	 * @return the nth Fibonacci number.
- 	 */
     public final double fibonacci(double n) {
     	return (Math.pow(Constant.goldenRatio, n) - Math.pow(1.0 - Constant.goldenRatio, n)) / Constant.sqrt5;
     }

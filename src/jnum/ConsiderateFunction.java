@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,25 +24,40 @@
 
 package jnum;
 
-// TODO: Auto-generated Javadoc
-// Functions that do not create a new object at every evaluation. 
-// If such behaviour is desired, the ConsiderateFunctionAdapter class
-// can be used to wrap this into a regular Function.
-
 /**
- * The Interface ConsiderateFunction.
+ * An interface for considerate functions, i.e. functions that do not create new objects to return. Instead, considerate
+ * functions place the result into a caller-supplied object. By avoiding the creation of return objects, considerate 
+ * functions can offer superior performance compared to regular functions (see {@link Function}).
+ * <p>
+ * 
+ * The practical recommendation is to use considerate functions, when possible, inside loops where the return value
+ * is restricted in scope to the loop body. In such case, the loop can benefit from the performance boost offered
+ * by the considerate function's design, without the possibility of mis-using the same return value outside of it.
+ * <p>
+ * 
+ * considerate functions can be easily converted into the safer form of regular function by the 
+ * {@link jnum.math.ConsiderateFunctionAdapter} class, without having to create a separate regular implementation.
+ * Therefore, the preferred primary implementation of functions with non-primite return type should be their
+ * considerate form.
  *
- * @param <ArgType> the generic type
- * @param <ReturnType> the generic type
+ * @param <ArgType> the generic type of the function's input argument
+ * @param <ReturnType> the generic type of the function's return value
+ * 
+ * @see Function
+ * @see jnum.math.ConsiderateFunctionAdapter
+ * 
  */
 public interface ConsiderateFunction<ArgType, ReturnType> {
 
 	/**
-	 * Evaluate.
+	 * Evaluates the function for the given parameters (first argument), and places the result in the
+	 * supplied return value object (second argument).
 	 *
-	 * @param parms the parms
-	 * @param toValue the to value
+	 * @param parms the input parameters (or arguments) to the function
+	 * @param toValue the return value object that will be populated with the result.
+	 * 
+	 * @throws IllegalArgumentException    If either the input parameters or the return object are not valid for some reason.
 	 */
-	public void evaluate(ArgType parms, ReturnType toValue);
+	public void evaluate(ArgType parms, ReturnType toValue) throws IllegalArgumentException;
 	
 }

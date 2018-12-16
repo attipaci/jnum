@@ -23,52 +23,41 @@
 
 package jnum;
 
-// TODO: Auto-generated Javadoc
+
 /**
- * The Class NonConformingException.
+ * A class for indicating that one object does not conform to another object of the same of compatible type. For example,
+ * two image objects of the same class, but of different dimensions, may throw such an exception if the operation that
+ * works on those two images cannot proceed because of their size difference. 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
  */
 public class NonConformingException extends IllegalArgumentException {
 
+
+    private static final long serialVersionUID = 6650987858665661469L;
+    
     /**
-     * Instantiates a new non conforming exception.
+     * Instantiates a new non conforming exception with no specific message detailing the failure.
      */
     public NonConformingException() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-    /**
-     * Instantiates a new non conforming exception.
-     *
-     * @param arg0 the arg 0
-     * @param arg1 the arg 1
-     */
+
     public NonConformingException(String arg0, Throwable arg1) {
         super(arg0, arg1);
-        // TODO Auto-generated constructor stub
     }
 
-    /**
-     * Instantiates a new non conforming exception.
-     *
-     * @param arg0 the arg 0
-     */
+
     public NonConformingException(String arg0) {
         super(arg0);
-        // TODO Auto-generated constructor stub
     }
 
-    /**
-     * Instantiates a new non conforming exception.
-     *
-     * @param arg0 the arg 0
-     */
+
     public NonConformingException(Throwable arg0) {
         super(arg0);
-        // TODO Auto-generated constructor stub
     }
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 6650987858665661469L;
 
 }

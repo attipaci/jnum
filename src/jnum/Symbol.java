@@ -23,84 +23,87 @@
 
 package jnum;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Symbol.
+ * A selection of commonly used unicode character symbols, especially for mathermatics, physics and astronomy. 
+ * 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
  */
 public final class Symbol {
 
 	// Numbers
-	/** The Constant permil. */
+	/** Part per thousand */
 	public final static char permil = '\u0089';
 	
-	/** The Constant quarter. */
+	/** 1/4. */
 	public final static char quarter = '\u00bc';
     
-    /** The Constant half. */
+    /** 1/2. */
     public final static char half = '\u00bd';
     
-    /** The Constant third. */
+    /** 1/3. */
     public final static char third  ='\u00be';
 	
     
 	// Business
-	/** The Constant trademark. */
+	/** trademark. */
 	public final static char trademark = '\u0099';
 	
-	/** The Constant copyright. */
+	/** copyright. */
 	public final static char copyright = '\u00a9';
     
-    /** The Constant circleR. */
+    /** circled R. */
     public final static char circleR = '\u00ae'; 
 	
 	// Currencies
-    /** The Constant euro. */
+    /** currency: euro. */
 	public final static char euro = '\u0080';
     
-    /** The Constant cent. */
+    /** currency: cent. */
     public final static char cent = '\u00a2';
     
-    /** The Constant pound. */
+    /** currency: pound. */
     public final static char pound = '\u00a3';
     
-    /** The Constant yen. */
+    /** currency: yen. */
     public final static char yen = '\u00a5';
     
     
     // typographical
-    /** The Constant paragraph. */
+    /** paragraph marker. */
     public final static char paragraph = '\u00a7';
     
  
     
-    /** The Constant ellipses. */
+    /** ellipses (...). */
     public final static char ellipses = '\u0085';
      
-    /** The Constant scriptf. */
+    /** script 'f'. */
     public final static char scriptf = '\u0083';    
     
-    /** The Constant dagger. */
+    /** dagger. */
     public final static char dagger = '\u0086';
     
-    /** The Constant doubleDagger. */
+    /** double dagger. */
     public final static char doubleDagger = '\u0087';
     
-    /** The Constant CE. */
+    /** The combined upper-case letter 'CE'. */
     public final static char CE = '\u008c';
     
-    /** The Constant ce. */
+    /** The combined lower-case letter 'ce'. */
     public final static char ce = '\u009c';
     
-    /** The Constant AE. */
+    /** The combined upper-case letter 'AE'. */
     public final static char AE = '\u00c6';
     
-    /** The Constant ae. */
+    /** The combined lower-case letter 'ae'. */
     public final static char ae = '\u00e6';
     
-    /** The Constant invertedExclamation. */
+    /** inverted exclamation mark. */
     public final static char invertedExclamation = '\u00a1';
     
-    /** The Constant invertedQuestionMark. */
+    /** inverted question mark. */
     public final static char invertedQuestionMark = '\u00bf';
     
     
@@ -108,162 +111,161 @@ public final class Symbol {
     
     // Math
     
-    /** The Constant squareRoot. */
+    /** square root. */
     public final static char squareRoot = '\u221a';
     
-    /** The Constant cubicRoot. */
+    /** cubic root. */
     public final static char cubicRoot = '\u221b';
     
-    /** The Constant fourthRoot. */
+    /** fourth root. */
     public final static char fourthRoot = '\u221c';
   
     
-    /** The Constant plusminus. */
+    /** plus or minus (+/-) */
     public final static char plusminus = '\u00b1';
     
-    /** The Constant minusplus. */
+    /** minus or plus (-/+) */
     public final static char minusplus = '\u2213';
     
-    /** The Constant upperminus. */
+    /** Upper minus */
     public final static char upperminus = '\u00af';
     
-    /** The Constant square. */
+    /** Square, i.e. superscript 2 */
     public final static char square = '\u00b2';
     
-    /** The Constant cube. */
+    /** Cube, i.e. superscript 3. */
     public final static char cube = '\u00b3';
     
-    /** The Constant dot. */
+    /** dot product. */
     public final static char dot = '\u00b7';
     
-    /** The Constant bigdot. */
+    /** big dot. */
     public final static char bigdot = '\u0095';
     
-    /** The Constant doubledot. */
+    /** double dot. */
     public final static char doubledot = '\u00a8';
     
-    /** The Constant cross. */
+    /** cross product. */
     public final static char cross = '\u00d7';
     
-    /** The Constant times. */
+    /** times. Same as cross. */
     public final static char times = '\u00d7';
     
-    /** The Constant infinity. */
+    /** infinity. */
     public final static char infinity = '\u221e';
     
-    /** The Constant circlePlus. */
+    /** circled plus. */
     public final static char circlePlus = '\u2295';
     
-    /** The Constant circleMinus. */
+    /** circled minus. */
     public final static char circleMinus = '\u2296';
     
-    /** The Constant circleTimes. */
+    /** circled cross product (e.g. external direct product). */
     public final static char circleTimes = '\u2297';
     
-    /** The Constant circleDivide. */
+    /** circled division. */
     public final static char circleDivide = '\u2298';
     
-    /** The Constant circleDot. */
+    /** circled dot product. */
     public final static char circleDot = '\u2299';
     
-    /** The Constant starOperator. */
+    /** star operator */
     public final static char starOperator = '\u22c6';
  
-    /** The Constant partial. */
+    /** partial derivative. */
     public final static char partial = '\u2202';
     
-    /** The Constant nabla. */
+    /** Nabla. */
     public final static char nabla = '\u2207';
     
-    /** The Constant integral. */
+    /** integral sign. */
     public final static char integral = '\u222b';
     
-    /** The Constant doubleIntegral. */
+    /** double integral signs. */
     public final static char doubleIntegral = '\u222c';
     
-    /** The Constant tripleIntegral. */
+    /** triple integral signs. */
     public final static char tripleIntegral = '\u222d';
     
-    /** The Constant crossProduct. */
+    /** cross product. */
     public final static char crossProduct = '\u2a2f';
     
-    /** The Constant prime. */
+    /** prime. */
     public final static char prime = '\u2032';
     
-    /** The Constant doublePrime. */
+    /** double prime. */
     public final static char doublePrime = '\u2033';
     
-    /** The Constant triplePrime. */
+    /** triple prime. */
     public final static char triplePrime = '\u2034';
     
-    /** The Constant summation. */
+    /** summation. */
     public final static char summation = '\u2211';
     
-    /** The Constant product. */
+    /** product. */
     public final static char product = '\u220f';
     
-    /** The Constant notEqual. */
+    /** not equal. */
     public final static char notEqual = '\u2260';
     
-    /** The Constant proportionalTo. */
+    /** proportional to. */
     public final static char proportionalTo = '\u221d';
     
-    /** The Constant approximately. */
+    /** approximately. */
     public final static char approximately = '\u2248';
     
     
     // Physics
-    /** The Constant degree. */
+    /** degree. */
     public final static char degree = '\u00b0';
     
-    /** The Constant celsius. */
+    /** degree celsius. */
     public final static char celsius = '\u2103';
     
-    /** The Constant farenheit. */
+    /** degree farenheit. */
     public final static char farenheit = '\u2109';
     
-    /** The Constant hbar. */
+    /** hbar (Dirac's constant). */
     public final static char hbar = '\u0127';
     
-    /** The Constant mu. */
+    /** greek letter: mu. */
     public final static char mu = '\u00b5';
     
-    /** The Constant Acircle. */
+    /** Circled A, as in Angstrom. */
     public final static char Acircle = '\u00c5';
     
    
            
-    
-    
-    /** The Constant Sun. */
     // Astronomy
+    
+    /** astronomy: Sun. */
     public final static char Sun = '\u2609';
     
-    /** The Constant Mercury. */
+    /** planet Mercury. */
     public final static char Mercury = '\u263f';
     
-    /** The Constant Venus. */
+    /** planer Venus. */
     public final static char Venus = '\u2640';
     
-    /** The Constant Earth. */
+    /** planet Earth. */
     public final static char Earth = '\u2641';
     
-    /** The Constant Mars. */
+    /** planet Mars. */
     public final static char Mars = '\u2642';
     
-    /** The Constant Jupiter. */
+    /** planet Jupiter. */
     public final static char Jupiter = '\u2643';
     
-    /** The Constant Saturn. */
+    /** planet Saturn. */
     public final static char Saturn = '\u2644';
     
-    /** The Constant Uranus. */
+    /** planet Uranus. */
     public final static char Uranus = '\u2645';
     
-    /** The Constant Neptune. */
+    /** planet Neptune. */
     public final static char Neptune = '\u2646';
     
-    /** The Constant Pluto. */
+    /** planet Pluto. */
     public final static char Pluto = '\u2647';
     
     

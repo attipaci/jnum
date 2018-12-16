@@ -181,9 +181,8 @@ ViewableAsDoubles, Parser, NumberFormating {
      * 
      * @param parser  The string parsing helper object.
      * @throws NumberFormatException
-     * @throws IllegalArgumentException
      */
-    public void parse(StringParser parser) throws NumberFormatException, IllegalArgumentException {
+    public void parse(StringParser parser) throws NumberFormatException {
         boolean isBracketed = false;
         
         parser.skipWhiteSpaces();

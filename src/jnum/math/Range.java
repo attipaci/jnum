@@ -314,7 +314,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
      *     or more colons ':'. E.g. "0.0:1.0" or "0.0:::1.0". 
      * @return the new range according to the specification
      */
-    public final void parse(String text) {
+    public final void parse(String text) throws NumberFormatException {
         from(text, false);
     }
 	
@@ -325,7 +325,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param isPositive true if the range is for positive only values (allows hyphens as a separator between min and max values 
 	 *     -- otherwise only colon ':' is allowed. E.g. "0.0--1.0" vs the more standard "0.0:1.0").
 	 */
-	public void parse(String text, boolean isPositive) {		
+	public void parse(String text, boolean isPositive) throws NumberFormatException {		
 		StringTokenizer tokens = new StringTokenizer(text, " \t:" + (isPositive ? "-" : ""));
 		
 		if(tokens.countTokens() == 1) {
@@ -460,11 +460,11 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
         return c;
 	}
 	
-	public static Range from(String text) {
+	public static Range from(String text) throws NumberFormatException {
 	    return from(text, false);
 	}
 	
-	public static Range from(String text, boolean isPositive) {
+	public static Range from(String text, boolean isPositive) throws NumberFormatException {
 	    Range range = new Range();
 	    range.parse(text, isPositive);
 	    return range;

@@ -25,28 +25,17 @@ package jnum.data;
 
 import java.util.Hashtable;
 
-import jnum.Counter;
 import jnum.ExtraMath;
 import jnum.Util;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Histogram.
- */
 public class Histogram implements Cloneable {
-	
-	/** The bins. */
-	private Hashtable<Integer, Counter> bins = new Hashtable<Integer, Counter>();
-	
-	/** The resolution. */
+
+	private Hashtable<Integer, RealValue> bins = new Hashtable<Integer, RealValue>();
+
 	private double resolution;
 	
-	/**
-	 * Instantiates a new histogram.
-	 *
-	 * @param resolution the resolution
-	 */
+
 	public Histogram(double resolution) {
 		if(resolution == 0.0 || Double.isNaN(resolution)) 
 			throw new IllegalStateException("Illegal bin resolution.");
@@ -63,102 +52,55 @@ public class Histogram implements Cloneable {
 	}
 	
 
-    /**
-     * Gets the resolution.
-     *
-     * @return the resolution
-     */
     public double getResolution() { return resolution; }
 	
-	/**
-	 * Adds the.
-	 *
-	 * @param value the value
-	 */
+
 	public void add(double value) {
 		add(value, 1.0);
 	}
 	
-	/**
-	 * Adds the.
-	 *
-	 * @param value the value
-	 * @param counts the counts
-	 */
+
 	public void add(double value, double counts) {
 		int binValue = binFor(value);
-		if(bins.containsKey(binValue)) bins.get(binValue).value += counts;
-		else bins.put(binValue, new Counter(counts));
+		if(bins.containsKey(binValue)) bins.get(binValue).add(counts);
+		else bins.put(binValue, new RealValue(counts));
 	}
 	
-	/**
-	 * Total counts.
-	 *
-	 * @return the double
-	 */
 	public double totalCounts() {
 		double totalCounts = 0.0;
-		for(int bin : bins.keySet()) totalCounts += bins.get(bin).value; 
+		for(int bin : bins.keySet()) totalCounts += bins.get(bin).value(); 
 		return totalCounts;
 	}
 	
-	/**
-	 * Counts for.
-	 *
-	 * @param value the value
-	 * @return the double
-	 */
+
 	public double countsFor(double value) {
 		int binValue = binFor(value);
-		if(bins.containsKey(binValue)) return bins.get(binValue).value;
+		if(bins.containsKey(binValue)) return bins.get(binValue).value();
 		return 0;
 	}
 	
-	/**
-	 * Bin for.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public int binFor(double value) {
 		return (int)Math.round(value/resolution);
 	}
 	
-	/**
-	 * Size.
-	 *
-	 * @return the int
-	 */
+
 	public int size() { return bins.size(); }
 	
-	/**
-	 * Clear.
-	 */
+
 	public void clear() { bins.clear(); }
 	
-	/**
-	 * Checks if is empty.
-	 *
-	 * @return true, if is empty
-	 */
+
 	public boolean isEmpty() { return bins.isEmpty(); }
 	
-	/**
-	 * Gets the min bin value.
-	 *
-	 * @return the min bin value
-	 */
+
 	public double getMinBinValue() {
 		double min = Double.POSITIVE_INFINITY;
 		for(int bin : bins.keySet()) if(bin < min) min = bin;
 		return resolution * min;
 	}
 	
-	/**
-	 * Gets the max bin value.
-	 *
-	 * @return the max bin value
-	 */
+
 	public double getMaxBinValue() {
 		double max = Double.NEGATIVE_INFINITY;
 		for(int bin : bins.keySet()) if(bin > max) max = bin;
@@ -182,51 +124,32 @@ public class Histogram implements Cloneable {
 		return text;
 	}
 	
-	/**
-	 * Gets the max dev.
-	 *
-	 * @return the max dev
-	 */
+
 	public double getMaxDev() {
 		return Math.max(Math.abs(getMaxBinValue()), Math.abs(getMinBinValue()));	
 	}
 	
-	/**
-	 * Product.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the histogram
-	 */
+
 	public static Histogram product(Histogram a, Histogram b) {
 		if(a.resolution != b.resolution) 
 			throw new IllegalArgumentException("Incompatible bin resolutions");
 		
 		Histogram product = a.clone();
-		product.bins = new Hashtable<Integer, Counter>();
+		product.bins = new Hashtable<Integer, RealValue>();
 		
 		for(int binA : a.bins.keySet()) for(int binB : b.bins.keySet()) {
-			product.add((binA + binB)*product.resolution, a.bins.get(binA).value * b.bins.get(binB).value);	
+			product.add((binA + binB)*product.resolution, a.bins.get(binA).value() * b.bins.get(binB).value());	
 		}
 		
 		return product;
 	}
 
-	/**
-	 * Adds the.
-	 *
-	 * @param histogram the histogram
-	 */
+
 	public void add(Histogram histogram) {
 		addMultipleOf(histogram, 1.0);		
 	}
 	
-	/**
-	 * Adds the multiple of.
-	 *
-	 * @param histogram the histogram
-	 * @param factor the factor
-	 */
+
 	public void addMultipleOf(Histogram histogram, double factor) {
 		if(histogram.resolution != resolution) 
 			throw new IllegalArgumentException("Incompatible bin resolutions");
@@ -234,28 +157,19 @@ public class Histogram implements Cloneable {
 		for(int bin : histogram.bins.keySet()) add(bin*resolution, factor*histogram.countsFor(bin*resolution));
 	}
 	
-	/**
-	 * To FFT array.
-	 *
-	 * @return the double[]
-	 */
+
 	public double[] toFFTArray() {
 		return toFFTArray(2 * ExtraMath.pow2ceil((int)Math.ceil(getMaxDev() / resolution)));
 		
 	}
 	
-	/**
-	 * To FFT array.
-	 *
-	 * @param N the n
-	 * @return the double[]
-	 */
+
 	public double[] toFFTArray(int N) {
 		
 		double[] data = new double[N];
 		
 		for(int bin : bins.keySet()) {
-			double value = bins.get(bin).value;
+			double value = bins.get(bin).value();
 			if(bin < 0) bin = N + bin;
 			data[bin] = value;
 		}

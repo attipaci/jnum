@@ -23,23 +23,31 @@
 
 package jnum;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface Verbosity.
+ * A simple interface for basic verbosity control. If you are looking for something more elaborate, check out the
+ * {@link jnum.reporting.BasicMessaging} interface. And, for something even more elaborate, you can see 
+ * {@link jnum.reporting.Reporter} abstract class. 
+ * 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ * 
+ * @see jnum.reporting.BasicMessaging
+ * @see jnum.reporting.Reporter
+ *
  */
 public interface Verbosity {
 
     /**
-     * Sets the verbose.
-     *
-     * @param value the new verbose
+     * Turns verbosity on or off.
+     * 
+     * @param value     <code>true</code> to turn on verbosity, or <code>false</code> to turn verbosity off.
      */
     public void setVerbose(boolean value);
     
     /**
-     * Checks if is verbose.
-     *
-     * @return true, if is verbose
+     * Checks the current verbosity setting.
+     * 
+     * @return      <code>true</code> if verbosity is enabled, otherwise <code>false</code>.
      */
     public boolean isVerbose();
     

@@ -417,7 +417,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
         return c;
     }
     
-    public void parse(String text) {
+    public void parse(String text) throws NumberFormatException {
         parse(text, false);
     }
     
@@ -435,11 +435,11 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
         }
     }
     
-    public static Range2D from(String text) {
+    public static Range2D from(String text) throws NumberFormatException {
         return from(text, false);
     }
     
-    public static Range2D from(String text, boolean isPositive) {
+    public static Range2D from(String text, boolean isPositive) throws NumberFormatException {
         Range2D range = new Range2D();
         range.parse(text, isPositive);
         return range;

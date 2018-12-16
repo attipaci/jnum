@@ -1,4 +1,5 @@
-0.22-2
+0.23-a1
+
 
 	[NEW] Configurator has new method clear() that resets the Configurator
 	object to its initial empty state.
@@ -7,11 +8,29 @@
  	for Cartesian coordinates (such as the spectral axis for HIRMES
 	spectral cubes) and instead being written in the natural (SI) units.
 
+	[API] {Counter} Remove class, superceded by RealValue, which provides
+	all the same functionality and more.
+
+	[API] {Constant} {Unit} Removed some superfluous definitions. Some
+	remain though allowing the user to chose referring to the constant
+	either by name or conventional notation (e.g. Constant.speedOfLight 
+	vs. Constant.c).
+
+	[API] Added explicit 'throw' (e.g. NumberFormatException) to some
+	of the method definitions.
+
+	[API] {Configurator} Some changes to conform with downstream use: 
+	isConfigured(String) -> hasOption(String), get(String) -> 
+	option(String), getExact(String) -> exactOption(String)
+
 	[API] Broadcaster add(Reporter) & remove(String) methods now return
 	The Reporter object that is replaced or was removed, or null if
 	there was no existing Reporter in use that mathes the argument.
 
-	[DOC] Add proper Javadoc to Reporter class.
+	[DOC] Javadoc updates: Reporter, plus all classes and interfaces 
+	directly under jnum (but not yet the subpackages...)
+
+
 
 0.22-1
 

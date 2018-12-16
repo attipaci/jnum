@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -22,21 +22,25 @@
  ******************************************************************************/
 package jnum;
 
-// TODO: Auto-generated Javadoc
 /**
- * A generic function interface for all things that take an argument (ArgType) from which it calculates
- * a return value (ReturnType).
+ * A generic function interface for all things that take an argument from which it generates
+ * a return value.
  *
  * @param <ArgType> the generic type of the arguments
  * @param <ReturnType> the generic type of the return value.
+ * 
+ * @see ConsiderateFunction
+ * @see jnum.math.ConsiderateFunctionAdapter
  */
-public interface Function<ArgType, ReturnType> {	
-	// throw IllegalArgumentException if the dimension of the arguments is incorrect...
+public interface Function<ArgType, ReturnType> {
+    
 	/**
 	 * Evaluates the function at the given set of parameters.
 	 *
-	 * @param parms the function parameters
-	 * @return the return value
+	 * @param parms    the function parameters (argument).
+	 * @return         the return value
+	 * 
+	 * @throws IllegalArgumentException    if the input parameters (argument) is not valid for some reason.
 	 */
-	public ReturnType valueAt(ArgType parms);	
+	public ReturnType valueAt(ArgType parms) throws IllegalArgumentException;	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,22 +20,25 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// (C)2007 Attila Kovacs <attila[AT]sigmyne.com>
 
 package jnum;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface CopyCat.
+ * The interface that allows copying the contents/data of one object into another object. The copied data must be
+ * fully independent from the original object's data. I.e. changes to the impelenting object after the copying should
+ * not affect the object whose data was copied from, and vice versa (see {@link Copiable}). 
  *
- * @param <T> the generic type
+ * @param <T> the generic type of the object whose data can be copied into the implementing class.
  */
 public interface CopyCat<T> {
 	
 	/**
-	 * Copy.
-	 *
-	 * @param template the template
+	 * Copies the data from the specified <code>template</code> object into the caller. The copied data must be
+	 * fully independent from the original object's data. I.e. changes to the caller object after the copying should
+	 * not affect the object where data was copied from, and vice versa (see {@link Copiable#copy()}). 
+	 * 
+	 * 
+	 * @param template the object whose data is to be copied into this object.
 	 */
 	public void copy(T template); 
 }

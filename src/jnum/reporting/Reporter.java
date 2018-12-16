@@ -27,9 +27,9 @@ package jnum.reporting;
 /**
  * 
  * Reporter is a convenient way of handling messages from your Java programs and methods. They should be preferred
- * to {@link java.lang.System.out#println(String)} or {@link java.lang.System.err#println(String)} statements, as 
- * you can always change how they are consumed (e.g. whether they are printed to {@link java.lang.System.out}, or to 
- * {@link java.lang.System.err}, or to some other {@link java.io.PrintStream}, or to a graphical GUI), or
+ * to {@link System.out#println(String)} or {@link System.err#println(String)} statements, as 
+ * you can always change how they are consumed (e.g. whether they are printed to {@link System.out}, or to 
+ * {@link System.err}, or to some other {@link PrintStream}, or to a graphical GUI), or
  * choose which messages are kept and which are suppressed).
  * 
  * There is a certain similarity to Java's built-in {@link Logger} class, but offering a somewhat different (better) set
@@ -103,7 +103,7 @@ public abstract class Reporter {
      * <p>
      * Warnings are meant to report something that did not go as planned, but which do not present a critical
      * issue. They are often used to report certain types of Exceptions, although they are not necessarily linked
-     * to an {@link java.lang.Exception}.
+     * to an {@link Exception}.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
      * @param message   The warning message body.
@@ -123,7 +123,7 @@ public abstract class Reporter {
      * <p>
      * Like warnings, but indicating a more critical issue or error. The user may want to abort whatever process produced
      * the error, and exit the program or start fresh. Also like warnings, errors are often, but not always, linked
-     * to an {@link java.lang.Exception} and/or {@link java.lang.Error}.
+     * to an {@link Exception} and/or {@link Error}.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
      * @param message   The warning message body.
@@ -142,7 +142,7 @@ public abstract class Reporter {
      * message.
      * 
      * <p>
-     * A trace may be generated when an {@link java.lang.Exception} or a {@link java.lang.Error} is encountered in a program, 
+     * A trace may be generated when an {@link Exception} or a {@link Error} is encountered in a program, 
      * or they may be generated for
      * monitoring or debugging purposes. They may often follow after {@lnik #warning(Object, String)} or 
      * {@link #error(Object, String)String)} messages to provide
@@ -157,13 +157,12 @@ public abstract class Reporter {
     
 
     /**
-     * Processes an error linked to a {@link java.lang.Thowable} (e.g. a Java {@link java.lang.Exception} or 
-     * {@link java.lang.Error}). The default implementation here is
-     * to report the included message as an {@link #error(Object, String)}, and then provide a {@link #trace(Throwable)} if debug is 
-     * set to true.
+     * Processes an error linked to a {@link Thowable} (e.g. a Java {@link java.lang.Exception} or {@link Error}). 
+     * The default implementation here is to report the included message as an {@link #error(Object, String)}, 
+     * and then provide a {@link #trace(Throwable)} if debug is set to true.
      * 
-     * @param owner     The {@link java.lang.Object} or {@link java.lang.Class} to which this message belongs
-     * @param e         The {@link java.lang.Throwable} object, such as an {@link java.lang.Exception} or {@link java.lang.Error}, that 
+     * @param owner     The {@link Object} or {@link Class} to which this message belongs
+     * @param e         The {@link Throwable} object, such as an {@link Exception} or {@link Error}, that 
      *                  contains the relevant information about the error.
      * @param debug     Set to <tt>true</tt> if a trace should be reported for this error via a {@link #trace(Throwable)} call.
      * 
@@ -179,7 +178,7 @@ public abstract class Reporter {
      * Same as {@link #error(Object, Throwable, boolean)}, but with the trace reporting enabled by default.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
-     * @param e         The {@link java.lang.Throwable} object, such as an {@link Exception} or {@link Error}, that contains the relevant information about the error.
+     * @param e         The {@link Throwable} object, such as an {@link Exception} or {@link Error}, that contains the relevant information about the error.
      *
      * @see #error(Object, Throwable, boolean)
      * @see #error(Object, String)
@@ -290,7 +289,7 @@ public abstract class Reporter {
      * message.
      * 
      * <p>
-     * Suggestions are sometimes generated following a {@link #warning(Object, String)} or {@link #error(Object, String)} call, 
+     * Suggestions are often generated following a {@link #warning(Object, String)} or {@link #error(Object, String)} call, 
      * and may provide information on what you may do to correct or work around some issue.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs

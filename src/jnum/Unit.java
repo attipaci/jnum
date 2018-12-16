@@ -311,32 +311,29 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
 
     // Basics (SI) and common scales
 
-    /** The Constant metre. */
-    public final static double metre = 1.0;
-
     /** The Constant meter. */
-    public final static double meter = metre;
+    public final static double meter = 1.0;
 
     /** The Constant m. */
-    public final static double m = metre;
+    public final static double m = meter;
 
     /** The Constant km. */
-    public final static double km = kilo * metre;
+    public final static double km = kilo * meter;
 
     /** The Constant dm. */
-    public final static double dm = deci * metre;
+    public final static double dm = deci * meter;
 
     /** The Constant cm. */
-    public final static double cm = centi * metre;
+    public final static double cm = centi * meter;
 
     /** The Constant mm. */
-    public final static double mm = milli * metre;
+    public final static double mm = milli * meter;
 
     /** The Constant um. */
-    public final static double um = micro * metre;
+    public final static double um = micro * meter;
 
     /** The Constant nm. */
-    public final static double nm = nano * metre;
+    public final static double nm = nano * meter;
 
     /** The Constant m2. */
     public final static double m2 = m * m;
@@ -1182,7 +1179,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     public final static double radpersec = radiansPerSecond;
 
     /** The Constant waveNumber. */
-    public final static double waveNumber = Constant.h * Constant.c / metre;
+    public final static double waveNumber = Constant.h * Constant.c / meter;
 
 
     // Forces & Pressures

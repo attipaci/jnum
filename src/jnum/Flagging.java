@@ -22,58 +22,107 @@
  ******************************************************************************/
 package jnum;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface Flagging.
+ * The interface for providing bit-wise flagging support in a 32-bit integer flag domain. For something more elaborate,
+ * with support for other domains, and labeling see {@link jnum.util.FlagSpace}.
+ * 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @see jnum.util.FlagSpace
+ *
  */
 public interface Flagging {
 
-	/**
-	 * Checks if is flagged.
-	 *
-	 * @param pattern the pattern
-	 * @return true, if is flagged
-	 */
-	public boolean isFlagged(int pattern);
-	
-	/**
-	 * Checks if is unflagged.
-	 *
-	 * @param pattern the pattern
-	 * @return true, if is unflagged
-	 */
+    /**
+     * Checks if the implementing object has any of the bit-wise flags set from <code>pattern</code>.
+     * 
+     * @param pattern   The bit-wise flag pattern to check for.
+     * @return          <code>true</code> if the implementing object has any of the <code>pattern</code> flags set, or
+     *                  <code>false</code> in none of the flags checked for are enabled.
+     *                  
+     * @see #isUnflagged(pattern)
+     * @see #flag(int)
+     * @see #unflag(int)
+     * @see #isFlagged()
+     */
+	public boolean isFlagged(int pattern);	
+
+    /**
+     * Checks if the implementing object has all of the bit-wise flags unset from <code>pattern</code>.
+     * 
+     * @param pattern   The bit-wise flag pattern to check for.
+     * @return          <code>true</code> if the implementing object has all of the <code>pattern</code> flags disabled, or
+     *                  <code>false</code> in any of the flags checked for are enabled.
+     *                  
+     * @see #isFlagged(int)
+     * @see #flag(int)
+     * @see #unflag(int)
+     * @see #isUnflagged()
+     */
 	public boolean isUnflagged(int pattern);
 
-	/**
-	 * Checks if is flagged.
-	 *
-	 * @return true, if is flagged
-	 */
+    /**
+     * Checks if the implementing object has any of the flags set.
+     * 
+     * @param pattern   The bit-wise flag pattern to check for.
+     * @return          <code>true</code> if the implementing object has any flags set, or
+     *                  <code>false</code> in none of the flags are enabled.
+     *                  
+     * @see #isUnflagged()
+     * @see #flag(int)
+     * @see #unflag(int)
+     * @see #isFlagged(int)
+     */
 	public boolean isFlagged();
+
 	
-	/**
-	 * Checks if is unflagged.
-	 *
-	 * @return true, if is unflagged
-	 */
+    /**
+     * Checks if the implementing object has all of the bit-wise flags unset.
+     * 
+     * @param pattern   The bit-wise flag pattern to check for.
+     * @return          <code>true</code> if the implementing object has all flags disabled, or
+     *                  <code>false</code> in any of the flags are enabled.
+     *                  
+     * @see #isFlagged()
+     * @see #flag(int)
+     * @see #unflag(int)
+     * @see #isUnflagged(int)
+     */
 	public boolean isUnflagged();
 	
 	/**
-	 * Flag.
-	 *
-	 * @param pattern the pattern
+	 * Sets the specified bit-wise flags on the implementing object.
+	 * 
+	 * 
+	 * @param pattern      The bit-wise pattern of flags to enable.
+	 * 
+	 * @see #unflag(int)
+	 * @see #isFlagged(int)
+	 * @see #isUnflagged(int)
+	 * 
 	 */
 	public void flag(int pattern);
-	
+
 	/**
-	 * Unflag.
-	 *
-	 * @param pattern the pattern
-	 */
+     * Unsets the specified bit-wise flags on the implementing object.
+     * 
+     * 
+     * @param pattern      The bit-wise pattern of flags to disable.
+     * 
+     * @see #flag(int)
+     * @see #isFlagged(int)
+     * @see #isUnflagged(int)
+     * 
+     */
 	public void unflag(int pattern);
-	
+
 	/**
-	 * Unflag.
+	 * Unsets all bit-wise flags on the implementing object.
+	 * 
+	 * @see #unflag(int)
+	 * @see #isFlagged()
+	 * 
 	 */
 	public void unflag();
 	

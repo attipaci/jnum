@@ -24,32 +24,43 @@
 
 package jnum;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface ViewableAsDoubles.
+ * A simple interface for objects that can be represented as an array, of 1 or more dimensions, of primitive 
+ * double-precission values.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
  */
 public interface ViewableAsDoubles {
 
-	/**
-	 * View as doubles.
-	 *
-	 * @return the object
-	 */
+    /**
+     * Return a view of this object as an array of doubles, in 1 or more dimensions 
+     * (e.g. <code>double[]</code> or <code>double[][]</code> or ...) that
+     * 
+     * @return  a primitive <code>double</code> array (1 or more dimensions) that represents the contents of the implementing object.
+     */
 	public Object viewAsDoubles();
 	
 	/**
-	 * View as doubles.
-	 *
-	 * @param view the view
-	 * @throws IllegalArgumentException the illegal argument exception
+	 * Populates the supplied <code>double</code> array (with 1 or more dimensions) with the representation of the
+	 * implementing object.
+	 * 
+	 * 
+	 * @param view         A pre-supplied <code>double</code> array that will hold the result.
+	 * @throws IllegalArgumentException    If the supplied object is not a primitive <code>double</code> array,
+	 *                                     or is of the wrong dimension, or is of the wrong size to hold the 
+	 *                                     implementing object's representation.
 	 */
 	public void viewAsDoubles(Object view) throws IllegalArgumentException;
 	
 	/**
-	 * Creates the from doubles.
-	 *
-	 * @param array the array
-	 * @throws IllegalArgumentException the illegal argument exception
+	 * Re-create the implementing object's data from the supplied primitive <code>double</code> array (of 1 or more dimensions).
+	 * 
+	 * 
+	 * @param array        The <code>double</code> array that contains the new data for the implementing object.
+	 * @throws IllegalArgumentException    If the supplied object is not a primitive <code>double</code> array,
+     *                                     or is of the wrong dimension, or is of the wrong size to hold the 
+     *                                     implementing object's representation.
 	 */
 	public void createFromDoubles(Object array) throws IllegalArgumentException;
 	

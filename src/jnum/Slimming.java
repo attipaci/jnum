@@ -24,14 +24,19 @@
 
 package jnum;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface Slimming.
+ * An interface that allows slimming, i.e. purging unused, invalid, or irrelevant data, in order to reduce the
+ * volume of data under processing.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
  */
 public interface Slimming {
 
-	/**
-	 * Slim.
-	 */
+    /**
+     * The single method that purges unused, invalid, or irrelevant data from this object, making it potentially smaller (slimmer)
+     * as a result.
+     * 
+     */
 	public void slim();
 }

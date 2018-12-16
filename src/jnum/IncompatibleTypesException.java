@@ -23,6 +23,14 @@
 
 package jnum;
 
+/**
+ * A generic exception indicating an operational failure because of a mismatch in types, such as between two arguments or an argument 
+ * and an internal variable.
+ * 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class IncompatibleTypesException extends IllegalArgumentException {
 
     /**
@@ -30,6 +38,12 @@ public class IncompatibleTypesException extends IllegalArgumentException {
      */
     private static final long serialVersionUID = -7538968509151055033L;
 
+    /**
+     * Constructs and IncompatibleTypesException with a corresponding message identifying the conflicting classes.
+     * 
+     * @param a     One of the conflicting objects
+     * @param b     The other conflicting object
+     */
     public IncompatibleTypesException(Object a, Object b) {
         super(a.getClass().getSimpleName() + " is not compatible with " + b.getClass().getSimpleName());
     }

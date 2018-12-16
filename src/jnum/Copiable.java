@@ -22,18 +22,40 @@
  ******************************************************************************/
 package jnum;
 
-// TODO: Auto-generated Javadoc
+
 /**
- * The Interface Copiable.
+ * The interface for implementing standard deep copies of objects. Deep copies are useful for spawning a new, entirely
+ * independent object from an object, while carrying over all of the original object properties.
+ * <p>
+ * 
+ * <b>The main principle of deep copies is to ensure that any changes to the copy will leave the original object uneffected, 
+ * and vice-versa.</b> As such, deep copies must follow the following rules:
+ * <p>
+ * 
+ *  <ul>
+ *  <li>The copy's class should match the original's class exactly.
+ *  <li><i>Recursivity</i>: for all mutable object fields, the copy must have a deep copy of the field itself. E.g. for 
+ *  a field that is collection, the copied object must have an entirely separate collection containing deep copies
+ *  of all the elements in the original collection. Same for arrays, etc.
+ *  <li>primitive fields are exempt, provided they were cloned (since these aren't references).
+ *  <li>Inmutable fields are also exempt, since they cannot be used to change the state of the original object from the copy.
+ *  object in the copy.
+ *  <li>Copies are most easily generated starting via {@link #clone()}. However, cloning is not required.
+ *  </ul>
  *
- * @param <Type> the generic type
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <Type> the generic type of the copies created.
+ * 
+ * @see #clone()
  */
 public interface Copiable<Type> {
 
 	/**
-	 * Copy.
+	 * Gets a deep copy of this object. The copy carries over the state/data from this object but is completely independent
+	 * from the original, s.t. any change to the copy will leave the original object unaffected and vice-versa.
 	 *
-	 * @return the type
+	 * @return the independent deep copy of the object that implements the <code>copy()</code> call.
 	 */
 	public Type copy();
 	
