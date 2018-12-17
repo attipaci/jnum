@@ -31,24 +31,14 @@ import jnum.data.image.SphericalGrid;
 import jnum.data.image.Values2D;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GridImageLayer.
- */
+
 public class GridImageLayer extends BufferedImageLayer {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5730801953668713086L;
-	
-	/** The grid. */
+
 	private Grid2D<?> grid;
 
-	
-	/**
-	 * Instantiates a new grid image layer.
-	 *
-	 * @param image the image
-	 */
+
 	public GridImageLayer(Values2D data, Grid2D<?> grid) {
 		super(data);
 			

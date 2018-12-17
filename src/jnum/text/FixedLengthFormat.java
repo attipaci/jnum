@@ -29,57 +29,32 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FixedLengthFormat.
- */
 public class FixedLengthFormat extends NumberFormat {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -7874756229468621371L;
-	
-	/** The length. */
+
 	int length;
-	
-	/** The nf. */
+
 	NumberFormat nf;
-	
-	/** The to left. */
+
 	boolean toLeft = false;
 	
-	/**
-	 * Instantiates a new fixed length format.
-	 *
-	 * @param baseFormat the base format
-	 * @param n the n
-	 */
+
 	public FixedLengthFormat(NumberFormat baseFormat, int n) {
 		nf = baseFormat;
 		length = n;
 	}
 	
-	/**
-	 * Left.
-	 */
+
 	public void left() { toLeft = true; }
 	
-	/**
-	 * Right.
-	 */
+
 	public void right() { toLeft = false; }
 	
-	/**
-	 * Checks if is left.
-	 *
-	 * @return true, if is left
-	 */
+
 	public boolean isLeft() { return toLeft; }
 	
-	/**
-	 * Checks if is right.
-	 *
-	 * @return true, if is right
-	 */
+
 	public boolean isRight() { return !toLeft; }
 	
 	/* (non-Javadoc)

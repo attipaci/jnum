@@ -37,27 +37,19 @@ import jnum.Util;
 import jnum.data.image.Values2D;
 import jnum.math.Range;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BufferedImageLayer.
- */
+
 public class BufferedImageLayer extends ImageLayer {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5659356933524758138L;
 
 	private Values2D data;
-	
-	/** The buffer. */
+
 	private BufferedImage buffer;
 	
-	/** The interpolation type. */
 	private int interpolationType = AffineTransformOp.TYPE_NEAREST_NEIGHBOR;
-	
-	/** The index to coords. */
+
 	private AffineTransform indexToCoords = new AffineTransform();
-	
-	/** The coords to index. */
+
 	private AffineTransform coordsToIndex = new AffineTransform();
 
 
@@ -73,72 +65,34 @@ public class BufferedImageLayer extends ImageLayer {
 	    createBuffer(data.sizeX(), data.sizeY());
 	}
 	
-	/**
-	 * Gets the buffer size.
-	 *
-	 * @return the buffer size
-	 */
+
 	public final Dimension getBufferSize() { 
 		return new Dimension(getBufferedImage().getWidth(), getBufferedImage().getHeight());
 	}
-	
-	/**
-	 * Gets the data size.
-	 *
-	 * @return the data size
-	 */
+
 	public final Dimension getDataSize() {
 	    return new Dimension(data.sizeX(), data.sizeY());
 	}
 	
 
-	
-	/**
-	 * Gets the value.
-	 *
-	 * @param i the i
-	 * @param j the j
-	 * @return the value
-	 */
 	public final double getValue(int i, int j) { return data.isValid(i, j) ? data.get(i, j).doubleValue() : Double.NaN; }
 
-	
-	
-	/**
-	 * Index to coords.
-	 *
-	 * @return the affine transform
-	 */
+
 	public AffineTransform indexToCoords() {
 		return indexToCoords;
 	}
 	
-	/**
-	 * Coords to index.
-	 *
-	 * @return the affine transform
-	 */
+
 	public AffineTransform coordsToIndex() {
 		return coordsToIndex;
 	}
 	
 
-	/**
-	 * Creates the buffer.
-	 *
-	 * @param width the width
-	 * @param height the height
-	 */
 	public void createBuffer(int width, int height) {
 		buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	}
 
-	
-	/**
-	 * Draw image.
-	 *
-	 * @param g the g
-	 */
+
 	@Override
 	protected void drawImage(Graphics g) {	
 		Graphics2D g2 = (Graphics2D) g;
@@ -162,19 +116,11 @@ public class BufferedImageLayer extends ImageLayer {
     }
 
 
-	/**
-	 * Update buffer.
-	 */
 	public void updateBuffer() {	
 		for(int i=buffer.getWidth(); --i >= 0; ) for(int j=buffer.getHeight(); --j >= 0; ) 
 			buffer.setRGB(i, j, getRGB(getValue(i, j)));
 	}
-	
-	/**
-	 * Gets the data range.
-	 *
-	 * @return the data range
-	 */
+
 	@Override
 	public Range getDataRange() {
 		Range range = new Range();
@@ -185,33 +131,18 @@ public class BufferedImageLayer extends ImageLayer {
 		return range;	
 	}
 
-	/**
-	 * Sets the coordinate transform.
-	 *
-	 * @param transform the new coordinate transform
-	 * @throws NoninvertibleTransformException the noninvertible transform exception
-	 */
+
 	public void setCoordinateTransform(AffineTransform transform) throws NoninvertibleTransformException  {
 		indexToCoords = transform;
 		coordsToIndex = transform.createInverse();
 	}
 	
-	/**
-	 * Index to coordinates.
-	 *
-	 * @param point the point
-	 * @return the point2 d
-	 */
+
 	public Point2D indexToCoordinates(Point2D point) {
 		return indexToCoords.transform(point, point);
 	}
 
-	/**
-	 * Coordinates to index.
-	 *
-	 * @param point the point
-	 * @return the point2 d
-	 */
+
 	public Point2D coordinatesToIndex(Point2D point) {
 		return coordsToIndex.transform(point, point);
 	}	
@@ -237,43 +168,20 @@ public class BufferedImageLayer extends ImageLayer {
 		return new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
 	}
 
-	
-	/**
-	 * Gets the buffered image.
-	 *
-	 * @return the buffered image
-	 */
+
 	public BufferedImage getBufferedImage() { return buffer; }
 	
-	/**
-	 * Sets the buffered image.
-	 *
-	 * @param im the new buffered image
-	 */
+
 	public void setBufferedImage(BufferedImage im) { this.buffer = im; }
 	
-	/**
-	 * Gets the interpolation type.
-	 *
-	 * @return the interpolation type
-	 */
+
 	public int getInterpolationType() { return interpolationType; }
 	
-	/**
-	 * Sets the interpolation type.
-	 *
-	 * @param value the new interpolation type
-	 */
+
 	public void setInterpolationType(int value) { interpolationType = value; }
-	
-	/**
-	 * Sets the pixelized.
-	 */
+
 	public void setPixelized() { setInterpolationType(AffineTransformOp.TYPE_NEAREST_NEIGHBOR); }
 
-	/**
-	 * Sets the spline.
-	 */
 	public void setSpline() { setInterpolationType(AffineTransformOp.TYPE_BICUBIC); }
 	
 	

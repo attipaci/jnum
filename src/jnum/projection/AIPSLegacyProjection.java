@@ -29,35 +29,20 @@ import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class AIPSLegacyProjection.
- */
+
 public class AIPSLegacyProjection extends SphericalProjection {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -3813183672541201623L;
 
-	/** The base projection. */
 	SphericalProjection baseProjection;
-	
-	/** The name. */
+
 	String name;
-	
-	/** The fits id. */
+
 	String fitsID;
-	
-	/** The reference offsets. */
+
 	private Vector2D referenceOffsets;
 	
 	
-	/**
-	 * Instantiates a new aIPS legacy projection.
-	 *
-	 * @param baseProjection the base projection
-	 * @param name the name
-	 * @param fitsID the fits id
-	 */
 	public AIPSLegacyProjection(SphericalProjection baseProjection, String name, String fitsID) {
 		this.baseProjection = baseProjection;
 		this.referenceOffsets = new Vector2D();

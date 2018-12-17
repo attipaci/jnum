@@ -32,16 +32,11 @@ import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CylindricalPerspective.
- */
+
 public class CylindricalPerspective extends CylindricalProjection {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 6778316198532804130L;
-	
-	/** The lambda. */
+
 	double mu = 1.0, lambda = 1.0;
 	
 	

@@ -23,13 +23,9 @@
 
 package jnum.projection;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ZenithalEquidistant.
- */
+
 public class ZenithalEquidistant extends ZenithalProjection {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5179501947703322697L;
 
 	/* (non-Javadoc)

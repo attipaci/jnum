@@ -44,90 +44,49 @@ import jnum.math.Vector2D;
 //  *   multiline labels (manually break lines and layout...)
 
 
-/**
- * The Class SimpleLabel.
- */
 public abstract class SimpleLabel {
-	
-	/** The canvas. */
+
 	private JComponent canvas;
-	
-	/** The font. */
+
 	private Font font;
-	
-	/** The label. */
+
 	private String label = "";
-		
-	/** The align x. */
+
 	private int alignX = ALIGN_CENTER;
-	
-	/** The align y. */
+
 	private int alignY = ALIGN_CENTER;
 	
-	/** The rotation. */
 	private double rotation = 0.0; // clockwise rotation
 	
-	/**
-	 * Instantiates a new simple label.
-	 *
-	 * @param canvas the canvas
-	 */
+
 	public SimpleLabel(JComponent canvas) {
 		this.canvas = canvas;
 		setFont(defaultFont);
 	}
 
-	/**
-	 * Instantiates a new simple label.
-	 *
-	 * @param canvas the canvas
-	 * @param text the text
-	 */
+
 	public SimpleLabel(JComponent canvas, String text) {
 		this(canvas);
 		this.label = text;
 	}
 
-	/**
-	 * Instantiates a new simple label.
-	 *
-	 * @param canvas the canvas
-	 * @param text the text
-	 * @param alignX the align x
-	 * @param alignY the align y
-	 */
+
 	public SimpleLabel(JComponent canvas, String text, int alignX, int alignY) {
 		this(canvas, text);
 		this.alignX = alignX;
 		this.alignY = alignY;
 	}	
 	
-	/**
-	 * Gets the position.
-	 *
-	 * @return the position
-	 */
+
 	public abstract Vector2D getPosition();
 
-	/**
-	 * Sets the font.
-	 *
-	 * @param f the new font
-	 */
+	
 	public void setFont(Font f) { this.font = f; }
 	
-	/**
-	 * Gets the font.
-	 *
-	 * @return the font
-	 */
+
 	public Font getFont() { return font == null ? canvas.getFont() : font; }
+
 	
-	/**
-	 * Gets the bounds.
-	 *
-	 * @return the bounds
-	 */
 	public Rectangle2D getBounds() {
 		Graphics g = canvas.getGraphics();
 		Graphics2D g2 = (Graphics2D) g;
@@ -136,9 +95,7 @@ public abstract class SimpleLabel {
 		return layout.getBounds();
 	}
 	
-	/**
-	 * Paint.
-	 */
+
 	public void paint() {
 		Graphics g = canvas.getGraphics();
 		Graphics2D g2 = (Graphics2D) g;
@@ -190,85 +147,39 @@ public abstract class SimpleLabel {
 		g.drawString(label, x0, y0);
 	}
 
-	
-	/**
-	 * Gets the horizontal text align.
-	 *
-	 * @return the horizontal text align
-	 */
+
 	public int getHorizontalTextAlign() { return alignX; }
 	
-	/**
-	 * Gets the vertical text align.
-	 *
-	 * @return the vertical text align
-	 */
+
 	public int getVerticalTextAlign() { return alignY; }
 	
-	/**
-	 * Sets the horizontal text align.
-	 *
-	 * @param value the new horizontal text align
-	 */
+
 	public void setHorizontalTextAlign(int value) { alignX = value; }
 	
-	/**
-	 * Sets the vertical text align.
-	 *
-	 * @param value the new vertical text align
-	 */
+
 	public void setVerticalTextAlign(int value) { alignY = value; }
 	
-	/**
-	 * Gets the text.
-	 *
-	 * @return the text
-	 */
+
 	public String getText() { return label; }
 	
-	/**
-	 * Sets the text.
-	 *
-	 * @param text the new text
-	 */
+
 	public void setText(String text) { this.label = text; }
 	
-	/**
-	 * Gets the rotation.
-	 *
-	 * @return the rotation
-	 */
+
 	public double getRotation() { return rotation; }
 	
-	/**
-	 * Sets the rotation.
-	 *
-	 * @param angle the new rotation
-	 */
+
 	public void setRotation(double angle) { this.rotation = angle; }
 
-	/**
-	 * Gets the font size.
-	 *
-	 * @return the font size
-	 */
+
 	public float getFontSize() { return getFont().getSize2D(); }
 	
-	
-	/**
-	 * Sets the font size.
-	 *
-	 * @param size the new font size
-	 */
+
 	public void setFontSize(float size) {
 		setFont(getFont().deriveFont(size));
 	}
 	
-	/**
-	 * Sets the font bold.
-	 *
-	 * @param value the new font bold
-	 */
+
 	public void setFontBold(boolean value) {
 		int style = getFont().getStyle();
 		if(value) style |= Font.BOLD;
@@ -276,11 +187,7 @@ public abstract class SimpleLabel {
 		setFont(getFont().deriveFont(style));
 	}
 	
-	/**
-	 * Sets the font italic.
-	 *
-	 * @param value the new font italic
-	 */
+
 	public void setFontItalic(boolean value) {
 		int style = getFont().getStyle();
 		if(value) style |= Font.ITALIC;
@@ -288,47 +195,32 @@ public abstract class SimpleLabel {
 		setFont(getFont().deriveFont(style));
 	}
 	
-	/**
-	 * Checks if is font italic.
-	 *
-	 * @return true, if is font italic
-	 */
+
 	public boolean isFontItalic() {
 		return (getFont().getStyle() & Font.ITALIC) != 0;
 	}
 	
-	/**
-	 * Checks if is font bold.
-	 *
-	 * @return true, if is font bold
-	 */
+
 	public boolean isFontBold() {
 		return (getFont().getStyle() & Font.BOLD) != 0;
 	}
 	
-	/** The Constant ALIGN_CENTER. */
+
 	public final static int ALIGN_CENTER = 0;
-	
-	/** The Constant ALIGN_LEFT. */
+
 	public final static int ALIGN_LEFT = 1;
-	
-	/** The Constant ALIGN_RIGHT. */
+
 	public final static int ALIGN_RIGHT = 2;
-	
-	/** The Constant ALIGN_BOTTOM. */
+
 	public final static int ALIGN_BOTTOM = 3;
-	
-	/** The Constant ALIGN_TOP. */
+
 	public final static int ALIGN_TOP = 4;
-	
-	/** The Constant ALIGN_BASELINE. */
+
 	public final static int ALIGN_BASELINE = 5;
-	
-	/** The Constant ALIGN_MIDRISE. */
+
 	public final static int ALIGN_MIDRISE = 6;
 
-	
-	/** The default font. */
+
 	public static Font defaultFont = new Font("SansSerif", Font.BOLD, 15);
 
 }

@@ -27,18 +27,11 @@ package jnum.projection;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class RadioProjection.
- */
+
 public class GlobalSinusoidal extends SphericalProjection {	
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -4620095512276967555L;
 
-	/**
-	 * Instantiates a new radio projection.
-	 */
 	public GlobalSinusoidal() {}
 
 	/* (non-Javadoc)

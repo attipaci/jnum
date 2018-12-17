@@ -30,32 +30,19 @@ import java.text.ParsePosition;
 
 import jnum.Util;
 
-// TODO: Auto-generated Javadoc
+
 // Chose a decimal format that keeps the most significant figures for the given length
 
-
-/**
- * The Class FixedLengthDecimalFormat.
- */
 public class FixedLengthDecimalFormat extends DecimalFormat {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 6113058377335474979L;
-	
-	/** The length. */
+
 	int length;
-	
-	/** The error. */
+
 	String error = new String();
-	
-	/** The to left. */
+
 	boolean toLeft;
-	
-	/**
-	 * Instantiates a new fixed length decimal format.
-	 *
-	 * @param n the n
-	 */
+
 	public FixedLengthDecimalFormat(int n) {
 		length = n;
 		for(int i=0; i<n; i++) error += "#";
@@ -139,13 +126,7 @@ public class FixedLengthDecimalFormat extends DecimalFormat {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	/**
-	 * Removes the trailing zeroes.
-	 *
-	 * @param number the number
-	 * @return the string
-	 */
+
 	private String removeTrailingZeroes(String number) {
 		int last = number.length() - 1;
 		while(number.charAt(last) == '0') last--;

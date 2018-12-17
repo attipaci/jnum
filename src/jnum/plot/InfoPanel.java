@@ -33,30 +33,19 @@ import java.awt.Graphics;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class InfoPanel.
- */
+
 public class InfoPanel extends JPanel {
-    
-    /** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 2660465593795584392L;
-	
-	/** The spacing. */
+
 	int borderwidth = 4, spacing = 4;
-    
-    /** The font. */
+
     Font font = new Font("SansSerif", Font.PLAIN, 13); 
-    
-    /** The lines. */
+
     String[] lines;
     
     
-    /**
-     * Instantiates a new info panel.
-     *
-     * @param size the size
-     */
+
     public InfoPanel(int size) {
     	//setBorder(BorderFactory.createRaisedBevelBorder());
     	setBorder(BorderFactory.createLineBorder(Color.black));
@@ -87,9 +76,7 @@ public class InfoPanel extends JPanel {
     	}
     }
     
-    /**
-     * Clear.
-     */
+
     public void clear() {
     	for(int i=0; i<lines.length; i++) lines[i] = "";
     	repaint();    	

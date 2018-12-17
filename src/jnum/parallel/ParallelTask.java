@@ -34,41 +34,24 @@ import java.util.concurrent.ThreadPoolExecutor;
 import jnum.ExtraMath;
 import jnum.Util;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Parallel.
- *
- * @param <ReturnType> the generic type
- */
+
 public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
-	
-	/** The index. */
+
 	private int index;
-	
-	/** The is interrupted. */
+
 	private boolean isAlive = false;
-	
-	/** The is complete. */
+
 	private boolean isComplete = false;
-	
-	/** The is interrupted. */
+
 	private boolean isInterrupted = false;
-	
-	/** The parallel. */
+
 	private Processor processor;
-	
-	/** The reduction. */
+
 	private ParallelReduction<ReturnType> reduction;
-	
-	/** The exception. */
+
 	private Exception exception = null;
 	
 	
-	/**
-	 * Sets the reduction.
-	 *
-	 * @param reduction the new reduction
-	 */
 	public void setReduction(ParallelReduction<ReturnType> reduction) {
 		this.reduction = reduction;
 		reduction.setParallel(this);
@@ -91,34 +74,18 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
-    /**
-     * Process.
-     *
-     * @param threadCount the thread count
-     * @throws Exception the exception
-     */
+
     public final synchronized void process(int chunks) throws Exception {    
         process(chunks, null);
     }
     
     
-    /**
-     * Process.
-     *
-     * @param pool the pool
-     * @throws Exception the exception
-     */
+
     public final void process(ThreadPoolExecutor pool) throws Exception {
         process(pool.getCorePoolSize(), pool);
     }
     
-    /**
-     * Process.
-     *
-     * @param chunks the chunks
-     * @param executor the executor
-     * @throws Exception the exception
-     */
+
     public synchronized void process(int chunks, ExecutorService executor) throws Exception { 
         
         /*
@@ -148,100 +115,56 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
    
    
     
-	/**
-	 * Submit.
-	 *
-	 * @param chunks the chunks
-	 * @param executor the executor
-	 * @return the processor
-	 */
+
 	private Processor submit(int chunks, ExecutorService executor) {	 
 		processor = new Processor();
 		processor.submit(chunks, executor);
 		return processor;
 	}
+
 	
-	/**
-	 * Post process.
-	 */
 	protected void postProcess() {}
 	
-	/**
-	 * Gets the workers.
-	 *
-	 * @return the workers
-	 */
+
 	public final Iterable<ParallelTask<ReturnType>> getWorkers() {
 		return processor.workers;
 	}
 	
-	/**
-	 * Gets the processor.
-	 *
-	 * @return the processor
-	 */
+
 	protected final Processor getProcessor() { return processor; }
 	
 		
-	/**
-	 * Inits the.
-	 */
 	protected void init() {}
 		
-	
-	/**
-	 * Interrupt all.
-	 */
+
 	public synchronized void interruptAll() {
 		processor.interruptAll();
 	}
 	
-	/**
-	 * Interrupt.
-	 */
+
 	private synchronized void interrupt() {
 		isInterrupted = true;
 		notifyAll(); // Notify all blocked operations to make them aware of the interrupt.
 	}
 	
-	/**
-	 * Checks if is interrupted.
-	 *
-	 * @return true, if is interrupted
-	 */
+
 	protected boolean isInterrupted() { return isInterrupted; }
 	
-	/**
-	 * Sets the index.
-	 *
-	 * @param index the new index
-	 */
+
 	private void setIndex(int index) {
 		if(isAlive()) throw new IllegalThreadStateException("Cannot change task index while running.");
 		this.index = index;
 	}
 	
-	/**
-	 * Gets the index.
-	 *
-	 * @return the index
-	 */
+
 	public int getIndex() { return index; }
 	
-	/**
-	 * Gets the partial result.
-	 *
-	 * @return the partial result
-	 */
+
 	public ReturnType getLocalResult() {
 		return null;
 	}
 	
-	/**
-	 * Gets the result.
-	 *
-	 * @return the result
-	 */
+
 	public ReturnType getResult() {
 		if(reduction != null) return reduction.getResult();
 		return null;
@@ -283,11 +206,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		catch(Exception e) { if(exception == null) exception = e; }
 	}
 
-	/**
-	 * Checks if is alive.
-	 *
-	 * @return true, if is alive
-	 */
+
 	private boolean isAlive() { return isAlive; }
 
 	/**
@@ -307,31 +226,19 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 	    
 	}
 	
-	/**
-	 * Wrapup.
-	 */
+
 	private synchronized void wrapup() {
 		isAlive = false;
 		isComplete = true;
 		notifyAll();
 	}
 		
-	/**
-	 * Wait complete.
-	 *
-	 * @throws InterruptedException the interrupted exception
-	 */
+
 	private synchronized void waitComplete() throws InterruptedException {
 		while(!isComplete) wait();
 	}
 	
-	/**
-	 * Process index.
-	 *
-	 * @param i the chunk index
-	 * @param split the total number of workers used.
-	 * @throws Exception the exception
-	 */
+
 	protected abstract void processChunk(int i, int split) throws Exception;
 	
 	protected int getTotalOps() { return -1; }
@@ -359,30 +266,18 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
  
     public static int minExecutorBlockSize = 100;
     
-	
-	/**
-	 * The Class Manager.
-	 */
+
 	public class Processor {
-		
-		/** The processes. */
+
 		private Vector<ParallelTask<ReturnType>> workers;
 		
 		private CyclicBarrier barrier;
 			
-		/**
-		 * Instantiates a new manager.
-		 *
-		 * @param task the task
-		 */
+
 		private Processor() {	
 		}
 		
-		/**
-		 * Gets the thread count.
-		 *
-		 * @return the thread count
-		 */
+
 		private int getThreadCount() { return workers.size(); }
 		
 		private int synchronizeThread() throws InterruptedException, BrokenBarrierException { 
@@ -390,12 +285,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		    return barrier.await(); 
 		}
 		
-		/**
-		 * Submit.
-		 *
-		 * @param split the chunks
-		 * @param executor the executor
-		 */
+
 		private synchronized void submit(int split, ExecutorService executor) {
 		    
 		    // If the split is 0 or negative...
@@ -431,11 +321,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		    workers.get(0).run();
 		}
 	
-		/**
-		 * Creates the processes.
-		 *
-		 * @param count the count
-		 */
+
 		private synchronized void createProcesses(int count) {	
 			workers = new Vector<ParallelTask<ReturnType>>(count);
 			
@@ -460,9 +346,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 			}
 		}
 		
-		/**
-	     * Interrupt all.
-	     */
+
 	    public synchronized void interruptAll() {
 	        for(ParallelTask<?> worker : workers) worker.interrupt();
 	    }

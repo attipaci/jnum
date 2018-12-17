@@ -30,10 +30,6 @@ import jnum.plot.ColorScheme;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Colorful.
- */
 public class Colorful extends ColorScheme {
 
 	/* (non-Javadoc)

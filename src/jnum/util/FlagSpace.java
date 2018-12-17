@@ -34,39 +34,22 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FlagSpace.
- *
- * @param <Type> the generic type
- */
+
 public abstract class FlagSpace<Type extends Number> implements Serializable, FitsHeaderEditing {
-    
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = -1742300725746047436L;
-    
-    /** The name. */
+
     private String name;
-   
-    /** The unknown flag. */
+
     private Flag<Type> unknownFlag;
-      
-    /** The values. */
+
     private Hashtable<Type, Flag<Type>> values = new Hashtable<Type, Flag<Type>>();
-    
-    /** The codes. */
+
     private Hashtable<Character, Flag<Type>> codes = new Hashtable<Character, Flag<Type>>();
-    
-    /** The names. */
+
     private Hashtable<String, Flag<Type>> names = new Hashtable<String, Flag<Type>>();
     
-  
-    /**
-     * Instantiates a new flag space.
-     *
-     * @param name the name
-     * @throws FlagConflictException the flag conflict exception
-     */
+
     private FlagSpace(String name) throws FlagConflictException {
         if(registry.containsKey(name))
             throw new FlagConflictException("A " + getClass().getSimpleName() + " already exists for '" + name + "'.");
@@ -78,14 +61,6 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     }
     
     
-    /**
-     * Creates the flag.
-     *
-     * @param value the value
-     * @param letterCode the letter code
-     * @param name the name
-     * @return the flag
-     */
     protected abstract Flag<Type> createFlag(long value, char letterCode, String name);
 
     /* (non-Javadoc)
@@ -108,25 +83,13 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         return true;
     }
     
-    /**
-     * Gets the name.
-     *
-     * @return the name
-     */
+
     public final String getName() { return name; }
     
-    /**
-     * Gets the bits.
-     *
-     * @return the bits
-     */
+
     public abstract int getBits();
     
-    /**
-     * Gets the mask.
-     *
-     * @return the mask
-     */
+
     public abstract long getMask();
     
     /* (non-Javadoc)
@@ -135,12 +98,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     @Override
     public String toString() { return getClass().getSimpleName() + "(" + name + ")"; }
     
-    /**
-     * Put.
-     *
-     * @param flag the flag
-     * @throws FlagConflictException the flag conflict exception
-     */
+
     public synchronized void put(Flag<Type> flag) throws FlagConflictException {
         if(values.containsKey(flag.value())) 
             throw new FlagConflictException("Flag value " + flag.toHexString() + "already in use by " + values.get(flag.value()) + ".");
@@ -155,99 +113,49 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         names.put(flag.name(), flag);
     }
     
-    /**
-     * Contains.
-     *
-     * @param value the value
-     * @return true, if successful
-     */
+
     public final boolean contains(long value) {
         return values.containsKey(value);
     }
     
-    /**
-     * Contains.
-     *
-     * @param letterCode the letter code
-     * @return true, if successful
-     */
+
     public final boolean contains(char letterCode) {
         return codes.containsKey(letterCode);
     }
     
-    /**
-     * Contains.
-     *
-     * @param name the name
-     * @return true, if successful
-     */
+
     public final boolean contains(String name) {
         return names.containsKey(name);
     }
     
-    /**
-     * Gets the.
-     *
-     * @param value the value
-     * @return the flag
-     */
+
     public final Flag<Type> get(Type value) {
         return values.get(value);
     }
+
     
-    /**
-     * Gets the.
-     *
-     * @param letterCode the letter code
-     * @return the flag
-     */
     public final Flag<Type> get(char letterCode) {
         return codes.get(letterCode);
     }
     
-    /**
-     * Gets the.
-     *
-     * @param name the name
-     * @return the flag
-     */
+
     public final Flag<Type> get(String name) {
         return names.get(name);
     }
     
-    /**
-     * Parses the.
-     *
-     * @param text the text
-     * @return the int
-     */
+    
     public Type parse(String text) {
         try { return decode(text); }
         catch(NumberFormatException e) { return parseLetterCodes(text); }
     }
     
-    /**
-     * Decode.
-     *
-     * @param text the text
-     * @return the type
-     */
+
     public abstract Type decode(String text);
     
-    /**
-     * Parses the letter codes.
-     *
-     * @param text the text
-     * @return the type
-     */
+
     public abstract Type parseLetterCodes(String text);
     
-    /**
-     * Parses the letter codes.
-     *
-     * @param text the text
-     * @return the flag value as a 64-bit long.
-     */
+
     public long parseLongLetterCodes(String text) {
         long lvalue = 0L;
        
@@ -269,12 +177,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         return lvalue;
     }
     
-    /**
-     * To string.
-     *
-     * @param flag the flag
-     * @return the string
-     */
+
     public String toString(int flag) {
         StringBuffer buf = new StringBuffer();
         
@@ -287,62 +190,29 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         return buf.length() > 0 ? new String(buf) : "-";
     }
     
-    /**
-     * Gets the value.
-     *
-     * @param lValue the l value
-     * @return the value
-     */
+
     public abstract Type getValue(long lValue);
     
-    /**
-     * Gets the values.
-     *
-     * @return the values
-     */
+
     public final Set<Type> getValues() { return values.keySet(); }
     
-    /**
-     * Gets the names.
-     *
-     * @return the names
-     */
+
     public final Set<String> getNames() { return names.keySet(); }
     
-    /**
-     * Gets the letter codes.
-     *
-     * @return the letter codes
-     */
+
     public final Set<Character> getLetterCodes() { return codes.keySet(); }
 
-    /**
-     * Gets the flag block.
-     *
-     * @param startBit the start bit
-     * @param endBit the end bit
-     * @return the flag block
-     */
+
     public final FlagBlock<Type> getFlagBlock(int startBit, int endBit) {
         return new FlagBlock<Type>(this, startBit, endBit);
     }
     
-    /**
-     * Gets the default flag block.
-     *
-     * @return the default flag block
-     */
+
     public final FlagBlock<Type> getDefaultFlagBlock() {
         return new FlagBlock<Type>(this, 0, getBits()-1);
     }
     
-    /**
-     * Edits the header.
-     *
-     * @param id the id
-     * @param header the header
-     * @throws HeaderCardException the header card exception
-     */
+
     public void editHeader(Header header, char id) throws HeaderCardException {
         editHeader(header, id + "");
     }
@@ -353,13 +223,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         editHeader(header, "");
     }
     
-    /**
-     * Edits the header.
-     *
-     * @param id the id
-     * @param header the header
-     * @throws HeaderCardException the header card exception
-     */
+
     protected void editHeader(Header header, String id) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         id = id.toUpperCase();
@@ -369,34 +233,19 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         }
     }
     
-    /**
-     * For name.
-     *
-     * @param name the name
-     * @return the flag space
-     */
+
     static FlagSpace<?> forName(String name) {
         return registry.get(name);
     }
-    
-    /** The groups. */
+
     private static Hashtable<String, FlagSpace<?>> registry = new Hashtable<String, FlagSpace<?>>();
   
-    /**
-     * The Class Byte.
-     */
+
     public static class Byte extends FlagSpace<java.lang.Byte> {
-        
-        /** The Constant serialVersionUID. */
+
         private static final long serialVersionUID = -6767408270247285330L;
 
-        /**
-         * Instantiates a new byte.
-         *
-         * @param name the name
-         * @throws IllegalArgumentException the illegal argument exception
-         * @throws FlagConflictException the flag conflict exception
-         */
+
         public Byte(String name) throws IllegalArgumentException, FlagConflictException {
             super(name);
         }
@@ -452,21 +301,11 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     }
     
     
-    /**
-     * The Class Short.
-     */
+
     public static class Short extends FlagSpace<java.lang.Short> {
-        
-        /** The Constant serialVersionUID. */
+
         private static final long serialVersionUID = 1846041379339852234L;
 
-        /**
-         * Instantiates a new short.
-         *
-         * @param name the name
-         * @throws IllegalArgumentException the illegal argument exception
-         * @throws FlagConflictException the flag conflict exception
-         */
         public Short(String name) throws IllegalArgumentException, FlagConflictException {
             super(name);
         }
@@ -521,21 +360,12 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         
     }
     
-    /**
-     * The Class Integer.
-     */
+
     public static class Integer extends FlagSpace<java.lang.Integer> {
-        
-        /** The Constant serialVersionUID. */
+
         private static final long serialVersionUID = -6014042418773380578L;
 
-        /**
-         * Instantiates a new integer.
-         *
-         * @param name the name
-         * @throws IllegalArgumentException the illegal argument exception
-         * @throws FlagConflictException the flag conflict exception
-         */
+
         public Integer(String name) throws IllegalArgumentException, FlagConflictException {
             super(name);
         }
@@ -591,21 +421,11 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     }
     
     
-    /**
-     * The Class Long.
-     */
     public static class Long extends FlagSpace<java.lang.Long> {
-        
-        /** The Constant serialVersionUID. */
+
         private static final long serialVersionUID = -1479352044112682464L;
 
-        /**
-         * Instantiates a new long.
-         *
-         * @param name the name
-         * @throws IllegalArgumentException the illegal argument exception
-         * @throws FlagConflictException the flag conflict exception
-         */
+
         public Long(String name) throws IllegalArgumentException, FlagConflictException {
             super(name);
         }

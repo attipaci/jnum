@@ -28,10 +28,6 @@ import jnum.plot.ColorScheme;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Temperature.
- */
 public class Temperature extends ColorScheme {
 	
 	/* (non-Javadoc)
@@ -87,8 +83,6 @@ public class Temperature extends ColorScheme {
 		return Color.GREEN;
 	}
 	
-	
-	/** The fifth. */
 	private static float fifth = 0.2F;
 
 	

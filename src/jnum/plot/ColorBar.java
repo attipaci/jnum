@@ -37,36 +37,23 @@ import jnum.math.Range;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ColorBar.
- */
+
 public class ColorBar extends JComponent implements PlotSide {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 460851913543807978L;
-	
-	/** The imager. */
+
 	private ImageLayer image;
 
-	/** The stripe. */
 	private Stripe stripe;
-	
-	/** The ruler. */
+
 	private Ruler ruler;
-	
-	/** The side. */
+
 	private int side = Plot.SIDE_UNDEFINED;
 	
-		
-	/** The name. */
+
 	public String name = null;
 	
-	/**
-	 * Instantiates a new color bar.
-	 *
-	 * @param image the image
-	 */
+
 	public ColorBar(ImageLayer image) { 
 		this.image = image;
 		stripe = new Stripe(defaultWidth);
@@ -117,9 +104,7 @@ public class ColorBar extends JComponent implements PlotSide {
 		arrange();
 	}
 	
-	/**
-	 * Arrange.
-	 */
+
 	private void arrange() {
 		removeAll();
 		
@@ -146,25 +131,15 @@ public class ColorBar extends JComponent implements PlotSide {
 		super.validate();
 	}
 	
-	/**
-	 * The Class Stripe.
-	 */
+
 	public class Stripe extends JComponent {	
-		
-		/** The Constant serialVersionUID. */
+
 		private static final long serialVersionUID = 5950901962993328368L;
-		
-		/** The width. */
+
 		private int width;
-		
-		/** The inverted. */
+
 		private boolean inverted = false;
 
-		/**
-		 * Instantiates a new stripe.
-		 *
-		 * @param width the width
-		 */
 		private Stripe(int width) {	
 			this.width = width;
 			setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
@@ -181,11 +156,7 @@ public class ColorBar extends JComponent implements PlotSide {
 			else drawVertical(g);
 		}
 		
-		/**
-		 * Draw vertical.
-		 *
-		 * @param g the g
-		 */
+
 		private void drawVertical(Graphics g) {
 			ColorScheme colors = image.getColorScheme();	
 			double scale = 1.0 / getHeight();
@@ -197,11 +168,7 @@ public class ColorBar extends JComponent implements PlotSide {
 			}	
 		}
 		
-		/**
-		 * Draw horizontal.
-		 *
-		 * @param g the g
-		 */
+
 		private void drawHorizontal(Graphics g) {
 			ColorScheme colors = image.getColorScheme();	
 			double scale = 1.0 / getWidth();
@@ -213,9 +180,7 @@ public class ColorBar extends JComponent implements PlotSide {
 			}	
 		}
 		
-		/**
-		 * Sets the preferred size.
-		 */
+
 		public void setPreferredSize() {
 			if(isVertical()) setPreferredSize(new Dimension(width, 2));
 			else if(isHorizontal()) setPreferredSize( new Dimension(2, width));
@@ -231,39 +196,24 @@ public class ColorBar extends JComponent implements PlotSide {
 			super.validate();
 		}
 		
-		/**
-		 * Sets the width.
-		 *
-		 * @param pixels the new width
-		 */
+
 		public void setWidth(int pixels) { this.width = pixels; }
 		
-		/**
-		 * Invert.
-		 */
 		public void invert() {
 			inverted = !inverted;
 		}		
 		
 	}
 	
+
 	
 	
-	
-	/**
-	 * The Class Ruler.
-	 */
 	public class Ruler extends FancyRuler {
-		
-		/** The Constant serialVersionUID. */
+
 		private static final long serialVersionUID = -7906137098891819994L;
 
-		/** The range. */
 		private Range range;
 		
-		/**
-		 * Instantiates a new ruler.
-		 */
 		private Ruler() {
 			super(ColorBar.this.getSide());
 		}
@@ -307,11 +257,7 @@ public class ColorBar extends JComponent implements PlotSide {
 	}
 	
 	
-	
-	
-	/** The default width. */
 	private static int defaultWidth = 20;
 	
-
 }
 

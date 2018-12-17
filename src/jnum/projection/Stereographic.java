@@ -24,13 +24,9 @@
 package jnum.projection;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Stereographic.
- */
+
 public class Stereographic extends ZenithalProjection {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4479302641810029811L;
 
 	/* (non-Javadoc)

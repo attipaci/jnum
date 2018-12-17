@@ -45,34 +45,23 @@ import nom.tam.util.Cursor;
 // TODO Implement a few more projections...
 
 // Based on Calabretta & Greisen 2002
-/**
- * The Class SphericalProjection.
- */
 public abstract class SphericalProjection extends Projection2D<SphericalCoordinates> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -4978006433879954740L;
 
 	// the reference in celestial (alpha0, delta0)
-	/** The native reference. */
 	private SphericalCoordinates nativeReference; // the reference in native (phi0, theta0)
-	
-	/** The native pole. */
+
 	private SphericalCoordinates nativePole; // the pole in native (phip, thetap)
-	
-	/** The pole. */
+
 	private SphericalCoordinates celestialPole; // the pole in celestial (alphap, deltap)
-	
-	/** The user pole. */
+
 	private boolean userPole = false; // True if not using the default pole.
-	
-	/** The user reference. */
+
 	private boolean userReference = false; // True if not using the default native reference.
-	
-	/** The inverted fits axes. */
+
 	protected boolean invertedFITSAxes = false;	// Whether first axis is longitude...
-	
-	/** The select solution. */
+
 	private int selectSolution = SELECT_NEAREST_POLE;	
 	
 	

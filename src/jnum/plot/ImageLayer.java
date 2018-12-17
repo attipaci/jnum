@@ -31,26 +31,16 @@ import jnum.plot.colorscheme.GreyScale;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ImageLayer.
- */
 public abstract class ImageLayer extends ContentLayer {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 1451020511179557736L;
-	
-	/** The color scheme. */
+
 	private ColorScheme colorScheme = new GreyScale();
-	
-	/** The range. */
+
 	private Range range, logRange, sqrtRange;
-	
-	/** The scaling. */
+
 	private int scaling = SCALE_LINEAR;
 	
-
-	/** The verbose. */
 	protected boolean verbose = false;	
 	
 	
@@ -70,28 +60,10 @@ public abstract class ImageLayer extends ContentLayer {
 	}
 	
 	
-
-	/**
-	 * Sets the scaling.
-	 *
-	 * @param value the new scaling
-	 */
 	public void setScaling(int value) { scaling = value; }
 	
-	/**
-	 * Gets the scaling.
-	 *
-	 * @return the scaling
-	 */
 	public int getScaling() { return scaling; }
 	
-	
-	/**
-	 * Gets the scaled.
-	 *
-	 * @param value the value
-	 * @return the scaled
-	 */
 	protected double getScaled(double value) {
 			
 		switch(scaling) {
@@ -104,12 +76,7 @@ public abstract class ImageLayer extends ContentLayer {
 		return (value - range.min()) / range.span();	
 	}
 	
-	/**
-	 * Gets the rgb.
-	 *
-	 * @param value the value
-	 * @return the rgb
-	 */
+
 	public int getRGB(double value) {
 		return Double.isNaN(value) ? colorScheme.noData : colorScheme.getRGB(getScaled(value));
 	}
@@ -124,24 +91,14 @@ public abstract class ImageLayer extends ContentLayer {
 		//System.err.println("### layer " + getSize());
 		drawImage(g);
 	}
+
 	
-	/**
-	 * Draw image.
-	 *
-	 * @param g the g
-	 */
 	protected abstract void drawImage(Graphics g);
 	
-	/**
-	 * Gets the data range.
-	 *
-	 * @return the data range
-	 */
+
 	public abstract Range getDataRange();
 	
-	/**
-	 * Autoscale.
-	 */
+
 	public void autoscale() {
 		setRange(getDataRange());
 		if(verbose) Util.info(this, "Setting scale to " + range);
@@ -157,64 +114,33 @@ public abstract class ImageLayer extends ContentLayer {
 	}
 		
 	
-	/**
-	 * Gets the color scheme.
-	 *
-	 * @return the color scheme
-	 */
 	public ColorScheme getColorScheme() { return colorScheme; }
 	
-	/**
-	 * Sets the color scheme.
-	 *
-	 * @param scheme the new color scheme
-	 */
+
 	public void setColorScheme(ColorScheme scheme) { this.colorScheme = scheme; }
 	
-	/**
-	 * Gets the range.
-	 *
-	 * @return the range
-	 */
+
 	public Range getRange() { return range; }
 	
-	/**
-	 * Sets the range.
-	 *
-	 * @param r the new range
-	 */
+
 	public void setRange(Range r) {
 		this.range.setRange(r.min(), r.max()); 
 		logRange.setRange(0.1 * Math.log(Math.abs(r.min())), Math.log(Math.abs(r.max())));
 		sqrtRange.setRange(Math.signum(r.min()) * Math.sqrt(Math.abs(r.min())), Math.signum(r.max()) * Math.log(Math.abs(r.max())));
 	}
 	
-	/**
-	 * Checks if is verbose.
-	 *
-	 * @return true, if is verbose
-	 */
+
 	public boolean isVerbose() { return verbose; }
 	
-	/**
-	 * Sets the verbose.
-	 *
-	 * @param value the new verbose
-	 */
+
 	public void setVerbose(boolean value) { verbose = value; }
 	
 	
 
-
-
-
-	/** The Constant SCALE_LINEAR. */
 	public final static int SCALE_LINEAR = 0;
-	
-	/** The Constant SCALE_LOG. */
+
 	public final static int SCALE_LOG = 1;
-	
-	/** The Constant SCALE_SQRT. */
+
 	public final static int SCALE_SQRT = 2;
 	
 }

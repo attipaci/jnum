@@ -26,81 +26,49 @@ import jnum.Util;
 import jnum.math.Complex;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Enum ParseType.
- */
+
 public enum ParseType {
 
-	/** The boolean. */
 	BOOLEAN (boolean.class),
-	
-	/** The byte. */
+
 	BYTE (byte.class), 
-	
-	/** The short. */
+
 	SHORT (short.class),
-	
-	/** The int. */
+
 	INT (int.class), 
-	
-	/** The long. */
+
 	LONG (long.class),
-	
-	/** The float. */
+
 	FLOAT (float.class),
-	
-	/** The double. */
+
 	DOUBLE (double.class),
-	
-	/** The complex. */
+
 	COMPLEX (Complex.class),
-	
-	/** The string. */
+
 	STRING (String.class);
 	
-	/** The type. */
+
 	private Class<?> type;
 	
-	/**
-	 * Instantiates a new parses the type.
-	 *
-	 * @param type the type
-	 */
+
 	private ParseType(Class<?> type) {
 		this.type = type;
 	}
 
-	/**
-	 * Gets the type.
-	 *
-	 * @return the type
-	 */
+
 	public Class<?> getType() {
 		return type;
 	}
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param value the value
-	 * @return the parses the type
-	 */
+
 	public static ParseType get(String value) {
 		return get(value, ParseType.BOOLEAN);
 	}
 		
-	/** The complex. */
+
 	private static Complex complex = new Complex();
 	
 	// Returns the parsing type >= lowest
-	/**
-	 * Gets the.
-	 *
-	 * @param value the value
-	 * @param lowest the lowest
-	 * @return the parses the type
-	 */
 	public synchronized static ParseType get(String value, ParseType lowest) {
 		switch(lowest) {
 		case BOOLEAN :

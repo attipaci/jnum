@@ -51,59 +51,37 @@ import jnum.math.Vector2D;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ContentArea.
- *
- * @param <ContentType> the generic type
- */
 public class ContentArea<ContentType extends ContentLayer> extends JPanel implements Arrangeable {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5175315778375641551L;
 
-	/** The content layer. */
 	private ContentType contentLayer;
-	
-	/** The coordinate layer. */
+
 	private JComponent coordinateLayer;
-	
-	/** The reference point. */
+
 	private Vector2D referencePoint = new Vector2D(0.0, 1.0); // lower left corner...
-	
-	/** The scale. */
+
 	private Vector2D scale = new Vector2D();
-	
-	/** The rotation. */
+
 	private double rotation = 0.0;
-	
-	/** The flip y. */
+
 	private boolean flipX = false, flipY = false;
-	
-	/** The zoom mode. */
+
 	private int zoomMode = ZOOM_STRETCH;
-	
-	/** The to coordinates. */
+
 	private AffineTransform toDisplay, toCoordinates = null;
-	
-	/** The initialized. */
+
 	private boolean initialized = false;
-	
-	/** The verbose. */
+
 	private boolean verbose = false;
-	
-	/** The y unit. */
+
 	private Unit xUnit, yUnit;
-	
-	/** The coordinate system. */
+
 	public CoordinateSystem coordinateSystem;
-	
-	/** The is auto angle y. */
+
 	public boolean isAutoAngleX = false, isAutoAngleY = false;
 	
-	/**
-	 * Instantiates a new content area.
-	 */
+
 	public ContentArea() {
 		setOpaque(false);
 		setLayout(new OverlayLayout(this));
@@ -118,11 +96,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		//add(coordinateLayer, COORDINATE_LAYER);
 	}
 	
-	/**
-	 * Instantiates a new content area.
-	 *
-	 * @param content the content
-	 */
+
 	public ContentArea(ContentType content) {
 		this();
 		setContentLayer(content);
@@ -138,39 +112,19 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		initialized = true;
 	}
 
-	/**
-	 * To display.
-	 *
-	 * @return the affine transform
-	 */
+
 	public final AffineTransform toDisplay() { return toDisplay; }
 	
-	/**
-	 * To coordinates.
-	 *
-	 * @return the affine transform
-	 */
+
 	public final AffineTransform toCoordinates() { return toCoordinates; }
 	
-	/**
-	 * Gets the reference point.
-	 *
-	 * @return the reference point
-	 */
+
 	public Vector2D getReferencePoint() { return referencePoint; }	
 	
-	/**
-	 * Sets the reference point.
-	 *
-	 * @param v the new reference point
-	 */
+
 	public void setReferencePoint(Vector2D v) { referencePoint = v; }
 	
-	/**
-	 * Gets the reference pixel.
-	 *
-	 * @return the reference pixel
-	 */
+
 	public Vector2D getReferencePixel() {
 		Vector2D ref = getReferencePoint(); 
 		ref.scaleX(getWidth());
@@ -178,36 +132,20 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		return ref;
 	}
 	
-	/**
-	 * Sets the reference pixel.
-	 *
-	 * @param v the new reference pixel
-	 */
+
 	public void setReferencePixel(Vector2D v) {
 		setReferencePoint(new Vector2D(v.x() / getWidth(), v.y() / getHeight()));
 	}
 	
-	/**
-	 * Gets the content layer.
-	 *
-	 * @return the content layer
-	 */
+
 	public ContentType getContentLayer() {
 		return contentLayer;		
 	}
 	
-	/**
-	 * Gets the coordinate layer.
-	 *
-	 * @return the coordinate layer
-	 */
+
 	public JComponent getCoordinateLayer() { return coordinateLayer; }
 	
-	/**
-	 * Sets the content layer.
-	 *
-	 * @param layer the new content layer
-	 */
+
 	public void setContentLayer(ContentType layer) {
 		if(contentLayer != null) {
 			if(layer == contentLayer) return; // Nothing to do...
@@ -218,11 +156,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		add(contentLayer, IMAGE_LAYER);
 	}
 	
-	/**
-	 * Gets the layers.
-	 *
-	 * @return the layers
-	 */
+
 	public Component[] getLayers() {
 		Component[] layers = getComponents();
 		Arrays.sort(layers, new Comparator<Component>() {
@@ -244,119 +178,58 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	public void arrange() {
 	}
 	
-	/**
-	 * Gets the scale.
-	 *
-	 * @return the scale
-	 */
+
 	public Vector2D getScale() { return scale; }
 	
-	/**
-	 * Sets the scale.
-	 *
-	 * @param s the new scale
-	 */
+
 	public void setScale(Coordinate2D s) { setScale(s.x(), s.y()); }
 	
-	/**
-	 * Sets the scale.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 */
+
 	public void setScale(double x, double y) { this.scale.set(x, y); }
 	
-	/**
-	 * Gets the x unit.
-	 *
-	 * @return the x unit
-	 */
+
 	public Unit getXUnit() { return xUnit; }
 	
-	/**
-	 * Gets the y unit.
-	 *
-	 * @return the y unit
-	 */
+
 	public Unit getYUnit() { return yUnit; }
 	
-	/**
-	 * Sets the x unit.
-	 *
-	 * @param u the new x unit
-	 */
+
 	public void setXUnit(Unit u) { xUnit = u; }
 	
-	/**
-	 * Sets the y unit.
-	 *
-	 * @param u the new y unit
-	 */
+
 	public void setYUnit(Unit u) { yUnit = u; }
  	
-	/**
-	 * Sets the render size.
-	 *
-	 * @param width the width
-	 * @param height the height
-	 */
+
 	public void setRenderSize(int width, int height) {
 		if(verbose) Util.info(this, "Setting render size to " + width + "x" + height);
 		Rectangle2D bounds = contentLayer.getCoordinateBounds();
 		scale.set(width / bounds.getWidth(), height / bounds.getHeight());
 	}
 	
-	/**
-	 * Move reference.
-	 *
-	 * @param dx the dx
-	 * @param dy the dy
-	 */
+
 	public void moveReference(double dx, double dy) {
 		referencePoint.subtractX(dx / getWidth());
 		referencePoint.subtractY(dy / getHeight());
 	}
 	
-	
 
-	/**
-	 * Gets the zoom mode.
-	 *
-	 * @return the zoom mode
-	 */
 	public int getZoomMode() { return zoomMode; }
 	
-	/**
-	 * Sets the zoom mode.
-	 *
-	 * @param value the new zoom mode
-	 */
+
 	public void setZoomMode(int value) { zoomMode = value; }
 	
-	/**
-	 * Sets the zoom.
-	 *
-	 * @param value the new zoom
-	 */
+
 	public void setZoom(double value) {
 		if(verbose) Util.info(this, "Setting zoom to " + value);
 		scale.set(value, value);
 	}
 
-	/**
-	 * Zoom.
-	 *
-	 * @param relative the relative
-	 */
+
 	public void zoom(double relative) {
 		if(verbose) Util.info(this, "Zooming by " + relative);
 		scale.scale(relative);
 	}
-	
-	
-	/**
-	 * Update zoom.
-	 */
+
 	protected void updateZoom() {
 		
 		Rectangle2D bounds = null;
@@ -377,71 +250,39 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		}		
 	}
 	
-	/**
-	 * Fit.
-	 */
+
 	public void fit() { 	
 		setZoomMode(ZOOM_FIT);
 		updateZoom();
 	}
 	
 
-	/**
-	 * Fill.
-	 */
 	public void fill() { 
 		setZoomMode(ZOOM_FILL);
 		updateZoom();
 	}
-	
-	/**
-	 * Sets the rotation.
-	 *
-	 * @param angle the new rotation
-	 */
+
 	public void setRotation(double angle) {
 		rotation = angle;
 	}
 	
-	/**
-	 * Invert axes.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 */
+
 	public void invertAxes(boolean x, boolean y) {
 		flipX = x;
 		flipY = y;
 	}
-	
-	/**
-	 * Checks if is inverted x.
-	 *
-	 * @return true, if is inverted x
-	 */
+
 	public boolean isInvertedX() { return flipX; }
 	
-	/**
-	 * Checks if is inverted y.
-	 *
-	 * @return true, if is inverted y
-	 */
+
 	public boolean isInvertedY() { return flipY; }
+
 	
-	/**
-	 * Gets the center x.
-	 *
-	 * @return the center x
-	 */
 	public int getCenterX() {
 		return (int) Math.round(0.5 * getWidth());
 	}
 	
-	/**
-	 * Gets the center y.
-	 *
-	 * @return the center y
-	 */
+
 	public int getCenterY() {
 		return (int) Math.round(0.5 * getHeight());
 	}
@@ -456,9 +297,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		updateTransforms();
 	}
 	
-	/**
-	 * Update transforms.
-	 */
+
 	protected void updateTransforms() {
 		toDisplay = new AffineTransform();
 			
@@ -490,22 +329,12 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		catch(NoninvertibleTransformException e) { toCoordinates = null; }
 	}
 	
-	/**
-	 * To display.
-	 *
-	 * @param point the point
-	 * @return the point2 d
-	 */
+
 	public Point2D toDisplay(Point2D point) {
 		return toDisplay.transform(point, point);
 	}
 
-	/**
-	 * To coordinates.
-	 *
-	 * @param point the point
-	 * @return the point2 d
-	 */
+
 	public Point2D toCoordinates(Point2D point) {
 		return toCoordinates.transform(point, point);
 	}
@@ -526,13 +355,6 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	}
 	
 	// Returns a generated image.
-	/**
-	 * Gets the rendered image.
-	 *
-	 * @param width the width
-	 * @param height the height
-	 * @return the rendered image
-	 */
 	public RenderedImage getRenderedImage(int width, int height) {
 		setSize(width, height);
 		
@@ -551,14 +373,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	    return bufferedImage;
 	}
 
-	/**
-	 * Save as.
-	 *
-	 * @param fileName the file name
-	 * @param width the width
-	 * @param height the height
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public void saveAs(String fileName, int width, int height) throws IOException {
 		File file = new File(fileName);
 		int iExt = fileName.lastIndexOf(".");
@@ -568,30 +383,12 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	}
 
 	
-	/**
-	 * Checks if is verbose.
-	 *
-	 * @return true, if is verbose
-	 */
 	public boolean isVerbose() { return verbose; }
 	
-	/**
-	 * Sets the verbose.
-	 *
-	 * @param value the new verbose
-	 */
 	public void setVerbose(boolean value) { verbose = value; }
 	
-	/**
-	 * Checks if is initialized.
-	 *
-	 * @return true, if is initialized
-	 */
 	protected boolean isInitialized() { return initialized; }
 	
-	/**
-	 * Sets the initialized.
-	 */
 	protected void setInitialized() { initialized = true; }
 
 	// Assume that children overlap...
@@ -600,24 +397,17 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	 */
 	@Override
 	public boolean isOptimizedDrawingEnabled() { return false; }
-	
-	/** The Constant ZOOM_FIXED. */
+
 	public static final int ZOOM_FIXED = 0;
 	
-	/** The Constant ZOOM_FIT. */
 	public static final int ZOOM_FIT = 1;
-	
-	/** The Constant ZOOM_FILL. */
+
 	public static final int ZOOM_FILL = 2;
 	
-	/** The Constant ZOOM_STRETCH. */
 	public static final int ZOOM_STRETCH = 3;
 
-	
-	/** The image layer. */
 	public static int IMAGE_LAYER = 0;
-	
-	/** The coordinate layer. */
+
 	public static int COORDINATE_LAYER = 1;
 	
 }

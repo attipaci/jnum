@@ -24,18 +24,9 @@
 
 package jnum.text;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface DecimalFormating.
- */
+
 public interface DecimalFormating extends NumberFormating {
 
-	/**
-	 * To string.
-	 *
-	 * @param decimals the decimals
-	 * @return the string
-	 */
 	public String toString(int decimals);
 	
 }

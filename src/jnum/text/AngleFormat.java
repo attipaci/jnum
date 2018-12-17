@@ -34,64 +34,39 @@ import jnum.Unit;
 import jnum.Util;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class AngleFormat.
- */
 public class AngleFormat extends NumberFormat {
 	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 8006119682644201943L;
-	
-	/** The decimals. */
+
 	private int decimals;
 	
-	/** The precision. */
 	private double precision;
-	
-	/** The top level. */
+
 	public int topLevel = LEVEL_DEGREE;
-	
-	/** The bottom level. */
+
 	public int bottomLevel = LEVEL_SECOND;
 
-	/** The separators. */
 	protected char[] marks = dmsMarks;
-	
-	
-	/** The one sided. */
+
 	protected boolean wrap = true, isPositiveOnly = false;
 	
-	/**
-	 * Instantiates a new angle format.
-	 */
+
 	public AngleFormat() {
 		setDecimals(0);
 	}
 	
-	/**
-	 * Instantiates a new angle format.
-	 *
-	 * @param decimals the decimals
-	 */
+
 	public AngleFormat(int decimals) {
 		setDecimals(decimals);
 	}
 	
-	/**
-	 * Sets the separator.
-	 *
-	 * @param type the new separator
-	 */
+
 	public void setMarks(int type) {
 		marks = getMarkerChars(type);
 	}
 	
-	/**
-	 * Gets the separator.
-	 *
-	 * @return the separator
-	 */
+
 	public int getMarks() {
 		if(marks == colonMarks) return FORMAT_COLONS;
 		else if(marks == dmsMarks) return FORMAT_DMS;
@@ -111,104 +86,50 @@ public class AngleFormat extends NumberFormat {
 	    }  
 	}
 
-	/**
-	 * Colons.
-	 */
+
 	public void colons() { marks = colonMarks; }
 	
-	/**
-	 * Letters.
-	 */
 	public void letters() { marks = dmsMarks; }
 	
-	/**
-	 * Symbols.
-	 */
 	public void symbols() { marks = symbolMarks; }
 	
-	/**
-     * Alternative Symbols.
-     */
     public void fancy() { marks = fancyMarks; }
 	
-	/**
-	 * Sets the top level.
-	 *
-	 * @param level the new top level
-	 */
+
 	public void setTopLevel(int level) { 
 		if(level < LEVEL_DEGREE || level > LEVEL_SECOND) throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " level.");
 		topLevel = level; 	
 	}
-	
-	/**
-	 * Sets the bottom level.
-	 *
-	 * @param level the new bottom level
-	 */
+
 	public void setBottomLevel(int level) { 
 		if(level < LEVEL_DEGREE || level > LEVEL_SECOND) throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " level.");
 		bottomLevel = level; 		
 	}
 	
-	/**
-	 * Gets the top level.
-	 *
-	 * @return the top level
-	 */
+
 	public int getTopLevel() { return topLevel; }
-	
-	/**
-	 * Gets the bottom level.
-	 *
-	 * @return the bottom level
-	 */
+
 	public int getBottomLevel() { return bottomLevel; }
 	
-	/**
-	 * Sets the decimals.
-	 *
-	 * @param decimals the new decimals
-	 */
 	public void setDecimals(int decimals) { 
 	    if(decimals < 0) decimals = MAX_DECIMALS;
 		this.decimals = decimals; 
 		precision = decimals >= 0 ? Math.pow(0.1, decimals) : 0.0;
 	}
 	
-	/**
-	 * Gets the decimals.
-	 *
-	 * @return the decimals
-	 */
+
 	public int getDecimals() { return decimals; }
 	
-	/**
-	 * Sets the one sided.
-	 *
-	 * @param value the new one sided
-	 */
+
 	public void setPositiveOnly(boolean value) { isPositiveOnly = value; }
 	
-	/**
-	 * Checks if is one sided.
-	 *
-	 * @return true, if is one sided
-	 */
+
 	public boolean isPositiveOnly() { return isPositiveOnly; }
 	
-	/**
-	 * Wrap.
-	 *
-	 * @param value the value
-	 */
+
 	public void wrap(boolean value) { wrap = value; }
 	
-	/**
-	 * Checks if is wrapping.
-	 *
-	 * @return true, if is wrapping
-	 */
+
 	public boolean isWrapping() { return wrap; }
 	
 	
@@ -267,14 +188,7 @@ public class AngleFormat extends NumberFormat {
 	    return Util.getWhiteSpaceChars() + ",";
 	}
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param source the source
-	 * @param pos the parse position
-	 * @param fromLevel the from level
-	 * @return the number
-	 */
+
 	public Number parse(String source, ParsePosition pos, int formatStyle) throws NumberFormatException {
 		int sign = 1;
 		double angle = Double.NaN;
@@ -327,12 +241,7 @@ public class AngleFormat extends NumberFormat {
 		return sign * angle;
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param angle the angle
-	 * @return the string
-	 */
+
 	public String toString(double angle) {
 		StringBuilder text = new StringBuilder(13 + decimals); // 12 characters plus the decimals, plus 1 for good measure...
 	
@@ -375,26 +284,19 @@ public class AngleFormat extends NumberFormat {
 	    
 	}
 	
-    
-    /** The Constant colonMarker. */
+
     protected static final char[] colonMarks = { ':', ':', 0};
-    
-    /** The Constant dmsMarker. */
+
     protected static final char[] dmsMarks = { 'd', 'm', 's'};
-    
-    /** The Constant symbolMarker. */
+
     protected static final char[] symbolMarks = { Symbol.degree, '\'', '"'};
 
     protected static final char[] fancyMarks = { Symbol.degree, Symbol.prime, Symbol.doublePrime};
- 
-    
-	/** The Constant DEGREE. */
+
 	public static final int LEVEL_DEGREE = 0;
-	
-	/** The Constant MINUTE. */
+
 	public static final int LEVEL_MINUTE = 1;
-	
-	/** The Constant SECOND. */
+
 	public static final int LEVEL_SECOND = 2;
 
 	

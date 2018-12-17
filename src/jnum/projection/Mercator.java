@@ -27,18 +27,12 @@ package jnum.projection;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Mercator.
- */
+
 public class Mercator extends CylindricalProjection {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8788347000013645857L;
 
-	/**
-	 * Instantiates a new mercator.
-	 */
+
 	public Mercator() {}
 
 	/* (non-Javadoc)

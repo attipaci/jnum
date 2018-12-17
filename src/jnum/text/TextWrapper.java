@@ -29,22 +29,15 @@ import java.util.StringTokenizer;
 import jnum.Util;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class TextWrapper.
- */
+
 public class TextWrapper {
-    
-    /** The width. */
+
     private int width;
-    
-    /** The white spaces. */
+
     private String whiteSpaces;
     
-    /** The breakables before. */
     private String wrapBefore;
-    
-    /** The breakables after. */
+
     private String wrapAfter;
     
     /** If wrapping at hyphens is allowed. */

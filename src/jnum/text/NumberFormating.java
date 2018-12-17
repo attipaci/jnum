@@ -26,18 +26,10 @@ package jnum.text;
 
 import java.text.NumberFormat;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface NumberFormating.
- */
+
 public interface NumberFormating {
 
-	/**
-	 * To string.
-	 *
-	 * @param nf the nf
-	 * @return the string
-	 */
+
 	public String toString(NumberFormat nf);
 	
 }

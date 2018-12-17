@@ -28,31 +28,18 @@ import jnum.Symbol;
 import jnum.Unit;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class TimeFormat.
- */
+
 public class TimeFormat extends AngleFormat {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -6135295347868421521L;
 
-		
-	/**
-	 * Instantiates a new time format.
-	 */
+
 	public TimeFormat() { defaults(); }
 	
-	/**
-	 * Instantiates a new time format.
-	 *
-	 * @param decimals the decimals
-	 */
+
 	public TimeFormat(int decimals) { super(decimals); defaults(); }
 
-	/**
-	 * Defaults.
-	 */
+
 	public void defaults() {
 		marks = hmsMarks;
 		isPositiveOnly = true;
@@ -151,10 +138,9 @@ public class TimeFormat extends AngleFormat {
 	    return 24.0 * Unit.hour;
 	}
     
-    /** The Constant hmsMarker. */
+
     protected static final char[] hmsMarks = { 'h', 'm', 's'};
     
-    /** The Constant symbolMarker. */
     @SuppressWarnings("hiding")
     protected static final char[] symbolMarks = { 'h', '\'', '"'};
     
@@ -162,26 +148,20 @@ public class TimeFormat extends AngleFormat {
     protected static final char[] fancyMarks = { 'h', Symbol.prime, Symbol.doublePrime};
 
 	
-	
-	/** The Constant HOUR. */
 	public static final int LEVEL_HOUR = AngleFormat.LEVEL_DEGREE;
 	
-	/** The Constant MINUTE. */
 	@SuppressWarnings("hiding")
     public static final int LEVEL_MINUTE = AngleFormat.LEVEL_MINUTE;
 	
-	/** The Constant SECOND. */
 	@SuppressWarnings("hiding")
     public static final int LEVEL_SECOND = AngleFormat.LEVEL_SECOND;
 	
-	/** The Constant COLONS. */
+
 	@SuppressWarnings("hiding")
     public static final int FORMAT_COLONS = AngleFormat.FORMAT_COLONS;
 	
-	/** The Constant HMS. */
 	public static final int FORMAT_HMS = AngleFormat.FORMAT_DMS;
 	
-	/** The Constant SYMBOLS. */
 	@SuppressWarnings("hiding")
     public static final int FORMAT_SYMBOLS = AngleFormat.FORMAT_SYMBOLS;
 	

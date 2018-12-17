@@ -43,26 +43,14 @@ import jnum.Util;
 import jnum.math.Scale;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FancyRuler.
- */
 public abstract class FancyRuler extends BasicRuler implements Arrangeable {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 132926720323714435L;
-	
-	/** The labels. */
+
 	private TickLabels tickLabels;
-	
-	/** The title. */
+
 	private AxisLabel axisLabel;
 	
-	/**
-	 * Instantiates a new fancy ruler.
-	 *
-	 * @param edge the edge
-	 */
 	public FancyRuler(int edge) {
 		super(edge);
 		setLayout(new BorderLayout());
@@ -78,56 +66,25 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 		super.setName(name);
 		axisLabel.setName(name);
 	}
-	
-	/**
-	 * Gets the labels.
-	 *
-	 * @return the labels
-	 */
+
 	public TickLabels getTickLabels() { return tickLabels; }
+
 	
-	/**
-	 * Show tick labels.
-	 *
-	 * @param value the value
-	 */
 	public void showTickLabels(boolean value) { tickLabels.setVisible(value); }
 	
-	/**
-	 * Checks if is showing tick labels.
-	 *
-	 * @return true, if is showing tick labels
-	 */
+
 	public boolean isShowingTickLabels() { return tickLabels.isVisible(); }
 	
-	
-	/**
-	 * Gets the axis label.
-	 *
-	 * @return the axis label
-	 */
+
 	public AxisLabel getAxisLabel() { return axisLabel; }
 
-	/**
-	 * Show axis label.
-	 *
-	 * @param value the value
-	 */
+
 	public void showAxisLabel(boolean value) { axisLabel.setVisible(value); }
+
 	
-	/**
-	 * Checks if is showing axis labels.
-	 *
-	 * @return true, if is showing axis labels
-	 */
 	public boolean isShowingAxisLabels() { return axisLabel.isVisible(); }
 	
-	
-	/**
-	 * Show labels.
-	 *
-	 * @param value the value
-	 */
+
 	public void showLabels(boolean value) {
 		showAxisLabel(value);
 		showTickLabels(value);
@@ -203,44 +160,32 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 		arrange();
 		super.validate();
 	}
+
 	
-	/**
-	 * The Class Labels.
-	 */
+	
 	public class TickLabels extends JComponent {
-		
-		/** The Constant serialVersionUID. */
+
 		private static final long serialVersionUID = 6716865385705990104L;
-			
-		/** The rotation. */
+
 		private double rotation = 0.0;
-		
-		/** The delta. */
+
 		private double delta = Double.NaN;
-		
-		/** The nf. */
+
 		private NumberFormat nf = null;
-		
-		/** The v align. */
+
 		private int hAlign, vAlign;
-		
-		/** The spacing. */
+
 		private int spacing = 2;
-		
-		/** The entries. */
+
 		private ArrayList<Entry> entries = new ArrayList<Entry>();
 		
 		
-		/**
-		 * Instantiates a new tick labels.
-		 */
+
 		public TickLabels() { 
 			setFont(defaultDivisionFont); 
 		}
 		
-		/**
-		 * Update.
-		 */
+
 		public void update() {
 			ArrayList<Scale.Division> divs = getMainDivisions();
 			
@@ -285,11 +230,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			setPreferredSize();
 		}
 		
-		/**
-		 * Sets the side.
-		 *
-		 * @param side the new side
-		 */
+
 		public void setSide(int side) {
 			setPreferredSize();
 			
@@ -313,10 +254,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			super.validate();
 		}
 
-		
-		/**
-		 * Sets the preferred size.
-		 */
+
 		private void setPreferredSize() {			
 			
 			int minsize = 10 + spacing;
@@ -341,28 +279,16 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			setPreferredSize(dim);
 		}
 		
-		
-		/**
-		 * Sets the rotation.
-		 *
-		 * @param theta the new rotation
-		 */
+
 		public void setRotation(double theta) { 
 			this.rotation = theta; 
 			setPreferredSize();
 		}
 		
-		/**
-		 * Gets the rotation.
-		 *
-		 * @return the rotation
-		 */
+
 		public double getRotation() { return rotation; }
 		
-		
-		/**
-		 * Calc delta.
-		 */
+
 		protected void calcDelta() {
 			delta = Double.POSITIVE_INFINITY;
 			final ArrayList<Scale.Division> divs = getMainDivisions();
@@ -385,13 +311,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			draw(g, getMainDivisions(), 1);
 		}
 		
-		/**
-		 * Draw.
-		 *
-		 * @param g the g
-		 * @param divs the divs
-		 * @param step the step
-		 */
+
 		private void draw(Graphics g, ArrayList<Scale.Division> divs, int step) {
 			final Point2D pos = new Point2D.Double();
 			final Graphics2D g2 = (Graphics2D) g;
@@ -443,39 +363,23 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			}	
 		}
 		
-		/**
-		 * The Class Entry.
-		 */
+
 		private class Entry implements Comparable<FancyRuler.TickLabels.Entry> {	
-			
-			/** The value. */
+
 			private double value;
-			
-			/** The text. */
+
 			private String text;
-			
-			/** The bounds. */
+
 			private Rectangle2D bounds;
 			
-			/**
-			 * Instantiates a new entry.
-			 *
-			 * @param value the value
-			 * @param text the text
-			 * @param font the font
-			 */
+			
 			private Entry(double value, String text, Font font) { 
 				this.value = value * getUnit().value(); 
 				this.text = text; 
 				if(font != null) getBounds(font);
 			}
 			
-			/**
-			 * Gets the bounds.
-			 *
-			 * @param font the font
-			 * @return the bounds
-			 */
+
 			private void getBounds(Font font) {		
 				bounds = font.getStringBounds(text, getFontMetrics(font).getFontRenderContext());
 			}
@@ -496,41 +400,29 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 		}
 		
 	}
+
 	
-	/**
-	 * The Class Title.
-	 */
+	
 	public class AxisLabel extends JComponent {
-		
-		/** The Constant serialVersionUID. */
+
 		private static final long serialVersionUID = -2340066081374973607L;
-		
-		/** The text. */
+
 		private String text;
-		
-		/** The show unit. */
+
 		private boolean showUnit = false;
-		
-		/** The bounds. */
+
 		private Rectangle2D bounds;
 		
-		
-		/** The spacing. */
+
 		int spacing = 10;
 		
-		/**
-		 * Instantiates a new title.
-		 *
-		 * @param name the name
-		 */
+
 		public AxisLabel(String name) {
 			setFont(defaultAxisLabelFont);
 			setName(name);			
 		}
+
 		
-		/**
-		 * Update.
-		 */
 		public void update() {	
 			text = getName();
 			
@@ -544,11 +436,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			setPreferredSize();
 		}
 
-		/**
-		 * Sets the side.
-		 *
-		 * @param side the new side
-		 */
+
 		public void setSide(int side) {
 			setPreferredSize();			
 		}
@@ -563,9 +451,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			super.validate();
 		}
 		
-		/**
-		 * Sets the preferred size.
-		 */
+
 		private void setPreferredSize() {
 			int h = getFontMetrics(getFont()).getHeight() + 2 * spacing;
 		
@@ -592,21 +478,13 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			setPreferredSize();
 		}
 		
-		/**
-		 * Show unit.
-		 *
-		 * @param value the value
-		 */
+
 		public void showUnit(boolean value) { 
 			showUnit = value; 
 			update();
 		}
 		
-		/**
-		 * Checks if is showing unit.
-		 *
-		 * @return true, if is showing unit
-		 */
+
 		public boolean isShowingUnit() { return showUnit; }
 		
 		/* (non-Javadoc)
@@ -620,13 +498,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			draw(g, getMainDivisions(), 1);
 		}
 		
-		/**
-		 * Draw.
-		 *
-		 * @param g the g
-		 * @param divs the divs
-		 * @param step the step
-		 */
+
 		private void draw(Graphics g, ArrayList<Scale.Division> divs, int step) {
 			final Graphics2D g2 = (Graphics2D) g;
 			
@@ -641,13 +513,11 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 		
 	}
 	
-	/** The Constant defaultDivisionFont. */
+
 	public final static Font defaultDivisionFont = new Font("Monospaced", Font.PLAIN, 10);
-	
-	/** The Constant defaultTitleFont. */
+
 	public final static Font defaultAxisLabelFont = new Font("Serif", Font.BOLD, 14);
 
-	/** The Constant defaultNumberFormat. */
 	public final static NumberFormat defaultNumberFormat = Util.f2;
 	
 	

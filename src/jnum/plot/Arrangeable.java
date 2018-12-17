@@ -22,15 +22,9 @@
  ******************************************************************************/
 package jnum.plot;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface Arrangeable.
- */
+
 public interface Arrangeable {
 
-	/**
-	 * Arrange.
-	 */
 	public void arrange();
 
 }

@@ -28,10 +28,7 @@ import jnum.plot.ColorScheme;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Doppler.
- */
+
 public class Doppler extends ColorScheme {
 
 	/* (non-Javadoc)

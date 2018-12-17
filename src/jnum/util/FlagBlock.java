@@ -26,40 +26,22 @@ package jnum.util;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FlagBlock.
- *
- * @param <Type> the generic type
- */
+
 public class FlagBlock<Type extends Number> implements Serializable {
-    
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = 3475889288391954525L;
-    
-    /** The space. */
+
     private FlagSpace<Type> space;
-    
-    /** The from bit. */
+
     private int fromBit;
-    
-    /** The to bit. */
+
     private int toBit;
-    
-    /** The next bit. */
+
     private int nextBit;
-    
-    /** The mask. */
+
     private long mask = 0;
     
-    /**
-     * Instantiates a new flag block.
-     *
-     * @param space the group
-     * @param fromBit the from bit
-     * @param toBit the to bit
-     * @throws IndexOutOfBoundsException the index out of bounds exception
-     */
+
     public FlagBlock(FlagSpace<Type> space, int fromBit, int toBit) throws IndexOutOfBoundsException {
         this.space = space;
         setBits(fromBit, toBit);
@@ -87,22 +69,10 @@ public class FlagBlock<Type extends Number> implements Serializable {
         if(!r.space.equals(space)) return false;
         return true;
     }
-    
-    /**
-     * Gets the flag space.
-     *
-     * @return the flag space
-     */
+
     public final FlagSpace<?> getFlagSpace() { return space; } 
     
-    /**
-     * Sets the bits.
-     *
-     * @param startBit the start bit
-     * @param endBit the end bit
-     * @return true, if successful
-     * @throws IndexOutOfBoundsException the index out of bounds exception
-     */
+
     private boolean setBits(int startBit, int endBit) throws IndexOutOfBoundsException {
         if(startBit < 0) throw new IndexOutOfBoundsException("negative flag space start: " + startBit);
         if(endBit <= startBit) throw new IndexOutOfBoundsException("empty flag space.");
@@ -138,11 +108,7 @@ public class FlagBlock<Type extends Number> implements Serializable {
         return space.createFlag(value, letterCode, name);
     }
     
-    /**
-     * Gets the mask.
-     *
-     * @return the mask
-     */
+
     public final long getMask() { return mask; }
     
     /* (non-Javadoc)

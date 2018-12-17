@@ -29,16 +29,10 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CanvasLayer.
- */
 public class CanvasLayer extends PlotLayer {
 	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6890933149678172692L;
-	
-	/** The color. */
+
 	Color color = null;
 	
 	/* (non-Javadoc)

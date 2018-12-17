@@ -29,18 +29,11 @@ import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ZenithalProjection.
- */
+
 public abstract class ZenithalProjection extends SphericalProjection {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6205931149858431357L;
 
-	/**
-	 * Instantiates a new zenithal projection.
-	 */
 	public ZenithalProjection() { 
 		getNativeReference().setNative(0.0, rightAngle);
 	}

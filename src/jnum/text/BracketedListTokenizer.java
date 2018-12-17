@@ -28,40 +28,23 @@ import java.util.*;
 import java.text.*;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BracketedListTokenizer.
- */
+
 public class BracketedListTokenizer {
-	
-	/** The list. */
+
 	protected Vector<Object> list = new Vector<Object>();
-	
-	/** The next index. */
+
 	private int nextIndex = 0;
-	
-	/** The opening. */
+
 	protected static String opening = "({[";
-	
-	/** The closing. */
+
 	protected static String closing = ")}]";
 
-	/**
-	 * Instantiates a new bracketed list tokenizer.
-	 *
-	 * @param str the str
-	 * @param delim the delim
-	 */
+
 	public BracketedListTokenizer(String str, String delim) {
 		init(str, delim);
 	}
 		
-	/**
-	 * Inits the.
-	 *
-	 * @param str the str
-	 * @param delim the delim
-	 */
+
 	protected void init(String str, String delim) {
 		boolean hasMore = false;
 		
@@ -77,40 +60,22 @@ public class BracketedListTokenizer {
 		}
 	}
 
-	/**
-	 * Instantiates a new bracketed list tokenizer.
-	 *
-	 * @param str the str
-	 */
+
 	public BracketedListTokenizer(String str) {
 		this(str, ",;");
 	}
 
-	/**
-	 * Count tokens.
-	 *
-	 * @return the int
-	 */
+
 	public int countTokens() {
 		return list.size();
 	}
 
-	/**
-	 * Checks for more tokens.
-	 *
-	 * @return true, if successful
-	 */
+
 	public boolean hasMoreTokens() {
 		return nextIndex < list.size();
 	}
 
-	/**
-	 * Next token.
-	 *
-	 * @return the string
-	 * @throws NoSuchElementException the no such element exception
-	 * @throws ParseException the parse exception
-	 */
+
 	public String nextToken() throws NoSuchElementException, ParseException {
 		try { 
 			Object entry = list.get(nextIndex++); 
@@ -121,15 +86,7 @@ public class BracketedListTokenizer {
 		catch(ArrayIndexOutOfBoundsException e) { throw new NoSuchElementException(e.getMessage()); }
 	}
 	
-	/**
-	 * Next token limits.
-	 *
-	 * @param source the source
-	 * @param delim the delim
-	 * @param bounds the bounds
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 * @throws ParseException the parse exception
-	 */
+
 	private static void nextTokenLimits(String source, String delim, int[] bounds) throws IndexOutOfBoundsException, ParseException {
 		// TODO Use BracketedExpression...
 		// A Token is either a closed bracketed expression, or separated by delimiters...
@@ -174,13 +131,7 @@ public class BracketedListTokenizer {
 		bounds[1] = pos;
 	}		
 		
-	/**
-	 * Checks if is delimiter.
-	 *
-	 * @param c the c
-	 * @param delim the delim
-	 * @return true, if is delimiter
-	 */
+
 	private static boolean isDelimiter(char c, String delim) {
 		for(int i=0; i<delim.length(); i++) if(c == delim.charAt(i)) return true;
 		return false;

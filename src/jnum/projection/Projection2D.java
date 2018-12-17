@@ -33,19 +33,12 @@ import jnum.math.Vector2D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Projection2D.
- *
- * @param <CoordinateType> the generic type
- */
+
 public abstract class Projection2D<CoordinateType extends Coordinate2D> implements Serializable, Cloneable,
     FitsHeaderParsing, FitsHeaderEditing {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4215964283613898581L;
-	
-	/** The reference. */
+
 	private CoordinateType reference;
 	
 	
@@ -96,77 +89,37 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 		return copy;
 	}
 
-	/**
-	 * Gets the coordinate instance.
-	 *
-	 * @return the coordinate instance
-	 */
+
 	public abstract CoordinateType getCoordinateInstance();
 	
-	/**
-	 * Project.
-	 *
-	 * @param coords the coords
-	 * @param toProjected the to projected
-	 */
+
 	public abstract void project(CoordinateType coords, Coordinate2D toProjected);
 
-	/**
-	 * Deproject.
-	 *
-	 * @param projected the projected
-	 * @param toCoords the to coords
-	 */
+
 	public abstract void deproject(Coordinate2D projected, CoordinateType toCoords);
 	
-	/**
-	 * Gets the fits id.
-	 *
-	 * @return the fits id
-	 */
+
 	public abstract String getFitsID();
 	
-	/**
-	 * Gets the full name.
-	 *
-	 * @return the full name
-	 */
+
 	public abstract String getFullName();
 	
-	/**
-	 * Gets the reference.
-	 *
-	 * @return the reference
-	 */
+
 	public CoordinateType getReference() { return reference; }
 	
-	/**
-	 * Sets the reference.
-	 *
-	 * @param coordinates the new reference
-	 */
+
 	public void setReference(CoordinateType coordinates) {
 		reference = coordinates;
 	}
 	
-	/**
-	 * Gets the projected.
-	 *
-	 * @param coords the coords
-	 * @return the projected
-	 */
+
 	public Coordinate2D getProjected(CoordinateType coords) {
 		Coordinate2D offset = new Coordinate2D();
 		project(coords, offset);
 		return offset;		
 	}
 	
-	/**
-	 * Gets the deprojected.
-	 *
-	 * @param projected the projected
-	 * @return the deprojected
-	 */
+
 	public CoordinateType getDeprojected(Vector2D projected) {
 		CoordinateType coords = getCoordinateInstance();
 		deproject(projected, coords);
@@ -177,25 +130,14 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	@Override
     public void parseHeader(Header header) { parseHeader(header, ""); }
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param header the header
-	 * @param alt the alt
-	 */
+
 	public abstract void parseHeader(Header header, String alt);
 	
 
 	@Override
     public void editHeader(Header header) throws HeaderCardException { editHeader(header, ""); }
 	
-	/**
-	 * Edits the.
-	 *
-	 * @param cursor the cursor
-	 * @param alt the alt
-	 * @throws HeaderCardException the header card exception
-	 */
+
 	public abstract void editHeader(Header header, String alt) throws HeaderCardException;
 	
 	

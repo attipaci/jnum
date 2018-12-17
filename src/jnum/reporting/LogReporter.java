@@ -28,26 +28,22 @@ import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class LogReporter.
+ * A reporter implementation that forwards incoming messages to a {@link Logger} object.
+ * 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
  */
 public class LogReporter extends Reporter {
-    
-    /** The logger. */
+
     private Logger logger;
-    
-    /** The is type labeled. */
+
     private boolean isTypeLabeled = true;
-    
-    /** The is object labeled. */
+
     private boolean isObjectLabeled = false;
     
-    /**
-     * Instantiates a new log reporter.
-     *
-     * @param logger the logger
-     */
+
     public LogReporter(Logger logger) {
         super(logger.getName());
         this.logger = logger;

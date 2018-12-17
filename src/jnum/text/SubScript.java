@@ -23,35 +23,24 @@
  
 package jnum.text;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SubScript.
- */
+
 public final class SubScript {
-    
-    /** The Constant number. */
+
     public final static char[] number = { '\u2080', '\u2081', '\u2082', '\u2083', '\u2084', '\u2085', 
             '\u2086', '\u2087', '\u2088', '\u2089' };
 
-    /** The Constant n. */
     public final static char n = '\u2099';
-    
-    /** The Constant i. */
+
     public final static char i = '\u1d62';
-    
-    /** The Constant plus. */
+
     public final static char plus = '\u208a';
-    
-    /** The Constant minus. */
+
     public final static char minus = '\u208b';
-    
-    /** The Constant equals. */
+
     public final static char equals = '\u208c';
-    
-    /** The Constant curvedLeft. */
+
     public final static char curvedLeft = '\u208d';
-    
-    /** The Constant curvedRight. */
+
     public final static char curvedRight = '\u208e';
     
     // TODO add more...

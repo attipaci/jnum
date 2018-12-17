@@ -23,75 +23,34 @@
 
 package jnum.reporting;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface BasicMessaging.
- */
+
 public interface BasicMessaging {
 
-       /**
-        * Info.
-        *
-        * @param message the message
-        */
+
        public void info(String message);
        
-       /**
-        * Notify.
-        *
-        * @param message the message
-        */
+
        public void notify(String message);
        
-       /**
-        * Debug.
-        *
-        * @param message the message
-        */
+
        public void debug(String message);
        
-       /**
-        * Warning.
-        *
-        * @param message the message
-        */
+
        public void warning(String message);
        
-       /**
-        * Warning.
-        *
-        * @param e the e
-        * @param debug the debug
-        */
+
        public void warning(Exception e, boolean debug);
        
-       /**
-        * Warning.
-        *
-        * @param e the e
-        */
+
        public void warning(Exception e);
     
-       /**
-        * Error.
-        *
-        * @param message the message
-        */
+
        public void error(String message);
        
-       /**
-        * Error.
-        *
-        * @param e the e
-        * @param debug the debug
-        */
+
        public void error(Throwable e, boolean debug);
        
-       /**
-        * Error.
-        *
-        * @param e the e
-        */
+
        public void error(Throwable e);
     
 }

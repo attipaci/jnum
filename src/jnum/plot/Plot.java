@@ -41,26 +41,17 @@ import javax.swing.JPanel;
 // TODO: Auto-generated Javadoc
 // TODO dragging boundaries to adjust component sizes?
 
-/**
- * The Class Plot.
- *
- * @param <ContentType> the generic type
- */
+
 public class Plot<ContentType extends ContentLayer> extends JPanel {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -1434685464605442072L;
-	
-	/** The content area. */
+
 	private ContentArea<? extends ContentType> contentArea;
 
-	/** The bottom. */
 	public PlotSidePane left, right, top, bottom;
-	
-	/** The bottom right. */
+
 	public PlotPane center,topLeft, topRight, bottomLeft, bottomRight;
-	
-	/** The stroke. */
+
 	private Stroke stroke;
 	
 	// containers for each sub-panel...
@@ -96,12 +87,9 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 	//  * (ColorBar.Horizontal, ...)
 	//  * (...)
 	
-	/** The layout. */
 	GridBagLayout layout = new GridBagLayout();
 	
-	/**
-	 * Instantiates a new plot.
-	 */
+
 	public Plot() {
 		setOpaque(false);
 		setLayout(layout);
@@ -148,72 +136,34 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 		for(Component c : getComponents()) c.setBackground(color);
 	}
 	
-	/**
-	 * Gets the center pane.
-	 *
-	 * @return the center pane
-	 */
+
 	public PlotPane getCenterPane() { return center; }
 	
-	/**
-	 * Gets the leftane.
-	 *
-	 * @return the leftane
-	 */
+
 	public PlotPane getLeftane() { return left; }
 	
-	/**
-	 * Gets the right pane.
-	 *
-	 * @return the right pane
-	 */
+
 	public PlotPane getRightPane() { return right; }
 	
-	/**
-	 * Gets the top pane.
-	 *
-	 * @return the top pane
-	 */
+
 	public PlotPane getTopPane() { return top; }
 	
-	/**
-	 * Gets the bottom pane.
-	 *
-	 * @return the bottom pane
-	 */
+
 	public PlotPane getBottomPane() { return bottom; }
 	
-	/**
-	 * Gets the top left pane.
-	 *
-	 * @return the top left pane
-	 */
+
 	public PlotPane getTopLeftPane() { return topLeft; }
 	
-	/**
-	 * Gets the top right pane.
-	 *
-	 * @return the top right pane
-	 */
+
 	public PlotPane getTopRightPane() { return topRight; }
 	
-	/**
-	 * Gets the bottom left pane.
-	 *
-	 * @return the bottom left pane
-	 */
+
 	public PlotPane getBottomLeftPane() { return bottomLeft; }
 	
-	/**
-	 * Gets the bottom right pane.
-	 *
-	 * @return the bottom right pane
-	 */
+
 	public PlotPane getBottomRightPane() { return bottomRight; }
 	
-	/**
-	 * Set defaults.
-	 */
+
 	public void setDefaults() {
 		setFont(defaultFont);
 	}
@@ -227,12 +177,7 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 		super.paint(g);
 	}
 	
-	/**
-	 * Gets the coordinate bounds.
-	 *
-	 * @param side the side
-	 * @return the coordinate bounds
-	 */
+
 	public Rectangle2D getCoordinateBounds(int side) {
 		
 		if(contentArea.toCoordinates() == null) return new Rectangle2D.Double(0.0, 0.0, 1.0, 1.0);
@@ -271,29 +216,17 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 	}
 	
 	
-	/**
-	 * Gets the content.
-	 *
-	 * @return the content
-	 */
+
 	public ContentArea<? extends ContentType> getContent() { return contentArea; }
 	
-	/**
-	 * Sets the content.
-	 *
-	 * @param area the new content
-	 */
+
 	public void setContent(ContentArea<? extends ContentType> area) { 
 		if(this.contentArea != null) center.remove(this.contentArea);
 		this.contentArea = area; 
 		center.add(area);
 	}
 	
-	/**
-	 * Sets the rulers.
-	 *
-	 * @param value the new rulers
-	 */
+
 	public void setRulers(boolean value) {
 		top.setRuler(value);
 		bottom.setRuler(value);
@@ -302,16 +235,7 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 		revalidate();
 	}
 	
-	/**
-	 * Adds the.
-	 *
-	 * @param component the component
-	 * @param x the x
-	 * @param y the y
-	 * @param fill the fill
-	 * @param weightx the weightx
-	 * @param weighty the weighty
-	 */
+
 	private void add(JComponent component, int x, int y, int fill, double weightx, double weighty) {	
         GridBagConstraints c = new GridBagConstraints();
         c.weightx = weightx;
@@ -323,42 +247,21 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
         add(component);
 	}
 	
-	/**
-	 * Gets the stroke.
-	 *
-	 * @return the stroke
-	 */
+
 	public Stroke getStroke() { return stroke; }
 
-	/**
-	 * Sets the stroke.
-	 *
-	 * @param s the new stroke
-	 */
+
 	public void setStroke(Stroke s) { this.stroke = s; }
 	
-	/**
-	 * Gets the font size.
-	 *
-	 * @return the font size
-	 */
+
 	public float getFontSize() { return getFont().getSize2D(); }
 	
 	
-	/**
-	 * Sets the font size.
-	 *
-	 * @param size the new font size
-	 */
 	public void setFontSize(float size) {
 		setFont(getFont().deriveFont(size));
 	}
 	
-	/**
-	 * Sets the font bold.
-	 *
-	 * @param value the new font bold
-	 */
+
 	public void setFontBold(boolean value) {
 		int style = getFont().getStyle();
 		if(value) style |= Font.BOLD;
@@ -366,11 +269,7 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 		setFont(getFont().deriveFont(style));
 	}
 	
-	/**
-	 * Sets the font italic.
-	 *
-	 * @param value the new font italic
-	 */
+
 	public void setFontItalic(boolean value) {
 		int style = getFont().getStyle();
 		if(value) style |= Font.ITALIC;
@@ -378,32 +277,17 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 		setFont(getFont().deriveFont(style));
 	}
 	
-	/**
-	 * Checks if is font italic.
-	 *
-	 * @return true, if is font italic
-	 */
+
 	public boolean isFontItalic() {
 		return (getFont().getStyle() & Font.ITALIC) != 0;
 	}
 	
-	/**
-	 * Checks if is font bold.
-	 *
-	 * @return true, if is font bold
-	 */
+
 	public boolean isFontBold() {
 		return (getFont().getStyle() & Font.BOLD) != 0;
 	}
 	
 	// Returns a generated image.
-	/**
-	 * Gets the rendered image.
-	 *
-	 * @param width the width
-	 * @param height the height
-	 * @return the rendered image
-	 */
 	public RenderedImage getRenderedImage(int width, int height) {
 		setSize(width, height);
 
@@ -422,42 +306,31 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 		return bufferedImage;
 	}
 	
-	
-	/** The default font. */
+
 	public static Font defaultFont = new Font("SansSerif", Font.BOLD, 15);
-	
-	/** The Constant SIDE_UNDEFINED. */
+
 	public final static int SIDE_UNDEFINED = -1;
-	
-	/** The Constant TOP_SIDE. */
+
 	public final static int TOP_SIDE = 0;
-	
-	/** The Constant BOTTOM_SIDE. */
+
 	public final static int BOTTOM_SIDE = 1;
-	
-	/** The Constant LEFT_SIDE. */
+
 	public final static int LEFT_SIDE = 2;
-	
-	/** The Constant RIGHT_SIDE. */
+
 	public final static int RIGHT_SIDE = 3;
 	
-	
-	/** The Constant VALIGN_TOP. */
+
 	public final static int VALIGN_TOP = 1;
-	
-	/** The Constant VALIGN_CENTER. */
+
 	public final static int VALIGN_CENTER = 0;
-	
-	/** The Constant VALIGN_BOTTOM. */
+
 	public final static int VALIGN_BOTTOM = -1;
+
 	
-	/** The Constant HALIGN_LEFT. */
 	public final static int HALIGN_LEFT = 1;
-	
-	/** The Constant HALIGN_CENTER. */
+
 	public final static int HALIGN_CENTER = 0;
-	
-	/** The Constant HALIGN_RIGHT. */
+
 	public final static int HALIGN_RIGHT = -1;
 	
 }

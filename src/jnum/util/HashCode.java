@@ -28,58 +28,28 @@ import jnum.ExtraMath;
 import jnum.data.image.Values2D;
 import jnum.data.samples.Values1D;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class HashCode.
- */
+
 public final class HashCode {
 
-	/**
-	 * Gets the.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public static int from(long value) {
 		return (int)(value & 0xFFFF) ^ (int)((value >> 32) & 0xFFFF);
 	}
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public static int from(float value) {
 		return Float.floatToIntBits(value);
 	}
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param value the value
-	 * @return the int
-	 */
+
 	public static int from(double value) {
 		return from(Double.doubleToLongBits(value));
 	}
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
+
 	public static int from(boolean[] values) { return from(values, 0, values.length); }
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @param from the from
-	 * @param to the to
-	 * @return the int
-	 */
+
 	public static int from(boolean[] values, int from, int to) {
 		int shift = 0;
 		int hash = from ^ to;
@@ -94,22 +64,10 @@ public final class HashCode {
 		return hash ^ current;
 	}
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
+
 	public static int from(byte[] values) { return from(values, 0, values.length); }
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @param from the from
-	 * @param to the to
-	 * @return the int
-	 */
+
 	public static int from(byte[] values, int from, int to) {
 		int shift = 0;
 		int hash = from ^ to;
@@ -125,22 +83,10 @@ public final class HashCode {
 		
 	}
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
+
 	public static int from(short[] values) { return from(values, 0, values.length); }
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @param from the from
-	 * @param to the to
-	 * @return the int
-	 */
+
 	public static int from(short[] values, int from, int to) {
 		int shift = 0;
 		int hash = from ^ to;
@@ -156,90 +102,39 @@ public final class HashCode {
 		
 	}
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
+
 	public static int from(int[] values) { return from(values, 0, values.length); }
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @param from the from
-	 * @param to the to
-	 * @return the int
-	 */
+
 	public static int from(int[] values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) hash ^= values[i]; 
 		return hash;
 	}
 	
-	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
+
 	public static int from(long[] values) { return from(values, 0, values.length); }
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @param from the from
-	 * @param to the to
-	 * @return the int
-	 */
+
 	public static int from(long[] values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) hash ^= from(values[i]); 
 		return hash;
 	}
 	
-	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
+
 	public static int from(float[] values) { return from(values, 0, values.length); }
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @param from the from
-	 * @param to the to
-	 * @return the int
-	 */
+
 	public static int from(float[] values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) hash ^= from(values[i]); 
 		return hash;		
 	}
-	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
+
 	public static int from(double[] values) { return from(values, 0, values.length); }
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @param from the from
-	 * @param to the to
-	 * @return the int
-	 */
+
 	public static int from(double[] values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) hash ^= from(values[i]); 
@@ -247,22 +142,9 @@ public final class HashCode {
 	}
 	
 
-    /**
-     * Gets the.
-     *
-     * @param values the values
-     * @return the int
-     */
     public static int from(Values1D values) { return from(values, 0, values.size()); }
     
-    /**
-     * Gets the.
-     *
-     * @param values the values
-     * @param from the from
-     * @param to the to
-     * @return the int
-     */
+
     public static int from(Values1D values, int from, int to) {
         int hash = from ^ to;
         for(int i=from; i<to; i++) hash ^= values.get(i).hashCode(); 
@@ -270,22 +152,9 @@ public final class HashCode {
     }
 	
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
 	public static int from(Object[] values) { return from(values, 0, values.length); }
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @param from the from
-	 * @param to the to
-	 * @return the int
-	 */
+
 	public static int from(Object[] values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) {
@@ -303,22 +172,10 @@ public final class HashCode {
 		return hash;		
 	}
 	
-	/**
-	 * From.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
+
 	public static int from(List<?> values) { return from(values, 0, values.size()); }
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param values the values
-	 * @param from the from
-	 * @param to the to
-	 * @return the int
-	 */
+
 	public static int from(List<?> values, int from, int to) {
 		int hash = from ^ to;
 		for(int i=from; i<to; i++) {
@@ -344,12 +201,6 @@ public final class HashCode {
 	
 	
 	// Get the first 8, the last 8, and 16 scattered
-	/**
-	 * Sample from.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
 	public static int sampleFrom(boolean[] values) {
 		if(values.length < 32) return from(values, 0, values.length);
 		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
@@ -360,12 +211,6 @@ public final class HashCode {
 	}
 	
 	// Get the first 8, last 8 and 16 scattered
-	/**
-	 * Sample from.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
 	public static int sampleFrom(byte[] values) {
 		if(values.length < 32) return from(values, 0, values.length);
 		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
@@ -382,12 +227,6 @@ public final class HashCode {
 	}
 	
 	// Get the first 8, last 8 and 16 scattered
-	/**
-	 * Sample from.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
 	public static int sampleFrom(short[] values) {
 		if(values.length < 32) return from(values, 0, values.length);
 		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
@@ -404,12 +243,6 @@ public final class HashCode {
 	}
 	
 	// Get the first 8, last 8 and 16 scattered
-	/**
-	 * Sample from.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
 	public static int sampleFrom(int[] values) {
 		if(values.length < 32) return from(values, 0, values.length);
 		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
@@ -419,12 +252,6 @@ public final class HashCode {
 	}
 	
 	// Get the first 8, last 8 and 16 scattered
-	/**
-	 * Sample from.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
 	public static int sampleFrom(long[] values) {
 		if(values.length < 32) return from(values, 0, values.length);
 		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
@@ -434,12 +261,6 @@ public final class HashCode {
 	}
 	
 	// Get the first 8, last 8 and 16 scattered
-	/**
-	 * Sample from.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
 	public static int sampleFrom(float[] values) {
 		if(values.length < 32) return from(values, 0, values.length);
 		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
@@ -449,12 +270,6 @@ public final class HashCode {
 	}
 	
 	// Get the first 8, last 8 and 16 scattered
-	/**
-	 * Sample from.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
 	public static int sampleFrom(double[] values) {
 		if(values.length < 32) return from(values, 0, values.length);
 		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
@@ -465,12 +280,6 @@ public final class HashCode {
 	
 	
 	// Get the first 8, last 8 and 16 scattered
-    /**
-     * Sample from.
-     *
-     * @param values the values
-     * @return the int
-     */
     public static int sampleFrom(Values1D values) {
         if(values.size() < 32) return from(values, 0, values.size());
         int hash = from(values, 0, 8) ^ from(values, values.size()-8, values.size());
@@ -481,12 +290,6 @@ public final class HashCode {
 	
 	
 	// Get the first 8, last 8 and 16 scattered
-	/**
-	 * Sample from.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
 	public static int sampleFrom(Object[] values) {
 		if(values.length < 32) return from(values, 0, values.length);
 		int hash = from(values, 0, 8) ^ from(values, values.length-8, values.length);
@@ -506,12 +309,7 @@ public final class HashCode {
 		return hash;
 	}
 	
-	/**
-	 * Sample from.
-	 *
-	 * @param values the values
-	 * @return the int
-	 */
+
 	public static int sampleFrom(List<?> values) {
 		if(values.size() < 32) return from(values, 0, values.size());
 		int hash = from(values, 0, 8) ^ from(values, values.size()-8, values.size());

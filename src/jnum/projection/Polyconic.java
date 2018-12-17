@@ -26,13 +26,9 @@ package jnum.projection;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Polyconic.
- */
+
 public class Polyconic extends SphericalProjection {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2600070844940523551L;
 
 	/* (non-Javadoc)

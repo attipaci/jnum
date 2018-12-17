@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -25,29 +25,33 @@ package jnum.reporting;
 
 import java.util.Hashtable;
 
-// TODO: Auto-generated Javadoc
+
 /**
- * The Class Broadcaster.
+ * Broadcasters are reporters that distribute incoming messages to a list of connected reporter objects. They are
+ * useful for managing message consumers which work independently, but process the same messages.
+ * 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
  */
 public class Broadcaster extends Reporter {
-    
-    /** The reporters. */
+
     private Hashtable<String, Reporter> reporters = new Hashtable<String, Reporter>();
 
     /**
      * Instantiates a new broadcaster.
      *
-     * @param id the id
+     * @param id    the identifier by which this broadcaster can be referenced
      */
     public Broadcaster(String id) {
         super(id);
     }
 
     /**
-     * Instantiates a new broadcaster.
+     * Instantiates a new broadcaster, and an initial reporter connected to it.
      *
-     * @param id the id
-     * @param r the r
+     * @param id    the identifier by which this broadcaster can be referenced
+     * @param r     the initial reporter to which incoming messages will be sent to.     
      */
     public Broadcaster(String id, Reporter r) {
         this(id);
@@ -55,31 +59,33 @@ public class Broadcaster extends Reporter {
     }
     
     /**
-     * Adds the specified reporter for processing messages.
+     * Adds the specified reporter to the broadcast.
      *
-     * @param r the r
+     * @param r     the reporter that is to be added to the broadcast.
+     * @return      The prior reporter with the same ID as the newly added one, or <code>null</code> if 
+     *              there was no prior reporter by the same ID.
      */
     public synchronized Reporter add(Reporter r) {
         return reporters.put(r.getID(), r);
     }
     
     /**
-     * Remove all reporters from the broadcasting... 
+     * Remove all reporters from the broadcast... 
      */
     public void clear() {
         reporters.clear();
     }
     
     /**
-     * Check if a given Reporter object is already being used for processing messages.
+     * Check if a given Reporter object is already part of this broadcast.
      *
-     * @param r the r
-     * @return true, if the specified Reporter is already included.
+     * @param r     the reporter to be checked for.
+     * @return      <code>true</code>, if the specified Reporter is already included.
      */
     public boolean contains(Reporter r) { return reporters.contains(r); }
     
     /**
-     * Check if a Reporter with the given String ID is already being used for processing messages.
+     * Check if a Reporter with the given String ID is already part of this broadcast.
      *
      * @param id the id of the Reporter to check
      * @return true, if a reporter with the specified ID is already included.
@@ -87,18 +93,19 @@ public class Broadcaster extends Reporter {
     public boolean contains(String id) { return reporters.containsKey(id); }
     
     /**
-     * Removes the.
+     * Removes the specified reporter from this broadcast.
      *
-     * @param r the r
+     * @param r     the reporter object to remove from the message broadcast.
      * @return the reporter
      */
     public synchronized Reporter remove(Reporter r) { return remove(r.getID()); }
     
     /**
-     * Removes the.
+     * Removes the reporter with the specified ID from the broadcast.
      *
-     * @param id the id
-     * @return the reporter
+     * @param id    the ID of the reporter to remove from the broadcast
+     * @return the  The reporter that was removed from the broadcast, or <code>null</code> if no 
+     *              reporter with the given ID was part of the broadcast. 
      */
     public synchronized Reporter remove(String id) { return reporters.remove(id); }
     

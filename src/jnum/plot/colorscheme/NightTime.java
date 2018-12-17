@@ -28,10 +28,6 @@ import jnum.plot.ColorScheme;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class NightTime.
- */
 public class NightTime extends ColorScheme {
 	
 	/* (non-Javadoc)
@@ -71,10 +67,8 @@ public class NightTime extends ColorScheme {
 		return Color.ORANGE;
 	}
 	
-	/** The third. */
 	private static float third = 1.0F / 3.0F;
 	
-	/** The twothirds. */
 	private static float twothirds = 2.0F / 3.0F;
 	
 }

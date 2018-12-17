@@ -13,7 +13,6 @@ public class PrefixedUnit extends Unit {
 
     private Unit baseUnit;
 
-    /** The multiplier. */
     private Multiplier multiplier;
     
     
@@ -54,48 +53,24 @@ public class PrefixedUnit extends Unit {
     @Override
     public double value() { return multiplier.value() * baseUnit.value(); }
    
-    /**
-     * Sets the multiplier.
-     *
-     * @param m the new multiplier
-     */
+
     public void setMultiplier(Multiplier m) { this.multiplier = m; }
 
-    /**
-     * Multiply by.
-     *
-     * @param m the m
-     */
+
     public void multiplyBy(Multiplier m) {
         setMultiplier(Multiplier.getMultiplier(getMultiplier().value * m.value));   
     }
 
-    /**
-     * Sets the multiplier for.
-     *
-     * @param value the new multiplier for
-     */
+
     public void setMultiplierFor(double value) {
         multiplyBy(Multiplier.getMultiplier(value));        
     }
 
 
-    /**
-     * Gets the multiplier.
-     *
-     * @return the multiplier
-     */
     public Multiplier getMultiplier() { return multiplier; }
 
 
-    
    
-    /**
-     * Gets the multiplier.
-     *
-     * @param c the c
-     * @return the multiplier
-     */
     public static Multiplier getMultiplier(char c) {    
         switch(c) {
         case ' ': return Multiplier.unity;
@@ -141,124 +116,75 @@ public class PrefixedUnit extends Unit {
         return new PrefixedUnit(m, u); 
     }
     
-    /**
-     * The Enum Multiplier.
-     */
+
     @SuppressWarnings("hiding")
     public static enum Multiplier {
 
-        /** The unity. */
         unity ("", 1.0, ""),
 
-        /** The deci. */
         deci ("d", 0.1, "deci"),
 
-        /** The centi. */
         centi ("c", 1.0e-2, "centi"),
 
-        /** The milli. */
         milli ("m", 1.0e-3, "milli"),
 
-        /** The micro. */
         micro ("u", 1.0e-6, "micro"), 
 
-        /** The nano. */
         nano ("n", 1.0e-9, "nano"),
 
-        /** The pico. */
         pico ("p", 1.0e-12, "pico"),
 
-        /** The femto. */
         femto ("f", 1.0e-15, "femto"), 
 
-        /** The atto. */
         atto ("a", 1.0e-18, "atto"), 
 
-        /** The zepto. */
         zepto ("z", 1.0e-21, "zepto"), 
 
-        /** The yocto. */
         yocto ("y", 1.0e-24, "yocto"), 
 
-        /** The deka. */
         deka ("dk", 10.0, "deka"),
 
-        /** The hecto. */
         hecto ("h", 100.0, "hecto"),
 
-        /** The kilo. */
         kilo ("k", 1.0e3, "kilo"),
 
-        /** The mega. */
         mega ("M", 1.0e6, "Mega"), 
 
-        /** The giga. */
         giga ("G", 1.0e9, "Giga"),
 
-        /** The tera. */
         tera ("T", 1.0e12, "Tera"), 
 
-        /** The peta. */
         peta ("P", 1.0e15, "Peta"), 
 
-        /** The exa. */
         exa ("E", 1.0e18, "Exa"),
 
-        /** The zetta. */
         zetta ("Z", 1.0e21, "Zetta"),
 
-        /** The yotta. */
         yotta ("Y", 1.0e24, "Yotta");
 
-        /** The value. */
         final double value;
 
-        /** The letter code. */
         final String letterCode;
 
-        /** The name. */
         final String name;
 
-        /**
-         * Instantiates a new multiplier.
-         *
-         * @param c the c
-         * @param multiplier the multiplier
-         * @param name the name
-         */
+
         private Multiplier(String c, double multiplier, String name) {
             this.letterCode = c;
             this.value = multiplier;
             this.name = name;
         }
 
-        /**
-         * Gets the value.
-         *
-         * @return the value
-         */
+
         public double value() { return value; }
 
-        /**
-         * Gets the letter code.
-         *
-         * @return the letter code
-         */
+
         public String letterCode() { return letterCode; }
 
-        /**
-         * Gets the name.
-         *
-         * @return the name
-         */
+
         public String standardName() { return name; }
 
-        /**
-         * Gets the multiplier.
-         *
-         * @param value the value
-         * @return the multiplier
-         */
+
         public static Multiplier getMultiplier(double value) {
             if(value < 1e-21) return yocto;
             if(value < 1e-18) return zepto;

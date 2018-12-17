@@ -30,10 +30,6 @@ import jnum.plot.ColorScheme;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GreyScale.
- */
 public class GreyScale extends ColorScheme {
 
 	/* (non-Javadoc)

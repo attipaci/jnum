@@ -23,13 +23,9 @@
 
 package jnum.projection;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CylindricalProjection.
- */
+
 public abstract class CylindricalProjection extends SphericalProjection {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 6517070902644197474L;
 
 

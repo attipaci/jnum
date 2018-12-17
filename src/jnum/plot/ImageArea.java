@@ -22,20 +22,11 @@
  ******************************************************************************/
 package jnum.plot;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ImageArea.
- *
- * @param <ContentType> the generic type
- */
+
 public class ImageArea<ContentType extends ImageLayer> extends ContentArea<ContentType> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2517432416174422671L;
 
-	/**
-	 * Instantiates a new image area.
-	 */
 	public ImageArea() {
 		// Fit the image into the plottable area...
 		setZoomMode(ZOOM_FIT);

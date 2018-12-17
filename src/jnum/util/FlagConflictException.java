@@ -23,49 +23,29 @@
 
 package jnum.util;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FlagConflictException.
- */
+
 public class FlagConflictException extends IllegalArgumentException {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Instantiates a new flag conflict exception.
-     */
     public FlagConflictException() {
         super();
         // TODO Auto-generated constructor stub
     }
 
-    /**
-     * Instantiates a new flag conflict exception.
-     *
-     * @param arg0 the arg0
-     * @param arg1 the arg1
-     */
+
     public FlagConflictException(String arg0, Throwable arg1) {
         super(arg0, arg1);
         // TODO Auto-generated constructor stub
     }
 
-    /**
-     * Instantiates a new flag conflict exception.
-     *
-     * @param s the s
-     */
+
     public FlagConflictException(String s) {
         super(s);
         // TODO Auto-generated constructor stub
     }
 
-    /**
-     * Instantiates a new flag conflict exception.
-     *
-     * @param cause the cause
-     */
+
     public FlagConflictException(Throwable cause) {
         super(cause);
         // TODO Auto-generated constructor stub

@@ -24,10 +24,7 @@
 
 package jnum.text;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BracketParser.
- */
+
 public class BracketParser extends EnclosureParser {
 
 	/* (non-Javadoc)

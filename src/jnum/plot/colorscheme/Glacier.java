@@ -28,10 +28,6 @@ import jnum.plot.ColorScheme;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Glacier.
- */
 public class Glacier extends ColorScheme {
 	
 	/* (non-Javadoc)
@@ -61,10 +57,8 @@ public class Glacier extends ColorScheme {
 		return Color.RED;
 	}
 	
-	/** The third. */
 	private static float third = 1.0F / 3.0F;
 	
-	/** The twothirds. */
 	private static float twothirds = 2.0F / 3.0F;
 	
 }

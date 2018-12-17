@@ -26,18 +26,11 @@ package jnum.projection;
 
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Gnomonic.
- */
+
 public class Gnomonic extends ZenithalProjection { 
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -6424305737899780309L;
 
-	/**
-	 * Instantiates a new gnomonic.
-	 */
 	public Gnomonic() {}
 
 	/* (non-Javadoc)

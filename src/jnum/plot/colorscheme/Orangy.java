@@ -30,10 +30,6 @@ import jnum.plot.ColorScheme;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Orangy.
- */
 public class Orangy extends ColorScheme {
 
 	/* (non-Javadoc)

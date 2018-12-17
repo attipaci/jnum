@@ -38,32 +38,17 @@ import java.util.StringTokenizer;
 
 import jnum.Util;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LogFile.
- */
 public class LogFile {
-	
-	/** The path. */
+
 	String path;
-	
-	/** The format. */
+
 	String format;
-	
-	/** The version. */
+
 	int version = 0;
-	
-	/** The conflict policy. */
+
 	int conflictPolicy = CONFLICT_DEFAULT;
 	
-	/**
-	 * Instantiates a new log file.
-	 *
-	 * @param path the path
-	 * @param format the format
-	 * @param conflictPolicy the conflict policy
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public LogFile(String path, String format, int conflictPolicy) throws IOException {
 		this.path = path;
 		this.format = format;
@@ -71,13 +56,7 @@ public class LogFile {
 		check();
 	}
 	
-	/**
-	 * Read header.
-	 *
-	 * @param in the in
-	 * @return the string
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	protected static String readHeader(BufferedReader in) throws IOException {
 		String header = in.readLine();
 		if(header == null) throw new IllegalStateException("Empty log file header.");
@@ -85,12 +64,7 @@ public class LogFile {
 		if(header.length() < 2) throw new IllegalStateException("Empty file header.");
 		return header.substring(2);
 	}
-		
-	/**
-	 * Check.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	protected void check() throws IOException {
 		File file = getFile();
 
@@ -128,37 +102,22 @@ public class LogFile {
 		}
 	}
 	
-	/**
-	 * Gets the file name.
-	 *
-	 * @return the file name
-	 */
+
 	public String getFileName() {
 		return path + getVersionExtension();
 	}
 	
-	/**
-	 * Gets the file.
-	 *
-	 * @return the file
-	 */
+
 	protected File getFile() {
 		return new File(getFileName());
 	}
 
-	
-	/**
-	 * Gets the version extension.
-	 *
-	 * @return the version extension
-	 */
+
 	protected String getVersionExtension() {
 		return version == 0 ? "" : "." + version; 
 	}
 	
-	/**
-	 * Delete.
-	 */
+
 	public void delete() {
 		File file = getFile();
 		if(file.exists()) {
@@ -167,9 +126,7 @@ public class LogFile {
 		}
 	}
 	
-	/**
-	 * Delete all.
-	 */
+
 	public void deleteAll() {
 		File directory = getFile().getParentFile();
 		final String name = getFile().getName();
@@ -200,75 +157,39 @@ public class LogFile {
 		}
 	}
 	
-	/**
-	 * Gets the prints the stream.
-	 *
-	 * @return the prints the stream
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public PrintStream getPrintStream() throws IOException {
 		return new PrintStream(new BufferedOutputStream(new FileOutputStream(getFile(), true)));
 	}
 	
-	
-	/**
-	 * Adds the.
-	 *
-	 * @param entry the entry
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public void add(String entry) throws IOException {
 		PrintStream out = getPrintStream();
 		out.println(entry);
 		out.close();
 	}
 	
+
 	
-	/**
-	 * The Class Entry.
-	 */
 	public static class Entry {
-		
-		/** The value. */
+
 		private String key, value;
-		
-		/**
-		 * Instantiates a new entry.
-		 *
-		 * @param key the key
-		 * @param value the value
-		 */
+
 		public Entry(String key, String value) {
 			this.key = key;
 			this.value = value;
 		}
 		
-		/**
-		 * Gets the key.
-		 *
-		 * @return the key
-		 */
+
 		public String getKey() { return key; }
 		
-		/**
-		 * Gets the value.
-		 *
-		 * @return the value
-		 */
+
 		public String getValue() { return value; }
 		
-		/**
-		 * Gets the double.
-		 *
-		 * @return the double
-		 */
+
 		public double getDouble() { return Double.parseDouble(value); }
 		
-		/**
-		 * Gets the int.
-		 *
-		 * @return the int
-		 */
+
 		public int getInt() { return Integer.parseInt(value); }
 	}
 	
@@ -296,32 +217,17 @@ public class LogFile {
 	}
 	*/
 
-	/**
-	 * The Class Row.
-	 */
+
 	public static class Row extends Hashtable<String, Entry> {	
-		
-		/** The Constant serialVersionUID. */
+
 		private static final long serialVersionUID = -1708055526314357120L;
 
-		/**
-		 * Adds the.
-		 *
-		 * @param entry the entry
-		 */
 		public void add(Entry entry) {
 			put(entry.getKey(), entry);
 		}
 	}
 	
-	
-	/**
-	 * Read.
-	 *
-	 * @param fileName the file name
-	 * @return the array list
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public static ArrayList<Row> read(String fileName) throws IOException {
 		ArrayList<Row> data = new ArrayList<Row>();
 		BufferedReader in = Util.getReader(fileName);
@@ -351,13 +257,10 @@ public class LogFile {
 		return data;		
 	}
 
-	
-	/** The Constant CONFLICT_OVERWRITE. */
+
 	public final static int CONFLICT_OVERWRITE = 0;
-	
-	/** The Constant CONFLICT_VERSION. */
+
 	public final static int CONFLICT_VERSION = 1;
-	
-	/** The Constant CONFLICT_DEFAULT. */
+
 	public final static int CONFLICT_DEFAULT = CONFLICT_VERSION;
 }

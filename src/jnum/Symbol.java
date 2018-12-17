@@ -24,10 +24,18 @@
 package jnum;
 
 /**
- * A selection of commonly used unicode character symbols, especially for mathermatics, physics and astronomy. 
+ * A selection of commonly used unicode character symbols, especially for mathermatics, physics and astronomy.
+ * 
+ *  For more symbols, check out {@link jnum.text.GreekLetter} and {@link jnum.text.Brackets}, {@jnum.textQuotationMarks}.
  * 
  * 
  * @author Attila Kovacs <attila@sigmyne.com>
+ * 
+ * @see jnum.text.GreekLetter
+ * @see jnum.text.Brackets
+ * @see jnum.text.QuotationMarks
+ * @see jnum.text.Subscript
+ * @see jnum.text.Superscript
  *
  */
 public final class Symbol {

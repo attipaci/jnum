@@ -26,29 +26,16 @@ package jnum.util;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SimpleMatrix.
- */
+
 public class SimpleMatrix implements Serializable {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 7486363505617096466L;
 
-	/** The value. */
 	public float[][] value; 
 
-	/**
-	 * Instantiates a new simple matrix.
-	 */
 	public SimpleMatrix() {}
 
-	/**
-	 * Instantiates a new simple matrix.
-	 *
-	 * @param v the v
-	 * @param dir the dir
-	 */
+
 	public SimpleMatrix(float[] v, int dir) {
 		int n = v.length;
 
@@ -65,28 +52,13 @@ public class SimpleMatrix implements Serializable {
 		}
 	}
 
-	/**
-	 * Instantiates a new simple matrix.
-	 *
-	 * @param a the a
-	 */
+
 	public SimpleMatrix(float[][] a) { value = a; }
 
-	/**
-	 * Instantiates a new simple matrix.
-	 *
-	 * @param n the n
-	 * @param m the m
-	 */
+
 	public SimpleMatrix(int n, int m) { value = new float[n][m]; }
 
-	/**
-	 * Dot.
-	 *
-	 * @param B the b
-	 * @return the simple matrix
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public SimpleMatrix dot(final SimpleMatrix B) throws IllegalArgumentException {	
 		final int l = value[0].length;
 		
@@ -103,11 +75,7 @@ public class SimpleMatrix implements Serializable {
 		return M;
 	}
 
-	/**
-	 * Transpose.
-	 *
-	 * @return the simple matrix
-	 */
+
 	public SimpleMatrix transpose() {
 		final int n = value.length;
 		final int m = value[0].length;
@@ -119,18 +87,12 @@ public class SimpleMatrix implements Serializable {
 		return M;
 	}
 
-	/**
-	 * Gets the size string.
-	 *
-	 * @return the size string
-	 */
+
 	final String getSizeString() {
 		return "[" + value.length + "x" + value[0].length + "]";
 	}
 
-	/** The Constant ROW_VECTOR. */
 	public final static int ROW_VECTOR = 0;
-	
-	/** The Constant COLUMN_VECTOR. */
+
 	public final static int COLUMN_VECTOR = 1;
 }

@@ -30,25 +30,13 @@ import java.text.ParsePosition;
 import jnum.Unit;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class HourAngleFormat.
- */
 public class HourAngleFormat extends TimeFormat {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -6260375852141250856L;
-	
-	/**
-	 * Instantiates a new hour angle format.
-	 */
+
 	public HourAngleFormat() { super(); setPositiveOnly(true); }
 		
-	/**
-	 * Instantiates a new hour angle format.
-	 *
-	 * @param decimals the decimals
-	 */
+
 	public HourAngleFormat(int decimals) { super(decimals); setPositiveOnly(true); }
 	
 	/* (non-Javadoc)

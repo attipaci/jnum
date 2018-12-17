@@ -28,18 +28,11 @@ import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class HammerAitoff.
- */
+
 public class HammerAitoff extends CylindricalProjection {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -5636733533889649074L;
 
-	/**
-	 * Instantiates a new hammer aitoff.
-	 */
 	public HammerAitoff() {}
 
 	/* (non-Javadoc)
@@ -73,23 +66,12 @@ public class HammerAitoff extends CylindricalProjection {
 		toOffset.set(2.0 * gamma * Math.cos(theta) * Math.sin(0.5*phi), gamma * Math.sin(theta));
 	}
 
-	/**
-	 * Z2.
-	 *
-	 * @param offset the offset
-	 * @return the double
-	 */
+
 	private final double Z2(Coordinate2D offset) {
 		return 1.0 - (offset.x() * offset.x()) / 16.0 - (offset.y() * offset.y()) / 4.0;
 	}
 	
-	/**
-	 * Gamma.
-	 *
-	 * @param theta the theta
-	 * @param phi the phi
-	 * @return the double
-	 */
+
 	private final double gamma(double theta, double phi) {
 		return Math.sqrt(2.0 / (1.0 + Math.cos(theta) * Math.cos(0.5*phi)));
 	}

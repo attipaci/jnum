@@ -48,12 +48,7 @@ package jnum.parallel;
 import jnum.data.WeightedPoint;
 import jnum.math.Additive;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Summation.
- *
- * @param <ReturnType> the generic type
- */
+
 public class Summation<ReturnType extends Additive<ReturnType>> extends ParallelReduction<ReturnType> {
 
 	
@@ -71,11 +66,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		return sum;
 	}
 	
-	/**
-	 * The Class WeightedSum.
-	 *
-	 * @param <ReturnType> the generic type
-	 */
+
 	public static class WeightedSum<ReturnType extends WeightedPoint> extends ParallelReduction<ReturnType> {
 		
 		/* (non-Javadoc)
@@ -96,9 +87,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
-	/**
-	 * The Class IntValue.
-	 */
+
 	public static class IntValue extends ParallelReduction<Integer> {
 		
 		/* (non-Javadoc)
@@ -111,10 +100,8 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 			return sum;
 		}
 	}
+
 	
-	/**
-	 * The Class FloatValue.
-	 */
 	public static class FloatValue extends ParallelReduction<Float> {
 		
 		/* (non-Javadoc)
@@ -128,9 +115,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
-	/**
-	 * The Class DoubleValue.
-	 */
+
 	public static class DoubleValue extends ParallelReduction<Double> {
 		
 		/* (non-Javadoc)
@@ -144,9 +129,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
-	/**
-	 * The Class IntArray.
-	 */
+
 	public static class IntArray extends ParallelReduction<int[]> {
 		
 		/* (non-Javadoc)
@@ -164,9 +147,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
-	/**
-	 * The Class FloatArray.
-	 */
+
 	public static class FloatArray extends ParallelReduction<float[]> {
 		
 		/* (non-Javadoc)
@@ -184,9 +165,7 @@ public class Summation<ReturnType extends Additive<ReturnType>> extends Parallel
 		}
 	}
 	
-	/**
-	 * The Class DoubleArray.
-	 */
+
 	public static class DoubleArray extends ParallelReduction<double[]> {
 		
 		/* (non-Javadoc)

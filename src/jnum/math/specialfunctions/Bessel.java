@@ -24,10 +24,7 @@ package jnum.math.specialfunctions;
 
 import jnum.Function;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Bessel.
- */
+
 public final class Bessel {
 
 

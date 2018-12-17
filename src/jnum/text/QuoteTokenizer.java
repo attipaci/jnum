@@ -23,19 +23,13 @@
 package jnum.text;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class QuoteTokenizer.
- */
+
 public class QuoteTokenizer {
-	
-	/** The type. */
+
 	int type = UNQUOTED;
-	
-	/** The line. */
+
 	String line;
-	
-	/** The index. */
+
 	int index = 0;
 
 	/*
@@ -52,11 +46,7 @@ public class QuoteTokenizer {
 	}
 	*/
 	
-	/**
-	 * Instantiates a new quote tokenizer.
-	 *
-	 * @param line the line
-	 */
+
 	public QuoteTokenizer(String line) {
 		this.line = line;
 		// If starting with a quote, then no need to return what precedes the quote...
@@ -77,50 +67,27 @@ public class QuoteTokenizer {
 		
 	}
 	
-	/**
-	 * Checks if is next quote.
-	 *
-	 * @return true, if is next quote
-	 */
+
 	public boolean isNextQuote() {
 		return type != UNQUOTED;
 	}
 	
-	/**
-	 * Checks if is next double quote.
-	 *
-	 * @return true, if is next double quote
-	 */
+
 	public boolean isNextDoubleQuote() {
 		return type == DOUBLE_QUOTE;
 	}
 	
-	/**
-	 * Checks if is next single quote.
-	 *
-	 * @return true, if is next single quote
-	 */
+
 	public boolean isNextSingleQuote() {
 		return type == SINGLE_QUOTE;
 	}
 	
-	/**
-	 * Checks for more elements.
-	 *
-	 * @return true, if successful
-	 */
+
 	public boolean hasMoreElements() {
 		return index < line.length();
 	}
 	
 
-	/**
-	 * Find next.
-	 *
-	 * @param c the c
-	 * @param from the from
-	 * @return the int
-	 */
 	private int findNext(char c, int from) {
 		int i = line.indexOf(c, from);
 
@@ -130,11 +97,7 @@ public class QuoteTokenizer {
 		return i;
 	}
 	
-	/**
-	 * Next token.
-	 *
-	 * @return the string
-	 */
+
 	public String nextToken() {
 		if(line.length() == 0) return line;
 
@@ -171,14 +134,11 @@ public class QuoteTokenizer {
 		
 		return value;
 	}
-	
-	/** The Constant UNQUOTED. */
+
 	public final static int UNQUOTED = 0;
-	
-	/** The Constant SINGLE_QUOTE. */
+
 	public final static int SINGLE_QUOTE = 1;
-	
-	/** The Constant DOUBLE_QUOTE. */
+
 	public final static int DOUBLE_QUOTE = 2;
 	
 }

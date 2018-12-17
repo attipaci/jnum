@@ -26,26 +26,30 @@ package jnum.util;
 import java.io.Serializable;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class representing a bitwise flag in a flag-space of an integer-type container. The flag has a unique letter
  * code identifying it in the flag-space it belongs to, and has a human-readable descriptive name. These allow
  * for human tracking, if desired, of which flags have been set.
- *
- * @param <Type> the generic type
+ * <p>
+ * 
+ * For more basic bit-wise flagging, see the {@link jnum.Flagging} interface.
+ * 
+ * @param <Type> the generic integer type supporting this flag space.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ * 
+ * @see jnum.Flagging
  */
 public abstract class Flag<Type extends Number> implements Serializable {
     
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6666953592077360485L;
     
-    /** The space. */
     private FlagSpace<Type> space;
     
-    /** The letter code. */
+    /** The letter code that uniquely identifies this flag in a given {@link FlagSpace}. */
     private char letterCode;
     
-    /** The name. */
+    /** The descriptive name of this flag. */
     private String name;
     
     /**

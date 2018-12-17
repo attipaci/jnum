@@ -25,23 +25,14 @@ package jnum.text;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class VersionString.
- */
+
 public class VersionString implements Serializable, Comparable<VersionString> {	
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -3580136873936732038L;
 
-	/** The type. */
+
 	int major, minor, update, type;
 
-	/**
-	 * Instantiates a new version string.
-	 *
-	 * @param text the text
-	 */
 	public VersionString(String text) { parse(text); }
 	
 	/* (non-Javadoc)
@@ -64,33 +55,21 @@ public class VersionString implements Serializable, Comparable<VersionString> {
 		else return 0;		
 	}
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param text the text
-	 */
+
 	public void parse(String text) {
 		StringTokenizer tokens = new StringTokenizer(text, "-");
 		parseVersion(tokens.nextToken());
 		parseUpdate(tokens.nextToken());
 	}
 	
-	/**
-	 * Parses the version.
-	 *
-	 * @param text the text
-	 */
+
 	private void parseVersion(String text) {
 		StringTokenizer tokens = new StringTokenizer(text, ".");
 		major = Integer.parseInt(tokens.nextToken());
 		minor = tokens.hasMoreTokens() ? Integer.parseInt(tokens.nextToken()) : 0;
 	}
 	
-	/**
-	 * Parses the update.
-	 *
-	 * @param text the text
-	 */
+
 	private void parseUpdate(String text) {
 		text = text.toLowerCase();
 		if(text.startsWith("alpha")) { type = TYPE_ALPHA; text = text.substring(5); }
@@ -106,25 +85,18 @@ public class VersionString implements Serializable, Comparable<VersionString> {
 		update = Integer.parseInt(text);		
 	}
 	
-	
-	/** The Constant TYPE_RAWHIDE. */
+
 	public final static int TYPE_RAWHIDE = 0;
 	
-	/** The Constant TYPE_ALPHA. */
 	public final static int TYPE_ALPHA = 1;
-	
-	/** The Constant TYPE_BETA. */
+
 	public final static int TYPE_BETA = 2;
-	
-	/** The Constant TYPE_RELEASE_CANDIDATE. */
+
 	public final static int TYPE_RELEASE_CANDIDATE = 3;
-	
-	/** The Constant TYPE_RELEASE. */
+
 	public final static int TYPE_RELEASE = 4;
-	
-	/** The Constant typeShortString. */
+
 	public final static String[] typeShortString = { "pre", "a", "b", "rc", "" };
-	
-	/** The Constant typeLongString. */
+
 	public final static String[] typeLongString = { "pre-release", "alpha", "beta", "release candidate", "update" };
 }

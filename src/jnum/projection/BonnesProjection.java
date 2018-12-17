@@ -33,26 +33,15 @@ import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BonnesProjection.
- */
+
 public class BonnesProjection extends SphericalProjection {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 9018823339614736356L;
-	
-	/** The theta1. */
+
 	private double theta1 = 0.0;
-	
-	/** The Y0. */
+
 	private double Y0;
 	
-	/**
-	 * Sets the theta1.
-	 *
-	 * @param value the new theta1
-	 */
 	public void setTheta1(double value) {
 		if(theta1 == value) return;
 		theta1 = value;

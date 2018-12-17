@@ -35,31 +35,14 @@ import jnum.astro.AstroTime;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class TableFormatter.
- */
 public final class TableFormatter {
 
-	/**
-	 * Format.
-	 *
-	 * @param entries the entries
-	 * @param format the format
-	 * @return the string
-	 */
+
 	public static String format(Entries entries, String format) {
 		return format(entries, format, " \t,=");
 	}
 	
-	/**
-	 * Format.
-	 *
-	 * @param entries the entries
-	 * @param format the format
-	 * @param separators the separators
-	 * @return the string
-	 */
+
 	public static String format(Entries entries, String format, String separators) {
 		StringTokenizer tokens = new StringTokenizer(format, separators, true);
 		StringBuffer line = new StringBuffer();
@@ -106,13 +89,6 @@ public final class TableFormatter {
 		return new String(line);		
 	}
 	
-	
-	/**
-	 * Gets the number format.
-	 *
-	 * @param spec the spec
-	 * @return the number format
-	 */
 	
 	public static NumberFormat getNumberFormat(String spec) {
 		if(spec == null) return null;
@@ -207,22 +183,10 @@ public final class TableFormatter {
 		return null;
 	}
 	
-	/**
-	 * The Interface Entries.
-	 */
-	public interface Entries {
 
-		/**
-		 * Gets the formatted entry.
-		 *
-		 * @param name the name
-		 * @param formatSpec the format spec
-		 * @return the formatted entry
-		 */
+	public interface Entries {
 		public Object getTableEntry(String name);
-		
 	}
-	
-	/** The no such data. */
+
 	public static String NO_SUCH_DATA = "---";
 }

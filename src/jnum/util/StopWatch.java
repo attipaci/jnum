@@ -22,44 +22,26 @@
  ******************************************************************************/
 package jnum.util;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class StopWatch.
- */
+
 public class StopWatch {
-	
-	/** The last. */
+
 	private long start = -1L, last = -1L;
 	
-	/**
-	 * Start.
-	 */
+
 	public synchronized void start() {
 		start = last = System.currentTimeMillis();
 	}
 	
-	/**
-	 * Checks if is running.
-	 *
-	 * @return true, if is running
-	 */
+
 	public synchronized boolean isRunning() { return start > 0L; }
 	
-	/**
-	 * Gets the time.
-	 *
-	 * @return the time
-	 */
+
 	public synchronized long getTime() {
 		long now = System.currentTimeMillis();
 		return start > 0L ? now - start : -1L;
 	}
 	
-	/**
-	 * Lap time.
-	 *
-	 * @return the long
-	 */
+
 	public synchronized long lapTime() {
 		long now = System.currentTimeMillis();
 		long elapsed = -1;

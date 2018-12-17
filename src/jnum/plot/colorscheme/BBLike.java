@@ -28,10 +28,6 @@ import jnum.plot.ColorScheme;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BBLike.
- */
 public class BBLike extends ColorScheme {
 	
 	/* (non-Javadoc)
@@ -59,9 +55,7 @@ public class BBLike extends ColorScheme {
 	@Override
 	public Color getHighlight() { return Color.CYAN; }
 	
-	/** The third. */
 	private static float third = 1.0F / 3.0F;
-	
-	/** The twothirds. */
+
 	private static float twothirds = 2.0F / 3.0F;
 }

@@ -30,48 +30,23 @@ import jnum.math.Vector2D;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ContentLayer.
- */
 public abstract class ContentLayer extends PlotLayer {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5434391089909200423L;
-	
-	
-	/** The user offset. */
+
 	private Vector2D userOffset = new Vector2D();
 	
-	/**
-	 * Gets the user offset.
-	 *
-	 * @return the user offset
-	 */
 	public Vector2D getUserOffset() { return userOffset; }
 	
-	/**
-	 * Gets the reference coordinate.
-	 *
-	 * @return the reference coordinate
-	 */
 	public Coordinate2D getReferenceCoordinate() {
 		Rectangle2D bounds = getCoordinateBounds();
 		Vector2D offset = getUserOffset();
 		return new Coordinate2D(bounds.getMinX() + offset.x(), bounds.getMinY() + offset.y());
 	}
 	
-	/**
-	 * Sets the user offset.
-	 *
-	 * @param v the new user offset
-	 */
+
 	public void setUserOffset(Vector2D v) { this.userOffset = v; }
 	
-	/**
-	 * Center.
-	 */
-
 	public void center() {	
 		Rectangle2D bounds = getCoordinateBounds();
 			
@@ -83,21 +58,10 @@ public abstract class ContentLayer extends PlotLayer {
 		)));
 	}
 
-	/**
-	 * Align.
-	 */
 	public void align() { userOffset.zero(); }
 	
-	/**
-	 * Gets the coordinate bounds.
-	 *
-	 * @return the coordinate bounds
-	 */
 	public abstract Rectangle2D getCoordinateBounds();
-	
-	/**
-	 * Initialize.
-	 */
+
 	public abstract void initialize();
 
 }

@@ -26,13 +26,9 @@ package jnum.projection;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ParabolicProjection.
- */
+
 public class ParabolicProjection extends CylindricalProjection {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -9078430471620050294L;
 
 

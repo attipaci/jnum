@@ -30,10 +30,7 @@ import jnum.plot.ColorScheme;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CoolBlue.
- */
+
 public class CoolBlue extends ColorScheme {
 
 	/* (non-Javadoc)

@@ -27,18 +27,11 @@ package jnum.projection;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SansonFlamsteed.
- */
+
 public class SansonFlamsteed extends CylindricalProjection {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1807113394531878268L;
 
-	/**
-	 * Instantiates a new Sanson-Flamsteed projection.
-	 */
 	public SansonFlamsteed() {}
 
 	/* (non-Javadoc)

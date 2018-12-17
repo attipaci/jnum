@@ -26,23 +26,13 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SignedFormat.
- */
+
 public class SignedFormat extends NumberFormat {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6900977697243233653L;
 
-	/** The nf. */
 	private NumberFormat nf;
-	
-	/**
-	 * Instantiates a new signed format.
-	 *
-	 * @param nf the nf
-	 */
+
 	public SignedFormat(NumberFormat nf) {
 		this.nf = nf;
 	}

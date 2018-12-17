@@ -37,45 +37,25 @@ import jnum.Util;
 // Keeps at least the required number of significant figures.
 // May keep more figures depending on the chosen format...
 
-/**
- * The Class SignificantFigures.
- */
 public class SignificantFiguresFormat extends NumberFormat {
-	
-	/** The digits. */
+
 	int digits;
-	
-	/** The trailing zeroes. */
+
 	boolean trailingZeroes;
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5240055256401076047L;
 
-	/**
-	 * Instantiates a new significant figures.
-	 *
-	 * @param n the n
-	 */
 	public SignificantFiguresFormat(int n) {
 		this(n, true);
 	}
 	
-	/**
-	 * Instantiates a new significant figures.
-	 *
-	 * @param n the n
-	 * @param trailingZeroes the trailing zeroes
-	 */
+
 	public SignificantFiguresFormat(int n, boolean trailingZeroes) {
 		digits = n;
 		this.trailingZeroes = trailingZeroes;
 	}
 	
-	/**
-	 * Checks for trailing zeroes.
-	 *
-	 * @return true, if successful
-	 */
+
 	public boolean hasTrailingZeroes() { return trailingZeroes; }
  	
 	/* (non-Javadoc)
@@ -95,22 +75,12 @@ public class SignificantFiguresFormat extends NumberFormat {
 	    if(number == 0.0) return getZeroFormat().format(number, toAppendTo, pos);
 	    return getFormat((int)Math.floor(Math.log10(number))).format(number, toAppendTo, pos);
 	}
-	
-	/**
-	 * Gets the zero format.
-	 *
-	 * @return the zero format
-	 */
+
 	public NumberFormat getZeroFormat() {
 	    return trailingZeroes ? Util.f[digits-1] : Util.F[digits-1];
 	}
 	
-	/**
-	 * Gets the format.
-	 *
-	 * @param order the order
-	 * @return the format
-	 */
+
 	public NumberFormat getFormat(int order) {
 		if(order < 0) {
 			//int elength = 4+digits; // #.###E-#

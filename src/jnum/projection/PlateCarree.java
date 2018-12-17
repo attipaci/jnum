@@ -28,18 +28,11 @@ import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class PlateCarree.
- */
+
 public class PlateCarree extends CylindricalProjection {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7736185332601427634L;
 
-	/**
-	 * Instantiates a new plate carree.
-	 */
 	public PlateCarree() {}
 
 	/* (non-Javadoc)

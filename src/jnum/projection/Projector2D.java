@@ -28,71 +28,38 @@ import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Projector2D.
- *
- * @param <CoordinateType> the generic type
- */
 public class Projector2D<CoordinateType extends Coordinate2D> implements Serializable {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -1473954926270300168L;
 
-	/** The offset. */
 	public Vector2D offset = new Vector2D();
-	
-	/** The projection. */
+
 	private Projection2D<CoordinateType> projection;
-	
-	/** The coords. */
+
 	private CoordinateType coords;
 	
-	
-	/**
-	 * Instantiates a new projector2 d.
-	 *
-	 * @param projection the projection
-	 */
+
 	@SuppressWarnings("unchecked")
 	public Projector2D(Projection2D<CoordinateType> projection) {
 		this.projection = projection;
 		coords = (CoordinateType) projection.getReference().clone();
 	}
 
-	/**
-	 * Gets the coordinates.
-	 *
-	 * @return the coordinates
-	 */
+
 	public CoordinateType getCoordinates() { return coords; }
 	
-	/**
-	 * Sets the reference coords.
-	 */
 	public void setReferenceCoords() {
 		coords.copy(getProjection().getReference());
 		//offset.zero();
 	}
-	
-	/**
-	 * Project.
-	 */
+
 	public void project() {
 		projection.project(coords, offset);
 	}
-	
-	/**
-	 * Deproject.
-	 */
+
 	public void deproject() {
 		projection.deproject(offset, coords);
 	}
 	
-	/**
-	 * Gets the projection.
-	 *
-	 * @return the projection
-	 */
 	public Projection2D<CoordinateType> getProjection() { return projection; }
 }

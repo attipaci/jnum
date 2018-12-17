@@ -25,12 +25,7 @@ package jnum.parallel;
 
 import jnum.data.WeightedPoint;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Averaging.
- *
- * @param <ReturnType> the generic type
- */
+
 public class Averaging<ReturnType extends WeightedPoint> extends ParallelReduction<ReturnType> {
 
 	/* (non-Javadoc)

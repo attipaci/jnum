@@ -28,22 +28,16 @@ import jnum.Unit;
 import jnum.Util;
 import jnum.math.InverseValue;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class PowerUnit.
- */
+
 public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
 
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = -5909400335570195212L;
 
-    /** The base. */
     private Unit base;
 
-    /** The exponent. */
     private double exponent;
 
-    /** Should the base be enclosed in brackets? */
     private boolean isEnclosed;
 
 
@@ -52,12 +46,7 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         this(base, 1.0);
     }
     
-    /**
-     * Instantiates a new power unit.
-     *
-     * @param base the base
-     * @param power the power
-     */
+
     public ExponentUnit(Unit base, double power) {
         set(base, power);
     }
@@ -72,19 +61,8 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         return u;
     }
 
-    /**
-     * Gets the base.
-     *
-     * @return the base
-     */
     public Unit getBase() { return base; }
 
-    /**
-     * Sets the.
-     *
-     * @param base the base
-     * @param exponent the exponent
-     */
     public void set(Unit base, double exponent) {
         this.base = base;
         this.exponent = exponent;
@@ -135,39 +113,14 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         return Math.pow(base.value(), exponent);
     }
 
-    /**
-     * Gets the exponent.
-     *
-     * @return the exponent
-     */
     public double getExponent() { return exponent; }
 
-    /**
-     * Sets the exponent.
-     *
-     * @param value the new exponent
-     */
     public void setExponent(double value) { this.exponent = value; }
 
-    /**
-     * Gets the.
-     *
-     * @param id the id
-     * @return the power unit
-     * @throws IllegalArgumentException the illegal argument exception
-     */
     public static ExponentUnit get(String id) throws IllegalArgumentException {
         return get(id, standardUnits);
     }
 
-    /**
-     * Gets the.
-     *
-     * @param id the id
-     * @param baseUnits the base units
-     * @return the power unit
-     * @throws IllegalArgumentException the illegal argument exception
-     */
     public static ExponentUnit get(String id, Map<String, Unit> baseUnits) throws IllegalArgumentException {
         for(String marker : parseExponentSymbols) {
             if(id.contains(marker)) return get(id, id.indexOf(marker), baseUnits);
@@ -176,15 +129,6 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         return new ExponentUnit(Unit.get(id, baseUnits), 1.0);
     }
 
-    /**
-     * Gets the.
-     *
-     * @param value the value
-     * @param index the index
-     * @param baseUnits the base units
-     * @return the power unit
-     * @throws IllegalArgumentException the illegal argument exception
-     */
     private static ExponentUnit get(String value, int index, Map<String, Unit> baseUnits) throws IllegalArgumentException {
         ExponentUnit u = new ExponentUnit(Unit.get(value.substring(0, index), baseUnits), 1.0);
         index += exponentSymbol.length();
@@ -219,7 +163,7 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
 
     public static String[] parseExponentSymbols = new String[] { "**", "^" };
 
-    /** The use slash. */
+    /** Whether to use a slash '/' for units that have negative exponent (i.e. "1/s**2" instead of "s**{-2}. */
     private static boolean useSlash = true;
     
 

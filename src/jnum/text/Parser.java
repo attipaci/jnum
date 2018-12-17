@@ -26,18 +26,8 @@ package jnum.text;
 
 import java.text.ParsePosition;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface Parser.
- */
+
 public interface Parser {
 
-    /**
-     * Parses the.
-     *
-     * @param text the text
-     * @throws NumberFormatException the number format exception
-     * @throws IllegalArgumentException the illegal argument exception
-     */
     public void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException;
 }

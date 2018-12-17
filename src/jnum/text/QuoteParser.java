@@ -25,13 +25,9 @@ package jnum.text;
 
 import jnum.Symbol;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class QuoteParser.
- */
+
 public class QuoteParser extends EnclosureParser {
 
-    /** The is german style. */
     private boolean isGermanStyle = false;
     
     /* (non-Javadoc)
@@ -91,18 +87,10 @@ public class QuoteParser extends EnclosureParser {
         }
     }
     
-    /**
-     * Checks if is german style.
-     *
-     * @return true, if is german style
-     */
+
     public boolean isGermanStyle() { return isGermanStyle; }
     
-    /**
-     * Sets the german style.
-     *
-     * @param value the new german style
-     */
+
     public void setGermanStyle(boolean value) { isGermanStyle = value; }
     
     

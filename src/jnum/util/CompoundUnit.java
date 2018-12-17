@@ -30,15 +30,11 @@ import jnum.Unit;
 import jnum.math.Division;
 import jnum.math.Multiplicative;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CompoundUnit.
- */
+
 public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division<Unit> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -8635925466445072139L;
-	/** The factors. */
+
 	public ArrayList<ExponentUnit> factors = new ArrayList<ExponentUnit>();
 		
 	/**
@@ -46,12 +42,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	 */
 	public CompoundUnit() {}
 	
-	/**
-	 * Instantiates a new compound unit.
-	 *
-	 * @param spec the spec
-	 * @param template the template
-	 */
+
 	public CompoundUnit(String spec) { 
 	    this();
 	    parse(spec); 
@@ -111,12 +102,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		return new String(name);
 	}
 	
-	/**
-	 * Multiply by.
-	 *
-	 * @param u the u
-	 */
-	
+
 	@Override
 	public void multiplyBy(Unit u) {
 		multiplyBy(u, false);
@@ -130,12 +116,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		multiplyBy(u, true);
 	}
 	
-	/**
-	 * Multiply by.
-	 *
-	 * @param u the u
-	 * @param inverse the inverse
-	 */
+
 	private void multiplyBy(Unit u, boolean inverse) {
 		if(u.equals(Unit.unity)) return;
 		
@@ -182,12 +163,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		parse(spec, standardUnits);
 	}
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param spec the spec
-	 * @param baseUnits the base units
-	 */
+
 	public void parse(String spec, Map<String, Unit> baseUnits) {		
 		if(factors == null) factors = new ArrayList<ExponentUnit>();
 		else factors.clear();
@@ -217,13 +193,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		if(buf.length() > 0) addFactor(new String(buf), invert, baseUnits);
 	}
 
-	/**
-	 * Adds the factor.
-	 *
-	 * @param spec the spec
-	 * @param invert the invert
-	 * @param baseUnits the base units
-	 */
+
 	private void addFactor(String spec, boolean invert, Map<String, Unit> baseUnits) {
 		ExponentUnit u = ExponentUnit.get(spec, baseUnits);
 		if(invert) u.setExponent(-u.getExponent());
@@ -240,15 +210,6 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		multiplyBy(b);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Division#setRatio(java.lang.Object, java.lang.Object)
-	 */
-	/**
-	 * Sets the ratio.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 */
 	public void setRatio(Unit a, Unit b) {
 		factors.clear();
 		multiplyBy(a);

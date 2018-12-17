@@ -42,75 +42,31 @@ import jnum.plot.colorscheme.Temperature;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ColorScheme.
- */
 public abstract class ColorScheme {
-	
-	/** The no data. */
+
 	public int noData = Color.TRANSLUCENT;
-	
-	/**
-	 * Instantiates a new color scheme.
-	 */
+
 	public ColorScheme() {}
 	
-	/**
-	 * Gets the rgb.
-	 *
-	 * @param scaledintensity the scaledintensity
-	 * @return the rgb
-	 */
+
 	public abstract int getRGB(double scaledintensity);
 
-	/**
-	 * Gets the highlight.
-	 *
-	 * @return the highlight
-	 */
+
 	public abstract Color getHighlight();
 	
-	/**
-	 * Gets the instance for.
-	 *
-	 * @param name the name
-	 * @return the instance for
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
-	 * @throws IllegalAccessException the illegal access exception
-	 * @throws InstantiationException the instantiation exception
-	 */
+
 	public static ColorScheme getInstanceFor(String name) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		name = name.toLowerCase();
 		return schemes.containsKey(name) ? schemes.get(name).getConstructor().newInstance() : null;
 	}
-	
-	/** The schemes. */
+
 	public static Hashtable<String, Class<? extends ColorScheme>> schemes = new Hashtable<String, Class<? extends ColorScheme>>();
 	
-	/**
-	 * Gets the rgb.
-	 *
-	 * @param r the r
-	 * @param g the g
-	 * @param b the b
-	 * @return the rgb
-	 */
+
 	public final static int getRGB(final int r, final int g, final int b) {
 		return 0xFF000000 | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
 	}
-	
-	/**
-	 * Gets the rgb.
-	 *
-	 * @param r the r
-	 * @param g the g
-	 * @param b the b
-	 * @return the rgb
-	 */
+
 	public final static int getRGB(final float r, final float g, final float b) {
 		final int R = (Math.min(255, (int)Math.floor(256.0F * r)));
 		final int G = (Math.min(255, (int)Math.floor(256.0F * g)));
@@ -151,10 +107,6 @@ public abstract class ColorScheme {
 		schemes.put("blue", CoolBlue.class);
 		
 		schemes.put("orange", Orangy.class);
-		
-		
-		
-		
 	}
 }
 

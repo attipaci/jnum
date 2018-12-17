@@ -31,18 +31,13 @@ import java.awt.Rectangle;
 // TODO: Auto-generated Javadoc
 // TODO Enclosing box. Ticks handled by ruler...
 
-/**
- * The Class CoordinateLayer.
- */
+
 public class CoordinateLayer extends PlotLayer {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -771338655043033632L;
-	
-	/** The pen color. */
+
 	Color penColor = Color.BLACK;
-	
-	/** The border width. */
+
 	int borderWidth = 0;
 	
 	/* (non-Javadoc)

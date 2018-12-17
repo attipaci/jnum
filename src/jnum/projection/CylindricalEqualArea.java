@@ -31,16 +31,11 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CylindricalEqualArea.
- */
+
 public class CylindricalEqualArea extends CylindricalProjection {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -6111486646040480793L;
 
-	/** The lambda. */
 	double lambda = 1.0;
 	
 	/* (non-Javadoc)

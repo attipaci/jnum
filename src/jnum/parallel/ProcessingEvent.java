@@ -25,22 +25,12 @@ package jnum.parallel;
 
 import java.awt.AWTEvent;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ProcessingEvent.
- */
+
 public class ProcessingEvent extends AWTEvent {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -6580482953480944763L;
 	
-	
-	/**
-	 * Instantiates a new processing event.
-	 *
-	 * @param source the source
-	 * @param id the id
-	 */
+
 	public ProcessingEvent(Object source, int id) {
 		super(source, id);
 	}

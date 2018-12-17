@@ -27,11 +27,6 @@ import java.awt.Color;
 import jnum.plot.ColorScheme;
 
 
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class Rainbow.
- */
 public class Rainbow extends ColorScheme {
 	
 	/* (non-Javadoc)

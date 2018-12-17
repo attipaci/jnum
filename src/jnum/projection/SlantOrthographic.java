@@ -25,18 +25,10 @@
 package jnum.projection;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SlantOrthographic.
- */
 public class SlantOrthographic  extends ZenithalProjection {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 731517061464195597L;
 
-	/**
-	 * Instantiates a new slant orthographic.
-	 */
 	public SlantOrthographic() { }
 
 	/* (non-Javadoc)

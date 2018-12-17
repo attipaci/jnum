@@ -27,13 +27,9 @@ import jnum.math.Coordinate2D;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class DefaultProjection2D.
- */
+
 public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2413285303727304456L;
 
 	public DefaultProjection2D() {

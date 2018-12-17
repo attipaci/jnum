@@ -24,18 +24,11 @@
 
 package jnum.projection;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ZenithalEqualArea.
- */
+
 public class ZenithalEqualArea extends ZenithalProjection {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1225375794601264165L;
 
-	/**
-	 * Instantiates a new zenithal equal area.
-	 */
 	public ZenithalEqualArea() {}
 
 	/* (non-Javadoc)
