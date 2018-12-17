@@ -65,20 +65,13 @@ import jnum.text.Parser;
 // Also Arrays.copyOf() and Arrays.copyOfRange() on indeces...
 // This should result in improved performance.
 
-
-/**
- * The Class ArrayUtil.
- */
+// Generic Multi-dimensional arrays
 public final class ArrayUtil {
 	
-	// Generic Multi-dimensional arrays
+    // --------------------------------------------------------------------------------------------------------------------
 	// Creation of arrays with int[] dimensions...
-	/**
-	 * Gets the rank.
-	 *
-	 * @param array the array
-	 * @return the rank
-	 */
+    // --------------------------------------------------------------------------------------------------------------------
+    
 	public static int getRank(Object array) {
 		if(array == null) return 0;
 		else if(array instanceof Object[]) return getRank(((Object[]) array)[0]) + 1;
@@ -86,12 +79,6 @@ public final class ArrayUtil {
 		else return 0;
 	}
 	
-	/**
-	 * Gets the shape.
-	 *
-	 * @param array the array
-	 * @return the shape
-	 */
 	public static int[] getShape(Object array) {
 		int[] dimension = new int[getRank(array)];
 		for(int i=0; i<dimension.length; i++) {
@@ -101,12 +88,7 @@ public final class ArrayUtil {
 		return dimension;
 	}
 	
-	/**
-	 * Gets the next size.
-	 *
-	 * @param array the array
-	 * @return the next size
-	 */
+
 	public static int getNextSize(Object array) {
 		if(array instanceof Object[]) return ((Object[]) array).length;
 		else if(array instanceof double[]) return ((double[]) array).length;
@@ -119,13 +101,7 @@ public final class ArrayUtil {
 		else return -1;		
 	}
 	
-	
-	/**
-	 * Gets the element count.
-	 *
-	 * @param array the array
-	 * @return the element count
-	 */
+
 	public static int getElementCount(Object array) {
 		int[] dimensions = getShape(array);
 		int n = 1;
@@ -133,12 +109,7 @@ public final class ArrayUtil {
 		return n;
 	}
 	
-	/**
-	 * Gets the class.
-	 *
-	 * @param data the data
-	 * @return the class
-	 */
+
 	public static Class<?> getClass(Object data) {
 		if(data instanceof Object[]) {
 			try { return getClass(((Object[]) data)[0]); }
@@ -155,13 +126,7 @@ public final class ArrayUtil {
 		return data.getClass();
 	}
 	
-	/**
-	 * Gets the class.
-	 *
-	 * @param data the data
-	 * @param depth the depth
-	 * @return the class
-	 */
+
 	public static Class<?> getClass(Object data, int depth) {
 		if(depth > 0) {
 			try { return getClass(((Object[]) data)[0], depth-1); }
@@ -177,12 +142,7 @@ public final class ArrayUtil {
 		return data.getClass();		
 	}
 	
-	/**
-	 * First element.
-	 *
-	 * @param data the data
-	 * @return the object
-	 */
+
 	public static Object firstElement(Object data) {
 		if(data instanceof Object[]) return firstElement(((Object[]) data)[0]);
 		else if(data instanceof double[]) return ((double[]) data)[0];
@@ -195,13 +155,7 @@ public final class ArrayUtil {
 		return data;				
 	}
 	
-	/**
-	 * First element.
-	 *
-	 * @param data the data
-	 * @param depth the depth
-	 * @return the object
-	 */
+
 	public static Object firstElement(Object data, int depth) {
 		if(depth > 0) return firstElement(((Object[]) data)[0], depth-1);
 		else if(data instanceof double[]) return ((double[]) data)[0];
@@ -214,25 +168,12 @@ public final class ArrayUtil {
 		return data;				
 	}
 	
-	/**
-	 * Value at.
-	 *
-	 * @param array the array
-	 * @param index the index
-	 * @return the object
-	 */
+
 	public static Object valueAt(Object array, int[] index) {
 		return valueAt(array, index, 0); 
 	}
 	
-	/**
-	 * Value at.
-	 *
-	 * @param array the array
-	 * @param index the index
-	 * @param depth the depth
-	 * @return the object
-	 */
+
 	public static Object valueAt(Object array, int[] index, int depth) {
 		if(array instanceof Object[][]) return valueAt(((Object[]) array)[index[depth]], index, depth++);
 		else if(array instanceof Object[]) return ((Object[]) array)[index[depth]];
@@ -249,68 +190,27 @@ public final class ArrayUtil {
 		return array;
 	}
 	
-	/**
-	 * Creates the array.
-	 *
-	 * @param type the type
-	 * @param dimension the dimension
-	 * @return the object
-	 */
+
 	public static Object createArray(Class<?> type, int dimension) {
 		return Array.newInstance(type, dimension);
 	}
 	
-	/**
-	 * Creates the array.
-	 *
-	 * @param type the type
-	 * @param dimensions the dimensions
-	 * @return the object
-	 */
+
 	public static Object createArray(Class<?> type, int[] dimensions) {
 		return Array.newInstance(type, dimensions);
 	}
 	
-	/**
-	 * Initialize.
-	 *
-	 * @param data the data
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
+
 	public static void initialize(Object data) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {	
 		initialize(data, getClass(data));
 	}
 	
-	/**
-	 * Initialize.
-	 *
-	 * @param data the data
-	 * @param from the from
-	 * @param to the to
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
+
 	public static void initialize(Object data, int[] from, int[] to) throws Exception {	
 		initialize(data, getClass(data), from, to);
 	}
 	
-	/**
-	 * Initialize.
-	 *
-	 * @param data the data
-	 * @param type the type
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
+
 	private static void initialize(Object data, Class<?> type) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {	
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
@@ -319,39 +219,12 @@ public final class ArrayUtil {
 		}
 	}
 
-	/**
-	 * Initialize.
-	 *
-	 * @param data the data
-	 * @param type the type
-	 * @param from the from
-	 * @param to the to
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
+
 	private static void initialize(Object data, Class<?> type, int[] from, int[] to) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {	
 		initialize(data, type, from, to, 0);
 	}
 	
-	/**
-	 * Initialize.
-	 *
-	 * @param data the data
-	 * @param type the type
-	 * @param from the from
-	 * @param to the to
-	 * @param depth the depth
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
+
 	private static void initialize(Object data, Class<?> type, int[] from, int[] to, int depth) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {	
 		if(data instanceof Object[]) {
 			final int start = from[depth];
@@ -363,39 +236,18 @@ public final class ArrayUtil {
 	}
 	
 	
-	// TODO
-	/**
-	 * Check consistency.
-	 *
-	 * @throws ClassCastException the class cast exception
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public void checkConsistency() throws ClassCastException, IndexOutOfBoundsException {
 		// throw ClassCastException if elements are not the same class
 		// throw IndexOutOfBoundsException if subarrays are not the size (not cubic!)
 	}
 	
-	/**
-	 * Sub array.
-	 *
-	 * @param array the array
-	 * @param from the from
-	 * @param to the to
-	 * @return the object
-	 */
+
 	public static Object subArray(Object array, int[] from, int[] to) {	
 		return subArray(array, from, to, 0);
 	}
 	
-	/**
-	 * Sub array.
-	 *
-	 * @param array the array
-	 * @param from the from
-	 * @param to the to
-	 * @param depth the depth
-	 * @return the object
-	 */
+
 	public static Object subArray(Object array, int[] from, int[] to, int depth) {
 		final int start = from[depth];
 		final int end = to[depth];
@@ -416,14 +268,7 @@ public final class ArrayUtil {
 		return subarray;		
 	}
 	
-	
-	/**
-	 * Paste.
-	 *
-	 * @param patch the patch
-	 * @param array the array
-	 * @param offset the offset
-	 */
+
 	public static void paste(Object patch, Object array, int[] offset) {
 		int[] N = getShape(array);
 		int[] beginning = new int[N.length];
@@ -432,14 +277,7 @@ public final class ArrayUtil {
 		arraycopy(patch, beginning, array, offset, N);	
 	}
 	
-	/**
-	 * Resize.
-	 *
-	 * @param data the data
-	 * @param toSize the to size
-	 * @return the object
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static Object resize(Object data, int[] toSize) throws IllegalArgumentException {
 		Object resized = createArray(getClass(data), toSize);
 		paste(data, resized, new int[toSize.length]);
@@ -447,14 +285,7 @@ public final class ArrayUtil {
 		return resized;
 	}
 
-	/**
-	 * Pad.
-	 *
-	 * @param data the data
-	 * @param fromSize the from size
-	 * @return the object
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static Object pad(Object data, int[] fromSize) throws IllegalArgumentException {
 		Class<?> type = getClass(data);
 		int[] toSize = getShape(data);
@@ -463,29 +294,11 @@ public final class ArrayUtil {
 	}
 	
 	// Used to pad data
-	/**
-	 * Pad.
-	 *
-	 * @param data the data
-	 * @param type the type
-	 * @param from the from
-	 * @param to the to
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	private static void pad(Object data, Class<?> type, int[] from, int[] to) throws IllegalArgumentException {
 		pad(data, type, from, to, 0);
 	}
 	
-	/**
-	 * Pad.
-	 *
-	 * @param data the data
-	 * @param type the type
-	 * @param from the from
-	 * @param to the to
-	 * @param depth the depth
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	private static void pad(Object data, Class<?> type, int[] from, int[] to, int depth) throws IllegalArgumentException {
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
@@ -498,29 +311,12 @@ public final class ArrayUtil {
 		else if(type.isPrimitive()) clear(data, from, to, depth);
 	}
 	
-	/**
-	 * Arraycopy.
-	 *
-	 * @param src the src
-	 * @param from the from
-	 * @param dst the dst
-	 * @param to the to
-	 * @param N the n
-	 */
+
 	private static void arraycopy(Object src, int[] from, Object dst, int[] to, int[] N) {
 		arraycopy(src, from, dst, to, N, 0);
 	}
-		
-	/**
-	 * Arraycopy.
-	 *
-	 * @param src the src
-	 * @param from the from
-	 * @param dst the dst
-	 * @param to the to
-	 * @param N the n
-	 * @param depth the depth
-	 */
+
+	
 	private static void arraycopy(Object src, int[] from, Object dst, int[] to, int[] N, int depth) {
 		if(depth == from.length-1) System.arraycopy(src, from[depth], dst, to[depth], N[depth]);
 		else {
@@ -529,13 +325,7 @@ public final class ArrayUtil {
 		}			
 	}
 	
-	/**
-	 * Adds the.
-	 *
-	 * @param array the array
-	 * @param offset the offset
-	 * @param patch the patch
-	 */
+
 	public static void add(Object array, int[] offset, Object patch) {
 		Class<?> type = getClass(array);
 		
@@ -548,35 +338,12 @@ public final class ArrayUtil {
 		add(array, offset, patch, type, N);	
 	}
 	
-	/**
-	 * Adds the.
-	 *
-	 * @param <T> the generic type
-	 * @param array the array
-	 * @param offset the offset
-	 * @param patch the patch
-	 * @param type the type
-	 * @param N the n
-	 * @throws ClassCastException the class cast exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	static <T> void add(Object array, int[] offset, Object patch, Class<T> type, int[] N) throws ClassCastException, IllegalArgumentException {			
 		add(array, offset, patch, type, N, 0);
 	}
 	
-	/**
-	 * Adds the.
-	 *
-	 * @param <T> the generic type
-	 * @param array the array
-	 * @param offset the offset
-	 * @param patch the patch
-	 * @param type the type
-	 * @param N the n
-	 * @param depth the depth
-	 * @throws ClassCastException the class cast exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	static <T> void add(Object array, int[] offset, Object patch, Class<T> type, int[] N, int depth) throws ClassCastException, IllegalArgumentException {			
 		final int start = offset[depth];
 		final int n = N[depth];
@@ -631,14 +398,6 @@ public final class ArrayUtil {
 	}
 	
 	
-	/**
-	 * Copy.
-	 *
-	 * @param array the array
-	 * @return the object
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
 	public static Object copyOf(Object array) throws InstantiationException, IllegalAccessException { 
 	    if(array == null) return null;
 	    else if(array instanceof Object[]) { 
@@ -659,39 +418,17 @@ public final class ArrayUtil {
 	
 	
 	// Scalable scale(0.0)
-	
-	/**
-	 * Clear.
-	 *
-	 * @param array the array
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	public static void clear(Object array) throws IllegalArgumentException {
 		int[] size = getShape(array);
 		clear(array, new int[size.length], size);
 	}
 		
-	/**
-	 * Clear.
-	 *
-	 * @param array the array
-	 * @param from the from
-	 * @param to the to
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static void clear(Object array, int[] from, int[] to) throws IllegalArgumentException {
 		clear(array, from, to, 0);
 	}
 	
-	/**
-	 * Clear.
-	 *
-	 * @param array the array
-	 * @param from the from
-	 * @param to the to
-	 * @param depth the depth
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static void clear(Object array, int[] from, int[] to, int depth) throws IllegalArgumentException {
 		final int start = from[depth];
 		final int end = to[depth];
@@ -728,27 +465,13 @@ public final class ArrayUtil {
 	}
 	
 	
-	/**
-	 * Fill.
-	 *
-	 * @param array the array
-	 * @param value the value
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static void fill(Object array, Object value) throws IllegalArgumentException {		
 		int[] size = getShape(array);
 		fill(array, new int[size.length], size, value);
 	}
 	
-	/**
-	 * Fill.
-	 *
-	 * @param array the array
-	 * @param from the from
-	 * @param to the to
-	 * @param value the value
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static void fill(Object array, int[] from, int[] to, Object value) throws IllegalArgumentException {
 		Class<?> type = getClass(array);
 		
@@ -778,31 +501,12 @@ public final class ArrayUtil {
 		
 	}
 	
-	/**
-	 * Fill.
-	 *
-	 * @param array the array
-	 * @param from the from
-	 * @param to the to
-	 * @param value the value
-	 * @param type the type
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static void fill(Object array, int[] from, int[] to, Object value, Class<?> type) throws IllegalArgumentException {
 		fill(array, from, to, value, type, 0);
 	}
 	
-	/**
-	 * Fill.
-	 *
-	 * @param array the array
-	 * @param from the from
-	 * @param to the to
-	 * @param value the value
-	 * @param type the type
-	 * @param depth the depth
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static void fill(Object array, int[] from, int[] to, Object value, Class<?> type, int depth) throws IllegalArgumentException {
 		final int start = from[depth];
 		final int end = to[depth];
@@ -853,8 +557,10 @@ public final class ArrayUtil {
 	}
 	*/
 	
+	// --------------------------------------------------------------------------------------------------------------------
 	// Coordinate rearrangments....
-		
+	// --------------------------------------------------------------------------------------------------------------------
+	
 	/*
 	// rotating is useful for methods that go thruogh all directions separately
 	public static Object rotatedView(Object array) {
@@ -875,14 +581,6 @@ public final class ArrayUtil {
 	
 	// collapse those dimensions where index is positive to the indexed element
 	// where index is negative, all elements are retained.
-	/**
-	 * Sub space.
-	 *
-	 * @param <T> the generic type
-	 * @param array the array
-	 * @param keepIndex the keep index
-	 * @return the object
-	 */
 	public static <T> Object subSpace(Object array, int[] keepIndex) {
 		int depth = keepIndex.length;
 			
@@ -913,14 +611,7 @@ public final class ArrayUtil {
 		return null;
 	}
 	
-	/**
-	 * Expand.
-	 *
-	 * @param <T> the generic type
-	 * @param array the array
-	 * @param placement the placement
-	 * @return the object
-	 */
+
 	public static <T> Object expand(Object array, boolean[] placement) {
 		int[] dimension = getShape(array);
 		if(placement.length < dimension.length) 
@@ -952,12 +643,7 @@ public final class ArrayUtil {
 		return null;
 	}
 	
-	/**
-	 * Collapse.
-	 *
-	 * @param array the array
-	 * @return the object
-	 */
+
 	public static Object collapse(Object array) {
 		int[] dimension = getShape(array);
 		int[] keepIndex = new int[dimension.length];
@@ -967,18 +653,12 @@ public final class ArrayUtil {
 	
 	
 	
-	
+	// --------------------------------------------------------------------------------------------------------------------
 	// Iterators....
-	
+	// --------------------------------------------------------------------------------------------------------------------
 	
 	
 	// TODO Rewrite without iterator? 
-	/**
-	 * Unfold.
-	 *
-	 * @param array the array
-	 * @return the object
-	 */
 	public static Object unfold(Object[] array) {
 		Class<?> type = getClass(array);
 		int N = getElementCount(array);
@@ -1000,15 +680,6 @@ public final class ArrayUtil {
 	}
 	
 	
-	/**
-	 * Fold.
-	 *
-	 * @param <T> the generic type
-	 * @param linearView the linear view
-	 * @param dimensions the dimensions
-	 * @return the object
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	public static <T> Object fold(Object linearView, int[] dimensions) throws IllegalArgumentException {
 		int dstSize = 1;
 		for(int i=0; i<dimensions.length; i++) dstSize *= dimensions[i];
@@ -1024,27 +695,18 @@ public final class ArrayUtil {
 	}
 	
 	
-	// Replacements...	
 	
-	/**
-	 * Replace values.
-	 *
-	 * @param data the data
-	 * @param from the from
-	 * @param to the to
-	 */
+	
+	
+	// --------------------------------------------------------------------------------------------------------------------
+	// Replacements...	
+	// --------------------------------------------------------------------------------------------------------------------
+	
 	public static void replaceValues(Object data, Object from, Object to) {
 		replaceValues(data, getClass(data), from, to);
 	}
 	
-	/**
-	 * Replace values.
-	 *
-	 * @param data the data
-	 * @param type the type
-	 * @param from the from
-	 * @param to the to
-	 */
+
 	static void replaceValues(Object data, Class<?> type, Object from, Object to) {
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
@@ -1058,24 +720,12 @@ public final class ArrayUtil {
 		}	
 	}
 	
-	/**
-	 * Replace values.
-	 *
-	 * @param data the data
-	 * @param from the from
-	 * @param to the to
-	 */
+
 	public static void replaceValues(double[] data, Double from, double to) {
 		for(int i=0; i<data.length; i++) if(from.equals(data[i])) data[i] = to;
 	}
 	
-	/**
-	 * Replace values.
-	 *
-	 * @param data the data
-	 * @param from the from
-	 * @param to the to
-	 */
+
 	public static void replaceValues(float[] data, Float from, float to) {
 		for(int i=0; i<data.length; i++) if(from.equals(data[i])) data[i] = to;
 	}
@@ -1084,15 +734,10 @@ public final class ArrayUtil {
 	
 
 
-
+	// --------------------------------------------------------------------------------------------------------------------
 	// Conversions	
+	// --------------------------------------------------------------------------------------------------------------------
 	
-	/**
-	 * As double.
-	 *
-	 * @param data the data
-	 * @return the object
-	 */
 	public static Object asDouble(Object data) {		
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
@@ -1109,12 +754,7 @@ public final class ArrayUtil {
 		else throw new IllegalArgumentException(data.getClass().getSimpleName() + " cannot be viewed as a double array.");		
 	}
 	
-	/**
-	 * As float.
-	 *
-	 * @param data the data
-	 * @return the object
-	 */
+
 	public static Object asFloat(Object data) {		
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
@@ -1131,12 +771,7 @@ public final class ArrayUtil {
 		else throw new IllegalArgumentException(data.getClass().getSimpleName() + " cannot be viewed as a float array.");		
 	}
 	
-	/**
-	 * As complex.
-	 *
-	 * @param data the data
-	 * @return the object
-	 */
+
 	public static Object asComplex(Object data) {
 		if(data instanceof Scalar) return new Complex(((Scalar) data).getValue());
 		else if(data instanceof Object[]) {
@@ -1154,12 +789,7 @@ public final class ArrayUtil {
 		else throw new IllegalArgumentException(data.getClass().getSimpleName() + " cannot be viewed as a complex array.");		
 	}
 	
-	/**
-	 * As imaginary.
-	 *
-	 * @param data the data
-	 * @return the object
-	 */
+
 	public static Object asImaginary(Object data) {		
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
@@ -1177,19 +807,7 @@ public final class ArrayUtil {
 	}
 	
 	
-	/**
-	 * View as.
-	 *
-	 * @param template the template
-	 * @param doubles the doubles
-	 * @return the object
-	 * @throws ClassCastException the class cast exception
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws SecurityException 
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
+
 	public static Object viewAs(ViewableAsDoubles template, Object doubles) throws ClassCastException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		try {			
 			ViewableAsDoubles view = template.getClass().getConstructor().newInstance();
@@ -1212,84 +830,49 @@ public final class ArrayUtil {
 	}
 	
 	
-	/**
-	 * As double.
-	 *
-	 * @param data the data
-	 * @return the double[]
-	 */
+
 	public static double[] asDouble(float[] data) {
 		double[] d = new double[data.length];
 		for(int i=0; i<data.length; i++) d[i] = data[i];
 		return d;
 	}
 
-	/**
-	 * As float.
-	 *
-	 * @param data the data
-	 * @return the float[]
-	 */
+
 	public static float[] asFloat(double[] data) {
 		float[] f = new float[data.length];
 		for(int i=0; i<data.length; i++) f[i] = (float)data[i];
 		return f;
 	}
 
-	/**
-	 * As complex.
-	 *
-	 * @param data the data
-	 * @return the complex[]
-	 */
+
 	public static Complex[] asComplex(double[] data) {
 		Complex[] c = new Complex[data.length];
 		for(int i=0; i<data.length; i++) c[i] = new Complex(data[i], 0.0);
 		return c;
 	}
 
-	/**
-	 * As complex.
-	 *
-	 * @param data the data
-	 * @return the complex[]
-	 */
+
 	public static Complex[] asComplex(float[] data) {
 		Complex[] c = new Complex[data.length];
 		for(int i=0; i<data.length; i++) c[i] = new Complex(data[i], 0.0);
 		return c;
 	}
 	
-	/**
-	 * As complex.
-	 *
-	 * @param data the data
-	 * @return the complex[]
-	 */
+
 	public static Complex[] asComplex(Scalar[] data) {
 		Complex[] c = new Complex[data.length];
 		for(int i=0; i<data.length; i++) c[i] = new Complex(data[i].getValue(), 0.0);
 		return c;
 	}
 
-	/**
-	 * As imaginary.
-	 *
-	 * @param data the data
-	 * @return the complex[]
-	 */
+
 	public static Complex[] asImaginary(double[] data) {
 		Complex[] c = new Complex[data.length];
 		for(int i=0; i<data.length; i++) c[i] = new Complex(0.0, data[i]);
 		return c;
 	}
 
-	/**
-	 * As imaginary.
-	 *
-	 * @param data the data
-	 * @return the complex[]
-	 */
+
 	public static Complex[] asImaginary(float[] data) {
 		Complex[] c = new Complex[data.length];
 		for(int i=0; i<data.length; i++) c[i] = new Complex(0.0, data[i]);
@@ -1301,37 +884,21 @@ public final class ArrayUtil {
 
 
 	
-	
+	// --------------------------------------------------------------------------------------------------------------------
 	// Scaling...
+	// --------------------------------------------------------------------------------------------------------------------
+	
 
-	/**
-	 * Scale.
-	 *
-	 * @param data the data
-	 * @param factor the factor
-	 */
 	public static void scale(double[] data, double factor) {
 		for(int i=data.length; --i >= 0; ) data[i] *= factor;
 	}
 
-	/**
-	 * Scale.
-	 *
-	 * @param data the data
-	 * @param factor the factor
-	 */
+
 	public static void scale(float[] data, double factor) {
 		for(int i=data.length; --i >= 0; ) data[i] *= factor;
 	}
 
 
-	/**
-	 * Scale.
-	 *
-	 * @param data the data
-	 * @param factor the factor
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	public static void scale(Object[] data, double factor) throws IllegalArgumentException {
 		for(int i=data.length; --i >= 0; ) {
 			if(data[i] instanceof double[]) scale((double[]) data[i], factor);
@@ -1342,13 +909,7 @@ public final class ArrayUtil {
 		}
 	}
 
-	/**
-	 * Scale.
-	 *
-	 * @param data the data
-	 * @param factor the factor
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static void scale(Object data, double factor) throws IllegalArgumentException {
 		if(data instanceof Object[]) scale((Object[]) data, factor);
 		else if(data instanceof double[]) scale((double[]) data, factor);
@@ -1356,14 +917,6 @@ public final class ArrayUtil {
 	}
 	
 	
-	/**
-	 * Scale.
-	 *
-	 * @param <T> the generic type
-	 * @param data the data
-	 * @param factor the factor
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	@SuppressWarnings("unchecked")
 	public static <T> void scale(Object data, T factor) throws IllegalArgumentException {
 		if(data instanceof Multiplicative) ((Multiplicative<T>) data).multiplyBy(factor);
@@ -1374,16 +927,7 @@ public final class ArrayUtil {
 		else throw new IllegalArgumentException("Cannot multiply type " + data.getClass().getSimpleName());
 	}
 	
-	
-	
-	/**
-	 * Scale.
-	 *
-	 * @param <T> the generic type
-	 * @param data the data
-	 * @param factor the factor
-	 * @return the list
-	 */
+
 	public static <T extends Scalable> List<T> scale(List<T> data, double factor) {
 		for(T element : data) element.scale(factor);
 		return data;
@@ -1391,13 +935,6 @@ public final class ArrayUtil {
 
 	// Cycling
 	// This is useful for loading and unloading FFTs...
-	/**
-	 * Cycle.
-	 *
-	 * @param data the data
-	 * @param n the n
-	 * @return the double[]
-	 */
 	public static double[] cycle(double[] data, int n) {
 		n %= data.length;
 		double[] temp = new double[data.length];
@@ -1409,13 +946,6 @@ public final class ArrayUtil {
 	
 	// Cycling
 	// This is useful for loading and unloading FFTs...
-	/**
-	 * Cycle.
-	 *
-	 * @param data the data
-	 * @param n the n
-	 * @return the float[]
-	 */
 	public static float[] cycle(float[] data, int n) {
 		n %= data.length;
 		float[] temp = new float[data.length];
@@ -1425,12 +955,6 @@ public final class ArrayUtil {
 		return data;
 	}
 
-	/**
-	 * Cycle.
-	 *
-	 * @param data the data
-	 * @param n the n
-	 */
 	public static void cycle(Object[] data, int n) {
 		n %= data.length;
 		Object[] temp = new Object[data.length];
@@ -1439,25 +963,12 @@ public final class ArrayUtil {
 		System.arraycopy(temp, 0, data, 0, data.length);
 	}	
 
-	/**
-	 * Cycle.
-	 *
-	 * @param data the data
-	 * @param n the n
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public static void cycle(Object[] data, int[] n) throws IndexOutOfBoundsException {
 		cycle(data, n, 0);
 	}	
 	
-	/**
-	 * Cycle.
-	 *
-	 * @param data the data
-	 * @param n the n
-	 * @param depth the depth
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public static void cycle(Object[] data, int[] n, int depth) throws IndexOutOfBoundsException {
 		cycle(data, n[depth]);
 		if(depth < n.length-1) for(int i=data.length; --i >= 0; ) {
@@ -1473,40 +984,19 @@ public final class ArrayUtil {
 	
 	
 	
-	
-	/**
-	 * Offset.
-	 *
-	 * @param data the data
-	 * @param constant the constant
-	 * @return the double[]
-	 */
+
 	public static double[] offset(double[] data, double constant) {
 		for(int i=data.length; --i >= 0; ) data[i] += constant;
 		return data;
 	}
 
-	/**
-	 * Offset.
-	 *
-	 * @param data the data
-	 * @param constant the constant
-	 * @return the float[]
-	 */
+
 	public static float[] offset(float[] data, double constant) {
 		for(int i=data.length; --i >= 0; ) data[i] += constant;
 		return data;
 	}
 
 
-	/**
-	 * Offset.
-	 *
-	 * @param data the data
-	 * @param constant the constant
-	 * @return the object[]
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	public static Object[] offset(Object[] data, double constant) throws IllegalArgumentException {
 		for(int i=data.length; --i >= 0; ) {
 			if(data[i] instanceof double[]) offset((double[]) data[i], constant);
@@ -1517,26 +1007,12 @@ public final class ArrayUtil {
 		return data;
 	}
 
-	/**
-	 * Offset.
-	 *
-	 * @param <T> the generic type
-	 * @param constant the constant
-	 * @param data the data
-	 * @return the object
-	 */
+
 	public static <T extends Scalable> Object offset(double constant, T... data) {
 		return scale(Arrays.asList(data), constant).toArray();
 	}	
 
-	/**
-	 * Offset.
-	 *
-	 * @param <T> the generic type
-	 * @param data the data
-	 * @param constant the constant
-	 * @return the list
-	 */
+
 	public static <T extends Scalable> List<T> offset(List<T> data, double constant) {
 		for(T element : data) element.scale(constant);
 		return data;
@@ -1544,67 +1020,30 @@ public final class ArrayUtil {
 
 
 	// Adding
-	/**
-	 * Adds the to.
-	 *
-	 * @param data the data
-	 * @param offset the offset
-	 * @return the double[]
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
 	public static double[] addTo(double[] data, double[] offset) throws IndexOutOfBoundsException {
 		for(int i=data.length; --i >= 0; ) data[i] += offset[i];
 		return data;
 	}
 
-	/**
-	 * Adds the to.
-	 *
-	 * @param data the data
-	 * @param offset the offset
-	 * @return the double[]
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public static double[] addTo(double[] data, float[] offset) throws IndexOutOfBoundsException {
 		for(int i=data.length; --i >= 0; ) data[i] += offset[i];
 		return data;
 	}
 
-	/**
-	 * Adds the to.
-	 *
-	 * @param data the data
-	 * @param offset the offset
-	 * @return the float[]
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public static float[] addTo(float[] data, double[] offset) throws IndexOutOfBoundsException {
 		for(int i=data.length; --i >= 0; ) data[i] += offset[i];
 		return data;
 	}
 
-	/**
-	 * Adds the to.
-	 *
-	 * @param data the data
-	 * @param offset the offset
-	 * @return the float[]
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public static float[] addTo(float[] data, float[] offset) throws IndexOutOfBoundsException {
 		for(int i=data.length; --i >= 0; ) data[i] += offset[i];
 		return data;
 	}
 
 
-	/**
-	 * Adds the to.
-	 *
-	 * @param data the data
-	 * @param offset the offset
-	 * @return the object[]
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	public static Object[] addTo(Object[] data, double[] offset) throws IllegalArgumentException {
 		for(int i=data.length; --i >= 0; ) {
 			if(data[i] instanceof double[]) addTo((double[]) data[i], offset);
@@ -1615,69 +1054,39 @@ public final class ArrayUtil {
 		return data;
 	}	
 
+	
+	
+	
+	// --------------------------------------------------------------------------------------------------------------------
 	// Multiplying...
+	// --------------------------------------------------------------------------------------------------------------------
+	
 
-	/**
-	 * Multiply by.
-	 *
-	 * @param data the data
-	 * @param factor the factor
-	 * @return the double[]
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
 	public static double[] multiplyBy(double[] data, double[] factor) throws IndexOutOfBoundsException {
 		for(int i=data.length; --i >= 0; ) data[i] *= factor[i];
 		return data;
 	}
 
-	/**
-	 * Multiply by.
-	 *
-	 * @param data the data
-	 * @param factor the factor
-	 * @return the double[]
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public static double[] multiplyBy(double[] data, float[] factor) throws IndexOutOfBoundsException {
 		for(int i=data.length; --i >= 0; ) data[i] *= factor[i];
 		return data;
 	}
 
-	/**
-	 * Multiply by.
-	 *
-	 * @param data the data
-	 * @param factor the factor
-	 * @return the float[]
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public static float[] multiplyBy(float[] data, double[] factor) throws IndexOutOfBoundsException {
 		for(int i=data.length; --i >= 0; ) data[i] += factor[i];
 		return data;
 	}
 
-	/**
-	 * Multiply by.
-	 *
-	 * @param data the data
-	 * @param factor the factor
-	 * @return the float[]
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public static float[] multiplyBy(float[] data, float[] factor) throws IndexOutOfBoundsException {
 		for(int i=data.length; --i >= 0; ) data[i] *= factor[i];
 		return data;
 	}
 
 
-	/**
-	 * Multiply by.
-	 *
-	 * @param data the data
-	 * @param factor the factor
-	 * @return the object[]
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Object[] multiplyBy(Object[] data, Object[] factor) throws IllegalArgumentException {
 		for(int i=data.length; --i >= 0; ) {
@@ -1691,65 +1100,33 @@ public final class ArrayUtil {
 	}	
 	
 		
-	
-	/**
-	 * Product.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the double[]
-	 */
+
 	public static double[] product(double[] a, double[] b) {
 		double[] result = new double[a.length];
 		for(int i=a.length; --i >= 0; ) result[i] = a[i] * b[i];
 		return result;
 	}
 	
-	/**
-	 * Product.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the double[]
-	 */
+
 	public static double[] product(double[] a, float[] b) {
 		double[] result = new double[a.length];
 		for(int i=a.length; --i >= 0; ) result[i] = a[i] * b[i];
 		return result;
 	}
 	
-	/**
-	 * Product.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the double[]
-	 */
+
 	public static double[] product(float[] a, double[] b) {
 		return product(b, a);
 	}
 	
-	/**
-	 * Product.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the float[]
-	 */
+
 	public static float[] product(float[] a, float[] b) {
 		float[] result = new float[a.length];
 		for(int i=a.length; --i >= 0; ) result[i] = a[i] * b[i];
 		return result;
 	}
 		
-	/**
-	 * Product.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the object
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static Object product(Object a, Object b) throws IllegalArgumentException {
 		if(a instanceof Object[]){
 			Object result = null;
@@ -1770,14 +1147,7 @@ public final class ArrayUtil {
 		return null;
 	}
 	
-	/**
-	 * Dot.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return the object
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static Object dot(Object a, Object b) throws IllegalArgumentException {
 		if(a instanceof Object[]) {
 			Object[] A = (Object[]) a;
@@ -1804,15 +1174,7 @@ public final class ArrayUtil {
 	}
 	
 	
-	/**
-	 * Multiply by.
-	 *
-	 * @param <T> the generic type
-	 * @param data the data
-	 * @param factor the factor
-	 * @return the t[]
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 */
+
 	public static <T extends Multiplicative<? super T>> T[] multiplyBy(T[] data, T[] factor) throws IndexOutOfBoundsException {
 		for(int i=data.length; --i >= 0; ) data[i].multiplyBy(factor[i]);
 		return data;
@@ -1821,34 +1183,18 @@ public final class ArrayUtil {
 	
 	
 	// Absolute value. Also for Vector2D.
-	/**
-	 * Abs.
-	 *
-	 * @param data the data
-	 * @return the double[]
-	 */
 	public static double[] abs(double[] data) {
 		for(int i=data.length; --i >= 0; ) data[i] = Math.abs(data[i]);
 		return data;
 	}
 	
-	/**
-	 * Abs.
-	 *
-	 * @param data the data
-	 * @return the float[]
-	 */
+
 	public static float[] abs(float[] data) {
 		for(int i=data.length; --i >= 0; ) data[i] = Math.abs(data[i]);
 		return data;	
 	}
 	
-	/**
-	 * Abs.
-	 *
-	 * @param data the data
-	 * @return the object
-	 */
+
 	public static Object abs(Object data) {
 		if(data instanceof AbsoluteValue[]) {
 			AbsoluteValue[] array = (AbsoluteValue[]) data;
@@ -1878,13 +1224,6 @@ public final class ArrayUtil {
 	
 	
 	// Very primitive for now. Simply returns the first n elements with the closest match to the sum
-	/**
-	 * Selection near sum.
-	 *
-	 * @param nearValue the near value
-	 * @param array the array
-	 * @return the int[]
-	 */
 	public static int[] selectionNearSum(double nearValue, double[] array) {
 		double sum = array[0];
 		if(sum >= nearValue) return new int[] {0};
@@ -1904,32 +1243,14 @@ public final class ArrayUtil {
 	
 	
 	
-	
-	
 
-	
-
-	
-	
-	
-	/**
-	 * Gets the default weights.
-	 *
-	 * @param data the data
-	 * @return the default weights
-	 */
 	public static double[] getDefaultWeights(double[] data) {
 		double[] weight = new double[data.length];
 		for(int i=data.length; --i >= 0; ) weight[i] = Double.isNaN(data[i]) ? 0.0 : 1.0;
 		return weight;
 	} 
 	
-	/**
-	 * Gets the default weights.
-	 *
-	 * @param data the data
-	 * @return the default weights
-	 */
+
 	public static float[] getDefaultWeights(float[] data) {
 		float[] weight = new float[data.length];
 		for(int i=data.length; --i >= 0; ) weight[i] = Float.isNaN(data[i]) ? 0.0F : 1.0F;
@@ -1937,13 +1258,7 @@ public final class ArrayUtil {
 	} 
 	
 	
-	/**
-	 * Gets the default weights.
-	 *
-	 * @param data the data
-	 * @return the default weights
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static Object getDefaultWeights(Object data) throws IllegalArgumentException {
 		if(data instanceof BlankingValue[]) {
 			BlankingValue[] array = (BlankingValue[]) data;
@@ -1966,16 +1281,7 @@ public final class ArrayUtil {
 	}
 	
 	
-	
-	
-	/**
-	 * Gets the smoothed.
-	 *
-	 * @param signal the signal
-	 * @param beam the beam
-	 * @return the smoothed
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static Object getSmoothed(Object signal, Object beam) throws IllegalArgumentException {
 		Class<?> type = getClass(signal);	
 		if(!type.equals(double.class)) throw new IllegalArgumentException("Can smooth double arrays only.");
@@ -1986,15 +1292,6 @@ public final class ArrayUtil {
 	
 	
 	// Smoothing for real-valued beams only!!!
-	/**
-	 * Gets the smoothed.
-	 *
-	 * @param signal the signal
-	 * @param weights the weights
-	 * @param beam the beam
-	 * @return the smoothed
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	public static Object getSmoothed(Object signal, Object weights, Object beam) throws IllegalArgumentException {
 		Class<?> type = getClass(signal);	
 		if(!type.equals(double.class)) throw new IllegalArgumentException("Can smooth double arrays only.");
@@ -2066,28 +1363,11 @@ public final class ArrayUtil {
 
 	
 	// Smooth LinearAlgebra arrays too...
-	
-	
-	/**
-	 * Gets the gaussian beam.
-	 *
-	 * @param FWHM the fwhm
-	 * @param w the w
-	 * @return the gaussian beam
-	 */
 	public static Object getGaussianBeam(double[] FWHM, double w) {	
 		return getGaussianBeam(FWHM, 1.0, w, 0);
 	}
 	
-	/**
-	 * Gets the gaussian beam.
-	 *
-	 * @param FWHM the fwhm
-	 * @param scaling the scaling
-	 * @param w the w
-	 * @param depth the depth
-	 * @return the gaussian beam
-	 */
+
 	private static Object getGaussianBeam(double[] FWHM, double scaling, double w, int depth) {
 		double sigma = FWHM[depth] / Constant.sigmasInFWHM;
 		double A = -0.5/(sigma*sigma);
@@ -2114,65 +1394,33 @@ public final class ArrayUtil {
 		return beam;				
 	}
 	
-	/**
-	 * Coarse regrid of.
-	 *
-	 * @param data the data
-	 * @param stretch the stretch
-	 * @return the double[]
-	 */
+
 	public static double[] coarseRegridOf(double[] data, double stretch) {
 		double[] regridded = new double[(int) Math.ceil(stretch * data.length)];
 		coarseRegrid(data, regridded);
 		return regridded;
 	}	
 	
-	/**
-	 * Coarse regrid of.
-	 *
-	 * @param data the data
-	 * @param stretch the stretch
-	 * @return the float[]
-	 */
+
 	public static float[] coarseRegridOf(float[] data, double stretch) {
 		float[] regridded = new float[(int) Math.ceil(stretch * data.length)];
 		coarseRegrid(data, regridded);
 		return regridded;
 	}
 	
-	
-	/**
-	 * Coarse regrid.
-	 *
-	 * @param data the data
-	 * @param dst the dst
-	 */
+
 	public static void coarseRegrid(double[] data, double[] dst) {
 		double stretch = (double) dst.length / data.length;
 		for(int i=data.length; --i >= 0; ) dst[(int)Math.floor(stretch * i)] += data[i];
 	}	
 	
-	/**
-	 * Coarse regrid.
-	 *
-	 * @param data the data
-	 * @param dst the dst
-	 */
+
 	public static void coarseRegrid(float[] data, float[] dst) {
 		double stretch = (double) dst.length / data.length;
 		for(int i=data.length; --i >= 0; ) dst[(int)Math.floor(stretch * i)] += data[i];
 	}
 	
-	
-	
-	/**
-	 * Coarse regrid of.
-	 *
-	 * @param array the array
-	 * @param stretch the stretch
-	 * @return the object
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static Object coarseRegridOf(Object array, double[] stretch) throws IllegalArgumentException {
 		int[] size = getShape(array);
 		for(int i=size.length; --i >= 0; ) size[i] = (int)Math.round(stretch[i] * size[i]);
@@ -2182,12 +1430,7 @@ public final class ArrayUtil {
 		return dst;
 	}
 	
-	/**
-	 * Coarse regrid.
-	 *
-	 * @param src the src
-	 * @param dst the dst
-	 */
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void coarseRegrid(Object src, Object dst) {
 		if(!src.getClass().equals(dst.getClass())) throw new IllegalArgumentException("src and dst are different types.");
@@ -2212,14 +1455,7 @@ public final class ArrayUtil {
 		}
 	}
 	
-	/**
-	 * Smooth regrid of.
-	 *
-	 * @param array the array
-	 * @param stretch the stretch
-	 * @return the object
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static Object smoothRegridOf(Object array, double[] stretch) throws IllegalArgumentException {
 		Class<?> type = getClass(array);
 		
@@ -2241,27 +1477,11 @@ public final class ArrayUtil {
 	
 	
 
-	/**
-	 * Adds the pin at.
-	 *
-	 * @param data the data
-	 * @param point the point
-	 * @param pos the pos
-	 */
 	public static void addPinAt(Object data, Object point, double[] pos) {
 		addPinAt(data, point, 1.0, pos, 0);
 	}
 	
-	/**
-	 * Adds the pin at.
-	 *
-	 * @param <T> the generic type
-	 * @param data the data
-	 * @param point the point
-	 * @param scale the scale
-	 * @param pos the pos
-	 * @param depth the depth
-	 */
+
 	@SuppressWarnings("unchecked")
 	private static <T> void addPinAt(Object data, T point, double scale, double[] pos, int depth) {
 		if(data instanceof LinearAlgebra) {
@@ -2286,54 +1506,24 @@ public final class ArrayUtil {
 	}
 	
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
 	public static String toString (double[] data) { return toString(data, Util.e3); }
 
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @return the string
-	 */
+
 	public static String toString(double[] data, NumberFormat df) {
 		return toString(data, df, ", ");
 	}
 
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
+
 	public static String toString (double[][] data) { return toString(data, Util.e3); }
 
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @return the string
-	 */
+
 	public static String toString(double[][] data, NumberFormat df) {
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) text.append(toString(data[i], df) + "\n");
 		return new String(text);
 	}
 
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @param separator the separator
-	 * @return the string
-	 */
+
 	public static String toString(double[] data, NumberFormat df, String separator) { 
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
@@ -2343,56 +1533,25 @@ public final class ArrayUtil {
 		return new String(text);
 	}	
 	
-	
-	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
+
 	public static String toString (float[] data) { return toString(data, Util.e3); }
 
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @return the string
-	 */
+
 	public static String toString(float[] data, NumberFormat df) {
 		return toString(data, df, ", ");
 	}
 
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
+
 	public static String toString (float[][] data) { return toString(data, Util.e3); }
 
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @return the string
-	 */
+
 	public static String toString(float[][] data, NumberFormat df) {
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) text.append(toString(data[i], df) + "\n");
 		return new String(text);
 	}
 
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @param separator the separator
-	 * @return the string
-	 */
+
 	public static String toString(float[] data, NumberFormat df, String separator) { 
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
@@ -2402,33 +1561,15 @@ public final class ArrayUtil {
 		return new String(text);
 	}	
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
+
 	public static String toString(NumberFormating[] data) { return toString(data, Util.e3); } 
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @return the string
-	 */
+
 	public static String toString(NumberFormating[] data, NumberFormat df) {
 		return toString(data, df, ", ");
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param nf the nf
-	 * @param separator the separator
-	 * @return the string
-	 */
+
 	public static String toString(NumberFormating[] data, NumberFormat nf, String separator) { 
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
@@ -2438,44 +1579,22 @@ public final class ArrayUtil {
 		return new String(text);
 	}	
 
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
+
 	public static String toString(NumberFormating[][] data) { return toString(data, Util.e3); }
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param nf the nf
-	 * @return the string
-	 */
+
 	public static String toString(NumberFormating[][] data, NumberFormat nf) {
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) text.append(toString(data[i], nf) + "\n");
 		return new String(text);
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
+
 	public static String toString(Object[] data) { 
 		return toString(data, ", ");
 	}	
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param separator the separator
-	 * @return the string
-	 */
+
 	public static String toString(Object[] data, String separator) { 
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
@@ -2485,37 +1604,19 @@ public final class ArrayUtil {
 		return new String(text);
 	}	
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
+
 	public static String toString(Object[][] data) {
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) text.append(toString(data[i]) + "\n");
 		return new String(text);
 	}
+
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
 	public static String toString(int[] data) {
 		return toString(data, ", ");
 	}
 	
-	
-	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param separator the separator
-	 * @return the string
-	 */
+
 	public static String toString(int[] data, String separator) { 
 		StringBuffer text = new StringBuffer("{");
 		for(int i=0; i<data.length; i++) {
@@ -2526,25 +1627,12 @@ public final class ArrayUtil {
 		return new String(text);
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @return the string
-	 */
+
 	public static String toString(int[] data, NumberFormat df) {
 		return toString(data, df, ", ");
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @param separator the separator
-	 * @return the string
-	 */
+
 	public static String toString(int[] data, NumberFormat df, String separator) { 
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
@@ -2554,26 +1642,14 @@ public final class ArrayUtil {
 		return new String(text);
 	}	
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
+
 	public static String toString(int[][] data) {
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) text.append(toString(data[i]) + "\n");
 		return new String(text);
 	}
 	
-	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param df the df
-	 * @return the string
-	 */
+
 	public static String toString(int[][] data, NumberFormat df) {
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) text.append(toString(data[i], df) + "\n");
@@ -2583,13 +1659,6 @@ public final class ArrayUtil {
 	// TODO generic toString() representations:
 	//	Type[d1][d2]...[dn] = { firstElement, ... , lastElement }
 	//  verbose mode to list 1D and 2D arrays.                  
-	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @return the string
-	 */
 	public static String toString(Object data) {
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
@@ -2609,14 +1678,7 @@ public final class ArrayUtil {
 		else return data.toString();
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param nf the nf
-	 * @return the string
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static String toString(Object data, NumberFormat nf) throws IllegalArgumentException {
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
@@ -2637,14 +1699,7 @@ public final class ArrayUtil {
 		else throw new IllegalArgumentException("Array contains non NumberFormating elements.");
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param data the data
-	 * @param decimals the decimals
-	 * @return the string
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public static String toString(Object data, int decimals) throws IllegalArgumentException {
 		if(data instanceof Object[]) {
 			Object[] array = (Object[]) data;
@@ -2662,20 +1717,7 @@ public final class ArrayUtil {
 		else throw new IllegalArgumentException("Array contains non DecimalFormating elements.");
 	}
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param text the text
-	 * @param type the type
-	 * @return the object
-	 * @throws ParseException the parse exception
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
-	 * @throws IllegalAccessException the illegal access exception
-	 * @throws InstantiationException the instantiation exception
-	 */
+
 	public static Object parse(String text, Class<?> type) throws ParseException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		text = text.trim();
 		
@@ -2765,17 +1807,7 @@ public final class ArrayUtil {
 		else throw new IllegalArgumentException("Parsing argument is not a well-formed array.");
 	}
 	
-
 	
-
-	/**
-	 * Parses the.
-	 *
-	 * @param text the text
-	 * @param data the data
-	 * @throws ParseException the parse exception
-	 * @throws NumberFormatException the number format exception
-	 */	
 	public static void parse(String text, Object data) throws ParseException, NumberFormatException {
 		text = text.trim();
 		if(data instanceof String) {

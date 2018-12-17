@@ -30,17 +30,12 @@ import jnum.math.Range;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Parameter.
- */
+
 public class Parameter extends DataPoint implements Penalty {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 8118303849902647386L;
 	
-	
-	/** The name. */
+
 	private String name;
 	
 	/** Restrict the parameter to a specified range of values... */

@@ -22,19 +22,10 @@
  ******************************************************************************/
 package jnum.math.specialfunctions;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BinomialCoefficient.
- */
+
 public class BinomialCoefficient {
 
-	/**
-	 * At.
-	 *
-	 * @param n the n
-	 * @param k the k
-	 * @return the double
-	 */
+
 	public final static double at(int n, int k) {
 		return Math.round(Math.exp(Factorial.logAt(n) - Factorial.logAt(k) - Factorial.logAt(n-k)));
 	}

@@ -24,21 +24,13 @@ package jnum.math.specialfunctions;
 
 import jnum.Function;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LegendrePolynomial.
- */
+
 public class LegendrePolynomial implements Function<Double, Double> {
 	
-	/** The m. */
+
 	int l, m;
 	
-	/**
-	 * Instantiates a new legendre polynomial.
-	 *
-	 * @param l the l
-	 * @param m the m
-	 */
+
 	public LegendrePolynomial(int l, int m) {
 		if(m < 0 || m > l) throw new IllegalArgumentException("Illegal orders for " + getClass().getSimpleName() + ".");
 		this.l = l;
@@ -53,14 +45,7 @@ public class LegendrePolynomial implements Function<Double, Double> {
 		return at(l, m, x);		
 	}
 	
-	/**
-	 * At.
-	 *
-	 * @param l the l
-	 * @param m the m
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public static double at(final int l, final int m, final double x) {
 		if(m < 0 || m > l || Math.abs(x) > 1.0)
 			throw new IllegalArgumentException("Illegal arguments to LegendrePolynomial.");

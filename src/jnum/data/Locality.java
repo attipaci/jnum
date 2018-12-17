@@ -25,18 +25,9 @@ package jnum.data;
 import jnum.math.Metric;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Locality.
- */
+
 public abstract class Locality implements Metric<Locality>, Comparable<Locality> {
 	
-		/**
-		 * Sorting distance to.
-		 *
-		 * @param other the other
-		 * @return the double
-		 */
 		public abstract double sortingDistanceTo(Locality other);
 	
 }

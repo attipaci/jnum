@@ -26,22 +26,12 @@ package jnum.io.dirfile;
 
 import java.io.IOException;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ShortStore.
- */
+
 public class ShortStore extends RawStore<Short> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1778998721254246537L;
 
-	/**
-	 * Instantiates a new short store.
-	 *
-	 * @param path the path
-	 * @param name the name
-	 * @param arraySize the array size
-	 */
+
 	public ShortStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
 		bytes = 2;

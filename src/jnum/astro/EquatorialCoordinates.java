@@ -39,20 +39,12 @@ import jnum.text.HourAngleFormat;
 // x, y kept in longitude,latitude form
 // use RA(), DEC(), setRA() and setDEC(functions) to for RA, DEC coordinates...
 
-/**
- * The Class EquatorialCoordinates.
- */
 public class EquatorialCoordinates extends PrecessingCoordinates {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 3445122576647034180L;
 	
 
-	
-	
-    /**
-     * Instantiates a new equatorial coordinates.
-     */
+
     public EquatorialCoordinates() { }
     
     
@@ -60,63 +52,31 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         super(epoch);
     }
 
-	/**
-	 * Instantiates a new equatorial coordinates.
-	 *
-	 * @param text the text
-	 */
+
 	public EquatorialCoordinates(String text) { super(text); }
 
-	/**
-	 * Instantiates a new equatorial coordinates.
-	 *
-	 * @param ra the ra in radians
-	 * @param dec the dec in radians
-	 */
+
 	public EquatorialCoordinates(double ra, double dec) { 
 	    super(ra, dec); 
 	}
 
-	/**
-	 * Instantiates a new equatorial coordinates.
-	 *
-	 * @param ra the ra
-	 * @param dec the dec
-	 * @param aEpoch the a epoch
-	 */
+
 	public EquatorialCoordinates(double ra, double dec, double epochYear) { 
 	    super(ra, dec, epochYear);
 	}
 
-	/**
-	 * Instantiates a new equatorial coordinates.
-	 *
-	 * @param ra the ra
-	 * @param dec the dec
-	 * @param epochSpec the epoch spec
-	 */
+
 	public EquatorialCoordinates(double ra, double dec, String epochSpec) { 
 	    super(ra, dec, epochSpec); 
 	 
 	}
 	
-	/**
-	 * Instantiates a new equatorial coordinates.
-	 *
-	 * @param ra the ra
-	 * @param dec the dec
-	 * @param epoch the epoch
-	 */
+
 	public EquatorialCoordinates(double ra, double dec, CoordinateEpoch epoch) { 
 	    super(ra, dec, epoch); 
 	}
 		
-	
-	/**
-	 * Instantiates a new equatorial coordinates.
-	 *
-	 * @param from the from
-	 */
+
 	public EquatorialCoordinates(CelestialCoordinates from) { super(from); }
 	
 	
@@ -148,55 +108,25 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         return defaultLocalCoordinateSystem;
     }
     	
-	/**
-	 * Right ascension in the 0 -- 2pi range.
-	 *
-	 * @return the double
-	 */
+
 	public final double RA() { return zeroToTwoPi(longitude()); }
 
-	/**
-	 * Right ascension in the 0 -- 2pi range.
-	 *
-	 * @return the double
-	 */
+
 	public final double rightAscension() { return RA(); }
 
-	/**
-	 * Dec.
-	 *
-	 * @return the double
-	 */
+
 	public final double DEC() { return latitude(); }
 
-	/**
-	 * Declination.
-	 *
-	 * @return the double
-	 */
+
 	public final double declination() { return DEC(); }
 
-	/**
-	 * Sets the ra.
-	 *
-	 * @param RA the new ra
-	 */
+
 	public final void setRA(double RA) { setLongitude(RA); }
 
-	/**
-	 * Sets the dec.
-	 *
-	 * @param DEC the new dec
-	 */
+
 	public final void setDEC(double DEC) { setLatitude(DEC); }
 
-	/**
-	 * Gets the parallactic angle.
-	 *
-	 * @param site the site
-	 * @param LST the lst
-	 * @return the parallactic angle
-	 */
+
 	public double getParallacticAngle(GeodeticCoordinates site, double LST) {
 		final double H = LST * Unit.timeAngle - RA();
 		return Math.atan2(site.cosLat() * Math.sin(H), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(H));
@@ -227,60 +157,28 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 		copy(equatorial);
 	}
 	
-	/**
-	 * To horizontal.
-	 *
-	 * @param site the site
-	 * @param LST the lst
-	 * @return the horizontal coordinates
-	 */
+
 	public HorizontalCoordinates toHorizontal(GeodeticCoordinates site, double LST) {
 		HorizontalCoordinates horizontal = new HorizontalCoordinates();
 		toHorizontal(this, horizontal, site, LST);
 		return horizontal;
 	}
 	
-	/**
-	 * To horizontal.
-	 *
-	 * @param toCoords the to coords
-	 * @param site the site
-	 * @param LST the lst
-	 */
+
 	public void toHorizontal(HorizontalCoordinates toCoords, GeodeticCoordinates site, double LST) { toHorizontal(this, toCoords, site, LST); }
 	
 	
-	/**
-	 * To horizontal offset.
-	 *
-	 * @param offset the offset
-	 * @param site the site
-	 * @param LST the lst
-	 */
 	public void toHorizontalOffset(Vector2D offset, GeodeticCoordinates site, double LST) {
 		toHorizontalOffset(offset, getParallacticAngle(site, LST));
 	}
 
-	/**
-	 * To horizontal offset.
-	 *
-	 * @param offset the offset
-	 * @param PA the pa
-	 */
+
 	public static void toHorizontalOffset(Vector2D offset, double PA) {
 		offset.scaleX(-1.0);
 		offset.rotate(-PA);
 	}
 	
-	/**
-	 * To horizontal.
-	 *
-	 * @param equatorial the equatorial
-	 * @param horizontal the horizontal
-	 * @param site the site
-	 * @param LST the lst
-	 */
-	
+
 	/*
 	public static void toHorizontal(EquatorialCoordinates equatorial, HorizontalCoordinates horizontal, GeodeticCoordinates site, double LST) {
 		double H = LST * Unit.timeAngle - equatorial.RA();
@@ -340,14 +238,11 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 	@Override
 	public double getZeroLongitude() { return 0.0; }
 	
-    
-	   
-    /** The default local coordinate system. */
+
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
-    
-    /** The hf. */
+
     private static HourAngleFormat haf = new HourAngleFormat(2);
     
 
@@ -374,26 +269,17 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     }	
 	
   
-    
-    
-    /** The equatorial pole. */
+
     private static EquatorialCoordinates equatorialPole = new EquatorialCoordinates(0.0, Constant.rightAngle);
 
 
-    
-    /** The Constant NORTH. */
+
     public final static int NORTH = 1;
-    
-    /** The Constant SOUTH. */
+
     public final static int SOUTH = -1;
-    
-    /** The Constant EAST. */
+
     public final static int EAST = -1;
-    
-    /** The Constant WEST. */
+
     public final static int WEST = 1;
-    
-    
-	
 
 }

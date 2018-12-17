@@ -23,7 +23,6 @@
 
 package jnum.data.fitting;
 
-// TODO: Auto-generated Javadoc
 /**
  * A class for formulating simple relational constraints between two quantities, one of which must be of {@link Parametric} type.
  */

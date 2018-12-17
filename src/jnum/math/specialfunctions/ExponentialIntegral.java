@@ -25,39 +25,24 @@ package jnum.math.specialfunctions;
 import jnum.Constant;
 import jnum.math.NumericalFunction;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ExponentialIntegral.
- */
+
 public class ExponentialIntegral implements NumericalFunction<Double, Double> {
 
-    /** The order. */
+
     private int order;
 
-    /** The precision. */
+
     private double precision = 1.0e-7;
 
-    /**
-     * Instantiates a new exponential integral.
-     *
-     * @param order the order
-     */
+
     public ExponentialIntegral(int order) {
         setOrder(order);
     }
 
-    /**
-     * Sets the order.
-     *
-     * @param order the new order
-     */
+
     public void setOrder(int order) { this.order = order; }
 
-    /**
-     * Gets the order.
-     *
-     * @return the order
-     */
+
     public int getOrder() { return order; }
 
     /* (non-Javadoc)
@@ -133,10 +118,10 @@ public class ExponentialIntegral implements NumericalFunction<Double, Double> {
         precision = Math.pow(0.1, digits);
     }
 
-    /** The max iteration. */
+
     public static int maxIteration = 300;
 
-    /** The fpmin. */
+
     public static double FPMIN = 1.0e-300;
 
 

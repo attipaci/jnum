@@ -31,27 +31,17 @@ public class LongMesh extends NumberMesh.IntegerType<Long> {
      */
     private static final long serialVersionUID = 7707405135422248118L;
 
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param dimensions the dimensions
-     */
+
     public LongMesh(int[] dimensions) {
         super(Long.class, dimensions);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     */
+
     public LongMesh() {
         super(Long.class);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param data the data
-     */
+
     public LongMesh(Object data) {
         this();
         setData(data);

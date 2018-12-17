@@ -29,42 +29,22 @@ import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SuperGalacticCoordinates.
- */
+
 public class SuperGalacticCoordinates extends CelestialCoordinates {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5322669438151443525L;
 
 
 
-    /**
-     * Instantiates a new super galactic coordinates.
-     */
     public SuperGalacticCoordinates() {}
 
-    /**
-     * Instantiates a new super galactic coordinates.
-     *
-     * @param text the text
-     */
+
     public SuperGalacticCoordinates(String text) { super(text); }
 
-    /**
-     * Instantiates a new super galactic coordinates.
-     *
-     * @param lat the lat
-     * @param lon the lon
-     */
+
     public SuperGalacticCoordinates(double lat, double lon) { super(lat, lon); }
 
-    /**
-     * Instantiates a new super galactic coordinates.
-     *
-     * @param from the from
-     */
+
     public SuperGalacticCoordinates(CelestialCoordinates from) { super(from); }
 
 
@@ -112,8 +92,7 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
     }
   
 
-    
-    /** The default local coordinate system. */
+
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
@@ -136,18 +115,12 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
     }
 
 
-
-
-    /** The Constant galacticPole. */
     public final static GalacticCoordinates galacticPole = new GalacticCoordinates(47.37*Unit.deg, 6.32*Unit.deg);
 
-    /** The Constant galacticZero. */
     public final static GalacticCoordinates galacticZero = new GalacticCoordinates(137.37*Unit.deg, 0.0);
 
-    /** The Constant equatorialPole. */
     public final static EquatorialCoordinates equatorialPole = galacticPole.toEquatorial(); 
 
-    /** The phi0. */
     public static double phi0 = CelestialCoordinates.getZeroLongitude(galacticZero, new SuperGalacticCoordinates());
 
 

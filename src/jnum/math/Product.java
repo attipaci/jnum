@@ -22,21 +22,11 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface Product.
- *
- * @param <LeftType> the generic type
- * @param <RightType> the generic type
- */
+
+
 public interface Product<LeftType, RightType> {
 
-	/**
-	 * Sets the product.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 */
+
 	public void setProduct(LeftType a, RightType b);
 	
 }

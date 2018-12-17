@@ -28,27 +28,16 @@ import jnum.projection.Projection2D;
 import jnum.projection.Projector2D;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CelestialProjector.
- */
+
 public class AstroProjector extends Projector2D<SphericalCoordinates> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -6883179727775205645L;
 
-	/** The equatorial. */
 	private EquatorialCoordinates equatorial;
-	
-	/** The celestial. */
+
 	private CelestialCoordinates celestial;
 	
 	
-	/**
-	 * Instantiates a new celestial projector.
-	 *
-	 * @param projection the projection
-	 */
 	public AstroProjector(Projection2D<SphericalCoordinates> projection) {
 		super(projection);
 
@@ -91,27 +80,15 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 		return true;
 	}
 	
-	/**
-	 * Gets the equatorial.
-	 *
-	 * @return the equatorial
-	 */
+
 	public EquatorialCoordinates getEquatorial() { return equatorial; }
 	
-	/**
-	 * Checks if is horizontal.
-	 *
-	 * @return true, if is horizontal
-	 */
+
 	public final boolean isHorizontal() {
 		return getCoordinates() instanceof HorizontalCoordinates;
 	}
 	
-	/**
-	 * Checks if is focal plane.
-	 *
-	 * @return true, if is focal plane
-	 */
+
 	public final boolean isFocalPlane() {
 		return getCoordinates() instanceof FocalPlaneCoordinates;
 	}
@@ -126,9 +103,7 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 		if(celestial != null) celestial.toEquatorial(equatorial);		
 	}
 
-	/**
-	 * Project from equatorial.
-	 */
+
 	public final void projectFromEquatorial() {
 		if(celestial != null) celestial.fromEquatorial(equatorial);
 		super.project();

@@ -31,48 +31,29 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GeocentricCoordinates.
- */
+
 public class GeocentricCoordinates extends SphericalCoordinates {	
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 14070920003212901L;
 
-	/**
-	 * Instantiates a new geocentric coordinates.
-	 */
+
 	public GeocentricCoordinates() {}
 	
-	/**
-	 * Instantiates a new geocentric coordinates.
-	 *
-	 * @param text the text
-	 */
+
 	public GeocentricCoordinates(String text) { super(text); }
 	
-	/**
-	 * Instantiates a new geocentric coordinates.
-	 *
-	 * @param lon the lon
-	 * @param lat the lat
-	 */
+
 	public GeocentricCoordinates(double lon, double lat) { super(lon, lat); }
 	
 	@Override
     public String getTwoLetterCode() { return "GC"; }
-	
-	/** The Constant NORTH. */
+
 	public final static int NORTH = 1;
-	
-	/** The Constant SOUTH. */
+
 	public final static int SOUTH = -1;
-	
-	/** The Constant EAST. */
+
 	public final static int EAST = 1;
-	
-	/** The Constant WEST. */
+
 	public final static int WEST = -1;
 	
 	/* (non-Javadoc)

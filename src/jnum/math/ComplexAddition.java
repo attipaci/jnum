@@ -23,7 +23,6 @@
 
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
 /**
  * Interface for all objects to which a Complex number can be added or subtracted.
  */

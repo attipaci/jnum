@@ -22,15 +22,10 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface ComplexConjugate.
- */
+
 public interface ComplexConjugate {
 
-	/**
-	 * Conjugate.
-	 */
+    
 	public void conjugate();
 	
 }

@@ -27,47 +27,27 @@ import jnum.data.ArrayUtil;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SquareMatrix.
- */
 public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5786886148000000230L;
 
-	/**
-	 * Instantiates a new square matrix.
-	 */
+
 	public SquareMatrix() {
 		super();
 	}
 	
-	/**
-	 * Instantiates a new square matrix.
-	 *
-	 * @param M the m
-	 */
+
 	public SquareMatrix(Matrix M) {
 		this(M.entry);
 		validate();
 	}
 
-	/**
-	 * Instantiates a new square matrix.
-	 *
-	 * @param a the a
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public SquareMatrix(double[][] a) throws IllegalArgumentException {
 		super(a);
 	}
 
-	/**
-	 * Instantiates a new square matrix.
-	 *
-	 * @param size the size
-	 */
+
 	public SquareMatrix(int size) {
 		super(size, size);
 	}
@@ -82,58 +62,31 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 	}
 	
 	
-	/**
-	 * Adds the rows.
-	 *
-	 * @param b the b
-	 */
 	public void addRows(Matrix b) {
 		throw new UnsupportedOperationException("Cannot add rows to a " + getClass().getSimpleName());
 	}
 	
-	/**
-	 * Adds the columns.
-	 *
-	 * @param b the b
-	 */
+
 	public void addColumns(Matrix b) {
 		throw new UnsupportedOperationException("Cannot add columns to a " + getClass().getSimpleName());
 	}
 	
-	/**
-	 * Gets the inverse.
-	 *
-	 * @return the inverse
-	 */
+
 	public SquareMatrix getInverse() {
 		return getLUInverse();
 	}
 	
-	/**
-	 * Gets the lU inverse.
-	 *
-	 * @return the lU inverse
-	 */
+
 	public SquareMatrix getLUInverse() {
 		return new LUDecomposition(this).getInverse();
 	}
 	
-	
-	/**
-	 * Gets the SVD inverse.
-	 *
-	 * @return the SVD inverse
-	 */
+
 	public SquareMatrix getSVDInverse() {
 		return new SquareMatrix(new SVD(this).getInverse());
 	}
 	
 	// Invert via Gauss-Jordan elimination
-	/**
-	 * Gets the gauss inverse.
-	 *
-	 * @return the gauss inverse
-	 */
 	public SquareMatrix getGaussInverse() {
 		int size = size();
 		Matrix combo = new Matrix(size, 2*size);
@@ -147,21 +100,9 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 
 	// indx is the row permutation, returns +/-1 for even/odd row exchanges...
 	// Based on Numerical Recipes in C (Press et al. 1989)
-	/**
-	 * Decompose lu.
-	 *
-	 * @param index the index
-	 * @return true, if successful
-	 */
 	protected boolean decomposeLU(int[] index) { return decomposeLU(index, 1e-20); }
 	
-	/**
-	 * Decompose lu.
-	 *
-	 * @param index the index
-	 * @param tinyValue the tiny value
-	 * @return true, if successful
-	 */
+
 	protected boolean decomposeLU(int[] index, double tinyValue) {
 		final int n = size();
 
@@ -217,31 +158,16 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 	}
 	
 	// TODO Solving with and without inversion...
-	
-	/**
-	 * Solve.
-	 *
-	 * @param b the b
-	 */
 	public void solve(double[] b) {
 		new LUDecomposition(this).solve(b);
 	}
 	
-	/**
-	 * Invert and solve.
-	 *
-	 * @param b the b
-	 */
-	public void invertAndSolve(double[] b) {
-		
+
+	public void invertAndSolve(double[] b) {	
 		
 	}
 	
-	/**
-	 * Solve.
-	 *
-	 * @param inputVectors the input vectors
-	 */
+	
 	public void solve(Matrix inputVectors) {
 		inputVectors.entry = getSolutionsTo(inputVectors.entry);
 	}
@@ -270,12 +196,6 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 	}
 	
 	
-	/**
-	 * Gets the solutions to.
-	 *
-	 * @param inputMatrix the input matrix
-	 * @return the solutions to
-	 */
 	public double[][] getSolutionsTo(double[][] inputMatrix) {
 		int size = size();
 		Matrix combo = new Matrix(size, size + inputMatrix[0].length);
@@ -299,11 +219,7 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 	@Override
 	public final int size() { return rows(); }
 
-	/**
-	 * Sets the size.
-	 *
-	 * @param size the new size
-	 */
+
 	public void setSize(int size) {
 	    super.setSize(size, size);
 	}
@@ -317,12 +233,7 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 		for(int i=entry.length; --i >= 0; ) entry[i][i] = 1.0;
 	}
 	
-	/**
-	 * Rotation.
-	 *
-	 * @param angle the angle
-	 * @return the square matrix
-	 */
+
 	public static SquareMatrix rotation(double angle) {	
 		double c = Math.cos(angle);
 		double s = Math.sin(angle);
@@ -332,36 +243,17 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 	}
 		
 	
-	/**
-	 * Rotation.
-	 *
-	 * @param theta the theta
-	 * @param phi the phi
-	 * @return the square matrix
-	 */
 	public static SquareMatrix rotation(double theta, double phi) {
 		return rotation(new double[] { theta, phi } );	
 	}
 	
 	
-	/**
-	 * Inverse rotation.
-	 *
-	 * @param theta the theta
-	 * @param phi the phi
-	 * @return the square matrix
-	 */
+
 	public static SquareMatrix inverseRotation(double theta, double phi) {	
 		return inverseRotation(new double[] { theta, phi } );
 	}
 	
-	
-	/**
-	 * Rotation.
-	 *
-	 * @param angles the angles
-	 * @return the square matrix
-	 */
+
 	public static SquareMatrix rotation(double[] angles) {
 		int n = angles.length + 1;
 		SquareMatrix rotation = new SquareMatrix(n);
@@ -390,12 +282,7 @@ public class SquareMatrix extends Matrix implements SquareMatrixAlgebra<Double> 
 		return rotation;
 	}
 	
-	/**
-	 * Inverse rotation.
-	 *
-	 * @param angles the angles
-	 * @return the square matrix
-	 */
+
 	public static SquareMatrix inverseRotation(double[] angles) {
 		int n = angles.length + 1;
 		SquareMatrix rotation = new SquareMatrix(n);

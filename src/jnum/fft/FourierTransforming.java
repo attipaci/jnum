@@ -25,39 +25,21 @@ package jnum.fft;
 
 import jnum.math.Scalable;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface FourierTransforming.
- */
+
 public interface FourierTransforming {
 
-	/**
-	 * Gets the volume count.
-	 *
-	 * @return the volume count
-	 */
+
 	public int getVolumeCount();
 	
-	/**
-	 * Complex transform.
-	 *
-	 * @param isForward the is forward
-	 */
+
 	public void complexTransform(boolean isForward);
 	
 
     public int getPointSize();
 
-	/**
-	 * The Interface Real.
-	 */
+
 	public interface Real extends FourierTransforming, Scalable {
 		
-		/**
-		 * Real transform.
-		 *
-		 * @param isForward the is forward
-		 */
 		public void realTransform(boolean isForward);
 		
 	}

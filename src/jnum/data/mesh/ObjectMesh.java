@@ -29,41 +29,22 @@ import jnum.Copiable;
 import jnum.text.Parser;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ObjectMesh.
- *
- * @param <T> the generic type
- */
+
 public class ObjectMesh<T> extends Mesh<T> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 86938797450633242L;
 
-	/**
-	 * Instantiates a new generic array.
-	 *
-	 * @param type the type
-	 */
+
 	public ObjectMesh(Class<T> type) {
 		super(type);
 	}
 
-	/**
-	 * Instantiates a new generic array.
-	 *
-	 * @param type the type
-	 * @param dimensions the dimensions
-	 */
+
 	public ObjectMesh(Class<T> type, int[] dimensions) {
 		super(type, dimensions);
 	}
 
-	/**
-	 * Instantiates a new generic array.
-	 *
-	 * @param data the data
-	 */
+
 	public ObjectMesh(Object data) {
 		super(data);
 	}

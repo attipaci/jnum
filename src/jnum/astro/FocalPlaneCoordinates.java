@@ -33,34 +33,18 @@ import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
 import jnum.text.GreekLetter;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FocalPlaneCoordinates.
- */
+
 public class FocalPlaneCoordinates extends SphericalCoordinates {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 6324566580599103464L;
 		
 
-	/**
-	 * Instantiates a new focal plane coordinates.
-	 */
 	public FocalPlaneCoordinates() {}
 
-	/**
-	 * Instantiates a new focal plane coordinates.
-	 *
-	 * @param text the text
-	 */
+
 	public FocalPlaneCoordinates(String text) { super(text); } 
 
-	/**
-	 * Instantiates a new focal plane coordinates.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 */
+
 	public FocalPlaneCoordinates(double x, double y) { super(x, y); }
 
 	/* (non-Javadoc)
@@ -101,9 +85,6 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
 	}
 	
 	
-    
-    
-    /** The default local coordinate system. */
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 		

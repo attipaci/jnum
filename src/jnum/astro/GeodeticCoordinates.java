@@ -37,42 +37,23 @@ import jnum.math.SphericalCoordinates;
 // ... rename to GeographicCoordinates
 // ... toString() formatting, and parse with N,S,E,W
 
-/**
- * The Class GeodeticCoordinates.
- */
+
 public class GeodeticCoordinates extends SphericalCoordinates {	
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -162411465069211958L;
 
-	/**
-	 * Instantiates a new geodetic coordinates.
-	 */
+
 	public GeodeticCoordinates() {}
 	
-	/**
-	 * Instantiates a new geodetic coordinates.
-	 *
-	 * @param text the text
-	 */
+
 	public GeodeticCoordinates(String text) { super(text); }
 	
-	/**
-	 * Instantiates a new geodetic coordinates.
-	 *
-	 * @param lon the lon
-	 * @param lat the lat
-	 */
+
 	public GeodeticCoordinates(double lon, double lat) { super(lon, lat); }
 	
 	// Approximation for converting geocentric to geodesic coordinates.
 	// Marik: Csillagaszat (1989)
 	// based on Woolard & Clemence: Spherical Astronomy (1966)
-	/**
-	 * Instantiates a new geodetic coordinates.
-	 *
-	 * @param geocentric the geocentric
-	 */
 	public GeodeticCoordinates(GeocentricCoordinates geocentric) {
 		setNativeLongitude(geocentric.x());
 		setNativeLatitude(geocentric.y() + Z * Math.sin(2.0 * geocentric.y()));
@@ -93,29 +74,21 @@ public class GeodeticCoordinates extends SphericalCoordinates {
 		c.add(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
 	}
 	
-	
-	/** The Constant a. */
+
 	public final static double a = 6378137.0 * Unit.m; // Earth major axis
-	
-	/** The Constant b. */
+
 	public final static double b = 6356752.3 * Unit.m; // Earth minor axis
-	
-	/** The Constant f. */
+
 	public final static double f = 1.0 / 298257.0; // Flattening of Earth (Marik: Csillagaszat)
-	
-	/** The Constant X. */
+
 	private final static double Z = 103132.4 * Unit.deg * (2.0 * f - f*f); // Approximation term for geodesic conversion (Marik: Csillagaszat)
-	
-	/** The Constant NORTH. */
+
 	public final static int NORTH = 1;
-	
-	/** The Constant SOUTH. */
+
 	public final static int SOUTH = -1;
-	
-	/** The Constant EAST. */
+
 	public final static int EAST = 1;
-	
-	/** The Constant WEST. */
+
 	public final static int WEST = -1;
 	
 	// TODO verify units of X...

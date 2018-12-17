@@ -30,13 +30,7 @@ import jnum.fits.FitsHeaderEditing;
 import jnum.fits.FitsHeaderParsing;
 import jnum.math.CoordinateSystem;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface Grid.
- *
- * @param <CoordinateType> the generic type
- * @param <OffsetType> the generic type
- */
+
 public abstract class Grid<CoordinateType, OffsetType> implements Serializable, Cloneable,
 FitsHeaderEditing, FitsHeaderParsing {
 
@@ -70,59 +64,30 @@ FitsHeaderEditing, FitsHeaderParsing {
     }
     
     
-    /**
-     * Sets the reference.
-     *
-     * @param coords the new reference
-     */
     public abstract void setReference(CoordinateType coords);
 
-    /**
-     * Gets the reference.
-     *
-     * @return the reference
-     */
+
     public abstract CoordinateType getReference();
 
-    /**
-     * Sets the reference index.
-     *
-     * @param index the new reference index
-     */
+
     public abstract void setReferenceIndex(OffsetType index);
 
-    /**
-     * Gets the reference index.
-     *
-     * @return the reference index
-     */
+
     public abstract OffsetType getReferenceIndex();
 
-    /**
-     * Sets the resolution.
-     *
-     * @param delta the new resolution
-     */
+
     public abstract void setResolution(OffsetType delta);
 
-    /**
-     * Gets the resolution.
-     *
-     * @return the resolution
-     */
-    public abstract OffsetType getResolution();
 
+    public abstract OffsetType getResolution();
 
 
     public abstract void coordsAt(OffsetType index, CoordinateType toValue);
     
+
     public abstract void indexOf(CoordinateType value, OffsetType toIndex);
  
 
     public abstract int dimension();
-
-   
-    
-    
 
 }

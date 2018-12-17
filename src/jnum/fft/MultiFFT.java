@@ -37,13 +37,9 @@ import jnum.math.ComplexMultiplication;
 import jnum.math.Scalable;
 import jnum.parallel.Parallelizable;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GenericFFT.
- */
+
 public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3679294695088014282L;
 
 
@@ -142,26 +138,13 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         return Integer.highestOneBit(data.length);
     }
 
-    /**
-     * Gets the padded.
-     *
-     * @param data the data
-     * @param n the n
-     * @return the padded
-     */
+
     public Object[] getPadded(Object[] data, int[] n) {
         // TODO Auto-generated method stub
         return null;
     }
 
 
-    /**
-     * Average power.
-     *
-     * @param data the data
-     * @param n the n
-     * @return the object
-     */
     public Object averagePower(Object[] data, int[] n) {
         double[][] windows = new double[n.length][];
         for(int i=n.length; --i >= 0; ) windows[i] = WindowFunction.getHamming(n[i]);
@@ -169,25 +152,12 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     }
 
 
-    /**
-     * Average power.
-     *
-     * @param data the data
-     * @param windows the windows
-     * @return the object
-     */
     public Object averagePower(final Object[] data, final double[][] windows) {
         // TODO
         return null;
     }
 
 
-    /**
-     * Sets the child for.
-     *
-     * @param element the new child for
-     * @return the child for
-     */
     private synchronized FFT<?> getChildFor(final Object element) throws FFTTypeException {
         if(element.getClass().equals(reuseType)) return reuseChild;
 
@@ -263,15 +233,6 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 
     // Blockbit is the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
     // Two consecutive blocks are merged by the algorithm into one larger block...
-    /**
-     * Merge2.
-     *
-     * @param data the data
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     * @param blkbit the blkbit
-     */
     @Override
     protected void radix2(final Object[] data, int from, int to, final boolean isForward, int blkbit) {	
 
@@ -351,15 +312,6 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 
     // Blockbit is the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
     // Four consecutive blocks are merged by the algorithm into one larger block...
-    /**
-     * Merge4.
-     *
-     * @param data the data
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     * @param blkbit the blkbit
-     */
     @Override
     protected void radix4(final Object[] data, int from, int to, final boolean isForward, int blkbit) {
 
@@ -582,14 +534,6 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     }
 
 
-    /**
-     * Sets the sum.
-     *
-     * @param <T> the generic type
-     * @param result the result
-     * @param a the a
-     * @param b the b
-     */
     @SuppressWarnings("unchecked")
     private <T> void setSum(final T result, final T a, final T b) throws FFTTypeException {	
         if(a instanceof Additive)
@@ -619,14 +563,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         else throw new FFTTypeException(a.getClass());
     }
 
-    /**
-     * Sets the difference.
-     *
-     * @param <T> the generic type
-     * @param result the result
-     * @param a the a
-     * @param b the b
-     */
+
     @SuppressWarnings({ "unchecked" })
     private <T> void setDifference(final T result, final T a, final T b) throws FFTTypeException {
 
@@ -715,12 +652,6 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 
 
 
-    /**
-     * Scale.
-     *
-     * @param data the data
-     * @param factor the factor
-     */
     public void scale(final Object data, final double factor) throws IllegalArgumentException {
         if(data instanceof Scalable) ((Scalable) data).scale(factor);
         else if(data instanceof float[]) {

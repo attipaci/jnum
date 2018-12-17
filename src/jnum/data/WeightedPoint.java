@@ -32,39 +32,23 @@ import jnum.math.Multiplicative;
 import jnum.math.Ratio;
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class WeightedPoint.
- */
+
 public class WeightedPoint extends RealValue implements Multiplicative<WeightedPoint>, Division<WeightedPoint>, Ratio<WeightedPoint, WeightedPoint>, LinearAlgebra<WeightedPoint>, 
-Accumulating<WeightedPoint>
-{
-	
-	/** The Constant serialVersionUID. */
+Accumulating<WeightedPoint> {
+
 	private static final long serialVersionUID = -6583109762992313591L;
-	/** The weight. */
+
 	private double weight;
 
-	/**
-	 * Instantiates a new weighted point.
-	 */
+
 	public WeightedPoint() {}
 
-	/**
-	 * Instantiates a new weighted point.
-	 *
-	 * @param template the template
-	 */
+
 	public WeightedPoint(final WeightedPoint template) {
 		copy(template);
 	}
 
-	/**
-	 * Instantiates a new weighted point.
-	 *
-	 * @param value the value
-	 * @param weight the weight
-	 */
+
 	public WeightedPoint(final double value, final double weight) { 
 		super(value);
 		this.weight = weight;
@@ -103,39 +87,19 @@ Accumulating<WeightedPoint>
 		return super.hashCode() ^ HashCode.from(weight);
 	}
 	
-	/**
-	 * Weight.
-	 *
-	 * @return the double
-	 */
+
 	public final double weight() { return weight; }	
-	/**
-	 * Sets the weight.
-	 *
-	 * @param w the new weight
-	 */
+
+	
 	public final void setWeight(final double w) { this.weight = w; }
 	
-	
-	/**
-	 * Adds the weight.
-	 *
-	 * @param dw the dw
-	 */
+
 	public final void addWeight(double dw) { weight += dw; }
 	
-	/**
-	 * Scale value.
-	 *
-	 * @param factor the factor
-	 */
+
 	public final void scaleValue(double factor) { super.scale(factor); }
 	
-	/**
-	 * Scale weight.
-	 *
-	 * @param factor the factor
-	 */
+
 	public final void scaleWeight(double factor) { weight *= factor; }
 
 
@@ -145,60 +109,33 @@ Accumulating<WeightedPoint>
 		weight = 0.0;
 	}
 
-	/**
-	 * Checks if is na n.
-	 *
-	 * @return true, if is na n
-	 */
+
 	public final boolean isNaN() { return isNaN(this); }
 
-	/**
-	 * Checks if is na n.
-	 *
-	 * @param point the point
-	 * @return true, if is na n
-	 */
+
 	public final static boolean isNaN(WeightedPoint point) { 
 		return Double.isNaN(point.value()) || point.weight == 0.0;
 	}
 
-	/**
-	 * Exact.
-	 */
+
 	public final void exact() { weight = Double.POSITIVE_INFINITY; }
 
-	/**
-	 * Checks if is exact.
-	 *
-	 * @return true, if is exact
-	 */
+
 	public final boolean isExact() { return Double.isInfinite(weight); }
 
-	/**
-	 * Copy.
-	 *
-	 * @param x the x
-	 */
+
 	public void copy(final WeightedPoint x) {
 		setValue(x.value());
 		weight = x.weight;
 	}
 	
-	/**
-	 * Adds the.
-	 *
-	 * @param x the x
-	 */
+
 	@Override
 	public final void add(final WeightedPoint x) {
 		setSum(this, x);
 	}
 		
-	/**
-	 * Subtract.
-	 *
-	 * @param x the x
-	 */
+
 	@Override
 	public final void subtract(final WeightedPoint x) {
 		setDifference(this, x);
@@ -236,21 +173,12 @@ Accumulating<WeightedPoint>
 		else weight = weight * x.weight / (x.weight + factor * factor * weight);
 	}
 	
-	/**
-	 * Average.
-	 *
-	 * @param x the x
-	 */
+
 	public void average(final WeightedPoint x) {
 		average(x.value(), x.weight);
 	}
+
 	
-	/**
-	 * Average.
-	 *
-	 * @param v the v
-	 * @param w the w
-	 */
 	public void average(final double v, final double w) {
 		setValue(weight * value() + w * v);
 		weight += w;
@@ -279,11 +207,7 @@ Accumulating<WeightedPoint>
 	    setValue(value() / weight);
 	}
 	
-	/**
-	 * Scale.
-	 *
-	 * @param x the x
-	 */
+
 	@Override
 	public final void scale(final double x) {
 		scaleValue(x);
@@ -331,13 +255,7 @@ Accumulating<WeightedPoint>
 		setValue(a.value() / b.value());
 	}
 	
-	/**
-	 * Math.
-	 *
-	 * @param op the op
-	 * @param x the x
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public void math(final char op, final WeightedPoint x) throws IllegalArgumentException {
 		switch(op) {
 		case '+' : add(x); break;
@@ -348,27 +266,14 @@ Accumulating<WeightedPoint>
 		}
 	}
 
-	/**
-	 * Math.
-	 *
-	 * @param a the a
-	 * @param op the op
-	 * @param b the b
-	 * @return the weighted point
-	 */
+
 	public static WeightedPoint math(final WeightedPoint a, final char op, final WeightedPoint b) {
 		WeightedPoint result = new WeightedPoint(a);
 		result.math(op, b);
 		return result;
 	}
 
-	/**
-	 * Math.
-	 *
-	 * @param op the op
-	 * @param x the x
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public void math(final char op, final double x) throws IllegalArgumentException {
 		switch(op) {
 		case '+' : add(x); break;
@@ -379,14 +284,7 @@ Accumulating<WeightedPoint>
 		}
 	}
 
-	/**
-	 * Math.
-	 *
-	 * @param a the a
-	 * @param op the op
-	 * @param b the b
-	 * @return the weighted point
-	 */
+
 	public static WeightedPoint math(final WeightedPoint a, final char op, final double b) {
 		WeightedPoint result = new WeightedPoint(a);
 		result.math(op, b);
@@ -401,100 +299,57 @@ Accumulating<WeightedPoint>
 		return toString(" +- ", ""); 
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param before the before
-	 * @param after the after
-	 * @return the string
-	 */
+
 	public String toString(String before, String after) {
 		return value() + before + Math.sqrt(1.0 / weight) + after; 
 	}
 
-	/**
-	 * To string.
-	 *
-	 * @param df the df
-	 * @return the string
-	 */
+
 	public String toString(final NumberFormat df) {
 		return toString(df, " +- ", "");
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param nf the nf
-	 * @param before the before
-	 * @param after the after
-	 * @return the string
-	 */
+
 	public String toString(final NumberFormat nf, String before, String after) {
 		return nf.format(value()) + before + nf.format(Math.sqrt(1.0 / weight)) + after; 
 	}
 
-	/**
-	 * Creates the array.
-	 *
-	 * @param size the size
-	 * @return the weighted point[]
-	 */
+
 	public static WeightedPoint[] createArray(int size) {
 		final WeightedPoint[] p = new WeightedPoint[size];
 		for(int i=size; --i >= 0; ) p[i] = new WeightedPoint();
 		return p;
 	}
 	
-	/**
-	 * Float values.
-	 *
-	 * @param data the data
-	 * @return the float[]
-	 */
+
 	public static float[] floatValues(final WeightedPoint[] data) {
 		final float[] fdata = new float[data.length];
 		for(int i=data.length; --i >= 0; ) fdata[i] = (float) data[i].value();
 		return fdata;
 	}
 	
-	/**
-	 * Values.
-	 *
-	 * @param data the data
-	 * @return the double[]
-	 */
+
 	public static double[] values(final WeightedPoint[] data) {
 		final double[] ddata = new double[data.length];
 		for(int i=data.length; --i >= 0; ) ddata[i] = data[i].value();
 		return ddata;
 	}
 	
-	/**
-	 * Float weights.
-	 *
-	 * @param data the data
-	 * @return the float[]
-	 */
+
 	public static float[] floatWeights(final WeightedPoint[] data) {
 		final float[] fdata = new float[data.length];
 		for(int i=data.length; --i >= 0; ) fdata[i] = (float) data[i].weight;
 		return fdata;
 	}
 	
-	/**
-	 * Weights.
-	 *
-	 * @param data the data
-	 * @return the double[]
-	 */
+
 	public static double[] weights(final WeightedPoint[] data) {
 		final double[] ddata = new double[data.length];
 		for(int i=data.length; --i >= 0; ) ddata[i] = data[i].weight;
 		return ddata;
 	}
 	
-	/** The Constant NaN. */
+
 	public final static WeightedPoint NaN = new WeightedPoint(0.0, 0.0);
 
 	/* (non-Javadoc)

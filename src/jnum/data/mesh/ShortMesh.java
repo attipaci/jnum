@@ -30,27 +30,17 @@ public class ShortMesh extends NumberMesh.IntegerType<Short> {
      */
     private static final long serialVersionUID = -8830391634606131234L;
 
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param dimensions the dimensions
-     */
+
     public ShortMesh(int[] dimensions) {
         super(short.class, dimensions);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     */
+    
     public ShortMesh() {
         super(short.class);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param data the data
-     */
+
     public ShortMesh(Object data) {
         this();
         setData(data);

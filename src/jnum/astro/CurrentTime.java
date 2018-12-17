@@ -27,10 +27,7 @@ package jnum.astro;
 
 import jnum.Unit;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CurrentTime.
- */
+
 public final class CurrentTime {
 
 	private static double dUT1 = 0.0;

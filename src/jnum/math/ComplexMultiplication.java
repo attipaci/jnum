@@ -22,17 +22,9 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface ComplexMultiplication.
- *
- * @param <Type> the generic type
- */
+
 public interface ComplexMultiplication<Type> extends Multiplication<Complex>, Product<Complex, Type> {
 	
-	/**
-	 * Multiply by i.
-	 */
 	public void multiplyByI();
 	
 }

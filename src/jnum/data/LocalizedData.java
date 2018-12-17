@@ -27,59 +27,29 @@ import java.io.Serializable;
 import jnum.math.Metric;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LocalizedData.
- */
+
 public abstract class LocalizedData implements Serializable, Comparable<LocalizedData>, Metric<LocalizedData> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 2776764506885561864L;
-	/** The measurements. */
+
 	public int measurements = 1;
 	
-	/**
-	 * Gets the locality.
-	 *
-	 * @return the locality
-	 */
+
 	public abstract Locality getLocality();
 
-	/**
-	 * Sets the locality.
-	 *
-	 * @param loc the new locality
-	 */
+
 	public abstract void setLocality(Locality loc);
 	
-	/**
-	 * Average.
-	 *
-	 * @param other the other
-	 * @param env the env
-	 * @param relativeWeight the relative weight
-	 */
+
 	public void average(LocalizedData other, Object env, double relativeWeight) {
 		averageWidth(other, env, relativeWeight);
 		measurements += other.measurements;
 	}
 	
-	/**
-	 * Average width.
-	 *
-	 * @param other the other
-	 * @param env the env
-	 * @param relativeWeight the relative weight
-	 */
+
 	protected abstract void averageWidth(LocalizedData other, Object env, double relativeWeight);
 	
 	
-	/**
-	 * Checks if is consistent with.
-	 *
-	 * @param other the other
-	 * @return true, if is consistent with
-	 */
 	public boolean isConsistentWith(LocalizedData other) { return true; }
 	
 	/* (non-Javadoc)
@@ -88,20 +58,10 @@ public abstract class LocalizedData implements Serializable, Comparable<Localize
 	@Override
 	public int compareTo(LocalizedData other) { return getLocality().compareTo(other.getLocality()); }
 	
-	/**
-	 * Compare to.
-	 *
-	 * @param loc the loc
-	 * @return the int
-	 */
+
 	public int compareTo(Locality loc) { return getLocality().compareTo(loc); }
 	
-	/**
-	 * Distance to.
-	 *
-	 * @param loc the loc
-	 * @return the double
-	 */
+
 	public double distanceTo(Locality loc) {
 		return getLocality().distanceTo(loc);
 	}
@@ -114,22 +74,12 @@ public abstract class LocalizedData implements Serializable, Comparable<Localize
 		return distanceTo(other.getLocality());
 	}
 
-	/**
-	 * Sorting distance to.
-	 *
-	 * @param loc the loc
-	 * @return the double
-	 */
+
 	public double sortingDistanceTo(Locality loc) {
 		return getLocality().sortingDistanceTo(loc);
 	}
 	
-	/**
-	 * Sorting distance to.
-	 *
-	 * @param other the other
-	 * @return the double
-	 */
+
 	public double sortingDistanceTo(LocalizedData other) {
 		return sortingDistanceTo(other.getLocality());
 	}

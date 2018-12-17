@@ -27,23 +27,15 @@ import java.io.Serializable;
 
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class AstroSystem.
- */
+
 public class AstroSystem implements Serializable {
 	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 1426502427666674606L;
-	
-	/** The system. */
+
 	private Class<? extends SphericalCoordinates> system;
 	
-	/**
-	 * Instantiates a new astro system.
-	 *
-	 * @param coordType the coord type
-	 */
+
 	public AstroSystem(Class<? extends SphericalCoordinates> coordType) {
 		this.system = coordType;
 	}
@@ -71,105 +63,51 @@ public class AstroSystem implements Serializable {
 		return hash;
 	}
 	
-	/**
-	 * Checks if is horizontal.
-	 *
-	 * @return true, if is horizontal
-	 */
+
 	public boolean isHorizontal() { return HorizontalCoordinates.class.isAssignableFrom(system); }
 
-	/**
-	 * Checks if it is focal plane coordinates.
-	 *
-	 * @return true, if focal plane coordinates
-	 */
+	
 	public boolean isFocalPlane() { return FocalPlaneCoordinates.class.isAssignableFrom(system); }
 	
-
-    /**
-     * Checks if is telescope coordinates.
-     *
-     * @return true, if is super galactic
-     */
+	
     public boolean isTelescope()  { return TelescopeCoordinates.class.isAssignableFrom(system); }
     
-	
-	/**
-	 * Checks if is equatorial.
-	 *
-	 * @return true, if is equatorial
-	 */
+
 	public boolean isEquatorial() { return EquatorialCoordinates.class.isAssignableFrom(system); }
 	
-	/**
-	 * Checks if is ecliptic.
-	 *
-	 * @return true, if is ecliptic
-	 */
+
 	public boolean isEcliptic() { return EclipticCoordinates.class.isAssignableFrom(system); }
 
-	/**
-	 * Checks if is galactic.
-	 *
-	 * @return true, if is galactic
-	 */
+
 	public boolean isGalactic()  { return GalacticCoordinates.class.isAssignableFrom(system); }
+
 	
-	/**
-	 * Checks if is super galactic.
-	 *
-	 * @return true, if is super galactic
-	 */
 	public boolean isSuperGalactic()  { return SuperGalacticCoordinates.class.isAssignableFrom(system); }
 
 
 	
-	/**
-	 * Gets the id.
-	 *
-	 * @return the id
-	 */
+
 	public String getID() { return getID(system); }
 	
-	/**
-	 * Gets the coordinate instance.
-	 *
-	 * @return the coordinate instance
-	 */
+
 	public SphericalCoordinates getCoordinateInstance() {
 		if(system == null) return null;
 		try { return system.getConstructor().newInstance(); } 
 		catch(Exception e) { return null; }
 	}
 	
-	/**
-	 * Gets the id.
-	 *
-	 * @param coordType the coord type
-	 * @return the id
-	 */
+
 	public static String getID(Class<? extends SphericalCoordinates> coordType) {
 		String id = SphericalCoordinates.getTwoLetterCodeFor(coordType);
 		return id == null ? "--" : id;
 	}
 	
-	
-	/**
-	 * Gets the coordinate class.
-	 *
-	 * @param id the id
-	 * @return the coordinate class
-	 */
+
 	public static Class<? extends SphericalCoordinates> getCoordinateClass(String id) {
 		return SphericalCoordinates.getTwoLetterClass(id);
 	}
 	
-	/**
-	 * Gets the coordinate instance.
-	 *
-	 * @param id the id
-	 * @return the coordinate instance
-	 */
+
 	public SphericalCoordinates getCoordinateInstance(String id) {
 		Class<? extends SphericalCoordinates> coordType = getCoordinateClass(id);
 		if(coordType == null) return null;

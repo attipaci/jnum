@@ -25,16 +25,11 @@ import java.io.*;
 
 import jnum.Util;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LittleEndianDataInputStream.
- */
+
 public class LittleEndianDataInputStream extends InputStream implements DataInput {
-	
-	/** The stream. */
+
 	private InputStream stream;
-	
-	/** The in. */
+
 	private DataInputStream in;
 
 	
@@ -127,13 +122,8 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 	public final int readInt() throws IOException {
 		return Integer.reverseBytes(in.readInt());
 	}
+
 	
-	/**
-	 * Read unsigned int.
-	 *
-	 * @return the long
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
 	public final long readUnsignedInt() throws IOException {
 		return Util.unsigned(readInt());
 	}
@@ -195,28 +185,13 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 		return in.skipBytes(arg0);
 	}
 	
-	/**
-	 * Read2 bytes.
-	 *
-	 * @return the short
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public final short read2Bytes() throws IOException { return in.readShort(); }
 	
-	/**
-	 * Read4 bytes.
-	 *
-	 * @return the int
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public final int read4Bytes() throws IOException { return in.readInt(); }
 	
-	/**
-	 * Read8 bytes.
-	 *
-	 * @return the long
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public final long read8Bytes() throws IOException { return in.readLong(); }
 	
 	

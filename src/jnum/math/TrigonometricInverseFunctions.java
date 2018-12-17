@@ -23,8 +23,7 @@
 
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-//TODO: Auto-generated Javadoc
+
 /**
 * Interface for objects that implement trogonometric functions. The methods are acted on the object itself. For example, 
 * for object x, the call x.sin() will replace x --> sin(x).

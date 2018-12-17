@@ -46,56 +46,30 @@ import nom.tam.util.Cursor;
 // TODO: Auto-generated Javadoc
 // TODO add BinaryTableIO interface (with projections...)
 
-/**
- * The Class SphericalCoordinates.
- */
 public class SphericalCoordinates extends Coordinate2D implements Metric<SphericalCoordinates>, Inversion {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -8343774069424653101L;
 
-	/** The sin lat. */
 	private double cosLat, sinLat;
 		
 	
-	
-	/**
-	 * Gets the FITS longitude stem.
-	 *
-	 * @return the FITS longitude stem
-	 */
+
 	public String getFITSLongitudeStem() { return "LON-"; }
 	
-	/**
-	 * Gets the FITS latitude stem.
-	 *
-	 * @return the FITS latitude stem
-	 */
 	public String getFITSLatitudeStem() { return "LAT-"; }
 	
 	public String getTwoLetterCode() { return "SP"; }
 	
-	/**
-	 * Instantiates a new spherical coordinates.
-	 */
+
 	public SphericalCoordinates() {
 		cosLat = 1.0;
 		sinLat = 0.0;		
 	}
 
-	/**
-	 * Instantiates a new spherical coordinates.
-	 *
-	 * @param longitude the longitude
-	 * @param latitude the latitude
-	 */
+
 	public SphericalCoordinates(final double longitude, final double latitude) { set(longitude, latitude); }
 	
-	/**
-	 * Instantiates a new spherical coordinates.
-	 *
-	 * @param text the text
-	 */
+
 	public SphericalCoordinates(String text) { parse(text); }
 		
 	/* (non-Javadoc)
@@ -111,37 +85,20 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
     public SphericalCoordinates copy() { return (SphericalCoordinates) super.copy(); }
     
 
-	
-	/**
-	 * Sin lat.
-	 *
-	 * @return the double
-	 */
+
 	public final double sinLat() { return sinLat; }
 	
-	/**
-	 * Cos lat.
-	 *
-	 * @return the double
-	 */
+
 	public final double cosLat() { return cosLat; }
 	
-	/**
-	 * Gets the coordinate system.
-	 *
-	 * @return the coordinate system
-	 */
+
 	public CoordinateSystem getCoordinateSystem() { return defaultCoordinateSystem; }
 
 	public final CoordinateAxis getLongitudeAxis() { return getCoordinateSystem().get(0); }
 	
 	public final CoordinateAxis getLatitudeAxis() { return getCoordinateSystem().get(1); }
 	
-	/**
-	 * Gets the local coordinate system.
-	 *
-	 * @return the local coordinate system
-	 */
+
 	public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
 	
 	
@@ -195,134 +152,64 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	@Override
 	public void set(final double lon, final double lat) { setLongitude(lon); setLatitude(lat); }
 		
-	/**
-	 * Sets the native.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 */
+
 	public void setNative(final double x, final double y) { super.set(x,  y); }
 	
-	/**
-	 * Native longitude.
-	 *
-	 * @return the double
-	 */
+
 	public final double nativeLongitude() { return x(); }
 	
-	/**
-	 * Native latitude.
-	 *
-	 * @return the double
-	 */
+
 	public final double nativeLatitude() { return y(); }
 	
-	/**
-	 * Checks if is reverse longitude.
-	 *
-	 * @return true, if is reverse longitude
-	 */
+
 	public final boolean isReverseLongitude() { return getCoordinateSystem().get(0).isReverse(); }
+
 	
-	/**
-	 * Checks if is reverse latitude.
-	 *
-	 * @return true, if is reverse latitude
-	 */
 	public final boolean isReverseLatitude() { return getCoordinateSystem().get(1).isReverse(); }
 	
 	// Like long on lat except returns the actual directly formattable
 	// coordinates for this system...
-	/**
-	 * Longitude.
-	 *
-	 * @return the double
-	 */
 	public final double longitude() { return isReverseLongitude() ? getCoordinateSystem().get(0).reverseFrom-nativeLongitude() : nativeLongitude(); }
 	
-	/**
-	 * Latitude.
-	 *
-	 * @return the double
-	 */
+
 	public final double latitude() { return isReverseLatitude() ? getCoordinateSystem().get(1).reverseFrom-nativeLatitude() : nativeLatitude(); }
 	
-	/**
-	 * Sets the native longitude.
-	 *
-	 * @param value the new native longitude
-	 */
+
 	public final void setNativeLongitude(final double value) { setX(value); }
 		
-	/**
-	 * Sets the native latitude.
-	 *
-	 * @param value the new native latitude
-	 */
+
 	public final void setNativeLatitude(final double value) { setY(value); }
 
-	/**
-	 * Sets the longitude.
-	 *
-	 * @param value the new longitude
-	 */
+
 	public final void setLongitude(final double value) {
 		setNativeLongitude(isReverseLongitude() ? getCoordinateSystem().get(0).reverseFrom-value : value);
 	}
 	
-	/**
-	 * Sets the latitude.
-	 *
-	 * @param value the new latitude
-	 */
+
 	public final void setLatitude(final double value) {
 		setNativeLatitude(isReverseLatitude() ? getCoordinateSystem().get(1).reverseFrom-value : value);
 	}
 	
-	/**
-	 * Project.
-	 *
-	 * @param projection the projection
-	 * @param toNativeOffset the to native offset
-	 */
+
 	public void project(final SphericalProjection projection, final Coordinate2D toNativeOffset) {
 		projection.project(this, toNativeOffset);
 	}
 	
-	/**
-	 * Sets the projected.
-	 *
-	 * @param projection the projection
-	 * @param fromNativeOffset the from native offset
-	 */
+
 	public void setProjected(final SphericalProjection projection, final Coordinate2D fromNativeOffset) {
 		projection.deproject(fromNativeOffset, this);
 	}
 		
-	/**
-	 * Gets the projected.
-	 *
-	 * @param projection the projection
-	 * @return the projected
-	 */
+
 	public final Coordinate2D getProjected(final SphericalProjection projection) { return projection.getProjected(this); }
 	
 	
-	/**
-	 * Adds the native offset.
-	 *
-	 * @param offset the offset
-	 */
 	public void addNativeOffset(final Vector2D offset) {
 		addX(offset.x() / cosLat);
 		addY(offset.y());
 	}
 	
-	/**
-	 * Adds the offset.
-	 *
-	 * @param offset the offset
-	 */
+
 	public void addOffset(final Vector2D offset) {
 		if(isReverseLongitude()) subtractX(offset.x() / cosLat);
 		else addX(offset.x() / cosLat);
@@ -330,21 +217,13 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		else addY(offset.y());
 	}
 	
-	/**
-	 * Subtract native offset.
-	 *
-	 * @param offset the offset
-	 */
+
 	public void subtractNativeOffset(final Vector2D offset) {
 		subtractX(offset.x() / cosLat);
 		subtractY(offset.y());
 	}
 	
-	/**
-	 * Subtract offset.
-	 *
-	 * @param offset the offset
-	 */
+
 	public void subtractOffset(final Vector2D offset) {
 		if(isReverseLongitude()) addX(offset.x() / cosLat);
 		else subtractX(offset.x() / cosLat);
@@ -352,60 +231,34 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		else subtractY(offset.y());
 	}
 	
-	
-	/**
-	 * Gets the native offset from.
-	 *
-	 * @param reference the reference
-	 * @return the native offset from
-	 */
+
 	public Vector2D getNativeOffsetFrom(SphericalCoordinates reference) {
 		Vector2D offset = new Vector2D();
 		getNativeOffsetFrom(reference, offset);
 		return offset;
 	}
 	
-	/**
-	 * Gets the offset from.
-	 *
-	 * @param reference the reference
-	 * @return the offset from
-	 */
+
 	public Vector2D getOffsetFrom(SphericalCoordinates reference) {
 		Vector2D offset = new Vector2D();
 		getOffsetFrom(reference, offset);
 		return offset;
 	}
 	
-	
-	/**
-	 * Gets the native offset from.
-	 *
-	 * @param reference the reference
-	 * @param toOffset the to offset
-	 * @return the native offset from
-	 */
+
 	public final void getNativeOffsetFrom(final SphericalCoordinates reference, final Vector2D toOffset) {
 		toOffset.setX(Math.IEEEremainder(x() - reference.x(), Constant.twoPi) * reference.cosLat);
 		toOffset.setY(y() - reference.y());
 	}
 	
-	/**
-	 * Gets the offset from.
-	 *
-	 * @param reference the reference
-	 * @param toOffset the to offset
-	 * @return the offset from
-	 */
+
 	public void getOffsetFrom(final SphericalCoordinates reference, final Vector2D toOffset) {
 		getNativeOffsetFrom(reference, toOffset);
 		if(isReverseLongitude()) toOffset.scaleX(-1.0);
 		if(isReverseLatitude()) toOffset.scaleY(-1.0);
 	}
 		
-	/**
-	 * Standardize.
-	 */
+
 	public void standardize() {
 		setX(Math.IEEEremainder(x(), Constant.twoPi));
 		setY(Math.IEEEremainder(y(), Math.PI));
@@ -420,12 +273,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		return coords.get(0).format(x()) + " " + coords.get(1).format(y());
 	}
 	
-	/**
-	 * To string.
-	 *
-	 * @param decimals the decimals
-	 * @return the string
-	 */
+
 	public String toString(int decimals) {
 		return Util.af[decimals].format(longitude()) + " " + Util.af[decimals].format(latitude());	
 	}
@@ -549,27 +397,12 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
     }
     
 	
-	
-	/**
-	 * Equal angles.
-	 *
-	 * @param a1 the a1
-	 * @param a2 the a2
-	 * @return true, if successful
-	 */
+
 	public static boolean equalAngles(double a1, double a2) {
 		return Math.abs(Math.IEEEremainder(a1-a2, Constant.twoPi)) < angularAccuracy;
 	}
 	
-	
-	/**
-	 * Transform.
-	 *
-	 * @param from the from
-	 * @param newPole the new pole
-	 * @param phi0 the phi0
-	 * @param to the to
-	 */
+
 	public static final void transform(final SphericalCoordinates from, final SphericalCoordinates newPole, final double phi0, final SphericalCoordinates to) {		
 		final double dL = from.x() - newPole.x();
 		final double cosdL = Math.cos(dL);	
@@ -579,14 +412,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		);	
 	}
 	
-	/**
-	 * Inverse transform.
-	 *
-	 * @param from the from
-	 * @param pole the pole
-	 * @param phi0 the phi0
-	 * @param to the to
-	 */
+
 	public static final void inverseTransform(final SphericalCoordinates from, final SphericalCoordinates pole, final double phi0, final SphericalCoordinates to) {		
 		final double dL = from.x() + phi0;
 		final double cosdL = Math.cos(dL);
@@ -596,12 +422,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 				Math.atan2(-from.sinLat * pole.cosLat + from.cosLat * pole.sinLat * cosdL, -from.cosLat * Math.sin(dL)));	
 	}
 	
-	/**
-	 * Gets the fits class.
-	 *
-	 * @param spec the spec
-	 * @return the FITS class
-	 */
+
 	public static Class<? extends SphericalCoordinates> getFITSClass(String spec) {	
 	    if(fitsTypes == null) registerTypes();
 	    
@@ -680,37 +501,22 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         return axis;
     }
 
-    /** The Constant degree. */
+
     public final static Unit degree = Unit.get("deg");
-    
-    /** The Constant arcmin. */
+
     public final static Unit arcmin = Unit.get("arcmin");
-    
-    /** The Constant arcsec. */
+
     public final static Unit arcsec = Unit.get("arcsec");
 
-    /** The default local coordinate system. */
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
-
-    /** The af. */
     protected static AngleFormat af = new AngleFormat(2);
     
 
     
-
-    /**
-     * Sets the default decimals.
-     *
-     * @param decimals the new default decimals
-     */
+    
     public static void setDefaultDecimals(int decimals) { af.setDecimals(decimals); }
     
-    /**
-     * Gets the default decimals.
-     *
-     * @return the default decimals
-     */
     public static int getDefaultDecimals() { return af.getDecimals(); }
     
     public static double zeroToTwoPi(double value) {
@@ -735,12 +541,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         defaultLocalCoordinateSystem.add(latitudeOffsetAxis);           
     }
     
-  
 
-    
-    /** The Constant angularAccuracy. */
     public final static double angularAccuracy = 1e-12;
 
-
-	
 }

@@ -44,30 +44,15 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.BufferedDataOutputStream;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FitsExtras.
- */
+
 public final class FitsToolkit {
 
-    /**
-     * Adds the long hierarch key.
-     *
-     * @param cursor the cursor
-     * @param key the key
-     * @param value the value
-     * @throws HeaderCardException the header card exception
-     */
+
     public static void addLongHierarchKey(Cursor<String, HeaderCard> cursor, String key, String value) throws HeaderCardException {
         FitsToolkit.addLongHierarchKey(cursor, key, 0, value);
     }
 
-    /**
-     * Gets the abbreviated hierarch key.
-     *
-     * @param key the key
-     * @return the abbreviated hierarch key
-     */
+
     public static String getAbbreviatedHierarchKey(String key) {
         int max = 66 - MIN_VALUE_LENGTH;
         if(key.length() <= max) return key;
@@ -81,15 +66,6 @@ public final class FitsToolkit {
     //
     //   1. blah-blah [unitname] blah...
     //   2. blah-blah (unitname) blah...
-    /**
-     * Gets the commented unit value.
-     *
-     * @param header the header
-     * @param key the key
-     * @param defaultValue the default value
-     * @param defaultUnitValue the default unit value
-     * @return the commented unit value
-     */
     //   3. unitname blah-blah...
     public static double getCommentedUnitValue(Header header, String key, double defaultValue, double defaultUnitValue) {
         HeaderCard card = header.findCard(key);
@@ -106,13 +82,6 @@ public final class FitsToolkit {
     }
 
 
-    /**
-     * Gets the commented unit.
-     *
-     * @param comment the comment
-     * @return the commented unit
-     * @throws Exception the exception
-     */
     public static Unit getCommentedUnit(String comment) throws Exception {
 
         // Unit in (the first) square bracketed value; 
@@ -134,15 +103,7 @@ public final class FitsToolkit {
         }
     }
 
-    /**
-     * Adds the long hierarch key.
-     *
-     * @param cursor the cursor
-     * @param key the key
-     * @param part the part
-     * @param value the value
-     * @throws HeaderCardException the header card exception
-     */
+
     public static void addLongHierarchKey(Cursor<String, HeaderCard> c, String key, int part, String value) throws HeaderCardException {	
         if(FitsFactory.isLongStringsEnabled()) {
             c.add(new HeaderCard("HIERARCH." + key, value, null));
@@ -176,13 +137,6 @@ public final class FitsToolkit {
 
   
 
-    /**
-     * Gets the long key.
-     *
-     * @param header the header
-     * @param key the key
-     * @return the long key
-     */
     public static String getLongKey(Header header, String key) {
         String value = header.getStringValue(key);
 
@@ -199,15 +153,7 @@ public final class FitsToolkit {
         return value;
     }
 
-    /**
-     * Adds the long key.
-     *
-     * @param cursor the cursor
-     * @param key the key
-     * @param value the value
-     * @param comment the comment
-     * @throws HeaderCardException the header card exception
-     */
+
     public static void addLongKey(Cursor<String, HeaderCard> c, String key, String value, String comment) throws HeaderCardException {
         /*
          * FIXME long keys with comments can be broken in 1.15.1+
@@ -252,12 +198,7 @@ public final class FitsToolkit {
         addLongKeyConvention(endOf(header));
     }
 
-    /**
-     * Adds the long key convention.
-     *
-     * @param cursor the cursor
-     * @throws HeaderCardException the header card exception
-     */
+
     public static void addLongKeyConvention(Cursor<String, HeaderCard> cursor) throws HeaderCardException {
         if(FitsFactory.isLongStringsEnabled()) cursor.add(new HeaderCard("LONGSTRN", "OGIP 1.0", "FITS standard long string convention."));
         else cursor.add(new HeaderCard("LONGSTRN", "CRUSH", "CRUSH's own long string convention."));
@@ -361,13 +302,7 @@ public final class FitsToolkit {
     }
 
 
-    /**
-     * Adds the history.
-     *
-     * @param cursor the cursor
-     * @param history the history
-     * @throws HeaderCardException the header card exception
-     */
+
     public static void addHistory(Cursor<String, HeaderCard> cursor, String history) throws HeaderCardException {
         // manually wrap long history entries into multiple lines... 
         if(history.length() <= MAX_HISTORY_LENGTH) cursor.add(new HeaderCard("HISTORY", history, false));
@@ -430,13 +365,12 @@ public final class FitsToolkit {
         c.add(new HeaderCard(name, value, comment));
     }
     
-    /** The extra history breaks after. */
+
     public static String extraHistoryBreaksAfter = "/\\:;_=";
 
-    /** The Constant MIN_VALUE_LENGTH. */
+
     public static final int MIN_VALUE_LENGTH = 5;
 
-    /** The Constant MAX_HISTORY_LENGTH. */
     public static final int MAX_HISTORY_LENGTH = 71;
     
     public static final int BITPIX_BYTE = 8;

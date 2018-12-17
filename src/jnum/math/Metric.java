@@ -22,7 +22,7 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * An interface for all objects that implement a metric, i.e. a distance function between elements of the same generic type.
  *

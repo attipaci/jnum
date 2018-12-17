@@ -23,10 +23,7 @@
 package jnum.astro;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class WeatherAdapter.
- */
+
 public class WeatherAdapter implements Weather {
 
 	/* (non-Javadoc)

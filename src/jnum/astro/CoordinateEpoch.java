@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,9 +26,7 @@ package jnum.astro;
 
 import java.io.Serializable;
 
-import jnum.Copiable;
 import jnum.fits.FitsHeaderEditing;
-import jnum.fits.FitsHeaderParsing;
 import jnum.fits.FitsToolkit;
 import jnum.util.HashCode;
 import nom.tam.fits.Header;
@@ -36,64 +34,16 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CoordinateEpoch.
- */
-public abstract class CoordinateEpoch implements Serializable, Cloneable, Copiable<CoordinateEpoch>, 
-Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
-	
-	/** The Constant serialVersionUID. */
+
+public abstract class CoordinateEpoch implements Serializable, Comparable<CoordinateEpoch>, FitsHeaderEditing {
+
 	private static final long serialVersionUID = -7090908739252631026L;
 
-	/** The year. */
 	private double year;
-	
-	/** The immutable. */
-	private boolean immutable = false;
 
-	/**
-	 * Instantiates a new coordinate epoch.
-	 */
-	public CoordinateEpoch() {}
 
-	/**
-	 * Instantiates a new coordinate epoch.
-	 *
-	 * @param epoch the epoch
-	 */
 	public CoordinateEpoch(double epoch) { year = epoch; }
-	
-	/**
-	 * Instantiates a new coordinate epoch.
-	 *
-	 * @param epoch the epoch
-	 * @param immutable the immutable
-	 */
-	protected CoordinateEpoch(double epoch, boolean immutable) { this(epoch); this.immutable = immutable; }
 
-	
-	
-	// The clone is always mutable...
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
-	@Override
-	public CoordinateEpoch clone() {
-		try { 
-			CoordinateEpoch clone = (CoordinateEpoch) super.clone(); 
-			clone.immutable = false;
-			return clone;
-		}
-		catch(CloneNotSupportedException e) { return null; }		
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Copiable#copy()
-	 */
-	@Override
-	public CoordinateEpoch copy() { return clone(); }
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -124,117 +74,49 @@ Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
 		return y1 < y2 ? -1 : 1;
 	}
 	
-	/**
-	 * Sets the immutable.
-	 *
-	 * @param value the new immutable
-	 */
-	public void setImmutable(boolean value) {
-		immutable = value;
-	}
 	
-	/**
-	 * Checks if is immutable.
-	 *
-	 * @return true, if is immutable
-	 */
-	public boolean isImmutable() { return immutable; }
-	
-	/**
-	 * Gets the year.
-	 *
-	 * @return the year
-	 */
+
 	public double getYear() { return year; }
 	
-	/**
-	 * Sets the year.
-	 *
-	 * @param year the new year
-	 */
-	protected void setYear(double year) {
-		if(immutable) throw new UnsupportedOperationException("Cannot alter immutable coordinate epoch.");
-		this.year = year;
-	}
-	
-	/**
-	 * Gets the julian year.
-	 *
-	 * @return the julian year
-	 */
+
 	public abstract double getJulianYear();
 
-	/**
-	 * Gets the besselian year.
-	 *
-	 * @return the besselian year
-	 */
+
 	public abstract double getBesselianYear();
 	
-	/**
-	 * Sets the mjd.
-	 *
-	 * @param MJD the new mjd
-	 */
-	public abstract void setMJD(double MJD);
-	
-	/**
-	 * Gets the mjd.
-	 *
-	 * @return the mjd
-	 */
+
 	public abstract double getMJD();
 	
-	/**
-	 * For julian date.
-	 *
-	 * @param JD the jd
-	 */
-	public void forJulianDate(double JD) { setMJD(JD - 2400000.5); }
+
+
 	
-	/**
-	 * Gets the julian date.
-	 *
-	 * @return the julian date
-	 */
+
 	public double getJulianDate() { return getMJD() + 2400000.5; }
 	
 	
 	@Override
     public void editHeader(Header header) throws HeaderCardException { editHeader(header, ""); }
 	
-	/**
-	 * Edits the.
-	 *
-	 * @param cursor the cursor
-	 * @param alt the alt
-	 * @throws HeaderCardException the header card exception
-	 */
+
 	public void editHeader(Header header, String alt) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 		c.add(new HeaderCard("EQUINOX" + alt, year, "The epoch of the quoted coordinates"));
 	}
 	
-	@Override
-    public void parseHeader(Header header) { parseHeader(header, ""); }
 
-	/**
-	 * Parses the.
-	 *
-	 * @param header the header
-	 * @param alt the alt
-	 */
-	public void parseHeader(Header header, String alt) {
-		year = header.getDoubleValue("EQUINOX" + alt, this instanceof BesselianEpoch ? 1950.0 : 2000.0);
-	}
+    public static CoordinateEpoch fromHeader(Header header) { return fromHeader(header, ""); }
 
-	/**
-	 * For string.
-	 *
-	 * @param text the text
-	 * @return the coordinate epoch
-	 * @throws NumberFormatException the number format exception
-	 */
+
+    public static CoordinateEpoch fromHeader(Header header, String alt) {    
+        double year = header.getDoubleValue("EQUINOX" + alt, Double.NaN);    
+        String system = header.getStringValue("RADESYS").toLowerCase();
+        
+        if(system.startsWith("FK4")) return new BesselianEpoch(Double.isNaN(year) ? 1950.0 : year);
+        else if(year < 1984.0) return new BesselianEpoch(year);
+        else return new JulianEpoch(Double.isNaN(year) ? 2000.0 : year);
+    }
+
+
 	public static CoordinateEpoch forString(String text) throws NumberFormatException {
 	    char first = text.charAt(0);
 	    
@@ -247,35 +129,26 @@ Comparable<CoordinateEpoch>, FitsHeaderParsing, FitsHeaderEditing {
 		}
 	}
 	
-	/** The Constant besselianYear. */
+
 	protected final static double besselianYear = 365.242198781;
-	
-	/** The Constant julianYear. */
+
 	protected final static double julianYear = 365.25;
-	
-	/** The Constant mjdB1900. */
+
 	protected final static double mjdB1900 = 15019.81352; // JD 2415020.31352
-	
-	/** The Constant mjdB1950. */
+
 	protected final static double mjdB1950 = 33281.92345905; // JD 2433282.42345905
 	
-	/** The Constant mjdJ1900. */
 	protected final static double mjdJ1900 = 15020.5; // JD 2415021.0 
-	
-	/** The Constant mjdJ2000. */
+
 	protected final static double mjdJ2000 = 51544.5; // JD 2551545.0
+	
 	//  2451545.0 JD = 1 January 2000, 11:58:55.816 UT, or 11:59:27.816 TAI
-	
-	/** The Constant B1900. */
-	public final static BesselianEpoch B1900 = new BesselianEpoch(1900.0, true);
-	
-	/** The Constant B1950. */
-	public final static BesselianEpoch B1950 = new BesselianEpoch(1950.0, true);
-	
-	/** The Constant J2000. */
-	public final static JulianEpoch J2000 = new JulianEpoch(2000.0, true);
+	public final static BesselianEpoch B1900 = new BesselianEpoch(1900.0);
+
+	public final static BesselianEpoch B1950 = new BesselianEpoch(1950.0);
+
+	public final static JulianEpoch J2000 = new JulianEpoch(2000.0);
 	
 	// The precision to which to epochs must match to be considered equal...
-	/** The Constant precision. */
 	public final static double precision = 1e-3; // in years...
 }

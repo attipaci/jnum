@@ -23,7 +23,7 @@
 
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * An interface for objects of that support a Division operation.
  *
@@ -31,11 +31,6 @@ package jnum.math;
  */
 public interface Division<Type> {
 
-	/**
-	 * Divide by.
-	 *
-	 * @param value the value
-	 */
 	public void divideBy(Type value);
 	
 	

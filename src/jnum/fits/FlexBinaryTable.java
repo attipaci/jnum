@@ -35,26 +35,16 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FlexBinaryTable.
- */
+
 public class FlexBinaryTable {
-	
-	/** The columns. */
+
 	Vector<Column> columns = new Vector<Column>();
-	
-	/** The rows. */
+
 	int rows;
-	
-	/** The header. */
+
 	Header header;
 	
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
+
 	public static void main(String[] args) {
 		try {
 			Fits fits = new Fits(args[0]);
@@ -76,12 +66,7 @@ public class FlexBinaryTable {
 		catch(Exception e) { Util.error(FlexBinaryTable.class, e); }
 	}
 	
-	/**
-	 * Instantiates a new flex binary table.
-	 *
-	 * @param hdu the hdu
-	 * @throws FitsException the fits exception
-	 */
+
 	public FlexBinaryTable(BinaryTableHDU hdu) throws FitsException {
 		this.header = hdu.getHeader();
 		rows = hdu.getNRows();
@@ -89,12 +74,7 @@ public class FlexBinaryTable {
 		for(int c=0; c<cols; c++) columns.add(new Column(c, hdu.getColumn(c)));
 	}
 	
-	/**
-	 * Creates the hdu.
-	 *
-	 * @return the binary table hdu
-	 * @throws FitsException the fits exception
-	 */
+
 	public BinaryTableHDU createHDU() throws FitsException {
 		
 		for(int c=columns.size(); --c >= 0; ) columns.get(c).index = c;
@@ -124,14 +104,7 @@ public class FlexBinaryTable {
 		return hdu;
 	}
 	
-	/**
-	 * Creates the hdu.
-	 *
-	 * @param fromRow the from row
-	 * @param toRow the to row
-	 * @return the binary table hdu
-	 * @throws FitsException the fits exception
-	 */
+
 	public BinaryTableHDU createHDU(int fromRow, int toRow) throws FitsException {
 		BinaryTableHDU hdu = createHDU();
 	
@@ -141,57 +114,30 @@ public class FlexBinaryTable {
 		return hdu;
 	}
 	
-	/**
-	 * Gets the column.
-	 *
-	 * @param i the i
-	 * @return the column
-	 */
+
 	public Column getColumn(int i) { return columns.get(i); }
 	
-	/**
-	 * Gets the column.
-	 *
-	 * @param name the name
-	 * @return the column
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public Column getColumn(String name) throws IllegalArgumentException {
 		int index = findColumn(name);
 		if(index < 0) throw new IllegalArgumentException("No such column: " + name);
 		return columns.get(index);
 	}
 	
-	/**
-	 * Find column.
-	 *
-	 * @param name the name
-	 * @return the int
-	 */
+
 	public int findColumn(String name) {
 		for(int c = columns.size(); --c >= 0; ) if(columns.get(c).getName().equals(name)) return c;
 		return -1;
 	}
 	
-	/**
-	 * Delete column.
-	 *
-	 * @param name the name
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public void deleteColumn(String name) throws IllegalArgumentException {
 		int index = findColumn(name);
 		if(index < 0) throw new IllegalArgumentException("No such column: " + name);
 		columns.remove(index);
 	}
 	
-	/**
-	 * Checks if is column key.
-	 *
-	 * @param key the key
-	 * @param index the index
-	 * @return true, if is column key
-	 */
+
 	public static boolean isColumnKey(String key, int index) {
 		if(key.charAt(0) != 'T') return false;
 		if(key.length() > 8) return false;
@@ -215,89 +161,46 @@ public class FlexBinaryTable {
 		
 	}
 	
-	/**
-	 * The Class Column.
-	 */
+
 	public class Column {
-		
-		/** The index. */
+
 		private int index;
-		
-		/** The cards. */
+
 		private Vector<ColumnCard> cards = new Vector<ColumnCard>();
-		
-		/** The data. */
+
 		private Object data;
 		
-		/**
-		 * Instantiates a new column.
-		 *
-		 * @param index the index
-		 * @param data the data
-		 */
+
 		public Column(int index, Object data) {
 			this.index = index;
 			this.data = data;
 			extractKeys();
 		}
 		
-		/**
-		 * Gets the data.
-		 *
-		 * @return the data
-		 */
+
 		public Object getData() { return data; }
 		
-		/**
-		 * Sets the data.
-		 *
-		 * @param data the new data
-		 */
+
 		public void setData(Object data) { this.data = data; }
 		
-		/**
-		 * Sets the name.
-		 *
-		 * @param name the name
-		 * @param comment the comment
-		 * @throws HeaderCardException the header card exception
-		 */
+
 		public void setName(String name, String comment) throws HeaderCardException {
 			setName(name, comment, "");
 		}
 		
-		/**
-		 * Sets the name.
-		 *
-		 * @param name the name
-		 * @param comment the comment
-		 * @param alt the alt
-		 * @throws HeaderCardException the header card exception
-		 */
+
 		public void setName(String name, String comment, String alt) throws HeaderCardException {
 			setMeta("TTYPE", name, comment, alt);
 		}
 			
-		/**
-		 * Gets the name.
-		 *
-		 * @return the name
-		 */
+
 		public String getName() {
 			for(ColumnCard card : cards) if(card.stem.equals("TTYPE")) if(card.alt.length() == 0) 
 				return card.getHeaderCard(index).getValue();
 			return null;
 		}
 		
-		/**
-		 * Sets the meta.
-		 *
-		 * @param stem the stem
-		 * @param name the name
-		 * @param comment the comment
-		 * @param alt the alt
-		 * @throws HeaderCardException the header card exception
-		 */
+
 		public void setMeta(String stem, String name, String comment, String alt) throws HeaderCardException {
 			if(alt == null) alt = "";
 			
@@ -314,11 +217,7 @@ public class FlexBinaryTable {
 			cards.add(new ColumnCard(hc, index));
 		}
 		
-		/**
-		 * Delete metas.
-		 *
-		 * @param stem the stem
-		 */
+
 		public void deleteMetas(String stem) {
 			for(int i=cards.size(); --i >=0; ) if(cards.get(i).stem.equals(stem)) cards.remove(i);			
 		}
@@ -327,9 +226,6 @@ public class FlexBinaryTable {
 		// Find all keys for the form T????nnA
 		// (includes TTYPE, TFORM, TUNIT...)
 		// Remove them from the header, and store card under the stems.
-		/**
-		 * Extract keys.
-		 */
 		public void extractKeys() {
 			Cursor<String, HeaderCard> cursor = header.iterator();
 			while(cursor.hasNext()) {
@@ -343,38 +239,22 @@ public class FlexBinaryTable {
 			}
 		}	
 		
-		/**
-		 * Adds the keys.
-		 *
-		 * @param cursor the cursor
-		 */
+
 		public void addKeys(Cursor<String, HeaderCard> cursor) {
 			for(ColumnCard card : cards) card.add(cursor, index); 
 		}
 	}
 	
-	/**
-	 * The Class ColumnCard.
-	 */
+
 	class ColumnCard {
-		
-		/** The stem. */
+
 		String stem;
-		
-		/** The tail. */
+
 		String tail;
-		
-		/** The alt. */
+
 		String alt = "";
 		
-		
-		/**
-		 * Instantiates a new column card.
-		 *
-		 * @param card the card
-		 * @param index the index
-		 * @throws IllegalArgumentException the illegal argument exception
-		 */
+
 		public ColumnCard(HeaderCard card, int index) throws IllegalArgumentException {
 			String key = card.getKey();
 			
@@ -390,24 +270,14 @@ public class FlexBinaryTable {
 			stem = key.substring(0, key.length() - n);	
 		}
 		
-		/**
-		 * Gets the header card.
-		 *
-		 * @param index the index
-		 * @return the header card
-		 */
+
 		public HeaderCard getHeaderCard(int index) {
 			String key = stem + (index+1) + alt;
 			while(key.length() < 8) key += ' ';
 			return HeaderCard.create(key + tail);
 		}
 		
-		/**
-		 * Adds the.
-		 *
-		 * @param cursor the cursor
-		 * @param index the index
-		 */
+
 		public void add(Cursor<String, HeaderCard> cursor, int index) {
 			cursor.setKey("TFORM" + (index + 1));
 			cursor.add(getHeaderCard(index));

@@ -26,22 +26,12 @@ package jnum.io.dirfile;
 
 import java.io.IOException;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class DoubleStore.
- */
+
 public class DoubleStore extends RawStore<Double> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6398336422409851188L;
 
-	/**
-	 * Instantiates a new double store.
-	 *
-	 * @param path the path
-	 * @param name the name
-	 * @param arraySize the array size
-	 */
+
 	public DoubleStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
 		bytes = 8;

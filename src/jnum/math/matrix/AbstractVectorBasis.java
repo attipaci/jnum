@@ -26,56 +26,34 @@ package jnum.math.matrix;
 
 import java.util.*;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class AbstractVectorBasis.
- *
- * @param <T> the generic type
- */
+
 public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -4045327046654212525L;
 
-	/**
-	 * Instantiates a new abstract vector basis.
-	 */
+
 	public AbstractVectorBasis() {}
 	
-	/**
-	 * Orthogonalize.
-	 */
+
 	public void orthogonalize() {
 		for(int i=1; i<size(); i++) for(int j=0; j<i; j++) get(i).orthogonalizeTo(get(j));	
 	}
 	
-	/**
-	 * Normalize.
-	 */
+
 	public void normalize() {
 		for(int i=0; i<size(); i++) get(i).normalize();
 	}
 	
-	/**
-	 * Orthonormalize.
-	 */
+
 	public void orthonormalize() { 
 		orthogonalize();
 		normalize();		
 	}
 	
-	/**
-	 * As matrix.
-	 *
-	 * @return the abstract matrix
-	 */
+
 	public abstract AbstractMatrix<T> asMatrix();
 
-	/**
-	 * As matrix.
-	 *
-	 * @param M the m
-	 */
+
 	public void asMatrix(AbstractMatrix<T> M) {
 		M.assertSize(get(0).size(), size());
 		for(int j=0; j<size(); j++) {

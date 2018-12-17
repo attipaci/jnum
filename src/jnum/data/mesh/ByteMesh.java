@@ -29,27 +29,17 @@ public class ByteMesh extends NumberMesh.IntegerType<Byte> {
      */
     private static final long serialVersionUID = 6417694497366820158L;
 
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param dimensions the dimensions
-     */
+
     public ByteMesh(int[] dimensions) {
         super(byte.class, dimensions);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     */
+
     public ByteMesh() {
         super(byte.class);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param data the data
-     */
+
     public ByteMesh(Object data) {
         this();
         setData(data);

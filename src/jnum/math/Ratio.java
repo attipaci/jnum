@@ -22,22 +22,9 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface Ratio.
- *
- * @param <NumeratorType> the generic type
- * @param <DenominatorType> the generic type
- */
+
 public interface Ratio<NumeratorType, DenominatorType> {
 
-
-	/**
-	 * Sets the ratio.
-	 *
-	 * @param numerator the numerator
-	 * @param denominator the denominator
-	 */
 	public void setRatio(NumeratorType numerator, DenominatorType denominator);
 	
 }

@@ -30,39 +30,25 @@ import jnum.Copiable;
 import jnum.Util;
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Angle.
- */
+
+
 public class Angle implements Cloneable, Serializable, Copiable<Angle>, Additive<Angle>, Inversion, Metric<Angle>,
 Comparable<Angle> {
-    
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = -3107020652545972613L;
-    
-    /** The s. */
+
     private double value, c, s;
     
-    /**
-     * Instantiates a new angle.
-     */
+
     public Angle() {}
     
-    /**
-     * Instantiates a new angle.
-     *
-     * @param value the value
-     */
+
     public Angle(double value) {
         this();
         set(value);
     }
     
-    /**
-     * Instantiates a new angle.
-     *
-     * @param v the v
-     */
+
     public Angle(Vector2D v) {
         value = v.angle();
         double l = v.length();
@@ -103,89 +89,49 @@ Comparable<Angle> {
         return Util.equals(value, ((Angle) o).value);
     }
     
-    /**
-     * Copy.
-     *
-     * @param a the a
-     */
+
     public void copy(Angle a) {
         value = a.value;
         c = a.c;
         s = a.s;
     }
     
-    /**
-     * Sets the.
-     *
-     * @param value the value
-     */
+
     public void set(double value) {
         this.value = value;
         c = Math.cos(value);
         s = Math.sin(value);
     }
     
-    /**
-     * Sets the cos sin.
-     *
-     * @param c the c
-     * @param s the s
-     */
+
     private final void setCosSin(final double c, final double s) {
         this.c = c;
         this.s = s;
     }
+
     
-    /**
-     * Canonize.
-     */
     public final void canonize() {
         value = Math.IEEEremainder(value, Constant.twoPi);
     }
     
-    /**
-     * Value.
-     *
-     * @return the double
-     */
+
     public final double value() { return value; }
     
-    /**
-     * Cos.
-     *
-     * @return the double
-     */
+
     public final double cos() { return c; }
     
-    /**
-     * Sin.
-     *
-     * @return the double
-     */
+
     public final double sin() { return s; }
     
-    /**
-     * Tan.
-     *
-     * @return the double
-     */
+
     public final double tan() { return s/c; }
     
-    /**
-     * To complex.
-     *
-     * @param length the length
-     * @return the complex
-     */
+
     public Complex toComplex(double length) {
         return new Complex(c * length, s * length);
     }
     
-    /**
-     * Adds the.
-     *
-     * @param theta the theta
-     */
+
     public void add(double theta) {
         set(value() + theta);
     }
@@ -208,11 +154,7 @@ Comparable<Angle> {
         setCosSin(c * theta.c + s * theta.s, s * theta.c - c * theta.s);
     }
     
-    /**
-     * Subtract.
-     *
-     * @param theta the theta
-     */
+
     public void subtract(double theta) {
         set(value() - theta);
     }

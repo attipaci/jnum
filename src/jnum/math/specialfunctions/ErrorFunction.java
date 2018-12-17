@@ -32,40 +32,21 @@ import jnum.Constant;
 //  erf(inf) = 1
 //  erf(-inf) = -1;
 //
-/**
- * The Class ErrorFunction.
- */
 public final class ErrorFunction  {
 	
-	/**
-	 * At.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public static double at(double x) {
 		if(Double.isInfinite(x)) return x > 0 ? 1.0 : -1.0;
 		return (x < 0.0 ? -1.0 : 1.0) * GammaFunction.P(0.5, x*x);
 	}
 	
-	/**
-	 * Complement at.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public static double complementAt(double x) {
 		if(Double.isInfinite(x)) return x > 0 ? -1.0 : 1.0;
 		return x < 0.0 ? 1.0 + GammaFunction.P(0.5,x*x) : GammaFunction.Q(0.5,x*x);
 	}
 
 	// Accuracy of at least 1.2E-7 everywhere....
-	/**
-	 * Fast complement at.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
 	public static double fastComplementAt(double x) {
 		if(Double.isInfinite(x)) return x > 0 ? -1.0 : 1.0;
 		
@@ -75,12 +56,7 @@ public final class ErrorFunction  {
 		return x >= 0.0 ? value : 2.0-value;		
 	}
 	
-	/**
-	 * Inverse at.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public static double inverseAt(double x) {
 		return CumulativeNormalDistribution.inverseAt(0.5 * (1.0 + x)) * Constant.isqrt2;
 	}

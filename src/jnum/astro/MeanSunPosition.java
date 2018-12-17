@@ -26,7 +26,7 @@ package jnum.astro;
 import jnum.Constant;
 import jnum.Unit;
 
-public final class SunPosition {
+public final class MeanSunPosition {
 
     /**
      * Sun's ecliptic longitude, good to within 0.5 arcmin between 1950 -- 2050

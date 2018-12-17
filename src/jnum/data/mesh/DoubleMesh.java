@@ -25,36 +25,22 @@ package jnum.data.mesh;
 
 import java.lang.Double;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class DoubleMesh.
- */
+
 public class DoubleMesh extends NumberMesh.FloatingType<Double> {
-    
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = -6960364610546704958L;
 
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param dimensions the dimensions
-     */
+
     public DoubleMesh(int[] dimensions) {
         super(double.class, dimensions);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     */
+
     public DoubleMesh() {
         super(double.class);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param data the data
-     */
+
     public DoubleMesh(Object data) {
         this();
         setData(data);

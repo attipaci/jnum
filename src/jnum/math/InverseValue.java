@@ -22,7 +22,7 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * An interface for all objects that implement an inverse value under some multiplication. Thus b is the inverse of a if
  * a*b = 1, i.e. the product of the object and its inverse is the identity value.

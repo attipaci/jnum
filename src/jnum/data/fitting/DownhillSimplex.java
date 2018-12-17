@@ -29,7 +29,7 @@ import java.util.Random;
 import jnum.Util;
 import jnum.math.Scalable;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * An implementation of the downhill simplex method of minimization.
  */

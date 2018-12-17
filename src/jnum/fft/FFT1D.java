@@ -28,15 +28,9 @@ import java.util.concurrent.ExecutorService;
 import jnum.data.WindowFunction;
 import jnum.parallel.Parallelizable;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FFT1D.
- *
- * @param <Type> the generic type
- */
+
 public abstract class FFT1D<Type> extends FFT<Type> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1722639496940144592L;
 
 	protected FFT1D() { super(); }
@@ -49,52 +43,22 @@ public abstract class FFT1D<Type> extends FFT<Type> {
         super(processing);
     }
 
-	/**
-	 * Average power.
-	 *
-	 * @param data the data
-	 * @param w the w
-	 * @return the double[]
-	 */
+
 	public abstract double[] averagePower(Type data, double[] w);
 	
-	
-	/**
-	 * Average power.
-	 *
-	 * @param data the data
-	 * @param windowSize the window size
-	 * @return the double[]
-	 */
+
 	public double[] averagePower(Type data, int windowSize) {
 		if(sizeOf(data) < windowSize) return averagePower(getPadded(data, windowSize), windowSize);
 		return averagePower(data, WindowFunction.getHamming(windowSize));			
 	}
 	
-	/**
-	 * Size of.
-	 *
-	 * @param data the data
-	 * @return the int
-	 */
+
 	public abstract int sizeOf(Type data);
 
-	/**
-	 * Gets the padded.
-	 *
-	 * @param data the data
-	 * @param n the n
-	 * @return the padded
-	 */
+
 	public abstract Type getPadded(Type data, int n);
 
-	/**
-	 * Image2bin.
-	 *
-	 * @param imageIndex the image index
-	 * @param addressBits the address bits
-	 * @return the int
-	 */
+
 	public static int image2bin(final int imageIndex, final int addressBits) {
 		final int nyquist = 1 << (addressBits-1);
 		
@@ -107,14 +71,7 @@ public abstract class FFT1D<Type> extends FFT<Type> {
 		return imageIndex;
 	}
 
-	
-	/**
-	 * Bin2 image.
-	 *
-	 * @param bin the bin
-	 * @param addressBits the address bits
-	 * @return the int
-	 */
+
 	public static int bin2Image(int bin, final int addressBits) {
 		final int n = 1 << addressBits;
 		

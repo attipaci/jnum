@@ -38,40 +38,23 @@ import java.text.*;
 //TODO Various decompositions.
 // TODO implement fast multiplication?
 
-/**
- * The Class Matrix.
- */
 public class Matrix extends AbstractMatrix<Double> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 1648081664701964671L;
-	/** The entry. */
+
 	public double[][] entry; 
 
-	/**
-	 * Instantiates a new matrix.
-	 */
+
 	public Matrix() {}
 
 	// Check for rectangular shape
-	/**
-	 * Instantiates a new matrix.
-	 *
-	 * @param a the a
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	public Matrix(double[][] a) throws IllegalArgumentException { 
 		this();
 		entry = a; 
 		validate();
 	}
 
-	/**
-	 * Instantiates a new matrix.
-	 *
-	 * @param rows the rows
-	 * @param cols the cols
-	 */
+
 	public Matrix(int rows, int cols) { 
 		this();
 		entry = new double[rows][cols];
@@ -124,21 +107,13 @@ public class Matrix extends AbstractMatrix<Double> {
 		else throw new IllegalArgumentException(" Cannot get " + getClass().getSimpleName() + " column into  " + data.getClass().getSimpleName() + ".");	
 	}
 	
-	/**
-	 * Sets the data.
-	 *
-	 * @param data the new data
-	 */
+
 	public void setData(double[][] data) {
 		entry = data;
 		validate();
 	}
 	
-	/**
-	 * Sets the data.
-	 *
-	 * @param data the new data
-	 */
+
 	public void setData(float[][] data) {
 		setData((double[][]) ArrayUtil.asDouble(data));		
 	}
@@ -178,37 +153,21 @@ public class Matrix extends AbstractMatrix<Double> {
 			entry[i][j] += A.getValue(i, k) * B.getValue(k, j);
 	}
 	
-	/**
-	 * Product.
-	 *
-	 * @param A the a
-	 * @param B the b
-	 * @return the matrix
-	 */
+
 	public static Matrix product(AbstractMatrix<Double> A, AbstractMatrix<Double> B) {
 		Matrix product = new Matrix();
 		product.setProduct(A, B);
 		return product;
 	}
 	
-	/**
-	 * Dot.
-	 *
-	 * @param v the v
-	 * @return the double[]
-	 */
+
 	public double[] dot(double[] v) {
 		double[] result = new double[rows()];
 		dot(v, result);
 		return result;
 	}
 	
-	/**
-	 * Dot.
-	 *
-	 * @param v the v
-	 * @param result the result
-	 */
+
 	public void dot(double[] v, double[] result) {
 		if(v.length != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
 		if(result.length != rows()) throw new IllegalArgumentException("Mismatched matrix/output-vector sizes.");
@@ -216,24 +175,14 @@ public class Matrix extends AbstractMatrix<Double> {
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) result[i] += entry[i][j] * v[j];
 	}
 	
-	/**
-	 * Dot.
-	 *
-	 * @param v the v
-	 * @return the float[]
-	 */
+
 	public float[] dot(float[] v) {
 		float[] result = new float[rows()];
 		dot(v, result);
 		return result;
 	}
 	
-	/**
-	 * Dot.
-	 *
-	 * @param v the v
-	 * @param result the result
-	 */
+
 	public void dot(float[] v, float[] result) {
 		if(v.length != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
 		if(result.length != rows()) throw new IllegalArgumentException("Mismatched matrix/output-vector sizes.");
@@ -241,24 +190,14 @@ public class Matrix extends AbstractMatrix<Double> {
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) result[i] += entry[i][j] * v[j];
 	}
 	
-	/**
-	 * Dot.
-	 *
-	 * @param v the v
-	 * @return the real vector
-	 */
+
 	public RealVector dot(RealVector v) {
 		RealVector result = new RealVector(rows());
 		dot(v, result);
 		return result;
 	}
 	
-	/**
-	 * Dot.
-	 *
-	 * @param v the v
-	 * @param result the result
-	 */
+
 	public void dot(RealVector v, RealVector result) {
 		if(v.size() != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
 		if(result.component == null) result.setSize(rows());
@@ -422,23 +361,11 @@ public class Matrix extends AbstractMatrix<Double> {
 	// A = U * diag(w) * V^T
 	// square A --> A^-1 = V * diag(1/w) * U^T
 	// Based on Numerical Recipes in C (Press et al. 1989)
-	/**
-	 * Svd.
-	 *
-	 * @param w the w
-	 * @param V the v
-	 */
 	protected void SVD(double[] w, Matrix V) {
 		SVD(w, V, 100);
 	}
 	
-	/**
-	 * Svd.
-	 *
-	 * @param w the w
-	 * @param V the v
-	 * @param maxIterations the max iterations
-	 */
+
 	protected void SVD(double[] w, Matrix V, int maxIterations) {
 		final int m = rows();
 		final int n = cols();
@@ -639,24 +566,12 @@ public class Matrix extends AbstractMatrix<Double> {
 		else throw new IllegalArgumentException(" Cannot get " + getClass().getSimpleName() + " column into  " + buffer.getClass().getSimpleName() + ".");
 	}
 	
-	/**
-	 * Gets the column.
-	 *
-	 * @param j the j
-	 * @param buffer the buffer
-	 * @return the column
-	 */
+
 	public void getColumn(int j, double[] buffer) {
 		for(int i=rows(); --i >= 0; ) buffer[i] = entry[i][j];		
 	}
 	
-	/**
-	 * Gets the column.
-	 *
-	 * @param j the j
-	 * @param buffer the buffer
-	 * @return the column
-	 */
+
 	public void getColumn(int j, float[] buffer) {
 		for(int i=rows(); --i >=0; ) buffer[i] = (float) entry[i][j];		
 	}
@@ -672,24 +587,12 @@ public class Matrix extends AbstractMatrix<Double> {
 		else throw new IllegalArgumentException(" Cannot get " + getClass().getSimpleName() + " column into  " + buffer.getClass().getSimpleName() + ".");
 	}
 	
-	/**
-	 * Gets the row.
-	 *
-	 * @param i the i
-	 * @param buffer the buffer
-	 * @return the row
-	 */
+
 	public void getRow(int i, double[] buffer) {
 		for(int j=cols(); --j >= 0; ) buffer[j] = entry[i][j];		
 	}
 	
-	/**
-	 * Gets the row.
-	 *
-	 * @param i the i
-	 * @param buffer the buffer
-	 * @return the row
-	 */
+
 	public void getRow(int i, float[] buffer) {
 		for(int j=cols(); --j >= 0; ) buffer[j] = (float) entry[i][j];		
 	}
@@ -703,26 +606,13 @@ public class Matrix extends AbstractMatrix<Double> {
 		else if(value instanceof float[]) setColumn(j, (float[]) value);
 		else throw new IllegalArgumentException(" Cannot use " + value.getClass().getSimpleName() + " to specify " + getClass().getSimpleName() + " column.");
 	}
-	
-	/**
-	 * Sets the column.
-	 *
-	 * @param j the j
-	 * @param value the value
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public void setColumn(int j, double[] value) throws IllegalArgumentException {
 		if(value.length != rows()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
 		for(int i=rows(); --i >= 0; ) entry[i][j] = value[i];		
 	}
 	
-	/**
-	 * Sets the column.
-	 *
-	 * @param j the j
-	 * @param value the value
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public void setColumn(int j, float[] value) throws IllegalArgumentException {
 		if(value.length != rows()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
 		for(int i=rows(); --i >= 0; ) entry[i][j] = value[i];		
@@ -739,26 +629,13 @@ public class Matrix extends AbstractMatrix<Double> {
 		else throw new IllegalArgumentException(" Cannot use " + value.getClass().getSimpleName() + " to specify " + getClass().getSimpleName() + " row.");
 	}
 	
-	
-	/**
-	 * Sets the row.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public void setRow(int i, double[] value) throws IllegalArgumentException {
 		if(value.length != cols()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
 		entry[i] = value;
 	}
 	
-	/**
-	 * Sets the row.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public void setRow(int i, float[] value) throws IllegalArgumentException {
 		if(value.length != cols()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
 		for(int j=cols(); --j >= 0; ) entry[i][j] = value[j];
@@ -840,11 +717,7 @@ public class Matrix extends AbstractMatrix<Double> {
 		scaleRow(i, factor.doubleValue());
 	}
 
-	/**
-	 * Offset.
-	 *
-	 * @param value the value
-	 */
+
 	public void offset(Double value) {
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) entry[i][j] += value;
 	}

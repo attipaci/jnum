@@ -31,53 +31,31 @@ import jnum.math.AbstractAlgebra;
 import jnum.math.LinearAlgebra;
 import jnum.math.Metric;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GenericLUDecomposition.
- *
- * @param <T> the generic type
- */
+
 public class GenericLUDecomposition<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue & Copiable<? super T>> {
-	
-	/** The lu. */
+
 	GenericSquareMatrix<T> LU;
-	
-	/** The index. */
+
 	int[] index;
-	
-	/** The even changes. */
+
 	boolean evenChanges;
 	
-	/**
-	 * Instantiates a new generic lu decomposition.
-	 */
+
 	public GenericLUDecomposition() {}
 	
-	/**
-	 * Instantiates a new generic lu decomposition.
-	 *
-	 * @param M the m
-	 */
+
 	public GenericLUDecomposition(GenericSquareMatrix<T> M) {
 		decompose(M);
 	}
 
-	/**
-	 * Decompose.
-	 *
-	 * @param M the m
-	 */
+
 	public void decompose(GenericSquareMatrix<T> M) {
 		LU = (GenericSquareMatrix<T>) M.copy();
 		index = new int[LU.size()];
 		evenChanges = LU.decomposeLU(index);
 	}
 	
-	/**
-	 * Solve.
-	 *
-	 * @param b the b
-	 */
+
 	@SuppressWarnings("unchecked")
 	public void solve(T b[]) {
 		int ii=-1;
@@ -107,23 +85,14 @@ public class GenericLUDecomposition<T extends LinearAlgebra<? super T> & Abstrac
 		}
 	}
 
-	/**
-	 * Gets the inverse.
-	 *
-	 * @return the inverse
-	 */
+
 	public GenericSquareMatrix<T> getInverse() {
 		GenericSquareMatrix<T> inverse = (GenericSquareMatrix<T>) LU.copy(false);
 		getInverseTo(inverse);
 		return inverse;
 	}
 	
-	/**
-	 * Gets the inverse to.
-	 *
-	 * @param inverse the inverse
-	 * @return the inverse to
-	 */
+
 	@SuppressWarnings("unchecked")
 	public void getInverseTo(GenericSquareMatrix<T> inverse) {		
 		final int n = LU.size();

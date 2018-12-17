@@ -25,7 +25,6 @@ package jnum.data.fitting;
 
 import jnum.math.matrix.SquareMatrix;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents the Hessian Matrix for a {@link Parametric} function of {@link java.lang.Double} type, using either numerical 
  * differentiation, or an appropriate {@link CovarianceMatrix} object.

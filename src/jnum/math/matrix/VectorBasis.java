@@ -24,18 +24,11 @@
 
 package jnum.math.matrix;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class VectorBasis.
- */
+
 public class VectorBasis extends AbstractVectorBasis<Double> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 2039401048091817380L;
 
-	/**
-	 * Instantiates a new vector basis.
-	 */
 	public VectorBasis() {}
 	
 	/* (non-Javadoc)

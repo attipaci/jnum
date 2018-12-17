@@ -32,32 +32,19 @@ import jnum.Constant;
 import jnum.Util;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Interpolator.
- */
+
 public abstract class Interpolator extends ArrayList<Interpolator.Data> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -7962217110619389946L;
-	
-	/** The verbose. */
+
 	public boolean verbose = false;
-	
-	/** The file name. */
+
 	public String fileName = "";
+
 	
-	/**
-	 * Instantiates a new interpolator.
-	 */
 	public Interpolator() {}
+
 	
-	/**
-	 * Instantiates a new interpolator.
-	 *
-	 * @param fileName the file name
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
 	public Interpolator(String fileName) throws IOException {
 	    this();
 		read(fileName);
@@ -85,50 +72,26 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		return true;
 	}
 	
-	/**
-	 * Validate.
-	 */
+
 	public void validate() {
 	    Collections.sort(this);
 	}
 	
-	/**
-	 * Read.
-	 *
-	 * @param fileName the file name
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public void read(String fileName) throws IOException {
 		if(fileName.equals(this.fileName)) return;
 		readData(fileName);
 		this.fileName = fileName;
 	}
 	
-	/**
-	 * Read data.
-	 *
-	 * @param fileName the file name
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	protected abstract void readData(String fileName) throws IOException; 
 	
-	/**
-	 * Gets the value.
-	 *
-	 * @param ordinate the ordinate
-	 * @return the value
-	 */
+
 	public double getValue(double ordinate) { return getTrapesoidValue(ordinate); }
 	
 	// Linear interpolation.
 	// Throws Exception if MJD is outside of the interpolator range.
-	/**
-	 * Gets the value.
-	 *
-	 * @param ordinate the ordinate
-	 * @return the value
-	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
-	 */
 	public double getTrapesoidValue(double ordinate) throws ArrayIndexOutOfBoundsException {
 		int upper = getIndexAbove(ordinate);
 		
@@ -138,13 +101,7 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		return (dt2 * get(upper-1).value + dt1 * get(upper).value) / (dt1 + dt2);	
 	}	
 	
-	/**
-	 * Gets the index above.
-	 *
-	 * @param ordinate the ordinate
-	 * @return the index above
-	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
-	 */
+
 	public int getIndexAbove(double ordinate) throws ArrayIndexOutOfBoundsException {
 		int lower = 0, upper = size()-1;
 		
@@ -162,14 +119,7 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	}
 	
 
-	/**
-	 * Gets the smooth value.
-	 *
-	 * @param ordinate the ordinate
-	 * @param fwhm the fwhm
-	 * @return the smooth value
-	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
-	 */
+
 	public double getSmoothValue(double ordinate, double fwhm) throws ArrayIndexOutOfBoundsException {
 		int i0 = getIndexAbove(ordinate); 
 		
@@ -225,17 +175,11 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	}   
     */
 	
-	/**
-	 * The Class Data.
-	 */
+
 	public static class Data implements Comparable<Interpolator.Data> {
-		
-		/** The value. */
+
 		public double ordinate, value;
-		
-		/**
-		 * Instantiates a new data.
-		 */
+
 		public Data() {}
 		
 		/* (non-Javadoc)

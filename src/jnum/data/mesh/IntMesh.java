@@ -30,27 +30,16 @@ public class IntMesh extends NumberMesh.IntegerType<Integer> {
      */
     private static final long serialVersionUID = 3405647344446844891L;
     
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param dimensions the dimensions
-     */
+
     public IntMesh(int[] dimensions) {
         super(int.class, dimensions);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     */
+
     public IntMesh() {
         super(int.class);
     }
 
-    /**
-     * Instantiates a new double mesh.
-     *
-     * @param data the data
-     */
     public IntMesh(Object data) {
         this();
         setData(data);

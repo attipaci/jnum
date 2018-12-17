@@ -28,30 +28,16 @@ import java.io.IOException;
 
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class PhaseShiftedStore.
- *
- * @param <Type> the generic type
- */
+
 public class PhaseShiftedStore<Type extends Number> extends DataStore<Type> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -5398091531703755110L;
 
-	/** The data. */
 	DataStore<Type> data;
-	
-	/** The shift. */
+
 	long shift;
 	
-	/**
-	 * Instantiates a new phase shifted store.
-	 *
-	 * @param name the name
-	 * @param data the data
-	 * @param shift the shift
-	 */
+
 	public PhaseShiftedStore(String name, DataStore<Type> data, long shift) {
 		super(name);
 		this.data = data;

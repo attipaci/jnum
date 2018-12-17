@@ -40,18 +40,15 @@ import jnum.util.HashCode;
 import java.io.Serializable;
 import java.lang.reflect.*;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Real.
- */
+
 public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar>, AbstractAlgebra<Scalar>, AbsoluteValue, Copiable<Scalar>, CopyCat<Scalar>, Cloneable, BlankingValue, 
 	PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions,
 	NumberFormating, DecimalFormating, Parser, Metric<Scalar>, Comparable<Scalar> {
 	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -4757211558088511549L;
 	
-	/** The value. */
+
 	private double value;
 	
 	/**
@@ -92,18 +89,10 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
+
 	public final double getValue() { return value; }
 	
-	/**
-	 * Sets the value.
-	 *
-	 * @param value the new value
-	 */
+
 	public final void setValue(double value) {
 		this.value = value;
 	}
@@ -140,20 +129,12 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		value += o.value;
 	}
 	
-	/**
-	 * Subtract.
-	 *
-	 * @param x the x
-	 */
+
 	public final void subtract(double x) {
 		value -= x;
 	}
 
-	/**
-	 * Adds the.
-	 *
-	 * @param x the x
-	 */
+
 	public final void add(double x) {
 		value += x;
 	}
@@ -334,11 +315,7 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		return Double.isNaN(value);
 	}
 
-	/**
-	 * Value.
-	 *
-	 * @return the double
-	 */
+	
 	public final double value() {
 		return value;
 	}
@@ -425,12 +402,6 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	}
 
 
-	/**
-	 * Dot.
-	 *
-	 * @param scalar the scalar
-	 * @return the real
-	 */
 	public Scalar dot(Scalar scalar) {
 		return new Scalar(value * scalar.value);
 	}
@@ -443,36 +414,21 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		return value * value;
 	}
 
-	/**
-	 * Array from.
-	 *
-	 * @param value the value
-	 * @return the real[]
-	 */
+
 	public static Scalar[] arrayFrom(double[] value) {
 		Scalar[] array = new Scalar[value.length];
 		for(int i=0; i<value.length; i++) array[i].value = value[i];
 		return array;
 	}
 	
-	/**
-	 * Array from.
-	 *
-	 * @param value the value
-	 * @return the real[]
-	 */
+
 	public static Scalar[] arrayFrom(float[] value) {
 		Scalar[] array = new Scalar[value.length];
 		for(int i=0; i<value.length; i++) array[i].value = value[i];
 		return array;
 	}
 	
-	/**
-	 * Array from.
-	 *
-	 * @param value the value
-	 * @return the object
-	 */
+
 	public static Object arrayFrom(Object value) {
 		if(value instanceof double[]) return arrayFrom((double[]) value);
 		else if(value instanceof float[]) return arrayFrom((float[]) value);
@@ -495,26 +451,14 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		return null;
 	}
 	
-	
-		
-	/**
-	 * To double array.
-	 *
-	 * @param array the array
-	 * @return the double[]
-	 */
+
 	public double[] toDoubleArray(Scalar[] array) {
 		double[] doubles = new double[array.length];
 		for(int i=0; i<array.length; i++) doubles[i] = array[i].value;
 		return doubles;
 	}
 	
-	/**
-	 * To float array.
-	 *
-	 * @param array the array
-	 * @return the float[]
-	 */
+
 	public float[] toFloatArray(Scalar[] array) {
 		float[] floats = new float[array.length];
 		for(int i=0; i<array.length; i++) floats[i] = (float) array[i].value;

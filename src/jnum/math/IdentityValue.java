@@ -22,7 +22,7 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * An interface for all objects that implement an identity value. Identity values are essential for all types of
  * abstract algebra, and occasionally for other applications too.

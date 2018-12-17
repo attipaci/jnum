@@ -25,7 +25,7 @@ package jnum.data.fitting;
 
 // TODO: Auto-generated Javadoc
 /**
- * An easily identifiable exception specifically for {@link} Minimizer implementations.
+ * An easily identifiable exception specifically for {@link Minimizer} implementations.
  */
 public class ConvergenceException extends IllegalStateException {
 

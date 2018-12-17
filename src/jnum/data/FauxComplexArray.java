@@ -36,33 +36,17 @@ import jnum.math.Complex;
 import jnum.parallel.Parallelizable;
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FauxComplexArray.
- *
- * @param <Type> the generic type
- */
+
 public abstract class FauxComplexArray<Type> implements Serializable, Cloneable, CopiableContent<FauxComplexArray<Type>> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -7774331934035418157L;
-	
-	/** The size. */
+
 	private int size;
 	
-	/**
-	 * Instantiates a new faux complex array.
-	 *
-	 * @param size the size
-	 */
+
 	private FauxComplexArray(int size) { this.size = size; }
 	
 	
-	/**
-	 * Instantiates a new double.
-	 *
-	 * @param data the data
-	 */
 	public FauxComplexArray(Complex[] data) {
 		this(data.length);
 		for(int i=data.length; --i >= 0; ) set(i, data[i]);
@@ -91,183 +75,98 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 	@Override
 	public abstract FauxComplexArray<Type> copy(boolean fill);
 		
-	
-	/**
-	 * Gets the data.
-	 *
-	 * @return the data
-	 */
+
 	public abstract Type getData();
 	
-	/**
-	 * Gets the.
-	 *
-	 * @param i the i
-	 * @return the double
-	 */
+
 	protected abstract double get(int i);
 	
-	/**
-	 * Sets the.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 */
+
 	protected abstract void set(int i, double value);
 	
-	
-	/**
-	 * Gets the.
-	 *
-	 * @param i the i
-	 * @param element the element
-	 */
+
 	public final void get(int i, final Complex element) {
 		element.set(get(i), get(i+1));		
 	}
 	
-	/**
-	 * Sets the.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 */
+
 	public final void set(int i, final Complex value) {
 		i <<= 1;
 		set(i, value.x());
 		set(i+1, value.y());
 	}
 	
-	/**
-	 * Conjugate.
-	 *
-	 * @param i the i
-	 */
+
 	public final void conjugate(int i) {
 		i = i<<1 + 1;
 		set(i, -get(i));
 	}
 	
-	/**
-	 * Norm.
-	 *
-	 * @param i the i
-	 * @return the double
-	 */
+
 	public final double norm(int i) {
 		i <<= 1;
 		return ExtraMath.sumSquares(get(i), get(i+1));
 	}
 	
-	/**
-	 * Length.
-	 *
-	 * @param i the i
-	 * @return the double
-	 */
+
 	public final double length(int i) {
 		i <<= 1;
 		return ExtraMath.hypot(get(i), get(i+1));
 	}
 	
-	/**
-	 * Angle.
-	 *
-	 * @param i the i
-	 * @return the double
-	 */
+
 	public final double angle(int i) {
 		i <<= 1;
 		return Math.atan2(get(i+1), get(i));
 	}
 	
-	/**
-	 * Cos angle.
-	 *
-	 * @param i the i
-	 * @return the double
-	 */
+
 	public final double cosAngle(int i) {
 		i <<= 1;
 		return ExtraMath.cos(get(i), get(i+1));
 	}
 	
-	/**
-	 * Sin angle.
-	 *
-	 * @param i the i
-	 * @return the double
-	 */
+
 	public final double sinAngle(int i) {
 		i <<= 1;
 		return ExtraMath.sin(get(i), get(i+1));
 	}
 	
-	/**
-	 * Tan angle.
-	 *
-	 * @param i the i
-	 * @return the double
-	 */
+
 	public final double tanAngle(int i) {
 		i <<= 1;
 		return ExtraMath.tan(get(i), get(i+1));
 	}
 	
-	/**
-	 * Increment.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 */
+
 	public final void increment(int i, final Complex value) {
 		i <<= 1;
 		set(i, get(i) + value.x());
 		set(++i, get(i) + value.y());
 	}
 	
-	/**
-	 * Decrement.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 */
+
 	public final void decrement(int i, final Complex value) {
 		i <<= 1;
 		set(i, get(i) - value.x());
 		set(++i, get(i) - value.y());
 	}
 	
-	/**
-	 * Scale.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 */
+
 	public final void scale(int i, final double value) {
 		i <<= 1;
 		set(i, get(i) * value);
 		set(++i, get(i) * value);
 	}
 	
-	/**
-	 * Divide by.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 */
+
 	public final void divideBy(int i, final double value) {
 		i <<= 1;
 		set(i, get(i) / value);
 		set(++i, get(i) / value);
 	}
 	
-	/**
-	 * Multiply.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 */
+
 	public final void multiply(int i, Complex value) {
 		i <<= 1;
 		final double x = get(i);
@@ -277,12 +176,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		set(i+1, x * value.y() + y * value.x());
 	}
 	
-	/**
-	 * Divide by.
-	 *
-	 * @param i the i
-	 * @param value the value
-	 */
+
 	public final void divideBy(int i, Complex value) {
 		final double A = 1.0 / value.absSquared();
 		final double x = get(i);
@@ -292,96 +186,50 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		set(i+1, A * (y * value.x() - x * value.y()));
 	}
 	
-	/**
-	 * Size.
-	 *
-	 * @return the int
-	 */
+
 	public final int size() { return size; }
 	
-	/**
-	 * As complex.
-	 *
-	 * @return the complex[]
-	 */
+
 	public final Complex[] asComplex() {
 		final Complex[] c = new Complex[size()];
 		for(int i=c.length; --i >= 0; ) get(i, c[i] = new Complex());	
 		return c;
 	}
 	
-	/**
-	 * Gets the fft.
-	 *
-	 * @return the fft
-	 */
+
 	public abstract FFT<Type> getFFT(ExecutorService executor);
 	
 	public abstract FFT<Type> getFFT(Parallelizable processing);
 	
 	
-	
-	/**
-	 * From.
-	 *
-	 * @param data the data
-	 * @return the float
-	 */
+
 	public static Float from(float[] data) { return new Float(data); }
 	
-	/**
-	 * From.
-	 *
-	 * @param data the data
-	 * @return the double
-	 */
+
 	public static Double from(double[] data) { return new Double(data); }
 	
-	
-	/**
-	 * Floats.
-	 *
-	 * @param size the size
-	 * @return the float
-	 */
+
 	public static Float floats(int size) { return new Float(size); }
 	
-	/**
-	 * Doubles.
-	 *
-	 * @param size the size
-	 * @return the double
-	 */
+
 	public static Double doubles(int size) { return new Double(size); }
 	
 	
 
-	/**
-	 * The Class Float.
-	 */
+
 	public static class Float extends FauxComplexArray<float[]> {
-		
-		/** The Constant serialVersionUID. */
+
 		private static final long serialVersionUID = -5639060583266518343L;
-		
-		/** The data. */
+
 		private float[] data;
 		
-		/**
-		 * Instantiates a new float.
-		 *
-		 * @param size the size
-		 */
+
 		public Float(int size) { 
 			super(size);
 			data = new float[size<<1]; 
 		}
 		
-		/**
-		 * Instantiates a new float.
-		 *
-		 * @param data the data
-		 */
+
 		public Float(float[] data) {
 			super(data.length >> 1);
 			if((data.length & 1) != 0) throw new IllegalArgumentException("Cannot create complex array from odd-sized float[].");
@@ -458,32 +306,20 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 	
 	
 	
-	/**
-	 * The Class Double.
-	 */
+
 	public static class Double extends FauxComplexArray<double[]> {
-		
-		/** The Constant serialVersionUID. */
+
 		private static final long serialVersionUID = 4234523710592006106L;
-		
-		/** The data. */
+
 		private double[] data;
 		
-		/**
-		 * Instantiates a new double.
-		 *
-		 * @param size the size
-		 */
+
 		public Double(int size) { 
 			super(size);
 			data = new double[size<<1]; 
 		}
 		
-		/**
-		 * Instantiates a new double.
-		 *
-		 * @param data the data
-		 */
+
 		public Double(double[] data) {
 			super(data.length >> 1);
 			if((data.length & 1) != 0) throw new IllegalArgumentException("Cannot create complex array from odd-sized double[].");

@@ -22,16 +22,8 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface Scalable.
- */
+
 public interface Scalable {
 	
-	/**
-	 * Scale.
-	 *
-	 * @param factor the factor
-	 */
 	public void scale(double factor);
 }

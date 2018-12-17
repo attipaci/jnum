@@ -24,51 +24,31 @@ package jnum.math.matrix;
 
 import java.util.Arrays;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LUDecomposition.
- */
+
 public class LUDecomposition {
-	
-	/** The lu. */
+
 	SquareMatrix LU;
-	
-	/** The index. */
+
 	int[] index;
-	
-	/** The even changes. */
+
 	boolean evenChanges;
+
 	
-	/**
-	 * Instantiates a new lU decomposition.
-	 */
 	public LUDecomposition() {}
 	
-	/**
-	 * Instantiates a new lU decomposition.
-	 *
-	 * @param M the m
-	 */
+
 	public LUDecomposition(SquareMatrix M) {
 		decompose(M);
 	}
 	
-	/**
-	 * Decompose.
-	 *
-	 * @param M the m
-	 */
+
 	public void decompose(SquareMatrix M) {
 		LU = (SquareMatrix) M.copy();
 		index = new int[LU.size()];
 		evenChanges = LU.decomposeLU(index);
 	}
 	
-	/**
-	 * Solve.
-	 *
-	 * @param b the b
-	 */
+
 	public void solve(double b[]) {
 		int ii=-1;
 		int n = LU.size();
@@ -88,23 +68,14 @@ public class LUDecomposition {
 		}
 	}
 
-	/**
-	 * Gets the inverse.
-	 *
-	 * @return the inverse
-	 */
+
 	public SquareMatrix getInverse() {
 		SquareMatrix inverse = new SquareMatrix(LU.size());
 		getInverseTo(inverse);
 		return inverse;
 	}
 	
-	/**
-	 * Gets the inverse to.
-	 *
-	 * @param inverse the inverse
-	 * @return the inverse to
-	 */
+
 	public void getInverseTo(SquareMatrix inverse) {
 		final int n = LU.size();
 		

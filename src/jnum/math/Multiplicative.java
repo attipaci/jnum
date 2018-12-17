@@ -22,7 +22,7 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * An interface for all object that implement a multiplication operation.
  *

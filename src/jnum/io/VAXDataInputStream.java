@@ -23,17 +23,10 @@
 package jnum.io;
 import java.io.*;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class VAXDataInputStream.
- */
+
 public class VAXDataInputStream extends LittleEndianDataInputStream {
 	
-	/**
-	 * Instantiates a new VAX data input stream.
-	 *
-	 * @param stream the stream
-	 */
+
 	public VAXDataInputStream(InputStream stream) {
 		super(stream);
 	}

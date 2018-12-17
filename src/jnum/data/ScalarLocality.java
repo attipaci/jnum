@@ -22,42 +22,24 @@
  ******************************************************************************/
 package jnum.data;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ScalarLocality.
- */
+
 public class ScalarLocality extends Locality {
-    
-    /** The value. */
+
     public double value;
     
-    /**
-     * Instantiates a new scalar locality.
-     */
+
     public ScalarLocality() {}
     
-    /**
-     * Instantiates a new scalar locality.
-     *
-     * @param value the value
-     */
+
     public ScalarLocality(double value) { 
         this();
         set(value);
     }
     
-    /**
-     * Gets the.
-     *
-     * @return the double
-     */
+
     public double get() { return value; }
     
-    /**
-     * Sets the.
-     *
-     * @param value the value
-     */
+
     public void set(double value) { this.value = value; }
     
     /* (non-Javadoc)

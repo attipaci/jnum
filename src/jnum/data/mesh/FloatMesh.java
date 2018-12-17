@@ -26,36 +26,22 @@ package jnum.data.mesh;
 import java.lang.Float;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FloatMesh.
- */
+
 public class FloatMesh extends NumberMesh.FloatingType<Float> {
-    
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = -4081004880332314702L;
 
-    /**
-     * Instantiates a new float mesh.
-     *
-     * @param dimensions the dimensions
-     */
+
     public FloatMesh(int[] dimensions) {
         super(float.class, dimensions);
     }
 
-    /**
-     * Instantiates a new float mesh.
-     */
+
     public FloatMesh() {
         super(float.class);
     }
 
-    /**
-     * Instantiates a new float mesh.
-     *
-     * @param data the data
-     */
+
     public FloatMesh(Object data) {
         this();
         setData(data);

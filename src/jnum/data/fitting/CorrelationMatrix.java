@@ -26,7 +26,7 @@ package jnum.data.fitting;
 import jnum.Util;
 import jnum.math.matrix.SquareMatrix;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * Represents a correlation matrix for a set of parameters, calculated from an appropriate {@link CovarianceMatrix} object.
  */

@@ -30,41 +30,21 @@ import jnum.math.LinearAlgebra;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class PrimitiveMesh.
- *
- * @param <T> the generic type
- */
 public abstract class NumberMesh<T extends Number> extends Mesh<T> implements CopyCat<Mesh<? extends Number>>, LinearAlgebra<Mesh<? extends Number>>, Overlayable<T> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 8401121783922804093L;
 
-	/**
-	 * Instantiates a new primitive array.
-	 *
-	 * @param type the type
-	 * @param dimensions the dimensions
-	 */
+
 	public NumberMesh(Class<T> type, int[] dimensions) {
 		super(type, dimensions);
 	}
 
-	/**
-	 * Instantiates a new primitive array.
-	 *
-	 * @param type the type
-	 */
+
 	public NumberMesh(Class<T> type) {
 		super(type);
 	}
 
-	/**
-	 * Instantiates a new primitive array.
-	 *
-	 * @param data the data
-	 */
+
 	public NumberMesh(Object data) {
 		super(data);
 	}
@@ -121,13 +101,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Co
         }
     }
     
-	
-	/**
-     * Adds the multiple of.
-     *
-     * @param o the o
-     * @param factor the factor
-     */
+
     @Override
     public void addScaled(Mesh<? extends Number> o, double factor) {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add mesh of different size/shape.");
@@ -141,13 +115,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Co
        
     }
     
-	
-	/**
-	 * Adds the.
-	 *
-	 * @param o the o
-	 * @throws NonConformingException the non conforming exception
-	 */
+
 	@Override
     public void add(Mesh<? extends Number> o) throws NonConformingException {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add mesh of different size/shape.");
@@ -160,12 +128,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Co
         }
     }
  
-	/**
-	 * Subtract.
-	 *
-	 * @param o the o
-	 * @throws NonConformingException the non conforming exception
-	 */
+
 	@Override
     public void subtract(Mesh<? extends Number> o) throws NonConformingException {
         if(!o.conformsTo(this)) throw new NonConformingException("cannot add mesh of different size/shape.");
@@ -178,12 +141,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Co
         }
     }
 	
-	/**
-	 * Sets the sum.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 */
+
 	@Override
 	public void setSum(Mesh<? extends Number> a, Mesh<? extends Number> b) {
 	    if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");
@@ -199,12 +157,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Co
          
 	}
 
-	/**
-	 * Sets the difference.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 */
+
 	@Override
 	public void setDifference(Mesh<? extends Number> a, Mesh<? extends Number> b) {
 	    if(!a.conformsTo(this)) throw new NonConformingException("non-conforming first argument.");

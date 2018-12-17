@@ -44,7 +44,7 @@ import nom.tam.util.Cursor;
  * A generic light-weight 3D datacube class implementation with FITS I/O support.
  * 
  * 
- * @author pumukli
+ * @author Attila Kovacs <attila@sigmyne.com>
  *
  */
 public abstract class Cube3D extends Data3D implements Image<Index3D> {    

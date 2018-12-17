@@ -22,10 +22,7 @@
  ******************************************************************************/
 package jnum.astro;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface Weather.
- */
+
 public interface Weather {
 
 	/**

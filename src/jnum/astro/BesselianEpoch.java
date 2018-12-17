@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.astro;
 
@@ -29,34 +29,13 @@ import java.text.NumberFormat;
 import jnum.Util;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BesselianEpoch.
- */
+
 public class BesselianEpoch extends CoordinateEpoch {	
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5133755849976402885L;
 
-	/**
-	 * Instantiates a new besselian epoch.
-	 */
-	public BesselianEpoch() { }
-
-	/**
-	 * Instantiates a new besselian epoch.
-	 *
-	 * @param epoch the epoch
-	 */
 	public BesselianEpoch(double epoch) { super(epoch); }
-	
-	/**
-	 * Instantiates a new besselian epoch.
-	 *
-	 * @param epoch the epoch
-	 * @param immutable the immutable
-	 */
-	protected BesselianEpoch(double epoch, boolean immutable) { super(epoch, immutable); }
+
 
 	/* (non-Javadoc)
 	 * @see jnum.astro.CoordinateEpoch#getBesselianYear()
@@ -70,23 +49,12 @@ public class BesselianEpoch extends CoordinateEpoch {
 	@Override
 	public double getJulianYear() { return JulianEpoch.getYearForMJD(getMJD()); }
 
-	/**
-	 * Gets the julian epoch.
-	 *
-	 * @return the julian epoch
-	 */
 	public JulianEpoch getJulianEpoch() { 
 		return new JulianEpoch(getBesselianYear());
 	}
 	
 	//  B = 1900.0 + (JD - 2415020.31352) / 365.242198781
-	/* (non-Javadoc)
-	 * @see jnum.astro.CoordinateEpoch#setMJD(double)
-	 */
-	@Override
-	public void setMJD(double MJD) {
-		setYear(getYearForMJD(MJD));
-	}
+
 
 	/* (non-Javadoc)
 	 * @see jnum.astro.CoordinateEpoch#getMJD()
@@ -96,63 +64,40 @@ public class BesselianEpoch extends CoordinateEpoch {
 		return getMJDForYear(getYear());
 	}
 	
-	/**
-	 * Gets the year for mjd.
-	 *
-	 * @param MJD the mjd
-	 * @return the year for mjd
-	 */
+	
+	/* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() { return toString(Util.f1); }
+    
+
+    public String toString(NumberFormat nf) {
+        return "B" + nf.format(getYear());
+    }
+
 	public static double getYearForMJD(double MJD) {
 		return 1900.0 + (MJD - mjdB1900) / julianYear;
 	}
 	
-	/**
-	 * Gets the mJD for year.
-	 *
-	 * @param year the year
-	 * @return the mJD for year
-	 */
+
 	public static double getMJDForYear(double year) {
 		return (year - 1900.0) * julianYear + mjdB1900;
 	}
 
-	/**
-	 * For mjd.
-	 *
-	 * @param MJD the mjd
-	 * @return the besselian epoch
-	 */
+
 	public static BesselianEpoch forMJD(double MJD) {
 		return new BesselianEpoch(getYearForMJD(MJD));		
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() { return toString(Util.f1); }
-	
-	/**
-	 * To string.
-	 *
-	 * @param nf the nf
-	 * @return the string
-	 */
-	public String toString(NumberFormat nf) {
-		return "B" + nf.format(getYear());
-	}
 
-	/**
-	 * Parses the.
-	 *
-	 * @param text the text
-	 * @throws NumberFormatException the number format exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public void parse(String text) throws NumberFormatException, IllegalArgumentException {
-		if(text.charAt(0) == 'B') setYear(Double.parseDouble(text.substring(1)));
-		else if(text.charAt(0) == 'J') setYear(getYearForMJD(JulianEpoch.getMJDForYear(Double.parseDouble(text.substring(1)))));
-		else setYear(Double.parseDouble(text));
+
+	public static BesselianEpoch forJulianDate(double JD) { return forMJD(JD - 2400000.5); }
+
+	public static BesselianEpoch forString(String text) throws NumberFormatException, IllegalArgumentException {
+		if(text.charAt(0) == 'B') return new BesselianEpoch(Double.parseDouble(text.substring(1)));
+		else if(text.charAt(0) == 'J') return new BesselianEpoch(getYearForMJD(JulianEpoch.getMJDForYear(Double.parseDouble(text.substring(1)))));
+		else return new BesselianEpoch(Double.parseDouble(text));
 	}	
 	
 }

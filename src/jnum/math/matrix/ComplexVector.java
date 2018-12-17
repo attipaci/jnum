@@ -33,62 +33,35 @@ import jnum.math.Scalar;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ComplexVector.
- */
+
 public class ComplexVector extends GenericVector<Complex> implements ComplexScaling, ComplexConjugate, ComplexMultiplication<ComplexVector> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6672815439678434695L;
 
-	/**
-	 * Instantiates a new complex vector.
-	 */
+
 	public ComplexVector() { super(Complex.class); }
 	
-		
-	/**
-	 * Instantiates a new complex vector.
-	 *
-	 * @param size the size
-	 */
+
 	public ComplexVector(int size) {
 		super(Complex.class, size);
 	}
 	
-	/**
-	 * Instantiates a new complex vector.
-	 *
-	 * @param data the data
-	 */
+
 	public ComplexVector(double[] data) {
 		super(ArrayUtil.asComplex(data));
 	}
 	
-	/**
-	 * Instantiates a new complex vector.
-	 *
-	 * @param data the data
-	 */
+
 	public ComplexVector(float[] data) {
 		super(ArrayUtil.asComplex(data));
 	}
+
 	
-	/**
-	 * Instantiates a new complex vector.
-	 *
-	 * @param data the data
-	 */
 	public ComplexVector(Scalar[] data) {
 		super(ArrayUtil.asComplex(data));
 	}
 	
-	/**
-	 * Instantiates a new complex vector.
-	 *
-	 * @param data the data
-	 */
+
 	public ComplexVector(Complex[] data) {
 		super(data);
 	}

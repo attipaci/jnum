@@ -28,31 +28,19 @@ import java.io.IOException;
 
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BitStore.
- */
+
 public class BitStore extends DataStore<Long> {
 	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 6409444230976963190L;
 
-	/** The container. */
 	DataStore<? extends Number> container;
-	
-	/** The mask. */
+
 	long mask = 0;
-	
-	/** The shift. */
+
 	int shift;
 	
-	/**
-	 * Instantiates a new bit store.
-	 *
-	 * @param name the name
-	 * @param bits the bits
-	 * @param position the position
-	 */
+
 	public BitStore(String name, DataStore<? extends Number> bits, int position) {
 		super(name);
 		this.container = bits;
@@ -81,14 +69,7 @@ public class BitStore extends DataStore<Long> {
 		return true;
 	}
 	
-	/**
-	 * Instantiates a new bit store.
-	 *
-	 * @param name the name
-	 * @param bits the bits
-	 * @param from the from
-	 * @param n the n
-	 */
+
 	public BitStore(String name, DataStore<? extends Number> bits, int from, int n) {
 		super(name);
 		this.container = bits;

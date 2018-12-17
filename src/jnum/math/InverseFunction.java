@@ -22,20 +22,8 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * Inverse function.
- *
- * @param <ArgType> the generic type
- * @param <ReturnType> the generic type
- */
+
 public interface InverseFunction<ArgType, ReturnType> {	
 		// throw IllegalArgumentException if the dimension of the arguments is incorrect...
-		/**
-		 * Inverse value at.
-		 *
-		 * @param parms the parms
-		 * @return the return type
-		 */
 		public ReturnType inverseValueAt(ArgType parms);
 }

@@ -24,69 +24,36 @@ package jnum.math.specialfunctions;
 
 import jnum.math.Complex;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class BetaFunction.
- */
+
 public final class BetaFunction {
 
-	/**
-	 * At.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the double
-	 */
+
 	public final static double at(double x, double y) {
 		if(x <= 0 || y <= 0) throw new IllegalArgumentException("Beta function is undefined for negative arguments.");
 		
 		return Math.exp(logAt(x, y));		
 	}
 	
-	/**
-	 * Log at.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the double
-	 */
+
 	public final static double logAt(double x, double y) {
 		return GammaFunction.logAt(x) + GammaFunction.logAt(y) - GammaFunction.logAt(x+y);
 	}
 	
-	/**
-	 * At.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the complex
-	 */
+
 	public final static Complex at(final Complex x, final Complex y) {
 		Complex result = new Complex();
 		evaluateAt(x, y, result);
 		return result;
 	}
 	
-	/**
-	 * Log at.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the complex
-	 */
+
 	public final static Complex logAt(final Complex x, final Complex y) {
 		Complex result = new Complex();
 		evaluateLogAt(x, y, result);
 		return result;
 	}
 	
-	/**
-	 * Evaluate at.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @param result the result
-	 */
+
 	public final static void evaluateAt(final Complex x, final Complex y, final Complex result) {
 		evaluateLogAt(x, y, result);
 		// If real, use faster real exponential.
@@ -94,13 +61,7 @@ public final class BetaFunction {
 		else result.exp();
 	}
 		
-	/**
-	 * Evaluate log at.
-	 *
-	 * @param x the x
-	 * @param y the y
-	 * @param result the result
-	 */
+
 	public final static void evaluateLogAt(final Complex x, final Complex y, final Complex result) {
 		if(x == result) throw new IllegalArgumentException("Identical arguments: x & result.");
 		if(y == result) throw new IllegalArgumentException("Identical arguments: y & result.");

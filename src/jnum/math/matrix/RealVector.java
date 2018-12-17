@@ -32,37 +32,22 @@ import jnum.math.TrueVector;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class RealVector.
- */
+
 public class RealVector extends AbstractVector<Double> implements TrueVector<Double>, Inversion {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1042626482476049050L;
-    /** The component. */
+
     public double[] component;
 
-    /**
-     * Instantiates a new real vector.
-     */
+
     public RealVector() {}
 
-    /**
-     * Instantiates a new real vector.
-     *
-     * @param size the size
-     */
+
     public RealVector(int size) {
         component = new double[size];
     }
 
 
-    /**
-     * Instantiates a new real vector.
-     *
-     * @param data the data
-     */
     public RealVector(double[] data) { setData(data); }
 
 
@@ -102,11 +87,7 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
         for(int i=array.length; --i >= 0; ) component[i] = array[i];		
     }
 
-    /**
-     * Sets the data.
-     *
-     * @param data the new data
-     */
+    
     public void setData(double[] data) { component = data; }
 
     /* (non-Javadoc)

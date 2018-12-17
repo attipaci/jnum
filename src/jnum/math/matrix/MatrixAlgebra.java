@@ -29,42 +29,22 @@ import jnum.math.LinearAlgebra;
 import jnum.math.Metric;
 import jnum.math.Product;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface MatrixAlgebra.
- *
- * @param <T> the generic type
- */
+
 public interface MatrixAlgebra<T> extends LinearAlgebra<T>, Product<T, T>, Metric<T>, IdentityValue {
 
-	/**
-	 * Dot.
-	 *
-	 * @param B the b
-	 * @return the t
-	 */
+
 	public T dot(T B);
 	
-	/**
-	 * Transpose.
-	 */
+
 	public void transpose();
 	
-	/**
-	 * Gets the rank.
-	 *
-	 * @return the rank
-	 */
+
 	public int getRank();
 	
-	/**
-	 * Gauss.
-	 */
+
 	public void gauss();
 	
-	/**
-	 * Gauss jordan.
-	 */
+
 	public void gaussJordan();
 	
 }

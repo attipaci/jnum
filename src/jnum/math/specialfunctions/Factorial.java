@@ -26,23 +26,13 @@ package jnum.math.specialfunctions;
 import java.util.Vector;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Factorial.
- */
+
 public final class Factorial {
-	
-	/** The Constant store. */
+
 	public final static Vector<Double> store = new Vector<Double>(100);
 	static { store.add(1.0); }
 	
 	// Calculates factorials as needed, storing the values for quick lookup later.
-	/**
-	 * At.
-	 *
-	 * @param n the n
-	 * @return the double
-	 */
 	public final static double at(int n) {
 		if (n < 0) throw new IllegalArgumentException("Negative Factorial.");
 		if (n < store.size()) return store.get(n);
@@ -57,12 +47,6 @@ public final class Factorial {
 	// Calculates values as needed, and stores them (up to some limit) for quick lookup later...
 	// Thus repeated calls become very fast for n<MAX_LOGBUFFERED.
 	// For larger n, calls to GammaFunction are made...
-	/**
-	 * Log at.
-	 *
-	 * @param n the n
-	 * @return the double
-	 */
 	public final static double logAt(int n) {
 		if (n < 0) throw new IllegalArgumentException("Negative Factorial.");
 		if (n < logStore.size()) return logStore.get(n);
@@ -74,10 +58,10 @@ public final class Factorial {
 		return logStore.get(m-1);
 	}
 	
-	/** The max logbuffered. */
+
 	static int MAX_LOGBUFFERED = 400;
 	
-	/** The Constant logStore. */
+
 	public final static Vector<Double> logStore = new Vector<Double>(100);
 	static { logStore.add(0.0); }	
 	

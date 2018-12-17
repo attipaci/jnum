@@ -27,27 +27,14 @@ import jnum.ConsiderateFunction;
 import jnum.Function;
 import jnum.Util;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ConsiderateFunctionAdapter.
- *
- * @param <ArgType> the generic type
- * @param <ReturnType> the generic type
- */
+
 public class ConsiderateFunctionAdapter<ArgType, ReturnType> implements Function<ArgType, ReturnType> {
-	
-	/** The function. */
+
 	ConsiderateFunction<ArgType, ReturnType> function;
-	
-	/** The return type. */
+
 	Class<ReturnType> returnType;
 	
-	/**
-	 * Instantiates a new considerate function adapter.
-	 *
-	 * @param f the f
-	 * @param template the template
-	 */
+
 	@SuppressWarnings("unchecked")
 	public ConsiderateFunctionAdapter(ConsiderateFunction<ArgType, ReturnType> f, ReturnType template) {
 		function = f;

@@ -26,22 +26,12 @@ package jnum.io.dirfile;
 
 import java.io.IOException;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class UIntegerStore.
- */
+
 public class UIntegerStore extends RawStore<Long> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2886396848639213765L;
 
-	/**
-	 * Instantiates a new u integer store.
-	 *
-	 * @param path the path
-	 * @param name the name
-	 * @param arraySize the array size
-	 */
+
 	public UIntegerStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
 		bytes = 4;

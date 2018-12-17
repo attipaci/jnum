@@ -28,41 +28,20 @@ import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GalacticCoordinates.
- */
+
 public class GalacticCoordinates extends CelestialCoordinates {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -942734735652370919L;
 
 
-    /**
-     * Instantiates a new galactic coordinates.
-     */
     public GalacticCoordinates() {}
 
-    /**
-     * Instantiates a new galactic coordinates.
-     *
-     * @param text the text
-     */
+
     public GalacticCoordinates(String text) { super(text); }
 
-    /**
-     * Instantiates a new galactic coordinates.
-     *
-     * @param lat the lat
-     * @param lon the lon
-     */
     public GalacticCoordinates(double lat, double lon) { super(lat, lon); }
     
-    /**
-     * Instantiates a new galactic coordinates.
-     *
-     * @param from the from
-     */
+
     public GalacticCoordinates(CelestialCoordinates from) { super(from); }
     
     
@@ -110,7 +89,6 @@ public class GalacticCoordinates extends CelestialCoordinates {
 	}
 	
 
-    /** The default local coordinate system. */
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
@@ -133,7 +111,7 @@ public class GalacticCoordinates extends CelestialCoordinates {
 
     }
     
-    /** The Constant equatorialPole. */
+
     public static final EquatorialCoordinates equatorialPole = new EquatorialCoordinates(12.0 * Unit.hourAngle + 49.0 * Unit.minuteAngle, 27.4 * Unit.deg, "B1950.0");
     
     /** The phi0. */
@@ -149,7 +127,5 @@ public class GalacticCoordinates extends CelestialCoordinates {
         phi0 = -zero.x();
         equatorialPole.precess(CoordinateEpoch.J2000);
     }
-  
-
 
 }

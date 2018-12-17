@@ -37,13 +37,10 @@ import jnum.data.DataCrawler;
  * @param <T> the generic type
  */
 public abstract class MeshCrawler<T> implements DataCrawler<T> {
-   
-    /** The to top-level index and its range. */
+
     protected int currentIndex, fromIndex, toIndex;
 
-    /**
-     * Instantiates a new array iterator.
-     */
+
     protected MeshCrawler() {}
 
 
@@ -62,12 +59,7 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
     @Override
     public abstract void reset();
 
-    /**
-     * Sets the array.
-     *
-     * @param data the new array
-     * @throws IllegalArgumentException the illegal argument exception
-     */
+
     protected abstract void setArray(Object data) throws IllegalArgumentException; 
 
     /* (non-Javadoc)
@@ -89,31 +81,16 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
         return true;
     }
     
-    /**
-     * Sets the next element.
-     *
-     * @param element the new next element
-     * @throws NoSuchElementException the no such element exception
-     */
+
     public void setNext(T element) throws NoSuchElementException {
         next();
         setCurrent(element);
     }
 
-    /**
-     * Sets the index.
-     *
-     * @param index the new index
-     */
+
     protected abstract void setLeadPosition(int index);
 
-   
-    /**
-     * Sets the index.
-     *
-     * @param index the index
-     * @param depth the depth
-     */
+
     protected abstract void setPosition(int[] index, int depth);
 
     public void getPosition(int[] index) { 
@@ -124,41 +101,20 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
         index[depth] = currentIndex;
     }
 
-    /**
-     * Iterator.
-     *
-     * @param <T> the generic type
-     * @param array the array
-     * @return the array iterator
-     */
+
     @SuppressWarnings("unchecked")
     public static <T> MeshCrawler<T> createFor(Object array) {
         if(array instanceof Object[]) return new GenericCrawler<T>((Object[]) array);
         return (ArrayCrawler<T>) ArrayCrawler.forArray(array);       
     }
 
-    /**
-     * Iterator.
-     *
-     * @param <T> the generic type
-     * @param array the array
-     * @param depth the depth
-     * @return the array iterator
-     */
+
     public static <T> MeshCrawler<T> createFor(Object array, int depth) {
         if(depth >= ArrayUtil.getRank(array)) return createFor(array);
         return new GenericCrawler<T>((Object[]) array, depth);
     }
 
-    /**
-     * Iterator.
-     *
-     * @param <T> the generic type
-     * @param array the array
-     * @param fromIndex the from index
-     * @param toIndex the to index
-     * @return the array iterator
-     */
+
     @SuppressWarnings("unchecked")
     public static <T> MeshCrawler<T> createFor(Object array, int[] fromIndex, int[] toIndex) {
         if(array instanceof Object[]) return new GenericCrawler<T>((Object[]) array, fromIndex, toIndex);
@@ -168,49 +124,24 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
 
 
 
-    /**
-     * The Class ObjectMesh.Iterator.
-     *
-     * @param <T> the generic type
-     */
     private static class GenericCrawler<T> extends MeshCrawler<T> {
 
-        /** The child. */
         private MeshCrawler<T> child;
 
-        /** The array. */
         private Object[] array;
 
 
-        /**
-         * Instantiates a new object array iterator.
-         *
-         * @param data the data
-         */
+
         private GenericCrawler(Object[] data) {
             this(data, new int[ArrayUtil.getRank(data)], ArrayUtil.getShape(data));     
         }
 
-        /**
-         * Instantiates a new object array iterator.
-         *
-         * @param data the data
-         * @param depth the depth
-         * @throws IllegalArgumentException the illegal argument exception
-         */
+
         private GenericCrawler(Object[] data, int depth) throws IllegalArgumentException {
             this(data, new int[depth], Arrays.copyOf(ArrayUtil.getShape(data), depth));     
         }
 
-        /**
-         * Instantiates a new object array iterator.
-         *
-         * @param data the data
-         * @param from the from
-         * @param to the to
-         * @throws IllegalArgumentException the illegal argument exception
-         * @throws IndexOutOfBoundsException the index out of bounds exception
-         */
+
         @SuppressWarnings("unchecked")
         private GenericCrawler(Object[] data, int[] from, int[] to) throws IllegalArgumentException, IndexOutOfBoundsException {   
             if(from.length > ArrayUtil.getRank(data) || from.length != to.length) throw new IllegalArgumentException("Iteration indeces are higher rank than array.");
@@ -278,9 +209,6 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
             array = (Object[]) data;        
         }
 
-        /**
-         * Set the next block of data, and propagate down to all children...
-         */
         /*
         public void setNextBlock() {
             if(++index[0] < toIndex) {

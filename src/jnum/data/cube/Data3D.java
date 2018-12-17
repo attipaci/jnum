@@ -54,8 +54,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
      * - level()
      */
 
-
-
     @Override
     public Cube3D newImage() {
         return Cube3D.createType(getElementType(), sizeX(), sizeY(), sizeZ());

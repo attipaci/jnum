@@ -24,67 +24,36 @@ package jnum.math.specialfunctions;
 
 import jnum.math.Complex;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Hankel.
- */
+
 public final class Hankel {
 
-	/**
-	 * The Class H1.
-	 */
+
 	public final static class H1 {
 		
-		/**
-		 * At.
-		 *
-		 * @param n the n
-		 * @param x the x
-		 * @return the complex
-		 */
+
 		public final static Complex at(final int n, final double x) {
 			final Complex result = new Complex();
 			evaluateAt(n, x, result);
 			return result;
 		}
 
-		/**
-		 * Evaluate at.
-		 *
-		 * @param n the n
-		 * @param x the x
-		 * @param result the result
-		 */
+
 		public final static void evaluateAt(final int n, final double x, final Complex result) {
 			result.set(Bessel.J(n, x), Bessel.Y(n,  x));
 		}
 	}
 		
-	/**
-	 * The Class H2.
-	 */
+
 	public final static class H2 {
 	
-		/**
-		 * At.
-		 *
-		 * @param n the n
-		 * @param x the x
-		 * @return the complex
-		 */
+
 		public final static Complex at(final int n, final double x) {
 			final Complex result = new Complex();
 			evaluateAt(n, x, result);
 			return result;
 		}
 
-		/**
-		 * Evaluate at.
-		 *
-		 * @param n the n
-		 * @param x the x
-		 * @param result the result
-		 */
+		
 		public final static void evaluateAt(final int n, final double x, final Complex result) {
 			result.set(Bessel.J(n, x), -Bessel.Y(n,  x));
 		}

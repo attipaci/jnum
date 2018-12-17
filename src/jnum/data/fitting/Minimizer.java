@@ -31,31 +31,22 @@ import jnum.Util;
 import jnum.Verbosity;
 import jnum.data.PrecisionControl;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Minimizer.
- */
+
+
 public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty {
-    
-    /** The function. */
+
     private Parametric<Double> function;
-    
-    /** The parameters. */
+
     private Parameter[] parameters;
-    
-    /** The precision. */
+
     private double precision;
-    
-    /** The verbose. */
+
     private boolean verbose = false; 
-    
-    /** The c. */
+
     private CovarianceMatrix C;
-    
-    /** The constraints. */
+
     private ArrayList<Constraint> constraints = new ArrayList<Constraint>();
-     
-    /** The cost function. */
+
     private Parametric<Double> costFunction = new Parametric<Double>() {
         @Override
         public Double evaluate() { return Minimizer.this.evaluate(); } 
@@ -378,7 +369,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
         return new String(info);
     }
     
-    /** The default precision. */
+
     public static double DEFAULT_PRECISION = 1e-8;
     
 }

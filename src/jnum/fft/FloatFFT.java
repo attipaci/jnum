@@ -42,7 +42,6 @@ import jnum.parallel.Parallelizable;
 public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3189956387053186573L;
 
 
@@ -83,15 +82,6 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
     // Blockbit is the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
     // Two consecutive blocks are merged by the algorithm into one larger block...
-    /**
-     * Merge2.
-     *
-     * @param data the data
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     * @param blkbit the blkbit
-     */
     @Override
     protected void radix2(final float[] data, int from, int to, final boolean isForward, final int blkbit) {	
 
@@ -177,15 +167,6 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
     // Blockbit is the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
     // Four consecutive blocks are merged by the algorithm into one larger block...
-    /**
-     * Merge4.
-     *
-     * @param data the data
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     * @param blkbit the blkbit
-     */
     @Override
     protected void radix4(final float[] data, int from, int to, final boolean isForward, final int blkbit) {	
 
@@ -309,15 +290,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
     }
 
-    /**
-     * Load real.
-     *
-     * @param data the data
-     * @param length the length
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     */
+
     private void loadReal(final float[] data, final int addressBits, int from, int to, final boolean isForward) {	
         final int length = 2<<addressBits;
         // Make from and to even indices 0...N/2
@@ -373,14 +346,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         realTransform(data, getAddressBits(data), isForward);
     }
 
-    /**
-     * Real transform.
-     *
-     * @param data the data
-     * @param addressBits the address bits
-     * @param isForward the is forward
-     * @param chunks the chunks
-     */
+
     void realTransform(final float[] data, final int addressBits, final boolean isForward) {
         if(getParallel() < 2) sequentialRealTransform(data, addressBits, isForward);
         else parallelRealTransform(data, addressBits, isForward);
@@ -407,24 +373,13 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         }
     }
 
-    /**
-     * Sequential real transform.
-     *
-     * @param data the data
-     * @param isForward the is forward
-     */
+
     @Override
     public void sequentialRealTransform(final float[] data, final boolean isForward) {
 
     }
 
-    /**
-     * Sequential real transform.
-     *
-     * @param data the data
-     * @param addressBits the address bits
-     * @param isForward the is forward
-     */
+
     void sequentialRealTransform(final float[] data, final int addressBits, final boolean isForward) {
         if(isForward) sequentialComplexTransform(data, addressBits, FORWARD);
 
@@ -445,14 +400,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
     }
 
 
-    /**
-     * Scale.
-     *
-     * @param data the data
-     * @param length the length
-     * @param value the value
-     * @param threads the threads
-     */
+
     protected void scale(final float[] data, final int length, final float value) {
         if(getParallel() < 2) {
             for(int i=length; --i >= 0; ) data[i] *= value;
@@ -596,12 +544,9 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
     }
 
 
-    /**
-     * The Class NyquistUnrolledRealFT.
-     */
+
     public static class NyquistUnrolledReal extends FloatFFT {
 
-        /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 3073121404450602358L;
 
         public NyquistUnrolledReal() {

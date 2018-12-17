@@ -26,12 +26,7 @@ package jnum.math.matrix;
 import jnum.math.IdentityValue;
 import jnum.math.Inversion;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface SquareMatrixAlgebra.
- *
- * @param <T> the generic type
- */
+
 public interface SquareMatrixAlgebra<T> extends Inversion, IdentityValue {
 	
 	// TODO
@@ -57,18 +52,10 @@ public interface SquareMatrixAlgebra<T> extends Inversion, IdentityValue {
 	
 	// TODO implement alternative inversions, choose best?
 	
-	/**
-	 * Size.
-	 *
-	 * @return the int
-	 */
+
 	public int size();
 	
-	/**
-	 * Solve.
-	 *
-	 * @param inputVectors the input vectors
-	 */
+
 	public void solve(AbstractVector<T>[] inputVectors);
 	
 	//public void getLUdecomposition();

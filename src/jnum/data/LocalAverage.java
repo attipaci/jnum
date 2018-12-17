@@ -27,27 +27,14 @@ import java.util.ArrayList;
 import jnum.ExtraMath;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LocalAverage.
- *
- * @param <DataType> the generic type
- */
+
 public abstract class LocalAverage<DataType extends LocalizedData> extends ArrayList<DataType> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 786022102371734003L;
-	
-	/** The span. */
+
 	public double span = 3.0;	
 		
-	/**
-	 * Index before.
-	 *
-	 * @param loc the loc
-	 * @return the int
-	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
-	 */
+
 	public int indexBefore(Locality loc) throws ArrayIndexOutOfBoundsException {
 		int i = 0;
 		int step = ExtraMath.pow2ceil(size()) >>> 1;
@@ -67,55 +54,24 @@ public abstract class LocalAverage<DataType extends LocalizedData> extends Array
 	}
 	
 	
-	/**
-	 * Gets the relative weight.
-	 *
-	 * @param normalizedDistance the normalized distance
-	 * @return the relative weight
-	 */
 	public double getRelativeWeight(double normalizedDistance) {
 		return Math.exp(-0.5 * normalizedDistance * normalizedDistance);
 	}
 	
-	/**
-	 * Gets the localized data instance.
-	 *
-	 * @return the localized data instance
-	 */
+
 	public abstract DataType getLocalizedDataInstance();
 	
-	/**
-	 * Gets the local average.
-	 *
-	 * @param loc the loc
-	 * @return the local average
-	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
-	 */
+
 	public final DataType getLocalAverage(Locality loc) throws ArrayIndexOutOfBoundsException {
 		return getLocalAverage(loc, null);
 	}
 	
-	/**
-	 * Gets the local average.
-	 *
-	 * @param loc the loc
-	 * @param env the env
-	 * @return the local average
-	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
-	 */	
+
 	public final DataType getLocalAverage(Locality loc, Object env) throws ArrayIndexOutOfBoundsException {
 		return getLocalAverage(loc, env, null);
 	}
 		
-	/**
-	 * Gets the local average.
-	 *
-	 * @param loc the loc
-	 * @param env the env
-	 * @param consistencyReference the consistency reference
-	 * @return the local average
-	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
-	 */
+
 	public DataType getLocalAverage(Locality loc, Object env, DataType consistencyReference) throws ArrayIndexOutOfBoundsException {
 		int i0 = indexBefore(loc);
 		
@@ -143,25 +99,12 @@ public abstract class LocalAverage<DataType extends LocalizedData> extends Array
 		
 	}
 	
-	/**
-	 * Gets the checked local average.
-	 *
-	 * @param loc the loc
-	 * @return the checked local average
-	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
-	 */
+
 	public final DataType getCheckedLocalAverage(Locality loc) throws ArrayIndexOutOfBoundsException {
 		return getCheckedLocalAverage(loc, null);
 	}
 	
-	/**
-	 * Gets the checked local average.
-	 *
-	 * @param loc the loc
-	 * @param env the env
-	 * @return the checked local average
-	 * @throws ArrayIndexOutOfBoundsException the array index out of bounds exception
-	 */
+
 	public DataType getCheckedLocalAverage(Locality loc, Object env) throws ArrayIndexOutOfBoundsException {
 		return getLocalAverage(loc, env, getLocalAverage(loc, env, null));
 	}

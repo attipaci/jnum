@@ -23,7 +23,7 @@
 
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * An interface for all object that implement a linear algebra. I.e. objects X that support the operation a*X+Y, 
  * where a is a scalar and X,Y is of the supported generic type (DataType), and have a null value such that 

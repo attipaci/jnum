@@ -23,21 +23,12 @@
 
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Cartesian.
- */
+
 public class CartesianSystem extends CoordinateSystem {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 487281387200705838L;
 
 
-	/**
-	 * Instantiates a new cartesian.
-	 *
-	 * @param axes the axes
-	 */
 	public CartesianSystem(int axes) {
 		super("Cartesian Coordinates");
 		int n1 = Math.min(axes, labels.length);
@@ -45,16 +36,11 @@ public class CartesianSystem extends CoordinateSystem {
 		for(int i=labels.length; i<axes; i++) add(new CoordinateAxis("t" + (i-labels.length+1)));
 	}
 	
-	/**
-	 * Instantiates a new cartesian.
-	 *
-	 * @param names the names
-	 */
+
 	public CartesianSystem(String[] names) {
 		for(int i=0; i< names.length; i++) add(new CoordinateAxis(names[i]));		
 	}
-	
-	/** The labels. */
+
 	String[] labels = { "x", "y", "z", "u", "v", "w", "t" };
 	
 }

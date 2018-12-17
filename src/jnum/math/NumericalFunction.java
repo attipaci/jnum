@@ -24,7 +24,6 @@ package jnum.math;
 
 import jnum.Function;
 
-// TODO: Auto-generated Javadoc
 /**
  * Numerical functions with tunable precision.
  *
@@ -40,11 +39,6 @@ public interface NumericalFunction<ArgType, ReturnType> extends Function<ArgType
 	 */
 	public void setPrecision(int digits);
 	
-	/**
-	 * Gets the max precision at.
-	 *
-	 * @param x the x
-	 * @return the max precision at
-	 */
+	
 	public int getMaxPrecisionAt(ArgType x);
 }

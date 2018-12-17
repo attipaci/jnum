@@ -40,21 +40,20 @@ import jnum.util.HashCode;
 
 /**
  *	
+ */
+
+/*
  *  UTC routines are approximate but consistent (btw. getUTC() and setUTC(), and currentTime())
  *  only UTC <===> (MJD, TT) conversion is approximate...
  *  Use (quadratic) fit to leap? This should give some accuracy for UTC...
  */
 public class AstroTime implements Serializable, Comparable<AstroTime> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 890383504654665623L;
 
-	/** The mjd. */
 	private double MJD = Double.NaN; // Assuming that MJD goes with TT
 	
-	/**
-	 * Instantiates a new astro time.
-	 */
+
 	public AstroTime() {}
 	
 	/* (non-Javadoc)
@@ -83,83 +82,41 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		return Double.compare(MJD, time.MJD);
 	}
 	
-	/**
-	 * Instantiates a new astro time.
-	 *
-	 * @param millis the millis
-	 */
+
 	public AstroTime(long millis) { setUTCMillis(millis); }
 	
-	/**
-	 * Now.
-	 *
-	 * @return the astro time
-	 */
+
 	public AstroTime now() {
 		setUTCMillis(System.currentTimeMillis()); 
 		return this;
 	}
 	
-	/**
-	 * Gets the date.
-	 *
-	 * @return the date
-	 */
+
 	public Date getDate() { return new Date(getUTCMillis()); }
 
-	
-	/**
-	 * Sets the time.
-	 *
-	 * @param date the new time
-	 */
+
 	public void setTime(Date date) { setUTCMillis(date.getTime()); }
 
-	/**
-	 * Gets the millis.
-	 *
-	 * @return the millis
-	 */
-	
-	
+
 	public final long getTAIMillis() {
 		return getTAIMillis(MJD);
 	}
 	
-	/**
-	 * Gets the TT millis.
-	 *
-	 * @return the TT millis
-	 */
 	public final long getTTMillis() {
 		return getTTMillis(MJD);
 	}
 	
-	/**
-	 * Gets the GPS millis.
-	 *
-	 * @return the GPS millis
-	 */
+
 	public final long getGPSMillis() {
 		return getGPSMillis(MJD);
 	}
 	
 	
-	/**
-	 * Gets the UTC millis.
-	 *
-	 * @return the UTC millis
-	 */
 	public final long getUTCMillis() { 
 		return getUTCMillis(MJD);
 	}
 
 	
-	/**
-	 * Sets the millis.
-	 *
-	 * @param millis the new millis
-	 */
 	public void setUTCMillis(long millis) {
 		MJD = getMJD(millis);
 	}
@@ -173,12 +130,6 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	}
 	
 	// UNIX clock measures UTC...
-	/**
-	 * Gets the mjd.
-	 *
-	 * @param millis the millis
-	 * @return the mjd
-	 */
 	public static double getMJD(long millis) {
 		return MJDJ2000 + (double)(millis - MillisJ2000 + 1000L * (LeapSeconds.get(millis) - Leap2000)) / DayMillis;
 	}
@@ -187,86 +138,40 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	    return MJDJ2000 + (millis - MillisJ2000 + 1000.0 * (LeapSeconds.get((long)millis) - Leap2000)) / DayMillis;
 	}
 
-	
-	/**
-	 * Gets the mjd.
-	 *
-	 * @return the mjd
-	 */
+
 	public double getMJD() { return MJD; }
 
 	public double getTCGMJD() { return (getMJD() - EMJD) / (1.0 - LG) + EMJD; }
 	
-	/**
-	 * Sets the mjd.
-	 *
-	 * @param date the new mjd
-	 */
 	public void setMJD(double date) { MJD = date; }
 	
-	/**
-	 * Gets the jd.
-	 *
-	 * @return the jd
-	 */
 	public double getJD() { return 2400000.5 + MJD; }
 
-	/**
-	 * Sets the jd.
-	 *
-	 * @param JD the new jd
-	 */
+
 	public void setJD(double JD) { setMJD(JD - 2400000.5); }
 	
 	// Terrestrial Time (based on Atomic Time TAI) in seconds
-	/**
-	 * Gets the tt.
-	 *
-	 * @return the tt
-	 */
 	public double getTT() {
 		return (MJD - (int)Math.floor(MJD)) * Unit.day;
 	}
 	
-	/**
-	 * Sets the tt.
-	 *
-	 * @param TT the new tt
-	 */
+
 	public void setTT(double TT) { MJD = Math.floor(MJD) + TT / Unit.day; }
 
-	/**
-	 * Gets the tai.
-	 *
-	 * @return the tai
-	 */
+	
 	public double getTAI() { return getTT() - TAI2TT; }
 
-	/**
-	 * Sets the tai.
-	 *
-	 * @param TAI the new tai
-	 */
 	public void setTAI(double TAI) { setTT(TAI + TAI2TT); }
 
 	// TCG is based on the Atomic Time but corrects for the gravitational dilation on Earth
 	// Thus it is a good measure of time in space.
 	// TT = TCG − LG × (JDTCG − 2443144.5003725) × 86400
 	// LG = 6.969290134e-10
-	/**
-	 * Gets the tcg.
-	 *
-	 * @return the tcg
-	 */
 	public double getTCG() {
 		return getTT() + LG * (MJD - EMJD) * Unit.day;
 	}
 
-	/**
-	 * Sets the tcg.
-	 *
-	 * @param TCG the new tcg
-	 */
+
 	public void setTCG(double TCG) {
 		setTT(TCG - LG * (MJD - EMJD) * Unit.day);
 	}
@@ -274,37 +179,19 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	
 	// Barycentric Dynamic time.
 	// Relativistic corrections to reference to Solar system barycenter.
-	/**
-	 * Gets the Barycentric Dynamic Time (TDB), which is referenced to the Solar system barycenter.
-	 *
-	 * @return TDB in seconds.
-	 */
-	
 	public double getTDB() {
 		double g = (357.53 + 0.9856003 * (MJD - MJDJ2000)) * Unit.deg;
 		return getTT() + 0.001658 * Math.sin(g) + 0.000014 * Math.sin(2.0*g);
 	}
 	
 	
-	/**
-	 * Gets the GPS time.
-	 *
-	 * @return the GPS time
-	 */
+
 	public double getGPSTime() { return getTAI() - GPS2TAI; }
 
-	/**
-	 * Sets the GPS time.
-	 *
-	 * @param GPST the GPS time
-	 */
+
 	public void setGPSTime(double GPST) { setTAI(GPST + GPS2TAI); }
 	
-	/**
-	 * Gets the utc.
-	 *
-	 * @return the utc
-	 */
+
 	public final double getUTC() {
 		return 1e-3 * getUTCMillis() % DayMillis;
 	}
@@ -353,54 +240,27 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	}
 		
 	
-	/**
-	 * Gets the besselian epoch.
-	 *
-	 * @return the besselian epoch
-	 */
-	public BesselianEpoch getBesselianEpoch() { 
-		BesselianEpoch epoch = new BesselianEpoch();
-		epoch.setMJD(MJD);
-		return epoch;
+
+	public BesselianEpoch getBesselianEpoch() {
+	    return BesselianEpoch.forMJD(MJD);
 	}
 
-	/**
-	 * Gets the julian epoch.
-	 *
-	 * @return the julian epoch
-	 */
+
 	public JulianEpoch getJulianEpoch() { 
-		JulianEpoch epoch = new JulianEpoch();
-		epoch.setMJD(MJD);
-		return epoch;
+	    return JulianEpoch.forMJD(MJD);
 	}
 	
-	
-	/**
-	 * Parses the iso time stamp.
-	 *
-	 * @param text the text
-	 * @throws ParseException the parse exception
-	 */
+
 	public void parseISOTimeStamp(String text) throws ParseException {  
 	    setUTCMillis(getDateFormat(ISOFormat).parse(text).getTime());
 	}
 	
-	/**
-	 * Gets the iSO time stamp.
-	 *
-	 * @return the iSO time stamp
-	 */
+
 	public String getISOTimeStamp() {
 	    return getDateFormat(ISOFormat).format(getDate());
 	}
 	
-	/**
-	 * Parses the fits time stamp.
-	 *
-	 * @param text the text
-	 * @throws ParseException the parse exception
-	 */
+
 	public void parseFitsTimeStamp(String text) throws ParseException {
 		// Set the MJD to 0 UTC of the date part...   
         setUTCMillis(getDateFormat(FITSDateFormat).parse(text.substring(0, FITSDateFormat.length())).getTime());
@@ -416,62 +276,34 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 		}
 	}
 	
-	/**
-	 * Gets the fits time stamp.
-	 *
-	 * @return the fits time stamp
-	 */
+
 	public String getFitsTimeStamp() {
 		long millis = getUTCMillis();
 		
 		return getDateFormat(FITSDateFormat).format(getDate()) + 'T' + FITSTimeFormat.format(1e-3 * (millis % DayMillis));
 	}
 	
-	/**
-	 * Gets the fits short date.
-	 *
-	 * @return the fits short date
-	 */
+
 	public String getFitsShortDate() {
 		return getDateFormat(FITSDateFormat).format(getUTCMillis());
 	}
 	
-	/**
-	 * Parses the simple date.
-	 *
-	 * @param text the text
-	 * @throws ParseException the parse exception
-	 */
+
 	public void parseFitsDate(String text) throws ParseException {
 		parseSimpleDate(text, getDateFormat(FITSDateFormat));
 	}
 	
-	/**
-	 * Parses the simple date.
-	 *
-	 * @param text the text
-	 * @throws ParseException the parse exception
-	 */
+
 	public void parseSimpleDate(String text) throws ParseException {
 		parseSimpleDate(text, getDateFormat(DefaultFormat));
 	}
 	
-	/**
-	 * Parses the simple date.
-	 *
-	 * @param text the text
-	 * @param format the format
-	 * @throws ParseException the parse exception
-	 */
+
 	public void parseSimpleDate(String text, DateFormat format) throws ParseException {
 		setUTCMillis(format.parse(text).getTime());
 	}
 	
-	/**
-	 * Gets the simple date.
-	 *
-	 * @return the simple date
-	 */
+
 	public String getSimpleDate() {
 	    return getDateFormat(DefaultFormat).format(getDate());
 	}
@@ -482,43 +314,22 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	    return f;
 	}
 	
-	/**
-	 * Gets the TAI millis.
-	 *
-	 * @param MJD the mjd
-	 * @return the TAI millis
-	 */
+
 	public final static long getTAIMillis(double MJD) {
 		return MillisJ2000 + leap2000Millis + (long)((MJD - MJDJ2000) * DayMillis);
 	}
 	
-	/**
-	 * Gets the TT millis.
-	 *
-	 * @param MJD the mjd
-	 * @return the TT millis
-	 */
+
 	public final static long getTTMillis(double MJD) {
 		return getTAIMillis(MJD) + MillisTAI2TT;
 	}
 	
-	/**
-	 * Gets the GPS millis.
-	 *
-	 * @param MJD the mjd
-	 * @return the GPS millis
-	 */
+
 	public final static long getGPSMillis(double MJD) {
 		return getTAIMillis(MJD) + MillisTAI2GPS;
 	}
 	
-	
-	/**
-	 * Gets the UTC millis.
-	 *
-	 * @param MJD the mjd
-	 * @return the UTC millis
-	 */
+
 	public final static long getUTCMillis(double MJD) { 
 		final long TAI = getTAIMillis(MJD); 
 		// Since leap seconds are relative to UTC, first get calculate UTC assuming
@@ -530,51 +341,27 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 	
 	
 	
-	/**
-	 * For iso time stamp.
-	 *
-	 * @param text the text
-	 * @return the astro time
-	 * @throws ParseException the parse exception
-	 */
 	public static AstroTime forISOTimeStamp(String text) throws ParseException {
 		AstroTime time = new AstroTime();
 		time.parseISOTimeStamp(text);
 		return time;
 	}
 	
-	/**
-	 * For fits time stamp.
-	 *
-	 * @param text the text
-	 * @return the astro time
-	 * @throws ParseException the parse exception
-	 */
+
 	public static AstroTime forFitsTimeStamp(String text) throws ParseException {
 		AstroTime time = new AstroTime();	
 		time.parseFitsTimeStamp(text.substring(0, 10));
 		return time;
 	}
 	
-	/**
-	 * For simple date.
-	 *
-	 * @param text the text
-	 * @return the astro time
-	 * @throws ParseException the parse exception
-	 */
+
 	public static AstroTime forSimpleDate(String text) throws ParseException {
 		AstroTime time = new AstroTime();
 		time.parseSimpleDate(text);
 		return time;
 	}
 	
-	/**
-	 * Time of day.
-	 *
-	 * @param time the time
-	 * @return the double
-	 */
+
 	public static double timeOfDay(double time) {
 		return time - Unit.day * Math.floor(time / Unit.day);
 	}

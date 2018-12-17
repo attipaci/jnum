@@ -29,16 +29,11 @@ import jnum.math.CoordinateAxis;
 import jnum.math.Scalar;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Grid1D.
- */
+
 public class Grid1D extends CartesianGrid<Scalar> {
-    
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = -4841377680124156007L;
-    
-    /** The resolution. */
+
     private Scalar refIndex, refValue, resolution;
     
     public Grid1D() {

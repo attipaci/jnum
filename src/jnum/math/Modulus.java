@@ -23,7 +23,7 @@
 
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * Interface for objects that implement a mathematical modulus operation.
  *

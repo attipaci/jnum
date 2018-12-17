@@ -26,22 +26,11 @@ package jnum.io.dirfile;
 
 import java.io.IOException;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class FloatStore.
- */
+
 public class FloatStore extends RawStore<Float> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5365409325445573181L;
 
-	/**
-	 * Instantiates a new float store.
-	 *
-	 * @param path the path
-	 * @param name the name
-	 * @param arraySize the array size
-	 */
 	public FloatStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
 		bytes = 4;

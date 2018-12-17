@@ -26,8 +26,5 @@ package jnum.devel.symbolic;
 public interface BooleanMath {
     
     public boolean getBooleanValue(boolean leftSide, boolean rightSide);
-    
-    
-    
 
 }

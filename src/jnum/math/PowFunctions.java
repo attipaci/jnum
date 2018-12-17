@@ -22,16 +22,13 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface PowFunctions.
- */
+
 public interface PowFunctions {
 
 	/**
 	 * abs(x).
 	 *
-	 * @return the double
+	 * @return the absolute value
 	 */
 	public double abs();
 	

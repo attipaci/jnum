@@ -454,21 +454,12 @@ public final class Bessel {
 	 */
 	public static class K implements Function<Double, Double> {
 
-		/** The order. */
 		private int order;
 
-		/**
-		 * Instantiates a new k.
-		 *
-		 * @param order the order
-		 */
+
 		public K(int order) { this.order = order; }
 
-		/**
-		 * Gets the order.
-		 *
-		 * @return the order
-		 */
+
 		public int getOrder() { return order; }
 
 		/* (non-Javadoc)
@@ -480,13 +471,10 @@ public final class Bessel {
 		}
 	}
 
-	/** The Constant ACC. */
 	private static final double ACC = 40.0;
 
-	/** The Constant BIGNO. */
 	private static final double BIG_VALUE = 1.0e10;
 
-	/** The Constant BIGNI. */
 	private static final double BIG_INVERSE = 1.0e-10;
 
 }

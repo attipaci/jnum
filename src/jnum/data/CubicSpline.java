@@ -27,25 +27,17 @@ import java.io.Serializable;
 
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SplineCoeffs.
- */
+
 public class CubicSpline implements Serializable {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5533149637827653369L;
 
-	/** The center index. */
 	private double centerIndex = Double.NaN;
-	
-	/** The local center. */
+
 	private double localCenter = Double.NaN; // should be between 1--2
-	
-	/** The i0. */
+
 	private int i0;
-	
-	/** The coeffs. */
+
 	public double[] coeffs = new double[NCOEFFS];
 
 	
@@ -70,12 +62,7 @@ public class CubicSpline implements Serializable {
 		return true;
 	}
 
-	
-	/**
-	 * Center on.
-	 *
-	 * @param i the i
-	 */
+
 	public void centerOn(double i) {
 		if(centerIndex == i) return;
 		
@@ -84,36 +71,18 @@ public class CubicSpline implements Serializable {
 		setLocalCenter(i - i0);
 	}
 	
-	/**
-	 * Value at.
-	 *
-	 * @param i the i
-	 * @return the double
-	 */
+
 	public final double coefficientAt(int i) {
 		return coeffs[i - i0];		
 	}
 	
-	/**
-	 * Min index.
-	 *
-	 * @return the int
-	 */
+
 	public final int minIndex() { return i0; }
 	
-	/**
-	 * Max index.
-	 *
-	 * @return the int
-	 */
+
 	public final int maxIndex() { return i0 + NCOEFFS; }
 	
 
-	/**
-	 * Sets the local center.
-	 *
-	 * @param delta the new local center value between 1.0 and 2.0
-	 */
 	private void setLocalCenter(final double delta) {
 	  
 		// Calculate the (bicubic) spline coefficients (as necessary)...
@@ -129,12 +98,7 @@ public class CubicSpline implements Serializable {
 		// ~45 ops...
 	}
 	
-	/**
-	 * Value for.
-	 *
-	 * @param dx the dx
-	 * @return the double
-	 */
+
 	public final static double valueFor(double dx) {
 	    dx = Math.abs(dx);
         return dx > 1.0 ? ((-0.5 * dx + 2.5) * dx - 4.0) * dx + 2.0 : (1.5 * dx - 2.5) * dx * dx + 1.0;

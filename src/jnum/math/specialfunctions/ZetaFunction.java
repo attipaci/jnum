@@ -25,20 +25,16 @@ package jnum.math.specialfunctions;
 import jnum.Constant;
 import jnum.math.Complex;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class ZetaFunction. Based on Gourdon and Sebah (2003).
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
  */
 public final class ZetaFunction {
 	
 	// Gourdon & Sebah (2003)
 	// precalculated binomial sums for maximal precision...
-	/**
-	 * At.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
 	public static double at(final double x) {	
 		if(x < 0.0) return Math.pow(Constant.twoPi, x) * Constant.iPi * Math.sin(Constant.rightAngle*x) * GammaFunction.at(1.0 - x) * at(1.0 - x);
 		else if(x == 0.0) return -0.5;
@@ -54,13 +50,7 @@ public final class ZetaFunction {
 		return (sum1 + sum2/(1<<n)) / (1.0 - Math.pow(2.0, 1.0-x));
 	}
 	
-	
-	/**
-	 * At.
-	 *
-	 * @param z the z
-	 * @return the complex
-	 */
+
 	public final static Complex at(final Complex z) {
 		final Complex result = new Complex();
 		evaluateAt(z, result);
@@ -68,12 +58,6 @@ public final class ZetaFunction {
 	}
 	
 	// Complex evaluation without creation of internal objects (complex numbers) for maximum speed.
-	/**
-	 * Evaluate at.
-	 *
-	 * @param z the z
-	 * @param result the result
-	 */
 	public static void evaluateAt(final Complex z, final Complex result) {
 		if(z == result) throw new IllegalArgumentException("Identical arguments.");
 		

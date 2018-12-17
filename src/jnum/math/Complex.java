@@ -682,10 +682,10 @@ public class Complex extends Vector2D implements
 	/**
 	 * Calculates the requested mathematical operation between a complex and a real argument.
 	 *
-	 * @param a the a
-	 * @param op the op
-	 * @param b the b
-	 * @return the complex
+	 * @param a the complex argument
+	 * @param op the operator, e.g. '+', '-', '*', '/'
+	 * @param b the real argument
+	 * @return the complex result
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
 	public static Complex math(Complex a, char op, double b) throws IllegalArgumentException {
@@ -750,12 +750,7 @@ public class Complex extends Vector2D implements
 		set(x() * x() - y() * y(), 2.0 * x() * y());
 	}
 		
-	/**
-	 * Creates the array.
-	 *
-	 * @param size the size
-	 * @return the complex[]
-	 */
+
 	public static Complex[] createArray(int size) {
 		final Complex[] z = new Complex[size];
 		for(int i=size; --i >= 0; ) z[i] = new Complex();

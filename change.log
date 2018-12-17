@@ -8,6 +8,10 @@
  	for Cartesian coordinates (such as the spectral axis for HIRMES
 	spectral cubes) and instead being written in the natural (SI) units.
 
+	[API] {CoordinateEpoch+} Changed to inmutable, and therefore not
+	cloneable or copiable, since it is safe to keep referencing the
+	same object everywhere...
+
 	[API] {Counter} Remove class, superceded by RealValue, which provides
 	all the same functionality and more.
 
@@ -26,6 +30,9 @@
 	[API] Broadcaster add(Reporter) & remove(String) methods now return
 	The Reporter object that is replaced or was removed, or null if
 	there was no existing Reporter in use that mathes the argument.
+
+	[DOC] Removed a bunch of auto-generated Javadoc. The goal is to 
+	fill in the missing javadoc sooner than later... 
 
 	[DOC] Javadoc updates: Reporter, plus all classes and interfaces 
 	directly under jnum (but not yet the subpackages...)

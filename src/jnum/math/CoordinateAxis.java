@@ -33,66 +33,40 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
 
-/**
- * The Class CoordinateAxis.
- */
 public class CoordinateAxis implements Serializable, Cloneable {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 7273239690459736139L;
 
-	/** The label. */
     private String label;
-	
-	/** The short label. */
+
 	private String shortLabel;
-	
-	/** The fancy label. */
+
 	private String fancyLabel;
-		
-	/** The format. */
+
 	public NumberFormat format;
-	
-	/** The reverse. */
+
 	public boolean reverse = false;
-	
-	/** The reverse from. */
+
 	public double reverseFrom = 0.0;
-	
-	/** The multiples. */
+
 	public double[] multiples; // The multiples of the fundamental tickunits that can be used.
-	
-	/** The magnitude scaling. */
+
 	public boolean magnitudeScaling = true; // If the ticks can be scaled by powers of 10 also.
-	
-	/** The minor tick. */
+
 	public double majorTick, minorTick; // The actual ticks.
 	
 	public Unit unit = Unit.arbitrary;
 	
-	/**
-	 * Instantiates a new coordinate axis.
-	 */
+
 	public CoordinateAxis() { this("unspecified axis"); }
 
-	/**
-	 * Instantiates a new coordinate axis.
-	 *
-	 * @param longLabel the long label
-	 */
+
 	public CoordinateAxis(String longLabel) {
 	    this(longLabel, null, null);
 	}
 	
-	/**
-	 * Instantiates a new coordinate axis.
-	 *
-	 * @param longLabel the long label
-	 * @param shortLabel the short label
-	 * @param fancyLabel the fancy label
-	 */
+
 	public CoordinateAxis(String longLabel, String shortLabel, String fancyLabel) { 
 		defaults();
 		setShortLabel(shortLabel);
@@ -118,82 +92,37 @@ public class CoordinateAxis implements Serializable, Cloneable {
 		magnitudeScaling = true;
 	}
 
-	/**
-	 * Sets the label.
-	 *
-	 * @param text the new label
-	 */
+
 	public void setLabel(String text) { label = text; }
 	
-	/**
-	 * Sets the short label.
-	 *
-	 * @param text the new short label
-	 */
+
 	public void setShortLabel(String text) { shortLabel = text; }
 
-	/**
-	 * Sets the fancy label.
-	 *
-	 * @param text the new fancy label
-	 */
+
 	public void setFancyLabel(String text) { fancyLabel = text; }
 	
-	/**
-	 * Gets the label.
-	 *
-	 * @return the label
-	 */
+
 	public String getLabel() { return label; }
 	
-	/**
-	 * Gets the short label.
-	 *
-	 * @return the short label
-	 */
+
 	public String getShortLabel() { return shortLabel == null ? getLabel() : shortLabel; }
 	
-	/**
-	 * Gets the fancy label.
-	 *
-	 * @return the fancy label
-	 */
+
 	public String getFancyLabel() { return fancyLabel == null ? getLabel() : fancyLabel; }
 
-	/**
-	 * Sets the format.
-	 *
-	 * @param nf the new format
-	 */
+
 	public void setFormat(NumberFormat nf) { format = nf; }
 	
-	/**
-	 * Gets the format.
-	 *
-	 * @return the format
-	 */
+
 	public NumberFormat getFormat() { return format; }
 	
-	/**
-	 * Sets the reverse.
-	 *
-	 * @param value the new reverse
-	 */
+
 	public void setReverse(boolean value) { setReverse(value, 0.0); }
 	
-	/**
-	 * Sets the reverse.
-	 *
-	 * @param value the value
-	 * @param from the from
-	 */
+
 	public void setReverse(boolean value, double from) { reverse = value; reverseFrom = from; }
 	
-	/**
-	 * Checks if is reverse.
-	 *
-	 * @return true, if is reverse
-	 */
+
 	public boolean isReverse() { return reverse; }
 	
 	public Unit getUnit() { return unit; }
@@ -201,33 +130,16 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	public void setUnit(Unit u) { this.unit = u; }
 	
 	
-	/**
-	 * Format.
-	 *
-	 * @param value the value
-	 * @return the string
-	 */
+
 	public String format(double value) { return format.format(reverse ? reverseFrom - value : value); }
 	
-	/**
-	 * Parses the.
-	 *
-	 * @param text the text
-	 * @return the double
-	 * @throws ParseException the parse exception
-	 */
+
 	public double parse(String text) throws ParseException {
 		double value = format.parse(text).doubleValue();
 		return reverse ? reverseFrom - value : value;
 	}
 	
-	/**
-	 * Edits the.
-	 *
-	 * @param cursor the cursor
-	 * @param id the id
-	 * @throws HeaderCardException the header card exception
-	 */
+
 	public void editHeader(Cursor<String, HeaderCard> cursor, String id) throws HeaderCardException {
 		if(shortLabel != null) cursor.add(new HeaderCard("CNAME" + id, shortLabel, "Coordinate axis name."));
 	}
@@ -235,12 +147,6 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	// TODO
 	// does not read label and format information...
 	// should use getDefaults("wcsName")?
-	/**
-	 * Parses the.
-	 *
-	 * @param header the header
-	 * @param id the id
-	 */
 	public void parse(Header header, String id) {
 		if(header.containsKey("CNAME" + id)) shortLabel = header.getStringValue("CNAME" + id);
 	}

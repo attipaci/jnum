@@ -22,10 +22,7 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface AbsoluteValue.
- */
+
 public interface AbsoluteValue {
 	
 	/**

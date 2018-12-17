@@ -32,42 +32,19 @@ import jnum.math.TrueVector;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class AbstractVector.
- *
- * @param <T> the generic type
- */
 public abstract class AbstractVector<T> implements TrueVector<T>, Serializable, 
 Cloneable, Copiable<AbstractVector<T>> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 785522803183758105L;
 
-	/**
-	 * Instantiates a new abstract vector.
-	 */
 	public AbstractVector() {}
-	
-	/**
-	 * Gets the type.
-	 *
-	 * @return the type
-	 */
+
 	public abstract Class<T> getType();
 	
-	/**
-	 * Gets the data.
-	 *
-	 * @return the data
-	 */
+
 	public abstract Object getData();
 	
-	/**
-	 * Sets the data.
-	 *
-	 * @param data the new data
-	 */
+
 	public abstract void setData(Object data);
 		
 	
@@ -113,18 +90,10 @@ Cloneable, Copiable<AbstractVector<T>> {
 		scale(1.0/abs());
 	}
 		
-	/**
-	 * Sets the size.
-	 *
-	 * @param size the new size
-	 */
+
 	public abstract void setSize(int size);
 	
-	/**
-	 * Assert size.
-	 *
-	 * @param size the size
-	 */
+
 	public void assertSize(int size) { 
 		if(size() != size) setSize(size);		
 	}

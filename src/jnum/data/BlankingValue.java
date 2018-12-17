@@ -23,17 +23,9 @@
 
 package jnum.data;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface BlankingValue.
- */
+
 public interface BlankingValue {
 
-	/**
-	 * Checks if is na n.
-	 *
-	 * @return true, if is na n
-	 */
 	public boolean isNaN(); 
 	
 }

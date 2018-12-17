@@ -35,34 +35,18 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class TelescopeCoordinates.
- */
+
 public class TelescopeCoordinates extends SphericalCoordinates {
-    
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = 5165681897613041311L;
 
-  
-    /**
-     * Instantiates a new horizontal coordinates.
-     */
+
     public TelescopeCoordinates() {}
 
-    /**
-     * Instantiates a new horizontal coordinates.
-     *
-     * @param text the text
-     */
+
     public TelescopeCoordinates(String text) { super(text); } 
 
-    /**
-     * Instantiates a new horizontal coordinates.
-     *
-     * @param az the az
-     * @param el the el
-     */
+
     public TelescopeCoordinates(double az, double el) { super(az, el); }
 
     /* (non-Javadoc)
@@ -92,66 +76,29 @@ public class TelescopeCoordinates extends SphericalCoordinates {
     }
 
 
-    /**
-     * Az.
-     *
-     * @return the double
-     */
     public final double XEL() { return nativeLongitude(); }
 
-    /**
-     * Azimuth.
-     *
-     * @return the double
-     */
+
     public final double crossElevation() { return nativeLongitude(); }
 
-    /**
-     * El.
-     *
-     * @return the double
-     */
+
     public final double EL() { return nativeLatitude(); }
 
-    /**
-     * Elevation.
-     *
-     * @return the double
-     */
+
     public final double elevation() { return nativeLatitude(); }
 
 
-    /**
-     * Sets the az.
-     *
-     * @param XEL the new xel
-     */
     public final void setXEL(double XEL) { setNativeLongitude(XEL); }
 
-    /**
-     * Sets the el.
-     *
-     * @param EL the new el
-     */
+
     public final void setEL(double EL) { setNativeLatitude(EL); }
 
 
-    /**
-     * To equatorial.
-     *
-     * @param offset the offset
-     * @param telVPA the tel VPA
-     */
     public void toEquatorial(Vector2D offset, double telVPA) {
         toEquatorialOffset(offset, telVPA);
     }
 
-    /**
-     * To equatorial offset.
-     *
-     * @param offset the offset
-     * @param telVPA the tel VPA
-     */
+    
     public static void toEquatorialOffset(Vector2D offset, double telVPA) {
         offset.rotate(telVPA);
         offset.scaleX(-1.0);
@@ -170,7 +117,6 @@ public class TelescopeCoordinates extends SphericalCoordinates {
     }
     
 
-    /** The default local coordinate system. */
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
  

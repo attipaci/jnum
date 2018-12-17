@@ -101,11 +101,6 @@ public class LinearRegression {
     public class Coefficients {
         DataPoint a, b;
     }
-    
-    
-    
-  
-    
-    
+
     
 }

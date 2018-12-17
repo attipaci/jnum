@@ -29,26 +29,15 @@ import java.io.IOException;
 import jnum.io.LineParser;
 import jnum.text.SmartTokenizer;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SimpleInterpolator.
- */
+
 public class SimpleInterpolator extends Interpolator {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -1849872877231563147L;
 
-	/**
-	 * Instantiates a new simple interpolator.
-	 */
+
 	public SimpleInterpolator() {}
 	
-	/**
-	 * Instantiates a new simple interpolator.
-	 *
-	 * @param fileName the file name
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public SimpleInterpolator(String fileName) throws IOException {
 		super(fileName);
 	}

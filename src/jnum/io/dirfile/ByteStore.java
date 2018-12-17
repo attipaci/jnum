@@ -26,22 +26,11 @@ package jnum.io.dirfile;
 
 import java.io.IOException;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ByteStore.
- */
+
 public class ByteStore extends RawStore<Byte> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1831718235512528971L;
 
-	/**
-	 * Instantiates a new byte store.
-	 *
-	 * @param path the path
-	 * @param name the name
-	 * @param arraySize the array size
-	 */
 	public ByteStore(String path, String name, int arraySize) {
 		super(path, name, arraySize);
 		bytes = 1;

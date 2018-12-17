@@ -25,10 +25,7 @@ package jnum.math.specialfunctions;
 import jnum.Constant;
 import jnum.math.Complex;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GammaFunction.
- */
+
 public final class GammaFunction {
 
 	/**
@@ -166,26 +163,13 @@ public final class GammaFunction {
 
 
 
-	/**
-	 * P.
-	 *
-	 * @param a the a
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public static double P(double a, double x) {
 		if (x < 0.0 || a <= 0.0) throw new IllegalArgumentException("Invalid arguments for GammaP(a,x).");
 		return x < (a+1.0) ? P(a,x,logAt(a)) : 1.0 - Q(a,x,logAt(a));
 	}
 
-	/**
-	 * P.
-	 *
-	 * @param a the a
-	 * @param x the x
-	 * @param logGamma the ln ga
-	 * @return the double
-	 */
+
 	public static double P(final double a, final double x, final double logGamma) {
 		if(x == 0.0) return 0.0;
 		if(x < 0.0) throw new IllegalStateException("Gamma P evaluated at x < 0.");
@@ -205,26 +189,13 @@ public final class GammaFunction {
 	}
 
 
-	/**
-	 * Q.
-	 *
-	 * @param a the a
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public static double Q(final double a, final double x) {
 		if (x < 0.0 || a <= 0.0) throw new IllegalStateException("Invalid arguments for GammaQ(a,x).");
 		return x < (a+1.0) ? 1.0 - P(a, x, logAt(a)) : Q(a, x, logAt(a));
 	}
 
-	/**
-	 * Q.
-	 *
-	 * @param a the a
-	 * @param x the x
-	 * @param lnGa the ln ga
-	 * @return the double
-	 */
+
 	public static double Q(final double a, final double x, final double lnGa) {
 		double b = x + 1.0 - a;
 		double c = 1.0 / FPMIN;
@@ -246,13 +217,11 @@ public final class GammaFunction {
 		throw new IllegalStateException("Gamma Q convergence not achieved: 'a' is too large, or need to iterate longer.");
 	}
 
-	/** The max iterations. */
+
 	public static int MAX_ITERATIONS = 300;
 
-	/** The eps. */
 	public static double EPS = 3.0e-7;
 
-	/** The fpmin. */
 	public static double FPMIN = 1.0e-300;
 
 	/** Coefficients for Lanczos approximation, same as used by the GNU Scientific Library. */

@@ -29,31 +29,18 @@ import java.io.IOException;
 
 import jnum.data.SimpleInterpolator;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LinearInterpolatorStore.
- */
+
 public class LinearInterpolatorStore extends DataStore<Double> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 1972465553588256489L;
 
-	/** The raw. */
 	protected DataStore<?> raw;
-	
-	/** The file name. */
+
 	protected String fileName;
-	
-	/** The table. */
+
 	protected SimpleInterpolator table;
 	
-	/**
-	 * Instantiates a new linear interpolator store.
-	 *
-	 * @param name the name
-	 * @param value the value
-	 * @param fileName the file name
-	 */
+
 	public LinearInterpolatorStore(String name, DataStore<?> value, String fileName) {
 		super(name);
 		this.fileName = fileName;
@@ -92,11 +79,7 @@ public class LinearInterpolatorStore extends DataStore<Double> {
 		return table.getValue(raw.get(n).doubleValue());
 	}
 	
-	/**
-	 * Load.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public void load() throws IOException {
 		table = new SimpleInterpolator(fileName);
 	}

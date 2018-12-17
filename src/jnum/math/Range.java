@@ -30,38 +30,22 @@ import java.util.StringTokenizer;
 import jnum.Copiable;
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Range.
- */
+
 public class Range implements Serializable, Scalable, Cloneable, Copiable<Range> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 7215369530550677188L;
-	
-	/** The max. */
+
 	private double min, max;
 	
-	/**
-	 * Instantiates a new range.
-	 */
+
 	public Range() { empty(); }
 	
-	/**
-	 * Instantiates a new range.
-	 *
-	 * @param pointValue the point value
-	 */
+
 	public Range(double pointValue) {
 	    this(pointValue, pointValue);
 	}
 	
-	/**
-	 * Instantiates a new range.
-	 *
-	 * @param minValue the min value
-	 * @param maxValue the max value
-	 */
+
 	public Range(double minValue, double maxValue) {
 		setRange(minValue, maxValue);
 	}
@@ -105,9 +89,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		return super.hashCode() ^ HashCode.from(min) ^ HashCode.from(max);
 	}
 	
-	/**
-	 * Flip.
-	 */
+
 	public void flip() {
 	    if(isEmpty()) return;
 		final double temp = min;
@@ -115,88 +97,47 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		max = temp;
 	}
 	
-	/**
-	 * Min.
-	 *
-	 * @return the double
-	 */
+
 	public final double min() { return min; }
 	
-	/**
-	 * Max.
-	 *
-	 * @return the double
-	 */
+
 	public final double max() { return max; }
 	
 	public final double midPoint() { return 0.5 * (min + max); }
 	
-	/**
-	 * Sets the min.
-	 *
-	 * @param value the new min
-	 */
+
 	public void setMin(double value) { min = value; }
 	
-	/**
-	 * Sets the max.
-	 *
-	 * @param value the new max
-	 */
+
 	public void setMax(double value) { max = value; }
 	
-	/**
-	 * Intersect this range with the specified other range. The new range will be the intersection
-	 * of the original range and the argument.
-	 *
-	 * @param r the range to intesect this range with.
-	 */
+
 	public void intersectWith(Range r) {
 		intersectWith(r.min, r.max);	
 	}
 	
-	/**
-	 * Restrict.
-	 *
-	 * @param min the min
-	 * @param max the max
-	 */
+
 	public synchronized void intersectWith(double min, double max) {
 		if(min > this.min) this.min = min;
 		if(max < this.max) this.max = max;
 	}
 	
-	
-	/**
-	 * Make this range an empty range that contains no values (a null set).
-	 */
+
 	public synchronized void empty() {
 		min=Double.POSITIVE_INFINITY; max=Double.NEGATIVE_INFINITY;		
 	}
 	
-	/**
-	 * Checks if this range is empty (a null set).
-	 *
-	 * @return true, if it is empty.
-	 */
+
 	public boolean isEmpty() {
 	    return min > max;
 	}
 	
-	/**
-	 * Make this range represent all real values from -infinity to infinity.
-	 */
+
 	public synchronized void full() {
 		min=Double.NEGATIVE_INFINITY; max=Double.POSITIVE_INFINITY;	
 	}
 	
-	
-	/**
-	 * Sets the range to the specified lower and upper bounds (min/max values).
-	 *
-	 * @param minValue the lower bound value
-	 * @param maxValue the uppper bound value
-	 */
+
 	public void setRange(double minValue, double maxValue) {
 		min = minValue;
 		max = maxValue;
@@ -385,7 +326,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	}
 
 	/**
-	 * To string.
+	 * Returns the string representation of this object.
 	 *
 	 * @param nf the number format
 	 * @return the string representation of this range, formatted to specification.

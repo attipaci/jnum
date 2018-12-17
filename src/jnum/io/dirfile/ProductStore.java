@@ -28,28 +28,16 @@ import java.io.IOException;
 
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ProductStore.
- */
+
 public class ProductStore extends DataStore<Double> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5702369503063112685L;
 
-	/** The b. */
 	DataStore<?> a,b;
-	
-	/** The index scale. */
+
 	double indexScale;
 	
-	/**
-	 * Instantiates a new product store.
-	 *
-	 * @param name the name
-	 * @param a the a
-	 * @param b the b
-	 */
+
 	public ProductStore(String name, DataStore<?> a, DataStore<?> b) {
 		super(name);
 		this.a = a;

@@ -36,51 +36,27 @@ import jnum.math.Metric;
 // TODO: Auto-generated Javadoc
 // TODO Overwrite all methods from Matrix that are not fully supported by square-matrices...
 
-/**
- * The Class GenericSquareMatrix.
- *
- * @param <T> the generic type
- */
 @SuppressWarnings("unchecked")
 public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue & Copiable<? super T>> extends GenericMatrix<T> implements SquareMatrixAlgebra<T> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 276116236966727928L;
 
-	/**
-	 * Instantiates a new generic square matrix.
-	 *
-	 * @param type the type
-	 */
+
 	public GenericSquareMatrix(Class<T> type) {
 		super(type);
 	}
 	
-	/**
-	 * Instantiates a new generic square matrix.
-	 *
-	 * @param a the a
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public GenericSquareMatrix(T[][] a) throws IllegalArgumentException {
 		super(a);
 	}
 
-	/**
-	 * Instantiates a new generic square matrix.
-	 *
-	 * @param type the type
-	 * @param size the size
-	 */
+
 	public GenericSquareMatrix(Class<T> type, int size) {
 		super(type, size, size);
 	}
 	
-	/**
-	 * Instantiates a new generic square matrix.
-	 *
-	 * @param a the a
-	 */
+
 	public GenericSquareMatrix(GenericMatrix<T> a) {
 		entry = a.entry;
 		validate();
@@ -95,39 +71,22 @@ public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAl
 		super.checkShape();
 	}
 	
-	/**
-	 * Adds the rows.
-	 *
-	 * @param b the b
-	 */
+
 	public void addRows(GenericMatrix<? extends T> b) {
 		throw new UnsupportedOperationException("Cannot add rows to a " + getClass().getSimpleName());
 	}
 	
-	/**
-	 * Adds the columns.
-	 *
-	 * @param b the b
-	 */
+
 	public void addColumns(GenericMatrix<? extends T> b) {
 		throw new UnsupportedOperationException("Cannot add columns to a " + getClass().getSimpleName());
 	}
 	
-	/**
-	 * Gets the inverse.
-	 *
-	 * @return the inverse
-	 */
+
 	public GenericSquareMatrix<T> getInverse() {
 		return getLUInverse();
 	}
 	
 	// Invert via Gauss-Jordan elimination
-	/**
-	 * Gets the gauss inverse.
-	 *
-	 * @return the gauss inverse
-	 */
 	public GenericSquareMatrix<T> getGaussInverse() {
 		int size = size();
 		GenericMatrix<T> combo = new GenericMatrix<T>(type, size, 2*size);
@@ -138,20 +97,12 @@ public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAl
 		return inverse;
 	}
 	
-	/**
-	 * Gets the lU inverse.
-	 *
-	 * @return the lU inverse
-	 */
+
 	public GenericSquareMatrix<T> getLUInverse() {
 		return new GenericLUDecomposition<T>(this).getInverse();
 	}
 	
-	/**
-	 * Solve.
-	 *
-	 * @param inputVectors the input vectors
-	 */
+
 	public void solve(GenericMatrix<T> inputVectors) {
 		inputVectors.entry = getSolutionsTo(inputVectors.entry);
 	}
@@ -178,12 +129,7 @@ public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAl
 		}
 	}
 	
-	/**
-	 * Gets the solutions to.
-	 *
-	 * @param inputMatrix the input matrix
-	 * @return the solutions to
-	 */
+
 	public T[][] getSolutionsTo(T[][] inputMatrix) {
 		int size = size();
 		GenericMatrix<T> combo = new GenericMatrix<T>(type, size, size + inputMatrix[0].length);
@@ -219,22 +165,9 @@ public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAl
 	}
 	
 	// indx is the row permutation, returns true/false for even/odd row exchanges...
-		
-	/**
-	 * Decompose lu.
-	 *
-	 * @param index the index
-	 * @return true, if successful
-	 */
 	protected boolean decomposeLU(int[] index) { return decomposeLU(index, 1e-20); }
 	
-	/**
-	 * Decompose lu.
-	 *
-	 * @param index the index
-	 * @param tinyValue the tiny value
-	 * @return true, if successful
-	 */
+
 	protected boolean decomposeLU(int[] index, double tinyValue) {
 		final int n = size();
 

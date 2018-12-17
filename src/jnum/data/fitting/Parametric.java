@@ -24,7 +24,6 @@
 package jnum.data.fitting;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * A generic interface for functions that depend on a set of parameters. The interface defines a single {@link #evaluate()} 
  * method whose return value is of the specified generic type.

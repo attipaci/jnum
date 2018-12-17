@@ -25,60 +25,33 @@ package jnum.math.specialfunctions;
 import jnum.Constant;
 import jnum.math.Complex;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SphericalHarmonics.
- */
+
 public class SphericalHarmonics {
-	
-	/** The m. */
+
 	private int l, m;
-	
-	/** The k. */
+
 	private double K;
 	
-	/**
-	 * Instantiates a new spherical harmonics.
-	 *
-	 * @param l the l
-	 * @param m the m
-	 */
+
 	public SphericalHarmonics(int l, int m) {
 		setOrder(l, m);
 	}
 	
-	/**
-	 * Sets the order.
-	 *
-	 * @param l the l
-	 * @param m the m
-	 */
+
 	public void setOrder(int l, int m) {
 		this.l = l;
 		this.m = m;
 		K = Math.sqrt((2*l+1)/Constant.fourPi * Factorial.at(l-m)/Factorial.at(l+m));
 	}
 	
-	/**
-	 * Value at.
-	 *
-	 * @param theta the theta
-	 * @param phi the phi
-	 * @return the complex
-	 */
+
 	public Complex valueAt(double theta, double phi) {
 		Complex result = new Complex();
 		evaluateAt(theta, phi, result);
 		return result;
 	}
+
 	
-	/**
-	 * Evaluate at.
-	 *
-	 * @param theta the theta
-	 * @param phi the phi
-	 * @param result the result
-	 */
 	public void evaluateAt(double theta, double phi, Complex result) {
 		if(m < 0) {
 			m *= -1;
@@ -94,30 +67,14 @@ public class SphericalHarmonics {
 		result.setPolar(r, phi);
 	}
 	
-	/**
-	 * At.
-	 *
-	 * @param l the l
-	 * @param m the m
-	 * @param theta the theta
-	 * @param phi the phi
-	 * @return the complex
-	 */
+
 	public Complex at(int l, int m, double theta, double phi) {
 		Complex result = new Complex();
 		evaluateAt(l, m, theta, phi, result);
 		return result;		
 	}
 	
-	/**
-	 * Evaluate at.
-	 *
-	 * @param l the l
-	 * @param m the m
-	 * @param theta the theta
-	 * @param phi the phi
-	 * @param result the result
-	 */
+
 	public void evaluateAt(int l, int m, double theta, double phi, Complex result) {
 		if(m < 0) {
 			evaluateAt(l, -m, theta, phi, result);

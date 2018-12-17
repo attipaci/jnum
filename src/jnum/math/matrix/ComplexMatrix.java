@@ -35,55 +35,30 @@ import jnum.math.Scalar;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ComplexMatrix.
- */
+
 public class ComplexMatrix extends GenericMatrix<Complex> implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 8842229635231169797L;
 
-	/**
-	 * Instantiates a new complex matrix.
-	 */
+
 	public ComplexMatrix() { super(Complex.class); }
 
-	/**
-	 * Instantiates a new complex matrix.
-	 *
-	 * @param a the a
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public ComplexMatrix(double[][] a) throws IllegalArgumentException { 
 		this((Complex[][]) ArrayUtil.asComplex(a));
 	}
 	
-	/**
-	 * Instantiates a new complex matrix.
-	 *
-	 * @param a the a
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public ComplexMatrix(float[][] a) throws IllegalArgumentException { 
 		this((Complex[][]) ArrayUtil.asComplex(a));
 	}
 	
-	/**
-	 * Instantiates a new complex matrix.
-	 *
-	 * @param a the a
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
+
 	public ComplexMatrix(Scalar[][] a) throws IllegalArgumentException { 
 		this((Complex[][]) ArrayUtil.asComplex(a));
 	}
 	
-	/**
-	 * Instantiates a new complex matrix.
-	 *
-	 * @param a the a
-	 */
+
 	public ComplexMatrix(GenericMatrix<?> a) {
 		this();
 		setData(a.entry);		
@@ -99,22 +74,11 @@ public class ComplexMatrix extends GenericMatrix<Complex> implements ComplexScal
 	}
 	
 	// Check for rectangular shape
-	/**
-	 * Instantiates a new complex matrix.
-	 *
-	 * @param a the a
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	public ComplexMatrix(Complex[][] a) throws IllegalArgumentException { 
 		super(a);
 	}
 
-	/**
-	 * Instantiates a new complex matrix.
-	 *
-	 * @param rows the rows
-	 * @param cols the cols
-	 */
+
 	public ComplexMatrix(int rows, int cols) { 
 		super(Complex.class, rows, cols);
 	}
@@ -127,11 +91,7 @@ public class ComplexMatrix extends GenericMatrix<Complex> implements ComplexScal
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) getValue(i, j).conjugate(); 
 	}
 	
-	/**
-	 * Gets the hermitian.
-	 *
-	 * @return the hermitian
-	 */
+
 	public ComplexMatrix getHermitian() {
 		ComplexMatrix transpose = (ComplexMatrix) getTransposed();
 		transpose.conjugate();
@@ -139,13 +99,6 @@ public class ComplexMatrix extends GenericMatrix<Complex> implements ComplexScal
 	}
 	
 	
-	/**
-	 * Product.
-	 *
-	 * @param A the a
-	 * @param B the b
-	 * @return the complex matrix
-	 */
 	public static ComplexMatrix product(ComplexMatrix A, ComplexMatrix B) {
 		ComplexMatrix product = new ComplexMatrix();
 		product.setProduct(A, B);
@@ -160,9 +113,7 @@ public class ComplexMatrix extends GenericMatrix<Complex> implements ComplexScal
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) getValue(i, j).multiplyBy(factor);
 	}
 
-	/**
-	 * Multiply by i.
-	 */
+
 	public void multiplyByI() {
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) getValue(i, j).multiplyByI();
 	}

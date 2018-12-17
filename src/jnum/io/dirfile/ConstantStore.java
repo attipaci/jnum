@@ -29,31 +29,17 @@ import java.io.IOException;
 import jnum.util.HashCode;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Constant.
- */
 public class ConstantStore extends DataStore<Number> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 8499362540214314258L;
 
-	/** The isFloating. */
 	boolean isFloating = true;
-	
-	/** The i value. */
+
 	long iValue;
-	
-	/** The value. */
+
 	double fValue = Double.NaN;
 	
-	/**
-	 * Instantiates a new constant.
-	 *
-	 * @param name the name
-	 * @param type the type
-	 * @param value the value
-	 */
+
 	public ConstantStore(String name, String type, String value) {	
 		super(name);
 		

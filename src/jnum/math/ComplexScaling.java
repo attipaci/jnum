@@ -23,7 +23,7 @@
 
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * Interface for objects that can be scaled by a complex value.
  */

@@ -41,12 +41,10 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      */
     private static final long serialVersionUID = 4675743914273761865L;
     
-    /** The epoch. */
+
     public CoordinateEpoch epoch;
 
-    /**
-     * Instantiates a new ecliptic coordinates.
-     */
+
     public PrecessingCoordinates() { this(CoordinateEpoch.J2000); }
 
     public PrecessingCoordinates(CoordinateEpoch epoch) { 
@@ -54,19 +52,10 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     }
     
     
-    /**
-     * Instantiates a new ecliptic coordinates.
-     *
-     * @param text the text
-     */
+
     public PrecessingCoordinates(String text) { super(text); }
     
-    /**
-     * Instantiates a new ecliptic coordinates.
-     *
-     * @param lon the lon
-     * @param lat the lat
-     */
+
     public PrecessingCoordinates(double lon, double lat) { 
         this(lon, lat, CoordinateEpoch.J2000); 
         
@@ -77,33 +66,17 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
         setEpoch(epoch);
     }
     
-    /**
-     * Instantiates a new ecliptic coordinates.
-     *
-     * @param lon the lon
-     * @param lat the lat
-     * @param aEpoch the a epoch
-     */
+
     public PrecessingCoordinates(double lon, double lat, double epochYear) { 
         this(lon, lat, epochYear < 1984.0 ? new BesselianEpoch(epochYear) : new JulianEpoch(epochYear)); 
     }
 
-    /**
-     * Instantiates a new ecliptic coordinates.
-     *
-     * @param lon the lon
-     * @param lat the lat
-     * @param epochSpec the epoch spec
-     */
+
     public PrecessingCoordinates(double lon, double lat, String epochSpec) { 
         this(lon, lat, CoordinateEpoch.forString(epochSpec)); 
     }
      
-    /**
-     * Instantiates a new ecliptic coordinates.
-     *
-     * @param from the from
-     */
+
     public PrecessingCoordinates(CelestialCoordinates from) { super(from); }
     
     /* (non-Javadoc)
@@ -141,20 +114,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      */
     @Override
     public void setEpoch(CoordinateEpoch epoch) { this.epoch = epoch; }
-    
-
-    
-    /**
-     * Copy.
-     *
-     * @return the coordinate2 d
-     */
-    @Override
-    public PrecessingCoordinates copy() {
-        PrecessingCoordinates copy = (PrecessingCoordinates) super.copy();
-        if(epoch != null) copy.epoch = epoch.copy();
-        return copy;
-    }
+   
     
   
     /* (non-Javadoc)
@@ -165,7 +125,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
         super.copy(coords);
         if(coords instanceof PrecessingCoordinates) {
             PrecessingCoordinates precession = (PrecessingCoordinates) coords;
-            epoch = precession.epoch == null ? null : (CoordinateEpoch) precession.epoch.clone(); 
+            epoch = precession.epoch;
         }
         else epoch = null;
     }
@@ -271,15 +231,13 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     @Override
     public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
         super.parseHeader(header, keyStem, alt, defaultValue);
+        epoch = null;
         
-        String system = header.getStringValue("RADESYS");
-        if(system == null) system = header.getDoubleValue("EQUINOX" + alt) < 1984.0 ? "FK4" : "FK5";
-        
-        if(system.equalsIgnoreCase("FK4")) epoch = new BesselianEpoch();
-        else if(system.equalsIgnoreCase("FK4-NO-E")) epoch = new BesselianEpoch();
-        else epoch = new JulianEpoch();
-        
-        epoch.parseHeader(header, alt);
+        if(defaultValue instanceof PrecessingCoordinates) 
+            if(!header.containsKey("EQUINOX" + alt)) if(!header.containsKey("RADESYS" + alt)) 
+                epoch = ((PrecessingCoordinates) defaultValue).getEpoch();
+                
+        if(epoch == null) epoch = CoordinateEpoch.fromHeader(header, alt);
     }
     
     

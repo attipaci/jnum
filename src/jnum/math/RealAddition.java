@@ -23,10 +23,7 @@
 
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-/**
- * Interface for objects to which one may add a real value.
- */
+
 public interface RealAddition {
 
 	/**

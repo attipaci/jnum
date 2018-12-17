@@ -28,7 +28,7 @@ import jnum.data.ArrayUtil;
 import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.SquareMatrix;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * Represents a covariance matrix for a set of parameters, calculated either as the inverse of a {@link HessianMatrix}, or from 
  * a {@link CorrelationMatrix}.

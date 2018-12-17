@@ -30,29 +30,18 @@ import java.util.ArrayList;
 import jnum.math.Vector2D;
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LinearCombinationStore.
- */
+
 public class LinearCombinationStore extends DataStore<Double> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -2557496368888356380L;
 
-	/** The terms. */
 	private ArrayList<DataStore<?>> terms = new ArrayList<DataStore<?>>();
-	
-	/** The coeffs. */
+
 	private ArrayList<Vector2D> coeffs = new ArrayList<Vector2D>();
-	
-	/** The index scale. */
+
 	private ArrayList<Double> indexScale = new ArrayList<Double>();
 
-	/**
-	 * Instantiates a new linear combination store.
-	 *
-	 * @param name the name
-	 */
+
 	public LinearCombinationStore(String name) {
 		super(name);
 	}
@@ -90,13 +79,7 @@ public class LinearCombinationStore extends DataStore<Double> {
 		return true;
 	}
 	
-	/**
-	 * Adds the term.
-	 *
-	 * @param store the store
-	 * @param a the a
-	 * @param b the b
-	 */
+
 	public synchronized void addTerm(DataStore<?> store, double a, double b) {
 		terms.add(store);
 		coeffs.add(new Vector2D(a, b));

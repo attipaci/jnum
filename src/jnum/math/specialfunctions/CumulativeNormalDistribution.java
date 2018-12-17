@@ -27,55 +27,27 @@ import jnum.Constant;
 // TODO: Auto-generated Javadoc
 // Tested 1/12/09.
 
-/**
- * The Class CumulativeNormalDistribution.
- */
 public final class CumulativeNormalDistribution {
 
 	
-	
-	/**
-	 * At.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
 	public static double at(double x) {
 		if(x < -TAIL) return 0.5 * ErrorFunction.complementAt(-x * Constant.isqrt2);
 		return 0.5 * (1.0 + ErrorFunction.at(x * Constant.isqrt2));
 	}
-	
-	/**
-	 * Complement at.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public static double complementAt(double x) {
 		
 		return 0.5 * (highPrecision ? ErrorFunction.complementAt(x * Constant.isqrt2) : ErrorFunction.fastComplementAt(x * Constant.isqrt2));		
 	}
 	
-	/**
-	 * Fast complement at.
-	 *
-	 * @param x the x
-	 * @return the double
-	 */
+
 	public static double fastComplementAt(double x) {
 		return 0.5 * ErrorFunction.fastComplementAt(x * Constant.isqrt2);		
 	}
 	
 	
-	
 	// Based on Peter J Acklam's algorithm...
 	// see http://home.online.no/~pjacklam/notes/invnorm/
-	/**
-	 * Inverse at.
-	 *
-	 * @param P the p
-	 * @return the double
-	 */
 	public static double inverseAt(final double P) {
 		if(P <= 0.0 || P >= 1.0) {
 			if(P == 0.0) return Double.NEGATIVE_INFINITY;
@@ -99,14 +71,6 @@ public final class CumulativeNormalDistribution {
     //      ((((d(1)*q+d(2))*q+d(3))*q+d(4))*q+1)
 	//endif
 
-
-	
-	/**
-	 * Inverse complement at.
-	 *
-	 * @param Q the q
-	 * @return the double
-	 */
 	public static double inverseComplementAt(final double Q) {
 		if(Q <= 0.0 || Q >= 1.0) {
 			if(Q == 1.0) return Double.NEGATIVE_INFINITY;
@@ -123,13 +87,7 @@ public final class CumulativeNormalDistribution {
 		return inverseAt(1.0 - Q);
 	}
 	
-	/**
-	 * Refine.
-	 *
-	 * @param value the value
-	 * @param P the p
-	 * @return the double
-	 */
+
 	private static double refine(final double value, final double P) {
 		if( P > 0.0 && P < 1.0) {
 			final double erfc = highPrecision ? ErrorFunction.complementAt(-value * Constant.isqrt2) : ErrorFunction.fastComplementAt(-value/Constant.isqrt2);
@@ -140,31 +98,28 @@ public final class CumulativeNormalDistribution {
 		return value;
 	}
 
-	
-	/** The Constant a. */
+
 	public final static double[] a = { -3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 
 						1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00 };
 	
-	/** The Constant b. */
+
 	public final static double[] b = { -5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 
 						6.680131188771972e+01, -1.328068155288572e+01 };
-	
-	/** The Constant c. */
+
 	public final static double[] c = { 7.784894002430293e-03, 3.223964580411365e-01, 2.400758277161838e+00,
 						2.549732539343734e+00, -4.374664141464968e+00, -2.938163982698783e+00 };
 
-	/** The Constant d. */
+
 	public final static double[] d = { 7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 
 						3.754408661907416e+00 };
 
 
-	/** The tail. */
 	private static double TAIL = 3.0;
 	
-	/** The high precision. */
+
 	public static boolean highPrecision = true;
 	
-	/** The critical p. */
+
 	private static double CRITICAL_P = 0.02425;
 
 	

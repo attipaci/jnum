@@ -27,60 +27,32 @@ package jnum.math.matrix;
 // A = U * diag(w) * V^T
 // square A --> A^-1 = V * diag(1/w) * U^T 
 // where U is column-orthogonal and V is orthogonal
-/**
- * The Class SVD.
- */
 public class SVD {
-	
-	/** The u. */
+
 	private Matrix u;
-	
-	/** The v. */
+
 	private SquareMatrix v;
-	
-	/** The w. */
+
 	private double[] w;
 	
-	/**
-	 * Instantiates a new svd.
-	 */
+
 	public SVD() {}
 	
-	/**
-	 * Instantiates a new svd.
-	 *
-	 * @param M the m
-	 */
+
 	public SVD(Matrix M) {
 		decompose(M);
 	}
 	
-	/**
-	 * Gets the u.
-	 *
-	 * @return the u
-	 */
+
 	public Matrix getU() { return u; }
 	
-	/**
-	 * Gets the v.
-	 *
-	 * @return the v
-	 */
+
 	public SquareMatrix getV() { return v; }
 	
-	/**
-	 * Gets the w.
-	 *
-	 * @return the w
-	 */
+
 	public double[] getW() { return w; }
 	
-	/**
-	 * Decompose.
-	 *
-	 * @param M the m
-	 */
+
 	public void decompose(Matrix M) {
 		int n = M.cols();
 		u = (Matrix) M.copy();
@@ -89,24 +61,14 @@ public class SVD {
 		u.SVD(w, v);
 	}
 	
-	/**
-	 * Solve.
-	 *
-	 * @param b the b
-	 * @return the double[]
-	 */
+
 	public double[] solve(double b[]) {
 		double[] x = new double[w.length];
 		solve(b, x);
 		return x;
 	}
 		
-	/**
-	 * Solve.
-	 *
-	 * @param b the b
-	 * @param x the x
-	 */
+
 	public void solve(double b[], double x[]) {
 		final int n = x.length;
 		final int m = b.length;
@@ -129,11 +91,7 @@ public class SVD {
 		
 	}
 	
-	/**
-	 * Gets the matrix.
-	 *
-	 * @return the matrix
-	 */
+
 	public Matrix getMatrix() {
 		Matrix M = new Matrix();
 		getMatrixTo(M);
@@ -141,12 +99,7 @@ public class SVD {
 	}
 	
 	
-	/**
-	 * Gets the matrix to.
-	 *
-	 * @param M the m
-	 * @return the matrix to
-	 */
+
 	public void getMatrixTo(Matrix M) {
 		final int n = w.length;
 		SquareMatrix wvT = new SquareMatrix(n);
@@ -155,12 +108,6 @@ public class SVD {
 	}
 	
 	// square A --> A^-1 = V * diag(1/w) * U^T 
-	/**
-	 * Gets the inverse.
-	 *
-	 * @return the inverse
-	 */
-	
 	public SquareMatrix getInverse() {
 		SquareMatrix inverse = new SquareMatrix();
 		getInverseTo(inverse);
@@ -168,12 +115,6 @@ public class SVD {
 	}
 	
 	
-	/**
-	 * Gets the inverse to.
-	 *
-	 * @param inverse the inverse
-	 * @return the inverse to
-	 */
 	public void getInverseTo(SquareMatrix inverse) {	
 		final int n = w.length;
 		if(u.rows() != n) throw new IllegalStateException("Cannot invert non-square matrix.");

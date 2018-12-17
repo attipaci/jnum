@@ -37,35 +37,18 @@ import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.text.GreekLetter;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class HorizontalCoordinates.
- */
+
 public class HorizontalCoordinates extends SphericalCoordinates {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -3759766679620485628L;
 	
 
-
-	/**
-	 * Instantiates a new horizontal coordinates.
-	 */
 	public HorizontalCoordinates() {}
 
-	/**
-	 * Instantiates a new horizontal coordinates.
-	 *
-	 * @param text the text
-	 */
+
 	public HorizontalCoordinates(String text) { super(text); } 
 
-	/**
-	 * Instantiates a new horizontal coordinates.
-	 *
-	 * @param az the az
-	 * @param el the el
-	 */
+
 	public HorizontalCoordinates(double az, double el) { super(az, el); }
 
 	/* (non-Javadoc)
@@ -96,109 +79,47 @@ public class HorizontalCoordinates extends SphericalCoordinates {
     }
     
 
-	/**
-	 * Az.
-	 *
-	 * @return the double
-	 */
 	public final double AZ() { return nativeLongitude(); }
 
-	/**
-	 * Azimuth.
-	 *
-	 * @return the double
-	 */
+
 	public final double azimuth() { return nativeLongitude(); }
 
-	/**
-	 * El.
-	 *
-	 * @return the double
-	 */
+
 	public final double EL() { return nativeLatitude(); }
 
-	/**
-	 * Elevation.
-	 *
-	 * @return the double
-	 */
 	public final double elevation() { return nativeLatitude(); }
 
-	/**
-	 * Za.
-	 *
-	 * @return the double
-	 */
+
 	public final double ZA() { return 90.0 * Unit.deg - nativeLatitude(); }
 
-	/**
-	 * Zenith angle.
-	 *
-	 * @return the double
-	 */
+
 	public final double zenithAngle() { return ZA(); }
 
-	/**
-	 * Sets the az.
-	 *
-	 * @param AZ the new az
-	 */
+
 	public final void setAZ(double AZ) { setNativeLongitude(AZ); }
 
-	/**
-	 * Sets the el.
-	 *
-	 * @param EL the new el
-	 */
+
 	public final void setEL(double EL) { setNativeLatitude(EL); }
 
-	/**
-	 * Sets the za.
-	 *
-	 * @param ZA the new za
-	 */
+
 	public final void setZA(double ZA) { setNativeLatitude(90.0 * Unit.deg - ZA); }
 
-	/**
-	 * To equatorial.
-	 *
-	 * @param site the site
-	 * @param LST the lst
-	 * @return the equatorial coordinates
-	 */
+
 	public EquatorialCoordinates toEquatorial(GeodeticCoordinates site, double LST) {
 		EquatorialCoordinates equatorial = new EquatorialCoordinates();
 		toEquatorial(this, equatorial, site, LST);
 		return equatorial;
 	}
 	
-	/**
-	 * To equatorial.
-	 *
-	 * @param toCoords the to coords
-	 * @param site the site
-	 * @param LST the lst
-	 */
+
 	public void toEquatorial(EquatorialCoordinates toCoords, GeodeticCoordinates site, double LST) { toEquatorial(this, toCoords, site, LST); }
 	
-	/**
-	 * Gets the parallactic angle.
-	 *
-	 * @param site the site
-	 * @return the parallactic angle
-	 */
+
 	public double getParallacticAngle(GeodeticCoordinates site) {
 		return Math.atan2(-site.cosLat() * Math.sin(x()), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(x()));
 	}
 	
-	/**
-	 * To equatorial.
-	 *
-	 * @param horizontal the horizontal
-	 * @param equatorial the equatorial
-	 * @param site the site
-	 * @param LST the lst
-	 */
+
 	public static void toEquatorial(HorizontalCoordinates horizontal, EquatorialCoordinates equatorial, GeodeticCoordinates site, double LST) {
 		double cosAZ = Math.cos(horizontal.x());
 		equatorial.setNativeLatitude(
@@ -211,22 +132,11 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 	}
 
 	
-	/**
-	 * To equatorial.
-	 *
-	 * @param offset the offset
-	 * @param site the site
-	 */
 	public void toEquatorial(Vector2D offset, GeodeticCoordinates site) {
 		toEquatorialOffset(offset, getParallacticAngle(site));
 	}
 
-	/**
-	 * To equatorial offset.
-	 *
-	 * @param offset the offset
-	 * @param PA the pa
-	 */
+
 	public static void toEquatorialOffset(Vector2D offset, double PA) {
 		offset.rotate(PA);
 		offset.scaleX(-1.0);
@@ -245,8 +155,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 	}
 	
 
-    
-    /** The default local coordinate system. */
+
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
   
@@ -266,7 +175,5 @@ public class HorizontalCoordinates extends SphericalCoordinates {
         defaultLocalCoordinateSystem.add(elevationOffsetAxis);
 
     }
-	
-  
 
 }

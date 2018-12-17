@@ -23,7 +23,7 @@
 
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
+
 /**
 * Inverse Hyperbolic Functions, which are acted on the object itself. For example, for object x, the call x.asinh() 
 * will replace x --> asinh(x).
@@ -31,19 +31,13 @@ package jnum.math;
 
 public interface HyperbolicInverseFunctions {
 
-	/**
-	 * Asinh.
-	 */
+
 	public void asinh();
 	
-	/**
-	 * Acosh.
-	 */
+	
 	public void acosh();
 	
-	/**
-	 * Atanh.
-	 */
+	
 	public void atanh();
 	
 }

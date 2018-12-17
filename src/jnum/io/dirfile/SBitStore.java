@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2010 Attila Kovacs 
+
 
 package jnum.io.dirfile;
 
@@ -28,31 +28,18 @@ import java.io.IOException;
 
 import jnum.util.HashCode;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SBitStore.
- */
+
 public class SBitStore extends DataStore<Long> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 4809906475956120084L;
 
-	/** The container. */
 	DataStore<? extends Number> container;
-	
-	/** The cmask. */
+
 	long mask = 0, cmask;
-	
-	/** The shift. */
+
 	int shift;
 	
-	/**
-	 * Instantiates a new s bit store.
-	 *
-	 * @param name the name
-	 * @param bits the bits
-	 * @param position the position
-	 */
+
 	public SBitStore(String name, DataStore<? extends Number> bits, int position) {
 		super(name);
 		this.container = bits;
@@ -84,14 +71,7 @@ public class SBitStore extends DataStore<Long> {
 		return true;
 	}
 	
-	/**
-	 * Instantiates a new s bit store.
-	 *
-	 * @param name the name
-	 * @param bits the bits
-	 * @param from the from
-	 * @param n the n
-	 */
+
 	public SBitStore(String name, DataStore<? extends Number> bits, int from, int n) {
 		super(name);
 		this.container = bits;

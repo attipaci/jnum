@@ -23,24 +23,13 @@
 
 package jnum.data;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface PrecisionControl.
- */
+
 public interface PrecisionControl {
 
-    /**
-     * Sets the precision.
-     *
-     * @param x the new precision
-     */
+
     public void setPrecision(double x);
     
-    /**
-     * Gets the precision.
-     *
-     * @return the precision
-     */
+
     public double getPrecision();
     
 }

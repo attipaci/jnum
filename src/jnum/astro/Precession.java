@@ -35,43 +35,25 @@ import jnum.util.SimpleMatrix;
 //TODO precess with proper motion...
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Precession.
- */
+
 public class Precession implements Serializable {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 5730425237393070503L;
 
-	/** The to epoch. */
 	private CoordinateEpoch fromEpoch, toEpoch;
-	
-	/** The p. */
+
 	private float[][] P = new float[3][3];
-	
-	/** The year2 century. */
+
 	private static float year2Century = (float) (Unit.year / Unit.julianCentury);
-	
-	/** The arcsec. */
+
 	private static float arcsec = (float) Unit.arcsec;
 	
-	/**
-	 * Instantiates a new precession.
-	 *
-	 * @param fromJulianEpoch the from julian epoch
-	 * @param toJulianEpoch the to julian epoch
-	 */
+
 	public Precession(double fromJulianEpoch, double toJulianEpoch) {
 		this(new JulianEpoch(fromJulianEpoch), new JulianEpoch(toJulianEpoch));
 	}
 	
-	/**
-	 * Instantiates a new precession.
-	 *
-	 * @param from the from
-	 * @param to the to
-	 */
+
 	public Precession(CoordinateEpoch from, CoordinateEpoch to) {
 		fromEpoch = from;
 		toEpoch = to;
@@ -107,11 +89,6 @@ public class Precession implements Serializable {
 	}
 	
 	//  Precession from Lederle & Schwan, Astronomy and Astrophysics, 134, 1-6 (1984)
-	/**
-	 * Calculates the matrix.
-	 *
-	 * @return the matrix
-	 */
 	private void calcMatrix() {
 		final float fromJulianYear = (float) fromEpoch.getJulianYear();
 		final float toJulianYear = (float) toEpoch.getJulianYear();
@@ -132,11 +109,6 @@ public class Precession implements Serializable {
 	}
 	
 	
-	/**
-	 * Precess.
-	 *
-	 * @param equatorial the equatorial
-	 */
 	public void precess(final EquatorialCoordinates equatorial) {		
 		if(P == null) return;
 		
@@ -158,14 +130,7 @@ public class Precession implements Serializable {
 		equatorial.epoch = toEpoch;
 	}
 
-	
-	
-	/**
-	 * R2.
-	 *
-	 * @param phi the phi
-	 * @return the simple matrix
-	 */
+
 	private SimpleMatrix R2(final double phi) {
 		final float c = (float) Math.cos(phi);
 		final float s = (float) Math.sin(phi);
@@ -177,12 +142,7 @@ public class Precession implements Serializable {
 		return new SimpleMatrix(R);
 	}
 
-	/**
-	 * R3.
-	 *
-	 * @param phi the phi
-	 * @return the simple matrix
-	 */
+
 	private SimpleMatrix R3(double phi) {
 		final float c = (float) Math.cos(phi);
 		final float s = (float) Math.sin(phi);

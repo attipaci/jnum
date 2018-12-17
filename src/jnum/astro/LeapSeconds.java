@@ -47,44 +47,33 @@ import jnum.text.SmartTokenizer;
  * NOTE: Under no circumstances should one query a NIST server more frequently than once every 4 seconds!!!
  *
  * Once the historical data has been loaded, you can retrieve the leap seconds value for any given 
- * {@link java.util.Date} using the {@link #get(long)} method, or the current value using the 
+ * {@link Date} using the {@link #get(long)} method, or the current value using the 
  * {@link #getCurrentLeap()} method. The method {@link #isCurrent()} can be used for checking if the current 
  * leap second value is up-to-date or not.
  * 
  */
 public final class LeapSeconds {
-	
-	/** The list. */
+
 	private static ArrayList<Datum> list;
-	
-	/** The Constant millis1900. */
+
 	public final static long millis1900 = -2208988800000L; // "1900-01-01T00:00:00.000" UTC
-	
-	/** The data file. */
+
 	public static String dataFile = null;
-	
-	/** The verbose. */
+
 	public static boolean verbose = false;
-	
-	/** The current leap. */
+
 	private static int currentLeap = 37;
-	
-	/** The release epoch. */
+
 	private static long releaseEpoch = 3676924800L;        // 8 July 2016 -- seconds since 1900
-	
-	/** The expiration epoch. */
+
 	private static long expirationEpoch = 3739132800L;     // 28 Jul 2017 -- seconds since 1900
-	
-	/** The expiration millis. */
+
 	private static long expirationMillis = millis1900 + 1000L * expirationEpoch;
-	
-	/** The current since millis. */
+
 	private static long currentSinceMillis = millis1900 + 1000L * 3550089600L; 
-	
-	/** The Constant firstLeapMillis. */
+
 	private final static long firstLeapMillis = millis1900 + 1000L * 2272060800L;	// 1 January 1972
-	
-	/** The is verbose. */
+
 	private static boolean isVerbose = true;
 	
 	/**
@@ -104,8 +93,8 @@ public final class LeapSeconds {
 	/**
 	 * Gets the leap seconds for a given {@link java.util.Date}
 	 *
-	 * @param timestamp the timestamp
-	 * @return the int
+	 * @param timestamp    the standatd UNIX/Java timestamp (millisecs since 1970)
+	 * @return             the historical leap seconds at the time.
 	 */
 	public static int get(long timestamp) {
 	

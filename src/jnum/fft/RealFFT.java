@@ -22,12 +22,7 @@
  ******************************************************************************/
 package jnum.fft;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface RealFFT.
- *
- * @param <Type> the generic type
- */
+
 public interface RealFFT<Type> {
 	
 	/**

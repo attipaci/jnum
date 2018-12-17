@@ -32,13 +32,9 @@ import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class EclipticCoordinates.
- */
+
 public class EclipticCoordinates extends PrecessingCoordinates {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 7687178545213533912L;
 
 

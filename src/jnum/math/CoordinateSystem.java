@@ -26,35 +26,19 @@ package jnum.math;
 
 import java.util.Vector;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CoordinateSystem.
- */
+
 public class CoordinateSystem extends Vector<CoordinateAxis> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 7965280172336615563L;
-	
-	/** The name. */
+
 	private String name = "Default Coordinate System";
 
-	/**
-	 * Instantiates a new coordinate system.
-	 */
 	public CoordinateSystem() {}
 	
-	/**
-	 * Instantiates a new coordinate system.
-	 *
-	 * @param text the text
-	 */
+
 	public CoordinateSystem(String text) { name = text; }
 	
-	/**
-	 * Instantiates a new coordinate system.
-	 *
-	 * @param dimension the dimension
-	 */
+	
 	public CoordinateSystem(int dimension) {
 		for(int i=0; i<dimension; i++)
 			add(new CoordinateAxis(defaultLabel[i%defaultLabel.length] 
@@ -90,62 +74,29 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 	}
 
 	
-	/**
-	 * Instantiates a new coordinate system.
-	 *
-	 * @param text the text
-	 * @param dimension the dimension
-	 */
 	public CoordinateSystem(String text, int dimension) {
 		this(dimension);
 		name = text;
 	}
 	
-	/**
-	 * Instantiates a new coordinate system.
-	 *
-	 * @param template the template
-	 */
+	
 	public CoordinateSystem(CoordinateSystem template) {
 		copy(template);
 	}
 	
-	/**
-	 * Copy.
-	 *
-	 * @param template the template
-	 */
+
 	public void copy(CoordinateSystem template) {
 		setName(template.getName());
 		for(CoordinateAxis axis : template) add(axis.clone());
 	}
 	
-	/**
-	 * Sets the name.
-	 *
-	 * @param text the new name
-	 */
+
 	public void setName(String text) { name = text; }
 
-	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
+
 	public String getName() { return name; }
 
-	/**
-	 * Contains.
-	 *
-	 * @param name the name
-	 * @return true, if successful
-	 */
-	/*
-	 * Contains.
-	 *
-	 * @param name the name
-	 * @return true, if successful
-	 */
+
 	public boolean contains(String name) {
 		for(CoordinateAxis axis : this) {
 		    if(axis.getLabel().equals(name)) return true;
@@ -156,12 +107,6 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 	}
 	
 	
-	/**
-	 * Gets the axis.
-	 *
-	 * @param name the name
-	 * @return the axis
-	 */
 	public CoordinateAxis getAxis(String name) {
 		for(int i=size(); --i >= 0; ) {
 		    if(get(i).getShortLabel().equals(name)) return get(i);
@@ -171,7 +116,7 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 		return null;
 	}
 	
-	/** The default label. */
+
 	protected static String[] defaultLabel = { "x", "y", "z", "u", "v", "w" };
 
 

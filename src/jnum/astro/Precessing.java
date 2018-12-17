@@ -24,31 +24,16 @@
 
 package jnum.astro;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface Precessing.
- */
+
 public interface Precessing {
 	
-	/**
-	 * Gets the epoch.
-	 *
-	 * @return the epoch
-	 */
+
 	public CoordinateEpoch getEpoch();
 	
-	/**
-	 * Sets the epoch.
-	 *
-	 * @param epoch the new epoch
-	 */
+
 	public void setEpoch(CoordinateEpoch epoch);
 	
-	/**
-	 * Precess.
-	 *
-	 * @param epoch the epoch
-	 */
+
 	public void precess(CoordinateEpoch epoch) throws UndefinedEpochException;
 	
 }

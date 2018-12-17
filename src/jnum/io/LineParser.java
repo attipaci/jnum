@@ -34,26 +34,19 @@ import java.util.List;
 
 import jnum.Util;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LineParser.
- */
+
 public abstract class LineParser {
-    
-    /** The comments. */
+
     private int lines = 0, comments = 0;
-    
-    /** The line number. */
+
     private int lineNumber = 0;
-   
-    
-    /** The parse exceptions. */
+
     private ArrayList<Exception> parseExceptions = new ArrayList<Exception>();
    
     
     /**
      * Read all available bytes from the specified InputStream, parsing the content line-by-line until
-     *  the end of stream (EOF) is reached.
+     * the end of stream (EOF) is reached.
      *
      * @param in the in
      * @throws IOException Signals that an I/O exception has occurred.

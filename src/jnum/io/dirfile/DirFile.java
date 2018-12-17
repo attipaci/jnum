@@ -61,31 +61,20 @@ import jnum.Util;
 // TODO Add COMPLEXnn and SBIT for v7 support
 
 
-/**
- * The Class DirFile.
- */
+
 public class DirFile extends Hashtable<String, DataStore<?>> {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 8563669618537254688L;
-	
-	/** The strings. */
+
 	Hashtable<String, String> strings = new Hashtable<String, String>();
-	
-	/** The pending. */
+
 	Vector<String> pending = new Vector<String>();
-	
-	/** The path. */
+
 	String path;
-	
-	/** The is big endian. */
+
 	boolean isBigEndian = false;
 	
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
+
 	public static void main(String[] args) {
 		try { 
 			DirFile data = new DirFile(args[0]);
@@ -109,23 +98,12 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		catch(Exception e) { Util.error(DirFile.class, e); }
 	}
 	
-	/**
-	 * Instantiates a new dir file.
-	 *
-	 * @param path the path
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public DirFile(String path) throws IOException {
 		this(path, "format");
 	}
 		
-	/**
-	 * Instantiates a new dir file.
-	 *
-	 * @param path the path
-	 * @param formatName the format name
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public DirFile(String path, String formatName) throws IOException {
 		this.path = path;
 		
@@ -166,12 +144,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		return true;
 	}
 	
-	/**
-	 * Include.
-	 *
-	 * @param fileName the file name
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public void include(String fileName) throws IOException {
 		// Check if the included file is specified together with a path (relative or absolute)
 		// If so, read the subdirfile and then add it...
@@ -191,11 +164,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		else parseFormat(fileName);
 	}
 	
-	/**
-	 * Include.
-	 *
-	 * @param subdir the subdir
-	 */
+
 	public void include(DirFile subdir) {
 		putAll(subdir);
 		strings.putAll(subdir.strings);
@@ -203,12 +172,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 	}
 	
 	
-	/**
-	 * Parses the format.
-	 *
-	 * @param name the name
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
+
 	public void parseFormat(String name) throws IOException {		
 		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(path + File.separator + name)));
 		String line = null;
@@ -239,12 +203,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		in.close();
 	}
 	
-	/**
-	 * Gets the data store.
-	 *
-	 * @param spec the spec
-	 * @return the data store
-	 */
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected DataStore<?> getDataStore(String spec) {
 		StringTokenizer tokens = new StringTokenizer(spec);
@@ -323,10 +282,7 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		}
 		else return null;
 	}
-	
-	/**
-	 * Close.
-	 */
+
 	public void close() {
 		for(DataStore<?> store : values()) {
 			if(store instanceof RawStore<?>) {
@@ -336,20 +292,12 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		}
 	}
 	
-	/**
-	 * List.
-	 */
+
 	public void list() {
 		
 	}
 	
 	// Upon opening read the format definition for each value
-	
-	/**
-	 * Adds the.
-	 *
-	 * @param field the field
-	 */
 	public void add(DataStore<?> field) {
 		put(field.name, field); 
 	}
