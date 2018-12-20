@@ -31,6 +31,13 @@
 	The Reporter object that is replaced or was removed, or null if
 	there was no existing Reporter in use that mathes the argument.
 
+	[FIX] RegularData.getSmoothed() was using loop() instead of 
+	smartFork(). (Probably a debug residue.). Fixed.
+
+	[FIX] Statistics.median could throw unexpected 
+	ArrayOutOfBoundsException in certain cases. Fixed by checking those
+	corner cases and returning NaN instead.
+
 	[DOC] Removed a bunch of auto-generated Javadoc. The goal is to 
 	fill in the missing javadoc sooner than later... 
 

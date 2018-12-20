@@ -170,7 +170,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
     public final RegularData<IndexType, VectorType> getSmoothed(final RegularData<IndexType, VectorType> beam, final VectorType refIndex, 
             final IndexedValues<IndexType> weight, final IndexedValues<IndexType> smoothedWeights) {
-
+        
         final RegularData<IndexType, VectorType> convolved = newImage();
 
         Interpolation op = new Interpolation() {
@@ -197,7 +197,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             }
         };
 
-        loop(op);
+        smartFork(op);
 
         return convolved;
     }
@@ -277,7 +277,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         };
 
         smartFork(interpolation); 
-
+        
         return convolved; 
     }
 

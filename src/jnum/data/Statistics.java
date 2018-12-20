@@ -463,6 +463,8 @@ public final class Statistics {
             toIndex++;
             
             int n = toIndex - fromIndex;
+            if(n < 1) return Double.NaN;
+            
             return n % 2 == 0 ? 0.5 * (data[fromIndex + (n>>>1)-1] + data[fromIndex + (n>>>1)]) : data[fromIndex + ((n-1)>>>1)];
         }
         
@@ -478,6 +480,8 @@ public final class Statistics {
             toIndex++;
             
             int n = toIndex - fromIndex;
+            if(n < 1) return Float.NaN;
+            
             return n % 2 == 0 ? 0.5F * (data[fromIndex + (n>>>1)-1] + data[fromIndex + (n>>>1)]) : data[fromIndex + ((n-1)>>>1)];
         }
         
@@ -495,7 +499,7 @@ public final class Statistics {
             int n = data.size();
             
             // NaN values go to the end. Skip these when calculating the median
-            for(; --n >= 0; ) if(!Double.isNaN(data.get(n).doubleValue())) break;
+            for(; --n >= 0; ) if(!Double.isNaN(data.get(n).doubleValue())) break;  
             n++;
             
             return data.size() % 2 == 0 ? 0.5 * (data.get((n>>>1) - 1).doubleValue() + data.get(n>>>1).doubleValue()) : data.get((n-1)>>>1).doubleValue();
