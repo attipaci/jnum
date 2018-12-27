@@ -530,7 +530,7 @@ public final class Statistics {
         }
 
 
-        public static void smartMedian(final WeightedPoint[] data, final int from, int to, final double maxDependence, WeightedPoint result) {
+        public static void smartMedian(final WeightedPoint[] data, final int from, int to, final double maxDependence, final WeightedPoint result) {
             // If no data, then 
             if(to == from) {
                 result.noData();
@@ -543,7 +543,7 @@ public final class Statistics {
             }
         
             Arrays.sort(data, from, to);
-        
+         
             // wt is the sum of all weights
             // wi is the integral sum including the current point.
             double wt = 0.0, wmax = 0.0;
@@ -555,37 +555,26 @@ public final class Statistics {
                 wt += w;
                 if(w > wmax) wmax = w;
             }
-        
-            // If a single datum dominates, then return the weighted mean...
-            if(wmax >= maxDependence * wt) {
-                double sum=0.0, sumw=0.0;
-                for(int i = to; --i >= from; ) {
-                    if(data[i].isNaN()) continue;
-                    final double w = data[i].weight();
-                   
-                    sum += w * data[i].value();
-                    sumw += w;
-                }
-                result.setValue(sum/sumw);
-                result.setWeight(sumw);
-                return;
-            }
             
             // NaN values go to the end. Skip these when calculating the median
             for(; --to >= from; ) if(!data[to].isNaN()) break;
             to++;
+   
+        
+            // If a single datum dominates, then return the weighted mean...
+            if(wmax >= maxDependence * wt) {
+                calcMean(data, from, to, result);
+                return;
+            }
           
-            // If all weights are zero return the arithmetic median...
-            // This should never happen, but just in case...
+                        
+            // If all weights are zero return NaN
             if(wt == 0.0) {
-                final int n = to - from;
-                result.setValue(n % 2 == 0 ? 
-                        0.5F * (data[from + n/2-1].value() + data[from + n/2].value()) 
-                        : data[from + (n-1)/2].value());
+                result.setValue(Double.NaN);
                 result.setWeight(0.0);
                 return;
             }
-        
+              
         
             final double midw = 0.5 * wt; 
             int ig = from; 
@@ -605,7 +594,7 @@ public final class Statistics {
             final double wminus = wi - 0.5 * (last.weight() + point.weight());
             
             final double w1 = (wplus - midw) / (wplus + wminus);
-            result.setValue(w1 * last.value() + (1.0-w1) * point.value());
+            result.setValue(w1 * last.value() + (1.0-w1) * point.value());            
             result.setWeight(wt);
         }
 

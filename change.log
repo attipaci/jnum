@@ -1,4 +1,4 @@
-0.23-a1
+0.23-b1
 
 
 	[NEW] Configurator has new method clear() that resets the Configurator
@@ -37,6 +37,8 @@
 	[FIX] Statistics.median could throw unexpected 
 	ArrayOutOfBoundsException in certain cases. Fixed by checking those
 	corner cases and returning NaN instead.
+
+	[CODE] Simplified Statistics.Inplace.median(WeightedPoint[] ...).
 
 	[DOC] Removed a bunch of auto-generated Javadoc. The goal is to 
 	fill in the missing javadoc sooner than later... 

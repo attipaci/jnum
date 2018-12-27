@@ -198,6 +198,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         };
 
         smartFork(op);
+        
+        convolved.addHistory("smoothed copy");
 
         return convolved;
     }
@@ -277,6 +279,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         };
 
         smartFork(interpolation); 
+        
+        convolved.addHistory("smoothed copy (fast method)");
         
         return convolved; 
     }
