@@ -44,7 +44,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     public Vector2D(double X, double Y) { super(X, Y); }
 
 
-    public Vector2D(Vector2D template) { super(template); }
+    public Vector2D(Coordinate2D template) { super(template); }
 
     public Vector2D(Point2D point) { super(point); }
 

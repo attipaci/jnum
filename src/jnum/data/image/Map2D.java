@@ -66,7 +66,7 @@ import nom.tam.util.Cursor;
  * 2D image base class with FITS I/O, simple units, and 2D grid...
  * 
  * 
- * @author pumukli
+ * @author Attila Kovacs <attila@sigmyne.com>
  *
  * @param <ImageType>
  * @param <ElementType>

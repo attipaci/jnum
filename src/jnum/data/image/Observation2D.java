@@ -25,6 +25,7 @@ package jnum.data.image;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import jnum.NonConformingException;
 import jnum.Unit;
@@ -266,6 +267,15 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         if(exposure != null) exposure.setParallel(n);
     }
 
+
+    @Override
+    public void setExecutor(ExecutorService executor) {
+        super.setExecutor(executor);
+        
+        if(weight != null) weight.setExecutor(executor);
+        if(exposure != null) exposure.setExecutor(executor);
+    }
+    
     
     @Override
     public final double weightAt(Index2D index) {

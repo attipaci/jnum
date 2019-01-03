@@ -26,7 +26,12 @@ package jnum.util;
 
 public class FlagConflictException extends IllegalArgumentException {
 
-    private static final long serialVersionUID = 1L;
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5362169797969198473L;
+
 
     public FlagConflictException() {
         super();

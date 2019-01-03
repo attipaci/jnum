@@ -190,8 +190,8 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
     @Override
     public int sizeZ() { return stack.size(); }
-
-
+    
+    
     public void setSizeZ(int sizeZ) {
         getPlanes().clear();
         if(sizeZ > 0) {       

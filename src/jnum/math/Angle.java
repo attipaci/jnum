@@ -47,7 +47,7 @@ Comparable<Angle> {
         this();
         set(value);
     }
-    
+   
 
     public Angle(Vector2D v) {
         value = v.angle();

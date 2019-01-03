@@ -1,3 +1,11 @@
+
+
+	[FIX] {FlagConflictException} Change default serialVersionUID to 
+	a generated one.
+
+	[FIX] Flagged2D/Observation2D parallel processing control
+
+
 0.23-1
 
 

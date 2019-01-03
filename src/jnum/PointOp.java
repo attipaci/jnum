@@ -36,7 +36,7 @@ import jnum.data.WeightedPoint;
  * For parallel processing with similar features, see {@link jnum.parallel.ParallelPointOp}
  * 
  * 
- * @author pumukli
+ * @author Attila Kovacs <attila@sigmyne.com>
  *
  * @param <PointType>   The generic type of the point upon which the operation acts.
  * @param <ReturnType>  The generic return type of the operation/

@@ -23,6 +23,8 @@
 
 package jnum.data.samples.overlay;
 
+import java.util.concurrent.ExecutorService;
+
 import jnum.Util;
 import jnum.data.samples.Flag1D;
 import jnum.data.samples.Values1D;
@@ -63,6 +65,11 @@ public class Flagged1D extends Overlay1D {
         flag.setParallel(threads);
     }
    
+    @Override
+    public void setExecutor(ExecutorService executor) {
+        super.setExecutor(executor);
+        if(flag != null) flag.setExecutor(executor);
+    }
     
     public void setFlags(Flag1D flag) { this.flag = flag; }
     

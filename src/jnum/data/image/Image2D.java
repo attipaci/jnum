@@ -44,7 +44,7 @@ import nom.tam.util.Cursor;
  * A generic light-weight 2D image class implementation with FITS I/O support.
  * 
  * 
- * @author pumukli
+ * @author Attila Kovacs <attila@sigmyne.com>
  *
  */
 public abstract class Image2D extends Data2D implements Image<Index2D> {    

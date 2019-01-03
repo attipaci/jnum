@@ -33,8 +33,12 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	private static final long serialVersionUID = 2413285303727304456L;
 
 	public DefaultProjection2D() {
+	    this(new Coordinate2D());
+	}
+	
+	public DefaultProjection2D(Coordinate2D reference) {
 	    super();
-	    setReference(new Coordinate2D());
+	    setReference(reference);
 	}
 	
 	

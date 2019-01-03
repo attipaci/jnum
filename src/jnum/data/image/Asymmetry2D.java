@@ -62,6 +62,7 @@ public class Asymmetry2D implements Serializable {
 		return true;
 	}
 	
+	
 	/**
 	 * Gets the x.
 	 *
