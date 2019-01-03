@@ -193,6 +193,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		catch(Exception e) {
 			Util.error(this, new Exception("Parallel processing error", e));
 			exception = e;
+			wrapup(); // SFM - to prevent deadlock bc waitComplete() is still being called.
 			interruptAll();
 		}
 		
@@ -274,8 +275,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		private CyclicBarrier barrier;
 			
 
-		private Processor() {	
-		}
+		private Processor() {}
 		
 
 		private int getThreadCount() { return workers.size(); }
