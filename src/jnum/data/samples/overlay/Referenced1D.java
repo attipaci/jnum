@@ -65,7 +65,7 @@ public class Referenced1D extends Overlay1D implements Referenced<Index1D, Offse
         if(!(o instanceof Referenced1D)) return false;
         
         Referenced1D r = (Referenced1D) o;
-        if(referenceIndex.x() != r.referenceIndex.x()) return false;
+        if(referenceIndex.x().doubleValue() != r.referenceIndex.x().doubleValue()) return false;
         
         return true;
     }

@@ -100,6 +100,8 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
+        if(o == null) return false;
+        
         if(!o.getClass().equals(getClass())) return false;
         
         Unit u = (Unit) o;
