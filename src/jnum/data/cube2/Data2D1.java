@@ -479,7 +479,6 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
                 op.process(index);
                 if(op.exception != null) return null;
             }
-            Thread.yield();
         }
         return op.getResult();
     }
@@ -490,7 +489,6 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         for(int k=to.k(); --k >= from.k(); ) {
             for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); )
                 if(isValid(i, j, k)) op.process(get(i, j, k));
-            Thread.yield();
         }
         return op.getResult();
     }
@@ -510,7 +508,6 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         protected void processChunk(int index, int threadCount) {
             for(int i=fromZ + index; i<toZ; i += threadCount) {
                 processPlane(i);
-                Thread.yield();
             }
         }
 

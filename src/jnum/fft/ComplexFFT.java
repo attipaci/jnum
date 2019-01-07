@@ -171,7 +171,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
             d1.add(x);			
 
 
-            if((i1 & yieldMask) == 0) Thread.yield();
+            //if((i1 & yieldMask) == 0) Thread.yield();
         }
         // <------------------- Processing Block Ends Here ------------------------->
     }
@@ -286,7 +286,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
             data[i2].setDifference(w2, w3);
             data[i0].setSum(w2, w3);
 
-            if((i1 & yieldMask) == 0) Thread.yield();
+            //if((i1 & yieldMask) == 0) Thread.yield();
 
         }
         // <------------------- Processing Block Ends Here ------------------------->
@@ -441,7 +441,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 
 
 
-    private final static int yieldMask = 0xFFF;
+    //private final static int yieldMask = 0xFFF;
 
 }
 

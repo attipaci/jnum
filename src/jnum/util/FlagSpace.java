@@ -246,7 +246,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         private static final long serialVersionUID = -6767408270247285330L;
 
 
-        public Byte(String name) throws IllegalArgumentException, FlagConflictException {
+        public Byte(String name) throws IllegalArgumentException {
             super(name);
         }
 
@@ -306,7 +306,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
 
         private static final long serialVersionUID = 1846041379339852234L;
 
-        public Short(String name) throws IllegalArgumentException, FlagConflictException {
+        public Short(String name) throws IllegalArgumentException {
             super(name);
         }
 
@@ -366,7 +366,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         private static final long serialVersionUID = -6014042418773380578L;
 
 
-        public Integer(String name) throws IllegalArgumentException, FlagConflictException {
+        public Integer(String name) throws IllegalArgumentException {
             super(name);
         }
 
@@ -426,7 +426,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         private static final long serialVersionUID = -1479352044112682464L;
 
 
-        public Long(String name) throws IllegalArgumentException, FlagConflictException {
+        public Long(String name) throws IllegalArgumentException {
             super(name);
         }
 

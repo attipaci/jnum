@@ -63,7 +63,7 @@ public abstract class Flag<Type extends Number> implements Serializable {
      * @throws IllegalArgumentException if the flag value is not a single bit in the flag space...
      * @throws FlagConflictException the flag conflict exception
      */
-    private Flag(FlagSpace<Type> space, Type value, char letterCode, String name) throws IllegalArgumentException, FlagConflictException {
+    private Flag(FlagSpace<Type> space, Type value, char letterCode, String name) throws IllegalArgumentException {
         this.space = space;
         setValue(checkValue(value, space));
         this.letterCode = letterCode;
@@ -189,7 +189,7 @@ public abstract class Flag<Type extends Number> implements Serializable {
          * @throws IllegalArgumentException the illegal argument exception
          * @throws FlagConflictException the flag conflict exception
          */
-        protected Byte(FlagSpace<java.lang.Byte> space, byte value, char letterCode, String name) throws IllegalArgumentException, FlagConflictException {
+        protected Byte(FlagSpace<java.lang.Byte> space, byte value, char letterCode, String name) throws IllegalArgumentException {
             super(space, value, letterCode, name);
         }
 
@@ -240,7 +240,7 @@ public abstract class Flag<Type extends Number> implements Serializable {
          * @throws IllegalArgumentException the illegal argument exception
          * @throws FlagConflictException the flag conflict exception
          */
-        protected Short(FlagSpace<java.lang.Short> space, short value, char letterCode, String name) throws IllegalArgumentException, FlagConflictException {
+        protected Short(FlagSpace<java.lang.Short> space, short value, char letterCode, String name) throws IllegalArgumentException {
             super(space, value, letterCode, name);
         }
 
@@ -291,7 +291,7 @@ public abstract class Flag<Type extends Number> implements Serializable {
          * @throws IllegalArgumentException the illegal argument exception
          * @throws FlagConflictException the flag conflict exception
          */
-        protected Integer(FlagSpace<java.lang.Integer> space, int value, char letterCode, String name) throws IllegalArgumentException, FlagConflictException {
+        protected Integer(FlagSpace<java.lang.Integer> space, int value, char letterCode, String name) throws IllegalArgumentException {
             super(space, value, letterCode, name);
         }
 
@@ -342,7 +342,7 @@ public abstract class Flag<Type extends Number> implements Serializable {
          * @throws IllegalArgumentException the illegal argument exception
          * @throws FlagConflictException the flag conflict exception
          */
-        protected Long(FlagSpace<java.lang.Long> space, long value, char letterCode, String name) throws IllegalArgumentException, FlagConflictException {
+        protected Long(FlagSpace<java.lang.Long> space, long value, char letterCode, String name) throws IllegalArgumentException {
             super(space, value, letterCode, name);
         }
 

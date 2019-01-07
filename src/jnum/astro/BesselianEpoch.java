@@ -94,7 +94,7 @@ public class BesselianEpoch extends CoordinateEpoch {
 
 	public static BesselianEpoch forJulianDate(double JD) { return forMJD(JD - 2400000.5); }
 
-	public static BesselianEpoch forString(String text) throws NumberFormatException, IllegalArgumentException {
+	public static BesselianEpoch forString(String text) throws IllegalArgumentException {
 		if(text.charAt(0) == 'B') return new BesselianEpoch(Double.parseDouble(text.substring(1)));
 		else if(text.charAt(0) == 'J') return new BesselianEpoch(getYearForMJD(JulianEpoch.getMJDForYear(Double.parseDouble(text.substring(1)))));
 		else return new BesselianEpoch(Double.parseDouble(text));

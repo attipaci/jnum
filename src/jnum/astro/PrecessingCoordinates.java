@@ -188,7 +188,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      * @see jnum.SphericalCoordinates#parse(java.lang.String)
      */
     @Override
-    public void parseDirect(StringParser parser) throws NumberFormatException, IllegalArgumentException {
+    public void parseDirect(StringParser parser) throws IllegalArgumentException {
         // Assume no epoch prior to parsing...
         CoordinateEpoch origEpoch = epoch;
         epoch = null; 

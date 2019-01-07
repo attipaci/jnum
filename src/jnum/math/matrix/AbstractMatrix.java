@@ -373,7 +373,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	 * @see kovacs.text.Parser#parse(java.lang.String)
 	 */
 	@Override
-	public void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException {
+	public void parse(String text, ParsePosition pos) throws IllegalArgumentException {
 	    // TODO need to update parseposition...
 	    try { setData(ArrayUtil.parse(text.substring(pos.getIndex()), getType())); }
 		catch(ParseException e) { throw new NumberFormatException(e.getMessage()); }

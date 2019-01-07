@@ -96,7 +96,7 @@ public class JulianEpoch extends CoordinateEpoch {
     public static JulianEpoch forJulianDate(double JD) { return forMJD(JD - 2400000.5); }
 	
 
-	public static JulianEpoch forString(String text) throws NumberFormatException, IllegalArgumentException {
+	public static JulianEpoch forString(String text) throws IllegalArgumentException {
 		if(text.charAt(0) == 'J') return new JulianEpoch(Double.parseDouble(text.substring(1)));
 		else if(text.charAt(0) == 'B') return new JulianEpoch(getYearForMJD(BesselianEpoch.getMJDForYear(Double.parseDouble(text.substring(1)))));
 		else return new JulianEpoch(Double.parseDouble(text));

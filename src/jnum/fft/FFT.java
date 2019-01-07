@@ -300,7 +300,6 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
              
             for(int offset = i * blockSize; offset < points; offset += superBlockSize) {
                 processBlock(data, offset, Math.min(points, offset + blockSize));
-                Thread.yield();
             }
         }
         

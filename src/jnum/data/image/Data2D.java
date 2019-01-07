@@ -612,7 +612,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
                 op.process(get(i, j));
                 if(op.exception != null) return null;
             }
-            Thread.yield();
         }
         return op.getResult();
     }
@@ -626,7 +625,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
                 op.process(index);
                 if(op.exception != null) return null;
             }
-            Thread.yield();
         }
         return op.getResult();
     }
@@ -723,7 +721,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         protected void processChunk(int index, int threadCount) {
             for(int i=from.i() + index; i < to.i(); i += threadCount) {
                 processX(i);
-                Thread.yield();
             }
         }
 

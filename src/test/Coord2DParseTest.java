@@ -54,7 +54,7 @@ public class Coord2DParseTest {
      
      
 
-     public static void parseEq(String input) throws Exception {
+     public static void parseEq(String input) {
          EquatorialCoordinates coords = new EquatorialCoordinates(input);
          System.out.println(input + " --> " + coords.toString(1));
      }

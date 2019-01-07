@@ -290,7 +290,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @see jnum.Coordinate2D#parse(java.lang.String)
 	 */
 	@Override
-	public void parse(StringParser parser) throws NumberFormatException, IllegalArgumentException {
+	public void parse(StringParser parser) throws IllegalArgumentException {
 	    parser.skipWhiteSpaces();
 	    
 	    SphericalCoordinates parseCoords = null; 
@@ -315,7 +315,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	    convertFrom(parseCoords);
 	}
 	
-	protected void parseDirect(StringParser parser) throws NumberFormatException, IllegalArgumentException {
+	protected void parseDirect(StringParser parser) throws IllegalArgumentException {
 	    super.parse(parser);
 	}
 	

@@ -35,7 +35,7 @@ public class HeaderTest {
 	 * @throws FitsException the fits exception
 	 * @throws FileNotFoundException the file not found exception
 	 */
-	public void addKeys() throws IOException, FitsException, FileNotFoundException {
+	public void addKeys() throws IOException, FitsException {
 		float[][] data = new float[10][10];
 		
 		BasicHDU<?> hdu = (BasicHDU<?>) Fits.makeHDU(data);

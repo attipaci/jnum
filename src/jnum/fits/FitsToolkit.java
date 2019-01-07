@@ -82,7 +82,7 @@ public final class FitsToolkit {
     }
 
 
-    public static Unit getCommentedUnit(String comment) throws Exception {
+    public static Unit getCommentedUnit(String comment) {
 
         // Unit in (the first) square bracketed value; 
         if(comment.contains("[")) {

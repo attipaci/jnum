@@ -340,7 +340,7 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	 * @see kovacs.text.Parser#parse(java.lang.String)
 	 */
 	@Override
-	public final void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException {
+	public final void parse(String text, ParsePosition pos) throws IllegalArgumentException {
 	    // TODO redo without Parser creation...
 	    value = Double.parseDouble(new StringParser(text, pos).nextToken());		
 	}

@@ -223,7 +223,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 
 
 	public static Object parseStringArrayData(String text) {	
-		Vector<Object> elements = new Vector<Object>();
+		ArrayList<Object> elements = new ArrayList<Object>();
 		
 		// If array, it has to start with a { bracket...
 		int from = text.indexOf('{') + 1, to = from;

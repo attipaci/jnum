@@ -138,7 +138,7 @@ public class SourceCounts {
     }
 
 
-    public void simulate(String fileName) throws IOException, FitsException, HeaderCardException {
+    public void simulate(String fileName) throws IOException, FitsException {
         // Load the the counts data into fluxes and counts...
         BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
         String record = null;

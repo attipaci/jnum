@@ -493,7 +493,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         for(int i=to.i(); --i >= from.i(); ) {
             for(int j=to.j(); --j >= from.j(); ) for(int k=to.k(); --k >= from.k(); )
                 if(isValid(i, j, k)) op.process(get(i, j, k));
-            Thread.yield();
         }
 
         return op.getResult();
@@ -508,7 +507,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
                 op.process(index);
                 if(op.exception != null) return null;
             }
-            Thread.yield();
         }
         return op.getResult();
     }
@@ -626,7 +624,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         protected void processChunk(int index, int threadCount) {
             for(int i=from.i() + index; i<to.i(); i += threadCount) {
                 processX(i);
-                Thread.yield();
             }
         }
 

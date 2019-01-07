@@ -217,7 +217,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 
 
 	@Override
-	public final void parse(String text, ParsePosition pos) throws NumberFormatException, IllegalArgumentException {
+	public final void parse(String text, ParsePosition pos) throws IllegalArgumentException {
 	    parse(new StringParser(text, pos));
 	}
 	
