@@ -214,7 +214,7 @@ public class Range3D implements Cloneable, Copiable<Range3D>, Serializable {
   
 
     @Override
-    public String toString() { return xRange.toString() + ", " + yRange.toString() + ", " + zRange.toString(); }
+    public String toString() { return xRange + ", " + yRange + ", " + zRange; }
     
 
     public String toString(NumberFormat nf) {

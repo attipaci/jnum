@@ -574,7 +574,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 		String yName = uy == Unit.unity ? "" : " " + uy.name();
  		
 		String info =
-			projectionName + ": " + reference.toString() + "\n" +
+			projectionName + ": " + reference + "\n" +
 			"Projection: " + projection.getFullName() + " (" + projection.getFitsID() + ")\n" + 
 			"Grid Spacing: " + (ux == uy ? 
 					nf.format(m11 / ux.value()) + " x " + nf.format(m22 / uy.value()) + xName :

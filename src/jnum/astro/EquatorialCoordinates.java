@@ -222,7 +222,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 	@Override
 	public String toString(int decimals) {
 		return Util.hf[decimals+1].format(longitude()) + " " + Util.af[decimals].format(latitude()) +
-		        (epoch == null ? "" : " (" + epoch.toString() + ")");	
+		        (epoch == null ? "" : " (" + epoch + ")");	
 	}
 	
 

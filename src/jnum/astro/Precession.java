@@ -159,7 +159,7 @@ public class Precession implements Serializable {
 	 */
 	@Override
     public String toString() {
-	    return fromEpoch.toString() + " --> " + toEpoch.toString();
+	    return fromEpoch + " --> " + toEpoch;
 	}
 	
 }

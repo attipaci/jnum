@@ -208,7 +208,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
             CoordinateSystem axes = spherical.getCoordinateSystem();
             ((AngleFormat) axes.get(0).format).colons();
             ((AngleFormat) axes.get(1).format).colons();
-            return getID() + "\t" + coords.toString() + "  " + Util.f1.format(radius.value()/Unit.arcsec) + " # " + getComment();
+            return getID() + "\t" + coords + "  " + Util.f1.format(radius.value()/Unit.arcsec) + " # " + getComment();
         }
         return getID() + "\t" + coords.x() + "\t" + coords.y() + "\t" + radius.value() + "\t# " + getComment();
     }

@@ -163,7 +163,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      */
     @Override
     public String toString() {
-        return super.toString() + (epoch == null ? "" : " (" + epoch.toString() + ")"); 
+        return super.toString() + (epoch == null ? "" : " (" + epoch + ")"); 
     }
     
     /* (non-Javadoc)
@@ -171,7 +171,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      */
     @Override
     public String toString(int decimals) {
-        return super.toString(decimals) + (epoch == null ? "" : " (" + epoch.toString() + ")");
+        return super.toString(decimals) + (epoch == null ? "" : " (" + epoch + ")");
     }
     
     /* (non-Javadoc)
@@ -179,7 +179,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      */
     @Override
     public String toString(NumberFormat nf) {
-        return super.toString(nf) + (epoch == null ? "" : " (" + epoch.toString() + ")");   
+        return super.toString(nf) + (epoch == null ? "" : " (" + epoch + ")");   
     }
     
 

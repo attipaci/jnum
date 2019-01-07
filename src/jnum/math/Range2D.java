@@ -255,7 +255,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString() { return xRange.toString() + ", " + yRange.toString(); }
+    public String toString() { return xRange + ", " + yRange; }
     
 
     public String toString(NumberFormat nf) {

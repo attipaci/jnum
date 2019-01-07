@@ -145,7 +145,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 		else if(B.isScalar()) setProduct(B, A);
 		
 		if(A.cols() != B.rows()) 
-			throw new IllegalArgumentException("Incompatible Dimensions: " + A.toString() + "," + B.toString());
+			throw new IllegalArgumentException("Incompatible Dimensions: " + A + "," + B);
 		
 		int n = A.rows();
 		int m = B.cols();

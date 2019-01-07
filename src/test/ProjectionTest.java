@@ -34,7 +34,7 @@ public class ProjectionTest {
 		projection.project(coords, projected);
 		projection.deproject(projected, coords);
 		projected.scale(1.0 / Unit.arcsec);
-		System.err.println("### NE: " + projected.toString() + "\t" + coords);
+		System.err.println("### NE: " + projected + "\t" + coords);
 		
 		projection.setReference(NW);
 		coords.copy(NW);
@@ -42,7 +42,7 @@ public class ProjectionTest {
 		projection.project(coords, projected);
 		projection.deproject(projected, coords);
 		projected.scale(1.0 / Unit.arcsec);
-		System.err.println("### NW: " + projected.toString() + "\t" + coords);
+		System.err.println("### NW: " + projected + "\t" + coords);
 		
 		projection.setReference(SE);
 		coords.copy(SE);
@@ -50,7 +50,7 @@ public class ProjectionTest {
 		projection.project(coords, projected);
 		projection.deproject(projected, coords);
 		projected.scale(1.0 / Unit.arcsec);
-		System.err.println("### SE: " + projected.toString() + "\t" + coords);
+		System.err.println("### SE: " + projected + "\t" + coords);
 		
 		projection.setReference(SW);
 		coords.copy(SW);
@@ -58,7 +58,7 @@ public class ProjectionTest {
 		projection.project(coords, projected);
 		projection.deproject(projected, coords);
 		projected.scale(1.0 / Unit.arcsec);
-		System.err.println("### SW: " + projected.toString() + "\t" + coords);
+		System.err.println("### SW: " + projected + "\t" + coords);
 		
 		
 	}

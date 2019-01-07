@@ -364,7 +364,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
         info.append(lead + getClass().getSimpleName() + " --> " + getFunction().getClass().getSimpleName() + ":\n\n");
         info.append(lead + "  min: " + Util.s4.format(getMinimum()) + "\n\n");
         
-        for(int i=0; i<parameters(); i++) info.append(lead + "  " + getParameter(i).toString() + "\n");
+        for(int i=0; i<parameters(); i++) info.append(lead + "  " + getParameter(i) + "\n");
         
         return new String(info);
     }

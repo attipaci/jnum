@@ -1598,7 +1598,7 @@ public final class ArrayUtil {
 	public static String toString(Object[] data, String separator) { 
 		StringBuffer text = new StringBuffer();
 		for(int i=0; i<data.length; i++) {
-			text.append(data[i].toString()); 
+			text.append(data[i]); 
 			if(i < data.length-1) text.append(separator);
 		}
 		return new String(text);
