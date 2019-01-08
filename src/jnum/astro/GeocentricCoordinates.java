@@ -34,37 +34,44 @@ import nom.tam.util.Cursor;
 
 public class GeocentricCoordinates extends SphericalCoordinates {	
 
-	private static final long serialVersionUID = 14070920003212901L;
+    private static final long serialVersionUID = 14070920003212901L;
 
 
-	public GeocentricCoordinates() {}
-	
+    public GeocentricCoordinates() {}
 
-	public GeocentricCoordinates(String text) { super(text); }
-	
 
-	public GeocentricCoordinates(double lon, double lat) { super(lon, lat); }
-	
-	@Override
+    public GeocentricCoordinates(String text) { super(text); }
+
+
+    public GeocentricCoordinates(double lon, double lat) { super(lon, lat); }
+
+    @Override
+    public GeocentricCoordinates clone() { return (GeocentricCoordinates) super.clone(); }
+
+    @Override
+    public GeocentricCoordinates copy() { return (GeocentricCoordinates) super.copy(); }
+
+
+    @Override
     public String getTwoLetterCode() { return "GC"; }
 
-	public final static int NORTH = 1;
+    public final static int NORTH = 1;
 
-	public final static int SOUTH = -1;
+    public final static int SOUTH = -1;
 
-	public final static int EAST = 1;
+    public final static int EAST = 1;
 
-	public final static int WEST = -1;
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
-	@Override
-	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
-		super.editHeader(header, keyStem, alt);	
+    public final static int WEST = -1;
+
+    /* (non-Javadoc)
+     * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
+     */
+    @Override
+    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
+        super.editHeader(header, keyStem, alt);	
 
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-		c.add(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
-	}
+        c.add(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
+    }
 
 }

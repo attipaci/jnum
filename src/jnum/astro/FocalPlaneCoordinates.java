@@ -36,75 +36,83 @@ import jnum.text.GreekLetter;
 
 public class FocalPlaneCoordinates extends SphericalCoordinates {
 
-	private static final long serialVersionUID = 6324566580599103464L;
-		
-
-	public FocalPlaneCoordinates() {}
+    private static final long serialVersionUID = 6324566580599103464L;
 
 
-	public FocalPlaneCoordinates(String text) { super(text); } 
+    public FocalPlaneCoordinates() {}
 
 
-	public FocalPlaneCoordinates(double x, double y) { super(x, y); }
+    public FocalPlaneCoordinates(String text) { super(text); } 
 
-	/* (non-Javadoc)
-	 * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
-	 */
-	@Override
-	public String getFITSLongitudeStem() { return "FLON"; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-	 */
-	@Override
-	public String getFITSLatitudeStem() { return "FLAT"; }
-	
-	
-	@Override
+
+    public FocalPlaneCoordinates(double x, double y) { super(x, y); }
+
+    @Override
+    public FocalPlaneCoordinates clone() { return (FocalPlaneCoordinates) super.clone(); }
+
+    @Override
+    public FocalPlaneCoordinates copy() { return (FocalPlaneCoordinates) super.copy(); }
+
+
+
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
+     */
+    @Override
+    public String getFITSLongitudeStem() { return "FLON"; }
+
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+     */
+    @Override
+    public String getFITSLatitudeStem() { return "FLAT"; }
+
+
+    @Override
     public String getTwoLetterCode() { return "FP"; }
-	
-	@Override
+
+    @Override
     public CoordinateSystem getCoordinateSystem() {
         return defaultCoordinateSystem;
     }
-     
+
     @Override
     public CoordinateSystem getLocalCoordinateSystem() {
         return defaultLocalCoordinateSystem;
     }
-    
-	/* (non-Javadoc)
-	 * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
-	@Override
-	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
-		super.editHeader(header, keyStem, alt);	
+
+    /* (non-Javadoc)
+     * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
+     */
+    @Override
+    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
+        super.editHeader(header, keyStem, alt);	
 
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-		c.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
-	}
-	
-	
+        c.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
+    }
+
+
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
-		
-    
+
+
     static {  
         CoordinateAxis xAxis = createAxis("Focal-plane X", "X", "X", af);  
         CoordinateAxis yAxis = createAxis("Focal-plane Y", "Y", "Y", af);
-        
+
         defaultCoordinateSystem = new CoordinateSystem("Focal Plane Coordinates");
         defaultCoordinateSystem.add(xAxis);
         defaultCoordinateSystem.add(yAxis);
-        
+
         CoordinateAxis xOffsetAxis = createOffsetAxis("Focal-plane dX", "dX", GreekLetter.Delta + " X");
         CoordinateAxis yOffsetAxis = createOffsetAxis("Focal-plane dY", "dY", GreekLetter.Delta + " Y");
-        
+
         defaultLocalCoordinateSystem = new CoordinateSystem("Focal Plane Offsets");
         defaultLocalCoordinateSystem.add(xOffsetAxis);
         defaultLocalCoordinateSystem.add(yOffsetAxis);
 
     }
 
-	
+
 }

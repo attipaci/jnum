@@ -41,145 +41,152 @@ import jnum.text.HourAngleFormat;
 
 public class EquatorialCoordinates extends PrecessingCoordinates {
 
-	private static final long serialVersionUID = 3445122576647034180L;
-	
+    private static final long serialVersionUID = 3445122576647034180L;
+
 
 
     public EquatorialCoordinates() { }
-    
-    
+
+
     public EquatorialCoordinates(CoordinateEpoch epoch) { 
         super(epoch);
     }
 
 
-	public EquatorialCoordinates(String text) { super(text); }
+    public EquatorialCoordinates(String text) { super(text); }
 
 
-	public EquatorialCoordinates(double ra, double dec) { 
-	    super(ra, dec); 
-	}
+    public EquatorialCoordinates(double ra, double dec) { 
+        super(ra, dec); 
+    }
 
 
-	public EquatorialCoordinates(double ra, double dec, double epochYear) { 
-	    super(ra, dec, epochYear);
-	}
+    public EquatorialCoordinates(double ra, double dec, double epochYear) { 
+        super(ra, dec, epochYear);
+    }
 
 
-	public EquatorialCoordinates(double ra, double dec, String epochSpec) { 
-	    super(ra, dec, epochSpec); 
-	 
-	}
-	
+    public EquatorialCoordinates(double ra, double dec, String epochSpec) { 
+        super(ra, dec, epochSpec); 
 
-	public EquatorialCoordinates(double ra, double dec, CoordinateEpoch epoch) { 
-	    super(ra, dec, epoch); 
-	}
-		
+    }
 
-	public EquatorialCoordinates(CelestialCoordinates from) { super(from); }
-	
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
-	 */
-	@Override
-	public String getFITSLongitudeStem() { return "RA--"; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-	 */
-	@Override
-	public String getFITSLatitudeStem() { return "DEC-"; }
-	
-	
-	@Override
+
+    public EquatorialCoordinates(double ra, double dec, CoordinateEpoch epoch) { 
+        super(ra, dec, epoch); 
+    }
+
+
+    public EquatorialCoordinates(CelestialCoordinates from) { super(from); }
+
+    @Override
+    public EquatorialCoordinates clone() { return (EquatorialCoordinates) super.clone(); }
+
+    @Override
+    public EquatorialCoordinates copy() { return (EquatorialCoordinates) super.copy(); }
+
+
+
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
+     */
+    @Override
+    public String getFITSLongitudeStem() { return "RA--"; }
+
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+     */
+    @Override
+    public String getFITSLatitudeStem() { return "DEC-"; }
+
+
+    @Override
     public String getTwoLetterCode() { return "EQ"; }
-	
-	
-	  
+
+
+
     @Override
     public CoordinateSystem getCoordinateSystem() {
         return defaultCoordinateSystem;
     }
-     
+
     @Override
     public CoordinateSystem getLocalCoordinateSystem() {
         return defaultLocalCoordinateSystem;
     }
-    	
-
-	public final double RA() { return zeroToTwoPi(longitude()); }
 
 
-	public final double rightAscension() { return RA(); }
+    public final double RA() { return zeroToTwoPi(longitude()); }
 
 
-	public final double DEC() { return latitude(); }
+    public final double rightAscension() { return RA(); }
 
 
-	public final double declination() { return DEC(); }
+    public final double DEC() { return latitude(); }
 
 
-	public final void setRA(double RA) { setLongitude(RA); }
+    public final double declination() { return DEC(); }
 
 
-	public final void setDEC(double DEC) { setLatitude(DEC); }
+    public final void setRA(double RA) { setLongitude(RA); }
 
 
-	public double getParallacticAngle(GeodeticCoordinates site, double LST) {
-		final double H = LST * Unit.timeAngle - RA();
-		return Math.atan2(site.cosLat() * Math.sin(H), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(H));
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.astro.CelestialCoordinates#getEquatorialPositionAngle()
-	 */
-	@Override
-	public final double getEquatorialPositionAngle() {
-		return 0.0;
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see jnum.astro.CelestialCoordinates#toEquatorial(jnum.astro.EquatorialCoordinates)
-	 */
-	@Override
-	public void toEquatorial(EquatorialCoordinates equatorial) {
-	    equatorial.copy(this);	
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.astro.CelestialCoordinates#fromEquatorial(jnum.astro.EquatorialCoordinates)
-	 */
-	@Override
-	public void fromEquatorial(EquatorialCoordinates equatorial) {	
-		copy(equatorial);
-	}
-	
-
-	public HorizontalCoordinates toHorizontal(GeodeticCoordinates site, double LST) {
-		HorizontalCoordinates horizontal = new HorizontalCoordinates();
-		toHorizontal(this, horizontal, site, LST);
-		return horizontal;
-	}
-	
-
-	public void toHorizontal(HorizontalCoordinates toCoords, GeodeticCoordinates site, double LST) { toHorizontal(this, toCoords, site, LST); }
-	
-	
-	public void toHorizontalOffset(Vector2D offset, GeodeticCoordinates site, double LST) {
-		toHorizontalOffset(offset, getParallacticAngle(site, LST));
-	}
+    public final void setDEC(double DEC) { setLatitude(DEC); }
 
 
-	public static void toHorizontalOffset(Vector2D offset, double PA) {
-		offset.scaleX(-1.0);
-		offset.rotate(-PA);
-	}
-	
+    public double getParallacticAngle(GeodeticCoordinates site, double LST) {
+        final double H = LST * Unit.timeAngle - RA();
+        return Math.atan2(site.cosLat() * Math.sin(H), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(H));
+    }
 
-	/*
+    /* (non-Javadoc)
+     * @see jnum.astro.CelestialCoordinates#getEquatorialPositionAngle()
+     */
+    @Override
+    public final double getEquatorialPositionAngle() {
+        return 0.0;
+    }
+
+
+    /* (non-Javadoc)
+     * @see jnum.astro.CelestialCoordinates#toEquatorial(jnum.astro.EquatorialCoordinates)
+     */
+    @Override
+    public void toEquatorial(EquatorialCoordinates equatorial) {
+        equatorial.copy(this);	
+    }
+
+    /* (non-Javadoc)
+     * @see jnum.astro.CelestialCoordinates#fromEquatorial(jnum.astro.EquatorialCoordinates)
+     */
+    @Override
+    public void fromEquatorial(EquatorialCoordinates equatorial) {	
+        copy(equatorial);
+    }
+
+
+    public HorizontalCoordinates toHorizontal(GeodeticCoordinates site, double LST) {
+        HorizontalCoordinates horizontal = new HorizontalCoordinates();
+        toHorizontal(this, horizontal, site, LST);
+        return horizontal;
+    }
+
+
+    public void toHorizontal(HorizontalCoordinates toCoords, GeodeticCoordinates site, double LST) { toHorizontal(this, toCoords, site, LST); }
+
+
+    public void toHorizontalOffset(Vector2D offset, GeodeticCoordinates site, double LST) {
+        toHorizontalOffset(offset, getParallacticAngle(site, LST));
+    }
+
+
+    public static void toHorizontalOffset(Vector2D offset, double PA) {
+        offset.scaleX(-1.0);
+        offset.rotate(-PA);
+    }
+
+
+    /*
 	public static void toHorizontal(EquatorialCoordinates equatorial, HorizontalCoordinates horizontal, GeodeticCoordinates site, double LST) {
 		double H = LST * Unit.timeAngle - equatorial.RA();
 		double cosH = Math.cos(H);
@@ -188,87 +195,87 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 		double acosA = site.cosLat() * equatorial.sinLat() - site.sinLat() * equatorial.cosLat() * cosH;
 		horizontal.setLongitude(Math.atan2(asinA, acosA));
 	}
-	*/
-	
-	public static void toHorizontal(EquatorialCoordinates equatorial, HorizontalCoordinates horizontal, GeodeticCoordinates site, double LST) {	
-		double H = LST * Unit.timeAngle - equatorial.RA();	
-		double cosH = Math.cos(H);
-		horizontal.setLatitude(SafeMath.asin(equatorial.sinLat() * site.sinLat() + equatorial.cosLat() * site.cosLat() * cosH));
-		double asinA = -Math.sin(H) * equatorial.cosLat() * site.cosLat();
-		double acosA = equatorial.sinLat() - site.sinLat() * horizontal.sinLat();
-		horizontal.setLongitude(Math.atan2(asinA, acosA));
-	}
-	
+     */
 
-	@Override
-	public void precessUnchecked(CoordinateEpoch newEpoch) {
-	    if(epoch.equals(newEpoch)) return;
-		Precession precession = new Precession(epoch, newEpoch);
-		precession.precess(this);
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalCoordinates#toString()
-	 */
-	@Override
-	public String toString() {
-		haf.setDecimals(getDefaultDecimals() + 1);
-		return super.toString();	
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.SphericalCoordinates#toString(int)
-	 */
-	@Override
-	public String toString(int decimals) {
-		return Util.hf[decimals+1].format(longitude()) + " " + Util.af[decimals].format(latitude()) +
-		        (epoch == null ? "" : " (" + epoch + ")");	
-	}
-	
+    public static void toHorizontal(EquatorialCoordinates equatorial, HorizontalCoordinates horizontal, GeodeticCoordinates site, double LST) {	
+        double H = LST * Unit.timeAngle - equatorial.RA();	
+        double cosH = Math.cos(H);
+        horizontal.setLatitude(SafeMath.asin(equatorial.sinLat() * site.sinLat() + equatorial.cosLat() * site.cosLat() * cosH));
+        double asinA = -Math.sin(H) * equatorial.cosLat() * site.cosLat();
+        double acosA = equatorial.sinLat() - site.sinLat() * horizontal.sinLat();
+        horizontal.setLongitude(Math.atan2(asinA, acosA));
+    }
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
-	 */
-	@Override
-	public EquatorialCoordinates getEquatorialPole() { return equatorialPole; }
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.CelestialCoordinates#getZeroLongitude()
-	 */
-	@Override
-	public double getZeroLongitude() { return 0.0; }
-	
+    @Override
+    public void precessUnchecked(CoordinateEpoch newEpoch) {
+        if(epoch.equals(newEpoch)) return;
+        Precession precession = new Precession(epoch, newEpoch);
+        precession.precess(this);
+    }
+
+    /* (non-Javadoc)
+     * @see jnum.SphericalCoordinates#toString()
+     */
+    @Override
+    public String toString() {
+        haf.setDecimals(getDefaultDecimals() + 1);
+        return super.toString();	
+    }
+
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#toString(int)
+     */
+    @Override
+    public String toString(int decimals) {
+        return Util.hf[decimals+1].format(longitude()) + " " + Util.af[decimals].format(latitude()) +
+                (epoch == null ? "" : " (" + epoch + ")");	
+    }
+
+
+    /* (non-Javadoc)
+     * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
+     */
+    @Override
+    public EquatorialCoordinates getEquatorialPole() { return equatorialPole; }
+
+    /* (non-Javadoc)
+     * @see jnum.astro.CelestialCoordinates#getZeroLongitude()
+     */
+    @Override
+    public double getZeroLongitude() { return 0.0; }
+
 
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
 
     private static HourAngleFormat haf = new HourAngleFormat(2);
-    
 
-    
+
+
     static {
         defaultCoordinateSystem = new CoordinateSystem("Equatorial Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Equatorial Offsets");
-        
+
         CoordinateAxis rightAscentionAxis = createAxis("Right Ascension", "RA", GreekLetter.alpha + "", haf);
         rightAscentionAxis.setReverse(true);
 
         CoordinateAxis declinationAxis = createAxis("Declination", "DEC", GreekLetter.delta + "", af);
-   
+
         CoordinateAxis rightAscentionOffsetAxis = createOffsetAxis("Right Ascension Offset", "dRA", GreekLetter.Delta + " " + GreekLetter.alpha);
         rightAscentionOffsetAxis.setReverse(true);
-         
+
         CoordinateAxis declinationOffsetAxis = createOffsetAxis("Declination Offset", "dDEC", GreekLetter.Delta + " " + GreekLetter.delta);
-        
+
         defaultCoordinateSystem.add(rightAscentionAxis);
         defaultCoordinateSystem.add(declinationAxis);
-        
+
         defaultLocalCoordinateSystem.add(rightAscentionOffsetAxis);
         defaultLocalCoordinateSystem.add(declinationOffsetAxis);        
     }	
-	
-  
+
+
 
     private static EquatorialCoordinates equatorialPole = new EquatorialCoordinates(0.0, Constant.rightAngle);
 

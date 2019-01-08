@@ -68,13 +68,10 @@ public class ProjectedIndexTransform2D<CoordinateType extends Coordinate2D> impl
     }
     
     public void transformOffset(Vector2D offset) {
-        fromProjector.offset.copy(offset);
-        fromProjector.deproject();
-        
+        fromProjector.setOffset(offset);
         toProjector.getCoordinates().convertFrom(fromProjector.getCoordinates());
-        
-        toProjector.project();
-        offset.copy(toProjector.offset);
+        toProjector.reproject();
+        offset.copy(toProjector.getOffset());
     }
     
 }

@@ -70,6 +70,14 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     public EclipticCoordinates(String text) {
         super(text);
     }
+    
+    @Override
+    public EclipticCoordinates clone() { return (EclipticCoordinates) super.clone(); }
+    
+    @Override
+    public EclipticCoordinates copy() { return (EclipticCoordinates) super.copy(); }
+    
+    
 
     /* (non-Javadoc)
      * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()

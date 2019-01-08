@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2019 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,15 +24,16 @@ package jnum.projection;
 
 import java.io.Serializable;
 
+import jnum.Copiable;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 
 
-public class Projector2D<CoordinateType extends Coordinate2D> implements Serializable {
+public class Projector2D<CoordinateType extends Coordinate2D> implements Serializable, Cloneable, Copiable<Projector2D<CoordinateType>> {
 
 	private static final long serialVersionUID = -1473954926270300168L;
 
-	public Vector2D offset = new Vector2D();
+	private Vector2D offset = new Vector2D();
 
 	private Projection2D<CoordinateType> projection;
 
@@ -45,21 +46,47 @@ public class Projector2D<CoordinateType extends Coordinate2D> implements Seriali
 		coords = (CoordinateType) projection.getReference().clone();
 	}
 
+	
+	@SuppressWarnings("unchecked")
+    @Override
+    public Projector2D<CoordinateType> clone() {
+	    try {   
+	        Projector2D<CoordinateType> clone = (Projector2D<CoordinateType>) super.clone(); 
+	        if(offset != null) clone.offset = offset.copy();
+	        if(coords != null) clone.coords = (CoordinateType) coords.copy(); 
+	        return clone;
+	    }
+	    catch(CloneNotSupportedException e) { return null; }
+	}
 
+	@Override
+    public Projector2D<CoordinateType> copy() {
+	    Projector2D<CoordinateType> copy = clone();
+	    if(projection != null) copy.projection = projection.copy();
+	    return copy;
+	}
+	
 	public CoordinateType getCoordinates() { return coords; }
+
+	public Vector2D getOffset() { return offset; }
 	
 	public void setReferenceCoords() {
 		coords.copy(getProjection().getReference());
-		//offset.zero();
+		offset.zero();
 	}
 
-	public void project() {
+	public void setCoordinates(CoordinateType coords) {
+	    if(this.coords != coords) this.coords.copy(coords);
 		projection.project(coords, offset);
 	}
 
-	public void deproject() {
+	public void setOffset(Vector2D offset) {
+	    if(this.offset != offset) this.offset = offset;
 		projection.deproject(offset, coords);
 	}
 	
+	public void reproject() { setCoordinates(getCoordinates()); }
+	
 	public Projection2D<CoordinateType> getProjection() { return projection; }
 }
+ 

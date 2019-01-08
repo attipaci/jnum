@@ -48,6 +48,13 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
     public SuperGalacticCoordinates(CelestialCoordinates from) { super(from); }
 
 
+    @Override
+    public SuperGalacticCoordinates clone() { return (SuperGalacticCoordinates) super.clone(); }
+    
+    @Override
+    public SuperGalacticCoordinates copy() { return (SuperGalacticCoordinates) super.copy(); }
+    
+    
     /* (non-Javadoc)
      * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
      */

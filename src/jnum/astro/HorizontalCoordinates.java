@@ -40,127 +40,135 @@ import jnum.text.GreekLetter;
 
 public class HorizontalCoordinates extends SphericalCoordinates {
 
-	private static final long serialVersionUID = -3759766679620485628L;
-	
-
-	public HorizontalCoordinates() {}
+    private static final long serialVersionUID = -3759766679620485628L;
 
 
-	public HorizontalCoordinates(String text) { super(text); } 
+    public HorizontalCoordinates() {}
 
 
-	public HorizontalCoordinates(double az, double el) { super(az, el); }
+    public HorizontalCoordinates(String text) { super(text); } 
 
-	/* (non-Javadoc)
-	 * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
-	 */
-	@Override
-	public String getFITSLongitudeStem() { return "ALON"; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-	 */
-	@Override
-	public String getFITSLatitudeStem() { return "ALAT"; }
-	
-	
-	@Override
+
+    public HorizontalCoordinates(double az, double el) { super(az, el); }
+
+    @Override
+    public HorizontalCoordinates clone() { return (HorizontalCoordinates) super.clone(); }
+
+    @Override
+    public HorizontalCoordinates copy() { return (HorizontalCoordinates) super.copy(); }
+
+
+
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
+     */
+    @Override
+    public String getFITSLongitudeStem() { return "ALON"; }
+
+    /* (non-Javadoc)
+     * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
+     */
+    @Override
+    public String getFITSLatitudeStem() { return "ALAT"; }
+
+
+    @Override
     public String getTwoLetterCode() { return "HO"; }
-	
-	  
+
+
     @Override
     public CoordinateSystem getCoordinateSystem() {
         return defaultCoordinateSystem;
     }
-     
+
     @Override
     public CoordinateSystem getLocalCoordinateSystem() {
         return defaultLocalCoordinateSystem;
     }
-    
-
-	public final double AZ() { return nativeLongitude(); }
 
 
-	public final double azimuth() { return nativeLongitude(); }
+    public final double AZ() { return nativeLongitude(); }
 
 
-	public final double EL() { return nativeLatitude(); }
-
-	public final double elevation() { return nativeLatitude(); }
+    public final double azimuth() { return nativeLongitude(); }
 
 
-	public final double ZA() { return 90.0 * Unit.deg - nativeLatitude(); }
+    public final double EL() { return nativeLatitude(); }
+
+    public final double elevation() { return nativeLatitude(); }
 
 
-	public final double zenithAngle() { return ZA(); }
+    public final double ZA() { return 90.0 * Unit.deg - nativeLatitude(); }
 
 
-	public final void setAZ(double AZ) { setNativeLongitude(AZ); }
+    public final double zenithAngle() { return ZA(); }
 
 
-	public final void setEL(double EL) { setNativeLatitude(EL); }
+    public final void setAZ(double AZ) { setNativeLongitude(AZ); }
 
 
-	public final void setZA(double ZA) { setNativeLatitude(90.0 * Unit.deg - ZA); }
+    public final void setEL(double EL) { setNativeLatitude(EL); }
 
 
-	public EquatorialCoordinates toEquatorial(GeodeticCoordinates site, double LST) {
-		EquatorialCoordinates equatorial = new EquatorialCoordinates();
-		toEquatorial(this, equatorial, site, LST);
-		return equatorial;
-	}
-	
-
-	public void toEquatorial(EquatorialCoordinates toCoords, GeodeticCoordinates site, double LST) { toEquatorial(this, toCoords, site, LST); }
-	
-
-	public double getParallacticAngle(GeodeticCoordinates site) {
-		return Math.atan2(-site.cosLat() * Math.sin(x()), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(x()));
-	}
-	
-
-	public static void toEquatorial(HorizontalCoordinates horizontal, EquatorialCoordinates equatorial, GeodeticCoordinates site, double LST) {
-		double cosAZ = Math.cos(horizontal.x());
-		equatorial.setNativeLatitude(
-		        SafeMath.asin(horizontal.sinLat() * site.sinLat() + horizontal.cosLat() * site.cosLat() * cosAZ));
-		final double asinH = -Math.sin(horizontal.x()) * horizontal.cosLat();
-		final double acosH = site.cosLat() * horizontal.sinLat() - site.sinLat() * horizontal.cosLat() * cosAZ;
-		//final double acosH = (horizontal.sinLat() - equatorial.sinLat() * site.sinLat()) / site.cosLat();
-		
-		equatorial.setLongitude(LST * Unit.timeAngle - Math.atan2(asinH, acosH));
-	}
-
-	
-	public void toEquatorial(Vector2D offset, GeodeticCoordinates site) {
-		toEquatorialOffset(offset, getParallacticAngle(site));
-	}
+    public final void setZA(double ZA) { setNativeLatitude(90.0 * Unit.deg - ZA); }
 
 
-	public static void toEquatorialOffset(Vector2D offset, double PA) {
-		offset.rotate(PA);
-		offset.scaleX(-1.0);
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
-	@Override
-	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
-		super.editHeader(header, keyStem, alt);	
-		
+    public EquatorialCoordinates toEquatorial(GeodeticCoordinates site, double LST) {
+        EquatorialCoordinates equatorial = new EquatorialCoordinates();
+        toEquatorial(this, equatorial, site, LST);
+        return equatorial;
+    }
+
+
+    public void toEquatorial(EquatorialCoordinates toCoords, GeodeticCoordinates site, double LST) { toEquatorial(this, toCoords, site, LST); }
+
+
+    public double getParallacticAngle(GeodeticCoordinates site) {
+        return Math.atan2(-site.cosLat() * Math.sin(x()), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(x()));
+    }
+
+
+    public static void toEquatorial(HorizontalCoordinates horizontal, EquatorialCoordinates equatorial, GeodeticCoordinates site, double LST) {
+        double cosAZ = Math.cos(horizontal.x());
+        equatorial.setNativeLatitude(
+                SafeMath.asin(horizontal.sinLat() * site.sinLat() + horizontal.cosLat() * site.cosLat() * cosAZ));
+        final double asinH = -Math.sin(horizontal.x()) * horizontal.cosLat();
+        final double acosH = site.cosLat() * horizontal.sinLat() - site.sinLat() * horizontal.cosLat() * cosAZ;
+        //final double acosH = (horizontal.sinLat() - equatorial.sinLat() * site.sinLat()) / site.cosLat();
+
+        equatorial.setLongitude(LST * Unit.timeAngle - Math.atan2(asinH, acosH));
+    }
+
+
+    public void toEquatorial(Vector2D offset, GeodeticCoordinates site) {
+        toEquatorialOffset(offset, getParallacticAngle(site));
+    }
+
+
+    public static void toEquatorialOffset(Vector2D offset, double PA) {
+        offset.rotate(PA);
+        offset.scaleX(-1.0);
+    }
+
+
+    /* (non-Javadoc)
+     * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
+     */
+    @Override
+    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
+        super.editHeader(header, keyStem, alt);	
+
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-		c.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
-	}
-	
+        c.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
+    }
+
 
 
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
-  
-	
-	static {
+
+
+    static {
         defaultCoordinateSystem = new CoordinateSystem("Horizontal Coordinates");
         defaultLocalCoordinateSystem = new CoordinateSystem("Horizontal Offsets");
 
@@ -168,7 +176,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
         CoordinateAxis elevationAxis = createAxis("Elevation", "EL", "El", af);
         CoordinateAxis azimuthOffsetAxis = createOffsetAxis("Azimuth Offset", "dAZ", GreekLetter.Delta + " AZ");
         CoordinateAxis elevationOffsetAxis = createOffsetAxis("Elevation Offset", "dEL", GreekLetter.Delta + " EL");
-        
+
         defaultCoordinateSystem.add(azimuthAxis);
         defaultCoordinateSystem.add(elevationAxis);
         defaultLocalCoordinateSystem.add(azimuthOffsetAxis);

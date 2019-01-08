@@ -49,6 +49,14 @@ public class TelescopeCoordinates extends SphericalCoordinates {
 
     public TelescopeCoordinates(double az, double el) { super(az, el); }
 
+    
+    @Override
+    public TelescopeCoordinates clone() { return (TelescopeCoordinates) super.clone(); }
+    
+    @Override
+    public TelescopeCoordinates copy() { return (TelescopeCoordinates) super.copy(); }
+    
+    
     /* (non-Javadoc)
      * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
      */

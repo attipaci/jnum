@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2019 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,6 +24,7 @@ package jnum.astro;
 
 import jnum.Util;
 import jnum.math.SphericalCoordinates;
+import jnum.math.Vector2D;
 import jnum.projection.Projection2D;
 import jnum.projection.Projector2D;
 
@@ -35,8 +36,6 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 
 	private EquatorialCoordinates equatorial;
 
-	private CelestialCoordinates celestial;
-	
 	
 	public AstroProjector(Projection2D<SphericalCoordinates> projection) {
 		super(projection);
@@ -49,10 +48,16 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 		// celestial is the same as coords if coords itself is celestial
 		// otherwise celestial is null, indicating horizontal projection...
 		else if(getCoordinates() instanceof CelestialCoordinates) {
-			celestial = (CelestialCoordinates) getCoordinates();
 			equatorial = new EquatorialCoordinates();
 		}
 
+	}
+	
+	@Override
+    public AstroProjector clone() {
+	    AstroProjector clone = (AstroProjector) super.clone();
+	    if(equatorial != null) clone.equatorial = equatorial.copy();
+	    return clone;
 	}
 	
 	/* (non-Javadoc)
@@ -61,8 +66,7 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
-		if(celestial != null) hash ^= celestial.hashCode();
-		if(equatorial != null) if(equatorial != celestial) hash ^= equatorial.hashCode();
+		if(equatorial != null) if(equatorial != getCelestial()) hash ^= equatorial.hashCode();
 		return hash;
 	}
 	
@@ -75,7 +79,6 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 		if(!(o instanceof AstroProjector)) return false;
 		if(!super.equals(o)) return false;
 		AstroProjector p = (AstroProjector) o;
-		if(!Util.equals(celestial, p.celestial)) return false;
 		if(!Util.equals(equatorial, p.equatorial)) return false;
 		return true;
 	}
@@ -83,7 +86,8 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 
 	public EquatorialCoordinates getEquatorial() { return equatorial; }
 	
-
+	public CelestialCoordinates getCelestial() { return isCelestial() ? (CelestialCoordinates) getCoordinates() : null; }
+	
 	public final boolean isHorizontal() {
 		return getCoordinates() instanceof HorizontalCoordinates;
 	}
@@ -93,6 +97,10 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 		return getCoordinates() instanceof FocalPlaneCoordinates;
 	}
 	
+	public final boolean isCelestial() { return getCoordinates() instanceof CelestialCoordinates; }
+	
+	public final boolean isEquatorial() { return getCoordinates() instanceof EquatorialCoordinates; }
+	
 	/* (non-Javadoc)
 	 * @see jnum.Projector2D#setReferenceCoords()
 	 */
@@ -100,21 +108,22 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	public void setReferenceCoords() {
 		super.setReferenceCoords();
 		// Set the equatorial reference...
-		if(celestial != null) celestial.toEquatorial(equatorial);		
+		if(isCelestial()) getCelestial().toEquatorial(equatorial);		
 	}
 
 
-	public final void projectFromEquatorial() {
-		if(celestial != null) celestial.fromEquatorial(equatorial);
-		super.project();
+	public final void setEquatorial(EquatorialCoordinates equatorial) {
+	    this.equatorial.copy(equatorial);
+		if(isCelestial()) getCelestial().fromEquatorial(equatorial);
+		reproject();
 	}
 	
 	/* (non-Javadoc)
 	 * @see kovacs.projection.Projector2D#deproject()
 	 */
 	@Override
-	public final void deproject() {
-		super.deproject();
-		if(celestial != null) celestial.toEquatorial(equatorial);
+	public final void setOffset(Vector2D offset) {
+		super.setOffset(offset);
+		if(isCelestial()) getCelestial().toEquatorial(equatorial);
 	}
 }

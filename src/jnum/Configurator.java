@@ -1839,7 +1839,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
             new LineParser() {
                 @Override
-                public boolean parse(String line) { setOption(line); return true; }
+                public boolean parse(String line) { return setOption(line); }
             }.read(configFile);
         }
         else throw new FileNotFoundException(fileName);

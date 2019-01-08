@@ -40,58 +40,66 @@ import jnum.math.SphericalCoordinates;
 
 public class GeodeticCoordinates extends SphericalCoordinates {	
 
-	private static final long serialVersionUID = -162411465069211958L;
+    private static final long serialVersionUID = -162411465069211958L;
 
 
-	public GeodeticCoordinates() {}
-	
+    public GeodeticCoordinates() {}
 
-	public GeodeticCoordinates(String text) { super(text); }
-	
 
-	public GeodeticCoordinates(double lon, double lat) { super(lon, lat); }
-	
-	// Approximation for converting geocentric to geodesic coordinates.
-	// Marik: Csillagaszat (1989)
-	// based on Woolard & Clemence: Spherical Astronomy (1966)
-	public GeodeticCoordinates(GeocentricCoordinates geocentric) {
-		setNativeLongitude(geocentric.x());
-		setNativeLatitude(geocentric.y() + Z * Math.sin(2.0 * geocentric.y()));
-	}
-	
-	@Override
+    public GeodeticCoordinates(String text) { super(text); }
+
+
+    public GeodeticCoordinates(double lon, double lat) { super(lon, lat); }
+
+    // Approximation for converting geocentric to geodesic coordinates.
+    // Marik: Csillagaszat (1989)
+    // based on Woolard & Clemence: Spherical Astronomy (1966)
+    public GeodeticCoordinates(GeocentricCoordinates geocentric) {
+        setNativeLongitude(geocentric.x());
+        setNativeLatitude(geocentric.y() + Z * Math.sin(2.0 * geocentric.y()));
+    }
+
+
+    @Override
+    public GeodeticCoordinates clone() { return (GeodeticCoordinates) super.clone(); }
+
+    @Override
+    public GeodeticCoordinates copy() { return (GeodeticCoordinates) super.copy(); }
+
+
+    @Override
     public String getTwoLetterCode() { return "GD"; }
-	
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
-	@Override
-	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
-		super.editHeader(header, keyStem, alt);	
-		
+
+    /* (non-Javadoc)
+     * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
+     */
+    @Override
+    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
+        super.editHeader(header, keyStem, alt);	
+
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-		c.add(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
-	}
-	
+        c.add(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
+    }
 
-	public final static double a = 6378137.0 * Unit.m; // Earth major axis
 
-	public final static double b = 6356752.3 * Unit.m; // Earth minor axis
+    public final static double a = 6378137.0 * Unit.m; // Earth major axis
 
-	public final static double f = 1.0 / 298257.0; // Flattening of Earth (Marik: Csillagaszat)
+    public final static double b = 6356752.3 * Unit.m; // Earth minor axis
 
-	private final static double Z = 103132.4 * Unit.deg * (2.0 * f - f*f); // Approximation term for geodesic conversion (Marik: Csillagaszat)
+    public final static double f = 1.0 / 298257.0; // Flattening of Earth (Marik: Csillagaszat)
 
-	public final static int NORTH = 1;
+    private final static double Z = 103132.4 * Unit.deg * (2.0 * f - f*f); // Approximation term for geodesic conversion (Marik: Csillagaszat)
 
-	public final static int SOUTH = -1;
+    public final static int NORTH = 1;
 
-	public final static int EAST = 1;
+    public final static int SOUTH = -1;
 
-	public final static int WEST = -1;
-	
-	// TODO verify units of X...
+    public final static int EAST = 1;
+
+    public final static int WEST = -1;
+
+    // TODO verify units of X...
 
     // See Wikipedia Geodetic System...
 
@@ -118,6 +126,6 @@ public class GeodeticCoordinates extends SphericalCoordinates {
     // chi = sqrt(1-e^2 sin^2(phi))
     //
     // tan(phi') = [(a/chi)(1-f)^2 + h] / [(a/chi) + h] tan(phi)
-    
-      
+
+
 }

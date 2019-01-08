@@ -52,6 +52,13 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 		convert(from, this);
 	}
 	
+	
+	@Override
+    public CelestialCoordinates clone() { return (CelestialCoordinates) super.clone(); }
+	
+	@Override
+    public CelestialCoordinates copy() { return (CelestialCoordinates) super.copy(); }
+	
 
 	public abstract EquatorialCoordinates getEquatorialPole();
 	
@@ -102,7 +109,7 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 		final EquatorialCoordinates pole = getEquatorialPole();
 		
 		if(!Util.equals(equatorial.epoch, pole.epoch)) {
-			equatorial = (EquatorialCoordinates) equatorial.clone();
+			equatorial = equatorial.clone();
 			try { equatorial.precess(pole.epoch); }
 			catch(UndefinedEpochException e) {}
 		}
