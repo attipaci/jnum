@@ -118,9 +118,6 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 		reproject();
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projector2D#deproject()
-	 */
 	@Override
 	public final void setOffset(Vector2D offset) {
 		super.setOffset(offset);

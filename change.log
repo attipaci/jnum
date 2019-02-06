@@ -1,3 +1,8 @@
+0.24-2
+
+	[BUG] AstroTime.forFITSTimestamp(String) parsed only the date part
+	of the supplied string, ignoring anything beyond the first 10 
+	characters. Fixed. 
 
 	[FIX] Fixed a couple of issues found by FindBugs. 1: A bad if-else-if
 	branching in SofiaProcessingData, and 2: a bad check for equality 
@@ -10,6 +15,9 @@
 	a generated one.
 
 	[FIX] Flagged2D/Observation2D parallel processing control
+
+	[API] Projector2D and AstroProjector API made more robust, and 
+	intiutive (hopefully).
 
 
 0.23-1

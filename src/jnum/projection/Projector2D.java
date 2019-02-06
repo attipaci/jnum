@@ -66,25 +66,64 @@ public class Projector2D<CoordinateType extends Coordinate2D> implements Seriali
 	    return copy;
 	}
 	
+	/**
+	 * Returns the coordinates that correspond to the current offsets.
+	 * 
+	 * @return The coordinates that match the current offsets.
+	 * 
+	 * @see #getOffset()
+	 * @see #setOffset()
+	 */
 	public CoordinateType getCoordinates() { return coords; }
 
+	/**
+	 * Returns the offsets that corresponds to the current coordinates.
+	 * 
+	 * @return The offsets corresponding to the current coordinates.
+	 * 
+	 * @see #getCoordinates()
+	 * @see #setCoordinates(Coordinate2D)
+	 */
 	public Vector2D getOffset() { return offset; }
 	
+	/**
+	 * Sets the projector to the reference coordinates. Subsequent calls to {@link #getOffset()} will return null vectors accordingly.
+	 * 
+	 * @see #setCoordinates(Coordinate2D)
+	 * 
+	 */
 	public void setReferenceCoords() {
 		coords.copy(getProjection().getReference());
 		offset.zero();
 	}
 
+	/**
+     * Sets the coordinates to the specified value and recalculates the projected offsets to match, so that
+     * subsequent calls to {@link #getCoordinates()} and {@link #getOffset()} return consistent values.
+     * 
+     * @param offset       The projected offsets to set.
+     */
 	public void setCoordinates(CoordinateType coords) {
 	    if(this.coords != coords) this.coords.copy(coords);
 		projection.project(coords, offset);
 	}
 
+	/**
+	 * Sets the projected offsets to the specified value and recalculates the coordinates to match, so that
+	 * subsequent calls to {@link #getCoordinates()} and {@link #getOffset()} return consistent values.
+	 * 
+	 * @param offset       The projected offsets to set.
+	 */
 	public void setOffset(Vector2D offset) {
 	    if(this.offset != offset) this.offset = offset;
 		projection.deproject(offset, coords);
 	}
 	
+	/**
+	 * Recalculates the offset from the current values of the coordinates. This is useful if
+	 * the coordinates were obtained via {@link #getCoordinates()} and then modified.
+	 * 
+	 */
 	public void reproject() { setCoordinates(getCoordinates()); }
 	
 	public Projection2D<CoordinateType> getProjection() { return projection; }
