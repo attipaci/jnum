@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-package jnum;
+package jnum.data;
 
 /**
  * The interface for providing bit-wise flagging support in a 32-bit integer flag domain. For something more elaborate,
@@ -46,7 +46,7 @@ public interface Flagging {
      * @see #unflag(int)
      * @see #isFlagged()
      */
-	public boolean isFlagged(int pattern);	
+	public boolean isFlagged(long pattern);	
 
     /**
      * Checks if the implementing object has all of the bit-wise flags unset from <code>pattern</code>.
@@ -60,7 +60,7 @@ public interface Flagging {
      * @see #unflag(int)
      * @see #isUnflagged()
      */
-	public boolean isUnflagged(int pattern);
+	public boolean isUnflagged(long pattern);
 
     /**
      * Checks if the implementing object has any of the flags set.
@@ -102,7 +102,7 @@ public interface Flagging {
 	 * @see #isUnflagged(int)
 	 * 
 	 */
-	public void flag(int pattern);
+	public void flag(long pattern);
 
 	/**
      * Unsets the specified bit-wise flags on the implementing object.
@@ -115,7 +115,7 @@ public interface Flagging {
      * @see #isUnflagged(int)
      * 
      */
-	public void unflag(int pattern);
+	public void unflag(long pattern);
 
 	/**
 	 * Unsets all bit-wise flags on the implementing object.
@@ -126,5 +126,11 @@ public interface Flagging {
 	 */
 	public void unflag();
 	
+	/**
+	 * Return all the bitwise flags
+	 * 
+	 * @return     All flags (up to 64 bitwise flags). 
+	 */
+	public long getFlags();
 }
 

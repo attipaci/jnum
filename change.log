@@ -16,6 +16,10 @@
 
 	[FIX] Flagged2D/Observation2D parallel processing control
 
+	[API] Flagging moved to jnum.data, and changed to int->long, s.t.
+	the interface can support 64 flag bits. (Of course, the classes that 
+	implement it can operate with 8, 16, or 32-bit flags all the same. 
+
 	[API] Projector2D and AstroProjector API made more robust, and 
 	intiutive (hopefully).
 

@@ -32,13 +32,13 @@ import java.io.Serializable;
  * for human tracking, if desired, of which flags have been set.
  * <p>
  * 
- * For more basic bit-wise flagging, see the {@link jnum.Flagging} interface.
+ * For more basic bit-wise flagging, see the {@link jnum.data.Flagging} interface.
  * 
  * @param <Type> the generic integer type supporting this flag space.
  * 
  * @author Attila Kovacs <attila@sigmyne.com>
  * 
- * @see jnum.Flagging
+ * @see jnum.data.Flagging
  */
 public abstract class Flag<Type extends Number> implements Serializable {
     
