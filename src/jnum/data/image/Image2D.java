@@ -25,6 +25,8 @@ package jnum.data.image;
 
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 import jnum.Unit;
 import jnum.Util;
@@ -459,9 +461,11 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
             if(Double.isNaN(value.doubleValue())) return false;
             return super.isValid(value);
         }
-
-       
-
+        
+        DoubleStream stream() {
+            return Stream.of(data).flatMapToDouble(DoubleStream::of);
+        }
+        
     }
     
     

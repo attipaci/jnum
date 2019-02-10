@@ -25,6 +25,7 @@
 package jnum.math;
 
 import java.text.NumberFormat;
+import java.util.stream.IntStream;
 
 
 
@@ -753,13 +754,13 @@ public class Complex extends Vector2D implements
 
 	public static Complex[] createArray(int size) {
 		final Complex[] z = new Complex[size];
-		for(int i=size; --i >= 0; ) z[i] = new Complex();
+		IntStream.range(0,  z.length).parallel().forEach(i -> z[i] = new Complex());
 		return z;
 	}
 	
     public static Complex[] copyOf(Complex[] array) {
         Complex[] copy = new Complex[array.length];
-        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
+        IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
 	

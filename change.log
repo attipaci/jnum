@@ -4,6 +4,8 @@
 	of the supplied string, ignoring anything beyond the first 10 
 	characters. Fixed. 
 
+	[BUG] {ArrayUtil} Some offset / scale methods were garbled. Fixed.
+
 	[FIX] Fixed a couple of issues found by FindBugs. 1: A bad if-else-if
 	branching in SofiaProcessingData, and 2: a bad check for equality 
 	between two Doubles.
@@ -24,6 +26,8 @@
 
 	[API] Projector2D and AstroProjector API made more robust, and 
 	intiutive (hopefully).
+
+	[CODE] {ArrayUtil} Upgraded to use Java 8 streams.
 
 
 0.23-1

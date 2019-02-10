@@ -25,6 +25,7 @@
 package jnum.math;
 
 import java.awt.geom.Point2D;
+import java.util.stream.IntStream;
 
 import jnum.ExtraMath;
 import jnum.NonConformingException;
@@ -277,7 +278,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
     @Override
     public void setValues(Double... values) {
-        for(int i=values.length; --i >= 0; ) setComponent(i, values[i]);
+        IntStream.range(0, values.length).parallel().forEach(i -> setComponent(i, values[i]));
     }
 
 
@@ -296,14 +297,14 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
     public static Vector2D[] createArray(int size) {
         final Vector2D[] v = new Vector2D[size];
-        for(int i=size; --i >= 0; ) v[i] = new Vector2D();
+        IntStream.range(0,  v.length).parallel().forEach(i -> v[i] = new Vector2D()); 
         return v;
     }
 
 
     public static Vector2D[] copyOf(Vector2D[] array) {
         Vector2D[] copy = new Vector2D[array.length];
-        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
+        IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
     

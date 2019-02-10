@@ -26,6 +26,7 @@ package jnum.data;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.IntStream;
 
 import jnum.CopiableContent;
 import jnum.ExtraMath;
@@ -49,7 +50,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 	
 	public FauxComplexArray(Complex[] data) {
 		this(data.length);
-		for(int i=data.length; --i >= 0; ) set(i, data[i]);
+		IntStream.range(0, data.length).parallel().forEach(i -> set(i, data[i]));
 	}
 	
 	

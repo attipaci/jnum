@@ -273,8 +273,6 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
             if(tokens.hasMoreTokens()) UTC += Integer.parseInt(tokens.nextToken()) * Unit.min;
             if(tokens.hasMoreTokens()) UTC += Double.parseDouble(tokens.nextToken()) * Unit.s;
             MJD += UTC / Unit.day;	
-
-            System.err.println("### UTC " + UTC);
         }
     }
 

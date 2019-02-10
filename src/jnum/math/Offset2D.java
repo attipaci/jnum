@@ -23,6 +23,8 @@
 
 package jnum.math;
 
+import java.util.stream.IntStream;
+
 import jnum.Util;
 
 public class Offset2D extends Vector2D {
@@ -66,7 +68,7 @@ public class Offset2D extends Vector2D {
 
     public static Vector2D[] copyOf(Vector2D[] array) {
         Vector2D[] copy = new Vector2D[array.length];
-        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
+        IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
 

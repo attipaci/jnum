@@ -26,6 +26,7 @@ package jnum.math;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.util.stream.IntStream;
 
 import jnum.Copiable;
 import jnum.Util;
@@ -312,7 +313,7 @@ ViewableAsDoubles, Parser, NumberFormating {
     
     public static Coordinate3D[] copyOf(Coordinate3D[] array) {
         Coordinate3D[] copy = new Coordinate3D[array.length];
-        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
+        IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
     

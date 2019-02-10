@@ -23,6 +23,8 @@
 
 package jnum.math;
 
+import java.util.stream.IntStream;
+
 import jnum.ExtraMath;
 import jnum.NonConformingException;
 import jnum.math.matrix.AbstractMatrix;
@@ -233,13 +235,13 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
 
     public static Vector3D[] createArray(int size) {
         Vector3D[] v = new Vector3D[size];
-        for(int i=size; --i >= 0; ) v[i] = new Vector3D();
+        IntStream.range(0,  v.length).parallel().forEach(i -> v[i] = new Vector3D());
         return v;
     }
     
     public static Vector3D[] copyOf(Vector3D[] array) {
         Vector3D[] copy = new Vector3D[array.length];
-        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
+        IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
   

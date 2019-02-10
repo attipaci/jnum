@@ -24,6 +24,7 @@
 package jnum.math;
 
 import java.text.NumberFormat;
+import java.util.stream.IntStream;
 
 import jnum.ExtraMath;
 
@@ -110,7 +111,7 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	
     public static PolarVector2D[] copyOf(PolarVector2D[] array) {
         PolarVector2D[] copy = new PolarVector2D[array.length];
-        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
+        IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
 

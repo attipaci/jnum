@@ -27,6 +27,7 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.util.stream.IntStream;
 
 import jnum.Copiable;
 import jnum.IncompatibleTypesException;
@@ -392,7 +393,7 @@ ViewableAsDoubles, Parser, NumberFormating {
     
     public static Coordinate2D[] copyOf(Coordinate2D[] array) {
         Coordinate2D[] copy = new Coordinate2D[array.length];
-        for(int i=array.length; --i >= 0; ) if(array[i] != null) copy[i] = array[i].copy();
+        IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
 	

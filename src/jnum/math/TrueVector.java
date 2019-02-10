@@ -43,6 +43,6 @@ public interface TrueVector<T> extends Coordinates<T>, AbsoluteValue, Normalizab
     
     public void fill(T value); // TODO default method.
     
-    public void setValues(T ... values); // TODO default method.
+    public void setValues(@SuppressWarnings("unchecked") T ... values); // TODO default method.
     
 }

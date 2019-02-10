@@ -25,6 +25,7 @@
 package jnum.data;
 
 import java.text.NumberFormat;
+import java.util.stream.IntStream;
 
 import jnum.math.Division;
 import jnum.math.LinearAlgebra;
@@ -317,27 +318,28 @@ Accumulating<WeightedPoint> {
 
 	public static WeightedPoint[] createArray(int size) {
 		final WeightedPoint[] p = new WeightedPoint[size];
-		for(int i=size; --i >= 0; ) p[i] = new WeightedPoint();
+		IntStream.range(0, size).parallel().forEach(i -> p[i] = new WeightedPoint());
 		return p;
 	}
 	
 
 	public static float[] floatValues(final WeightedPoint[] data) {
 		final float[] fdata = new float[data.length];
-		for(int i=data.length; --i >= 0; ) fdata[i] = (float) data[i].value();
+		IntStream.range(0, data.length).parallel().forEach(i -> fdata[i] = (float) data[i].value());
 		return fdata;
 	}
 	
 
 	public static double[] values(final WeightedPoint[] data) {
 		final double[] ddata = new double[data.length];
-		for(int i=data.length; --i >= 0; ) ddata[i] = data[i].value();
+		IntStream.range(0, data.length).parallel().forEach(i -> ddata[i] = data[i].value());
 		return ddata;
 	}
 	
 
 	public static float[] floatWeights(final WeightedPoint[] data) {
 		final float[] fdata = new float[data.length];
+		IntStream.range(0, data.length).parallel().forEach(i -> fdata[i] = (float) data[i].weight());
 		for(int i=data.length; --i >= 0; ) fdata[i] = (float) data[i].weight;
 		return fdata;
 	}
@@ -345,7 +347,7 @@ Accumulating<WeightedPoint> {
 
 	public static double[] weights(final WeightedPoint[] data) {
 		final double[] ddata = new double[data.length];
-		for(int i=data.length; --i >= 0; ) ddata[i] = data[i].weight;
+		IntStream.range(0, data.length).parallel().forEach(i -> ddata[i] = data[i].weight());
 		return ddata;
 	}
 	
