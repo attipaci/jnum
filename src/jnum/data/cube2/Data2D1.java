@@ -59,7 +59,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     
       
     public Data2D1() {
-        stack = new ArrayList<ImageType>();
+        stack = new ArrayList<>();
     }
 
     public Data2D1(int initialPlanesCapacity) {
@@ -278,7 +278,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         fromk = Math.max(0, fromk);
         tok = Math.min(sizeZ() -1, tok);
 
-        ArrayList<ImageType> planes = new ArrayList<ImageType>(tok - fromk + 1);
+        ArrayList<ImageType> planes = new ArrayList<>(tok - fromk + 1);
         for(int k = fromk; k <= tok; k++) planes.add(getPlane(k));
 
         setPlanes(planes);

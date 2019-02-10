@@ -48,7 +48,7 @@ public class AdditiveMesh<T extends Additive<? super T>> extends ObjectMesh<T> i
 
     @Override
     public Mesh<T> newInstance() {
-        return new AdditiveMesh<T>(elementClass);
+        return new AdditiveMesh<>(elementClass);
     }
 
     @Override

@@ -267,7 +267,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @return the generic vector
 	 */
 	public GenericVector<T> dot(RealVector v) {
-		GenericVector<T> result = new GenericVector<T>(type, rows());
+		GenericVector<T> result = new GenericVector<>(type, rows());
 		dot(v, result);
 		return result;
 	}
@@ -292,7 +292,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @return the generic vector
 	 */
 	public GenericVector<T> dot(GenericVector<T> v) {
-		GenericVector<T> result = new GenericVector<T>(type, rows());
+		GenericVector<T> result = new GenericVector<>(type, rows());
 		dot(v, result);
 		return result;
 	}
@@ -316,7 +316,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public AbstractMatrix<T> getTransposed() {		
-		GenericMatrix<T> M = new GenericMatrix<T>(type, cols(), rows());
+		GenericMatrix<T> M = new GenericMatrix<>(type, cols(), rows());
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) M.entry[j][i] = entry[i][j];
 		return M;
 	}
@@ -654,7 +654,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public AbstractVectorBasis<T> getBasis() {
-		GenericVectorBasis<T> basis = new GenericVectorBasis<T>();
+		GenericVectorBasis<T> basis = new GenericVectorBasis<>();
 		GenericMatrix<T> copy = (GenericMatrix<T>) copy();
 		copy.gauss();
 
@@ -663,7 +663,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 			T[] row = copy.entry[i];
 			for(int j=col; j<cols(); j++) {
 				if(!row[j].isNull()) {
-					GenericVector<T> v = new GenericVector<T>(type, cols());
+					GenericVector<T> v = new GenericVector<>(type, cols());
 					getColumn(j, v.component);
 					basis.add(v);
 					col = j+1;

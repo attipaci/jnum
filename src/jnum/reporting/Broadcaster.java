@@ -36,7 +36,7 @@ import java.util.Hashtable;
  */
 public class Broadcaster extends Reporter {
 
-    private Hashtable<String, Reporter> reporters = new Hashtable<String, Reporter>();
+    private Hashtable<String, Reporter> reporters = new Hashtable<>();
 
     /**
      * Instantiates a new broadcaster.

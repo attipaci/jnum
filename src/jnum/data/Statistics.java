@@ -403,13 +403,13 @@ public final class Statistics {
     }
     
     public static <T extends Comparable<? super T>> T select(List<T> data, double fraction, int fromIndex, int toIndex) {
-        ArrayList<T> sorter = new ArrayList<T>(toIndex - fromIndex);
+        ArrayList<T> sorter = new ArrayList<>(toIndex - fromIndex);
         while(fromIndex < toIndex) sorter.add(data.get(fromIndex++));
         return Inplace.select(sorter, fraction);
     }
     
     public static <T> T select(List<T> data, double fraction, int fromIndex, int toIndex, Comparator<? super T> comparator) {
-        ArrayList<T> sorter = new ArrayList<T>(toIndex - fromIndex);
+        ArrayList<T> sorter = new ArrayList<>(toIndex - fromIndex);
         while(fromIndex < toIndex) sorter.add(data.get(fromIndex++));
         return Inplace.select(sorter, fraction, comparator);
     }

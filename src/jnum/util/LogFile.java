@@ -70,24 +70,21 @@ public class LogFile {
 
 		// If there is no prior log by that name, then simply create it and return....
 		if(!file.exists()) {
-			PrintWriter out = new PrintWriter(new FileOutputStream(file));
-			out.println("# " + format);
-			out.close();
+		    try(PrintWriter out = new PrintWriter(new FileOutputStream(file))) {
+		        out.println("# " + format);
+		        out.close();
+		    }
 			return;
 		}
 					
 		// Otherwise check if the headers match...
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(getFile())));
-		try { 
+		try(BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(getFile())))) {
 		    boolean pass = false;
 		    if(readHeader(in).equals(format)) pass = true;
-		    try { in.close(); } catch(IOException e) {}
+		    in.close();
 		    if(pass) return;
 		}
 		catch(IllegalStateException e) { Util.warning(this, e); }
-		finally {
-		    try { in.close(); } catch(IOException e) {}
-		}
 		
 		// Conflict...
 		if(conflictPolicy == CONFLICT_OVERWRITE) {
@@ -164,9 +161,10 @@ public class LogFile {
 	
 
 	public void add(String entry) throws IOException {
-		PrintStream out = getPrintStream();
-		out.println(entry);
-		out.close();
+	    try(PrintStream out = getPrintStream()) {
+	        out.println(entry);
+	        out.close();
+	    }
 	}
 	
 
@@ -229,30 +227,31 @@ public class LogFile {
 	
 
 	public static ArrayList<Row> read(String fileName) throws IOException {
-		ArrayList<Row> data = new ArrayList<Row>();
-		BufferedReader in = Util.getReader(fileName);
+		ArrayList<Row> data = new ArrayList<>();
 		
-		String header = readHeader(in);
-		StringTokenizer tokens = new StringTokenizer(header);
-		ArrayList<String> labels = new ArrayList<String>();
-		
-		while(tokens.hasMoreTokens()) {
-			String label = tokens.nextToken();
-			if(label.contains("(")) label = label.substring(0, label.indexOf("("));
-			labels.add(label);
+		try(BufferedReader in = Util.getReader(fileName)) {
+		    String header = readHeader(in);
+		    StringTokenizer tokens = new StringTokenizer(header);
+		    ArrayList<String> labels = new ArrayList<>();
+
+		    while(tokens.hasMoreTokens()) {
+		        String label = tokens.nextToken();
+		        if(label.contains("(")) label = label.substring(0, label.indexOf("("));
+		        labels.add(label);
+		    }
+
+		    String line = null;
+		    while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') {
+		        tokens = new StringTokenizer(line);
+		        int col = 0;
+		        Row row = new Row();
+
+		        while(tokens.hasMoreTokens()) row.add(new Entry(labels.get(col++), tokens.nextToken()));
+		        data.add(row);
+		    }
+
+		    in.close();
 		}
-		
-		String line = null;
-		while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') {
-			tokens = new StringTokenizer(line);
-			int col = 0;
-			Row row = new Row();
-			
-			while(tokens.hasMoreTokens()) row.add(new Entry(labels.get(col++), tokens.nextToken()));
-			data.add(row);
-		}
-		
-		in.close();
 		
 		return data;		
 	}

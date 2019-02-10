@@ -82,7 +82,7 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     public Data() { 
         setVerbose(false);
         setBlankingValue(Double.NaN);
-        history = new ArrayList<String>();
+        history = new ArrayList<>();
         setDefaultUnit();
         logNewData = true;
     }
@@ -136,7 +136,7 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
         if(history != null) clone.history = (ArrayList<String>) history.clone();
         
         if(localUnits != null) {
-            clone.localUnits = new Hashtable<String, Unit>(localUnits.size());
+            clone.localUnits = new Hashtable<>(localUnits.size());
             clone.localUnits.putAll(localUnits);
         }
          
@@ -158,7 +158,7 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
 
     public void keepHistory(boolean value) {
         if(!value) history = null;
-        else if(history == null) history = new ArrayList<String>();
+        else if(history == null) history = new ArrayList<>();
         
     }
     
@@ -173,7 +173,7 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     }
 
     public void setHistory(List<String> entries) {
-        history = new ArrayList<String>(entries.size());
+        history = new ArrayList<>(entries.size());
         history.addAll(entries);
     }
 
@@ -181,12 +181,12 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     
 
     public void addLocalUnit(Unit u) {
-        if(localUnits == null) localUnits = new Hashtable<String, Unit>();
+        if(localUnits == null) localUnits = new Hashtable<>();
         u.registerTo(localUnits);
     }
 
     public void addLocalUnit(Unit u, String altNames) {
-        if(localUnits == null) localUnits = new Hashtable<String, Unit>();
+        if(localUnits == null) localUnits = new Hashtable<>();
         u.registerTo(localUnits, altNames);
         addLocalUnit(u);
     }
@@ -892,7 +892,7 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     }
     
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
-        ArrayList<BasicHDU<?>> hdus = new ArrayList<BasicHDU<?>>();
+        ArrayList<BasicHDU<?>> hdus = new ArrayList<>();
         hdus.add(createHDU(dataType));
         return hdus;
     }

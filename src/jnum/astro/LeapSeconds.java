@@ -172,7 +172,7 @@ public final class LeapSeconds {
 	 */
 	public static void read(String fileName) throws IOException {
 			
-		if(list == null) list = new ArrayList<Datum>();
+		if(list == null) list = new ArrayList<>();
 		else list.clear();
 		
 		if(verbose) Util.info(LeapSeconds.class, "Reading leap seconds table from " + fileName);

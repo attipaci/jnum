@@ -35,7 +35,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 
 	private static final long serialVersionUID = -8635925466445072139L;
 
-	public ArrayList<ExponentUnit> factors = new ArrayList<ExponentUnit>();
+	public ArrayList<ExponentUnit> factors = new ArrayList<>();
 		
 	/**
 	 * Instantiates a new compound unit.
@@ -68,7 +68,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	@Override
 	public CompoundUnit copy() {
 		CompoundUnit copy = (CompoundUnit) super.copy();
-		factors = new ArrayList<ExponentUnit>(factors.size());
+		factors = new ArrayList<>(factors.size());
 		for(ExponentUnit factor : factors) copy.factors.add(factor.copy());
 		return copy;
 	}
@@ -165,7 +165,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	
 
 	public void parse(String spec, Map<String, Unit> baseUnits) {		
-		if(factors == null) factors = new ArrayList<ExponentUnit>();
+		if(factors == null) factors = new ArrayList<>();
 		else factors.clear();
 			
 		StringBuffer buf = new StringBuffer();

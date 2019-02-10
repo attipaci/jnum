@@ -462,9 +462,9 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	
 	static void registerTypes() {
 	    
-	    idLookup = new Hashtable<Class<? extends SphericalCoordinates>, String>();
-	    ids = new Hashtable<String, Class<? extends SphericalCoordinates>>();
-	    fitsTypes = new Hashtable<String, Class<? extends SphericalCoordinates>>();
+	    idLookup = new Hashtable<>();
+	    ids = new Hashtable<>();
+	    fitsTypes = new Hashtable<>();
 
 	    
 	    register(new SphericalCoordinates());

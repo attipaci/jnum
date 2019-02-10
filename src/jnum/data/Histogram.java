@@ -31,7 +31,7 @@ import jnum.Util;
 
 public class Histogram implements Cloneable {
 
-	private Hashtable<Integer, RealValue> bins = new Hashtable<Integer, RealValue>();
+	private Hashtable<Integer, RealValue> bins = new Hashtable<>();
 
 	private double resolution;
 	
@@ -135,7 +135,7 @@ public class Histogram implements Cloneable {
 			throw new IllegalArgumentException("Incompatible bin resolutions");
 		
 		Histogram product = a.clone();
-		product.bins = new Hashtable<Integer, RealValue>();
+		product.bins = new Hashtable<>();
 		
 		for(int binA : a.bins.keySet()) for(int binB : b.bins.keySet()) {
 			product.add((binA + binB)*product.resolution, a.bins.get(binA).value() * b.bins.get(binB).value());	

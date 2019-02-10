@@ -317,7 +317,7 @@ public final class FitsToolkit {
 
     
     public static ArrayList<String> parseHistory(Header header) {
-        ArrayList<String> history = new ArrayList<String>();
+        ArrayList<String> history = new ArrayList<>();
         
         Cursor<String, HeaderCard> cursor = header.iterator();
         

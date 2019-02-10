@@ -66,9 +66,9 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 
 	private static final long serialVersionUID = 8563669618537254688L;
 
-	Hashtable<String, String> strings = new Hashtable<String, String>();
+	Hashtable<String, String> strings = new Hashtable<>();
 
-	Vector<String> pending = new Vector<String>();
+	Vector<String> pending = new Vector<>();
 
 	String path;
 
@@ -174,33 +174,34 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 	
 
 	public void parseFormat(String name) throws IOException {		
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(path + File.separator + name)));
-		String line = null;
-		
-		// Read lines in order...
-		// Those that have unresolved dependecies go to pending
-		while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') {
-			try { add(getDataStore(line)); }
-			catch(NullPointerException e) { pending.add(line); }
-			catch(ClassCastException e) { Util.error(this, e); }
-		}
+	    try(BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(path + File.separator + name)))) {
+	        String line = null;
 
-		// Pending list is reduced after...
-		int initialSize;
-		
-		do {
-			initialSize = pending.size();		
-			for(int i=pending.size(); i>=0; i--) {
-				try { 
-					add(getDataStore(pending.get(i))); 
-					pending.remove(i);
-				} 
-				catch(NullPointerException e) {}
-				catch(ClassCastException e) { Util.error(this, e); }
-			}
-		} while(pending.size() < initialSize);	
-		
-		in.close();
+	        // Read lines in order...
+	        // Those that have unresolved dependecies go to pending
+	        while((line = in.readLine()) != null) if(line.length() > 0) if(line.charAt(0) != '#') {
+	            try { add(getDataStore(line)); }
+	            catch(NullPointerException e) { pending.add(line); }
+	            catch(ClassCastException e) { Util.error(this, e); }
+	        }
+
+	        // Pending list is reduced after...
+	        int initialSize;
+
+	        do {
+	            initialSize = pending.size();		
+	            for(int i=pending.size(); i>=0; i--) {
+	                try { 
+	                    add(getDataStore(pending.get(i))); 
+	                    pending.remove(i);
+	                } 
+	                catch(NullPointerException e) {}
+	                catch(ClassCastException e) { Util.error(this, e); }
+	            }
+	        } while(pending.size() < initialSize);	
+
+	        in.close();
+	    }
 	}
 	
 

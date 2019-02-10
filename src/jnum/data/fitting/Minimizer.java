@@ -45,7 +45,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
 
     private CovarianceMatrix C;
 
-    private ArrayList<Constraint> constraints = new ArrayList<Constraint>();
+    private ArrayList<Constraint> constraints = new ArrayList<>();
 
     private Parametric<Double> costFunction = new Parametric<Double>() {
         @Override

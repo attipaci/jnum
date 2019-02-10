@@ -323,7 +323,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 	
 
 		private synchronized void createProcesses(int count) {	
-			workers = new Vector<ParallelTask<ReturnType>>(count);
+			workers = new Vector<>(count);
 			
 			// Use only copies of the task for calculation, leaving the template
 			// task in its original state, s.t. it may be reused again...

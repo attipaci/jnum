@@ -31,7 +31,7 @@ import java.text.*;
 
 public class BracketedListTokenizer {
 
-	protected Vector<Object> list = new Vector<Object>();
+	private ArrayList<Object> list = new ArrayList<>();
 
 	private int nextIndex = 0;
 
@@ -41,11 +41,6 @@ public class BracketedListTokenizer {
 
 
 	public BracketedListTokenizer(String str, String delim) {
-		init(str, delim);
-	}
-		
-
-	protected void init(String str, String delim) {
 		boolean hasMore = false;
 		
 		int[] bounds = { 0, 0 };

@@ -54,7 +54,7 @@ public class ObjectMesh<T> extends Mesh<T> {
      */
     @Override
     public Mesh<T> newInstance() {
-        return new ObjectMesh<T>(elementClass);
+        return new ObjectMesh<>(elementClass);
     }
 	
 	/* (non-Javadoc)

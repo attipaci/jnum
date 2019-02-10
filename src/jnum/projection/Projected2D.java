@@ -86,7 +86,7 @@ public class Projected2D<CoordinateType extends Coordinate2D> extends Offset2D {
    
     public Projected2D<CoordinateType> getReprojected(Projection2D<CoordinateType> p, CoordinateType temp) {
         projection.deproject(this, temp);
-        return new Projected2D<CoordinateType>(p, temp); // TODO new Vector2D(this); ???
+        return new Projected2D<>(p, temp); // TODO new Vector2D(this); ???
     }
    
     public final Projected2D<CoordinateType> getReprojected(Projection2D<CoordinateType> p) {

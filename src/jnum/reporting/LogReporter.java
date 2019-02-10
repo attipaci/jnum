@@ -151,8 +151,7 @@ public class LogReporter extends Reporter {
     public void trace(Throwable e) {
        String s = new String();
        
-       try {
-           PrintStream out = new PrintStream(s);
+       try(PrintStream out = new PrintStream(s)) {
            e.printStackTrace(out);
            logger.log(Level.WARNING, getLabel(null, "TRACE") + s);
            out.close();

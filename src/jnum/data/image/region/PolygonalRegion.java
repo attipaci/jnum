@@ -41,7 +41,7 @@ public class PolygonalRegion extends Region2D {
 
 	private static final long serialVersionUID = -7872681437465288221L;
 
-	private Vector<Coordinate2D> corners = new Vector<Coordinate2D>();
+	private Vector<Coordinate2D> corners = new Vector<>();
 	
 
 	public PolygonalRegion(Class<? extends Coordinate2D> coordinateType) { 
@@ -93,7 +93,7 @@ public class PolygonalRegion extends Region2D {
 	    
 	    protected Representation(Grid2D<?> grid) throws IncompatibleTypesException {
 	        super(grid);
-	        indices = new Vector<Vector2D>(corners.size());
+	        indices = new Vector<>(corners.size());
 	        for(int i=0; i<corners.size(); i++) indices.add(getIndex(corners.get(i)));
 	    }
 	    

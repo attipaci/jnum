@@ -104,20 +104,20 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
 
     @SuppressWarnings("unchecked")
     public static <T> MeshCrawler<T> createFor(Object array) {
-        if(array instanceof Object[]) return new GenericCrawler<T>((Object[]) array);
+        if(array instanceof Object[]) return new GenericCrawler<>((Object[]) array);
         return (ArrayCrawler<T>) ArrayCrawler.forArray(array);       
     }
 
 
     public static <T> MeshCrawler<T> createFor(Object array, int depth) {
         if(depth >= ArrayUtil.getRank(array)) return createFor(array);
-        return new GenericCrawler<T>((Object[]) array, depth);
+        return new GenericCrawler<>((Object[]) array, depth);
     }
 
 
     @SuppressWarnings("unchecked")
     public static <T> MeshCrawler<T> createFor(Object array, int[] fromIndex, int[] toIndex) {
-        if(array instanceof Object[]) return new GenericCrawler<T>((Object[]) array, fromIndex, toIndex);
+        if(array instanceof Object[]) return new GenericCrawler<>((Object[]) array, fromIndex, toIndex);
         return (ArrayCrawler<T>) ArrayCrawler.forArray(array, fromIndex[0], toIndex[0]);
     }   
 
@@ -156,7 +156,7 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
                 if(element instanceof Object[]) {
                     int[] childFrom = Arrays.copyOfRange(from, 1, from.length);
                     int[] childTo = Arrays.copyOfRange(to, 1, to.length);
-                    child = new GenericCrawler<T>((Object[]) element, childFrom, childTo);
+                    child = new GenericCrawler<>((Object[]) element, childFrom, childTo);
                 }
                 else {
                     child = (ArrayCrawler<T>) ArrayCrawler.forArray(element, from[1], to[1]);

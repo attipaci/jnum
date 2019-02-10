@@ -177,7 +177,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 
 		private int spacing = 2;
 
-		private ArrayList<Entry> entries = new ArrayList<Entry>();
+		private ArrayList<Entry> entries = new ArrayList<>();
 		
 		
 

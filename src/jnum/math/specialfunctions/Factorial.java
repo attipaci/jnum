@@ -29,7 +29,7 @@ import java.util.Vector;
 
 public final class Factorial {
 
-	public final static Vector<Double> store = new Vector<Double>(100);
+	public final static Vector<Double> store = new Vector<>(100);
 	static { store.add(1.0); }
 	
 	// Calculates factorials as needed, storing the values for quick lookup later.
@@ -62,7 +62,7 @@ public final class Factorial {
 	static int MAX_LOGBUFFERED = 400;
 	
 
-	public final static Vector<Double> logStore = new Vector<Double>(100);
+	public final static Vector<Double> logStore = new Vector<>(100);
 	static { logStore.add(0.0); }	
 	
 

@@ -41,8 +41,8 @@ public class ProjectedIndexTransform2D<CoordinateType extends Coordinate2D> impl
         this.fromGrid = from;
         this.toGrid = to;
         
-        fromProjector = new Projector2D<CoordinateType>(from.getProjection());
-        toProjector = new Projector2D<CoordinateType>(to.getProjection());
+        fromProjector = new Projector2D<>(from.getProjection());
+        toProjector = new Projector2D<>(to.getProjection());
     }
     
     @Override

@@ -493,7 +493,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	static Hashtable<String, Class<? extends SphericalProjection>> registry;
 	
 	static {
-		registry = new Hashtable<String, Class<? extends SphericalProjection>>();
+		registry = new Hashtable<>();
 		register(new SlantOrthographic()); // SIN
 		register(new Gnomonic()); // TAN
 		register(new ZenithalEqualArea()); // ZEA

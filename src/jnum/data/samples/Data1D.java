@@ -402,18 +402,19 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     public void writeASCIITable(String corePath, Grid1D grid, String yName, String nanValue) throws FileNotFoundException {
         String fileName = corePath + ".dat";
 
-        PrintWriter out = new PrintWriter(new FileOutputStream(fileName));
-        StringTokenizer header = new StringTokenizer(getInfo(), "\n");
+        try(PrintWriter out = new PrintWriter(new FileOutputStream(fileName))) {
+            StringTokenizer header = new StringTokenizer(getInfo(), "\n");
 
-        while(header.hasMoreTokens()) out.println("# " + header.nextToken());
-           
-        out.println("#");
-        out.println("# " + getASCIITableHeader(grid, yName));
-            
-        for(int i=0; i<size(); i++)  out.println(getASCIITableEntry(i, grid, nanValue));
-        
-        out.flush();
-        out.close();
+            while(header.hasMoreTokens()) out.println("# " + header.nextToken());
+
+            out.println("#");
+            out.println("# " + getASCIITableHeader(grid, yName));
+
+            for(int i=0; i<size(); i++)  out.println(getASCIITableEntry(i, grid, nanValue));
+
+            out.flush();
+            out.close();
+        }
         
         Util.notify(this, "Written " + fileName);
     }
@@ -452,25 +453,27 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
      
     public void gnuplot(String coreName, Grid1D grid, String yName, String gnuplotCommand, Configurator options) throws IOException {
         String plotName = coreName + ".plt";
-        PrintWriter plot = new PrintWriter(new FileOutputStream(plotName));
-                      
-        // Save & disable the default plot terminal while setting up the plot command...
-        plot.println("set term push");
-        plot.println("set term dumb");
         
-        createGnuplot(plot, coreName, grid, yName, options);
-        plot.println();
-           
-        if(options.hasOption("eps")) gnuplotEPS(plot, coreName);
-        if(options.hasOption("png")) gnuplotPNG(plot, coreName, options.option("png"));
-            
-        // Re-enable the default plot terminal
-        plot.println("set out");
-        plot.println("set term pop");
-        
-        // Plot onto default terminal if requested.
-        plot.println((options.hasOption("show") ? "" : "#")  + "replot");
-        plot.close();
+        try(PrintWriter plot = new PrintWriter(new FileOutputStream(plotName))) {
+
+            // Save & disable the default plot terminal while setting up the plot command...
+            plot.println("set term push");
+            plot.println("set term dumb");
+
+            createGnuplot(plot, coreName, grid, yName, options);
+            plot.println();
+
+            if(options.hasOption("eps")) gnuplotEPS(plot, coreName);
+            if(options.hasOption("png")) gnuplotPNG(plot, coreName, options.option("png"));
+
+            // Re-enable the default plot terminal
+            plot.println("set out");
+            plot.println("set term pop");
+
+            // Plot onto default terminal if requested.
+            plot.println((options.hasOption("show") ? "" : "#")  + "replot");
+            plot.close();
+        }
         
         Util.notify(this, "Written " + plotName);
 

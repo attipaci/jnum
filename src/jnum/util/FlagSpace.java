@@ -43,11 +43,11 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
 
     private Flag<Type> unknownFlag;
 
-    private Hashtable<Type, Flag<Type>> values = new Hashtable<Type, Flag<Type>>();
+    private Hashtable<Type, Flag<Type>> values = new Hashtable<>();
 
-    private Hashtable<Character, Flag<Type>> codes = new Hashtable<Character, Flag<Type>>();
+    private Hashtable<Character, Flag<Type>> codes = new Hashtable<>();
 
-    private Hashtable<String, Flag<Type>> names = new Hashtable<String, Flag<Type>>();
+    private Hashtable<String, Flag<Type>> names = new Hashtable<>();
     
 
     private FlagSpace(String name) throws FlagConflictException {
@@ -204,12 +204,12 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
 
 
     public final FlagBlock<Type> getFlagBlock(int startBit, int endBit) {
-        return new FlagBlock<Type>(this, startBit, endBit);
+        return new FlagBlock<>(this, startBit, endBit);
     }
     
 
     public final FlagBlock<Type> getDefaultFlagBlock() {
-        return new FlagBlock<Type>(this, 0, getBits()-1);
+        return new FlagBlock<>(this, 0, getBits()-1);
     }
     
 
@@ -238,7 +238,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
         return registry.get(name);
     }
 
-    private static Hashtable<String, FlagSpace<?>> registry = new Hashtable<String, FlagSpace<?>>();
+    private static Hashtable<String, FlagSpace<?>> registry = new Hashtable<>();
   
 
     public static class Byte extends FlagSpace<java.lang.Byte> {

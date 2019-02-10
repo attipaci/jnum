@@ -182,7 +182,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 		try { 
 			T[][] array = (T[][]) Array.newInstance(component.getClass(), 1);
 			array[0] = component;
-			return new GenericMatrix<T>(array);
+			return new GenericMatrix<>(array);
 		}
 		catch(Exception e) { return null; }
 
@@ -193,7 +193,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public AbstractMatrix<T> asColumnVector() {
-		GenericMatrix<T> M = new GenericMatrix<T>(getType(), component.length, 1);
+		GenericMatrix<T> M = new GenericMatrix<>(getType(), component.length, 1);
 		M.setColumn(0, component);
 		return M;
 	}

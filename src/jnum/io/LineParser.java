@@ -41,7 +41,7 @@ public abstract class LineParser {
 
     private int lineNumber = 0;
 
-    private ArrayList<Exception> parseExceptions = new ArrayList<Exception>();
+    private ArrayList<Exception> parseExceptions = new ArrayList<>();
    
     
     /**

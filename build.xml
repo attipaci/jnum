@@ -12,8 +12,8 @@
 	<property name="crushtools.location" value="../crushtools"/>
 	<property name="ECLIPSE_HOME" value="../../../../usr/lib64/eclipse/"/>
 	<property name="debuglevel" value="source,lines,vars"/>
-	<property name="target" value="1.6"/>
-	<property name="source" value="1.6"/>
+	<property name="target" value="1.8"/>
+	<property name="source" value="1.8"/>
 	<path id="jnum.classpath">
 		<pathelement location="bin"/>
 		<pathelement location="${crush.location}/fits.jar"/>

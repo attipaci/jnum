@@ -89,17 +89,17 @@ public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAl
 	// Invert via Gauss-Jordan elimination
 	public GenericSquareMatrix<T> getGaussInverse() {
 		int size = size();
-		GenericMatrix<T> combo = new GenericMatrix<T>(type, size, 2*size);
+		GenericMatrix<T> combo = new GenericMatrix<>(type, size, 2*size);
 		for(int i=size; --i >= 0; ) combo.entry[i][i+size].setIdentity();
 		combo.paste(this, 0, 0);
 		combo.gaussJordan();
-		GenericSquareMatrix<T> inverse = new GenericSquareMatrix<T>((T[][]) ArrayUtil.subArray(combo.entry, new int[] { 0, size }, new int[] { size, 2*size }));
+		GenericSquareMatrix<T> inverse = new GenericSquareMatrix<>((T[][]) ArrayUtil.subArray(combo.entry, new int[] { 0, size }, new int[] { size, 2*size }));
 		return inverse;
 	}
 	
 
 	public GenericSquareMatrix<T> getLUInverse() {
-		return new GenericLUDecomposition<T>(this).getInverse();
+		return new GenericLUDecomposition<>(this).getInverse();
 	}
 	
 
@@ -113,7 +113,7 @@ public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAl
 	@Override
 	public void solve(AbstractVector<T>[] inputVectors) {
 		int size = size();
-		GenericMatrix<T> combo = new GenericMatrix<T>(type, size, size + inputVectors.length);
+		GenericMatrix<T> combo = new GenericMatrix<>(type, size, size + inputVectors.length);
 		combo.paste(this, 0, 0);
 		
 		for(int col=inputVectors.length; --col >= 0; ) {
@@ -132,7 +132,7 @@ public class GenericSquareMatrix<T extends LinearAlgebra<? super T> & AbstractAl
 
 	public T[][] getSolutionsTo(T[][] inputMatrix) {
 		int size = size();
-		GenericMatrix<T> combo = new GenericMatrix<T>(type, size, size + inputMatrix[0].length);
+		GenericMatrix<T> combo = new GenericMatrix<>(type, size, size + inputMatrix[0].length);
 		combo.paste(this, 0, 0);
 		ArrayUtil.paste(inputMatrix, entry, new int[] { 0, size });
 		combo.gaussJordan();

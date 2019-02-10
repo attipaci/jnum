@@ -33,7 +33,7 @@ public abstract class EnclosureParser {
     public boolean autoClose = true;
     
     public String parse(String text, ParsePosition pos) throws ParseException {
-        ArrayList<Character> expectedClosing = new ArrayList<Character>();
+        ArrayList<Character> expectedClosing = new ArrayList<>();
         
         // Skip to the first bracket.
         int i = pos.getIndex();

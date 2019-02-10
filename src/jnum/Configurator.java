@@ -81,8 +81,8 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     public boolean wasUsed = false;
 
 
-    public Hashtable<String, Configurator> branches = new Hashtable<String, Configurator>();
-    public Hashtable<String, Vector<String>> conditionals = new Hashtable<String, Vector<String>>();
+    public Hashtable<String, Configurator> branches = new Hashtable<>();
+    public Hashtable<String, Vector<String>> conditionals = new Hashtable<>();
 
     private static int counter = 0;	
 
@@ -111,10 +111,10 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     public Configurator copy() {
         Configurator copy = clone();
 
-        copy.branches = new Hashtable<String, Configurator>();
+        copy.branches = new Hashtable<>();
         for(String key : branches.keySet()) copy.branches.put(key, branches.get(key).copy());
 
-        copy.conditionals = new Hashtable<String, Vector<String>>();
+        copy.conditionals = new Hashtable<>();
         for(String key : conditionals.keySet()) copy.conditionals.put(key, (Vector<String>) conditionals.get(key).clone());
 
         return copy;
@@ -186,7 +186,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @see #parse(String)
      */
     public List<Exception> parseAll(List<String> lines) {
-        ArrayList<Exception> exceptions = new ArrayList<Exception>();
+        ArrayList<Exception> exceptions = new ArrayList<>();
 
         for(String line : lines) {
             try { parse(line); }
@@ -432,7 +432,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
             if(details) Util.detail(this, "<.> " + branchName);
 
             if(branchName.equals("*")) {
-                for(String name : new ArrayList<String>(branches.keySet())) process(name + key.substring(1), argument);				
+                for(String name : new ArrayList<>(branches.keySet())) process(name + key.substring(1), argument);				
             }	
             else if(branchName.startsWith("[")) {
                 String condition = branchName.substring(1, branchName.indexOf(']'));
@@ -466,7 +466,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         if(isSatisfied(condition)) setOption(setting); 
 
         else {
-            Vector<String> list = conditionals.containsKey(condition) ? conditionals.get(condition) : new Vector<String>();
+            Vector<String> list = conditionals.containsKey(condition) ? conditionals.get(condition) : new Vector<>();
             list.add(setting.trim());
 
             // Remove leading spaces and replace assignments and other spaces with a single ?
@@ -514,7 +514,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     private List<String> getList(String argument) {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         StringTokenizer tokens = new StringTokenizer(argument, " \t,");
         while(tokens.hasMoreTokens()) list.add(tokens.nextToken());
         return list;
@@ -599,7 +599,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         String branchName = getBranchName(arg);
 
         if(branchName.equals("*")) {
-            for(String name : new ArrayList<String>(branches.keySet())) forget(name + getRemainder(arg, 1));
+            for(String name : new ArrayList<>(branches.keySet())) forget(name + getRemainder(arg, 1));
         }	
         else {
             String key = unaliasedKey(branchName);
@@ -620,7 +620,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         String branchName = getBranchName(arg);
 
         if(branchName.equals("*")) {
-            for(String name : new ArrayList<String>(branches.keySet())) recall(name + getRemainder(arg, 1));
+            for(String name : new ArrayList<>(branches.keySet())) recall(name + getRemainder(arg, 1));
         }	
         else {
             String key = unaliasedKey(branchName);
@@ -644,11 +644,11 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         String branchName = getBranchName(arg);
 
         if(branchName.equals("*")) {
-            for(String name : new ArrayList<String>(branches.keySet())) remove(name + getRemainder(arg, 1));
+            for(String name : new ArrayList<>(branches.keySet())) remove(name + getRemainder(arg, 1));
         }
         else if(branchName.startsWith("[") && branchName.endsWith("]")) {
             branchName = branchName.substring(1, branchName.length()-1).trim();
-            for(String condition : new ArrayList<String>(conditionals.keySet())) if(condition.startsWith(branchName)) conditionals.remove(condition);
+            for(String condition : new ArrayList<>(conditionals.keySet())) if(condition.startsWith(branchName)) conditionals.remove(condition);
         }
         else {
             String key = unaliasedKey(branchName);
@@ -672,11 +672,11 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         String branchName = getBranchName(arg);
 
         if(branchName.equals("*")) {
-            for(String name : new ArrayList<String>(branches.keySet())) purge(name + getRemainder(arg, 1));
+            for(String name : new ArrayList<>(branches.keySet())) purge(name + getRemainder(arg, 1));
         }
         else if(branchName.startsWith("[") && branchName.endsWith("]")) {
             branchName = branchName.substring(1, branchName.length()-1).trim();
-            for(String condition : new ArrayList<String>(conditionals.keySet())) if(condition.startsWith(branchName)) conditionals.remove(condition);
+            for(String condition : new ArrayList<>(conditionals.keySet())) if(condition.startsWith(branchName)) conditionals.remove(condition);
         }
         else {
             String key = unaliasedKey(branchName);
@@ -706,7 +706,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
         if(branchName.equals("*")) {
             if(arg.length() == 1) for(String name : getRemoved().branches.keySet()) restore(name);
-            else for(String name : new ArrayList<String>(branches.keySet())) restore(name + getRemainder(arg, 1));
+            else for(String name : new ArrayList<>(branches.keySet())) restore(name + getRemainder(arg, 1));
         }
         else {
             String key = unaliasedKey(branchName);
@@ -1443,7 +1443,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * 
      */
     public List<String> getList() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         StringTokenizer tokens = new StringTokenizer(getValue(), " \t,");
         while(tokens.hasMoreTokens()) list.add(tokens.nextToken());
         return list;
@@ -1464,7 +1464,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * 
      */
     public List<String> getLowerCaseList() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         StringTokenizer tokens = new StringTokenizer(getValue(), " \t,");
         while(tokens.hasMoreTokens()) list.add(tokens.nextToken().toLowerCase());
         return list;		
@@ -1486,7 +1486,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      */
     public List<Double> getDoubles() throws NumberFormatException {
         List<String> list = getList();
-        ArrayList<Double> doubles = new ArrayList<Double>(list.size());	
+        ArrayList<Double> doubles = new ArrayList<>(list.size());	
         for(String entry : list) {
             try { doubles.add(Double.parseDouble(entry)); }
             catch(NumberFormatException e) { doubles.add(Double.NaN); }
@@ -1510,7 +1510,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      */
     public List<Float> getFloats() {
         List<String> list = getList();
-        ArrayList<Float> floats = new ArrayList<Float>(list.size());	
+        ArrayList<Float> floats = new ArrayList<>(list.size());	
         for(String entry : list) {
             try { floats.add(Float.parseFloat(entry)); }
             catch(NumberFormatException e) { floats.add(Float.NaN); }
@@ -1533,7 +1533,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      */
     public List<Integer> getIntegers() {
         List<String> list = getList();
-        ArrayList<Integer> ints = new ArrayList<Integer>(list.size());	
+        ArrayList<Integer> ints = new ArrayList<>(list.size());	
         for(String entry : list) {
             try { ints.add(Integer.decode(entry)); }
             catch(NumberFormatException e) {
@@ -1549,7 +1549,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     
     public List<String> getKeys(boolean includeBlacklisted) {
-        ArrayList<String> keys = new ArrayList<String>();
+        ArrayList<String> keys = new ArrayList<>();
         for(String branchName : branches.keySet()) {
             Configurator option = branches.get(branchName);	
             if(option.isEnabled) keys.add(branchName);
@@ -1561,7 +1561,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     public List<String> getForgottenKeys() {
-        ArrayList<String> keys = new ArrayList<String>();
+        ArrayList<String> keys = new ArrayList<>();
         for(String branchName : branches.keySet()) {
             Configurator option = branches.get(branchName);
             if(!option.isEnabled) if(option.value != null) if(option.value.length() > 0) keys.add(branchName);
@@ -1572,7 +1572,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     public List<String> getBlacklist() {
-        ArrayList<String> keys = new ArrayList<String>();
+        ArrayList<String> keys = new ArrayList<>();
         for(String branchName : branches.keySet()) {
             Configurator option = branches.get(branchName);	
             if(option.isBlacklisted()) keys.add(branchName);
@@ -1590,7 +1590,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
 
         Hashtable<String, Vector<String>> conditions = getConditions(true);
-        ArrayList<String> forKey = new ArrayList<String>();
+        ArrayList<String> forKey = new ArrayList<>();
 
         for(String condition : conditions.keySet()) {
             Vector<String> settings = conditions.get(condition);
@@ -1628,7 +1628,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     public Hashtable<String, Vector<String>> getConditions(boolean isBracketed) {
-        Hashtable<String, Vector<String>> conditions = new Hashtable<String, Vector<String>>();
+        Hashtable<String, Vector<String>> conditions = new Hashtable<>();
         for(String key : conditionals.keySet()) {
             conditions.put(isBracketed ? "[" + key + "]" : key, conditionals.get(key));
         }
@@ -1812,7 +1812,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
         // Add all the conditionals...
         Hashtable<String, Vector<String>> conditions = getConditions(true);
-        ArrayList<String> conditionKeys = new ArrayList<String>(conditions.keySet());	
+        ArrayList<String> conditionKeys = new ArrayList<>(conditions.keySet());	
         Collections.sort(conditionKeys);
 
         out.println(prefix + " --------------------------------------------------------------------");
@@ -1859,7 +1859,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
         // Add all the conditionals...
         Hashtable<String, Vector<String>> conditions = getConditions(true);
-        ArrayList<String> conditionKeys = new ArrayList<String>(conditions.keySet());	
+        ArrayList<String> conditionKeys = new ArrayList<>(conditions.keySet());	
         Collections.sort(conditionKeys);
 
         for(String condition : conditionKeys) {

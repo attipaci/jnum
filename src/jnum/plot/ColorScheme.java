@@ -60,7 +60,7 @@ public abstract class ColorScheme {
 		return schemes.containsKey(name) ? schemes.get(name).getConstructor().newInstance() : null;
 	}
 
-	public static Hashtable<String, Class<? extends ColorScheme>> schemes = new Hashtable<String, Class<? extends ColorScheme>>();
+	public static Hashtable<String, Class<? extends ColorScheme>> schemes = new Hashtable<>();
 	
 
 	public final static int getRGB(final int r, final int g, final int b) {

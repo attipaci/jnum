@@ -43,7 +43,7 @@ public class GenericVectorBasis<T extends Copiable<? super T> & LinearAlgebra<? 
 	 */
 	@Override
 	public AbstractMatrix<T> asMatrix() {
-		GenericMatrix<T> M = new GenericMatrix<T>(get(0).getType());
+		GenericMatrix<T> M = new GenericMatrix<>(get(0).getType());
 		asMatrix(M);
 		return M;
 	}

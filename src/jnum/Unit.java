@@ -45,7 +45,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     private static final long serialVersionUID = -1573657596441176858L;
 
     /** The Constant standardUnits. */
-    protected final static Hashtable<String, Unit> standardUnits = new Hashtable<String, Unit>();
+    protected final static Hashtable<String, Unit> standardUnits = new Hashtable<>();
 
     // Usage Example:
     //    - To convert degrees to hourAngle : hourAngle = (degrees * Unit.deg) / Unit.hourAngle

@@ -35,11 +35,11 @@ public class LinearCombinationStore extends DataStore<Double> {
 
 	private static final long serialVersionUID = -2557496368888356380L;
 
-	private ArrayList<DataStore<?>> terms = new ArrayList<DataStore<?>>();
+	private ArrayList<DataStore<?>> terms = new ArrayList<>();
 
-	private ArrayList<Vector2D> coeffs = new ArrayList<Vector2D>();
+	private ArrayList<Vector2D> coeffs = new ArrayList<>();
 
-	private ArrayList<Double> indexScale = new ArrayList<Double>();
+	private ArrayList<Double> indexScale = new ArrayList<>();
 
 
 	public LinearCombinationStore(String name) {

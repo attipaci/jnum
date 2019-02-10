@@ -37,11 +37,11 @@ public class ProcessingQueue extends Thread {
 
 	private ExecutorService executor;
 
-	private Hashtable<Integer, Process> activeProcesses = new Hashtable<Integer, Process>();
+	private Hashtable<Integer, Process> activeProcesses = new Hashtable<>();
 	
 
 	public ProcessingQueue(int size) {
-		queue = new ArrayBlockingQueue<Entry>(size);
+		queue = new ArrayBlockingQueue<>(size);
 	}
 	
 
