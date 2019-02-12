@@ -317,6 +317,11 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         private double[] data;
 
         
+        
+        public Double1D() {}
+        
+        public Double1D(double[] data) { setData(data); }
+        
         @Override
         public Number getLowestCompareValue() { return Double.NEGATIVE_INFINITY; }
         
@@ -389,6 +394,10 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
   
         private float[] data;
 
+        
+        public Float1D() {}
+        
+        public Float1D(float[] data) { setData(data); }
         
         @Override
         public Number getLowestCompareValue() { return Float.NEGATIVE_INFINITY; }
@@ -464,6 +473,11 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         
         private long[] data;
 
+        
+        
+        public Long1D() {}
+        
+        public Long1D(long[] data) { setData(data); }
 
         @Override
         public Class<? extends Number> getElementType() {
@@ -521,6 +535,11 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
     
         private int[] data;
 
+        
+        
+        public Integer1D() {}
+        
+        public Integer1D(int[] data) { setData(data); }
 
         @Override
         public Class<? extends Number> getElementType() {
@@ -578,6 +597,11 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         
         private short[] data;
 
+        
+        
+        public Short1D() {}
+        
+        public Short1D(short[] data) { setData(data); }
 
         @Override
         public Class<? extends Number> getElementType() {
@@ -633,6 +657,11 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         
         private byte[] data;
 
+        
+        
+        public Byte1D() {}
+        
+        public Byte1D(byte[] data) { setData(data); }
 
         @Override
         public Class<? extends Number> getElementType() {

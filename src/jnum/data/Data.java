@@ -53,7 +53,8 @@ import nom.tam.fits.ImageHDU;
 import nom.tam.util.Cursor;
 
 public abstract class Data<IndexType extends Index<IndexType>>
-extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter.Entries {
+extends ParallelObject 
+implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter.Entries {
 
     static {
         Locale.setDefault(Locale.US);
@@ -72,8 +73,6 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     
     private Hashtable<String, Unit> localUnits;
     
-
-
 
     
     private boolean logNewData;
@@ -830,6 +829,30 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     }
     
     
+    public final double covarianceTo(final Data<IndexType> data) {
+        return smartFork(new ParallelPointOp.Sum<IndexType>() {
+            @Override
+            protected double getValue(IndexType point) {
+                if(!isValid(point)) return 0.0;
+                if(!data.isValid(point)) return 0.0;
+                return get(point).doubleValue() * data.get(point).doubleValue();
+            }
+        });     
+    }
+    
+    public final double correlationTo(final Data<IndexType> data) {
+        return covarianceTo(data) / Math.sqrt(covarianceTo(this) * data.covarianceTo(data));   
+    }
+    
+    public final void multiplyByComponentsOf(final Data<IndexType> data) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType point) {
+                set(point, get(point).doubleValue() * data.get(point).doubleValue());
+            }
+        });  
+    }
+    
     public final void add(final Data<IndexType> data) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -856,6 +879,7 @@ extends ParallelObject implements Verbosity, IndexedValues<IndexType>, Iterable<
     public final void subtract(final Data<IndexType> data) {
         addScaled(data, -1.0);
     }
+
 
 
   

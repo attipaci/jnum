@@ -35,7 +35,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
 
     public RegularData() {
-        reuseIpolData = new SplineSet<VectorType>(dimension());
+        reuseIpolData = new SplineSet<>(dimension());
         setInterpolationType(SPLINE);
     }
     
@@ -43,7 +43,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     @Override
     public RegularData<IndexType, VectorType> clone() {
         RegularData<IndexType, VectorType> clone = (RegularData<IndexType, VectorType>) super.clone();
-        clone.reuseIpolData = new SplineSet<VectorType>(dimension());  
+        clone.reuseIpolData = new SplineSet<>(dimension());  
         return clone;
     }
 
@@ -365,7 +365,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             public void init() {
                 super.init();
                 d = patch.getVectorInstance();
-                iPolData = new SplineSet<V>(dimension());
+                iPolData = new SplineSet<>(dimension());
             }
 
             @Override
@@ -521,7 +521,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         VectorType refIndex = getVectorInstance();
         center.toVector(refIndex);
 
-        return new ReferencedData<IndexType, VectorType>(neighbors, refIndex);
+        return new ReferencedData<>(neighbors, refIndex);
     }
 
 
@@ -539,7 +539,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         }
 
         Referenced<IndexType, VectorType> beam = antiAlias ? getGaussianBeam(scale) : null;        
-        resampleFrom(image, new Stretch<VectorType>(scale), beam, null);
+        resampleFrom(image, new Stretch<>(scale), beam, null);
     }
 
 
@@ -574,7 +574,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
         beam.smartFork(op);
 
-        return new ReferencedData<IndexType, VectorType>(beam, center);
+        return new ReferencedData<>(beam, center);
     }
 
 
@@ -691,12 +691,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
 
     public abstract class Interpolation extends ParallelPointOp.Simple<IndexType> {
-        private SplineSet<VectorType> splines = new SplineSet<VectorType>(dimension());
+        private SplineSet<VectorType> splines = new SplineSet<>(dimension());
 
         @Override
         protected Interpolation clone() {
             Interpolation clone = (Interpolation) super.clone();
-            clone.splines = new SplineSet<VectorType>(dimension());
+            clone.splines = new SplineSet<>(dimension());
             return clone;
         }
 

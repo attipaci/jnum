@@ -174,7 +174,7 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
     
        
     @Override
-    public final void multiplyByComponents(Coordinates<? extends Double> v) throws NonConformingException {
+    public final void multiplyByComponentsOf(Coordinates<? extends Double> v) throws NonConformingException {
         if(v.size() != 3) throw new NonConformingException("dot product with vector of different size.");
         scaleX(v.x());
         scaleY(v.y());

@@ -116,7 +116,7 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
     }
     
     @Override
-    public void multiplyByComponents(Coordinates<? extends Double> v) {
+    public void multiplyByComponentsOf(Coordinates<? extends Double> v) {
         for(int i=size(); --i >= 0; ) component[i] *= v.getComponent(i);
     }
     

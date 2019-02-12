@@ -128,7 +128,7 @@ public class Offset1D implements TrueVector<Double> {
     public void setDifference(TrueVector<? extends Double> a, TrueVector<? extends Double> b) { x = a.x() + b.x(); }
 
     @Override
-    public void multiplyByComponents(Coordinates<? extends Double> v) {
+    public void multiplyByComponentsOf(Coordinates<? extends Double> v) {
         x *= v.x();
     }
     

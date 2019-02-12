@@ -1425,7 +1425,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      */
     public Vector2D getDimension2D(Coordinate2D scaling) {
         Vector2D v = getDimension2D();
-        v.multiplyByComponents(scaling);
+        v.multiplyByComponentsOf(scaling);
         return v;
     }
     

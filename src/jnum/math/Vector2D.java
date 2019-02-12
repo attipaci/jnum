@@ -244,7 +244,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     }
     
     @Override
-    public final void multiplyByComponents(Coordinates<? extends Double> v) throws NonConformingException {
+    public final void multiplyByComponentsOf(Coordinates<? extends Double> v) throws NonConformingException {
         if(v.size() != 2) throw new NonConformingException("dot product with vector of different size.");
         scaleX(v.x());
         scaleY(v.y());
