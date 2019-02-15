@@ -235,7 +235,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
         if(tok < fromk) return null;
 
         final Observation2D ave = getPlaneTemplate().copy(false);
-
+        
         new ForkZ<Void>(fromk, tok) {
             @Override
             protected void processPlane(int k) {
@@ -252,7 +252,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
     
     @Override
     public Observation2D getMedianZ() { 
-        return getAverageZ(0, sizeZ());
+        return getMedianZ(0, sizeZ());
     }
 
 
@@ -263,7 +263,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
 
         if(tok < fromk) return null;
 
-        final Observation2D median = createPlane();
+        final Observation2D median = getPlaneTemplate().copy(false);
 
         median.new Fork<Void>() {
             private WeightedPoint[] sorter;

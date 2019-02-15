@@ -326,7 +326,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
         if(tok < fromk) return null;
 
-        final Image2D sum = Image2D.createType(getElementType(), sizeX(), sizeY());
+        final ImageType sum = newPlaneInstance();
 
         sum.new Fork<Void>() {
             @Override
@@ -352,7 +352,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
         if(tok < fromk) return null;
 
-        final Image2D sum = Image2D.createType(getElementType(), sizeX(), sizeY());
+        final ImageType sum = newPlaneInstance();
 
         sum.new Fork<Void>() {
             @Override
@@ -382,7 +382,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
         if(tok < fromk) return null;
 
-        final Image2D sum = Image2D.createType(getElementType(), sizeX(), sizeY());
+        final ImageType sum = newPlaneInstance();
 
         sum.new Fork<Void>() {
             private double[] sorter;

@@ -6,6 +6,8 @@
 
 	[BUG] {ArrayUtil} Some offset / scale methods were garbled. Fixed.
 
+	[FIX] {Map2D} editHeader() did not write FITS properties.
+
 	[FIX] Fixed a couple of issues found by FindBugs. 1: A bad if-else-if
 	branching in SofiaProcessingData, and 2: a bad check for equality 
 	between two Doubles.
@@ -26,6 +28,9 @@
 
 	[API] Projector2D and AstroProjector API made more robust, and 
 	intiutive (hopefully).
+
+	[CODE] {Data2D1...} Use newPlaneInstance() instead of new Image2D()
+	where possible.
 
 	[CODE] {ArrayUtil} Upgraded to use Java 8 streams.
 
