@@ -41,24 +41,23 @@ public class Doppler extends ColorScheme {
 		if(I > 1.0F) I = 1.0F;
 		if(I < 0.0F) I = 0.0F;
 		
-		float r, g, b;
-
-		if(I <= 0.15) {
-			b = 0.5F + I / 0.30F;
-			r = g = 0.0F;
+		float r = 0.0F, g = 0.0F, b = 0.0F;
+		
+		if(I < 0.25) {
+		    b = 1.0F;
+		    g = (float) ((0.25-I) / 0.25);
 		}
-		else if(I <= 0.5) {
-			b = 1.0F;
-			r = g = (I - 0.15F) / 0.35F;
+		else if(I < 0.5) {
+		    b = (float) Math.sqrt((0.5-I)/0.25);
 		}
-		else if(I <= 0.85) {
-			r = 1.0F;
-			b = g = (0.85F - I) / 0.35F;
+		else if(I < 0.75) {
+		    r = (float) Math.sqrt((I - 0.5)/0.25);
 		}
 		else {
-			r = 0.5F + (1.0F - I) / 0.30F;
-			b = g = 0.0F;
+		    r = 1.0F;
+		    g = (float) ((I-0.75) / 0.25);
 		}
+		
 
 		return ColorScheme.getRGB(r, g, b);	
 	}

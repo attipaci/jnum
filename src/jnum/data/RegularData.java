@@ -122,7 +122,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     // I(x) = I -> I' = I -> C = sum(wB2) / sum(wB)
     // I' = sum(wBI)/sum(wB)
     // rms = Math.sqrt(1 / sum(wB))
-    protected void getSmoothedValueAtIndex(final VectorType index, final RegularData<IndexType, VectorType> beam, final VectorType refIndex, 
+    public void getSmoothedValueAtIndex(final VectorType index, final RegularData<IndexType, VectorType> beam, final VectorType refIndex, 
             final IndexedValues<IndexType> weight, final SplineSet<VectorType> splines, final WeightedPoint result) {   
 
         final VectorType i0 = getVectorInstance();
