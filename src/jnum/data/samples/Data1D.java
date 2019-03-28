@@ -523,9 +523,12 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         plot.println("set style data " + style);  
     }
     
+    public String getPlotXValues() { return "1"; }
+    
+    public String getPlotYValues() { return "2"; }
     
     protected String getPlotCommand(String coreName) {
-        return "'" + coreName + ".dat' using 1:2 notitle";        
+        return "'" + coreName + ".dat' using " + getPlotXValues() + ":" + getPlotYValues() + " notitle";        
     }
     
 
