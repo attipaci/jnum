@@ -8,9 +8,8 @@
 
 	[FIX] {Map2D} editHeader() did not write FITS properties.
 
-	[FIX] Fixed a couple of issues found by FindBugs. 1: A bad if-else-if
-	branching in SofiaProcessingData, and 2: a bad check for equality 
-	between two Doubles.
+	[FIX] Fixed a couple of issues found by FindBugs. such as a bad check 
+	for equality between two Doubles.
 
 	[FIX] Steve Maher's fix for possible deadlock when ParallelTask 
 	encounters an Exception. 
