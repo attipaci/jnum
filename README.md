@@ -131,4 +131,4 @@ Finally, the parts that are heavily under construction at this point...
 
 -----------------------------------------------------------------------------
 
-Copyright (C) 2017 Attila Kovacs <attila[AT]sigmyne.com>
+Copyright (C) 2019 Attila Kovacs <attila[AT]sigmyne.com>
