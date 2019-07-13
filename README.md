@@ -16,17 +16,18 @@ started life inside the **crush** data reduction code
 (It's floating point FFTs on 1M points beat the C FFTW handily in my tests).
 
 **jnum** is not (yet) a fully stable code. It's API still continues to evolve
-(driven by **crush**), although there are signs of stabilization in many of 
-the Java subpackages within. Also, some parts have clearly received more 
-attention through the years as others. The javadoc markup is at best spotty at 
-this point, although classes, methods and arguments are generally named in a 
-self-explanatory manner. 
+(driven by [crush](https://github.com/attipaci/crush)), although there are 
+signs of stabilization in many of the Java subpackages within. Also, some parts
+have clearly received more attention through the years as others. The javadoc 
+markup is at best spotty at this point, although classes, methods and arguments
+are generally named in a self-explanatory manner. 
 
 There is more work to be done for sure. But, if you are willing to put up with 
 occasional bugs and API changes, it might just make your scientific Java 
 coding a breeze.
 
-The **jnum** package is dependent on the **nom.tam.fits** packages for
+The **jnum** package is dependent on the 
+[nom.tam.fits](https://github.com/nom-tam-fits/nom-tam-fits) packages for
 dealing with FITS files, also on GitHub 
 (https://github.com/nom-tam-fits/nom-tam-fits). 
 
