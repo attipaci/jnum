@@ -199,7 +199,14 @@ public class AngleFormat extends NumberFormat {
         String markers = new String(getMarkerChars(formatStyle));
 
         parser.skipWhiteSpaces();
-      
+        
+        if(!parser.hasMoreTokens()) return Double.NaN;
+
+        if(parser.peek() == '-') {
+            sign = -1;
+            parser.skip(1);
+        }
+        
 		for(int level = LEVEL_DEGREE; level <= LEVEL_SECOND && pos.getIndex() < source.length(); level++) {
 		    parser.skipWhiteSpaces();  
 		    
@@ -219,16 +226,15 @@ public class AngleFormat extends NumberFormat {
 	        // Top level parse errors will throw an exception....
 	        if(Double.isNaN(angle)) {
 	            angle = Double.parseDouble(source.substring(pos.getIndex(), to)) * getUnit(level);
-	            if(angle < 0.0) {
-	                angle *= -1.0;
-	                sign = -1;
-	            }
+	            if(angle < 0.0) throw new NumberFormatException("Unexpected extra negative sign.");
 	            pos.setIndex(to + 1);
 	        }
 	        // Sub-level parse error assume complete...
 	        else {
 	            try {
-	                angle += Double.parseDouble(source.substring(pos.getIndex(), to)) * getUnit(level);
+	                double x = Double.parseDouble(source.substring(pos.getIndex(), to)) * getUnit(level);
+	                if(x < 0) throw new NumberFormatException("Unexpected sub-level negative sign.");
+	                angle += x;
 	                pos.setIndex(to + 1);
 	            }
 	            catch(NumberFormatException e) { return sign * angle; }

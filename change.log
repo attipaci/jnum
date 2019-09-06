@@ -1,3 +1,6 @@
+	[BUG] AngleFormat parsing negative angles was incorrect. Fixed.
+
+
 0.30-1
 
 	[BUG] AstroTime.forFITSTimestamp(String) parsed only the date part
