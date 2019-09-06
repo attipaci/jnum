@@ -41,6 +41,7 @@ import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import jnum.math.Vector3D;
 import nom.tam.fits.Header;
+import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 
 
@@ -285,6 +286,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
         MapType representative = sizeZ() > 0 ? getPlane(0) : getPlaneTemplate();
         representative.editHeader(header);    
         super.editHeader(header);
+        header.addLine(new HeaderCard("WCSAXES", 3, "Number of WCS coordinate axes."));
     }
 
 }

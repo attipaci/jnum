@@ -229,7 +229,7 @@ public class AngleFormat extends NumberFormat {
 	            if(angle < 0.0) throw new NumberFormatException("Unexpected extra negative sign.");
 	            pos.setIndex(to + 1);
 	        }
-	        // Sub-level parse error assume complete...
+	        // Sub-level parse error: assume complete...
 	        else {
 	            try {
 	                double x = Double.parseDouble(source.substring(pos.getIndex(), to)) * getUnit(level);

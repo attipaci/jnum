@@ -208,7 +208,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
         // If the parsing does not provide a specific epoch, then assume that the user knows what they're
         // doing and set the epoch of this object to the desired value prior to parsing...
         // Thus, preserve the original epoch...
-        if(epoch == null) epoch = origEpoch;
+        if(epoch == null) epoch = origEpoch == null ? CoordinateEpoch.J2000 : origEpoch;
     }
     
  
