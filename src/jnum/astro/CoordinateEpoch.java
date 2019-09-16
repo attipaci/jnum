@@ -109,7 +109,10 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 
     public static CoordinateEpoch fromHeader(Header header, String alt) {    
         double year = header.getDoubleValue("EQUINOX" + alt, Double.NaN);    
-        String system = header.getStringValue("RADESYS").toLowerCase();
+        String system = header.getStringValue("RADESYS");
+        
+        if(system == null) system = "";
+        else system.toUpperCase();
         
         if(system.startsWith("FK4")) return new BesselianEpoch(Double.isNaN(year) ? 1950.0 : year);
         else if(year < 1984.0) return new BesselianEpoch(year);
