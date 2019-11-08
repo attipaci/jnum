@@ -524,14 +524,16 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         // Use new IBMAJ/IBMIN if available
         // Otherwise calculate it based on BMAJ, BMIN
         // Else, use old BEAM, or calculate based on old RESOLUTN
+        underlyingBeam = new Gaussian2D();
+        
         if(header.containsKey(underlyingBeamFitsID + "BMAJ")) 
             underlyingBeam.parseHeader(header, underlyingBeamFitsID, getDefaultGridUnit().value());
-        else if(header.containsKey("BEAM")) 
-            underlyingBeam.set(FitsToolkit.getCommentedUnitValue(header, "BEAM", Double.NaN, getDisplayGridUnit().value()));
         else if(header.containsKey("BMAJ")) {
             underlyingBeam.parseHeader(header, "", getDefaultGridUnit().value());
             underlyingBeam.deconvolveWith(smoothingBeam);
         }
+        else if(header.containsKey("BEAM")) 
+            underlyingBeam.set(FitsToolkit.getCommentedUnitValue(header, "BEAM", Double.NaN, getDisplayGridUnit().value()));
         else if(header.containsKey("RESOLUTN")) {
             double resolution = FitsToolkit.getCommentedUnitValue(header, "RESOLUTN", Double.NaN, getDisplayGridUnit().value());
             underlyingBeam.set(resolution > smoothingBeam.getMajorFWHM() ? Math.sqrt(resolution * resolution - smoothingBeam.getMajorFWHM() * smoothingBeam.getMinorFWHM()) : 0.0);

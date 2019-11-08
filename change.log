@@ -1,5 +1,8 @@
+0.30-2
 	
 	[BUG] {AngleFormat} parsing negative angles was incorrect. Fixed.
+
+	[FIX] {Grid2D} FITS header writing/parsing fixes.
 
 	[FIX] {CoordinateEpoch} Fix case mitmatch in comparison.
 
@@ -7,6 +10,9 @@
 	not present.
 
 	[FIX] {AbstractMap2D1} Write WCSAXES=3 in FITS headers.
+
+	[TWEAK] {Observation2D+} deperated accumulate() call with weight only.
+	Instead call with gain and weight.
 
 	[TWEAK] {PrecessingCoordinates} Default to J2000 when parsing 
 	coordinates with no epoch given in String or defined in parsing

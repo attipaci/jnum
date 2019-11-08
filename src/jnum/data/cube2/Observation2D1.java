@@ -45,8 +45,8 @@ import nom.tam.fits.FitsException;
 
 public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Observations<Data3D>, IndexedObservations<Index3D> {
     private Class<? extends Number> weightType;
-    
-    
+
+
     public Observation2D1(Class<? extends Number> dataType, Class<? extends Number> weightType, int flagType) {
         super(dataType, flagType);
         this.weightType = weightType;
@@ -142,8 +142,13 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
         };
     }
 
-    public void accumulate(final Observation2D1 cube, final double weight) {
-        for(int k=sizeZ(); --k >= 0; ) getPlane(k).accumulate(cube.getPlane(k), weight);
+    public final void accumulate(final Observation2D1 cube) {
+        accumulate(cube, 1.0, 1.0);
+    }
+
+
+    public void accumulate(final Observation2D1 cube, final double gain, final double weight) {
+        for(int k=sizeZ(); --k >= 0; ) getPlane(k).accumulate(cube.getPlane(k), gain, weight);
     }
 
 
@@ -220,7 +225,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
     public double exposureAt(Index3D index) {
         return getPlane(index.k()).exposureAt(index.i(), index.j());
     }
-   
+
 
     @Override
     public Observation2D getAverageZ() { 
@@ -235,7 +240,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
         if(tok < fromk) return null;
 
         final Observation2D ave = getPlaneTemplate().copy(false);
-        
+
         new ForkZ<Void>(fromk, tok) {
             @Override
             protected void processPlane(int k) {
@@ -249,7 +254,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
 
         return ave;
     }
-    
+
     @Override
     public Observation2D getMedianZ() { 
         return getMedianZ(0, sizeZ());
@@ -278,7 +283,7 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
                 for(int k=fromk; k < tok; k++) {
                     final Observation2D plane = getPlane(k);
                     if(!plane.isValid(i, j)) continue;
-                    
+
                     final WeightedPoint p = sorter[m++];
                     p.setValue(plane.get(i, j).doubleValue());
                     p.setWeight(plane.weightAt(i, j));
@@ -297,8 +302,8 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
     }
 
 
-    
-    
+
+
     @Override
     public WeightedPoint getMean() { return getWeightedMean(getWeights()); }
 
@@ -309,18 +314,18 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
     public final void memCorrect(final Values3D model, final double lambda) {
         memCorrect(model, this.getNoise(), lambda);
     } 
-    
 
-    
+
+
     @Override
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {   
         ArrayList<BasicHDU<?>> hdus = super.getHDUs(dataType);
-  
+
         BasicHDU<?> hdu = getExposures().createHDU(dataType);
         FitsToolkit.setName(hdu, "Exposure");
         editHeader(hdu.getHeader());
         hdus.add(hdu);
-        
+
         hdu = getNoise().createHDU(dataType);
         editHeader(hdu.getHeader());
         FitsToolkit.setName(hdu, "Noise");
@@ -334,5 +339,5 @@ public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Obs
         return hdus;
     }
 
-    
+
 }

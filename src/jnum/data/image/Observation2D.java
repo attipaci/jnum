@@ -128,9 +128,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     @Override
     public boolean isValid(int i, int j) {
         if(!super.isValid(i, j)) return false;
-        final double w = weightAt(i, j);
-        if(Double.isNaN(w)) return false;
-        return isZeroWeightValid ? w >= 0.0 : w > 0.0;
+        return isZeroWeightValid ? weightAt(i, j) >= 0.0 : weightAt(i, j) > 0.0;
     }
     
     @Override
@@ -355,17 +353,20 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         super.crop(from, to);
     }
 
-  
+
+    public final void accumulate(final Observation2D image) {
+        accumulate(image, 1.0, 1.0);
+     }
     
-    public void accumulate(final Observation2D image, final double weight) {
+    
+    public void accumulate(final Observation2D image, final double gain, final double weight) {
         new Fork<Void>() {
             @Override
             protected void process(int i, int j) {
-                if(image.isValid(i, j)) accumulateAt(i, j, image.get(i, j).doubleValue(), 1.0, weight * image.weightAt(i, j), image.exposureAt(i, j));
+                if(image.isValid(i, j)) accumulateAt(i, j, image.get(i, j).doubleValue(), gain, weight * image.weightAt(i, j), image.exposureAt(i, j));
             }
         }.process();
     }
-    
     
     @Override
     public void endAccumulation() {
