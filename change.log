@@ -1,3 +1,13 @@
+0.30-3	
+
+	[TWEAK] {BufferedRandom} Simplified, with reduced initialization load 
+	and storage requirement.
+	
+	[TWEAK] {Data} Add static option for controlling whether or not
+	standatd long FITS keywords (using CONTINUE) are used when constructing
+	FITS headers, or if using the CRUSH standard instead.
+
+
 0.30-2
 	
 	[BUG] {AngleFormat} parsing negative angles was incorrect. Fixed.
@@ -193,7 +203,7 @@
 0.20-4
 
 	[FIX] NaN values from source fitting no longer written to the FITS
-	neader where they can produce unhandled exceptions...
+	header where they can produce unhandled exceptions...
 
 
 0.20-3

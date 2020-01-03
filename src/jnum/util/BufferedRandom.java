@@ -39,7 +39,7 @@ public class BufferedRandom extends Random {
     private static final long serialVersionUID = -8696559579537431957L;
     
 	/** The buffer. */
-	private int[][] buffer;
+	private int[] buffer;
 	
 	/**
 	 * Instantiates a new buffered random generator with a default number of buffered elements.
@@ -54,8 +54,8 @@ public class BufferedRandom extends Random {
 	 * @param size the number of random numbers buffered.
 	 */
 	public BufferedRandom(int size) {
-		buffer = new int[32][size];
-		for(int bits=1; bits<32; bits++) for(int i=0; i<size; i++) buffer[bits][i] = super.next(bits);	
+		buffer = new int[size];
+		for(int i=0; i<size; i++) buffer[i] = super.next(32);	
 	}
 	
 	/**
@@ -70,9 +70,16 @@ public class BufferedRandom extends Random {
 	 */
 	@Override
 	public int next(int bits) {
-		final int i = (int) (buffer.length * Math.random());
-		final int value = buffer[bits][i];
-		buffer[bits][i] = super.next(bits);
+		final int mask = (int) ((1L<<bits) - 1L);
+	    
+		/* Choose a slot from which to pick a random number */
+	    final int i = (int) (buffer.length * Math.random());
+		final int value = buffer[i] & mask;
+		
+		/* Replace the used bits with a new value */
+		buffer[i] &= ~mask;
+		buffer[i] |= super.next(bits);
+		
 		return value;
 	}
 

@@ -905,7 +905,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
     public abstract Object getCore();
        
     public Fits createFits(Class<? extends Number> dataType) throws FitsException {
-        FitsFactory.setLongStringsEnabled(true);
+        FitsFactory.setLongStringsEnabled(standardLongFitsKeywords);
         FitsFactory.setUseHierarch(true);
         Fits fits = new Fits(); 
         
@@ -1004,5 +1004,8 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             this.to = to;
         }
     }
+    
+    
+    public static boolean standardLongFitsKeywords = true;
   
 }
