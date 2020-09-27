@@ -125,7 +125,7 @@ public abstract class OldCountsModel implements Parametric<Double> {
         model.setVerbose(false);
 
         double imageFWHM = map.getUnderlyingBeam().getCircularEquivalentFWHM();
-        double fullArea = (map.sizeX() * map.getResolution().x() + imageFWHM) * (map.sizeY() * map.getResolution().y() + imageFWHM);
+        double fullArea = (map.sizeU() * map.getResolution().x() + imageFWHM) * (map.sizeV() * map.getResolution().y() + imageFWHM);
 
         // To avoid excessive overlapping (unless counts warrant it) put one source for every 10 beams...
         final int n = (int)Math.ceil(0.3 * fullArea / model.getImageBeamArea());
@@ -165,7 +165,7 @@ public abstract class OldCountsModel implements Parametric<Double> {
             model.level(true);
             double[][] s2n = model.getS2N();
 
-            for(int i=0; i<model.sizeX(); i++) for(int j=0; j<model.sizeY(); j++) if(map.isUnflagged(i,j)) {
+            for(int i=0; i<model.sizeU(); i++) for(int j=0; j<model.sizeV(); j++) if(map.isUnflagged(i,j)) {
 
                 for(int k=0; k<s2nCounts.length; k++, points++) {
 
@@ -215,8 +215,8 @@ public abstract class OldCountsModel implements Parametric<Double> {
 
     public void createRandomSource(AstroMap image, double flux) {
         double fwhm = image.getImageBeam().getCircularEquivalentFWHM() / Math.sqrt(image.getPixelArea());
-        double i0 = (image.sizeX() + fwhm) * random.nextDouble() - fwhm/2.0;
-        double j0 = (image.sizeY() + fwhm) * random.nextDouble() - fwhm/2.0;
+        double i0 = (image.sizeU() + fwhm) * random.nextDouble() - fwhm/2.0;
+        double j0 = (image.sizeV() + fwhm) * random.nextDouble() - fwhm/2.0;
 
         image.addRegion(image.dXofIndex(i0), image.dYofIndex(j0), image.getImageFWHM(), flux/Unit.jansky * image.janskyPerBeam.evaluate());
     }
@@ -483,7 +483,7 @@ public abstract class OldCountsModel implements Parametric<Double> {
 
         double imageFWHM = map.getImageBeam().getCircularEquivalentFWHM();
         
-        double fullArea = (map.sizeX() * map.getResolution().x() + imageFWHM) * (map.sizeY() * map.getResolution().y() + imageFWHM);
+        double fullArea = (map.sizeU() * map.getResolution().x() + imageFWHM) * (map.sizeV() * map.getResolution().y() + imageFWHM);
 
          
         // Insert the desired number of sources...
@@ -495,8 +495,8 @@ public abstract class OldCountsModel implements Parametric<Double> {
             double binCounts = counts[i] * fullArea / map.getArea();      
 
             for(int added=0; added < binCounts; added++, N++) {
-                double x = (map.sizeX() + imageFWHM) * random.nextDouble() - 0.5 * imageFWHM;
-                double y = (map.sizeY() + imageFWHM) * random.nextDouble() - 0.5 * imageFWHM;
+                double x = (map.sizeU() + imageFWHM) * random.nextDouble() - 0.5 * imageFWHM;
+                double y = (map.sizeV() + imageFWHM) * random.nextDouble() - 0.5 * imageFWHM;
                 boolean addSource =  (added+1) < binCounts ? true : random.nextDouble() < binCounts - added;
                 if(addSource) sim.addRegion(sim.dXofIndex(x), sim.dYofIndex(y), sim.getImageFWHM(), peak);
             }
@@ -519,12 +519,12 @@ public abstract class OldCountsModel implements Parametric<Double> {
             AstroMap noise = (AstroMap) map.copy(false);
             noise.reset(true);
            
-            for(int i=0; i<sim.sizeX(); i++) for(int j=0; j<sim.sizeY(); j++) if(noise.isUnflagged(i, j))
+            for(int i=0; i<sim.sizeU(); i++) for(int j=0; j<sim.sizeV(); j++) if(noise.isUnflagged(i, j))
                 noise.set(i, j, noiseScale.value() * random.nextGaussian() / Math.sqrt(noise.weightAt(i, j)));
 
             noise.smoothTo(map.getUnderlyingBeam().getCircularEquivalentFWHM());
 
-            for(int i=0; i<sim.sizeX(); i++) for(int j=0; j<sim.sizeY(); j++) if(noise.isUnflagged(i,j)) 
+            for(int i=0; i<sim.sizeU(); i++) for(int j=0; j<sim.sizeV(); j++) if(noise.isUnflagged(i,j)) 
                 sim.set(i, j, sim.get(i, j) + noise.get(i, j));
 
         }
@@ -544,7 +544,7 @@ public abstract class OldCountsModel implements Parametric<Double> {
             AstroMap noise = (AstroMap) sim.copy();
             jackknife.regridTo(noise);
             System.err.println("Adding jackknifed noise to map...");
-            for(int i=0; i<sim.sizeX(); i++) for(int j=0; j<sim.sizeY(); j++) if(sim.isUnflagged(i,j))
+            for(int i=0; i<sim.sizeU(); i++) for(int j=0; j<sim.sizeV(); j++) if(sim.isUnflagged(i,j))
                 sim.set(i, j, sim.get(i, j) + noise.get(i, j));
         }
 
@@ -560,7 +560,7 @@ public abstract class OldCountsModel implements Parametric<Double> {
         Histogram histogram = new Histogram(resolution);
 
         double[][] s2n = map.getS2N();
-        for(int i=0; i<map.sizeX(); i++) for(int j=0; j<map.sizeY(); j++) if(map.isUnflagged(i, j)) {
+        for(int i=0; i<map.sizeU(); i++) for(int j=0; j<map.sizeV(); j++) if(map.isUnflagged(i, j)) {
             histogram.add(s2n[i][j]);
         }
 

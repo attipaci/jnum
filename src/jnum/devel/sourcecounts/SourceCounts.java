@@ -52,7 +52,7 @@ public class SourceCounts {
         double sumw = 0.0;
         int n= 0;
         
-        for(int i=0; i<map.sizeX(); i++) for(int j=0; j<map.sizeY(); j++) if(map.isUnflagged(i, j)) {
+        for(int i=0; i<map.sizeU(); i++) for(int j=0; j<map.sizeV(); j++) if(map.isUnflagged(i, j)) {
             sumw += 1.0 / (rms[i][j] * rms[i][j]);
             n++;
         }

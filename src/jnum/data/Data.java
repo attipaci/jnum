@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,6 +26,7 @@ package jnum.data;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -59,25 +60,25 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
     static {
         Locale.setDefault(Locale.US);
     }
-    
-   
+
+
     private Number blankingValue;
 
     private boolean isVerbose;
 
     private int interpolationType;    
-  
+
     private Unit unit;  
 
     private ArrayList<String> history;
-    
-    private Hashtable<String, Unit> localUnits;
-    
 
-    
+    private Hashtable<String, Unit> localUnits;
+
+
+
     private boolean logNewData;
- 
-    
+
+
     public Data() { 
         setVerbose(false);
         setBlankingValue(Double.NaN);
@@ -85,34 +86,34 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         setDefaultUnit();
         logNewData = true;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = super.hashCode() ^ getInterpolationType() ^ getBlankingValue().hashCode(); 
         if(getUnit() != null) hash ^= getUnit().hashCode();
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null) return false;
         if(!getClass().isAssignableFrom(o.getClass())) return false;
-        
+
         @SuppressWarnings("unchecked")
         Data<IndexType> data = (Data<IndexType>) o;
-             
+
         if(getInterpolationType() != data.getInterpolationType()) return false;
         if(!Util.equals(getBlankingValue(), data.getBlankingValue())) return false;
         if(!Util.equals(getUnit(), data.getUnit())) return false;
-         
+
         return contentEquals(data);
     }
-    
+
 
     public boolean contentEquals(final Data<IndexType> data) {   
         if(!getSizeString().equals(data.getSizeString())) return false;
-        
+
         PointOp.Simple<IndexType> comparison = new PointOp.Simple<IndexType>() {
             @Override
             public void process(IndexType index) {
@@ -120,32 +121,32 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
                 if(!get(index).equals(data.get(index))) exception = new IllegalStateException("Mismatched content");
             }
         };
-        
+
         loop(comparison);
         if(comparison.exception != null) return false;
 
         return true;
     }
-  
-    
+
+
     @SuppressWarnings("unchecked")
     @Override
     public Data<IndexType> clone() {
         Data<IndexType> clone = (Data<IndexType>) super.clone();
         if(history != null) clone.history = (ArrayList<String>) history.clone();
-        
+
         if(localUnits != null) {
             clone.localUnits = new Hashtable<>(localUnits.size());
             clone.localUnits.putAll(localUnits);
         }
-         
+
         clone.logNewData = true;
-        
+
         return clone;
     }
-   
-    
-    
+
+
+
     @Override
     public final boolean isVerbose() { return isVerbose; }
 
@@ -158,13 +159,13 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
     public void keepHistory(boolean value) {
         if(!value) history = null;
         else if(history == null) history = new ArrayList<>();
-        
+
     }
-    
+
     public void clearHistory() {
         if(history != null) history.clear();
     }
-    
+
     public void addHistory(String entry) {
         if(history == null) return;
         history.add(entry); 
@@ -176,8 +177,8 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         history.addAll(entries);
     }
 
-    
-    
+
+
 
     public void addLocalUnit(Unit u) {
         if(localUnits == null) localUnits = new Hashtable<>();
@@ -194,16 +195,16 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
     public Hashtable<String, Unit> getLocalUnits() { return localUnits; }
 
 
-    
+
 
     public final Number getBlankingValue() {
         return blankingValue;
     }
 
-    
+
     public final void setBlankingValue(final Number value) {
-         
-   
+
+
         // Replace old blanking values in image with the new value, as needed...
         if(blankingValue != null) if(!blankingValue.equals(value)) {
             smartFork(new ParallelPointOp.Simple<IndexType>() {
@@ -212,32 +213,32 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
                 public void process(IndexType index) {
                     if(blankingValue.equals(get(index))) set(index, value);
                 }
-                
+
             });
         }
-        
+
         blankingValue = (value == null) ? Double.NaN : value;    
 
     }
 
-    
 
-    
+
+
     @Override
     public Number getLowestCompareValue() { return Long.MIN_VALUE; }
-    
+
     @Override
     public Number getHighestCompareValue() { return Long.MAX_VALUE; }
-    
-    
+
+
     @Override
     public int compare(Number a, Number b) {
         if(a.longValue() == b.longValue()) return 0;
         return a.longValue() < b.longValue() ? -1 : 1;
     }
-   
 
-  
+
+
 
     public boolean isValid(Number value) {
         return !value.equals(blankingValue);
@@ -248,17 +249,17 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
 
     public void setInterpolationType(int value) { this.interpolationType = value; }
 
-    
-    
+
+
     protected void setDefaultUnit() { setUnit(Unit.unity); }
-    
+
     public Unit getUnit() {
         return unit;
     }
 
     public void setUnit(Unit u) { this.unit = u; }
-    
-    
+
+
     public void setUnit(String spec) {
         setUnit(spec, getLocalUnits());
     }
@@ -268,12 +269,12 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         u.parse(spec, extraBaseUnits);
         setUnit(u); 
     }
-    
-    
+
+
     protected void silentNextNewData() {
         logNewData = false;
     }
-    
+
     protected void recordNewData(String detail) {
         if(!logNewData) logNewData = false;
         else {
@@ -281,39 +282,39 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             addHistory("set new image " + getSizeString() + (detail == null ? "" : " " + detail));
         }
     }
-     
+
     @Override
     public abstract DataCrawler<Number> iterator();
- 
+
     public final <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op) {
         return loop(op, getIndexInstance(), getSize());
     }
-    
+
     public final <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op) {
         return loopValid(op, getIndexInstance(), getSize());
     }
-    
+
     public abstract <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
-    
+
     public abstract <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op, IndexType from, IndexType to);
-    
-    
+
+
     public final <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op) {
         return fork(op, getIndexInstance(), getSize());
     }
-    
+
     public final <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
         return forkValid(op, getIndexInstance(), getSize());
     }
-    
+
     public abstract <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
-    
+
     public abstract <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to);
-   
+
     public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op) {
         return smartFork(op, getIndexInstance(), getSize());
     }
-    
+
     public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to) {
         if(getParallel() < 2) return loop(op, from, to);
         IndexType span = getIndexInstance();
@@ -321,11 +322,11 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loop(op, from, to);
         return fork(op, from, to);
     }
-    
+
     public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op) {
         return smartForkValid(op, getIndexInstance(), getSize());
     }
-    
+
     public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to) {
         if(getParallel() < 2) return loopValid(op, from, to);
         IndexType span = getIndexInstance();
@@ -333,13 +334,13 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loopValid(op, from, to);
         return forkValid(op, from, to);  
     }
-    
-    
+
+
     /**
      * 
      * @return a instance of the index type, initialized to zeroes.
      */
-     
+
     @Override
     public final boolean conformsTo(IndexedValues<IndexType> data) { return conformsTo(data.getSize()); }
 
@@ -347,17 +348,17 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
     public final boolean conformsTo(IndexType size) {
         return getSize().equals(size);
     }
-    
+
     public abstract Number getValid(final IndexType index, final Number defaultValue);
-    
+
     public abstract boolean isValid(IndexType index);
-    
+
     public abstract void discard(IndexType index);
-    
+
     public abstract String toString(IndexType index);
-   
-   
-    
+
+
+
     public final void clear() {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -366,7 +367,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         clearHistory();
         addHistory("clear " + getSizeString());
     }
-    
+
     public final void fill(final Number value) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -375,7 +376,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         clearHistory();
         addHistory("fill " + getSizeString() + " with " + value);
     }
-    
+
     public final void add(final Number value) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -383,7 +384,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         });
         addHistory("add " + value);
     }
-    
+
     public void scale(final double factor) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -391,7 +392,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         });
         addHistory("scale by " + factor);
     }
-    
+
     public final void validate() {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -399,7 +400,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         });
         addHistory("validate");
     }
-    
+
 
     public void validate(final Validating<IndexType> validator) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
@@ -408,7 +409,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         });
         addHistory("validate via " + validator);
     }
-    
+
     public final void discardRange(final Range discard) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -417,7 +418,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }
         });
     }
-    
+
     public final void restrictRange(final Range keep) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -426,7 +427,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }
         });
     }
-   
+
     public final void paste(final Data<IndexType> source, boolean report) {
         if(source == this) return;
 
@@ -441,27 +442,29 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         if(report) addHistory("pasted new content: " + source.getSizeString());
     }
 
-    
-    
+
+
     public abstract void despike(double level);
-      
+
     public abstract String getInfo();
-    
-    
-      
+
+    public boolean isEmpty() {
+        return countPoints() == 0;
+    }
+
     public int countPoints() {
         return smartForkValid(new ParallelPointOp.ElementCount<Number>()).intValue();
     }
-    
+
     public Number getMin() {
         return smartForkValid(new ParallelPointOp<Number, Number>() {
             Number min;
-            
+
             @Override
             protected void init() {
                 min = getHighestCompareValue();
             }
-            
+
             @Override
             public final void process(Number point) {
                 if(compare(point, min) < 0) min = point;
@@ -471,7 +474,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             public Number getResult() {
                 return min;
             }
-    
+
             @Override
             public void mergeResult(Number localMin) {
                 if(compare(localMin, min) < 0) min = localMin; 
@@ -482,12 +485,12 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
     public Number getMax() {
         return smartForkValid(new ParallelPointOp<Number, Number>() {
             Number max;
-            
+
             @Override
             protected void init() {
                 max = getLowestCompareValue();
             }
-            
+
             @Override
             public final void process(Number point) {
                 if(compare(point, max) > 0) max = point;
@@ -497,23 +500,23 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             public Number getResult() {
                 return max;
             }
-    
+
             @Override
             public void mergeResult(Number localMax) {
                 if(compare(localMax, max) > 0) max = localMax; 
             }    
         });
     }
-    
+
     public Range getRange() {
         return smartForkValid(new ParallelPointOp<Number, Range>() {
             Range range;
-            
+
             @Override
             protected void init() {
                 range = new Range();
             }
-            
+
             @Override
             public final void process(Number point) {
                 range.include(point.doubleValue());
@@ -523,14 +526,14 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             public Range getResult() {
                 return range;
             } 
-            
+
             @Override
             public void mergeResult(Range localRange) {
                 range.include(localRange);
             }  
         });
     }
-    
+
 
 
     /**
@@ -545,7 +548,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         return smartFork(new ParallelPointOp<IndexType, IndexType>() {
             private IndexType minIndex;
             private Number min;
-          
+
             @Override
             protected void init() {
                 minIndex = null;
@@ -558,14 +561,14 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
                 if(compare(get(index), min) >= 0) return;
                 min = get(index);
                 minIndex = copyOfIndex(index);
-                
+
             }
 
             @Override
             public IndexType getResult() {
                 return minIndex;
             }
-            
+
             @Override
             public void mergeResult(IndexType localMinIndex) {
                 if(minIndex == null) minIndex = localMinIndex;
@@ -574,8 +577,8 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }            
         });
     }
-      
-    
+
+
     /**
      * Return the index of the lowest value.
      * If there are multiple points with the same minimum value, it is undefined (and possibly random) whose 
@@ -588,7 +591,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         return smartFork(new ParallelPointOp<IndexType, IndexType>() {
             private IndexType maxIndex;
             private Number max;
-          
+
             @Override
             protected void init() {
                 maxIndex = null;
@@ -601,14 +604,14 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
                 if(compare(get(index), max) <= 0) return;
                 max = get(index);
                 maxIndex = copyOfIndex(index);
-                
+
             }
 
             @Override
             public IndexType getResult() {
                 return maxIndex;
             }
-            
+
             @Override
             public void mergeResult(IndexType localMaxIndex) {
                 if(maxIndex == null) maxIndex = localMaxIndex;
@@ -617,8 +620,8 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }            
         });
     }
-    
-    
+
+
     /**
      * Return the index of the datum with the largest absolute deviation from zero.
      * Uses cast to double, so may not work perfectly on long types. If there are multiple points with the
@@ -631,7 +634,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         return smartFork(new ParallelPointOp<IndexType, IndexType>() {
             private IndexType maxIndex;
             private Number max;
-          
+
             @Override
             protected void init() {
                 maxIndex = null;
@@ -644,14 +647,14 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
                 if(compare(get(index), max) <= 0) return;
                 max = Math.abs(get(index).doubleValue());
                 maxIndex = copyOfIndex(index);
-                
+
             }
 
             @Override
             public IndexType getResult() {
                 return maxIndex;
             }
-            
+
             @Override
             public void mergeResult(IndexType localMaxIndex) {
                 if(maxIndex == null) maxIndex = localMaxIndex;
@@ -666,7 +669,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         add(-level);
         return level;
     }
-    
+
     public WeightedPoint getMean() {
         return smartForkValid(new ParallelPointOp.Average<Number>() {
             @Override
@@ -680,7 +683,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }  
         });
     }
-    
+
     public final WeightedPoint getWeightedMean(final IndexedValues<IndexType> weights) {
         return smartFork(new ParallelPointOp.Average<IndexType>() {
             @Override
@@ -695,74 +698,74 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }  
         });
     }
-    
+
     public WeightedPoint getMedian() {
         final double[] temp = getValidSortingArray();
         if(temp.length == 0) return new WeightedPoint(Double.NaN, 0.0);
         return new WeightedPoint(Statistics.Inplace.median(temp, 0, temp.length), temp.length);      
     }
-    
+
     public final WeightedPoint getWeightedMedian(final IndexedValues<IndexType> weights) {   
         final WeightedPoint[] temp = getValidSortingArray(weights);
         if(temp.length == 0) return new WeightedPoint(Double.NaN, 0.0);
         return Statistics.Inplace.median(temp, 0, temp.length);      
     }
-    
+
     public double select(double fraction) {
         if(fraction == 0.0) return getMin().doubleValue();
         else if(fraction == 1.0) return getMax().doubleValue();
-        
+
         final double[] temp = getValidSortingArray();
         if(temp.length == 0) return Double.NaN;
         return Statistics.Inplace.select(temp, fraction, 0, temp.length);
     }
-    
+
 
     private double[] getValidSortingArray() {    
         final double[] sorter = new double[countPoints()];
-        
+
         if(sorter.length == 0) return sorter;
-        
+
         loopValid(new PointOp.Simple<Number>() {
             private int k;
-            
+
             @Override
             protected void init() {
                 k = 0;
             }
-            
+
             @Override
             public void process(Number point) {
                 sorter[k++] = point.doubleValue();
             }   
         });
-           
+
         return sorter;
     }
-    
+
     private WeightedPoint[] getValidSortingArray(final IndexedValues<IndexType> weights) {    
         final WeightedPoint[] sorter = new WeightedPoint[countPoints()];
-         
+
         if(sorter.length == 0) return sorter;
-        
+
         loop(new PointOp.Simple<IndexType>() {
             private int k;
-            
+
             @Override
             protected void init() {
                 k = 0;
             }
-            
+
             @Override
             public void process(IndexType index) {
                 if(!isValid(index)) return;
                 sorter[k++] = new WeightedPoint(get(index).doubleValue(), weights.get(index).doubleValue());
             }   
         });
-           
+
         return sorter;
     }
-   
+
     public final double getRMS(boolean isRobust) {
         return isRobust ? getRobustRMS() : getRMS();
     }
@@ -770,9 +773,9 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
     public final double getVariance(boolean isRobust) {
         return isRobust ? getRobustVariance() : getVariance();
     }
-   
+
     public double getRMS() { return Math.sqrt(getVariance()); }
-    
+
     public double getVariance() {
         return smartForkValid(new ParallelPointOp.Average<Number>() {
             @Override
@@ -787,18 +790,18 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         }).value();     
     }
 
-    
+
     public double getRobustRMS() { return Math.sqrt(getRobustVariance()); }
-    
+
     public double getRobustVariance() {
         final double[] var = getValidSortingArray();
         if(var.length == 0) return Double.NaN;
-        
+
         for(int i=var.length; --i >= 0; ) var[i] *= var[i];
         return Statistics.Inplace.median(var) / Statistics.medianNormalizedVariance;
     }
 
-    
+
     public double getSum() {
         return smartForkValid(new ParallelPointOp.Sum<Number>() {
             @Override
@@ -807,18 +810,18 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }
         });
     }
-    
-    
+
+
     public double getAbsSum() {
         return smartForkValid(new ParallelPointOp.Sum<Number>() {
             @Override
             public final double getValue(Number point) {
-               return point.doubleValue();
+                return point.doubleValue();
             }   
         });
     }
-    
-    
+
+
     public double getSquareSum() {  
         return smartForkValid(new ParallelPointOp.Sum<Number>() {
             @Override
@@ -827,8 +830,8 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }        
         });      
     }
-    
-    
+
+
     public final double covarianceTo(final Data<IndexType> data) {
         return smartFork(new ParallelPointOp.Sum<IndexType>() {
             @Override
@@ -839,11 +842,11 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }
         });     
     }
-    
+
     public final double correlationTo(final Data<IndexType> data) {
         return covarianceTo(data) / Math.sqrt(covarianceTo(this) * data.covarianceTo(data));   
     }
-    
+
     public final void multiplyByComponentsOf(final Data<IndexType> data) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -852,7 +855,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             }
         });  
     }
-    
+
     public final void add(final Data<IndexType> data) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -860,7 +863,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
                 if(data.isValid(index)) add(index, data.get(index));
             }      
         });
-        
+
         addHistory("added " + getClass().getSimpleName());
     }
 
@@ -872,7 +875,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
                 if(data.isValid(index)) add(index, scaling * data.get(index).doubleValue());
             }      
         });
-       
+
         addHistory("added scaled " + getClass().getSimpleName() + " (" + scaling + "x).");
     }
 
@@ -882,39 +885,96 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
 
 
 
-  
 
-    
+
+
     // TODO Make default method in Observations
     public void memCorrect(final IndexedValues<IndexType> model, final IndexedValues<IndexType> noise, final double lambda) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
 
-         @Override
-         public void process(IndexType index) {
-             if(isValid(index)) {
-                 final double noiseValue = noise.get(index).doubleValue();
-                 final double target = model == null ? 0.0 : model.get(index).doubleValue();
-                 final double memValue = ExtraMath.hypot(get(index).doubleValue(), noiseValue) / ExtraMath.hypot(target, noiseValue);
-                 add(index, -Math.signum(get(index).doubleValue()) * lambda * noiseValue * Math.log(memValue));
-             }
-         }            
+            @Override
+            public void process(IndexType index) {
+                if(isValid(index)) {
+                    final double noiseValue = noise.get(index).doubleValue();
+                    final double target = model == null ? 0.0 : model.get(index).doubleValue();
+                    final double memValue = ExtraMath.hypot(get(index).doubleValue(), noiseValue) / ExtraMath.hypot(target, noiseValue);
+                    add(index, -Math.signum(get(index).doubleValue()) * lambda * noiseValue * Math.log(memValue));
+                }
+            }            
         });          
-     }  
+    }  
     
-   
+    public final List<Peak> findPeaks(double threshold, double r) {
+        return findPeaks(threshold, new double[] { r });
+    }
+
+    public List<Peak> findPeaks(double threshold, double[] r) {
+
+        ArrayList<Peak> peaks = new ArrayList<>();
+
+        if(isEmpty()) return peaks;
+
+        while(true) {
+            IndexType idx = indexOfMax();
+            double S = get(idx).doubleValue();
+            if(S < threshold) break;
+
+            peaks.add(new Peak(idx, S));
+            flagRadius(idx, r);
+
+        }
+
+        return peaks;
+    }
+
+
+    @SuppressWarnings("cast")
+    public void flagRadius(final IndexType centerIndex, double[] rPix) {
+        IndexType from = (IndexType) centerIndex.copy();
+        IndexType to = (IndexType) centerIndex.copy();
+
+        for(int i=centerIndex.dimension(); --i >= 0; ) {
+            int d =  (int) Math.ceil(rPix[rPix.length > i ? i : rPix.length - 1]);
+            from.setValue(i, from.getValue(i) - d);
+            to.setValue(i, to.getValue(i) + d + 1);
+        }
+
+        PointOp<IndexType, Void> flagger = new PointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType idx) {
+                if(!isValid(idx)) return;
+
+                double d2 = 0.0;
+
+                for(int i=centerIndex.dimension(); --i >= 0; ) {
+                    double d = (idx.getValue(i) - centerIndex.getValue(i)) / rPix[rPix.length > i ? i : rPix.length - 1];
+                    d2 += d * d;
+                    if(d2 > 1.0) return;
+                }
+
+                set(idx, blankingValue);
+            } 
+        };
+
+        loop(flagger, from, to);
+    }
+
+
+
+
     public abstract Object getCore();
-       
+
     public Fits createFits(Class<? extends Number> dataType) throws FitsException {
         FitsFactory.setLongStringsEnabled(standardLongFitsKeywords);
         FitsFactory.setUseHierarch(true);
         Fits fits = new Fits(); 
-        
+
         ArrayList<BasicHDU<?>> hdus = getHDUs(dataType);
         for(int i=0; i<hdus.size(); i++) fits.addHDU(hdus.get(i));
 
         return fits;
     }
-    
+
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
         ArrayList<BasicHDU<?>> hdus = new ArrayList<>();
         hdus.add(createHDU(dataType));
@@ -926,15 +986,15 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         editHeader(hdu.getHeader());
         return hdu;
     }
-    
-   
+
+
     public abstract Object getFitsData(Class<? extends Number> dataType);
-   
-    
+
+
     protected void editHeader(Header header) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         Range range = getRange();
-        
+
         if(!range.isEmpty()) {
             if(range.isLowerBounded()) c.add(new HeaderCard("DATAMIN", range.min() / getUnit().value(), "The lowest value in the image"));
             if(range.isUpperBounded()) c.add(new HeaderCard("DATAMAX", range.max() / getUnit().value(), "The highest value in the image"));
@@ -944,12 +1004,12 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         c.add(new HeaderCard("BSCALE", 1.0, "Scaling of the image data"));
 
         if(getUnit() != null) c.add(new HeaderCard("BUNIT", getUnit().name(), "Data unit specification."));
-        
-        
+
+
         addHistory(header);
     }
 
-    
+
     protected void parseHeader(Header header) {
         setUnit(header.containsKey("BUNIT") ? new Unit(header.getStringValue("BUNIT")) : Unit.unity);
     }
@@ -964,7 +1024,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         if(getHistory() != null) FitsToolkit.addHistory(header, getHistory());
     }
 
-    
+
     @Override
     public Object getTableEntry(String name) {
         if(name.equals("points")) return Integer.toString(countPoints());
@@ -976,19 +1036,19 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         else if(name.equals("rms")) return getRMS(true);
         else return TableFormatter.NO_SUCH_DATA;
     }
-   
-    
-    
+
+
+
     public abstract class AbstractLoop<ReturnType> {
         protected IndexType from, to;
-        
+
         public AbstractLoop() { this(getIndexInstance(), getSize()); }
-        
+
         public AbstractLoop(IndexType from, IndexType to) { 
             this.from = from;
             this.to = to;
         }
-        
+
         public abstract ReturnType process();
 
         protected ReturnType getResult() { return null; }
@@ -996,16 +1056,94 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
 
     public abstract class AbstractFork<ReturnType> extends Task<ReturnType> {
         protected IndexType from, to;
-        
+
         public AbstractFork() { this(getIndexInstance(), getSize()); }
-        
+
         public AbstractFork(IndexType from, IndexType to) { 
             this.from = from;
             this.to = to;
         }
     }
+
+
+    public class Peak {
+        public IndexType index;
+        public double value;
+
+        @SuppressWarnings("cast")
+        private Peak(IndexType index, double value) {
+            this.index = (IndexType) index.copy();
+            this.value = value;
+        }
+    }
+
     
+    /**
+    * A class for iterating over generic any-dimensional data indices. Typically, this is not the most efficient
+    * way to crawl though data. It is generally preferred to use {@link #loop(jnum.PointOp)} or 
+    * {@link #fork(jnum.parallel.ParallelPointOp)} for processing indexed data entries, 
+    * {@link #loopValid(jnum.PointOp)} or {@link #forkValid(jnum.parallel.ParallelPointOp)}, or their variants, 
+    * or even {@link #iterator()} for processing indexless entries.
+    * 
+    * However, in case when none of the above suffice, this class provides an explicit way to cycle though
+    * multidimensional indices.
+    * 
+    * @author Attila Kovacs <attila@sigmyne.com>
+    *
+    */
+   public class IndexIterator implements Iterator<IndexType> {
+       private IndexType from, to, idx, limit;
+        
+       /**
+        * Constructor.
+        */
+       public IndexIterator() {
+           this(getIndexInstance(), getSize());
+       }
+       
+       
+       /**
+        * Constructor for iterating though a sub-section of the 
+        * 
+        * @param from
+        * @param to
+        * @param size
+        */
+       public IndexIterator(IndexType from, IndexType to) {
+           setRange(from, to);
+           idx = getIndexInstance();
+           this.limit = getSize();
+       }
+       
+       
+       private void setRange(IndexType from, IndexType to) {
+           this.from = from.copy();
+           this.to = to.copy();
+
+           for(int i=from.dimension(); --i >= 0; ) {
+               if(from.getValue(i) < 0) this.from.setValue(i, 0);
+               else if(to.getValue(i) >= limit.getValue(i)) this.to.setValue(i, limit.getValue(i)); 
+           } 
+       }
+           
+       @Override
+       public boolean hasNext() {
+           for(int i=0; i<idx.dimension(); i++) if(idx.getValue(i) < to.getValue(i)) return true;
+           return false;
+       }
+
+       @Override
+       public IndexType next() {
+           for(int i=idx.dimension(); --i >= 0; ) {
+               if(idx.increment(i) < limit.getValue(i)) break;
+               if(i > 0) idx.setValue(i,  from.getValue(i));
+           }
+           return from;
+       }
+
+   }
+
     
     public static boolean standardLongFitsKeywords = true;
-  
+
 }

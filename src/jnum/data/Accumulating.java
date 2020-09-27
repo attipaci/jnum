@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,16 +23,48 @@
 
 package jnum.data;
 
+import java.util.stream.Collector;
 
 public interface Accumulating<T> {
 
     public void noData();
+
+    public void accumulate(T x);
     
     public void accumulate(T x, double w);
-    
+
     public void accumulate(T x, double w, double G);
- 
+
     public void startAccumulation();
-    
+
     public void endAccumulation();
+
+
+    public static <T extends Accumulating<T>> Collector<T, T, T> sum(Class<T> cl) {
+        return Collector.of(
+                () -> {
+                    try { return cl.newInstance(); }
+                    catch(Exception e) { return null; }
+                },
+                (partial, point) -> partial.accumulate(point, 1.0),
+                (sum, partial) -> { sum.accumulate(partial, 1.0); return sum; },
+                Collector.Characteristics.UNORDERED,
+                Collector.Characteristics.IDENTITY_FINISH
+                );
+    }
+
+    
+    
+    public static <T extends Accumulating<T>> Collector<? extends T, T, T> average(Class<T> cl) {
+        return Collector.of(
+                () -> {
+                    try { return cl.newInstance(); }
+                    catch(Exception e) { return null; }
+                },
+                (partial, point) -> partial.accumulate(point, 1.0),
+                (sum, partial) -> { sum.accumulate(partial, 1.0); return sum; },
+                sum -> { sum.endAccumulation(); return sum; },
+                Collector.Characteristics.UNORDERED
+                );
+    }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -60,6 +60,10 @@ public class EllipticalSource extends GaussianSource {
         super(coordinateClass);
     }
 
+    
+    public EllipticalSource(Coordinate2D coords, double fwhm) {
+        this(coords, fwhm, fwhm, 0.0);
+    }
 
     public EllipticalSource(Coordinate2D coords, double a, double b, double angle) {
         super(coords, Math.sqrt(a * b));

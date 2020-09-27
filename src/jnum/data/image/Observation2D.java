@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c)2020 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -543,6 +543,8 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         setSmoothingBeam(replacementPSF);
     }
 
+    
+ 
 
 
 

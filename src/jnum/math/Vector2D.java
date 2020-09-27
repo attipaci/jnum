@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.math;
 
@@ -60,7 +60,8 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
     public final double length() { return ExtraMath.hypot(x(), y()); }
 
-
+    public final double lengthSquared() { return absSquared(); }
+    
     /**
      * Absolute value (radius) of the complex number. Same as {@link #length()}.
      *
@@ -102,7 +103,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     }
 
     @Override
-    public final void scale(final double value) { scaleX(value); scaleY(value); }    
+    public void scale(final double value) { scaleX(value); scaleY(value); }    
 
     public final void rotate(final double alpha) {
         final double sinA = Math.sin(alpha);

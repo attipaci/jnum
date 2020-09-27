@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
+
 
 package jnum.data;
 
@@ -30,79 +30,81 @@ import jnum.Util;
 
 public class DataPoint extends WeightedPoint {
 
-	private static final long serialVersionUID = -7893241481449777111L;
+    private static final long serialVersionUID = -7893241481449777111L;
 
 
-	public DataPoint() { super(); }
+    public DataPoint() { super(); }
 
 
-	public DataPoint(double value, double rms) {
-		super(value, 1.0/(rms*rms));
-	}
-	
+    public DataPoint(double value, double rms) {
+        super(value, 1.0/(rms*rms));
+    }
 
-	public DataPoint(WeightedPoint template) {
-		super(template);
-	}
-	
-	@Override
+
+    public DataPoint(WeightedPoint template) {
+        super(template);
+    }
+
+    @Override
     public DataPoint clone() {
-	    return (DataPoint) super.clone();
-	}
-	
-	@Override
+        return (DataPoint) super.clone();
+    }
+
+    @Override
     public DataPoint copy() {
         return (DataPoint) super.copy();
     }
-	
-
-	public double rms() { return 1.0/Math.sqrt(weight()); }
 
 
-	public void setRMS(final double value) { setWeight(1.0 / (value * value)); }
-	
+    public double rms() { return 1.0/Math.sqrt(weight()); }
 
-	public String toString(Unit unit) { return toString(this, unit); }
 
-	
-	public final double significance() { return significanceOf(this); }
-	
+    public void setRMS(final double value) { setWeight(1.0 / (value * value)); }
 
-	public static double significanceOf(final WeightedPoint point) {
-		return Math.abs(point.value()) * Math.sqrt(point.weight());
-	}
-	
 
-	public static String toString(DataPoint point, Unit unit) {
-		return toString(point, unit, " +- ", " ");
-	}
-	
+    public String toString(Unit unit) { return toString(this, unit); }
 
-	public static String toString(DataPoint point, Unit unit, String before, String after) {
-		double u = unit == null ? 1.0 : unit.value();
-		double value = point.value() / u;
-		double rms = point.rms() / u;
-		double res = Math.pow(10.0, 2 - errorFigures + Math.floor(Math.log10(rms)));
-		
-		return Util.getDecimalFormat(Math.abs(value) / res, 6).format(point.value() / u) 
-			+ before + Util.s[errorFigures].format(rms) + after + (unit == null ? "" : unit.name());   
-	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.data.WeightedPoint#toString(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public String toString(String before, String after) {
-		return toString(this, null, before, after);
-	}
-	
 
-	public static DataPoint[] createArray(int size) {
-		final DataPoint[] p = new DataPoint[size];
-		for(int i=size; --i >= 0; ) p[i] = new DataPoint();
-		return p;
-	}
-	
+    public final double significance() { return significanceOf(this); }
 
-	public static int errorFigures = 2;
+
+    public static double significanceOf(final WeightedPoint point) {
+        return Math.abs(point.value()) * Math.sqrt(point.weight());
+    }
+
+
+    public static String toString(DataPoint point, Unit unit) {
+        return toString(point, unit, " +- ", " ");
+    }
+
+
+    public static String toString(DataPoint point, Unit unit, String before, String after) {
+        double u = unit == null ? 1.0 : unit.value();
+        double value = point.value() / u;
+        double rms = point.rms() / u;
+        double res = Math.pow(10.0, 2 - errorFigures + Math.floor(Math.log10(rms)));
+
+        return Util.getDecimalFormat(Math.abs(value) / res, 6).format(point.value() / u) 
+                + before + Util.s[errorFigures].format(rms) + after + (unit == null ? "" : unit.name());   
+    }
+
+    /* (non-Javadoc)
+     * @see jnum.data.WeightedPoint#toString(java.lang.String, java.lang.String)
+     */
+    @Override
+    public String toString(String before, String after) {
+        return toString(this, null, before, after);
+    }
+
+
+    public static DataPoint[] createArray(int size) {
+        final DataPoint[] p = new DataPoint[size];
+        for(int i=size; --i >= 0; ) p[i] = new DataPoint();
+        return p;
+    }
+
+   
+   
+
+    public static int errorFigures = 2;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -536,7 +536,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
      */
     public void editHeader(Header header, String name, String fitsID, Unit sizeUnit) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        
+          
         if(name != null) c.add(new HeaderCard(fitsID + "BNAM", name, "Beam name."));
         c.add(new HeaderCard(fitsID + "BMAJ", majorFWHM / sizeUnit.value(), "Beam major axis (" + sizeUnit.name() + ")."));
         c.add(new HeaderCard(fitsID + "BMIN", minorFWHM / sizeUnit.value(), "Beam minor axis (" + sizeUnit.name() + ")."));

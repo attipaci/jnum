@@ -52,6 +52,8 @@ FitsHeaderEditing, FitsHeaderParsing {
 
     private String telescopeName;
 
+    private String organization;
+    
     private String instrumentName;
 
     private String observerName;
@@ -145,6 +147,10 @@ FitsHeaderEditing, FitsHeaderParsing {
     public String getInstrumentName() { return instrumentName; }
 
     public void setInstrumentName(String value) { this.instrumentName = value; }
+    
+    public String getOrganization() { return organization; }
+
+    public void setOrganization(String value) { this.organization = value; }
 
     public String getObserverName() { return observerName; }
 
@@ -159,6 +165,7 @@ FitsHeaderEditing, FitsHeaderParsing {
         setObjectName(header.getStringValue("OBJECT"));
         setTelescopeName(header.getStringValue("TELESCOP"));
         setInstrumentName(header.getStringValue("INSTRUME"));
+        setOrganization(header.getStringValue("ORIGIN"));
         setObserverName(header.getStringValue("OBSERVER"));
         setObservationDateString(header.getStringValue("DATE_OBS"));
     }
@@ -168,7 +175,8 @@ FitsHeaderEditing, FitsHeaderParsing {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         FitsToolkit.add(c, "OBJECT", getObjectName(), "Observed object's name.");
         FitsToolkit.add(c, "TELESCOP", getTelescopeName(), "Name of telescope.");
-        FitsToolkit.add(c, "INSTRUME", getInstrumentName(), "Name of instrument used.");        
+        FitsToolkit.add(c, "INSTRUME", getInstrumentName(), "Name of instrument used.");
+        FitsToolkit.add(c, "ORIGIN", getOrganization(), "Name of organization.");
         FitsToolkit.add(c, "OBSERVER", getObserverName(), "Name of obserer(s).");
         FitsToolkit.add(c, "DATE-OBS", getObservationDateString(), "Start of observation.");
         FitsToolkit.add(c, "CREATOR", getCreatorName(), getCopyright());

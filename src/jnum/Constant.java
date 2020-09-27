@@ -47,8 +47,19 @@ public class Constant {
     /** 1.0 / (4.0 * Pi) */
     public final static double iFourPi = 1.0 / fourPi;
     
-    /** A right angle, i.e. 90 {@link Unit#deg}, or Pi/2 */
-    public final static double rightAngle = 0.5 * Pi;
+    
+    /** Pi/2 */
+    public final static double halfPi = 0.5 * Pi;
+    
+    /** Pi/3 */
+    public final static double thirdPi = Pi / 3.0;
+    
+    /** Pi/4 */
+    public final static double quarterPi = 0.25 * Pi;
+    
+    /** A right angle, i.e. 90 {@link Unit#deg}, same as Pi/2 */
+    public final static double rightAngle = halfPi;
+    
     
     /** sqrt(Pi) */
     public final static double sqrtPi = Math.sqrt(Pi);

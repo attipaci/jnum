@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -191,7 +191,7 @@ public class Complex extends Vector2D implements
 	 * 1/z (the inverse under multiplication).
 	 */
 	@Override
-	public final void inverse() { 
+	public void inverse() { 
 		conjugate();
 		scale(1.0 / absSquared());
 	}
@@ -308,7 +308,7 @@ public class Complex extends Vector2D implements
 	 * @param y the power exponent.
 	 */
 	@Override
-	public final void pow(final double y) {
+	public void pow(final double y) {
 		setPolar(Math.pow(length(), y), y * angle());
 	}
 
