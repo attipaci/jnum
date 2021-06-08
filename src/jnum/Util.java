@@ -56,7 +56,7 @@ public final class Util {
     
     public final static String revision = "";
     
-    public final static String copyright = "(c)2019 Attila Kovacs"; 
+    public final static String copyright = "(c)2021 Attila Kovacs"; 
     
     public final static String copyrightEmail = "<attila[AT]sigmyne.com>"; 
 
@@ -879,6 +879,32 @@ public final class Util {
 
     public final static AngleFormat af12 = new AngleFormat(12);
 
+    
+    public final static AngleFormat Af0 = new AngleFormat(0, true);
+
+    public final static AngleFormat Af1 = new AngleFormat(1, true);
+
+    public final static AngleFormat Af2 = new AngleFormat(2, true);
+
+    public final static AngleFormat Af3 = new AngleFormat(3, true);
+
+    public final static AngleFormat Af4 = new AngleFormat(4, true);
+    
+    public final static AngleFormat Af5 = new AngleFormat(5, true);
+
+    public final static AngleFormat Af6 = new AngleFormat(6, true);
+
+    public final static AngleFormat Af7 = new AngleFormat(7, true);
+
+    public final static AngleFormat Af8 = new AngleFormat(8, true);
+
+    public final static AngleFormat Af9 = new AngleFormat(9, true);
+
+    public final static AngleFormat Af10 = new AngleFormat(10, true);
+
+    public final static AngleFormat Af11 = new AngleFormat(11, true);
+
+    public final static AngleFormat Af12 = new AngleFormat(12, true);
 
 
     public final static TimeFormat tf0 = new TimeFormat(0);
@@ -906,7 +932,33 @@ public final class Util {
     public final static TimeFormat tf11 = new TimeFormat(11);
 
     public final static TimeFormat tf12 = new TimeFormat(12);
+    
 
+    public final static HourAngleFormat haf0 = new HourAngleFormat(0);
+
+    public final static HourAngleFormat haf1 = new HourAngleFormat(1);
+
+    public final static HourAngleFormat haf2 = new HourAngleFormat(2);
+
+    public final static HourAngleFormat haf3 = new HourAngleFormat(3);
+
+    public final static HourAngleFormat haf4 = new HourAngleFormat(4);
+
+    public final static HourAngleFormat haf5 = new HourAngleFormat(5);
+
+    public final static HourAngleFormat haf6 = new HourAngleFormat(6);
+
+    public final static HourAngleFormat haf7 = new HourAngleFormat(7);
+
+    public final static HourAngleFormat haf8 = new HourAngleFormat(8);
+
+    public final static HourAngleFormat haf9 = new HourAngleFormat(9);
+
+    public final static HourAngleFormat haf10 = new HourAngleFormat(10);
+
+    public final static HourAngleFormat haf11 = new HourAngleFormat(11);
+
+    public final static HourAngleFormat haf12 = new HourAngleFormat(12);
 
 
     public final static DecimalFormat[] 
@@ -925,8 +977,11 @@ public final class Util {
 
     public final static AngleFormat[] af = { af0, af1, af2, af3, af4, af5, af6, af7, af8, af9, af10, af11, af12 };
 
+    public final static AngleFormat[] Af = { Af0, Af1, Af2, Af3, Af4, Af5, Af6, Af7, Af8, Af9, Af10, Af11, Af12 };
+    
     public final static TimeFormat[] tf = { tf0, tf1, tf2, tf3, tf4, tf5, tf6, tf7, tf8, tf9, tf10, tf11, tf12 };
 
+    public final static HourAngleFormat[] haf = { haf0, haf1, haf2, haf3, haf4, haf5, haf6, haf7, haf8, haf9, haf10, haf11, haf12 };
     
 }
 

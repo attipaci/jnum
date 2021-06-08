@@ -42,7 +42,7 @@ public class PrefixedUnit extends Unit {
         if(!o.getClass().equals(getClass())) return false;
         
         PrefixedUnit u = (PrefixedUnit) o;
-        if(!u.multiplier.equals(multiplier)) return false;
+        if(u.multiplier != multiplier) return false;
         return true;
     }
     

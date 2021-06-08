@@ -45,6 +45,18 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	 */
 	public SphericalGrid() { }
 	
+	   
+    /**
+     * Instantiates a new spherical grid.
+     *
+     * @param reference the reference
+     */
+    public SphericalGrid(SphericalCoordinates reference) {
+        this();
+        setReference(reference);
+    }
+    
+	
 	/* (non-Javadoc)
 	 * @see jnum.data.Grid2D#defaults()
 	 */
@@ -59,17 +71,7 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	
 	@Override
     public final Unit fitsYUnit() { return SphericalCoordinates.degree; }
-	
-	/**
-	 * Instantiates a new spherical grid.
-	 *
-	 * @param reference the reference
-	 */
-	public SphericalGrid(SphericalCoordinates reference) {
-		this();
-		setReference(reference);
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see kovacs.data.Grid2D#setReference(kovacs.math.Coordinate2D)
 	 */
@@ -82,6 +84,7 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	
 	/* (non-Javadoc)
 	 * @see jnum.data.Grid2D#isReverseX()
+	 * 
 	 */
 	@Override
 	public boolean isReverseX() { return getReference().isReverseLongitude(); }

@@ -115,8 +115,11 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
         else system.toUpperCase();
         
         if(system.startsWith("FK4")) return new BesselianEpoch(Double.isNaN(year) ? 1950.0 : year);
-        else if(year < 1984.0) return new BesselianEpoch(year);
-        else return new JulianEpoch(Double.isNaN(year) ? 2000.0 : year);
+        if(system.startsWith("FK5")) return new JulianEpoch(Double.isNaN(year) ? 1950.0 : year);
+        if(system.equals("ICRS")) return new ICRSEpoch();
+        if(year < 1984.0) return new BesselianEpoch(year);
+        
+        return new JulianEpoch(Double.isNaN(year) ? 2000.0 : year);
     }
 
 
@@ -151,6 +154,8 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 	public final static BesselianEpoch B1950 = new BesselianEpoch(1950.0);
 
 	public final static JulianEpoch J2000 = new JulianEpoch(2000.0);
+	
+	public final static ICRSEpoch ICRS = new ICRSEpoch();
 	
 	// The precision to which to epochs must match to be considered equal...
 	public final static double precision = 1e-3; // in years...

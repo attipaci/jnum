@@ -821,8 +821,8 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 
         if(!px.equals(py)) return new FlatGrid2D();
 
-        if(xtype.equals("ra") && ytype.equals("dec")) return new SphericalGrid();
-        if(xtype.equals("dec") && ytype.equals("ra")) return new SphericalGrid();
+        if(xtype.equals("ra") && ytype.equals("dec")) return new SkyGrid();
+        if(xtype.equals("dec") && ytype.equals("ra")) return new SkyGrid();
         if(xtype.equals("lon") && ytype.equals("lat")) return new SphericalGrid();
         if(xtype.equals("lat") && ytype.equals("lon")) return new SphericalGrid();
 
@@ -830,15 +830,15 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 
         xtype = xtype.substring(1);
         ytype = ytype.substring(1);
-        if(xtype.equals("lon") && ytype.equals("lat")) return new SphericalGrid();
-        if(xtype.equals("lat") && ytype.equals("lon")) return new SphericalGrid();
+        if(xtype.equals("lon") && ytype.equals("lat")) return new SkyGrid();
+        if(xtype.equals("lat") && ytype.equals("lon")) return new SkyGrid();
 
         if(xtype.charAt(0) != ytype.charAt(0)) return new FlatGrid2D();
 
         xtype = xtype.substring(1);
         ytype = ytype.substring(1);
-        if(xtype.equals("ln") && ytype.equals("lt")) return new SphericalGrid();
-        if(xtype.equals("lt") && ytype.equals("ln")) return new SphericalGrid();
+        if(xtype.equals("ln") && ytype.equals("lt")) return new SkyGrid();
+        if(xtype.equals("lt") && ytype.equals("ln")) return new SkyGrid();
 
         return new FlatGrid2D();
     }

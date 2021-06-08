@@ -43,7 +43,7 @@ public interface Accumulating<T> {
     public static <T extends Accumulating<T>> Collector<T, T, T> sum(Class<T> cl) {
         return Collector.of(
                 () -> {
-                    try { return cl.newInstance(); }
+                    try { return cl.getDeclaredConstructor().newInstance(); }
                     catch(Exception e) { return null; }
                 },
                 (partial, point) -> partial.accumulate(point, 1.0),
@@ -58,7 +58,7 @@ public interface Accumulating<T> {
     public static <T extends Accumulating<T>> Collector<? extends T, T, T> average(Class<T> cl) {
         return Collector.of(
                 () -> {
-                    try { return cl.newInstance(); }
+                    try { return cl.getDeclaredConstructor().newInstance(); }
                     catch(Exception e) { return null; }
                 },
                 (partial, point) -> partial.accumulate(point, 1.0),

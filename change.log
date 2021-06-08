@@ -1,3 +1,48 @@
+0.31-a1
+
+	[NEW] {SkyGrid} class, based on SphericalGrid but with mirrored
+	projections appropriate for looking out to sky rather than looking in
+	at a globe.
+
+	[NEW] {WeightedPoint} Math functions (power, trig, hyperbolic, and
+	inverses) with proper error propagation.	
+
+	[NEW] Spherical Coordinates conbversion to/from Cartesian Vector3D.
+
+	[NEW] New ICRS and Apparent coordinate epochs. Conversion to/from
+	ICRS is fully implemented with the ~22 mas rotation, inccordance
+	with Capitaine an Wallace, A&A, 450, 855 (2006) and IERS technical
+	note 36. Apparent epochs include wobble correction parameters xp
+	and yp which will be applied if specidied, and a UT1-UTC time
+  	difference, which is not yet used. Nutation and high-precision LST 
+	calculations are not yet implemented, but stay tuned.
+
+	[NEW] {Vector3D} Added efficient implementation of 3D rotation by 
+	very small angles.
+
+	[NEW] Util class has new convenience access to more angle formats
+	such as positive-only (0:2Pi) formatting and hour angle formatting
+	without conversion to time.
+
+	[NEW] FITS UV Table tool and initial interferometry spectral image	
+	processing tools.
+
+	[CHANGE] {SphericalCoordinates} Changed what longitude convention is
+	considered normal and reversed. Now normal is what goes clockwise 
+	looking from the North, such as R.A., ecliptic and galactic longitudes.
+	Azimuth is now reversed. The change of convention does not affect
+	functionality much, in general, but aligns better with Cartesian
+	conversions.
+
+	[FIX] {AngleFormat} Wrapping and non-negative format options now
+	correctly dealt with.
+	
+	[FIX] Many potential flaws fixed with the help of FindBugs.
+ 
+	[TWEAK] Overall cleanup of SphericalCoordinate classes and their
+	coordinate systems.
+
+
 0.30-3	
 
 	[TWEAK] {BufferedRandom} Simplified, with reduced initialization load 

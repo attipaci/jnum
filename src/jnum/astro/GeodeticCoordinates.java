@@ -24,13 +24,11 @@
 
 package jnum.astro;
 
-import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCard;
-import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 import jnum.Unit;
-import jnum.fits.FitsToolkit;
+import jnum.math.CoordinateAxis;
+import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
+import jnum.text.GreekLetter;
 
 // TODO: Auto-generated Javadoc
 // TODO Needs updating
@@ -70,18 +68,15 @@ public class GeodeticCoordinates extends SphericalCoordinates {
     @Override
     public String getTwoLetterCode() { return "GD"; }
 
-
-    /* (non-Javadoc)
-     * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-     */
     @Override
-    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
-        super.editHeader(header, keyStem, alt);	
-
-        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        c.add(new HeaderCard("WCSNAME" + alt, getClass().getSimpleName(), "coordinate system description."));
+    public CoordinateSystem getCoordinateSystem() {
+        return defaultCoordinateSystem;
     }
 
+    @Override
+    public CoordinateSystem getLocalCoordinateSystem() {
+        return defaultLocalCoordinateSystem;
+    }
 
     public final static double a = 6378137.0 * Unit.m; // Earth major axis
 
@@ -98,6 +93,28 @@ public class GeodeticCoordinates extends SphericalCoordinates {
     public final static int EAST = 1;
 
     public final static int WEST = -1;
+    
+    
+    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+
+    
+    static {
+        defaultCoordinateSystem = new CoordinateSystem("Geodetic");
+        defaultLocalCoordinateSystem = new CoordinateSystem("Geodetic Offsets");
+        
+        CoordinateAxis longitudeAxis = createAxis("Latitude", "LAT", "lat", af);
+        CoordinateAxis latitudeAxis = createAxis("Longitude", "LON", "lon", af);
+         
+        CoordinateAxis longitudeOffsetAxis = createOffsetAxis("Longitude Offset", "dLON", GreekLetter.Delta + "lat");
+        CoordinateAxis latitudeOffsetAxis = createOffsetAxis("Latitude Offset", "dLAT", GreekLetter.delta + "lon");
+           
+        defaultCoordinateSystem.add(longitudeAxis);
+        defaultCoordinateSystem.add(latitudeAxis);
+        
+        defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
+        defaultLocalCoordinateSystem.add(latitudeOffsetAxis);           
+    }
+
 
     // TODO verify units of X...
 

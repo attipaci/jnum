@@ -60,7 +60,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	
 	public String getTwoLetterCode() { return "SP"; }
 	
-
 	public SphericalCoordinates() {
 		cosLat = 1.0;
 		sinLat = 0.0;		
@@ -69,6 +68,9 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 
 	public SphericalCoordinates(final double longitude, final double latitude) { set(longitude, latitude); }
 	
+	public SphericalCoordinates(Vector3D v) {
+	    fromCartesian(v);
+	}
 
 	public SphericalCoordinates(String text) { parse(text); }
 		
@@ -161,11 +163,11 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 
 	public final double nativeLatitude() { return y(); }
 	
-
+	
 	public final boolean isReverseLongitude() { return getCoordinateSystem().get(0).isReverse(); }
-
 	
 	public final boolean isReverseLatitude() { return getCoordinateSystem().get(1).isReverse(); }
+	
 	
 	// Like long on lat except returns the actual directly formattable
 	// coordinates for this system...
@@ -264,18 +266,26 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		setY(Math.IEEEremainder(y(), Math.PI));
 	}
 	
+	
+	public NumberFormat getLongitudeFormat(int decimals) {
+	    return Util.af[decimals];
+	}
+
+	public NumberFormat getLatitudeFormat(int decimals) {
+	    return Util.af[decimals];
+	}
+	
 	/* (non-Javadoc)
 	 * @see jnum.Coordinate2D#toString()
 	 */
 	@Override
 	public String toString() {
-		CoordinateSystem coords = getCoordinateSystem();
-		return coords.get(0).format(x()) + " " + coords.get(1).format(y());
+	    return toString(3);
 	}
 	
 
 	public String toString(int decimals) {
-		return Util.af[decimals].format(longitude()) + " " + Util.af[decimals].format(latitude());	
+		return getLongitudeFormat(decimals).format(longitude()) + " " + getLatitudeFormat(decimals).format(latitude());	
 	}
 
 	/* (non-Javadoc)
@@ -347,6 +357,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	    return Math.atan2(ExtraMath.hypot(point.cosLat * Math.sin(point.x() - x()), cosLat * point.sinLat - sinLat * cosphi2cosdl),  c);
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see jnum.Coordinate2D#edit(nom.tam.util.Cursor, java.lang.String)
 	 */
@@ -358,6 +369,8 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		if(lon < 0.0) lon += Constant.twoPi;
 		
 		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+		
+        c.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
 
 		c.add(new HeaderCard(keyStem + "1" + alt, lon / Unit.deg, "The reference longitude coordinate (deg)."));
 		c.add(new HeaderCard(keyStem + "2" + alt, latitude() / Unit.deg, "The reference latitude coordinate (deg)."));
@@ -395,8 +408,34 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         super.invertY();
         sinLat *= -1.0;
     }
+
+    public Vector3D toCartesian() {
+        Vector3D v = new Vector3D();
+        toCartesian(v);
+        return v;
+    }
     
+    
+    public void toCartesian(Vector3D v) {
+        v.setX(cosLat() * Math.cos(x()));
+        v.setY(cosLat() * Math.sin(x()));
+        v.setZ(sinLat());
+    }
 	
+
+    public double fromCartesian(Vector3D v) {
+        final double l = v.length();
+        
+        if(l == 0.0) v.zero();
+        else if(v.z() == l) set(0.0, Constant.rightAngle);
+        else {
+            final double xy = ExtraMath.hypot(v.x(), v.y());
+            setY(Math.atan2(v.z(), xy));
+            if(xy == 0.0) setX(0.0);
+            else setX(Math.atan2(v.y(), v.x()));
+        }
+        return l;
+    }
 
 	public static boolean equalAngles(double a1, double a2) {
 		return Math.abs(Math.IEEEremainder(a1-a2, Constant.twoPi)) < angularAccuracy;
@@ -501,20 +540,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         return axis;
     }
 
-
-    public final static Unit degree = Unit.get("deg");
-
-    public final static Unit arcmin = Unit.get("arcmin");
-
-    public final static Unit arcsec = Unit.get("arcsec");
-
-    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
-
-    protected static AngleFormat af = new AngleFormat(2);
-    
-
-    
-    
     public static void setDefaultDecimals(int decimals) { af.setDecimals(decimals); }
     
     public static int getDefaultDecimals() { return af.getDecimals(); }
@@ -523,13 +548,27 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         value = Math.IEEEremainder(value, Constant.twoPi);
         return value >= 0 ? value : value + Constant.twoPi;
     }
+
+    public final static Unit degree = Unit.get("deg");
+
+    public final static Unit arcmin = Unit.get("arcmin");
+
+    public final static Unit arcsec = Unit.get("arcsec");
+    
+    
+ 
+    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+
+    protected static AngleFormat af = new AngleFormat(2);
+    
+
     
     static {
-        defaultCoordinateSystem = new CoordinateSystem("Spherical Coordinates");
+        defaultCoordinateSystem = new CoordinateSystem("Spherical");
         defaultLocalCoordinateSystem = new CoordinateSystem("Spherical Offsets");
         
-        CoordinateAxis longitudeAxis = createAxis("Latitude", "LAT", GreekLetter.phi + "", af);
-        CoordinateAxis latitudeAxis = createAxis("Longitude", "LON", GreekLetter.theta + "", af);
+        CoordinateAxis longitudeAxis = createAxis("Longitude", "LON", GreekLetter.phi + "", af);
+        CoordinateAxis latitudeAxis = createAxis("Latitude", "LAT", GreekLetter.theta + "", af);
          
         CoordinateAxis longitudeOffsetAxis = createOffsetAxis("Longitude Offset", "dLON", GreekLetter.Delta + " " + GreekLetter.phi + "");
         CoordinateAxis latitudeOffsetAxis = createOffsetAxis("Latitude Offset", "dLAT", GreekLetter.delta + " " + GreekLetter.theta + "");

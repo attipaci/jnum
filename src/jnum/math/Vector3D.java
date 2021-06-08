@@ -40,6 +40,11 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
     
     public Vector3D(double x, double y, double z) { super(x, y, z); }
     
+    public Vector3D(SphericalCoordinates coords) {
+        this();
+        coords.toCartesian(this);
+    }
+    
     public Vector3D(Coordinates<? extends Double> v) { super(v); } 
     
     
@@ -89,7 +94,40 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
         set(angle.cos() * x() - angle.sin() * y(), -angle.sin() * x() + angle.cos() * y(), z());
     }
    
+    /**
+     * Computationally efficient implementation of 3D rotation with small angles. 
+     * All angles must be <<1 for this small angle approximation to work.
+     * 
+     * @param ax    (radian) rotation angle around X. 
+     * @param ay    (radian) rotation angle around Y. 
+     * @param az    (radian) rotation angle around Z. 
+     */
+    public void smallRotate3D(final double ax, final double ay, final double az) {
+        final double fx = x(), fy = y(), fz = z();              ///< Copy of the original vector (from)
+        final double Ax = ax * ax, Ay = ay * ay, Az = az * az;  ///< Squares of the rotation angles
+
+        setX(fx - 0.5 * (Ay + Az) * fx - az * fy + ay * fz);
+        setY(fy - 0.5 * (Ax + Az) * fy + az * fx - ax * fz);
+        setZ(fz - 0.5 * (Ax + Ay) * fz - ay * fx + ax * fy);
+    }
     
+    /**
+     * Computationally efficient implementation of 3D rotation with small angles.
+     * 
+     * @param a     (radian) 3D rotation angles around X,Y,Z. All of them must be <<1 for this small angle approximation to work.
+     */
+    public void smallRotate3D(double[] a) {
+        smallRotate3D(a[0], a[1], a[2]);
+    }
+
+    /**
+     * Computationally efficient implementation of 3D rotation with small angles.
+     * 
+     * @param a     (radian) 3D rotation angles around X,Y,Z. All of them must be <<1 for this small angle approximation to work.
+     */
+    public void smallRotate3D(TrueVector<? extends Double> a) {
+        smallRotate3D(a.x(), a.y(), a.z());
+    }
     
     public double length() {
         return ExtraMath.hypot(x(), y(), z());
@@ -222,7 +260,7 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
         for(int i=values.length; --i >= 0; ) setComponent(i, values[i]);
     }
     
-
+    
     public static Vector3D sumOf(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
         return new Vector3D(a.x() + b.x(), a.y() + b.y(), a.z() + b.z());
     }

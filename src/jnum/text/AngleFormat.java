@@ -61,12 +61,18 @@ public class AngleFormat extends NumberFormat {
 		setDecimals(decimals);
 	}
 	
-
+	
+	public AngleFormat(int decimals, boolean positiveOnly) {
+        setDecimals(decimals);
+        isPositiveOnly = true;
+	}
+	
+	
 	public void setMarks(int type) {
 		marks = getMarkerChars(type);
 	}
 	
-
+	
 	public int getMarks() {
 		if(marks == colonMarks) return FORMAT_COLONS;
 		else if(marks == dmsMarks) return FORMAT_DMS;
@@ -251,6 +257,12 @@ public class AngleFormat extends NumberFormat {
 	public String toString(double angle) {
 		StringBuilder text = new StringBuilder(13 + decimals); // 12 characters plus the decimals, plus 1 for good measure...
 	
+		if(wrap) {
+		    angle = Math.IEEEremainder(angle, getWrapValue());
+		    if(isPositiveOnly) if(angle < 0.0) angle += getWrapValue();
+		} 
+		
+		
 		if(angle < 0.0) {
 			angle *= -1.0;
 			text.append('-');	

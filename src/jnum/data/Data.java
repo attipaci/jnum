@@ -794,11 +794,11 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
     public double getRobustRMS() { return Math.sqrt(getRobustVariance()); }
 
     public double getRobustVariance() {
-        final double[] var = getValidSortingArray();
-        if(var.length == 0) return Double.NaN;
+        final double[] variance = getValidSortingArray();
+        if(variance.length == 0) return Double.NaN;
 
-        for(int i=var.length; --i >= 0; ) var[i] *= var[i];
-        return Statistics.Inplace.median(var) / Statistics.medianNormalizedVariance;
+        for(int i=variance.length; --i >= 0; ) variance[i] *= variance[i];
+        return Statistics.Inplace.median(variance) / Statistics.medianNormalizedVariance;
     }
 
 

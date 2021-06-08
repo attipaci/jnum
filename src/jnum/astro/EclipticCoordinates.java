@@ -26,8 +26,11 @@ package jnum.astro;
 
 
 
+import java.text.NumberFormat;
+
 import jnum.Constant;
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
@@ -93,8 +96,7 @@ public class EclipticCoordinates extends PrecessingCoordinates {
 
     @Override
     public String getTwoLetterCode() { return "EC"; }
-
-
+    
 
     @Override
     public CoordinateSystem getCoordinateSystem() {
@@ -118,14 +120,17 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     @Override
     public double getZeroLongitude() { return Constant.rightAngle; }
 
-
+    @Override
+    public NumberFormat getLongitudeFormat(int decimals) {
+        return Util.Af[decimals];
+    }
+    
     @Override
     public void precessUnchecked(CoordinateEpoch toEpoch) {
         EquatorialCoordinates equatorial = toEquatorial();
         equatorial.precess(toEpoch);
         fromEquatorial(equatorial);
     }
-
 
 
     /** The default local coordinate system. */
@@ -135,14 +140,12 @@ public class EclipticCoordinates extends PrecessingCoordinates {
 
     
     static {
-        defaultCoordinateSystem = new CoordinateSystem("Ecliptic Coordinates");
+        defaultCoordinateSystem = new CoordinateSystem("Ecliptic");
         defaultLocalCoordinateSystem = new CoordinateSystem("Ecliptic Offsets");
 
         CoordinateAxis longitudeAxis = createAxis("Ecliptic Longitude", "ELON", GreekLetter.lambda + "", af);
-        longitudeAxis.setReverse(true);
         CoordinateAxis latitudeAxis = createAxis("Ecliptic Latitude", "ELAT", GreekLetter.beta + "", af);
         CoordinateAxis longitudeOffsetAxis = createOffsetAxis("Ecliptic Longitude Offset", "dELON", GreekLetter.Delta + " " + GreekLetter.lambda);
-        longitudeOffsetAxis.setReverse(true);
         CoordinateAxis latitudeOffsetAxis = createOffsetAxis("Ecliptic Latitude Offset", "dELAT", GreekLetter.Delta + " " + GreekLetter.beta);
 
         defaultCoordinateSystem.add(longitudeAxis);

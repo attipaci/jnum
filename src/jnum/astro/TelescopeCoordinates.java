@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,17 +24,11 @@
 package jnum.astro;
 
 
-import jnum.fits.FitsToolkit;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.text.GreekLetter;
-import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCard;
-import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
-
 
 public class TelescopeCoordinates extends SphericalCoordinates {
 
@@ -56,19 +50,19 @@ public class TelescopeCoordinates extends SphericalCoordinates {
     @Override
     public TelescopeCoordinates copy() { return (TelescopeCoordinates) super.copy(); }
     
-    
+
     /* (non-Javadoc)
      * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
      */
     @Override
     public String getFITSLongitudeStem() { return "TLON"; }
-    
+
     /* (non-Javadoc)
      * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
      */
     @Override
     public String getFITSLatitudeStem() { return "TLAT"; }
-    
+
     
     @Override
     public String getTwoLetterCode() { return "TE"; }
@@ -112,31 +106,19 @@ public class TelescopeCoordinates extends SphericalCoordinates {
         offset.scaleX(-1.0);
     }
     
-    
-    /* (non-Javadoc)
-     * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-     */
-    @Override
-    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {    
-        super.editHeader(header, keyStem, alt);   
-
-        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        c.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
-    }
-    
 
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
  
      
     static {
-        defaultCoordinateSystem = new CoordinateSystem("Telescope Coordinates");
+        defaultCoordinateSystem = new CoordinateSystem("Telescope");
         defaultLocalCoordinateSystem = new CoordinateSystem("Telescope Offsets");
 
-        CoordinateAxis crossElevationAxis = createAxis("Telescope Cross-elevation", "XEL", "XEL", af);
-        CoordinateAxis elevationAxis = createAxis("Telescope Elevation", "EL", "EL", af);
-        CoordinateAxis xelOffsetAxis = createOffsetAxis("Telescioe Cross-elevation Offset", "dXEL", GreekLetter.Delta + " XEL");
-        CoordinateAxis elevationOffsetAxis = createOffsetAxis("Telescope Elevation Offset", "dEL", GreekLetter.Delta + " EL");
+        CoordinateAxis crossElevationAxis = createAxis("Telescope Cross-elevation", "XEL", "XEl", af);
+        CoordinateAxis elevationAxis = createAxis("Telescope Elevation", "EL", "El", af);
+        CoordinateAxis xelOffsetAxis = createOffsetAxis("Telescioe Cross-elevation Offset", "dXEL", GreekLetter.Delta + " XEl");
+        CoordinateAxis elevationOffsetAxis = createOffsetAxis("Telescope Elevation Offset", "dEL", GreekLetter.Delta + " El");
         
         defaultCoordinateSystem.add(crossElevationAxis);
         defaultCoordinateSystem.add(elevationAxis);

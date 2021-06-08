@@ -27,15 +27,22 @@ package jnum.data;
 import java.text.NumberFormat;
 import java.util.stream.IntStream;
 
+import jnum.ExtraMath;
 import jnum.math.Division;
+import jnum.math.HyperbolicFunctions;
+import jnum.math.HyperbolicInverseFunctions;
 import jnum.math.LinearAlgebra;
 import jnum.math.Multiplicative;
+import jnum.math.PowFunctions;
 import jnum.math.Ratio;
+import jnum.math.TrigonometricFunctions;
+import jnum.math.TrigonometricInverseFunctions;
 import jnum.util.HashCode;
 
 
-public class WeightedPoint extends RealValue implements Multiplicative<WeightedPoint>, Division<WeightedPoint>, Ratio<WeightedPoint, WeightedPoint>, LinearAlgebra<WeightedPoint>, 
-Accumulating<WeightedPoint> {
+public class WeightedPoint extends RealValue implements Multiplicative<WeightedPoint>, Division<WeightedPoint>, 
+    Ratio<WeightedPoint, WeightedPoint>, LinearAlgebra<WeightedPoint>, Accumulating<WeightedPoint>, 
+    PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions {
 
     private static final long serialVersionUID = -6583109762992313591L;
 
@@ -297,6 +304,176 @@ Accumulating<WeightedPoint> {
         result.math(op, b);
         return result;
     }
+    
+    
+    
+    /* (non-Javadoc)
+     * @see jnum.math.LinearAlgebra#isNull()
+     */
+    @Override
+    public boolean isNull() {
+        return super.isNull() && isExact();
+    }
+
+    /* (non-Javadoc)
+     * @see jnum.math.LinearAlgebra#zero()
+     */
+    @Override
+    public void zero() {
+        super.zero();
+        exact();
+    }
+
+
+    @Override
+    public double abs() {
+        return Math.abs(value());
+    }
+
+
+    @Override
+    public void pow(double n) {
+        double y = Math.pow(value(), n);
+        double z = value()/(n*y);
+        scaleWeight(z * z);
+        setValue(y);        
+    }
+
+
+    @Override
+    public void invert() {
+        double x2 = value() * value();
+        setValue(1.0 / value());
+        scaleWeight(x2 * x2);
+    }
+
+
+    @Override
+    public void square() {
+        scaleValue(value());
+        scaleWeight(0.25 * value());
+    }
+
+
+    @Override
+    public void sqrt() {
+        scaleWeight(4.0 / value());
+        setValue(Math.sqrt(value()));
+    }
+
+
+    @Override
+    public void exp() {
+        setValue(Math.exp(value()));
+        scaleWeight(1.0 / (value() * value()));
+    }
+
+
+    @Override
+    public void expm1() {
+        scaleWeight(Math.exp(-2.0 * value()));
+        setValue(Math.expm1(value()));
+    }
+
+
+    @Override
+    public void log() {
+        scaleWeight(value() * value());
+        setValue(Math.log(value()));
+    }
+
+
+    @Override
+    public void log1p() {
+        scaleWeight((1.0 + value()) * (1.0 + value()));
+        setValue(Math.log1p(value()));
+    }
+
+
+    @Override
+    public void sin() {
+        setValue(Math.sin(value()));
+        scaleWeight(1.0 / (1.0 - value() * value()));
+    }
+
+
+    @Override
+    public void cos() {
+        setValue(Math.cos(value()));
+        scaleWeight(1.0 / (1.0 - value() * value()));
+    }
+
+
+    @Override
+    public void tan() {
+        setValue(Math.tan(value()));
+        scaleWeight(1.0 / (1.0 + value() * value()));
+    }
+
+    @Override
+    public void asin() {
+        scaleWeight(1.0 - value() * value());
+        setValue(Math.asin(value()));
+    }
+
+
+    @Override
+    public void acos() {
+        scaleWeight(1.0 - value() * value());
+        setValue(Math.acos(value()));
+        
+    }
+
+    @Override
+    public void atan() {
+        scaleWeight(1.0 + value() * value());
+        setValue(Math.atan(value()));
+    }
+    
+    
+    @Override
+    public void sinh() {
+        setValue(Math.sinh(value()));
+        scaleWeight(1.0 / (1.0 + value() * value()));
+    }
+
+
+    @Override
+    public void cosh() {
+        setValue(Math.cosh(value()));
+        scaleWeight(1.0 / (value() * value() - 1.0));
+    }
+
+
+    @Override
+    public void tanh() {
+        setValue(Math.tanh(value()));
+        scaleWeight(1.0 / (1.0 - value() * value()));
+    }
+
+
+    @Override
+    public void asinh() {
+        scaleWeight(1.0 + value() * value());
+        setValue(ExtraMath.asinh(value()));
+        
+    }
+
+
+    @Override
+    public void acosh() {
+        scaleWeight(value() * value() - 1.0);
+        setValue(ExtraMath.acosh(value()));
+    }
+
+
+    @Override
+    public void atanh() {
+        scaleWeight(1.0 - value() * value());
+        setValue(ExtraMath.atanh(value()));
+    }
+    
+    
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -362,22 +539,8 @@ Accumulating<WeightedPoint> {
 
     public final static WeightedPoint NaN = new WeightedPoint(0.0, 0.0);
 
-    /* (non-Javadoc)
-     * @see jnum.math.LinearAlgebra#isNull()
-     */
-    @Override
-    public boolean isNull() {
-        return super.isNull() && isExact();
-    }
-
-    /* (non-Javadoc)
-     * @see jnum.math.LinearAlgebra#zero()
-     */
-    @Override
-    public void zero() {
-        super.zero();
-        exact();
-    }
 
 
+
+   
 }

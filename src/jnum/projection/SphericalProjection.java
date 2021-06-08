@@ -205,11 +205,11 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	 * Convert offsets to phi, theta.
 	 *
 	 * @param offset the offset
+	 * @param mirror Use mirror projection
 	 * @param phiTheta the phi theta
 	 * @return the double
 	 */
 	protected abstract void getPhiTheta(Coordinate2D offset, SphericalCoordinates phiTheta);
-
 	
 	/**
 	 * Gets the offsets.

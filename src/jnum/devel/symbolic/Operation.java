@@ -61,16 +61,16 @@ public abstract class Operation {
         public long update(VariableLookup variables, String id, Long leftSide, Long rightSide) {
             // TODO check that called with single non-null argument... 
             
-            Variable var = variables.get(id);
+            Variable variance = variables.get(id);
             
             if(leftSide == null) {
-                long value = var.asLong() + 1L;
-                var.setValue(value);
+                long value = variance.asLong() + 1L;
+                variance.setValue(value);
                 return value;
             }
 
-            long value = var.asLong();
-            var.setValue(value + 1L);
+            long value = variance.asLong();
+            variance.setValue(value + 1L);
             return value;
         }
     }
@@ -81,17 +81,17 @@ public abstract class Operation {
         @Override
         public long update(VariableLookup variables, String id, Long leftSide, Long rightSide) {
             // TODO check that called with single non-null argument... 
-            Variable var = variables.get(id);
+            Variable variance = variables.get(id);
             
             
             if(leftSide == null) {
-                long value = var.asLong() - 1L;
-                var.setValue(value);
+                long value = variance.asLong() - 1L;
+                variance.setValue(value);
                 return value;
             }
 
-            long value = var.asLong();
-            var.setValue(value - 1L);
+            long value = variance.asLong();
+            variance.setValue(value - 1L);
             return value;
         }
     }

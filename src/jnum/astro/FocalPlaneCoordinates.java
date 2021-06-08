@@ -23,11 +23,6 @@
 
 package jnum.astro;
 
-import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCard;
-import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
-import jnum.fits.FitsToolkit;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
@@ -54,7 +49,6 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
     public FocalPlaneCoordinates copy() { return (FocalPlaneCoordinates) super.copy(); }
 
 
-
     /* (non-Javadoc)
      * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
      */
@@ -71,6 +65,7 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
     @Override
     public String getTwoLetterCode() { return "FP"; }
 
+   
     @Override
     public CoordinateSystem getCoordinateSystem() {
         return defaultCoordinateSystem;
@@ -80,33 +75,22 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
     public CoordinateSystem getLocalCoordinateSystem() {
         return defaultLocalCoordinateSystem;
     }
-
-    /* (non-Javadoc)
-     * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-     */
-    @Override
-    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
-        super.editHeader(header, keyStem, alt);	
-
-        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        c.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
-    }
-
+   
 
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
 
     static {  
-        CoordinateAxis xAxis = createAxis("Focal-plane X", "X", "X", af);  
-        CoordinateAxis yAxis = createAxis("Focal-plane Y", "Y", "Y", af);
+        CoordinateAxis xAxis = createAxis("Focal-plane X", "x", GreekLetter.xi + "", af);  
+        CoordinateAxis yAxis = createAxis("Focal-plane Y", "y", GreekLetter.eta + "", af);
 
-        defaultCoordinateSystem = new CoordinateSystem("Focal Plane Coordinates");
+        defaultCoordinateSystem = new CoordinateSystem("Focal Plane");
         defaultCoordinateSystem.add(xAxis);
         defaultCoordinateSystem.add(yAxis);
 
-        CoordinateAxis xOffsetAxis = createOffsetAxis("Focal-plane dX", "dX", GreekLetter.Delta + " X");
-        CoordinateAxis yOffsetAxis = createOffsetAxis("Focal-plane dY", "dY", GreekLetter.Delta + " Y");
+        CoordinateAxis xOffsetAxis = createOffsetAxis("Focal-plane dX", "dX", GreekLetter.Delta + " " + GreekLetter.xi);
+        CoordinateAxis yOffsetAxis = createOffsetAxis("Focal-plane dY", "dY", GreekLetter.Delta + " " + GreekLetter.eta);
 
         defaultLocalCoordinateSystem = new CoordinateSystem("Focal Plane Offsets");
         defaultLocalCoordinateSystem.add(xOffsetAxis);

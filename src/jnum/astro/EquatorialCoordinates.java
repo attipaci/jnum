@@ -24,6 +24,8 @@
 package jnum.astro;
 
 
+import java.text.NumberFormat;
+
 import jnum.Constant;
 import jnum.SafeMath;
 import jnum.Unit;
@@ -31,6 +33,7 @@ import jnum.Util;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.math.Vector2D;
+import jnum.math.Vector3D;
 import jnum.text.GreekLetter;
 import jnum.text.HourAngleFormat;
 
@@ -42,7 +45,6 @@ import jnum.text.HourAngleFormat;
 public class EquatorialCoordinates extends PrecessingCoordinates {
 
     private static final long serialVersionUID = 3445122576647034180L;
-
 
 
     public EquatorialCoordinates() { }
@@ -139,6 +141,15 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         return Math.atan2(site.cosLat() * Math.sin(H), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(H));
     }
 
+    /**
+     * Returns the change in position angle due to precession, relative to the J2000 epoch.
+     * 
+     * @return
+     */
+    public double getEpochPosAngle() {
+       return precessionPARate * (epoch.getYear() - 2000.0) * Math.sin(RA()) / cosLat();
+    }
+    
     /* (non-Javadoc)
      * @see jnum.astro.CelestialCoordinates#getEquatorialPositionAngle()
      */
@@ -209,30 +220,48 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 
     @Override
     public void precessUnchecked(CoordinateEpoch newEpoch) {
+        
+        if(epoch instanceof ICRSEpoch) {
+            if(newEpoch instanceof ICRSEpoch) return;
+            
+            Vector3D pos = toCartesian();
+            pos.smallRotate3D(eta0, -xi0, -dalpha0);
+            fromCartesian(pos);
+            
+            setEpoch(CoordinateEpoch.J2000);
+        }
+        else if(epoch instanceof ApparentEpoch) {
+            // TODO Nutation
+            wobbleCorrect(((ApparentEpoch) epoch).getWobble(), false);
+        }
+        
         if(epoch.equals(newEpoch)) return;
         Precession precession = new Precession(epoch, newEpoch);
         precession.precess(this);
+        
+      
+        if(newEpoch instanceof ICRSEpoch) {
+            Vector3D pos = toCartesian();
+            pos.smallRotate3D(-eta0, xi0, dalpha0);
+            fromCartesian(pos);
+       
+            setEpoch(CoordinateEpoch.ICRS);
+        } 
+        else if(newEpoch instanceof ApparentEpoch) {
+            wobbleCorrect(((ApparentEpoch) newEpoch).getWobble(), true);
+        }
     }
+    
 
-    /* (non-Javadoc)
-     * @see jnum.SphericalCoordinates#toString()
-     */
-    @Override
-    public String toString() {
-        haf.setDecimals(getDefaultDecimals() + 1);
-        return super.toString();	
+    private void wobbleCorrect(final Vector2D wobble, boolean toApparent) {
+        double s1 = -0.47 * Unit.mas * (epoch.getJulianYear() - 2000.0); 
+        Vector3D pos = toCartesian();
+        if(toApparent) pos.smallRotate3D(-s1, -wobble.x(), -wobble.y());
+        else pos.smallRotate3D(s1, wobble.x(), wobble.y());
+        fromCartesian(pos);
     }
-
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#toString(int)
-     */
-    @Override
-    public String toString(int decimals) {
-        return Util.hf[decimals+1].format(longitude()) + " " + Util.af[decimals].format(latitude()) +
-                (epoch == null ? "" : " (" + epoch + ")");	
-    }
-
-
+    
+    
     /* (non-Javadoc)
      * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
      */
@@ -245,6 +274,12 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     @Override
     public double getZeroLongitude() { return 0.0; }
 
+    
+    @Override
+    public NumberFormat getLongitudeFormat(int decimals) {
+        return Util.haf[decimals+1];
+    }
+
 
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
@@ -255,17 +290,13 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 
 
     static {
-        defaultCoordinateSystem = new CoordinateSystem("Equatorial Coordinates");
+        defaultCoordinateSystem = new CoordinateSystem("Equatorial");
         defaultLocalCoordinateSystem = new CoordinateSystem("Equatorial Offsets");
 
         CoordinateAxis rightAscentionAxis = createAxis("Right Ascension", "RA", GreekLetter.alpha + "", haf);
-        rightAscentionAxis.setReverse(true);
-
         CoordinateAxis declinationAxis = createAxis("Declination", "DEC", GreekLetter.delta + "", af);
 
         CoordinateAxis rightAscentionOffsetAxis = createOffsetAxis("Right Ascension Offset", "dRA", GreekLetter.Delta + " " + GreekLetter.alpha);
-        rightAscentionOffsetAxis.setReverse(true);
-
         CoordinateAxis declinationOffsetAxis = createOffsetAxis("Declination Offset", "dDEC", GreekLetter.Delta + " " + GreekLetter.delta);
 
         defaultCoordinateSystem.add(rightAscentionAxis);
@@ -275,18 +306,24 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         defaultLocalCoordinateSystem.add(declinationOffsetAxis);        
     }	
 
-
+    private static final double eta0 = -0.006819 * Unit.arcsec;
+    private static final double xi0 = -0.016617 * Unit.arcsec;
+    private static final double dalpha0 = -0.01470 * Unit.arcsec;
 
     private static EquatorialCoordinates equatorialPole = new EquatorialCoordinates(0.0, Constant.rightAngle);
 
+    /**
+     * Constant for position angle rate of change due to precession near J2000
+     */
+    private static final double precessionPARate = 20.05 * Unit.arcsec;
 
 
     public final static int NORTH = 1;
 
     public final static int SOUTH = -1;
 
-    public final static int EAST = -1;
+    public final static int EAST = 1;
 
-    public final static int WEST = 1;
+    public final static int WEST = -1;
 
 }

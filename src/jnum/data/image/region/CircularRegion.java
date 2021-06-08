@@ -425,7 +425,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
             Index2D peakIndex = null;
             if(sign == 0) peakIndex = view.indexOfMaxDev();
             else peakIndex = sign < 0 ? view.indexOfMin() : view.indexOfMax();
-              
+
             Vector2D fracIndex = view.getRefinedPeakIndex(peakIndex);
             
             fracIndex.addX(view.fromi());

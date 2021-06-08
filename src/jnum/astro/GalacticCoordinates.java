@@ -23,7 +23,10 @@
 
 package jnum.astro;
 
+import java.text.NumberFormat;
+
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
@@ -39,7 +42,7 @@ public class GalacticCoordinates extends CelestialCoordinates {
 
     public GalacticCoordinates(String text) { super(text); }
 
-    public GalacticCoordinates(double lat, double lon) { super(lat, lon); }
+    public GalacticCoordinates(double lon, double lat) { super(lon, lat); }
     
 
     public GalacticCoordinates(CelestialCoordinates from) { super(from); }
@@ -95,27 +98,28 @@ public class GalacticCoordinates extends CelestialCoordinates {
 		return phi0;
 	}
 	
-
+	@Override
+	public NumberFormat getLongitudeFormat(int decimals) {
+	    return Util.Af[decimals];
+	}
+	
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
-      
+    
     static {
-        defaultCoordinateSystem = new CoordinateSystem("Galactic Coordinates");
+        defaultCoordinateSystem = new CoordinateSystem("Galactic");
         defaultLocalCoordinateSystem = new CoordinateSystem("Galactic Offsets");
         
         CoordinateAxis longitudeAxis = createAxis("Galactic Longitude", "GLON", "l", af);
-        longitudeAxis.setReverse(true);
         CoordinateAxis latitudeAxis = createAxis("Galactic Latitude", "GLAT", "b", af);
         CoordinateAxis longitudeOffsetAxis = createOffsetAxis("Galactic Longitude Offset", "dGLON", GreekLetter.Delta + " l");
-        longitudeOffsetAxis.setReverse(true);
         CoordinateAxis latitudeOffsetAxis = createOffsetAxis("Galactic Latitude Offset", "dGLAT", GreekLetter.Delta + " b");
         
         defaultCoordinateSystem.add(longitudeAxis);
         defaultCoordinateSystem.add(latitudeAxis);
         defaultLocalCoordinateSystem.add(longitudeOffsetAxis);
         defaultLocalCoordinateSystem.add(latitudeOffsetAxis);   
-
     }
     
 
@@ -127,11 +131,10 @@ public class GalacticCoordinates extends CelestialCoordinates {
     // Change the pole and phi0 to J2000, s.t. conversion to J2000 is faster...
     static { 
         GalacticCoordinates zero = new GalacticCoordinates(phi0, 0.0);
-        phi0 = 0.0;
         EquatorialCoordinates equatorialZero = zero.toEquatorial();
         equatorialZero.precess(CoordinateEpoch.J2000);
         zero.fromEquatorial(equatorialZero);
-        phi0 = -zero.x();
+        phi0 = zero.longitude();
         equatorialPole.precess(CoordinateEpoch.J2000);
     }
 

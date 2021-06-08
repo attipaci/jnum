@@ -23,7 +23,10 @@
 
 package jnum.astro;
 
+import java.text.NumberFormat;
+
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
@@ -98,21 +101,23 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
         return phi0;
     }
   
-
+    @Override
+    public NumberFormat getLongitudeFormat(int decimals) {
+        return Util.Af[decimals];
+    }
+    
 
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
     
     static {
-        defaultCoordinateSystem = new CoordinateSystem("Supergalactic Coordinates");
+        defaultCoordinateSystem = new CoordinateSystem("Supergalactic");
         defaultLocalCoordinateSystem = new CoordinateSystem("Supergalactic Offsets");
 
         CoordinateAxis longitudeAxis = createAxis("Supergalactic Longitude", "SGL", "L", af);
-        longitudeAxis.setReverse(true);
         CoordinateAxis latitudeAxis = createAxis("Supergalactic Latitude", "SGB", "B", af);
         CoordinateAxis longitudeOffsetAxis = createOffsetAxis("Supergalactic Longitude Offset", "dSGL", GreekLetter.Delta + " L");
-        longitudeOffsetAxis.setReverse(true);
         CoordinateAxis latitudeOffsetAxis = createOffsetAxis("Supergalactic Latitude", "dSGB", GreekLetter.Delta + " B");
 
         defaultCoordinateSystem.add(longitudeAxis);

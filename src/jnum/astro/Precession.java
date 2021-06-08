@@ -88,7 +88,8 @@ public class Precession implements Serializable {
 		return true;
 	}
 	
-	//  Precession from Lederle & Schwan, Astronomy and Astrophysics, 134, 1-6 (1984)
+	// Precession from Lederle & Schwan, Astronomy and Astrophysics, 134, 1-6 (1984)
+	// TODO update precession to IERS 2003 convention...
 	private void calcMatrix() {
 		final float fromJulianYear = (float) fromEpoch.getJulianYear();
 		final float toJulianYear = (float) toEpoch.getJulianYear();

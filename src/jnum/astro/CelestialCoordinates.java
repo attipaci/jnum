@@ -34,177 +34,177 @@ import jnum.math.SphericalCoordinates;
 // w.r.t the distant stars (quasars)...
 public abstract class CelestialCoordinates extends SphericalCoordinates {
 
-	private static final long serialVersionUID = 1991797523903701648L;
+    private static final long serialVersionUID = 1991797523903701648L;
 
     private static EquatorialCoordinates reuseEquatorial = new EquatorialCoordinates();
 
 
-	public CelestialCoordinates() { super(); }
-	
+    public CelestialCoordinates() { super(); }
 
-	public CelestialCoordinates(String text) { super(text); }
 
-	
-	public CelestialCoordinates(double lon, double lat) { super(lon, lat); }
-	
+    public CelestialCoordinates(String text) { super(text); }
 
-	public CelestialCoordinates(CelestialCoordinates from) {
-		convert(from, this);
-	}
-	
-	
-	@Override
+
+    public CelestialCoordinates(double lon, double lat) { super(lon, lat); }
+
+
+    public CelestialCoordinates(CelestialCoordinates from) {
+        convert(from, this);
+    }
+
+
+    @Override
     public CelestialCoordinates clone() { return (CelestialCoordinates) super.clone(); }
-	
-	@Override
+
+    @Override
     public CelestialCoordinates copy() { return (CelestialCoordinates) super.copy(); }
-	
 
-	public abstract EquatorialCoordinates getEquatorialPole();
-	
 
-	public abstract double getZeroLongitude();
-	
-	
-	public double getEquatorialPositionAngle() {
-		EquatorialCoordinates equatorialPole = getEquatorialPole();
-		return Math.atan2(-equatorialPole.cosLat() * Math.sin(x()), equatorialPole.sinLat() * cosLat() - equatorialPole.cosLat() * sinLat() * Math.cos(x()));
-	}
-	
-	
+    public abstract EquatorialCoordinates getEquatorialPole();
 
-	public EquatorialCoordinates toEquatorial() {
-		EquatorialCoordinates equatorial = new EquatorialCoordinates();
-		toEquatorial(equatorial);
-		return equatorial;
-	}
-	
-	/**
-	 * Convert to equatorial, placing the result in the supplied destination coordinates.
-	 *
-	 * @param equatorial the equivalent equatorial coordinates
-	 */
-	public void toEquatorial(EquatorialCoordinates equatorial) {
+
+    public abstract double getZeroLongitude();
+
+
+    public double getEquatorialPositionAngle() {
+        EquatorialCoordinates equatorialPole = getEquatorialPole();
+        return Math.atan2(-equatorialPole.cosLat() * Math.sin(x()), equatorialPole.sinLat() * cosLat() - equatorialPole.cosLat() * sinLat() * Math.cos(x()));
+    }
+
+
+
+    public EquatorialCoordinates toEquatorial() {
+        EquatorialCoordinates equatorial = new EquatorialCoordinates();
+        toEquatorial(equatorial);
+        return equatorial;
+    }
+
+    /**
+     * Convert to equatorial, placing the result in the supplied destination coordinates.
+     *
+     * @param equatorial the equivalent equatorial coordinates
+     */
+    public void toEquatorial(EquatorialCoordinates equatorial) {
         if(equatorial.epoch == null) equatorial.epoch = CoordinateEpoch.J2000;
-    
-	    final EquatorialCoordinates pole = getEquatorialPole();
-		
-		CelestialCoordinates.inverseTransform(this, pole, getZeroLongitude(), equatorial);
-		
-		if(!Util.equals(equatorial.epoch, pole.epoch)) {
-			final CoordinateEpoch epoch = equatorial.epoch;
-			equatorial.epoch = pole.epoch;
-			try { equatorial.precess(epoch); }
-			catch(UndefinedEpochException e) {}
-		}
-		
-	}
-	
-	/**
-	 * Convert from the specified equatorial coordinates, keeping the argument's epoch when applicable.
-	 *
-	 * @param equatorial the equatorial coordinates.
-	 */
-	public void fromEquatorial(EquatorialCoordinates equatorial) {
-		final EquatorialCoordinates pole = getEquatorialPole();
-		
-		if(!Util.equals(equatorial.epoch, pole.epoch)) {
-			equatorial = equatorial.clone();
-			try { equatorial.precess(pole.epoch); }
-			catch(UndefinedEpochException e) {}
-		}
-		
-		CelestialCoordinates.transform(equatorial, pole, getZeroLongitude(), this);
-	}
-	
-	@Override
+
+        final EquatorialCoordinates pole = getEquatorialPole();
+
+        CelestialCoordinates.inverseTransform(this, pole, -getZeroLongitude(), equatorial);
+
+        if(!Util.equals(equatorial.epoch, pole.epoch)) {
+            final CoordinateEpoch epoch = equatorial.epoch;
+            equatorial.epoch = pole.epoch;
+            try { equatorial.precess(epoch); }
+            catch(UndefinedEpochException e) {}
+        }
+
+    }
+
+    /**
+     * Convert from the specified equatorial coordinates, keeping the argument's epoch when applicable.
+     *
+     * @param equatorial the equatorial coordinates.
+     */
+    public void fromEquatorial(EquatorialCoordinates equatorial) {
+        final EquatorialCoordinates pole = getEquatorialPole();
+
+        if(!Util.equals(equatorial.epoch, pole.epoch)) {
+            equatorial = equatorial.clone();
+            try { equatorial.precess(pole.epoch); }
+            catch(UndefinedEpochException e) {}
+        }
+
+        CelestialCoordinates.transform(equatorial, pole, -getZeroLongitude(), this);
+    }
+
+    @Override
     public void convertFrom(Coordinate2D coords) throws IncompatibleTypesException {
-	    if(coords instanceof CelestialCoordinates) convertFrom((CelestialCoordinates) coords);
-	    else super.convertFrom(coords);
-	}
-	
-
-	public void convertFrom(CelestialCoordinates other) {
-		convert(other, this);
-	}
-	
-
-	public void convertTo(CelestialCoordinates other) {
-		convert(this, other);
-	}
-	
-
-	public void toEcliptic(EclipticCoordinates ecliptic) { convertTo(ecliptic); }
-	
-
-	public void toGalactic(GalacticCoordinates galactic) { convertTo(galactic); }
-	
-
-	public void toSuperGalactic(SuperGalacticCoordinates supergal) { convertTo(supergal); }
-	
-
-	public EclipticCoordinates toEcliptic() {
-		EclipticCoordinates ecliptic = new EclipticCoordinates();
-		convertTo(ecliptic);
-		return ecliptic;
-	}
-	
-
-	public GalacticCoordinates toGalactic() {
-		GalacticCoordinates galactic = new GalacticCoordinates();
-		convertTo(galactic);
-		return galactic;
-	}
-		
-
-	public SuperGalacticCoordinates toSuperGalactic() {
-		SuperGalacticCoordinates supergal = new SuperGalacticCoordinates();
-		convertTo(supergal);
-		return supergal;
-	}
-	
-
-	public static void convert(CelestialCoordinates from, CelestialCoordinates to) {
-	    
-	    // If converting to same type, then just copy, precessing as necessary;
-		if(to.getClass().equals(from.getClass())) {
-			if(from instanceof Precessing) {
-				to.copy(from);
-				try { ((Precessing) to).precess(((Precessing) to).getEpoch()); }
-				catch(UndefinedEpochException e) {}
-			}
-			else to.copy(from);
-		}
-		
-		if(from instanceof EquatorialCoordinates) {
-		    to.fromEquatorial((EquatorialCoordinates) from);
-		}
-		else if(to instanceof EquatorialCoordinates) {
-		    from.toEquatorial((EquatorialCoordinates) to);
-		}
-		else synchronized(reuseEquatorial) {
-		    from.toEquatorial(reuseEquatorial);
-		    to.fromEquatorial(reuseEquatorial);
-		}
-	
-	}
-	
-
-	public static EquatorialCoordinates getPole(double inclination, double risingRA) {
-		return new EquatorialCoordinates(risingRA - Constant.rightAngle, Constant.rightAngle - inclination);
-	}
+        if(coords instanceof CelestialCoordinates) convertFrom((CelestialCoordinates) coords);
+        else super.convertFrom(coords);
+    }
 
 
-	public static EquatorialCoordinates getPole(CelestialCoordinates referenceSystem, double inclination, double risingLON) {
-		referenceSystem.set(risingLON - Constant.rightAngle, Constant.rightAngle - inclination);
-		return referenceSystem.toEquatorial();
-	}
-	
+    public void convertFrom(CelestialCoordinates other) {
+        convert(other, this);
+    }
 
-	public static double getZeroLongitude(CelestialCoordinates from, CelestialCoordinates to) {
-		EquatorialCoordinates equatorialZero = from.toEquatorial();
-    	to.fromEquatorial(equatorialZero);
-    	return to.nativeLongitude();		
-	}
-	
+
+    public void convertTo(CelestialCoordinates other) {
+        convert(this, other);
+    }
+
+
+    public void toEcliptic(EclipticCoordinates ecliptic) { convertTo(ecliptic); }
+
+
+    public void toGalactic(GalacticCoordinates galactic) { convertTo(galactic); }
+
+
+    public void toSuperGalactic(SuperGalacticCoordinates supergal) { convertTo(supergal); }
+
+
+    public EclipticCoordinates toEcliptic() {
+        EclipticCoordinates ecliptic = new EclipticCoordinates();
+        convertTo(ecliptic);
+        return ecliptic;
+    }
+
+
+    public GalacticCoordinates toGalactic() {
+        GalacticCoordinates galactic = new GalacticCoordinates();
+        convertTo(galactic);
+        return galactic;
+    }
+
+
+    public SuperGalacticCoordinates toSuperGalactic() {
+        SuperGalacticCoordinates supergal = new SuperGalacticCoordinates();
+        convertTo(supergal);
+        return supergal;
+    }
+
+
+    public static void convert(CelestialCoordinates from, CelestialCoordinates to) {
+
+        // If converting to same type, then just copy, precessing as necessary;
+        if(to.getClass().equals(from.getClass())) {
+            if(from instanceof Precessing) {
+                to.copy(from);
+                try { ((Precessing) to).precess(((Precessing) to).getEpoch()); }
+                catch(UndefinedEpochException e) {}
+            }
+            else to.copy(from);
+        }
+
+        if(from instanceof EquatorialCoordinates) {
+            to.fromEquatorial((EquatorialCoordinates) from);
+        }
+        else if(to instanceof EquatorialCoordinates) {
+            from.toEquatorial((EquatorialCoordinates) to);
+        }
+        else synchronized(reuseEquatorial) {
+            from.toEquatorial(reuseEquatorial);
+            to.fromEquatorial(reuseEquatorial);
+        }
+
+    }
+
+
+    public static EquatorialCoordinates getPole(double inclination, double risingRA) {
+        return new EquatorialCoordinates(risingRA - Constant.rightAngle, Constant.rightAngle - inclination);
+    }
+
+
+    public static EquatorialCoordinates getPole(CelestialCoordinates referenceSystem, double inclination, double risingLON) {
+        referenceSystem.set(risingLON - Constant.rightAngle, Constant.rightAngle - inclination);
+        return referenceSystem.toEquatorial();
+    }
+
+
+    public static double getZeroLongitude(CelestialCoordinates from, CelestialCoordinates to) {
+        EquatorialCoordinates equatorialZero = from.toEquatorial();
+        to.fromEquatorial(equatorialZero);
+        return to.nativeLongitude();		
+    }
+
 }

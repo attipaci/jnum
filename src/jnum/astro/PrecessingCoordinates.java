@@ -157,15 +157,6 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     }
     
     
-    
-    /* (non-Javadoc)
-     * @see jnum.SphericalCoordinates#toString()
-     */
-    @Override
-    public String toString() {
-        return super.toString() + (epoch == null ? "" : " (" + epoch + ")"); 
-    }
-    
     /* (non-Javadoc)
      * @see jnum.math.SphericalCoordinates#toString(int)
      */

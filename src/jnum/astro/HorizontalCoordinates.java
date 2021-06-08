@@ -24,13 +24,8 @@
 
 package jnum.astro;
 
-import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCard;
-import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 import jnum.SafeMath;
 import jnum.Unit;
-import jnum.fits.FitsToolkit;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
@@ -56,7 +51,6 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 
     @Override
     public HorizontalCoordinates copy() { return (HorizontalCoordinates) super.copy(); }
-
 
 
     /* (non-Javadoc)
@@ -86,7 +80,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
         return defaultLocalCoordinateSystem;
     }
 
-
+ 
     public final double AZ() { return nativeLongitude(); }
 
 
@@ -150,33 +144,23 @@ public class HorizontalCoordinates extends SphericalCoordinates {
         offset.scaleX(-1.0);
     }
 
-
-    /* (non-Javadoc)
-     * @see kovacs.math.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-     */
-    @Override
-    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
-        super.editHeader(header, keyStem, alt);	
-
-        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        c.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
-    }
-
-
-
+    
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
 
     static {
-        defaultCoordinateSystem = new CoordinateSystem("Horizontal Coordinates");
+        defaultCoordinateSystem = new CoordinateSystem("Horizontal");
         defaultLocalCoordinateSystem = new CoordinateSystem("Horizontal Offsets");
 
         CoordinateAxis azimuthAxis = createAxis("Azimuth", "AZ", "Az", af);
         CoordinateAxis elevationAxis = createAxis("Elevation", "EL", "El", af);
-        CoordinateAxis azimuthOffsetAxis = createOffsetAxis("Azimuth Offset", "dAZ", GreekLetter.Delta + " AZ");
-        CoordinateAxis elevationOffsetAxis = createOffsetAxis("Elevation Offset", "dEL", GreekLetter.Delta + " EL");
+        CoordinateAxis azimuthOffsetAxis = createOffsetAxis("Azimuth Offset", "dAZ", GreekLetter.Delta + " Az");
+        CoordinateAxis elevationOffsetAxis = createOffsetAxis("Elevation Offset", "dEL", GreekLetter.Delta + " El");
 
+        azimuthAxis.setReverse(true);
+        azimuthOffsetAxis.setReverse(true);
+        
         defaultCoordinateSystem.add(azimuthAxis);
         defaultCoordinateSystem.add(elevationAxis);
         defaultLocalCoordinateSystem.add(azimuthOffsetAxis);
