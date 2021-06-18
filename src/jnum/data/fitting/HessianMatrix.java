@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,13 +23,13 @@
 
 package jnum.data.fitting;
 
-import jnum.math.matrix.SquareMatrix;
+import jnum.math.matrix.Matrix;
 
 /**
  * Represents the Hessian Matrix for a {@link Parametric} function of {@link java.lang.Double} type, using either numerical 
  * differentiation, or an appropriate {@link CovarianceMatrix} object.
  */
-public class HessianMatrix extends SquareMatrix {
+public class HessianMatrix extends Matrix {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 7056277026515087299L;

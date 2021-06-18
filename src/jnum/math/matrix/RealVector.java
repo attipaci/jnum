@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,18 +26,19 @@ package jnum.math.matrix;
 
 import java.util.Arrays;
 
+import jnum.ShapeException;
 import jnum.math.Coordinates;
 import jnum.math.Inversion;
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 
 
 
 
-public class RealVector extends AbstractVector<Double> implements TrueVector<Double>, Inversion {
+public class RealVector extends AbstractVector<Double> implements MathVector<Double>, Inversion {
 
     private static final long serialVersionUID = 1042626482476049050L;
 
-    public double[] component;
+    private double[] component;
 
 
     public RealVector() {}
@@ -50,7 +51,18 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
 
     public RealVector(double[] data) { setData(data); }
 
-
+    
+    @Override
+    public RealVector clone() {
+        return (RealVector) super.clone();
+    }
+    
+    @Override
+    public RealVector copy() {
+        return (RealVector) super.copy();
+    }
+    
+    
     @Override
     public final Double x() { return component[0]; }
 
@@ -71,10 +83,8 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      * @see kovacs.math.AbstractVector#getData()
      */
     @Override
-    public Object getData() {
-        Double[] data = new Double[component.length];
-        for(int i=size(); --i >= 0; ) data[i] = component[i];
-        return data;
+    public double[] getData() {
+        return component;
     }
 
     /* (non-Javadoc)
@@ -107,6 +117,13 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      */
     @Override
     public final void setComponent(int i, Double x) { component[i] = x; }
+    
+    public final void setComponent(int i, double x) { component[i] = x; }
+
+    public final void incrementValue(int i, double x) { component[i] += x; }
+    
+    @Override
+    public final void incrementValue(int i, Double x) { component[i] += x; }
 
     
     @Override
@@ -129,12 +146,12 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
         for(int i=size(); --i >= 0; ) sum += component[i] * v.getComponent(i);
         return sum;
     }
-
+    
     /* (non-Javadoc)
      * @see kovacs.math.AbstractVector#asRowVector()
      */
     @Override
-    public AbstractMatrix<Double> asRowVector() { 
+    public Matrix asRowVector() { 
         double[][] array = new double[1][];
         array[0] = component;
         return new Matrix(array);
@@ -144,7 +161,7 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      * @see kovacs.math.AbstractVector#asColumnVector()
      */
     @Override
-    public AbstractMatrix<Double> asColumnVector() {
+    public Matrix asColumnVector() {
         Matrix M = new Matrix(size(), 1);
         M.setColumn(0, component);
         return M;
@@ -154,7 +171,7 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
      */
     @Override
-    public void addScaled(TrueVector<? extends Double> o, double factor) {
+    public void addScaled(MathVector<? extends Double> o, double factor) {
         for(int i=size(); --i >= 0; ) component[i] += o.getComponent(i) * factor;		
     }
 
@@ -179,7 +196,7 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      * @see kovacs.math.Additive#subtract(java.lang.Object)
      */
     @Override
-    public void subtract(TrueVector<? extends Double> o) {
+    public void subtract(MathVector<? extends Double> o) {
         for(int i=size(); --i >= 0; ) component[i] -= o.getComponent(i);	
     }
 
@@ -187,7 +204,7 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      * @see kovacs.math.Additive#add(java.lang.Object)
      */
     @Override
-    public void add(TrueVector<? extends Double> o) {
+    public void add(MathVector<? extends Double> o) {
         for(int i=component.length; --i >= 0; ) component[i] += o.getComponent(i);	
     }
 
@@ -211,7 +228,7 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      * @see kovacs.math.Metric#distanceTo(java.lang.Object)
      */
     @Override
-    public double distanceTo(TrueVector<? extends Double> v) {
+    public double distanceTo(MathVector<? extends Double> v) {
         double d2 = 0.0;
         for(int i=size(); --i >= 0; ) {
             double d = component[i] - v.getComponent(i);
@@ -224,13 +241,13 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      * @see kovacs.math.AbstractVector#orthogonalizeTo(kovacs.math.AbstractVector)
      */
     @Override
-    public void orthogonalizeTo(TrueVector<? extends Double> v) {
+    public void orthogonalizeTo(MathVector<? extends Double> v) {
         addScaled(v, -dot(v) / (abs() * v.abs()));
     }
 
  
     @Override
-    public final void projectOn(final TrueVector<? extends Double> v) {
+    public final void projectOn(final MathVector<? extends Double> v) {
         double scaling = dot(v) / v.abs();
         copy(v);
         scale(scaling);
@@ -251,9 +268,8 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
      */
     @Override
-    public void setSum(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
-        if(size() != a.size() || size() != b.size()) throw new IllegalArgumentException("different size vectors.");
-
+    public void setSum(MathVector<? extends Double> a, MathVector<? extends Double> b) {
+        if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
         for(int i=size(); --i >= 0; ) component[i] = a.getComponent(i) - b.getComponent(i);
     }
 
@@ -261,8 +277,8 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
      * @see kovacs.math.Additive#setDifference(java.lang.Object, java.lang.Object)
      */
     @Override
-    public void setDifference(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
-        if(size() != a.size() || size() != b.size()) throw new IllegalArgumentException("different size vectors.");
+    public void setDifference(MathVector<? extends Double> a, MathVector<? extends Double> b) {
+        if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
 
         for(int i=size(); --i >= 0; ) component[i] = a.getComponent(i) - b.getComponent(i);
     }
@@ -280,6 +296,7 @@ public class RealVector extends AbstractVector<Double> implements TrueVector<Dou
     }
 
 
+    
 
 
 }

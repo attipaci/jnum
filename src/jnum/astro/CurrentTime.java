@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -31,7 +31,6 @@ import jnum.Unit;
 public final class CurrentTime {
 
 	private static double dUT1 = 0.0;
-	//public static double errorUT1 = 1.0 * Unit.s;
 	
 	private static AstroTime time = new AstroTime();
 	
@@ -50,10 +49,26 @@ public final class CurrentTime {
 		return TAI() - LeapSeconds.getCurrentLeap();
 	}
 	
+	public static synchronized double ERA() {
+        return time.now().getERA(dUT1);
+    }
+	
+	public static synchronized double GMST(double longitude) {
+        return time.now().getGMST(dUT1);
+    }
+    
+    public static synchronized double GST(double longitude) {
+        return time.now().getGST(dUT1);
+    }
 
 	public static synchronized double LMST(double longitude) {
 		return time.now().getLMST(longitude, dUT1);
 	}
+	
+	public static synchronized double LST(double longitude) {
+        return time.now().getLST(longitude, dUT1);
+    }
+    
 	
 	// UT1 reflects most correctly the rotational position of Earth (i.e. to be used in astronomy)
 	// needs DUT1 lookup from server via refreshData() to be accurate

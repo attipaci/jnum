@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -30,7 +30,7 @@ import jnum.NonConformingException;
 import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 
-public class Vector3D extends Coordinate3D implements TrueVector<Double> { 
+public class Vector3D extends Coordinate3D implements MathVector<Double> { 
     /**
      * 
      */
@@ -45,7 +45,7 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
         coords.toCartesian(this);
     }
     
-    public Vector3D(Coordinates<? extends Double> v) { super(v); } 
+    public Vector3D(Coordinates<Double> v) { super(v); } 
     
     
     @Override
@@ -125,7 +125,7 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
      * 
      * @param a     (radian) 3D rotation angles around X,Y,Z. All of them must be <<1 for this small angle approximation to work.
      */
-    public void smallRotate3D(TrueVector<? extends Double> a) {
+    public void smallRotate3D(MathVector<Double> a) {
         smallRotate3D(a.x(), a.y(), a.z());
     }
     
@@ -149,7 +149,7 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
     
    
     @Override
-    public double distanceTo(final TrueVector<? extends Double> v) {
+    public double distanceTo(final MathVector<? extends Double> v) {
         return ExtraMath.hypot(v.x() - x(), v.y() - y(), v.z() - z());
     }
     
@@ -159,17 +159,17 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
     }
     
     @Override
-    public void add(final TrueVector<? extends Double> v) {
+    public void add(final MathVector<? extends Double> v) {
         set(x() + v.x(), y() + v.y(), z() + v.z());
     }
     
     @Override
-    public void subtract(final TrueVector<? extends Double> v) {
+    public void subtract(final MathVector<? extends Double> v) {
         set(x() - v.x(), y() - v.y(), z() - v.z());
     }
     
     @Override
-    public void addScaled(final TrueVector<? extends Double> v, final double factor) {
+    public void addScaled(final MathVector<? extends Double> v, final double factor) {
         set(x() + factor * v.x(), y() + factor * v.y(), z() + factor * v.z());
     }
     
@@ -180,12 +180,12 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
   
     
     @Override
-    public void setSum(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+    public void setSum(final MathVector<? extends Double> a, final MathVector<? extends Double> b) {
         set(a.x() + b.x(), a.y() + b.y(), a.z() + b.z());
     }
     
     @Override
-    public void setDifference(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+    public void setDifference(final MathVector<? extends Double> a, final MathVector<? extends Double> b) {
         set(a.x() - b.x(), a.y() - b.y(), a.z() - b.z());
     }
     
@@ -195,8 +195,10 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
     }
     
     @Override
-    public void normalize() {
-        scale(1.0 / length());
+    public double normalize() {
+        double l = length();
+        scale(1.0 / l);
+        return l;
     }
     
     @Override
@@ -227,20 +229,20 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
     
      
     @Override
-    public void orthogonalizeTo(TrueVector<? extends Double> v) {
+    public void orthogonalizeTo(MathVector<? extends Double> v) {
         addScaled(v, -dot(v) / (abs() * v.abs()));
     }
     
     
     @Override
-    public void reflectOn(final TrueVector<? extends Double> v) {
+    public void reflectOn(final MathVector<? extends Double> v) {
         Vector3D ortho = copy();
         ortho.orthogonalizeTo(v);
         addScaled(ortho, -2.0);        
     }
     
     @Override
-    public final void projectOn(final TrueVector<? extends Double> v) {
+    public final void projectOn(final MathVector<? extends Double> v) {
         double scaling = dot(v) / v.abs();
         copy(v);
         scale(scaling);
@@ -256,17 +258,26 @@ public class Vector3D extends Coordinate3D implements TrueVector<Double> {
     }
 
     @Override
+    public void incrementValue(int idx, Double increment) {
+        switch(idx) {
+        case X: addX(increment); break;
+        case Y: addY(increment); break;
+        case Z: addZ(increment); break;
+        }
+    }
+    
+    @Override
     public void setValues(Double... values) {
         for(int i=values.length; --i >= 0; ) setComponent(i, values[i]);
     }
+   
     
-    
-    public static Vector3D sumOf(TrueVector<? extends Double> a, TrueVector<? extends Double> b) {
+    public static Vector3D sumOf(final MathVector<Double> a, final MathVector<Double> b) {
         return new Vector3D(a.x() + b.x(), a.y() + b.y(), a.z() + b.z());
     }
     
 
-    public static Vector3D differenceOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+    public static Vector3D differenceOf(final MathVector<Double> a, final MathVector<Double> b) {
         return new Vector3D(a.x() - b.x(), a.y() - b.y(), a.z() - b.z());
     }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,13 +24,14 @@
 package jnum.data.fitting;
 
 import jnum.Util;
-import jnum.math.matrix.SquareMatrix;
+import jnum.math.matrix.Matrix;
+import jnum.math.matrix.SquareMatrixException;
 
 
 /**
  * Represents a correlation matrix for a set of parameters, calculated from an appropriate {@link CovarianceMatrix} object.
  */
-public class CorrelationMatrix extends SquareMatrix {
+public class CorrelationMatrix extends Matrix {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1272894374094189932L;
@@ -47,10 +48,11 @@ public class CorrelationMatrix extends SquareMatrix {
      * @param C the covariance matrix
      */
     public CorrelationMatrix(CovarianceMatrix C) {
-        this.setSize(C.size());
+        if(!C.isSquare()) throw new SquareMatrixException();
+        this.setSize(C.rows());
        
         parameters = C.getParameters();
-        isigma = new double[C.size()];
+        isigma = new double[C.rows()];
         
         calcFrom(C);
     }
@@ -61,10 +63,11 @@ public class CorrelationMatrix extends SquareMatrix {
      * @param C the covariance matrix
      */
     private void calcFrom(CovarianceMatrix C) {
+       if(!C.isSquare()) throw new SquareMatrixException();
         
-       for(int i=size(); --i >= 0; ) isigma[i] = 1.0 / Math.sqrt(C.getValue(i, i));
+       for(int i=rows(); --i >= 0; ) isigma[i] = 1.0 / Math.sqrt(C.getValue(i, i));
       
-       for(int i=size(); --i >= 0; ) for(int j=size(); --j >= 0; )
+       for(int i=rows(); --i >= 0; ) for(int j=rows(); --j >= 0; )
            setValue(i, j, C.getValue(i,  j) * isigma[i] * isigma[j]);
         
     }
@@ -76,8 +79,9 @@ public class CorrelationMatrix extends SquareMatrix {
      * @return the string
      */
     public String sigmasToString() {
+        if(!isSquare()) throw new SquareMatrixException();
         StringBuffer buf = new StringBuffer();
-        for(int i=0; i < size(); i++) buf.append(Util.s3.format(1.0/isigma[i]) + ", ");
+        for(int i=0; i < rows(); i++) buf.append(Util.s3.format(1.0/isigma[i]) + ", ");
         return new String(buf);
     }
     

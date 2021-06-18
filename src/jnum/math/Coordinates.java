@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -39,5 +39,5 @@ public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>> {
     
     public T z();
 
-    
+   
 }

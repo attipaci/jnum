@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -27,10 +27,10 @@ package jnum.data;
 import jnum.PointOp;
 import jnum.Util;
 import jnum.data.transform.Stretch;
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 import jnum.parallel.ParallelPointOp;
 
-public abstract class RegularData<IndexType extends Index<IndexType>, VectorType extends TrueVector<Double>> extends Data<IndexType> {
+public abstract class RegularData<IndexType extends Index<IndexType>, VectorType extends MathVector<Double>> extends Data<IndexType> {
     protected SplineSet<VectorType> reuseIpolData;
 
 
@@ -341,12 +341,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     }
 
 
-    public <V extends TrueVector<Double>> void addPatchAt(final VectorType index, final RegularData<IndexType, V> patch, final double scaling) {
+    public <V extends MathVector<Double>> void addPatchAt(final VectorType index, final RegularData<IndexType, V> patch, final double scaling) {
         addPatchAt(index, patch, scaling, false);
     }
 
 
-    public <V extends TrueVector<Double>> void addPatchAt(final VectorType index, final RegularData<IndexType, V> patch, final double scaling, boolean parallel) {
+    public <V extends MathVector<Double>> void addPatchAt(final VectorType index, final RegularData<IndexType, V> patch, final double scaling, boolean parallel) {
         IndexType size = getSize();
         IndexType patchSize = patch.getSize();
         IndexType min = getIndexInstance();

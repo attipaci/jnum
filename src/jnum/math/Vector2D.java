@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -34,7 +34,7 @@ import jnum.math.matrix.Matrix;
 
 
 
-public class Vector2D extends Coordinate2D implements TrueVector<Double> {
+public class Vector2D extends Coordinate2D implements MathVector<Double> {
 
 
     private static final long serialVersionUID = 7319941007342696348L;
@@ -86,19 +86,19 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
 
     @Override
-    public final void add(final TrueVector<? extends Double> v) { addX(v.x()); addY(v.y()); }
+    public final void add(final MathVector<? extends Double> v) { addX(v.x()); addY(v.y()); }
 
     @Override
-    public final void subtract(final TrueVector<? extends Double> v) { subtractX(v.x()); subtractY(v.y()); }
+    public final void subtract(final MathVector<? extends Double> v) { subtractX(v.x()); subtractY(v.y()); }
 
 
     @Override
-    public final void addScaled(final TrueVector<? extends Double> vector, final double factor) {
+    public final void addScaled(final MathVector<? extends Double> vector, final double factor) {
         addX(factor * vector.x());
         addY(factor * vector.y());
     }
 
-    public final void setMultipleOf(final TrueVector<? extends Double> v, final double factor) {
+    public final void setMultipleOf(final MathVector<? extends Double> v, final double factor) {
         set(factor * v.x(), factor * v.y());
     }
 
@@ -122,16 +122,16 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
 
     @Override
-    public final void setSum(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+    public final void setSum(final MathVector<? extends Double> a, final MathVector<? extends Double> b) {
         set(a.x() + b.x(), a.y() + b.y());      
     }
 
     @Override
-    public final void setDifference(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+    public final void setDifference(final MathVector<? extends Double> a, final MathVector<? extends Double> b) {
         set(a.x() - b.x(), a.y() - b.y());      
     }
 
-    public void set(final TrueVector<? extends Double> a, final char op, final TrueVector<? extends Double> b) {
+    public void set(final MathVector<? extends Double> a, final char op, final MathVector<? extends Double> b) {
         switch(op) {
         case '+' : setSum(a, b); break;
         case '-' : setDifference(a, b); break;
@@ -163,9 +163,11 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     }
 
     @Override
-    public final void normalize() throws IllegalStateException { 
+    public final double normalize() throws IllegalStateException { 
         if(isNull()) throw new IllegalStateException("Null Vector");
-        scale(1.0 / absSquared()); 
+        double l = length();
+        scale(1.0 / l);
+        return l;
     }
 
     @Override
@@ -173,20 +175,20 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
 
     @Override
-    public void reflectOn(final TrueVector<? extends Double> v) {
+    public void reflectOn(final MathVector<? extends Double> v) {
         Vector2D ortho = copy();
         ortho.orthogonalizeTo(v);
         addScaled(ortho, -2.0);        
     }
 
     @Override
-    public final void projectOn(final TrueVector<? extends Double> v) {
+    public final void projectOn(final MathVector<? extends Double> v) {
         double scaling = dot(v) / v.abs();
         copy(v);
         scale(scaling);
     }
 
-    public void math(char op, TrueVector<? extends Double> v) throws IllegalArgumentException {
+    public void math(char op, MathVector<? extends Double> v) throws IllegalArgumentException {
         switch(op) {
         case '+': add(v); break;
         case '-': subtract(v); break;
@@ -234,6 +236,15 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
 
     @Override
+    public void incrementValue(int idx, Double increment) {
+        switch(idx) {
+        case X: addX(increment); break;
+        case Y: addY(increment); break;
+        }
+    }
+    
+
+    @Override
     public AbstractMatrix<Double> asRowVector() { 
         return new Matrix(new double[][] {{ x(), y() }});
     }
@@ -260,13 +271,13 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
 
     @Override
-    public void orthogonalizeTo(TrueVector<? extends Double> v) {
+    public void orthogonalizeTo(MathVector<? extends Double> v) {
         addScaled(v, -dot(v) / (abs() * v.abs()));
     }
 
 
     @Override
-    public final double distanceTo(final TrueVector<? extends Double> point) {
+    public final double distanceTo(final MathVector<? extends Double> point) {
         return ExtraMath.hypot(point.x() - x(), point.y() - y());
     }
 
@@ -286,12 +297,12 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
 
 
 
-    public final static Vector2D sumOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+    public final static Vector2D sumOf(final MathVector<Double> a, final MathVector<Double> b) {
         return new Vector2D(a.x() + b.x(), a.y() + b.y());
     }
 
 
-    public final static Vector2D differenceOf(final TrueVector<? extends Double> a, final TrueVector<? extends Double> b) {
+    public final static Vector2D differenceOf(final MathVector<Double> a, final MathVector<Double> b) {
         return new Vector2D(a.x() - b.x(), a.y() - b.y());
     }
 
@@ -309,7 +320,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
         return copy;
     }
     
-
+    
     public static final int LENGTH = 2;
 
     public static final int NORM = 3;
@@ -317,5 +328,7 @@ public class Vector2D extends Coordinate2D implements TrueVector<Double> {
     public static final int ANGLE = 4;
 
     public static final Vector2D NaN = new Vector2D(Double.NaN, Double.NaN);
+
+
 
 }

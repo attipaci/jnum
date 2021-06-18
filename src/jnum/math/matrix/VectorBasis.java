@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -35,7 +35,7 @@ public class VectorBasis extends AbstractVectorBasis<Double> {
 	 * @see kovacs.math.AbstractVectorBasis#asMatrix()
 	 */
 	@Override
-	public AbstractMatrix<Double> asMatrix() {
+	public Matrix asMatrix() {
 		Matrix M = new Matrix();
 		asMatrix(M);
 		return M;

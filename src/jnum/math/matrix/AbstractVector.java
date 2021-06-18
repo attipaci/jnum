@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -28,11 +28,11 @@ import java.io.Serializable;
 import jnum.Copiable;
 import jnum.Util;
 import jnum.data.ArrayUtil;
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 
 
 
-public abstract class AbstractVector<T> implements TrueVector<T>, Serializable, 
+public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
 Cloneable, Copiable<AbstractVector<T>> {
 
 	private static final long serialVersionUID = 785522803183758105L;
@@ -86,8 +86,10 @@ Cloneable, Copiable<AbstractVector<T>> {
 	 * @see kovacs.math.Normalizable#normalize()
 	 */
 	@Override
-	public void normalize() {
-		scale(1.0/abs());
+	public double normalize() {
+	    double l = abs();
+		scale(1.0/l);
+		return l;
 	}
 		
 
@@ -106,7 +108,7 @@ Cloneable, Copiable<AbstractVector<T>> {
 	
 	   
     @Override
-    public void reflectOn(final TrueVector<? extends T> v) {
+    public void reflectOn(final MathVector<? extends T> v) {
         AbstractVector<T> ortho = copy();
         ortho.orthogonalizeTo(v);
         addScaled(ortho, -2.0);        

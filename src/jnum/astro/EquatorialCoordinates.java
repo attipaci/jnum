@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -33,7 +33,6 @@ import jnum.Util;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.math.Vector2D;
-import jnum.math.Vector3D;
 import jnum.text.GreekLetter;
 import jnum.text.HourAngleFormat;
 
@@ -47,11 +46,10 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     private static final long serialVersionUID = 3445122576647034180L;
 
 
-    public EquatorialCoordinates() { }
+    public EquatorialCoordinates() {}
 
-
-    public EquatorialCoordinates(CoordinateEpoch epoch) { 
-        super(epoch);
+    public EquatorialCoordinates(EquatorialSystem system) { 
+        super(system);
     }
 
 
@@ -59,27 +57,23 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 
 
     public EquatorialCoordinates(double ra, double dec) { 
-        super(ra, dec); 
+        super(ra, dec, EquatorialSystem.ICRS); 
     }
 
 
-    public EquatorialCoordinates(double ra, double dec, double epochYear) { 
-        super(ra, dec, epochYear);
-    }
-
-
-    public EquatorialCoordinates(double ra, double dec, String epochSpec) { 
-        super(ra, dec, epochSpec); 
+    public EquatorialCoordinates(double ra, double dec, String sysSpec) { 
+        super(ra, dec, sysSpec); 
 
     }
 
 
-    public EquatorialCoordinates(double ra, double dec, CoordinateEpoch epoch) { 
-        super(ra, dec, epoch); 
+    public EquatorialCoordinates(double ra, double dec, EquatorialSystem system) { 
+        super(ra, dec, system); 
     }
 
 
     public EquatorialCoordinates(CelestialCoordinates from) { super(from); }
+    
 
     @Override
     public EquatorialCoordinates clone() { return (EquatorialCoordinates) super.clone(); }
@@ -141,13 +135,23 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         return Math.atan2(site.cosLat() * Math.sin(H), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(H));
     }
 
+    @Override
+    public void transform(EquatorialTransform t) {
+        EquatorialCoordinates equatorial = toEquatorial();
+        t.transform(equatorial);
+        fromEquatorial(equatorial);
+        setSystem(equatorial.getSystem());
+    }
+    
+
+    
     /**
      * Returns the change in position angle due to precession, relative to the J2000 epoch.
      * 
      * @return
      */
     public double getEpochPosAngle() {
-       return precessionPARate * (epoch.getYear() - 2000.0) * Math.sin(RA()) / cosLat();
+       return precessionPARate * (getSystem().getJulianYear() - 2000.0) * Math.sin(RA()) / cosLat();
     }
     
     /* (non-Javadoc)
@@ -217,51 +221,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         horizontal.setLongitude(Math.atan2(asinA, acosA));
     }
 
-
-    @Override
-    public void precessUnchecked(CoordinateEpoch newEpoch) {
-        
-        if(epoch instanceof ICRSEpoch) {
-            if(newEpoch instanceof ICRSEpoch) return;
-            
-            Vector3D pos = toCartesian();
-            pos.smallRotate3D(eta0, -xi0, -dalpha0);
-            fromCartesian(pos);
-            
-            setEpoch(CoordinateEpoch.J2000);
-        }
-        else if(epoch instanceof ApparentEpoch) {
-            // TODO Nutation
-            wobbleCorrect(((ApparentEpoch) epoch).getWobble(), false);
-        }
-        
-        if(epoch.equals(newEpoch)) return;
-        Precession precession = new Precession(epoch, newEpoch);
-        precession.precess(this);
-        
       
-        if(newEpoch instanceof ICRSEpoch) {
-            Vector3D pos = toCartesian();
-            pos.smallRotate3D(-eta0, xi0, dalpha0);
-            fromCartesian(pos);
-       
-            setEpoch(CoordinateEpoch.ICRS);
-        } 
-        else if(newEpoch instanceof ApparentEpoch) {
-            wobbleCorrect(((ApparentEpoch) newEpoch).getWobble(), true);
-        }
-    }
-    
-
-    private void wobbleCorrect(final Vector2D wobble, boolean toApparent) {
-        double s1 = -0.47 * Unit.mas * (epoch.getJulianYear() - 2000.0); 
-        Vector3D pos = toCartesian();
-        if(toApparent) pos.smallRotate3D(-s1, -wobble.x(), -wobble.y());
-        else pos.smallRotate3D(s1, wobble.x(), wobble.y());
-        fromCartesian(pos);
-    }
-    
-    
     /* (non-Javadoc)
      * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
      */
@@ -277,7 +237,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     
     @Override
     public NumberFormat getLongitudeFormat(int decimals) {
-        return Util.haf[decimals+1];
+        return Util.haf[decimals > 0 ? decimals-1 : 0];
     }
 
 
@@ -306,10 +266,6 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         defaultLocalCoordinateSystem.add(declinationOffsetAxis);        
     }	
 
-    private static final double eta0 = -0.006819 * Unit.arcsec;
-    private static final double xi0 = -0.016617 * Unit.arcsec;
-    private static final double dalpha0 = -0.01470 * Unit.arcsec;
-
     private static EquatorialCoordinates equatorialPole = new EquatorialCoordinates(0.0, Constant.rightAngle);
 
     /**
@@ -317,6 +273,12 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
      */
     private static final double precessionPARate = 20.05 * Unit.arcsec;
 
+    /**
+     * Precession (Lieske+1977)
+     * 
+     */
+    final static double eps0 = 23.4392911111111 * Unit.deg;  ///< Earth obliquity: 23d 26m 21.448s
+    
 
     public final static int NORTH = 1;
 

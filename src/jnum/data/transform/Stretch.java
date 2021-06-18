@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,9 +24,9 @@
 package jnum.data.transform;
 
 import jnum.data.Transforming;
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 
-public class Stretch<V extends TrueVector<Double>> implements Transforming<V> {
+public class Stretch<V extends MathVector<Double>> implements Transforming<V> {
     private V scale;
    
     public Stretch(V scale) {

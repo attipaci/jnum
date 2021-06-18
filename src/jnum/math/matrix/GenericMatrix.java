@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -27,11 +27,14 @@ package jnum.math.matrix;
 import java.util.Arrays;
 
 import jnum.Copiable;
+import jnum.ShapeException;
 import jnum.Util;
+import jnum.data.ArrayUtil;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.LinearAlgebra;
 import jnum.math.Metric;
+import jnum.math.MathVector;
 
 import java.lang.reflect.*;
 
@@ -44,7 +47,8 @@ import java.lang.reflect.*;
  * @param <T> the generic type
  */
 @SuppressWarnings("unchecked")
-public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractMatrix<T> {
+public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractMatrix<T> 
+{
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2705914561805806547L;
@@ -92,6 +96,24 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 		this.type = type;
 	}
 	
+	
+	public GenericMatrix(Class<T> type, int size) { 
+        super(type, size, size);
+        this.type = type;
+    }
+	
+	
+	@Override
+    public GenericMatrix<T> clone() {
+	    return (GenericMatrix<T>) super.clone();
+	}
+	
+	@Override
+    public GenericMatrix<T> copy() {
+        return (GenericMatrix<T>) super.copy();
+    }
+    
+	
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractMatrix#getType()
 	 */
@@ -103,7 +125,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 *
 	 * @return the t
 	 */
-	public T newEntry() {
+	public T createEntry() {
 		try { return type.getConstructor().newInstance(); }
 		catch(Exception e) { 
 			Util.error(this, e);
@@ -136,6 +158,13 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	@Override
 	public final void setValue(int row, int col, T v) { entry[row][col] = v; }
 	
+	@Override
+    public void addValue(int i, int j, T increment) { entry[i][j].add(increment); }
+    
+    @Override
+    public void addScaledValue(int i, int j, T increment, double scaling) { entry[i][j].addScaled(increment, scaling); }
+	
+	
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractMatrix#validate()
 	 */
@@ -161,15 +190,27 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.AbstractMatrix#calcProduct(kovacs.math.AbstractMatrix, kovacs.math.AbstractMatrix, boolean)
 	 */
 	@Override
-	protected synchronized void calcProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B, boolean clearFirst) {		
-		T term = newEntry();
+	protected synchronized void addProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) {		
+		final T P = createEntry();
 		
-		if(clearFirst) zero();
-		
-		for(int i=A.rows(); --i >= 0; ) for(int j=B.cols(); --j >= 0; ) for(int k=A.cols(); --k >= 0; ) {
-			term.setProduct(A.getValue(i, k), B.getValue(k, j));
-			entry[i][j].add(term);
-		}
+		// TODO parallelize on i.
+        
+        for(int i=A.rows(); --i >= 0; ) {
+            final T[] row = entry[i];
+            
+            for(int k=A.cols(); --k >= 0; ) {
+                final T a = A.getValue(i, k);
+                if(a.isNull()) continue;
+                
+                for(int j=B.cols(); --j >= 0; ) {
+                    final T b = B.getValue(k, j);
+                    if(b.isNull()) continue;
+                    
+                    P.setProduct(a, b);
+                    row[j].add(P);
+                }
+            }       
+        }
 	}
 	
 	/**
@@ -191,11 +232,13 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @param result the result
 	 */
 	public void dot(double[] v, T[] result) {
-		if(v.length != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
-		if(result.length != rows()) throw new IllegalArgumentException("Mismatched matrix/output-vector sizes.");
+		if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+		if(result.length != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
 		for(int i=rows(); --i >= 0; ) {
-			result[i].zero();
-			for(int j=cols(); --j >= 0; ) result[i].addScaled(entry[i][j], v[j]);
+		    final T[] row = entry[i];
+		    final T to = result[i];
+			to.zero();
+			for(int j=cols(); --j >= 0; ) if(v[j] != 0.0) if(!row[j].isNull()) to.addScaled(entry[i][j], v[j]);
 		}
 	}
 	
@@ -218,11 +261,13 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @param result the result
 	 */
 	public void dot(float[] v, T[] result) {
-		if(v.length != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
-		if(result.length != rows()) throw new IllegalArgumentException("Mismatched matrix/output-vector sizes.");
+		if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+		if(result.length != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
 		for(int i=rows(); --i >= 0; ) {
-			result[i].zero();
-			for(int j=cols(); --j >= 0; ) result[i].addScaled(entry[i][j], v[j]);
+		    final T[] row = entry[i];
+		    final T to = result[i];
+			to.zero();
+			for(int j=cols(); --j >= 0; ) if(v[j] != 0.0) if(!row[j].isNull()) to.addScaled(row[j], v[j]);
 		}
 	}
 	
@@ -245,16 +290,19 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @param result the result
 	 */
 	public synchronized void dot(T[] v, T[] result) {
-		if(v.length != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
-		if(result.length != rows()) throw new IllegalArgumentException("Mismatched matrix/output-vector sizes.");
+		if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+		if(result.length != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
 		
-		T term = newEntry();
+		final T P = createEntry();
 		
 		for(int i=rows(); --i >= 0; ) {
-			result[i].zero();
-			for(int j=cols(); --j >= 0; ) {
-				term.setProduct(entry[i][j], v[j]);
-				result[i].add(term);
+		    final T[] row = entry[i];
+			final T to = result[i];
+			
+			to.zero();
+			for(int j=cols(); --j >= 0; ) if(!row[j].isNull()) if(!v[j].isNull()) {
+				P.setProduct(entry[i][j], v[j]);
+				to.add(P);
 			}
 		}
 	}
@@ -279,10 +327,10 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @param result the result
 	 */
 	public void dot(RealVector v, GenericVector<T> result) {
-		if(v.size() != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
-		if(result.component == null) result.setSize(rows());
+		if(v.size() != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+		if(result.getData() == null) result.setSize(rows());
 		else if(result.size() != rows()) result.setSize(rows());
-		dot(v.component, result.component);
+		dot(v.getData(), result.getData());
 	}
 	
 	/**
@@ -304,11 +352,32 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @param result the result
 	 */
 	public void dot(GenericVector<T> v, GenericVector<T> result) {
-		if(v.size() != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
-		if(result.component == null) result.setSize(rows());
+		if(v.size() != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+		if(result.getData() == null) result.setSize(rows());
 		else if(result.size() != rows()) result.setSize(rows());
-		dot(v.component, result.component);
+		dot(v.getData(), result.getData());
 	}
+	
+	public void dot(MathVector<T> v, MathVector<T> result) {
+        if(v.size() != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+        if(result.size() != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
+        
+        final T P = createEntry();
+        final T sum = createEntry();
+  
+        for(int i=rows(); --i >= 0; ) {
+            final T[] row = entry[i];
+            sum.zero();
+            for(int j=cols(); --j >= 0; ) if(!row[j].isNull()) {
+                final T c = v.getComponent(j);
+                if(c.isNull()) continue;
+                P.setProduct(v.getComponent(j), row[j]);
+                sum.add(P);
+            }
+            result.setComponent(i, sum);
+        }
+    }
+    
 	
 	
 	/* (non-Javadoc)
@@ -327,7 +396,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	@Override
 	public void zero() {
 		if(entry != null) for(int i=entry.length; --i >= 0; ) for(int j=entry[i].length; --j >= 0; ) {
-			if(entry[i][j] == null) entry[i][j] = newEntry();
+			if(entry[i][j] == null) entry[i][j] = createEntry();
 			entry[i][j].zero();
 		}
 	}
@@ -394,25 +463,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	@Override
 	public final int rows() { return entry.length; }
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.IdentityValue#setIdentity()
-	 */
-	@Override
-	public void setIdentity() {		
-		T value = newEntry();
-		value.setIdentity();
-		setScalar(value);
-	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractMatrix#setScalar(java.lang.Object)
-	 */
-	@Override
-	public void setScalar(T value) {		
-		entry = (T[][]) Array.newInstance(type, new int[] {1, 1});
-		entry[0][0] = value;
-	}
-	 
 	/* (non-Javadoc)
 	 * @see kovacs.math.MatrixAlgebra#gaussJordan()
 	 */
@@ -427,8 +478,8 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 
 		Arrays.fill(ipiv, -1);
 		
-		T temp = newEntry();
-		T unused = newEntry();
+		T temp = createEntry();
+		T unused = createEntry();
 
 		for(int i=rows; --i >= 0; ) {
 			int icol=-1, irow=-1;
@@ -511,9 +562,9 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.AbstractMatrix#setColumn(int, java.lang.Object)
 	 */
 	@Override
-	public void setColumn(int j, Object value) throws IllegalArgumentException {
+	public void setColumn(int j, Object value) throws ShapeException {
 		T[] array = (T[]) value;
-		if(array.length != rows()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
+		if(array.length != rows()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
 		for(int i=rows(); --i >= 0; ) entry[i][j] = array[i];
 	}
 
@@ -531,7 +582,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	@Override
 	public void setRow(int i, Object value) {
 		T[] array = (T[]) value;
-		if(array.length != cols()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
+		if(array.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
 		entry[i] = array;
 	}
 	
@@ -568,7 +619,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public synchronized void addMultipleOfRow(int row, int toRow, T scaling) {
-		T term = newEntry();
+		T term = createEntry();
 		
 		for(int j=cols(); --j >= 0; ) {
 			term.setProduct(entry[row][j], scaling);
@@ -598,7 +649,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	@Override
 	public void zeroRow(int i) {
 		for(int j=cols(); --j >= 0; ) {
-			if(entry[i][j] == null) entry[i][j] = newEntry();
+			if(entry[i][j] == null) entry[i][j] = createEntry();
 			entry[i][j].zero();
 		}
 	}
@@ -633,7 +684,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public int getRank() {
-		GenericMatrix<T> copy = (GenericMatrix<T>) copy();
+		GenericMatrix<T> copy = copy();
 		copy.gauss();
 		int rank = 0;
 		int col = 0;
@@ -655,7 +706,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	@Override
 	public AbstractVectorBasis<T> getBasis() {
 		GenericVectorBasis<T> basis = new GenericVectorBasis<>();
-		GenericMatrix<T> copy = (GenericMatrix<T>) copy();
+		GenericMatrix<T> copy = copy();
 		copy.gauss();
 
 		int col = 0;
@@ -664,7 +715,7 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 			for(int j=col; j<cols(); j++) {
 				if(!row[j].isNull()) {
 					GenericVector<T> v = new GenericVector<>(type, cols());
-					getColumn(j, v.component);
+					getColumn(j, v.getData());
 					basis.add(v);
 					col = j+1;
 					break;
@@ -689,10 +740,10 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public void setSum(AbstractMatrix<? extends T> a, AbstractMatrix<? extends T> b) {
-		if(!a.isEqualSize(b))	throw new IllegalArgumentException("different size matrices.");
+		if(!a.isEqualSize(b))	throw new ShapeException("different size matrices.");
 		
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
-			if(entry[i][j] == null) entry[i][j] = newEntry();
+			if(entry[i][j] == null) entry[i][j] = createEntry();
 			entry[i][j].setSum(a.getValue(i, j), b.getValue(i,  j));
 		}
 	}
@@ -702,12 +753,167 @@ public class GenericMatrix<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public void setDifference(AbstractMatrix<? extends T> a, AbstractMatrix<? extends T> b) {
-		if(!a.isEqualSize(b)) throw new IllegalArgumentException("different size matrices.");
+		if(!a.isEqualSize(b)) throw new ShapeException("different size matrices.");
 		
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
-			if(entry[i][j] == null) entry[i][j] = newEntry();
+			if(entry[i][j] == null) entry[i][j] = createEntry();
 			entry[i][j].setDifference(a.getValue(i, j), b.getValue(i,  j));
 		}
 	}
 	
+	
+	
+	
+	public GenericMatrix<T> getInverse() {
+        return getLUInverse();
+    }
+    
+    // Invert via Gauss-Jordan elimination
+    public GenericMatrix<T> getGaussInverse() {
+        if(!isSquare()) throw new SquareMatrixException();
+        int size = rows();
+        GenericMatrix<T> combo = new GenericMatrix<>(type, size, 2*size);
+        for(int i=size; --i >= 0; ) combo.entry[i][i+size].setIdentity();
+        combo.paste(this, 0, 0);
+        combo.gaussJordan();
+        GenericMatrix<T> inverse = new GenericMatrix<>((T[][]) ArrayUtil.subArray(combo.entry, new int[] { 0, size }, new int[] { size, 2*size }));
+        return inverse;
+    }
+    
+
+    public GenericMatrix<T> getLUInverse() {
+        return new GenericLUDecomposition<>(this).getInverse();
+    }
+    
+
+    public void solve(GenericMatrix<T> inputVectors) {
+        inputVectors.entry = getSolutionsTo(inputVectors.entry);
+    }
+    
+    /* (non-Javadoc)
+     * @see kovacs.math.SquareMatrixAlgebra#solve(kovacs.math.AbstractVector[])
+     */
+    @Override
+    public void solve(AbstractVector<T>[] inputVectors) {
+        if(!isSquare()) throw new SquareMatrixException();
+        int size = rows();
+        GenericMatrix<T> combo = new GenericMatrix<>(type, size, size + inputVectors.length);
+        combo.paste(this, 0, 0);
+        
+        for(int col=inputVectors.length; --col >= 0; ) {
+            AbstractVector<T> v = inputVectors[col];
+            for(int row=size; --row >= 0; ) combo.setValue(row, size + col, v.getComponent(row));
+        }
+
+        combo.gaussJordan();
+        
+        for(int col=inputVectors.length; --col >= 0; ) {
+            AbstractVector<T> v = inputVectors[col];
+            for(int row=size; --row >= 0; ) v.setComponent(row, combo.getValue(row, size + col));
+        }
+    }
+    
+
+    public T[][] getSolutionsTo(T[][] inputMatrix) {
+        if(!isSquare()) throw new SquareMatrixException();
+        int size = rows();
+        GenericMatrix<T> combo = new GenericMatrix<>(type, size, size + inputMatrix[0].length);
+        combo.paste(this, 0, 0);
+        ArrayUtil.paste(inputMatrix, entry, new int[] { 0, size });
+        combo.gaussJordan();
+        return (T[][]) ArrayUtil.subArray(combo.entry, new int[] { 0, size }, new int[] { size, combo.cols() });
+    }
+    
+    
+    
+    /* (non-Javadoc)
+     * @see kovacs.math.Inversion#invert()
+     */
+    @Override
+    public void invert() {
+        entry = getInverse().entry;
+    }
+    
+    @Override
+    public void addIdentity(double scaling) {
+        if(!isSquare()) throw new SquareMatrixException();
+        T increment = createEntry();
+        increment.setIdentity();
+        increment.scale(scaling);
+        for(int i=rows(); --i >= 0; ) entry[i][i].add(increment);
+    }
+    
+    // indx is the row permutation, returns true/false for even/odd row exchanges...
+    protected boolean decomposeLU(int[] index) { return decomposeLU(index, 1e-30); }
+    
+
+    protected boolean decomposeLU(int[] index, double tinyValue) {
+        if(!isSquare()) throw new SquareMatrixException();
+        final int n = rows();
+
+        double[] v = new double[n];
+        boolean evenChanges = true;
+        
+        T product = createEntry();
+        
+        for(int i=n; --i >= 0; ) {
+            double big = 0.0;
+            for(int j=n; --j >= 0; ) {
+                final double tmp = entry[i][j].abs();
+                if(tmp > big) big = tmp;
+            }
+            if(big == 0.0) throw new IllegalStateException("Singular matrix in LU decomposition.");
+            v[i] = 1.0 / big;
+        }
+        for(int j=0; j<n; j++ ) {
+            int imax = -1;
+            
+            for(int i=j; --i >= 0; ) {
+                T sum = (T) entry[i][j].copy();
+                for(int k=i; --k >= 0; ) {
+                    product.setProduct(entry[i][k], entry[k][j]);
+                    sum.subtract(product);
+                }
+                entry[i][j] = sum;
+            }
+            double big = 0.0;
+            for(int i=n; --i >= j; ) {
+                T sum = (T) entry[i][j].copy();
+                for(int k=j; --k >= 0; ) {
+                    product.setProduct(entry[i][k], entry[k][j]);
+                    sum.subtract(product);
+                }
+                entry[i][j] = sum;
+                final double tmp = v[i] * sum.abs();
+                if (tmp >= big) {
+                    big=tmp;
+                    imax=i;
+                }
+            }
+            if(j != imax) {
+                for(int k=n; --k >= 0; ) {
+                    T tmp = entry[imax][k];
+                    entry[imax][k] = entry[j][k];
+                    entry[j][k] = tmp;
+                }
+                evenChanges = !evenChanges;
+                v[imax] = v[j];
+            }
+            index[j] = imax;
+            
+            T diag = entry[j][j];
+            
+            if(diag.isNull()) {
+                diag.setIdentity();
+                diag.scale(tinyValue);
+            }
+            
+            if(j != n-1) {
+                T tmp = (T) diag.getInverse();
+                for(int i=n; --i > j; ) entry[i][j].multiplyBy(tmp);
+            }
+        }
+        return evenChanges;
+    }	
+ 
 }

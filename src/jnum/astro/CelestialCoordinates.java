@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -85,17 +85,14 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
      * @param equatorial the equivalent equatorial coordinates
      */
     public void toEquatorial(EquatorialCoordinates equatorial) {
-        if(equatorial.epoch == null) equatorial.epoch = CoordinateEpoch.J2000;
+        if(equatorial.getSystem() == null) equatorial.setSystem(EquatorialSystem.ICRS);
 
         final EquatorialCoordinates pole = getEquatorialPole();
 
         CelestialCoordinates.inverseTransform(this, pole, -getZeroLongitude(), equatorial);
 
-        if(!Util.equals(equatorial.epoch, pole.epoch)) {
-            final CoordinateEpoch epoch = equatorial.epoch;
-            equatorial.epoch = pole.epoch;
-            try { equatorial.precess(epoch); }
-            catch(UndefinedEpochException e) {}
+        if(!Util.equals(equatorial.getSystem(), pole.getSystem())) {
+            new EquatorialTransform(equatorial.getSystem(), pole.getSystem()).transform(equatorial);
         }
 
     }
@@ -108,10 +105,9 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
     public void fromEquatorial(EquatorialCoordinates equatorial) {
         final EquatorialCoordinates pole = getEquatorialPole();
 
-        if(!Util.equals(equatorial.epoch, pole.epoch)) {
+        if(!Util.equals(equatorial.getSystem(), pole.getSystem())) {
             equatorial = equatorial.clone();
-            try { equatorial.precess(pole.epoch); }
-            catch(UndefinedEpochException e) {}
+            new EquatorialTransform(equatorial.getSystem(), pole.getSystem()).transform(equatorial);
         }
 
         CelestialCoordinates.transform(equatorial, pole, -getZeroLongitude(), this);
@@ -168,10 +164,11 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 
         // If converting to same type, then just copy, precessing as necessary;
         if(to.getClass().equals(from.getClass())) {
-            if(from instanceof Precessing) {
-                to.copy(from);
-                try { ((Precessing) to).precess(((Precessing) to).getEpoch()); }
-                catch(UndefinedEpochException e) {}
+            if(from instanceof PrecessingCoordinates) {
+                PrecessingCoordinates pFrom = (PrecessingCoordinates) from;
+                PrecessingCoordinates pTo = (PrecessingCoordinates) to;
+                pTo.copy(pFrom);
+                pTo.transform(new EquatorialTransform(pFrom.getSystem(), pTo.getSystem()));
             }
             else to.copy(from);
         }

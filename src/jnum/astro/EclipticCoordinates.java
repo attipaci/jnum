@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -50,20 +50,16 @@ public class EclipticCoordinates extends PrecessingCoordinates {
         super(from);
     }
 
-    public EclipticCoordinates(CoordinateEpoch epoch) {
-        super(epoch);
+    public EclipticCoordinates(EquatorialSystem system) {
+        super(system);
     }
 
-    public EclipticCoordinates(double lon, double lat, CoordinateEpoch epoch) {
-        super(lon, lat, epoch);
+    public EclipticCoordinates(double lon, double lat, EquatorialSystem system) {
+        super(lon, lat, system);
     }
 
-    public EclipticCoordinates(double lon, double lat, double epochYear) {
-        super(lon, lat, epochYear);
-    }
-
-    public EclipticCoordinates(double lon, double lat, String epochSpec) {
-        super(lon, lat, epochSpec);
+    public EclipticCoordinates(double lon, double lat, String sysSpec) {
+        super(lon, lat, sysSpec);
     }
 
     public EclipticCoordinates(double lon, double lat) {
@@ -126,10 +122,11 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     }
     
     @Override
-    public void precessUnchecked(CoordinateEpoch toEpoch) {
+    public void transform(EquatorialTransform t) {
         EquatorialCoordinates equatorial = toEquatorial();
-        equatorial.precess(toEpoch);
+        t.transform(equatorial);
         fromEquatorial(equatorial);
+        setSystem(equatorial.getSystem());
     }
 
 

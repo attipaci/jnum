@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -118,19 +118,18 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 
 
     public double getParallacticAngle(GeodeticCoordinates site) {
-        return Math.atan2(-site.cosLat() * Math.sin(x()), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(x()));
+        return Math.atan2(-site.cosLat() * Math.sin(AZ()), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(AZ()));
     }
 
 
     public static void toEquatorial(HorizontalCoordinates horizontal, EquatorialCoordinates equatorial, GeodeticCoordinates site, double LST) {
-        double cosAZ = Math.cos(horizontal.x());
-        equatorial.setNativeLatitude(
-                SafeMath.asin(horizontal.sinLat() * site.sinLat() + horizontal.cosLat() * site.cosLat() * cosAZ));
-        final double asinH = -Math.sin(horizontal.x()) * horizontal.cosLat();
+        double cosAZ = Math.cos(horizontal.AZ());
+        equatorial.setNativeLatitude(SafeMath.asin(horizontal.sinLat() * site.sinLat() + horizontal.cosLat() * site.cosLat() * cosAZ));
+        final double asinH = -Math.sin(horizontal.AZ()) * horizontal.cosLat();
         final double acosH = site.cosLat() * horizontal.sinLat() - site.sinLat() * horizontal.cosLat() * cosAZ;
         //final double acosH = (horizontal.sinLat() - equatorial.sinLat() * site.sinLat()) / site.cosLat();
 
-        equatorial.setLongitude(LST * Unit.timeAngle - Math.atan2(asinH, acosH));
+        equatorial.setLongitude(LST * Unit.timeAngle + Math.atan2(asinH, acosH));
     }
 
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -918,8 +918,10 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     /** The Constant arcsec. */
     public final static double arcsec = arcSecond;
 
-    /** The Constant mas. */
+    /** The Constant milliarcsecond. */
     public final static double mas = milli * arcSecond;
+   
+    public final static double uas = micro * arcSecond;
 
     /** The Constant hourAngle. */
     public final static double hourAngle = Constant.twoPi / 24.0;
@@ -961,6 +963,8 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
 
     /** The Constant day. */
     public final static double day = 24.0 * hour;
+    
+    public final static double siderealDay = 23.9344696 * hour;
 
     /** The Constant year. */
     public final static double year = 365.24219879 * day;
@@ -968,11 +972,14 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     /** The Constant yr. */
     public final static double yr = year;
 
+    /** The Constant julianYear. */
+    public final static double julianYear = 365.25 * day;
+    
     /** The Constant century. */
     public final static double century = 100.0 * year;
 
     /** The Constant julianCentury. */
-    public final static double julianCentury = 36525.0 * day;
+    public final static double julianCentury = 100.0 * julianYear;
 
     /** The Constant timeAngle. */
     public final static double timeAngle = hourAngle / hour;

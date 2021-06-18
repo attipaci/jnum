@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,10 +24,15 @@
 
 package jnum.astro;
 
+import java.text.NumberFormat;
+
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
+import jnum.math.PolarVector2D;
 import jnum.math.SphericalCoordinates;
+import jnum.math.Vector3D;
 import jnum.text.GreekLetter;
 
 // TODO: Auto-generated Javadoc
@@ -39,24 +44,57 @@ import jnum.text.GreekLetter;
 public class GeodeticCoordinates extends SphericalCoordinates {	
 
     private static final long serialVersionUID = -162411465069211958L;
-
+    
+    private double altitude = 0.0;
 
     public GeodeticCoordinates() {}
 
-
     public GeodeticCoordinates(String text) { super(text); }
 
-
-    public GeodeticCoordinates(double lon, double lat) { super(lon, lat); }
-
-    // Approximation for converting geocentric to geodesic coordinates.
-    // Marik: Csillagaszat (1989)
-    // based on Woolard & Clemence: Spherical Astronomy (1966)
-    public GeodeticCoordinates(GeocentricCoordinates geocentric) {
-        setNativeLongitude(geocentric.x());
-        setNativeLatitude(geocentric.y() + Z * Math.sin(2.0 * geocentric.y()));
+    public GeodeticCoordinates(double lon, double lat, double altitude) { 
+        super(lon, lat); 
+        this.altitude = altitude;
     }
-
+    
+    public GeodeticCoordinates(GeocentricCoordinates geocentric) {
+       fromGeocentric(geocentric);
+    }
+   
+    public void fromGeocentric(GeocentricCoordinates geocentric) {
+        setNativeLongitude(geocentric.x());
+        setNativeLatitude(Math.atan((1.0 - f) * Math.tan(geocentric.latitude())));
+        
+        altitude = 0.0;
+        PolarVector2D p = getGeocentricLatitudeVector();
+        
+        altitude = (geocentric.radius() - p.length()) * Math.cos(p.angle() - geocentric.latitude()); 
+    }
+    
+    public PolarVector2D getGeocentricLatitudeVector() {
+        double beta = Math.atan(1.0 / (1.0 - f) * Math.tan(latitude()));    // Geocentric latitude
+        double ac2 = a * Math.cos(beta);
+        double bs2 = b * Math.sin(beta);
+        
+        ac2 *= ac2;
+        bs2 *= bs2;
+        
+        double R = Math.sqrt((a * a * ac2 + b * b * bs2) / (ac2 + bs2));
+        return new PolarVector2D(R, beta);
+    }
+    
+    @Override
+    public void toCartesian(Vector3D v) {
+        PolarVector2D p = getGeocentricLatitudeVector();
+        double R = p.length();
+        double cR = p.length() * Math.cos(p.angle());
+        v.set(cR * Math.cos(longitude()), cR * Math.sin(longitude()), R * Math.sin(p.angle()));
+    }
+    
+    public void fromCartesian(Vector3D v) {
+        GeocentricCoordinates gc = new GeocentricCoordinates();
+        gc.fromCartesian(v);
+        fromGeocentric(gc);
+    }
 
     @Override
     public GeodeticCoordinates clone() { return (GeodeticCoordinates) super.clone(); }
@@ -77,14 +115,23 @@ public class GeodeticCoordinates extends SphericalCoordinates {
     public CoordinateSystem getLocalCoordinateSystem() {
         return defaultLocalCoordinateSystem;
     }
+    
+    @Override
+    public String toString(int decimals) {
+        return super.toString(decimals) + " " + Util.f1.format(altitude) + "m";
+    }
+    
+    @Override
+    public String toString(NumberFormat nf) {
+        return super.toString(nf) + " " + Util.f1.format(altitude) + "m";
+    }
+    
 
     public final static double a = 6378137.0 * Unit.m; // Earth major axis
 
-    public final static double b = 6356752.3 * Unit.m; // Earth minor axis
+    public final static double b = 6356752.3142 * Unit.m; // Earth minor axis
 
-    public final static double f = 1.0 / 298257.0; // Flattening of Earth (Marik: Csillagaszat)
-
-    private final static double Z = 103132.4 * Unit.deg * (2.0 * f - f*f); // Approximation term for geodesic conversion (Marik: Csillagaszat)
+    public final static double f = 1.0 / 298.257223563; // Flattening WGS84
 
     public final static int NORTH = 1;
 
@@ -94,7 +141,7 @@ public class GeodeticCoordinates extends SphericalCoordinates {
 
     public final static int WEST = -1;
     
-    
+    @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
     

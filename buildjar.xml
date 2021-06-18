@@ -14,22 +14,24 @@
 		<jar 
 	destfile="${projectHome}/jnum.jar" 
 	basedir="${projectHome}/bin"
-	includes="**/*.class" 
+	includes="**/*.class, **/data/**" 
 	excludes="**/test/**,**/devel/**,**/TODO*,**/*~,**/.*" 
 	index="true"
-	level="9" 
-    />
+	level="9">
+			<fileset dir="${projectHome}" includes="**/data/**" />
+		</jar>
 	</target>
 
 	<target name="jnum-src.jar">
 		<jar 
 	destfile="${projectHome}/jnum-src.jar" 
 	basedir="${projectHome}/src"
-	includes="**/*.java" 
+	includes="**/*.java, **/data/**" 
 	excludes="**/test/**,**/devel/**,**/TODO*,**/*~,**/.*" 
 	index="true"
-	level="9" 
-    />
+	level="9">
+		<fileset dir="${projectHome}" includes="**/data/**" />
+    	</jar>
 	</target>
 
 </project>

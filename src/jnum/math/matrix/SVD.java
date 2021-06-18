@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -30,8 +30,7 @@ package jnum.math.matrix;
 public class SVD {
 
 	private Matrix u;
-
-	private SquareMatrix v;
+	private Matrix v;  // square
 
 	private double[] w;
 	
@@ -47,7 +46,7 @@ public class SVD {
 	public Matrix getU() { return u; }
 	
 
-	public SquareMatrix getV() { return v; }
+	public Matrix getV() { return v; }
 	
 
 	public double[] getW() { return w; }
@@ -55,8 +54,8 @@ public class SVD {
 
 	public void decompose(Matrix M) {
 		int n = M.cols();
-		u = (Matrix) M.copy();
-		v = new SquareMatrix(n);
+		u = M.copy();
+		v = new Matrix(n);
 		w = new double[n];
 		u.SVD(w, v);
 	}
@@ -78,14 +77,14 @@ public class SVD {
 		for (int j=n; --j >= 0; ) {
 			double s = 0.0;
 			if(w[j] != 0.0) {
-				for(int i=m; --i >= 0; ) s += u.entry[i][j] * b[i];
+				for(int i=m; --i >= 0; ) s += u.getValue(i, j) * b[i];
 				s /= w[j];
 			}
 			tmp[j] = s;
 		}
 		for(int j=n; --j >= 0; ) {
 			double s = 0.0;
-			for(int jj=n; --jj >= 0; ) s += v.entry[j][jj] * tmp[jj];
+			for(int jj=n; --jj >= 0; ) s += v.getValue(j, jj) * tmp[jj];
 			x[j] = s;
 		}
 		
@@ -102,24 +101,24 @@ public class SVD {
 
 	public void getMatrixTo(Matrix M) {
 		final int n = w.length;
-		SquareMatrix wvT = new SquareMatrix(n);
-		for(int i=n; --i >= 0; ) for(int j=n; --j >= 0; ) wvT.entry[i][j] = w[i] * v.entry[j][i];
+		Matrix wvT = new Matrix(n);
+		for(int i=n; --i >= 0; ) for(int j=n; --j >= 0; ) wvT.setValue(i, j, w[i] * v.getValue(j, i));
 		M.setProduct(u, wvT);
 	}
 	
 	// square A --> A^-1 = V * diag(1/w) * U^T 
-	public SquareMatrix getInverse() {
-		SquareMatrix inverse = new SquareMatrix();
+	public Matrix getInverse() {
+		Matrix inverse = new Matrix();
 		getInverseTo(inverse);
 		return inverse;		
 	}
 	
 	
-	public void getInverseTo(SquareMatrix inverse) {	
+	public void getInverseTo(Matrix inverse) {	
 		final int n = w.length;
-		if(u.rows() != n) throw new IllegalStateException("Cannot invert non-square matrix.");
-		SquareMatrix iwuT = new SquareMatrix(n);
-		for(int i=n; --i >= 0; ) for(int j=n; --j >= 0; ) iwuT.entry[i][j] = 1.0 / w[i] * u.entry[j][i];
+		if(u.rows() != n) throw new SquareMatrixException("Cannot invert non-square matrix.");
+		Matrix iwuT = new Matrix(n);
+		for(int i=n; --i >= 0; ) for(int j=n; --j >= 0; ) iwuT.setValue(i, j, 1.0 / w[i] * u.getValue(j, i));
 		inverse.setProduct(v, iwuT);
 	}
 	

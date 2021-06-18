@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -409,32 +409,32 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         sinLat *= -1.0;
     }
 
-    public Vector3D toCartesian() {
+    public final Vector3D toCartesian() {
         Vector3D v = new Vector3D();
         toCartesian(v);
         return v;
     }
     
     
-    public void toCartesian(Vector3D v) {
+    public void toCartesian(Vector3D v) {     
         v.setX(cosLat() * Math.cos(x()));
         v.setY(cosLat() * Math.sin(x()));
         v.setZ(sinLat());
     }
 	
 
-    public double fromCartesian(Vector3D v) {
-        final double l = v.length();
+    public double fromCartesian(MathVector<Double> v) { 
+        final double r = v.abs();
         
-        if(l == 0.0) v.zero();
-        else if(v.z() == l) set(0.0, Constant.rightAngle);
+        if(r == 0.0) v.zero();
+        else if(v.z() == r) set(0.0, Constant.rightAngle);
         else {
             final double xy = ExtraMath.hypot(v.x(), v.y());
             setY(Math.atan2(v.z(), xy));
             if(xy == 0.0) setX(0.0);
             else setX(Math.atan2(v.y(), v.x()));
         }
-        return l;
+        return r;
     }
 
 	public static boolean equalAngles(double a1, double a2) {

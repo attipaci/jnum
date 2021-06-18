@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,6 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// (C)2007 Attila Kovacs <attila[AT]sigmyne.com>
 
 package jnum.math.matrix;
 
@@ -28,8 +27,10 @@ package jnum.math.matrix;
 import java.util.*;
 
 import jnum.ExtraMath;
+import jnum.ShapeException;
 import jnum.data.ArrayUtil;
 import jnum.data.fitting.ConvergenceException;
+import jnum.math.MathVector;
 import jnum.util.HashCode;
 
 import java.text.*;
@@ -42,8 +43,7 @@ public class Matrix extends AbstractMatrix<Double> {
 
 	private static final long serialVersionUID = 1648081664701964671L;
 
-	public double[][] entry; 
-
+	private double[][] entry; 
 
 	public Matrix() {}
 
@@ -53,13 +53,30 @@ public class Matrix extends AbstractMatrix<Double> {
 		entry = a; 
 		validate();
 	}
-
+		
+	public Matrix(int size) {
+	    this(size, size);
+	}
 
 	public Matrix(int rows, int cols) { 
 		this();
 		entry = new double[rows][cols];
 	}
 
+	@Override
+    public Matrix clone() {
+        return (Matrix) super.clone();
+    }
+	
+	@Override
+    public Matrix copy() {
+	    return (Matrix) super.copy();
+	}
+	
+    public Matrix dot(Matrix B) {
+	    return (Matrix) super.dot(B);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -130,15 +147,25 @@ public class Matrix extends AbstractMatrix<Double> {
 	@Override
 	public final void setValue(int row, int col, Double v) { entry[row][col] = v; }
 	
+	public void setValue(int i, int j, double value) { entry[i][j] = value; }
+	
+	public void addValue(int i, int j, double increment) { entry[i][j] += increment; }
+	
+	@Override
+    public void addValue(int i, int j, Double increment) { entry[i][j] += increment; }
+	
+	@Override
+    public void addScaledValue(int i, int j, Double increment, double scaling) { entry[i][j] += increment * scaling; }
+	
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractMatrix#checkShape()
 	 */
 	@Override
-	protected void checkShape() throws IllegalStateException {
+	protected void checkShape() throws ShapeException {
 		if(getData() == null) return;
 		if(rows() == 0) return;
 		int m = cols();
-		for(int i=rows(); --i > 0; ) if(entry[i].length != m) throw new IllegalStateException("Matrix has non-rectangular shape!");	
+		for(int i=rows(); --i > 0; ) if(entry[i].length != m) throw new ShapeException("Matrix has an irregular non-rectangular shape!");	
 	}
 	
 	
@@ -146,15 +173,27 @@ public class Matrix extends AbstractMatrix<Double> {
 	 * @see kovacs.math.AbstractMatrix#calcProduct(kovacs.math.AbstractMatrix, kovacs.math.AbstractMatrix, boolean)
 	 */
 	@Override
-	protected void calcProduct(AbstractMatrix<? extends Double> A, AbstractMatrix<? extends Double> B, boolean clearFirst) {				
-		if(clearFirst) zero();	
-		
-		for(int i=A.rows(); --i >= 0; ) for(int j=B.cols(); --j >= 0; ) for(int k=A.cols(); --k >= 0; ) 
-			entry[i][j] += A.getValue(i, k) * B.getValue(k, j);
+	protected void addProduct(AbstractMatrix<? extends Double> A, AbstractMatrix<? extends Double> B) {	
+	    // TODO parallelize on i.
+	    
+		for(int i=A.rows(); --i >= 0; ) {
+		    final double[] row = entry[i];
+		    
+		    for(int k=A.cols(); --k >= 0; ) {
+		        final double a = A.getValue(i, k);
+		        if(a == 0.0) continue;
+		        
+		        for(int j=B.cols(); --j >= 0; ) {
+		            final double b = B.getValue(k, j);
+		            if(b == 0.0) continue;
+		            row[j] += a * b;
+		        }
+		    }
+	            
+		}
 	}
 	
-
-	public static Matrix product(AbstractMatrix<Double> A, AbstractMatrix<Double> B) {
+	public static Matrix product(AbstractMatrix<? extends Double> A, AbstractMatrix<? extends Double> B) {
 		Matrix product = new Matrix();
 		product.setProduct(A, B);
 		return product;
@@ -167,12 +206,18 @@ public class Matrix extends AbstractMatrix<Double> {
 		return result;
 	}
 	
-
+	
 	public void dot(double[] v, double[] result) {
-		if(v.length != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
-		if(result.length != rows()) throw new IllegalArgumentException("Mismatched matrix/output-vector sizes.");
-		Arrays.fill(result, 0.0);
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) result[i] += entry[i][j] * v[j];
+		if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+		if(result.length != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
+		
+		// TODO parallelize on i;
+		for(int i=rows(); --i >= 0; ) {
+		    final double[] row = entry[i];
+		    double sum = 0.0;
+		    for(int j=cols(); --j >= 0; ) if(row[j] != 0.0) if(v[j] != 0.0) sum += row[j] * v[j];
+		    result[i] = sum;
+		}
 	}
 	
 
@@ -184,26 +229,38 @@ public class Matrix extends AbstractMatrix<Double> {
 	
 
 	public void dot(float[] v, float[] result) {
-		if(v.length != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
-		if(result.length != rows()) throw new IllegalArgumentException("Mismatched matrix/output-vector sizes.");
-		Arrays.fill(result, 0.0F);
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) result[i] += entry[i][j] * v[j];
-	}
-	
+		if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+		if(result.length != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
 
-	public RealVector dot(RealVector v) {
+		for(int i=rows(); --i >= 0; ) {
+		    final double[] row = entry[i];
+		    double sum = 0.0;
+		    for(int j=cols(); --j >= 0; ) if(row[j] != 0.0) if(v[j] != 0.0) sum += row[j] * v[j];
+		    result[i] = (float) sum;
+		}
+	}
+
+	
+	public RealVector dot(MathVector<Double> v) {
 		RealVector result = new RealVector(rows());
 		dot(v, result);
 		return result;
 	}
-	
+    
 
-	public void dot(RealVector v, RealVector result) {
-		if(v.size() != cols()) throw new IllegalArgumentException("Mismatched matrix/input-vector sizes.");
-		if(result.component == null) result.setSize(rows());
-		else if(result.size() != rows()) result.setSize(rows());
-		else result.zero();
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) result.component[i] += entry[i][j] * v.component[j];
+	public void dot(MathVector<Double> v, MathVector<Double> result) {
+		if(v.size() != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+		if(result.size() != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
+
+		for(int i=rows(); --i >= 0; ) {
+		    final double[] row = entry[i];
+		    double sum = 0.0;
+		    for(int j=cols(); --j >= 0; ) if(row[j] != 0.0) {
+		        double c = v.getComponent(j);
+		        if(c != 0.0) sum += row[j] * v.getComponent(j);
+		    }
+		    result.setComponent(i, sum);
+		}
 	}
 	
 	
@@ -216,7 +273,7 @@ public class Matrix extends AbstractMatrix<Double> {
 		int m = cols();
 
 		Matrix M = new Matrix(m, n);
-
+		
 		for(int i=n; --i >= 0; ) for(int j=m; --j >= 0; ) M.entry[j][i] = entry[i][j];
 
 		return M;
@@ -227,7 +284,7 @@ public class Matrix extends AbstractMatrix<Double> {
 	 */
 	@Override
 	public void zero() {
-		if(entry != null) for(int i=entry.length; --i >= 0; ) Arrays.fill(entry[i], 0.0);
+		if(entry != null) for(double[] row : entry) Arrays.fill(row, 0.0);
 	}
 	
 
@@ -262,7 +319,7 @@ public class Matrix extends AbstractMatrix<Double> {
 	 */
 	@Override
 	public void scale(double factor) {
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) entry[i][j] *= factor;
+		for(double[] row : entry) for(int j=cols(); --j >= 0; ) row[j] *= factor;
 	}
 	
 	/* (non-Javadoc)
@@ -290,13 +347,6 @@ public class Matrix extends AbstractMatrix<Double> {
 	@Override
 	public final int rows() { return entry.length; }
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.IdentityValue#setIdentity()
-	 */
-	@Override
-	public void setIdentity() {		
-		entry = new double[][] {{ 1.0 }};		
-	}
 
 	// The b[] are vectors for which to solve for Ax = b
 	// the matrix is inverted, and the solution vectors are returned in their place
@@ -607,14 +657,14 @@ public class Matrix extends AbstractMatrix<Double> {
 		else throw new IllegalArgumentException(" Cannot use " + value.getClass().getSimpleName() + " to specify " + getClass().getSimpleName() + " column.");
 	}
 
-	public void setColumn(int j, double[] value) throws IllegalArgumentException {
-		if(value.length != rows()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
+	public void setColumn(int j, double[] value) throws ShapeException {
+		if(value.length != rows()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
 		for(int i=rows(); --i >= 0; ) entry[i][j] = value[i];		
 	}
 	
 
-	public void setColumn(int j, float[] value) throws IllegalArgumentException {
-		if(value.length != rows()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
+	public void setColumn(int j, float[] value) throws ShapeException {
+		if(value.length != rows()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
 		for(int i=rows(); --i >= 0; ) entry[i][j] = value[i];		
 	}
 	
@@ -630,14 +680,14 @@ public class Matrix extends AbstractMatrix<Double> {
 	}
 	
 
-	public void setRow(int i, double[] value) throws IllegalArgumentException {
-		if(value.length != cols()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
+	public void setRow(int i, double[] value) throws ShapeException {
+		if(value.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
 		entry[i] = value;
 	}
 	
 
-	public void setRow(int i, float[] value) throws IllegalArgumentException {
-		if(value.length != cols()) throw new IllegalArgumentException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
+	public void setRow(int i, float[] value) throws ShapeException {
+		if(value.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
 		for(int j=cols(); --j >= 0; ) entry[i][j] = value[j];
 	}
 
@@ -722,21 +772,13 @@ public class Matrix extends AbstractMatrix<Double> {
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) entry[i][j] += value;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractMatrix#setScalar(java.lang.Object)
-	 */
-	@Override
-	public void setScalar(Double value) {
-		entry = new double[][] {{ value }};
-	}
-	
 
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractMatrix#getRank()
 	 */
 	@Override
 	public int getRank() {
-		Matrix copy = (Matrix) copy();
+		Matrix copy = copy();
 		copy.gauss();
 		int rank = 0;
 		int col = 0;
@@ -757,9 +799,9 @@ public class Matrix extends AbstractMatrix<Double> {
 	 * @see kovacs.math.AbstractMatrix#getBasis()
 	 */
 	@Override
-	public AbstractVectorBasis<Double> getBasis() {
+	public VectorBasis getBasis() {
 		VectorBasis basis = new VectorBasis();
-		Matrix copy = (Matrix) copy();
+		Matrix copy = copy();
 		copy.gauss();
 		int col = 0;
 		for(int i=0; i<rows(); i++) {
@@ -767,7 +809,7 @@ public class Matrix extends AbstractMatrix<Double> {
 			for(int j=col; j < cols(); j++) {
 				if(row[j] != 0.0) {
 					RealVector v = new RealVector(cols());
-					getColumn(j, v.component);
+					getColumn(j, v.getData());
 					basis.add(v);
 					col = j+1;
 					break;
@@ -815,7 +857,7 @@ public class Matrix extends AbstractMatrix<Double> {
 	 */
 	@Override
 	public void setSum(AbstractMatrix<? extends Double> a, AbstractMatrix<? extends Double> b) {
-		if(!a.isEqualSize(b)) throw new IllegalArgumentException("different size matrices.");			
+		if(!a.isEqualSize(b)) throw new ShapeException("different size matrices.");			
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) entry[i][j] = a.getValue(i, j) + b.getValue(i,  j);
 	}
 
@@ -824,9 +866,178 @@ public class Matrix extends AbstractMatrix<Double> {
 	 */
 	@Override
 	public void setDifference(AbstractMatrix<? extends Double> a, AbstractMatrix<? extends Double> b) {
-		if(!a.isEqualSize(b)) throw new IllegalArgumentException("different size matrices.");
+		if(!a.isEqualSize(b)) throw new ShapeException("different size matrices.");
 		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) entry[i][j] = a.getValue(i, j) + b.getValue(i,  j);
 	}
 	
+	
+
+	
+	public Matrix getInverse() {
+        return getLUInverse();
+    }
+    
+
+    public Matrix getLUInverse() {
+        return new LUDecomposition(this).getInverse();
+    }
+    
+
+    public Matrix getSVDInverse() {
+        return new SVD(this).getInverse().copy();
+    }
+    
+    // Invert via Gauss-Jordan elimination
+    public Matrix getGaussInverse() {
+        if(!isSquare()) throw new SquareMatrixException();
+        
+        int size = rows();
+        Matrix combo = new Matrix(size, 2*size);
+        for(int i=size; --i >= 0; ) combo.entry[i][i+size] = 1.0;
+        combo.paste(this, 0, 0);
+        combo.gaussJordan();
+        Matrix inverse = new Matrix((double[][]) ArrayUtil.subArray(combo.entry, new int[] { 0, size }, new int[] { size, 2*size }));
+        return inverse;
+    }
+    
+
+    // indx is the row permutation, returns +/-1 for even/odd row exchanges...
+    // Based on Numerical Recipes in C (Press et al. 1989)
+    protected boolean decomposeLU(int[] index) { return decomposeLU(index, 1e-30); }
+    
+
+    protected boolean decomposeLU(int[] index, double tinyValue) {
+        if(!isSquare()) throw new SquareMatrixException();
+        
+        final int n = rows();
+
+        double[] v = new double[n];
+        boolean evenChanges = true;
+        
+        for(int i=n; --i >= 0; ) {
+            double big = 0.0;
+            for(int j=n; --j >= 0; ) {
+                final double temp = Math.abs(entry[i][j]);
+                if(temp > big) big = temp;
+            }
+            if(big == 0.0) throw new IllegalStateException("Singular matrix in LU decomposition.");
+            v[i] = 1.0 / big;
+        }
+        for(int j=0; j<n; j++) {
+            int imax = -1;
+            
+            for(int i=j; --i >= 0; ) {
+                double sum = entry[i][j];
+                for(int k=i; --k >= 0; ) sum -= entry[i][k] * entry[k][j];
+                entry[i][j] = sum;
+            }
+            double big = 0.0;
+            for(int i=n; --i >= j; ) {
+                double sum = entry[i][j];
+                for(int k=j; --k >= 0; ) sum -= entry[i][k] * entry[k][j];
+                entry[i][j] = sum;
+                final double temp = v[i] * Math.abs(sum);
+                if (temp >= big) {
+                    big=temp;
+                    imax=i;
+                }
+            }
+            if(j != imax) {
+                for(int k=n; --k >= 0; ) {
+                    double temp = entry[imax][k];
+                    entry[imax][k] = entry[j][k];
+                    entry[j][k] = temp;
+                }
+                evenChanges = !evenChanges;
+                v[imax] = v[j];
+            }
+            index[j] = imax;
+            if(entry[j][j] == 0.0) entry[j][j] = tinyValue;
+            
+            if(j != n-1) {
+                double temp = 1.0 / entry[j][j];
+                for(int i=n; --i > j; ) entry[i][j] *= temp;
+            }
+        }
+        return evenChanges;
+    }
+    
+    // TODO Solving with and without inversion...
+    public void solve(double[] b) {
+        new LUDecomposition(this).solve(b);
+    }
+    
+
+    // TODO ...
+    public void invertAndSolve(double[] b) {    
+        
+    }
+    
+    
+    public void solve(Matrix inputVectors) {
+        inputVectors.entry = getSolutionsTo(inputVectors.entry);
+    }
+    
+
+    @Override
+    public void solve(AbstractVector<Double>[] inputVectors) {
+        if(!isSquare()) throw new SquareMatrixException();
+        int size = rows();
+        Matrix combo = new Matrix(size, size + inputVectors.length);
+        combo.paste(this, 0, 0);
+        
+        for(int col=inputVectors.length; --col >= 0; ) {
+            AbstractVector<Double> v = inputVectors[col];
+            for(int row=size; --row >= 0; ) combo.setValue(row, size + col, v.getComponent(row));
+        }
+
+        combo.gaussJordan();
+        
+        for(int col=inputVectors.length; --col >= 0; ) {
+            AbstractVector<Double> v = inputVectors[col];
+            for(int row=size; --row >= 0; ) v.setComponent(row, combo.getValue(row, size + col));
+        }
+
+    }
+    
+    
+    public double[][] getSolutionsTo(double[][] inputMatrix) {
+        if(!isSquare()) throw new SquareMatrixException();
+        int size = rows();
+        Matrix combo = new Matrix(size, size + inputMatrix[0].length);
+        combo.paste(this, 0, 0);
+        ArrayUtil.paste(inputMatrix, entry, new int[] { 0, size });
+        combo.gaussJordan();
+        return (double[][]) ArrayUtil.subArray(combo.entry, new int[] { 0, size }, new int[] { size, combo.cols() });
+    }
+    
+
+    @Override
+    public void invert() {
+        entry = getInverse().entry;
+    }
+
+   
+    public void setSize(int size) {
+        setSize(size, size);
+    }
+    
+    @Override
+    public void addIdentity(double scaling) {
+        if(!isSquare()) throw new SquareMatrixException();
+        for(int i=rows(); --i >= 0; ) entry[i][i] += scaling;
+    }
+    
+    
+    public final static Matrix identity() {
+        return new Matrix(new double[][] {{1.0}});
+    }
+    
+    public final static Matrix identity(int size) {
+        Matrix I = new Matrix(size);
+        I.addIdentity(1.0);
+        return I;
+    }
+    
 	
 }

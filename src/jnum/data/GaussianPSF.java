@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -33,9 +33,9 @@ import jnum.math.Multiplication;
 import jnum.math.Product;
 import jnum.math.Ratio;
 import jnum.math.Scalable;
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 
-public abstract class GaussianPSF<V extends TrueVector<Double>> implements Serializable, Cloneable, Copiable<GaussianPSF<? extends V>>, 
+public abstract class GaussianPSF<V extends MathVector<Double>> implements Serializable, Cloneable, Copiable<GaussianPSF<? extends V>>, 
 CopyCat<GaussianPSF<? extends V>>, Scalable, Multiplication<GaussianPSF<? extends V>>, Division<GaussianPSF<? extends V>>, 
 Product<GaussianPSF<? extends V>, GaussianPSF<? extends V>>, Ratio<GaussianPSF<? extends V>, GaussianPSF<? extends V>> {
 

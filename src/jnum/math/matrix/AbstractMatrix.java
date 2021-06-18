@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -32,13 +32,15 @@ import java.lang.reflect.*;
 import jnum.CopiableContent;
 import jnum.Util;
 import jnum.data.ArrayUtil;
+import jnum.data.image.Index2D;
 import jnum.math.Multiplicative;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
 
 
-public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<? extends T>>, Serializable, Cloneable, CopiableContent<AbstractMatrix<T>>, Iterable<T>, NumberFormating, DecimalFormating, Parser {
+public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<? extends T>>, SquareMatrixAlgebra<T>, Serializable, Cloneable, 
+CopiableContent<AbstractMatrix<T>>, Iterable<T>, NumberFormating, DecimalFormating, Parser {
 
 	private static final long serialVersionUID = 8165960625207147822L;
 
@@ -49,8 +51,10 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	public AbstractMatrix(Class<? extends T> type, int rows, int cols) {
 		setData(ArrayUtil.createArray(type, new int[] {rows, cols}));
 	}
-	
 
+    
+    
+	
 	public void setSize(int rows, int cols) {
 		setData(ArrayUtil.createArray(getType(), new int[] {rows, cols}));
 	}
@@ -72,7 +76,7 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 	public void assertSize(int rows, int cols) {
 		if(!isSize(rows, cols)) setSize(rows, cols);
 	}
-	
+
 
 	public abstract Class<T> getType();
 	
@@ -130,6 +134,19 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 
 	public abstract void noData();
 	
+	@Override
+    public final void setIdentity() {
+        if(!isSquare()) throw new SquareMatrixException();
+        zero();
+        addIdentity(1.0);
+    }
+	
+	@Override
+    public final void addIdentity() { addIdentity(1.0); }
+	
+	@Override
+    public final void subtractIdentity() { addIdentity(-1.0); }
+	
 	/* (non-Javadoc)
 	 * @see kovacs.math.Product#setProduct(java.lang.Object, java.lang.Object)
 	 */
@@ -150,15 +167,12 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 		int n = A.rows();
 		int m = B.cols();
 		
-		if(getData() == null) setData(ArrayUtil.createArray(getType(), new int[] {n, m})); 
-		else if(rows() != n || cols() != m) setData(ArrayUtil.createArray(getType(), new int[] {n, m})); 
-		else zero();
-		
-		calcProduct(A, B, false);
+		setData(ArrayUtil.createArray(getType(), new int[] {n, m}));
+		addProduct(A, B);
 	}
 	
 
-	protected abstract void calcProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B, boolean clearFirst);
+	protected abstract void addProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B);
 	
 	/* (non-Javadoc)
 	 * @see kovacs.math.MatrixAlgebra#dot(java.lang.Object)
@@ -236,6 +250,10 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 		setValue(i2, j2, temp);	
 	}
 	
+	
+	public void switchElements(Index2D i1, Index2D i2) {
+	    switchElements(i1.i(), i1.j(), i2.i(), i2.j());
+	}
 
 	public abstract void addMultipleOfRow(int row, int toRow, double scaling); 
 	
@@ -282,13 +300,21 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 
 	public abstract T getValue(int row, int col);
 	
-
 	public abstract void setValue(int row, int col, T v);
 	
-
-	public abstract void setScalar(T value);
+	public final T getValue(Index2D idx) { return getValue(idx.i(), idx.j()); }
+    
+    public final void setValue(Index2D idx, T value) { setValue(idx.i(),idx.j(), value); }
 	
+    
+    public abstract void addValue(int row, int col, T increment);
 
+    public final void addValue(Index2D idx, T increment) { addValue(idx.i(),idx.j(), increment); }
+    
+    public abstract void addScaledValue(int row, int col, T increment, double scaling);
+
+    public final void addScaledValue(Index2D idx, T increment, double scaling) { addScaledValue(idx.i(),idx.j(), increment, scaling); }
+    
 	public void addPatch(AbstractMatrix<? extends T> patch, int fromRow, int fromCol) {
 		addPatch(patch, fromRow, fromCol, 1.0);
 	}
@@ -331,6 +357,8 @@ public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<
 
 
 	public abstract int rows();
+	
+	public boolean isSquare() { return rows() == cols(); }
 	 
 	//public abstract void gaussJordan();
 	

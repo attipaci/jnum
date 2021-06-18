@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,29 +26,25 @@ package jnum.astro;
 import java.text.NumberFormat;
 
 import jnum.Util;
-import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Coordinates;
 import jnum.text.StringParser;
 import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
-public abstract class PrecessingCoordinates extends CelestialCoordinates  implements Precessing {
+public abstract class PrecessingCoordinates extends CelestialCoordinates {
     /**
      * 
      */
     private static final long serialVersionUID = 4675743914273761865L;
     
+    private EquatorialSystem system;
 
-    public CoordinateEpoch epoch;
 
+    public PrecessingCoordinates() { this(EquatorialSystem.ICRS); }
 
-    public PrecessingCoordinates() { this(CoordinateEpoch.J2000); }
-
-    public PrecessingCoordinates(CoordinateEpoch epoch) { 
-        setEpoch(epoch);
+    public PrecessingCoordinates(EquatorialSystem system) { 
+        setSystem(system);
     }
     
     
@@ -57,27 +53,34 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     
 
     public PrecessingCoordinates(double lon, double lat) { 
-        this(lon, lat, CoordinateEpoch.J2000); 
+        this(lon, lat, EquatorialSystem.ICRS); 
         
     }
 
-    public PrecessingCoordinates(double lon, double lat, CoordinateEpoch epoch) { 
+    public PrecessingCoordinates(double lon, double lat, EquatorialSystem system) { 
         super(lon, lat);
-        setEpoch(epoch);
+        setSystem(system);
     }
-    
+   
 
-    public PrecessingCoordinates(double lon, double lat, double epochYear) { 
-        this(lon, lat, epochYear < 1984.0 ? new BesselianEpoch(epochYear) : new JulianEpoch(epochYear)); 
-    }
-
-
-    public PrecessingCoordinates(double lon, double lat, String epochSpec) { 
-        this(lon, lat, CoordinateEpoch.forString(epochSpec)); 
+    public PrecessingCoordinates(double lon, double lat, String sysSpec) { 
+        this(lon, lat, EquatorialSystem.forString(sysSpec)); 
     }
      
 
-    public PrecessingCoordinates(CelestialCoordinates from) { super(from); }
+    public PrecessingCoordinates(CelestialCoordinates from) { 
+        super(from); 
+        if(from instanceof PrecessingCoordinates) system = ((PrecessingCoordinates) from).getSystem();
+        else system = EquatorialSystem.ICRS;
+    }
+    
+    public EquatorialSystem getSystem() {
+        return system;
+    }
+    
+    public void setSystem(EquatorialSystem system) {
+        this.system = system;
+    }
     
     /* (non-Javadoc)
      * @see jnum.math.Coordinate2D#hashCode()
@@ -85,7 +88,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        if(epoch != null) hash ^= epoch.hashCode();
+        if(system != null) hash ^= system.hashCode();
         return hash;
     }
     
@@ -98,24 +101,12 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
         if(!(o instanceof PrecessingCoordinates)) return false;
         if(!super.equals(o)) return false;
         PrecessingCoordinates e = (PrecessingCoordinates) o;
-        if(!Util.equals(epoch, e.epoch)) return false;
+        if(!Util.equals(system, e.system)) return false;
         return true;
     }
     
-    
-    /* (non-Javadoc)
-     * @see jnum.astro.Precessing#getEpoch()
-     */
-    @Override
-    public CoordinateEpoch getEpoch() { return epoch; }
-
-    /* (non-Javadoc)
-     * @see jnum.astro.Precessing#setEpoch(jnum.astro.CoordinateEpoch)
-     */
-    @Override
-    public void setEpoch(CoordinateEpoch epoch) { this.epoch = epoch; }
+    public double getEpochYear() { return system.getJulianYear(); }
    
-    
   
     /* (non-Javadoc)
      * @see jnum.SphericalCoordinates#copy(jnum.Coordinate2D)
@@ -124,27 +115,17 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     public void copy(Coordinates<? extends Double> coords) {
         super.copy(coords);
         if(coords instanceof PrecessingCoordinates) {
-            PrecessingCoordinates precession = (PrecessingCoordinates) coords;
-            epoch = precession.epoch;
+            PrecessingCoordinates p = (PrecessingCoordinates) coords;
+            system = p.getSystem();
         }
-        else epoch = null;
+        else system = EquatorialSystem.ICRS;
     }
     
-    
-    @Override
-    public final void precess(CoordinateEpoch newEpoch) throws UndefinedEpochException {
-        if(Util.equals(epoch, newEpoch)) return;
-        if(epoch == null) throw new UndefinedEpochException("Undefined from epoch.");
-        if(newEpoch == null) throw new UndefinedEpochException("Undefined to epoch.");
-        precessUnchecked(newEpoch);
-    }
-    
-    protected abstract void precessUnchecked(CoordinateEpoch newEpoch); 
-
+ 
     @Override
     public void toEquatorial(EquatorialCoordinates equatorial) {
         super.toEquatorial(equatorial);  
-        equatorial.epoch = epoch;
+        equatorial.setSystem(system);
     }
     
     /* (non-Javadoc)
@@ -153,16 +134,32 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     @Override
     public void fromEquatorial(EquatorialCoordinates equatorial) {
         super.fromEquatorial(equatorial);
-        epoch = equatorial.epoch;
+        setSystem(equatorial.getSystem());
     }
     
     
+    public abstract void transform(EquatorialTransform T);
+    
+    public EquatorialTransform getTransformTo(EquatorialSystem toSystem) {
+        return new EquatorialTransform(getSystem(), toSystem);
+    }
+    
+    public void transformTo(EquatorialSystem toSystem) {
+        if(getSystem().equals(toSystem)) return;
+        transform(getTransformTo(toSystem));
+    }
+  
+    
+    public void toICRS() {
+        transformTo(EquatorialSystem.ICRS);
+    }    
+
     /* (non-Javadoc)
      * @see jnum.math.SphericalCoordinates#toString(int)
      */
     @Override
     public String toString(int decimals) {
-        return super.toString(decimals) + (epoch == null ? "" : " (" + epoch + ")");
+        return super.toString(decimals) + (system == null ? "" : " " + system);
     }
     
     /* (non-Javadoc)
@@ -170,7 +167,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
      */
     @Override
     public String toString(NumberFormat nf) {
-        return super.toString(nf) + (epoch == null ? "" : " (" + epoch + ")");   
+        return super.toString(nf) + (system == null ? "" : " " + system);   
     }
     
 
@@ -181,8 +178,8 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     @Override
     public void parseDirect(StringParser parser) throws IllegalArgumentException {
         // Assume no epoch prior to parsing...
-        CoordinateEpoch origEpoch = epoch;
-        epoch = null; 
+        EquatorialSystem origSystem = system;
+        system = null; 
         
         // Parse the text as is...
         super.parseDirect(parser);
@@ -192,14 +189,14 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
             // see if an epoch is specified... 
             parser.skipWhiteSpaces();
             int pos = parser.getIndex();
-            try { epoch = CoordinateEpoch.forString(parser.nextToken(Util.getWhiteSpaceChars() + "()")); }
-            catch(NumberFormatException e) { parser.setIndex(pos); }
+            try { system = EquatorialSystem.forString(parser.nextToken(Util.getWhiteSpaceChars())); }
+            catch(IllegalArgumentException e) { parser.setIndex(pos); }
         }
           
         // If the parsing does not provide a specific epoch, then assume that the user knows what they're
         // doing and set the epoch of this object to the desired value prior to parsing...
         // Thus, preserve the original epoch...
-        if(epoch == null) epoch = origEpoch == null ? CoordinateEpoch.J2000 : origEpoch;
+        if(system == null) system = origSystem == null ? EquatorialSystem.ICRS : origSystem;
     }
     
  
@@ -210,10 +207,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     @Override
     public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
         super.editHeader(header, keyStem, alt);
-        
-        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        c.add(new HeaderCard("RADESYS" + alt, epoch instanceof BesselianEpoch ? "FK4" : "FK5", "Reference convention."));
-        epoch.editHeader(header, alt);
+        system.editHeader(header, alt);
     }
     
     /* (non-Javadoc)
@@ -222,13 +216,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates  implem
     @Override
     public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
         super.parseHeader(header, keyStem, alt, defaultValue);
-        epoch = null;
-        
-        if(defaultValue instanceof PrecessingCoordinates) 
-            if(!header.containsKey("EQUINOX" + alt)) if(!header.containsKey("RADESYS" + alt)) 
-                epoch = ((PrecessingCoordinates) defaultValue).getEpoch();
-                
-        if(epoch == null) epoch = CoordinateEpoch.fromHeader(header, alt);
+        system = EquatorialSystem.fromHeader(header, alt);
     }
     
     

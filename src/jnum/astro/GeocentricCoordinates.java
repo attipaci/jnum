@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,9 +24,14 @@
 
 package jnum.astro;
 
+import java.text.NumberFormat;
+
+import jnum.Unit;
+import jnum.Util;
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
+import jnum.math.Vector3D;
 import jnum.text.GreekLetter;
 
 
@@ -34,22 +39,34 @@ public class GeocentricCoordinates extends SphericalCoordinates {
 
     private static final long serialVersionUID = 14070920003212901L;
 
-
+    private double radius = Math.sqrt(GeodeticCoordinates.a * GeodeticCoordinates.b);
+    
     public GeocentricCoordinates() {}
-
 
     public GeocentricCoordinates(String text) { super(text); }
 
-
-    public GeocentricCoordinates(double lon, double lat) { super(lon, lat); }
-
+    public GeocentricCoordinates(double lon, double lat, double radius) { 
+        super(lon, lat); 
+        this.radius = radius;
+    }
+    
     @Override
     public GeocentricCoordinates clone() { return (GeocentricCoordinates) super.clone(); }
 
     @Override
     public GeocentricCoordinates copy() { return (GeocentricCoordinates) super.copy(); }
-
-
+    
+    @Override
+    public void toCartesian(Vector3D v) {
+        super.toCartesian(v);
+        v.scale(radius);
+    }
+ 
+    public void fromCartesian(Vector3D v) {
+        super.fromCartesian(v);
+        radius = v.length();
+    }
+    
     @Override
     public String getTwoLetterCode() { return "GC"; }
     
@@ -62,6 +79,19 @@ public class GeocentricCoordinates extends SphericalCoordinates {
     public CoordinateSystem getLocalCoordinateSystem() {
         return defaultLocalCoordinateSystem;
     }
+    
+    @Override
+    public String toString(int decimals) {
+        return super.toString(decimals) + " " + Util.f3.format(radius / Unit.km) + " km";
+    }
+    
+    @Override
+    public String toString(NumberFormat nf) {
+        return super.toString(nf) + " " + Util.f3.format(radius / Unit.km) + " km";
+    }
+    
+    
+    public double radius() { return radius; }
 
     public final static int NORTH = 1;
 
@@ -71,6 +101,7 @@ public class GeocentricCoordinates extends SphericalCoordinates {
 
     public final static int WEST = -1;
 
+    @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
     

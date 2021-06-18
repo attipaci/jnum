@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,6 +26,7 @@ package jnum.math.matrix;
 import java.lang.reflect.Array;
 
 import jnum.Copiable;
+import jnum.ShapeException;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.LinearAlgebra;
@@ -34,34 +35,37 @@ import jnum.math.Metric;
 
 public class GenericLUDecomposition<T extends LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue & Copiable<? super T>> {
 
-	GenericSquareMatrix<T> LU;
-
-	int[] index;
-
-	boolean evenChanges;
+	private GenericMatrix<T> LU;
+	private int[] index;
+	private boolean evenChanges;
 	
 
 	public GenericLUDecomposition() {}
 	
 
-	public GenericLUDecomposition(GenericSquareMatrix<T> M) {
+	public GenericLUDecomposition(GenericMatrix<T> M) {
 		decompose(M);
 	}
 
-
-	public void decompose(GenericSquareMatrix<T> M) {
-		LU = (GenericSquareMatrix<T>) M.copy();
-		index = new int[LU.size()];
+	
+	public GenericMatrix<T> getMatrix() { return LU; }
+	
+	public void decompose(GenericMatrix<T> M) {
+	    if(!M.isSquare()) throw new SquareMatrixException();
+		LU = M.copy();
+		index = new int[LU.rows()];
 		evenChanges = LU.decomposeLU(index);
 	}
 	
 
 	@SuppressWarnings("unchecked")
 	public void solve(T b[]) {
+	    if(!LU.isSquare()) throw new SquareMatrixException();
+	    
 		int ii=-1;
-		int n = LU.size();
+		int n = LU.rows();
 		
-		T term = LU.newEntry();
+		T term = LU.createEntry();
 		
 		for(int i=0; i<n; i++) {
 			int ip = index[i];
@@ -86,23 +90,24 @@ public class GenericLUDecomposition<T extends LinearAlgebra<? super T> & Abstrac
 	}
 
 
-	public GenericSquareMatrix<T> getInverse() {
-		GenericSquareMatrix<T> inverse = (GenericSquareMatrix<T>) LU.copy(false);
+	public GenericMatrix<T> getInverse() {
+		GenericMatrix<T> inverse = (GenericMatrix<T>) LU.copy(false);
 		getInverseTo(inverse);
 		return inverse;
 	}
 	
 
 	@SuppressWarnings("unchecked")
-	public void getInverseTo(GenericSquareMatrix<T> inverse) {		
-		final int n = LU.size();
+	public void getInverseTo(GenericMatrix<T> inverse) {		
+	    if(!inverse.isSquare()) throw new SquareMatrixException();
+		final int n = LU.rows();
 		
-		if(inverse.size() != n) throw new IllegalArgumentException("mismatched inverse matrix size.");
+		if(inverse.rows() != n) throw new ShapeException("mismatched inverse matrix size.");
 		
 		T[] v = (T[]) Array.newInstance(LU.getType(), n);
 		
 		for(int i=0; i<n; i++) {
-			v[i] = LU.newEntry();
+			v[i] = LU.createEntry();
 			
 			if(i > 0) for(int k=n; --k >=0; ) v[k].zero();
 			v[i].setIdentity();

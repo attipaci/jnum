@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -29,8 +29,10 @@ package jnum.math;
 public interface Normalizable {
 
 	/**
-	 * Normalize.
+	 * Normalize to unit size.
+	 * 
+	 * @return     The normalization factor.
 	 */
-	public void normalize();
+	public double normalize();
 	
 }

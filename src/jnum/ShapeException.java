@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,31 +21,39 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.astro;
+package jnum;
 
-public class UndefinedEpochException extends IllegalStateException {
+/**
+ * An expection that indicates that there is something about the shape of the object (e.g. a matrix)
+ * or objects (e.g. a matrix and a vector) that makes the operation operation impossible to
+ * perform as requested.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
+public class ShapeException extends IllegalArgumentException {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -6302815450103707404L;
+    private static final long serialVersionUID = -4097408545266016198L;
 
-    public UndefinedEpochException() {
+    
+    public ShapeException() {
         super();
     }
 
-    public UndefinedEpochException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
+    public ShapeException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public UndefinedEpochException(String arg0) {
-        super(arg0);
+    public ShapeException(String s) {
+        super(s);
     }
 
-    public UndefinedEpochException(Throwable arg0) {
-        super(arg0);
+    public ShapeException(Throwable cause) {
+        super(cause);
     }
 
-    
     
 }

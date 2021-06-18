@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,7 +20,6 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-// (C)2007 Attila Kovacs <attila[AT]sigmyne.com>
 
 package jnum.math.matrix;
 
@@ -36,7 +35,8 @@ import jnum.math.Scalar;
 
 
 
-public class ComplexMatrix extends GenericMatrix<Complex> implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
+public class ComplexMatrix extends GenericMatrix<Complex> 
+implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
 
 	private static final long serialVersionUID = 8842229635231169797L;
 
@@ -63,6 +63,16 @@ public class ComplexMatrix extends GenericMatrix<Complex> implements ComplexScal
 		this();
 		setData(a.entry);		
 	}
+	
+	@Override
+    public ComplexMatrix clone() {
+	    return (ComplexMatrix) super.clone();
+	}
+	
+	@Override
+    public ComplexMatrix copy() {
+        return (ComplexMatrix) super.copy();
+    }
 	
 	/* (non-Javadoc)
 	 * @see kovacs.math.GenericMatrix#setData(java.lang.Object)

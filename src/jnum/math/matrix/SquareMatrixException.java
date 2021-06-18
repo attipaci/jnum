@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,19 +21,33 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
+package jnum.math.matrix;
 
-package jnum.astro;
+import jnum.ShapeException;
 
+public class SquareMatrixException extends ShapeException {
 
-public interface Precessing {
-	
+    public SquareMatrixException() {
+        super(defaultMessage);
+    }
 
-	public CoordinateEpoch getEpoch();
-	
+    public SquareMatrixException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public void setEpoch(CoordinateEpoch epoch);
-	
+    public SquareMatrixException(String s) {
+        super(s);
+    }
 
-	public void precess(CoordinateEpoch epoch) throws UndefinedEpochException;
-	
+    public SquareMatrixException(Throwable cause) {
+        super(defaultMessage, cause);
+    }
+
+    private static String defaultMessage = "square matrix operation on a non-square matrix.";
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -612910914774238752L;
+
 }

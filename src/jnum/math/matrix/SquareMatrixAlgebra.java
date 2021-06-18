@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -53,9 +53,12 @@ public interface SquareMatrixAlgebra<T> extends Inversion, IdentityValue {
 	// TODO implement alternative inversions, choose best?
 	
 
-	public int size();
-	
+	public void addIdentity(double scaling);
 
+	public void addIdentity();
+	
+	public void subtractIdentity();
+	
 	public void solve(AbstractVector<T>[] inputVectors);
 	
 	//public void getLUdecomposition();

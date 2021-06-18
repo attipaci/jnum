@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,9 +23,9 @@
 
 package jnum.data;
 
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 
-public class ReferencedData<IndexType extends Index<IndexType>, VectorType extends TrueVector<Double>>
+public class ReferencedData<IndexType extends Index<IndexType>, VectorType extends MathVector<Double>>
 implements Referenced<IndexType, VectorType> {
     public RegularData<IndexType, VectorType> data;
     public VectorType refIndex;

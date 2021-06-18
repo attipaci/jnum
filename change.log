@@ -1,4 +1,50 @@
-0.31-a1
+0.40-a1 (devel.1)
+
+
+	Overview
+	----------------------------------------------------------------------
+	This release brings a major overhaul of the astrometry utilities to
+	make jnum suitable for high-precision astrometry. Equatorial (and
+	ecliptic) coordinates are now tagged with a proper coordinate system
+	(vs just an epoch prior), and an EquatorialTransform class can
+	convert between ICRS, GCRS, FK4, FK5, Dynamical (CIRS), and local 
+	topocentric coordinate systems at any epoch. The transformation 
+	includes precession, nutation (with the IAU2000/R06 models), 
+	aberration (annual/diurnal/observer), gravitational deflection by the 
+	Sun, polar wobble corrections, frame bias, and optionally parallax 
+	corrections as needed.
+	-- All in line with the IAU2000 standard as described in the 
+	IERS Technical Note 36 (2010).
+
+	Apart from the big astrometry overhaul, the matrix classes have also
+	been simplified and improved to be more user friendly.
+	--------------------------------------------------------------------- 
+
+
+	[NEW] {EquatorialSystem} New class representing the specific equatorial
+	coordinate system, with static subclasses for ICRS, GCRS, FK4, FK5,
+	Dynamical (CIRS) and Topocentric (Local apparent) systems. The system
+	is now tagged in EquatorialCoordinates and EclipticCoordinates classes,
+	replacing the previous simplistic CoordinateEpoch tag.
+
+	[NEW] {EquatorialTransform} New class for efficient and precise 
+	transformation between various equatorial coordinate systems. It 
+	handles precession (old and new), nutation (IAU200A/R06), aberration,
+	gravitational deflection by the Sun, frame bias, polar wobble,
+	and optinally parallax also.
+
+	[NEW] {Nutation} An implementation of the IAU2000A nutation model
+	and R06 revision (2006). Both full and reduced precision calculations
+	are supported.
+
+	[NEW] {SimpleOrbits} A class for simple position and velocity 
+	estimation of Earth, Sun, and the Solar-System barycenter to use
+	in calculations (e.g. coordinate transformations), where approximate
+	knowledge of the Earth/Sun/SSB positions and velocities suffices.
+
+	[NEW] {DelaunayArguments} Implementation of the Delaunay arguments
+	Sun/Moon position parameters commonly used for nutation and for
+	calculation the equation of origins.
 
 	[NEW] {SkyGrid} class, based on SphericalGrid but with mirrored
 	projections appropriate for looking out to sky rather than looking in
@@ -10,7 +56,7 @@
 	[NEW] Spherical Coordinates conbversion to/from Cartesian Vector3D.
 
 	[NEW] New ICRS and Apparent coordinate epochs. Conversion to/from
-	ICRS is fully implemented with the ~22 mas rotation, inccordance
+	ICRS is fully implemented with the ~22 mas rotation, in accordance
 	with Capitaine an Wallace, A&A, 450, 855 (2006) and IERS technical
 	note 36. Apparent epochs include wobble correction parameters xp
 	and yp which will be applied if specidied, and a UT1-UTC time
@@ -27,6 +73,19 @@
 	[NEW] FITS UV Table tool and initial interferometry spectral image	
 	processing tools.
 
+	[NEW] {ShapeException} {SquareMatrixException} New exception classes
+	to indicate if an argument has the wrong shape (e.g. matrix) or if
+	attempting an operation that requires a square matric on a  non-square 
+	matrix.
+
+	[NEW] {Transform3D} A base class for transforming Vector3D and
+	SphericalCoordinates, providing Euler rotations, and small angle 
+	rotations. (It is the base class for EquatorialTransform also).  
+
+	[NEW] {GeocentricCoordinates} Added radius as 3rd coordinate.
+
+	[NEW] {GeodeticCoordinates} Added altitude as 3rd coordinate. 
+
 	[CHANGE] {SphericalCoordinates} Changed what longitude convention is
 	considered normal and reversed. Now normal is what goes clockwise 
 	looking from the North, such as R.A., ecliptic and galactic longitudes.
@@ -34,13 +93,49 @@
 	functionality much, in general, but aligns better with Cartesian
 	conversions.
 
+	[CHANGE] {Normalizable} normalize() to return the mormalizing
+	argument.
+
+	[CHANGE] {jnum.math.matrix} Eliminated separate SquareMatrix* classes.
+	Instead square matrix operations are now in the regular corresponding
+	matrix classes, which simply throw a SquareMatrixException if
+	a function requiring a square matric is called with a non-square
+	matrix.
+
+	[DEPRECATE] {SimpleMatrix} {Precession} {Precessing} These classes
+	and interfaces are no longer necessary and better implementations
+	are available to perform the functions they were meant to.
+
+	[RENAME] TrueVector renamed MathVector. It really is just a class
+	representing a vector in the mathematical sense (vs the Java Vector
+	class that represents a dynamically sized array).
+
+	[FIX] {GeodeticCoordinates} not have proper toCartesian() conversion
+	into 3D rectangular xyz coordinates.
+
+	[FIX] {Vector2D} normalize() had incorrect normalization, not resulting
+	in a unit vector as expected.
+
 	[FIX] {AngleFormat} Wrapping and non-negative format options now
 	correctly dealt with.
 	
 	[FIX] Many potential flaws fixed with the help of FindBugs.
  
+	[TWEAK] {jnum.math.matrix} Many slight improvements and tweaks to 
+	Matrix and vector representation classes, targeting improved 
+	performance and ease of use.
+	
+	[TWEAK] {AstroTime} New formulas for GST/GMST and LST/LMST calculations
+	in accordance with IERS Technical Note 36 (2010).
+
 	[TWEAK] Overall cleanup of SphericalCoordinate classes and their
 	coordinate systems.
+	
+	[TWEAK] Adjusted 'Temperature' Color scheme for better visual
+	appearance and symmetry.
+
+	[TWEAK] Changed <? extends Double> to <Double> where appropriate as
+	Double is a fina class that cannot be extended.
 
 
 0.30-3	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -55,7 +55,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 	    set(x, y, z);
 	}
 	
-	public Coordinate3D(Coordinates<? extends Double> v) {
+	public Coordinate3D(Coordinates<Double> v) {
 	    this(v.x(), v.y(), v.z());
 	}
 
@@ -130,7 +130,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 	
     @Override
     public String toString(NumberFormat nf) {
-        return "(" + nf.format(x) + "," + nf.format(y) + nf.format(z) + ")";
+        return "(" + nf.format(x) + "," + nf.format(y) + "," + nf.format(z) + ")";
     }
 
     /* (non-Javadoc)
@@ -138,7 +138,7 @@ ViewableAsDoubles, Parser, NumberFormating {
      */
     @Override
     public String toString() { 
-        return "(" + x + "," + y + z + ")";
+        return "(" + x + "," + y + "," + z + ")";
     }
     
     

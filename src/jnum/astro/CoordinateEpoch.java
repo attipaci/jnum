@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -111,14 +111,25 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
         double year = header.getDoubleValue("EQUINOX" + alt, Double.NaN);    
         String system = header.getStringValue("RADESYS");
         
-        if(system == null) system = "";
-        else system.toUpperCase();
+        if(system == null) {
+            if(Double.isNaN(year)) return CoordinateEpoch.J2000;
+            if(year == 1900) return CoordinateEpoch.B1900;
+            if(year == 1950) return CoordinateEpoch.B1950;
+            if(year == 2000) return CoordinateEpoch.J2000;
+            if(year < 1984.0) return new BesselianEpoch(year);
+            return new JulianEpoch(year);
+           
+        }
         
-        if(system.startsWith("FK4")) return new BesselianEpoch(Double.isNaN(year) ? 1950.0 : year);
-        if(system.startsWith("FK5")) return new JulianEpoch(Double.isNaN(year) ? 1950.0 : year);
-        if(system.equals("ICRS")) return new ICRSEpoch();
-        if(year < 1984.0) return new BesselianEpoch(year);
+        system.toUpperCase();
         
+        if(system.startsWith("FK4")) {
+            if(year == 1900) return CoordinateEpoch.B1900;
+            if(year == 1950) return CoordinateEpoch.B1950;
+            return new BesselianEpoch(Double.isNaN(year) ? 1950.0 : year);
+        }
+        
+        if(year == 2000) return CoordinateEpoch.J2000;
         return new JulianEpoch(Double.isNaN(year) ? 2000.0 : year);
     }
 
@@ -154,8 +165,6 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 	public final static BesselianEpoch B1950 = new BesselianEpoch(1950.0);
 
 	public final static JulianEpoch J2000 = new JulianEpoch(2000.0);
-	
-	public final static ICRSEpoch ICRS = new ICRSEpoch();
 	
 	// The precision to which to epochs must match to be considered equal...
 	public final static double precision = 1e-3; // in years...

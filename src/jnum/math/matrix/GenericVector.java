@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -28,13 +28,14 @@ import java.lang.reflect.*;
 import java.util.Arrays;
 
 import jnum.Copiable;
+import jnum.ShapeException;
 import jnum.Util;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.Coordinates;
 import jnum.math.LinearAlgebra;
 import jnum.math.Metric;
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -49,7 +50,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	private static final long serialVersionUID = 4341703980593410457L;
 
 	/** The component. */
-	public T[] component;
+	private T[] component;
 	
 	/** The type. */
 	protected Class<T> type;
@@ -81,6 +82,16 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	public GenericVector(T[] data) { setData(data); }
 	
+	
+	@Override
+    public GenericVector<T> clone() {
+        return (GenericVector<T>) super.clone();
+    }
+    
+    @Override
+    public GenericVector<T> copy() {
+        return (GenericVector<T>) super.copy();
+    }
 	
 	@Override
     public void copy(Coordinates<? extends T> v) {
@@ -121,7 +132,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.AbstractVector#getData()
 	 */
 	@Override
-	public Object getData() { return component; }
+	public T[] getData() { return component; }
 	
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractVector#setData(java.lang.Object)
@@ -150,6 +161,9 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	@Override
 	public final void setComponent(int i, T x) { component[i] = x; }
 
+    @Override
+    public final void incrementValue(int i, T x) { component[i].add(x); }
+	
     @Override
     public synchronized void multiplyByComponentsOf(Coordinates<? extends T> v) { 
         for(int i=component.length; --i >= 0; ) component[i].multiplyBy(v.getComponent(i));
@@ -202,7 +216,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
 	 */
 	@Override
-	public void addScaled(TrueVector<? extends T> o, double factor) {
+	public void addScaled(MathVector<? extends T> o, double factor) {
 		for(int i=component.length; --i >= 0; ) {
 		    T vi = o.getComponent(i);
             if(vi == null) continue;
@@ -234,7 +248,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.Additive#subtract(java.lang.Object)
 	 */
 	@Override
-	public void subtract(TrueVector<? extends T> o) {
+	public void subtract(MathVector<? extends T> o) {
 		for(int i=component.length; --i >= 0; ) {
 		    T vi = o.getComponent(i);
             if(vi == null) continue;
@@ -246,7 +260,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.Additive#add(java.lang.Object)
 	 */
 	@Override
-	public void add(TrueVector<? extends T> o) {
+	public void add(MathVector<? extends T> o) {
 		for(int i=component.length; --i >= 0; ) {
 		    T vi = o.getComponent(i);
             if(vi == null) continue;
@@ -277,7 +291,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.Metric#distanceTo(java.lang.Object)
 	 */
 	@Override
-	public double distanceTo(TrueVector<? extends T> v) {
+	public double distanceTo(MathVector<? extends T> v) {
 		double d2 = 0.0;
 		for(int i=component.length; --i >= 0; ) {
 		    T vi = v.getComponent(i);
@@ -292,12 +306,12 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.AbstractVector#orthogonalizeTo(kovacs.math.AbstractVector)
 	 */
 	@Override
-	public void orthogonalizeTo(TrueVector<? extends T> v) {
+	public void orthogonalizeTo(MathVector<? extends T> v) {
 		addScaled(v, -dot(v).abs() / (abs() * v.abs()));
 	}
 	
 	@Override
-    public final void projectOn(final TrueVector<? extends T> v) {
+    public final void projectOn(final MathVector<? extends T> v) {
         double scaling = dot(v).abs() / v.abs();
         copy(v);
         scale(scaling);
@@ -317,8 +331,8 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void setSum(TrueVector<? extends T> a, TrueVector<? extends T> b) {
-		if(size() != a.size() || size() != b.size()) throw new IllegalArgumentException("different size vectors.");
+	public void setSum(MathVector<? extends T> a, MathVector<? extends T> b) {
+		if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
 		
 		for(int i=component.length; --i >= 0; ) {
 			if(component[i] == null) component[i] = newEntry();
@@ -331,8 +345,8 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @see kovacs.math.Additive#setDifference(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void setDifference(TrueVector<? extends T> a, TrueVector<? extends T> b) {
-		if(size() != a.size() || size() != b.size()) throw new IllegalArgumentException("different size vectors.");
+	public void setDifference(MathVector<? extends T> a, MathVector<? extends T> b) {
+		if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
 		
 		for(int i=component.length; --i >= 0; ) {
 			if(component[i] == null) component[i] = newEntry();

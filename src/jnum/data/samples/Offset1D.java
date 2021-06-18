@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -24,12 +24,12 @@
 package jnum.data.samples;
 
 import jnum.math.Coordinates;
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 import jnum.util.HashCode;
 
-public class Offset1D implements TrueVector<Double> {
+public class Offset1D implements MathVector<Double> {
     private double x;
 
     public Offset1D() { this (0.0); }
@@ -91,18 +91,22 @@ public class Offset1D implements TrueVector<Double> {
     public final double absSquared() { return x*x; }
 
     @Override
-    public void normalize() { x = 1.0; }
+    public double normalize() { 
+        double old = x;
+        x = 1.0; 
+        return Math.abs(old);
+    }
 
     @Override
     public void invert() { x *= -1.0; }
 
     @Override
-    public final double distanceTo(TrueVector<? extends Double> point) {
+    public final double distanceTo(MathVector<? extends Double> point) {
         return Math.abs(point.x() - x);
     }
 
     @Override
-    public final void addScaled(TrueVector<? extends Double> o, double factor) {
+    public final void addScaled(MathVector<? extends Double> o, double factor) {
         x += factor * o.x();
     }
 
@@ -116,16 +120,16 @@ public class Offset1D implements TrueVector<Double> {
     public void scale(double factor) { x *= factor; }
 
     @Override
-    public void add(TrueVector<? extends Double> o) { x += o.x(); }
+    public void add(MathVector<? extends Double> o) { x += o.x(); }
 
     @Override
-    public void subtract(TrueVector<? extends Double> o) { x -= o.x(); }
+    public void subtract(MathVector<? extends Double> o) { x -= o.x(); }
 
     @Override
-    public void setSum(TrueVector<? extends Double> a, TrueVector<? extends Double> b) { x = a.x() + b.x(); }
+    public void setSum(MathVector<? extends Double> a, MathVector<? extends Double> b) { x = a.x() + b.x(); }
 
     @Override
-    public void setDifference(TrueVector<? extends Double> a, TrueVector<? extends Double> b) { x = a.x() + b.x(); }
+    public void setDifference(MathVector<? extends Double> a, MathVector<? extends Double> b) { x = a.x() + b.x(); }
 
     @Override
     public void multiplyByComponentsOf(Coordinates<? extends Double> v) {
@@ -136,13 +140,13 @@ public class Offset1D implements TrueVector<Double> {
     public Double dot(Coordinates<? extends Double> v) { return x * v.x(); }
 
     @Override
-    public void orthogonalizeTo(TrueVector<? extends Double> v) { x = 0.0; }
+    public void orthogonalizeTo(MathVector<? extends Double> v) { x = 0.0; }
 
     @Override
-    public void projectOn(TrueVector<? extends Double> v) {}
+    public void projectOn(MathVector<? extends Double> v) {}
 
     @Override
-    public void reflectOn(TrueVector<? extends Double> v) {}
+    public void reflectOn(MathVector<? extends Double> v) {}
 
 
     @Override
@@ -163,6 +167,11 @@ public class Offset1D implements TrueVector<Double> {
     @Override
     public AbstractMatrix<Double> asColumnVector() {
         return new Matrix(new double[][] {{ x }});
+    }
+
+    @Override
+    public void incrementValue(int idx, Double increment) {
+        if(idx == 0) x += increment;
     }
 
    

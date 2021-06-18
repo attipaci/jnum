@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -132,10 +132,10 @@ public class GalacticCoordinates extends CelestialCoordinates {
     static { 
         GalacticCoordinates zero = new GalacticCoordinates(phi0, 0.0);
         EquatorialCoordinates equatorialZero = zero.toEquatorial();
-        equatorialZero.precess(CoordinateEpoch.J2000);
+        equatorialZero.transform(EquatorialTransform.B1950toICRS);
         zero.fromEquatorial(equatorialZero);
         phi0 = zero.longitude();
-        equatorialPole.precess(CoordinateEpoch.J2000);
+        equatorialPole.transform(EquatorialTransform.B1950toICRS);
     }
 
 }

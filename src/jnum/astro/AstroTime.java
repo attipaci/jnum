@@ -32,7 +32,9 @@ import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 
+import jnum.Constant;
 import jnum.Unit;
+import jnum.math.Vector2D;
 import jnum.text.TimeFormat;
 import jnum.util.HashCode;
 
@@ -137,18 +139,22 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
     public static double getMJD(double millis) {
         return MJDJ2000 + (millis - MillisJ2000 + 1000.0 * (LeapSeconds.get((long)millis) - Leap2000)) / DayMillis;
     }
-
+    
 
     public double getMJD() { return MJD; }
-
+    
+    public double getUTCMJD() { 
+        return MJDJ2000 + (getUTC() - MillisJ2000) / Unit.day;
+    }
+    
     public double getTCGMJD() { return (getMJD() - EMJD) / (1.0 - LG) + EMJD; }
 
     public void setMJD(double date) { MJD = date; }
 
-    public double getJD() { return 2400000.5 + MJD; }
+    public double getJD() { return JD_MJD0 + MJD; }
 
 
-    public void setJD(double JD) { setMJD(JD - 2400000.5); }
+    public void setJD(double JD) { setMJD(JD - JD_MJD0); }
 
     // Terrestrial Time (based on Atomic Time TAI) in seconds
     public double getTT() {
@@ -198,39 +204,61 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 
 
     /**
-     * Gets the Greenwich Mean Solar Time (GMST) at UT1 = 0h, i.e. the Mean Solar RA in time units (use for calculationg LST)
-     *
-     * @return the Greenwich Mean Solar Time (GMST). 
-     */	
-    public final double getGMST0() {
-        // Ratio of mLST to UT1 = 0.997269566329084 − 5.8684×10−11T + 5.9×10−15T², 
-        // where T is the number of Julian centuries of 36525 days each that have elapsed since JD 2451545.0 (J2000).[1]
-
-        // From http://www.cv.nrao.edu/~rfisher/Ephemerides/times.html
-        final double T = (MJD - MJDJ2000) / JulianCenturyDays;
-        return (24110.54841 + T * (8640184.812866 + T * (0.093104 - T * 0.0000062))) * Unit.s;
-
-
-    }
-
-    // Greenwich Sidereal Time
-
-
-    /**
-     * Gets the Greenwich Mean Sidereal Time
-     *
-     * @param dUT1     (s) UT1 - UT time difference (-0.5s < dUT1 < 0.5s)  
-     * @return         (s) the GMST
+     * Earth Rotation Angle (ERA).
+     * 
+     * See Eq. 5.15 IN IERS Technical Note 36, based on Capitaine et al. (2000), 
+     * 
+     * @param dUT1  (sec) UT1-UTC time difference (-0.5s < dUT1 < 0.5s).
+     * 
+     * @return      (rad) Earth rotation angle
      */
-    public final double getGMST(double dUT1) {
-        return getGMST0() + dSTdUT * (getUTC() + dUT1);    // ~366.242189 / 365.242189
+    public double getERA(double dUT1) {
+        double Tu = 0.5 + getUTCMJD() + dUT1 / Unit.day;   // UT1 days since JD 2400000.0
+        double ut1DayFrac = Math.IEEEremainder(Tu, 1.0);
+        return Constant.twoPi * Math.IEEEremainder(ut1DayFrac + 0.7790572732640 + 0.00273781191135448 * Tu, 1.0);
     }
-
+    
+    /**
+     * Greenwich Sidereal Time, according to the IERS Technical Note 36 (2010).
+     * 
+     * @param dUT1  (sec) UT1-UTC time difference.
+     * @return      (s) GST time
+     */
+    public double getGST(double dUT1) {
+        return (getERA(dUT1) - getEquationOfOrigins()) / Unit.timeAngle;
+    }
+    
+    /**
+     * Gets the Local Sidereal Time
+     * 
+     * @param longitude    (radian) The geodetic longitude of the observer
+     * @param dUT1         (s) UT1 - UTC time difference (-0.5s < dUT1 < 0.5s)
+     * @return             (s) the LMST
+     */
+    public final double getLST(double longitude, double dUT1) {
+        double LST = Math.IEEEremainder(getGMST(dUT1) + longitude / Unit.timeAngle, Unit.day);
+        if(LST < 0.0) LST += Unit.day;
+        return LST;
+    }
+    
+    
+    /**
+     * Greenwich Mean Sidereal time, according to the IERS Technical Note 36 (2010).
+     * 
+     * @param dUT1  (sec) UT1-UTC time difference (-0.5s < dUT1 < 0.5s).
+     * @return      (s) GMST time
+     */
+    public double getGMST(double dUT1) {
+        final double t = (getMJD() - MJDJ2000) / JulianCenturyDays;
+        double dmas = 14.506 + t * (-4612156.534 + t * (-1391.5817 + t * (0.00044 + t * (-0.029956 - t * 0.0000368))));
+        return (getERA(dUT1) - dmas * Unit.mas) / Unit.timeAngle;
+    }
+    
     /**
      * Gets the Local Mean Sidereal Time
      * 
      * @param longitude    (radian) The geodetic longitude of the observer
-     * @param dUT1         (s) UT1 - UT time difference (-0.5s < dUT1 < 0.5s)
+     * @param dUT1         (s) UT1 - UTC time difference (-0.5s < dUT1 < 0.5s)
      * @return             (s) the LMST
      */
     public final double getLMST(double longitude, double dUT1) {
@@ -239,6 +267,45 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
         return LST;
     }
 
+    
+
+    /**
+     * 
+     * Based on Table 5.2e of IERS Technical Note 36 (2010).
+     * 
+     * @return      (rad)   The 'equations of the origings' angle.
+     */
+    double getEquationOfOrigins() {
+        final DelaunayArguments m = new DelaunayArguments(getMJD());
+        final double sinOmega = Math.sin(m.Omega());
+        final double F2O = 2.0 * m.F() + m.Omega();
+        final double D2 = 2.0 * m.D();
+        final double F2OmD2 = F2O - D2;
+        final double O2 = 2.0 * m.Omega();
+        
+        final double t = (getMJD() - MJDJ2000) / JulianCenturyDays;
+        final double epsA = EquatorialCoordinates.eps0 + t * (-46.8150 + t * (-0.00059 + t * 0.001813));
+        
+        final Vector2D d = Nutation.getTruncated100uas(getMJD());
+        
+        double EOuas = -14506 + t * (-4612156534.0 + t *(-1391581.7 + t * 0.44))
+               - d.x() * Math.cos(epsA)
+               + 2640.96 * sinOmega
+               +  63.52 * Math.sin(O2)
+               +  11.75 * Math.sin(F2OmD2 + O2)
+               +  11.21 * Math.sin(F2OmD2)
+               -   4.55 * Math.sin(F2OmD2 + m.Omega())
+               +   2.02 * Math.sin(F2O    + O2)
+               +   1.98 * Math.sin(F2O)
+               -   1.72 * Math.sin(3.0 * m.Omega())
+               -   1.41 * Math.sin(m.l1() + m.Omega())
+               -   1.36 * Math.sin(m.l1() - m.Omega())
+               -   0.63 * Math.sin(m.l() + m.Omega())
+               -   0.63 * Math.sin(m.l() - m.Omega());
+        
+        return EOuas * Unit.uas;
+    }
+    
 
 
     public BesselianEpoch getBesselianEpoch() {
@@ -250,6 +317,10 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
         return JulianEpoch.forMJD(MJD);
     }
 
+    
+    public double getJulianYear() { 
+        return (MJD - MJDJ2000) / JulianYearDays;
+    }
 
     public void parseISOTimeStamp(String text) throws ParseException {  
         setUTCMillis(getDateFormat(ISOFormat).parse(text).getTime());
@@ -339,8 +410,13 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
         return TAI - 1000L * LeapSeconds.get(UTC0);
     }
 
-
-
+   
+    public static AstroTime forMJD(double MJD) {
+        AstroTime t = new AstroTime();
+        t.setMJD(MJD);
+        return t;
+    }
+    
     public static AstroTime forISOTimeStamp(String text) throws ParseException {
         AstroTime time = new AstroTime();
         time.parseISOTimeStamp(text);
@@ -407,11 +483,15 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
     /** MJD at J2000, i.e. 0 TT, 1 January 2000 */
     public final static double MJDJ2000 = 51544.5;	// 12 TT 1 January 2000
 
+    public final static double JD_MJD0 = 24100000.5;   // JD date for MJD=0
+    
     /** Milliseconds per Julian century, i.e. 36525.0 days */
     protected final static double JulianCenturyMillis = Unit.julianCentury / Unit.ms;
 
+    public final static double JulianYearDays = 365.25;
+    
     /** Days in a Julian cenruty */
-    public final static double JulianCenturyDays = 36525.0;
+    public final static double JulianCenturyDays = 100.0 * JulianYearDays;
 
     /** The TAI to TT offset in seconds. */
     public final static double TAI2TT = MillisTAI2TT * Unit.ms;

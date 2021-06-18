@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -28,7 +28,7 @@ package jnum.data.image;
 import jnum.ExtraMath;
 import jnum.NonConformingException;
 import jnum.data.AbstractIndex;
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 import jnum.math.Vector2D;
 
 // TODO: Auto-generated Javadoc
@@ -188,7 +188,7 @@ public class Index2D extends AbstractIndex<Index2D> {
     }
     
     @Override
-    public void toVector(TrueVector<Double> v) throws NonConformingException {  
+    public void toVector(MathVector<Double> v) throws NonConformingException {  
         if(v.size() != dimension()) throw new NonConformingException("Size mismatch " + v.size() + " vs. " + dimension());  
         v.setComponent(0, (double) i);
         v.setComponent(1, (double) j);

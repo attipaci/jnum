@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -32,7 +32,7 @@ import jnum.math.Metric;
 import jnum.math.Modulus;
 import jnum.math.Multiplicative;
 import jnum.math.Ratio;
-import jnum.math.TrueVector;
+import jnum.math.MathVector;
 
 public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copiable<T> ,
     Additive<T>, Multiplicative<T>, Ratio<T, T>, Modulus<T>, Metric<T> {
@@ -67,7 +67,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
     
     public T getReversed();
     
-    public void toVector(TrueVector<Double> v) throws NonConformingException; 
+    public void toVector(MathVector<Double> v) throws NonConformingException; 
     
     public String toString(String separator);
     

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -71,9 +71,11 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	public final double angle() { return y(); }
 
 	@Override
-	public final void normalize() throws IllegalStateException {
+	public final double normalize() throws IllegalStateException {
 		if(x() == 0.0) throw new IllegalStateException("Null Vector");
+		double r = length();
 		setX(1.0);
+		return r;
 	}
 
 	@Override

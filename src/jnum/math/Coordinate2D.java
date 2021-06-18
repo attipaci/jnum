@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -63,7 +63,7 @@ ViewableAsDoubles, Parser, NumberFormating {
         set(X, Y);  
     }
     
-    public Coordinate2D(Coordinates<? extends Double> v) {
+    public Coordinate2D(Coordinates<Double> v) {
         this(v.x(), v.y());
     }
 	
@@ -397,7 +397,8 @@ ViewableAsDoubles, Parser, NumberFormating {
         return copy;
     }
 	
-
+    
+   
 	public static final int X = 0;
 	
 	public static final int Y = 1;

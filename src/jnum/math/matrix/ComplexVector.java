@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -66,6 +66,16 @@ public class ComplexVector extends GenericVector<Complex> implements ComplexScal
 		super(data);
 	}
 	
+	@Override
+    public ComplexVector clone() {
+        return (ComplexVector) super.clone();
+    }
+    
+    @Override
+    public ComplexVector copy() {
+        return (ComplexVector) super.copy();
+    }
+	
 	/* (non-Javadoc)
 	 * @see kovacs.math.GenericVector#getType()
 	 */
@@ -77,7 +87,7 @@ public class ComplexVector extends GenericVector<Complex> implements ComplexScal
 	 */
 	@Override
 	public void conjugate() {
-		for(int i=component.length; --i >= 0; ) component[i].conjugate();
+		for(int i=size(); --i >= 0; ) getComponent(i).conjugate();
 	}
 
 	/* (non-Javadoc)
@@ -85,7 +95,7 @@ public class ComplexVector extends GenericVector<Complex> implements ComplexScal
 	 */
 	@Override
 	public void scale(Complex factor) {
-		for(int i=component.length; --i >= 0; ) component[i].scale(factor);
+		for(int i=size(); --i >= 0; ) getComponent(i).scale(factor);
 	}
 
 	/* (non-Javadoc)
@@ -93,7 +103,7 @@ public class ComplexVector extends GenericVector<Complex> implements ComplexScal
 	 */
 	@Override
 	public void multiplyBy(Complex o) {
-		for(int i=component.length; --i >= 0; ) component[i].multiplyBy(o);
+		for(int i=size(); --i >= 0; ) getComponent(i).multiplyBy(o);
 	}
 
 	/* (non-Javadoc)
@@ -101,7 +111,7 @@ public class ComplexVector extends GenericVector<Complex> implements ComplexScal
 	 */
 	@Override
 	public void setProduct(Complex a, ComplexVector v) {
-		for(int i=component.length; --i >= 0; ) component[i].setProduct(a, v.getComponent(i));
+		for(int i=size(); --i >= 0; ) getComponent(i).setProduct(a, v.getComponent(i));
 	}
 
 	/* (non-Javadoc)
@@ -109,7 +119,7 @@ public class ComplexVector extends GenericVector<Complex> implements ComplexScal
 	 */
 	@Override
 	public void multiplyByI() {
-		for(int i=component.length; --i >= 0; ) component[i].multiplyByI();
+		for(int i=size(); --i >= 0; ) getComponent(i).multiplyByI();
 	}
 
 }

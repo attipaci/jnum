@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -42,7 +42,7 @@ public class GenericVectorBasis<T extends Copiable<? super T> & LinearAlgebra<? 
 	 * @see kovacs.math.AbstractVectorBasis#asMatrix()
 	 */
 	@Override
-	public AbstractMatrix<T> asMatrix() {
+	public GenericMatrix<T> asMatrix() {
 		GenericMatrix<T> M = new GenericMatrix<>(get(0).getType());
 		asMatrix(M);
 		return M;

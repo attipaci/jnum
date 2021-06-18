@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,14 +26,15 @@ package jnum.data.fitting;
 
 import jnum.data.ArrayUtil;
 import jnum.math.matrix.AbstractMatrix;
-import jnum.math.matrix.SquareMatrix;
+import jnum.math.matrix.Matrix;
+import jnum.math.matrix.SquareMatrixException;
 
 
 /**
  * Represents a covariance matrix for a set of parameters, calculated either as the inverse of a {@link HessianMatrix}, or from 
  * a {@link CorrelationMatrix}.
  */
-public class CovarianceMatrix extends SquareMatrix {
+public class CovarianceMatrix extends Matrix {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1183263893625404802L;
@@ -111,7 +112,8 @@ public class CovarianceMatrix extends SquareMatrix {
      * Set the uncertainties for all parameters.
      */
     public void setParameterErrors() {
-        for(int i=size(); --i >= 0; ) parameters[i].setWeight(1.0 / getValue(i, i));
+        if(!isSquare()) throw new SquareMatrixException();
+        for(int i=rows(); --i >= 0; ) parameters[i].setWeight(1.0 / getValue(i, i));
     }
     
     /**

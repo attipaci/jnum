@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -114,8 +114,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
     }
 
     public void convertTo(Class<? extends Coordinate2D> coordinateClass) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException { 
-        Coordinate2D converted;
-        converted = coordinateClass.getConstructor().newInstance();
+        Coordinate2D converted = coordinateClass.getConstructor().newInstance();
         coords.convertTo(converted);
         coords = converted;
     }
@@ -327,7 +326,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         }
             
         public void setCenterIndex(Vector2D index) throws IncompatibleTypesException {
-            if(coords == null) coords = getGrid().getReference().copy();
+            if(coords == null) coords = getGrid().getReference().copy();            
             coords.convertFrom(getGridCoords(index));
             centerIndex = index;
         }

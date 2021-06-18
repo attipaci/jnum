@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -42,34 +42,40 @@ public class Temperature extends ColorScheme {
 		
 		float r, g, b;
 
-		if(I < fifth) {
+		if(I < section) {
 			// red rise
-			r = I / fifth;
+			r = I / section;
 			g = b = 0.0F;
 		}
-		else if(I < 2 * fifth) {
+		else if(I < 2 * section) {
 			// green rise
 			r = 1.0F;
-			g = (I - fifth) / fifth;
+			g = (I - section) / section;
 			b = 0.0F;			
 		}
-		else if(I < 3 * fifth) {
+		else if(I < 3 * section) {
 			// blue rise
 			r = 1.0F;
 			g = 1.0F;
-			b = (I - 2 * fifth) / fifth;
+			b = (I - 2 * section) / section;
 		}
-		else if(I < 4 * fifth) {
+		else if(I < 4 * section) {
 			// red fall
-			r = 1.0F - (I - 3 * fifth) / fifth;
+			r = 1.0F - (I - 3 * section) / section;
 			g = 1.0F;
 			b = 1.0F;
 		}
-		else {
+		else if(I < 5 * section) {
 			// green fall
 			r = 0.0F;
-			g = 1.0F - (I - 4 * fifth) / fifth;
+			g = 1.0F - (I - 4 * section) / section;
 			b = 1.0F;
+		}
+		else {
+		 // blue fall
+		 r = 0.0F;
+		 g = 0.0F;
+		 b = 1.0F - (I - 5 * section) / section;
 		}
 
 		return ColorScheme.getRGB(r, g, b);	
@@ -83,7 +89,7 @@ public class Temperature extends ColorScheme {
 		return Color.GREEN;
 	}
 	
-	private static float fifth = 0.2F;
+	private static float section = 1.0F / 6.0F;
 
 	
 }
