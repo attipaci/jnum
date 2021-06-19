@@ -395,13 +395,6 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
          */
         private static final long serialVersionUID = -3072712180016848106L;
         private double[][] data;
-
-        
-        @Override
-        public Number getLowestCompareValue() { return Double.NEGATIVE_INFINITY; }
-        
-        @Override
-        public Number getHighestCompareValue() { return Double.POSITIVE_INFINITY; }
         
         @Override
         public int compare(Number a, Number b) {
@@ -476,13 +469,6 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         private static final long serialVersionUID = 2228491380717964808L;
         private float[][] data;
 
-        
-        @Override
-        public Number getLowestCompareValue() { return Float.NEGATIVE_INFINITY; }
-        
-        @Override
-        public Number getHighestCompareValue() { return Float.POSITIVE_INFINITY; }
-        
         @Override
         public int compare(Number a, Number b) {
             return Float.compare(a.floatValue(), b.floatValue());

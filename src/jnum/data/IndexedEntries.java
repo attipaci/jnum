@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,26 +21,30 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.math.matrix;
+package jnum.data;
 
-import jnum.math.IdentityValue;
-import jnum.math.LinearAlgebra;
-import jnum.math.Metric;
-import jnum.math.Product;
+public interface IndexedEntries<IndexType, DataType> {
+ public int capacity();
+    
+    public int dimension();
+    
+    public IndexType getSize();
+    
+    public DataType get(IndexType index);
+    
+    public void set(IndexType index, DataType value);
+    
+    public IndexType getIndexInstance();
+    
+    public abstract IndexType copyOfIndex(IndexType index);
+    
+    public abstract boolean conformsTo(IndexType size);
+         
+    public boolean conformsTo(IndexedValues<IndexType, ?> data);
+    
+    public abstract String getSizeString();
+    
+    public abstract boolean containsIndex(IndexType index);
+    
 
-
-public interface MatrixAlgebra<T> extends LinearAlgebra<T>, Product<T, T>, Metric<T>, IdentityValue {
-
-
-	public T dot(T B);
-	
-
-	public int getRank();
-	
-
-	public void gauss();
-	
-
-	public void gaussJordan();
-	
 }

@@ -34,7 +34,7 @@ import jnum.math.Scalar;
 
 
 
-public class ComplexVector extends GenericVector<Complex> implements ComplexScaling, ComplexConjugate, ComplexMultiplication<ComplexVector> {
+public class ComplexVector extends ObjectVector<Complex> implements ComplexScaling, ComplexConjugate, ComplexMultiplication<ComplexVector> {
 
 	private static final long serialVersionUID = 6672815439678434695L;
 

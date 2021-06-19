@@ -167,16 +167,6 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     public Class<? extends Number> getElementType() { return getPlaneTemplate().getElementType(); }
 
     @Override
-    public Number getLowestCompareValue() {
-        return getPlaneTemplate().getLowestCompareValue();
-    }
-
-    @Override
-    public Number getHighestCompareValue() {
-        return getPlaneTemplate().getHighestCompareValue();
-    }
-
-    @Override
     public int compare(Number a, Number b) {
         return getPlaneTemplate().compare(a, b);
     }

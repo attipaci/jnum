@@ -31,6 +31,8 @@ import java.util.stream.IntStream;
 import jnum.Copiable;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
+import jnum.data.IndexedValues;
+import jnum.data.samples.Index1D;
 import jnum.fits.FitsToolkit;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
@@ -232,7 +234,7 @@ ViewableAsDoubles, Parser, NumberFormating {
     
   
     @Override
-    public final Object viewAsDoubles() {
+    public final double[] viewAsDoubles() {
         return new double[] { x, y, z };       
     }
     
@@ -291,6 +293,76 @@ ViewableAsDoubles, Parser, NumberFormating {
         return 3;
     }
 
+    @Override
+    public final int capacity() {
+        return 3;
+    }
+
+
+    @Override
+    public final int dimension() {
+        return 1;
+    }
+
+
+    @Override
+    public final Index1D getSize() {
+        return new Index1D(size());
+    }
+
+
+    @Override
+    public final Double get(Index1D index) {
+        return getComponent(index.i());
+    }
+
+
+    @Override
+    public void set(Index1D index, Double value) {
+        setComponent(index.i(), value);
+    }
+
+
+    @Override
+    public final Index1D getIndexInstance() {
+        return new Index1D();
+    }
+
+
+    @Override
+    public final Index1D copyOfIndex(Index1D index) {
+        return index.copy();
+    }
+
+
+    @Override
+    public final boolean conformsTo(Index1D size) {
+        return size.i() == 3;
+    }
+
+
+    @Override
+    public final boolean conformsTo(IndexedValues<Index1D, ?> data) {
+        return data.getSize().i() == 3;
+    }
+
+
+    @Override
+    public final String getSizeString() {
+        return "[3]";
+     }
+
+
+    @Override
+    public final boolean containsIndex(Index1D index) {
+        int i = index.getValue(0);
+        if(i == X) return true;
+        if(i == Y) return true;
+        return false;
+    }
+
+    
+    
     @Override
     public final Double getComponent(final int index) {
         switch(index) {

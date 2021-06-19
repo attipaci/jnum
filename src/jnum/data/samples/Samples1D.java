@@ -322,11 +322,6 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         
         public Double1D(double[] data) { setData(data); }
         
-        @Override
-        public Number getLowestCompareValue() { return Double.NEGATIVE_INFINITY; }
-        
-        @Override
-        public Number getHighestCompareValue() { return Double.POSITIVE_INFINITY; }
         
         @Override
         public int compare(Number a, Number b) {
@@ -399,11 +394,6 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         
         public Float1D(float[] data) { setData(data); }
         
-        @Override
-        public Number getLowestCompareValue() { return Float.NEGATIVE_INFINITY; }
-        
-        @Override
-        public Number getHighestCompareValue() { return Float.POSITIVE_INFINITY; }
         
         @Override
         public int compare(Number a, Number b) {

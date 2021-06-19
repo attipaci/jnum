@@ -27,14 +27,16 @@ package jnum.math.matrix;
 import java.util.Arrays;
 
 import jnum.ShapeException;
+import jnum.ViewableAsDoubles;
+import jnum.data.IndexedValues;
+import jnum.data.samples.Index1D;
 import jnum.math.Coordinates;
-import jnum.math.Inversion;
 import jnum.math.MathVector;
 
 
 
 
-public class RealVector extends AbstractVector<Double> implements MathVector<Double>, Inversion {
+public class RealVector extends AbstractVector<Double> implements MathVector<Double>, IndexedValues<Index1D, Double>, ViewableAsDoubles {
 
     private static final long serialVersionUID = 1042626482476049050L;
 
@@ -57,11 +59,14 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
         return (RealVector) super.clone();
     }
     
-    @Override
-    public RealVector copy() {
-        return (RealVector) super.copy();
-    }
     
+    @Override
+    public RealVector copy(boolean withContent) {
+        RealVector copy = clone();
+        copy.component = new double[size()];
+        if(withContent) System.arraycopy(component, 0, copy.component, 0, size());
+        return copy;
+    }
     
     @Override
     public final Double x() { return component[0]; }
@@ -128,7 +133,7 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     
     @Override
     public void copy(Coordinates<? extends Double> coords) {
-        setSize(coords.size());
+        assertSize(coords.size());
         for(int i = size(); --i >= 0; ) component[i] = coords.getComponent(i);
     }
     
@@ -253,16 +258,6 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
         scale(scaling);
     }
 
-   
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#setSize(int)
-     */
-    @Override
-    public void setSize(int size) {
-        component = new double[size];		
-    }
-
-
 
     /* (non-Javadoc)
      * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
@@ -296,7 +291,68 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     }
 
 
-    
+    @Override
+    public Object viewAsDoubles() {
+        return component;
+    }
 
+
+    @Override
+    public void viewAsDoubles(Object view) throws IllegalArgumentException {
+        if(!(view instanceof double[])) throw new IllegalArgumentException("Argument is class " + view.getClass().getSimpleName() + " instead of double[].");
+        double[] d = (double[]) view;
+        if(d.length != size()) throw new ShapeException("Size mismatch. " + d.length + " instead of expected " + size() + ".");
+        
+        System.arraycopy(component, 0, d, 0, size());
+    }
+
+
+    @Override
+    public void createFromDoubles(Object array) throws IllegalArgumentException {
+        if(!(array instanceof double[])) throw new IllegalArgumentException("Argument is class " + array.getClass().getSimpleName() + " instead of double[].");
+     
+        double[] d = (double[]) array;
+        if(d.length != size()) throw new ShapeException("Size mismatch. " + d.length + " instead of expected " + size() + ".");
+        
+        System.arraycopy(d, 0, component, 0, size());
+    }
+
+
+    @Override
+    public final Class<? extends Number> getElementType() {
+        return double.class;
+    }
+
+
+    @Override
+    public final int compare(Number a, Number b) {
+        return Double.compare(a.doubleValue(), b.doubleValue());
+    }
+
+
+    @Override
+    public void clear(Index1D index) {
+        setComponent(index.i(), 0.0);
+    }
+
+
+    @Override
+    public void scale(Index1D index, double factor) {
+       component[index.i()] *=  factor;
+    }
+
+
+    @Override
+    public void set(Index1D index, Number value) {
+        setComponent(index.i(), value.doubleValue());
+    }
+
+
+    @Override
+    public void add(Index1D index, Number value) {
+        component[index.i()] += value.doubleValue();
+    }
+
+   
 
 }

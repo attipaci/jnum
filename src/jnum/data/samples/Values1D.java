@@ -26,7 +26,7 @@ package jnum.data.samples;
 import jnum.data.IndexedValues;
 
 
-public interface Values1D extends IndexedValues<Index1D>, Validating1D {
+public interface Values1D extends IndexedValues<Index1D, Number>, Validating1D {
   
     public int size();
     

@@ -33,30 +33,30 @@ public interface Additive<DataType> {
 	/**
 	 * Add a value to this object.
 	 *
-	 * @param o the value to be added.
+	 * @param o    the value to be added to this one.
 	 */
 	public void add(DataType o);
 	
 	/**
 	 * Subtract the argument.
 	 *
-	 * @param o the argument to be subtracted.
+	 * @param o    the argument to be subtracted from this one.
 	 */
 	public void subtract(DataType o);	
 	
 	/**
 	 * Set this object to be the sum of the two arguments.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a    left-hand argument for sum
+	 * @param b    right-hand argument for sum
 	 */
 	public void setSum(DataType a, DataType b);
 	
 	/**
 	 * Set this object to be the difference of a and b (i.e., a-b).
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a    left-hand argument for difference
+	 * @param b    right-hand argument for difference
 	 */
 	public void setDifference(DataType a, DataType b);
 	

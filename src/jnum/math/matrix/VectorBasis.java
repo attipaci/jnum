@@ -36,7 +36,7 @@ public class VectorBasis extends AbstractVectorBasis<Double> {
 	 */
 	@Override
 	public Matrix asMatrix() {
-		Matrix M = new Matrix();
+		Matrix M = new Matrix(size());
 		asMatrix(M);
 		return M;
 	}

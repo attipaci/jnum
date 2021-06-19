@@ -24,125 +24,219 @@
 package jnum.math.matrix;
 
 
-import jnum.data.ArrayUtil;
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.ParsePosition;
+
+import jnum.ShapeException;
+import jnum.ViewableAsDoubles;
 import jnum.math.Complex;
 import jnum.math.ComplexAddition;
 import jnum.math.ComplexConjugate;
 import jnum.math.ComplexScaling;
 import jnum.math.Multiplication;
-import jnum.math.Scalar;
 
 
 
 
-public class ComplexMatrix extends GenericMatrix<Complex> 
-implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
+public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
 
-	private static final long serialVersionUID = 8842229635231169797L;
+    private static final long serialVersionUID = 8842229635231169797L;
 
+    public ComplexMatrix(int rows, int cols) {
+        super(Complex.class, rows, cols);
+    }
 
-	public ComplexMatrix() { super(Complex.class); }
+    public ComplexMatrix(int size) {
+        super(Complex.class, size, size);
+    }
 
+    public ComplexMatrix(Complex[][] data) throws ShapeException {
+        super(data);
+    }
 
-	public ComplexMatrix(double[][] a) throws IllegalArgumentException { 
-		this((Complex[][]) ArrayUtil.asComplex(a));
-	}
-	
+    public ComplexMatrix(String text, ParsePosition pos) throws ParseException, Exception {
+        super(Complex.class, text, pos);
+    }
 
-	public ComplexMatrix(float[][] a) throws IllegalArgumentException { 
-		this((Complex[][]) ArrayUtil.asComplex(a));
-	}
-	
+    @Override
+    protected ComplexMatrix createMatrix(int rows, int cols, boolean initialize) {
+        if(initialize) return new ComplexMatrix(rows, cols);
+        return new ComplexMatrix((Complex[][]) Array.newInstance(Complex.class, new int[] { rows, cols }));
+    }
 
-	public ComplexMatrix(Scalar[][] a) throws IllegalArgumentException { 
-		this((Complex[][]) ArrayUtil.asComplex(a));
-	}
-	
-
-	public ComplexMatrix(GenericMatrix<?> a) {
-		this();
-		setData(a.entry);		
-	}
-	
-	@Override
+    @Override
     public ComplexMatrix clone() {
-	    return (ComplexMatrix) super.clone();
-	}
-	
-	@Override
+        return (ComplexMatrix) super.clone();
+    }
+
+    @Override
     public ComplexMatrix copy() {
         return (ComplexMatrix) super.copy();
     }
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.GenericMatrix#setData(java.lang.Object)
-	 */
-	@Override
-	public void setData(Object data) {
-		if(data instanceof Complex[][]) entry = (Complex[][]) data;
-		else entry = (Complex[][]) ArrayUtil.asComplex(data);
-	}
-	
-	// Check for rectangular shape
-	public ComplexMatrix(Complex[][] a) throws IllegalArgumentException { 
-		super(a);
-	}
+
+    public double[][] getRealPart() {
+        double[][] dst = new double[rows()][cols()];
+        getRealPart(dst);
+        return dst;
+    }
+
+    public double[][] getImaginaryPart() {
+        double[][] dst = new double[rows()][cols()];
+        getImaginaryPart(dst);
+        return dst;
+    }
 
 
-	public ComplexMatrix(int rows, int cols) { 
-		super(Complex.class, rows, cols);
-	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.ComplexConjugate#conjugate()
-	 */
-	@Override
-	public void conjugate() {
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) getValue(i, j).conjugate(); 
-	}
-	
+    public void setRealPart(double[][] re) throws ShapeException {
+        assertSize(re.length, re[0].length);
+        for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).setRealPart(re[i][j]);
+    }
 
-	public ComplexMatrix getHermitian() {
-		ComplexMatrix transpose = (ComplexMatrix) getTransposed();
-		transpose.conjugate();
-		return transpose;
-	}
-	
-	
-	public static ComplexMatrix product(ComplexMatrix A, ComplexMatrix B) {
-		ComplexMatrix product = new ComplexMatrix();
-		product.setProduct(A, B);
-		return product;
-	}
+    public void setRealPart(float[][] re) throws ShapeException {
+        assertSize(re.length, re[0].length);
+        for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).setRealPart(re[i][j]);
+    }
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Multiplication#multiplyBy(java.lang.Object)
-	 */
-	@Override
-	public void multiplyBy(Complex factor) {
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) getValue(i, j).multiplyBy(factor);
-	}
+    public void setRealPart(Object data) {
+        if(data instanceof double[][]) setRealPart((double[][]) data);
+        else if(data instanceof float[][]) setRealPart((float[][]) data);
+        else if(data instanceof ViewableAsDoubles) setRealPart(((ViewableAsDoubles) data).viewAsDoubles());
+        else throw new IllegalArgumentException(" Cannot convert " + data.getClass().getSimpleName() + " into double[][] format.");   
+    }
+    
+    public void setImaginaryPart(double[][] im) throws ShapeException {
+        assertSize(im.length, im[0].length);
+        for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).setImaginaryPart(im[i][j]);
+    }
+
+    public void setImaginaryPart(float[][] im) throws ShapeException {
+        assertSize(im.length, im[0].length);
+        for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).setImaginaryPart(im[i][j]);
+    }
+    
+    public void setImaginaryPart(Object data) {
+        if(data instanceof double[][]) setImaginaryPart((double[][]) data);
+        else if(data instanceof float[][]) setImaginaryPart((float[][]) data);
+        else if(data instanceof ViewableAsDoubles) setImaginaryPart(((ViewableAsDoubles) data).viewAsDoubles());
+        else throw new IllegalArgumentException(" Cannot convert " + data.getClass().getSimpleName() + " into double[][] format.");   
+    }
+
+    public void getRealPart(double[][] dst) throws ShapeException {
+        assertSize(dst.length, dst[0].length);
+        for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) dst[i][j] = get(i, j).re();
+    }
+
+    public void getRealPart(float[][] dst) throws ShapeException {
+        assertSize(dst.length, dst[0].length);
+        for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) dst[i][j] = (float) get(i, j).re();
+    }
+
+    public void getImaginaryPart(double[][] dst) throws ShapeException {
+        assertSize(dst.length, dst[0].length);
+        for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) dst[i][j] = get(i, j).im();
+    }
+
+    public void getImaginaryPart(float[][] dst) throws ShapeException {
+        assertSize(dst.length, dst[0].length);
+        for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) dst[i][j] = (float) get(i, j).im();
+    }
 
 
-	public void multiplyByI() {
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) getValue(i, j).multiplyByI();
-	}
+    /* (non-Javadoc)
+     * @see kovacs.math.ComplexConjugate#conjugate()
+     */
+    @Override
+    public void conjugate() {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).conjugate(); 
+    }
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.ComplexAddition#addComplex(kovacs.math.Complex)
-	 */
-	@Override
-	public void addComplex(Complex z) {
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) getValue(i, j).addComplex(z);
-	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.ComplexAddition#subtractComplex(kovacs.math.Complex)
-	 */
-	@Override
-	public void subtractComplex(Complex z) {
-		for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) getValue(i, j).subtractComplex(z);
-	}
+    public ComplexMatrix getHermitian() {
+        ComplexMatrix transpose = getTranspose();
+        transpose.conjugate();
+        return transpose;
+    }
 
-	
+
+    public static ComplexMatrix product(ComplexMatrix A, ComplexMatrix B) {
+        ComplexMatrix product = new ComplexMatrix(A.rows(), B.cols());
+        product.setProduct(A, B);
+        return product;
+    }
+
+    @Override
+    public ComplexMatrix dot(AbstractMatrix<? extends Complex> B) {
+        return (ComplexMatrix) super.dot(B);
+    }
+
+    @Override
+    public ComplexMatrix getTranspose() {        
+        return (ComplexMatrix) super.getTranspose();
+    }
+
+    @Override
+    public ComplexMatrix getInverse() {        
+        return (ComplexMatrix) super.getInverse();
+    }
+
+    @Override
+    public ComplexMatrix getGaussInverse() {
+        return (ComplexMatrix) super.getGaussInverse();
+    }
+
+    @Override
+    public ComplexMatrix getLUInverse() {
+        return (ComplexMatrix) super.getLUInverse();
+    }
+
+
+    /* (non-Javadoc)
+     * @see kovacs.math.Multiplication#multiplyBy(java.lang.Object)
+     */
+    @Override
+    public void multiplyBy(Complex factor) {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).multiplyBy(factor);
+    }
+
+
+    public void multiplyByI() {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).multiplyByI();
+    }
+
+    /* (non-Javadoc)
+     * @see kovacs.math.ComplexAddition#addComplex(kovacs.math.Complex)
+     */
+    @Override
+    public void addComplex(Complex z) {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).addComplex(z);
+    }
+
+    /* (non-Javadoc)
+     * @see kovacs.math.ComplexAddition#subtractComplex(kovacs.math.Complex)
+     */
+    @Override
+    public void subtractComplex(Complex z) {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).subtractComplex(z);
+    }
+
+    public static ComplexMatrix fromReal(double[][] data) {
+        ComplexMatrix M = new ComplexMatrix(data.length, data[0].length);
+        M.setRealPart(data);
+        return M;
+    }
+    
+    public static ComplexMatrix fromReal(float[][] data) {
+        ComplexMatrix M = new ComplexMatrix(data.length, data[0].length);
+        M.setRealPart(data);
+        return M;
+    }
+
+    public static ComplexMatrix fromReal(Object data) {
+       if(data instanceof double[][]) return fromReal((double[][]) data);
+       if(data instanceof float[][]) return fromReal((float[][]) data);
+       if(data instanceof ViewableAsDoubles) return fromReal(((ViewableAsDoubles) data).viewAsDoubles());
+       throw new IllegalArgumentException(" Cannot convert " + data.getClass().getSimpleName() + " into double[][] format.");    
+    }
+    
 }

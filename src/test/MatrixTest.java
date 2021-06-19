@@ -30,7 +30,6 @@ import jnum.Util;
 import jnum.math.matrix.LUDecomposition;
 import jnum.math.matrix.Matrix;
 import jnum.math.matrix.SVD;
-import jnum.math.matrix.SquareMatrix;
 
 
 
@@ -51,23 +50,24 @@ public class MatrixTest {
 		Random random = new Random();
 		for(int i=data.length; --i >=0; ) for(int j=data[i].length; --j >=0; ) data[i][j] = random.nextGaussian();
 		
-		SquareMatrix M = new SquareMatrix(data);
-		System.out.println(M.toString(Util.f1));
+		Matrix M = new Matrix(data);
+		System.out.println(M.toString(Util.f3));
 	
-		SquareMatrix I = M.getInverse();
-		System.out.println("inverse: " + I.toString(Util.f1));
+		Matrix I = M.getInverse();
+		System.out.println("inverse: " + I.toString(Util.f3));
 	
 		Matrix P = Matrix.product(M, I);
-		System.out.println("M * M-1: " + P.toString(Util.f1));
+		System.out.println("M * M-1: " + P.toString(Util.f3));
 		
 		SVD decomposed = new SVD(M);
-		System.out.println("SVD decomp: " + decomposed.getMatrix().toString(Util.f1));
-		System.out.println("SVD inverse: " + decomposed.getInverse().toString(Util.f1));
+		System.out.println("SVD reconst: " + decomposed.getReconstructedMatrix().toString(Util.f3));
+		System.out.println("SVD inverse: " + decomposed.getInverseMatrix().toString(Util.f3));
 		
 		LUDecomposition LU = new LUDecomposition(M);
-		System.out.println("LU inverse: " + LU.getInverse().toString(Util.f1));
+		System.out.println("LU decomp: " + LU.getLU().toString(Util.f3));
+		System.out.println("LU inverse: " + LU.getInverseMatrix().toString(Util.f3));
 		
-		System.out.println("Gauss inverse: " + M.getGaussInverse().toString(Util.f1));
+		System.out.println("Gauss inverse: " + M.getGaussInverse().toString(Util.f3));
 		
 	}
 	

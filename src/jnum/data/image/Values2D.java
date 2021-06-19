@@ -25,7 +25,7 @@ package jnum.data.image;
 
 import jnum.data.IndexedValues;
 
-public interface Values2D extends IndexedValues<Index2D>, Validating2D {
+public interface Values2D extends IndexedValues<Index2D, Number>, Validating2D {
     
     public int sizeX();
     

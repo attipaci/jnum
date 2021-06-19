@@ -23,34 +23,14 @@
 
 package jnum.data;
 
-public interface IndexedValues<IndexType> extends Values {
+public interface IndexedValues<IndexType, NumberType extends Number> extends Values, IndexedEntries<IndexType, NumberType> {
 
-    public int capacity();
-    
-    public int dimension();
-    
-    public IndexType getSize();
-    
-    public Number get(IndexType index);
-    
-    public void add(IndexType index, Number value);
-    
-    public void set(IndexType index, Number value);
-    
-    public IndexType getIndexInstance();
-    
-    public abstract IndexType copyOfIndex(IndexType index);
-    
-    public abstract boolean conformsTo(IndexType size);
-         
-    public boolean conformsTo(IndexedValues<IndexType> data);
-    
-    public abstract String getSizeString();
-    
-    public abstract boolean containsIndex(IndexType index);
-    
     public abstract void clear(IndexType index);
     
     public abstract void scale(IndexType index, double factor);
+    
+    public void set(IndexType index, Number value);
+    
+    public void add(IndexType index, Number value);
       
 }

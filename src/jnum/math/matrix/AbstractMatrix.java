@@ -27,113 +27,353 @@ package jnum.math.matrix;
 
 import java.text.*;
 import java.io.Serializable;
-import java.lang.reflect.*;
 
 import jnum.CopiableContent;
+import jnum.CopyCat;
+import jnum.ShapeException;
 import jnum.Util;
 import jnum.data.ArrayUtil;
+import jnum.data.IndexedEntries;
+import jnum.data.IndexedValues;
 import jnum.data.image.Index2D;
-import jnum.math.Multiplicative;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
-import jnum.text.Parser;
 
 
-public abstract class AbstractMatrix<T> implements MatrixAlgebra<AbstractMatrix<? extends T>>, SquareMatrixAlgebra<T>, Serializable, Cloneable, 
-CopiableContent<AbstractMatrix<T>>, Iterable<T>, NumberFormating, DecimalFormating, Parser {
+/**
+ * An abstract Matrix class representing a matrix for some generic element type. It has two principal subclasses, {@link Matrix}, which
+ * is a real-valued matrix with essentially primitive double elements, and {@link GenerixMatrix}, which handles matrices for generic type 
+ * objects as long as they provide the required algebra to support matrix operation. For example {@link ComplexMatrix} with {@link Complex}
+ * elements is an example subtype, but one could construct matrices e.g. with {@link Matrix} or {@link ObjectMatrix} elements (for a 
+ * matrix of matrices), or matrices with other more complex types...
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>       The generic type of the elements in a matrix.
+ */
+public abstract class AbstractMatrix<T> implements IndexedEntries<Index2D, T>, MatrixAlgebra<AbstractMatrix<? extends T>>, SquareMatrixAlgebra<T>, Serializable, 
+Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, NumberFormating, DecimalFormating {
 
 	private static final long serialVersionUID = 8165960625207147822L;
 
-
-	public AbstractMatrix() {}
+	/**
+	 * Constructor that subclasses can rely on but should never be publicly accessible...
+	 */
+	protected AbstractMatrix() {}
 	
-
+	/**
+	 * Constructor of a matrix with a specific element class, and size.
+	 * 
+	 * @param type     Java class for elements. The class should have a constructor for new elements without
+	 *                 arguments.
+	 * @param rows     Matrix rows
+	 * @param cols     Matric columns
+	 */
 	public AbstractMatrix(Class<? extends T> type, int rows, int cols) {
 		setData(ArrayUtil.createArray(type, new int[] {rows, cols}));
 	}
 
-    
-    
 	
-	public void setSize(int rows, int cols) {
-		setData(ArrayUtil.createArray(getType(), new int[] {rows, cols}));
-	}
-	
-
-	public boolean isScalar() { return rows() * cols() == 1; }
-	
-
-	public boolean isSize(int rows, int cols) {
-		return rows == rows() && cols == cols();		
-	}
-	
-
-	public boolean isEqualSize(AbstractMatrix<?> M) {
-		return M.isSize(rows(), cols());
-	}
-	
-
-	public void assertSize(int rows, int cols) {
-		if(!isSize(rows, cols)) setSize(rows, cols);
-	}
-
-
-	public abstract Class<T> getType();
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@SuppressWarnings("unchecked")
     @Override
-	public AbstractMatrix<T> clone() {
-		try { return (AbstractMatrix<T>) super.clone(); } 
-		catch(CloneNotSupportedException e) { return null; }
-	}
+    public AbstractMatrix<T> clone() {
+        try { return (AbstractMatrix<T>) super.clone(); } 
+        catch(CloneNotSupportedException e) { return null; }
+    }
 	
 
-	public void clear() { zero(); }
-	
-
-	public void validate() throws IllegalArgumentException {
-		try { checkShape(); }
-		catch(IllegalStateException e) { 
-			setData(null);
-			throw new IllegalArgumentException(e.getMessage()); 
-		}
-	}
-	
-
-	protected abstract void checkShape() throws IllegalStateException;
-	
-	/* (non-Javadoc)
-	 * @see jnum.Copiable#copy()
-	 */
+	@SuppressWarnings("cast")
 	@Override
 	public AbstractMatrix<T> copy() {
-		return copy(true);
+	    return (AbstractMatrix<T>) copy(true);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.CopiableContent#copy(boolean)
-	 */
-	@Override
-	public AbstractMatrix<T> copy(boolean withContents) {
-		AbstractMatrix<T> copy = clone();
-		if(getData() == null) return copy;
-		if(withContents) {			
-			try { copy.setData(ArrayUtil.copyOf(getData())); }
-			catch(Exception e) { Util.error(this, e); }
-		}
-		else {
-			copy.noData();
-			copy.setSize(rows(), cols());
-		}
-		return copy;
-	}
-	
 
-	public abstract void noData();
+	@Override
+	public void copy(AbstractMatrix<T> M) {
+	    assertSize(M.rows(), M.cols());
+	    for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >=0; ) set(i, j, M.copyOf(i, j));
+	}
+
 	
+	/**
+     * Gets the class of elements contained in this matrix.
+     * 
+     * @return     The class of elements contained in this matrix.
+     */
+    public abstract Class<T> getElementType();
+    
+    /**
+     * Returns the underlying data object (usually a 2D array of sorts) that holds the matrix elements
+     * 
+     * @return     The underlying data object of this matrix.
+     */
+    public abstract Object getData();
+    
+    /**
+     * Sets the underlying data of this matrix to the specified value. Implementations should assert
+     * that the supplied data is the same size as the matrix was designated to be at creation. If
+     * not, the function should throw a {@link ShapeException}.
+     * 
+     * @param data The new underlying data or this matrix.
+     */
+    public abstract void setData(Object data) throws ShapeException;
+
+
+    /**
+     * Creates a new genetic type matrix element.
+     *
+     * @return the t
+     */
+    protected T createElement() {
+        try { return getElementType().getConstructor().newInstance(); }
+        catch(Exception e) { 
+            Util.error(this, e);
+            return null;
+        }   
+    }
+    
+    
+    protected abstract AbstractMatrix<T> createMatrix(int rows, int cols, boolean initialize);
+    
+    /**
+     * Gets the number of columns in this matrix
+     * 
+     * @return     Number of columns in this matrix.
+     */
+    public abstract int cols();
+
+    /**
+     * Gets the number of rows in this matrix.
+     * 
+     * @return     Nmber of rows in this matrix.
+     */
+    public abstract int rows();
+    
+    
+    @Override
+    public int capacity() { return rows() * cols(); }
+    
+    @Override
+    public final int dimension() { return 2; }
+    
+    @Override
+    public Index2D getIndexInstance() {
+        return new Index2D();
+    }
+
+    @Override
+    public Index2D copyOfIndex(Index2D index) {
+         return index.copy();
+    }
+
+    @Override
+    public boolean conformsTo(Index2D size) {
+        return size.i() == rows() && size.j() == cols();
+    }
+
+    @Override
+    public boolean conformsTo(IndexedValues<Index2D, ?> data) {
+        return conformsTo(data.getSize());
+    }
+
+    @Override
+    public boolean containsIndex(Index2D index) {
+        if(index.i() < 0.0) return false;
+        if(index.i() > rows()) return false;
+        if(index.j() < 0.0) return false;
+        if(index.j() > cols()) return false;
+        return true;
+    }
+   
+    
+    /**
+     * Checks if this is a square matrix (i.e. it has the same number of rows and columns.).
+     * 
+     * @return     <code>true</code> if this is a square matrix otherwise <code>false</code>.
+     */
+    public boolean isSquare() { return rows() == cols(); }
+     
+    
+
+    /**
+     * Checks if the matrix is effectively a scalar enclosed in a matrix object, i.e. if it is a 1x1 matrix with
+     * a single element.
+     * 
+     * @return
+     */
+    public boolean isScalar() { return rows() * cols() == 1; }
+    
+
+    /**
+     * Gets the dimensions (rows, cols) of this matrix.
+     * 
+     * @return     An index object in which the i and j indices are set to the number of rows and columns
+     *             respectively in this matrix.
+     */
+    @Override
+    public Index2D getSize() { return new Index2D(rows(), cols()); }
+    
+    /** 
+     * Checks if the size matches what is expected
+     * 
+     * @param rows     Number of expected rows.
+     * @param cols     Number of expected columns
+     * @return         true if the matrix contains the same number of rows and columns as specified. Otherwise false.
+     */
+    public boolean isSize(int rows, int cols) {
+        return rows == rows() && cols == cols();        
+    }
+    
+    /**
+     * Checks if the matrix has the expected size for some operation. If not a {@link ShapeException} is thrown.
+     * 
+     * @param rows
+     * @param cols
+     * @throws ShapeException
+     */
+    public void assertSize(int rows, int cols) throws ShapeException {
+        if(!isSize(rows, cols)) throw new ShapeException("Matrix has wrong size " + getSizeString() + ". Expected " + rows + "x" + cols +".");
+    }
+    
+
+    /**
+     * Checks if this matrix is equal in size to another matrix. I.e. both matrices have the same number of rows
+     * and columns. (But the two matrices could have elements of very different types...)
+     * 
+     * @param M
+     * @return
+     */
+    public boolean isEqualSize(AbstractMatrix<?> M) {
+        return M.isSize(rows(), cols());
+    }
+       
+	   
+
+    /**
+     * Gets the matrix element at the specified row, column index in the matrix.
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element.
+     * @return         The matrix element at the specified row/col index. It is a reference to an object or
+     *                 else a primitive value.
+     */
+    public abstract T get(int row, int col);
+    
+    /**
+     * Sets the matrix element at the specified row, column index in the matrix to the specified new value.
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element.
+     * @param v        The new matrix element to set. (For object types the matrix will hold a reference
+     *                 to the specified value).
+     */
+    public abstract void set(int row, int col, T v);
+    
+    /**
+     * Gets the matrix element at the specified row, column index in the matrix.
+     * 
+     * @param idx      The (row, col) index of matrix element
+     * @return         The matrix element at the specified row/col index. It is a reference to an object or
+     *                 else a primitive value.
+     */
+    @Override
+    public final T get(Index2D idx) { return get(idx.i(), idx.j()); }
+    
+    protected abstract T copyOf(int i, int j);
+    
+    
+    
+    /**
+    * Sets the matrix element at the specified row, column index in the matrix to the specified new value.
+    * 
+    * @param idx      The (row,col) index of matrix element
+    * @param v        The new matrix element to set. (For object types the matrix will hold a reference
+    *                 to the specified value).
+    */
+    @Override
+    public final void set(Index2D idx, T value) { set(idx.i(),idx.j(), value); }
+    
+    public abstract void clear(int i, int j);
+    
+    public final void clear(Index2D index) {
+        clear(index.i(), index.j());
+    }
+    
+    /**
+     * Adds a value to the matrix element at the specified row, column index in the matrix.
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element.
+     * @param v        The increment to the matrix element.
+     */
+    public abstract void add(int row, int col, T increment);
+
+    /**
+     * Adds a value to the matrix element at the specified row, column index in the matrix.
+     * 
+     * @param idx      The (row, col) index of the matrix element.
+     * @param v        The increment to the matrix element.
+     */
+    public final void add(Index2D idx, T increment) { add(idx.i(),idx.j(), increment); }
+    
+    /**
+     * Adds a scaled value to the matrix element at the specified row, column index in the matrix.
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element.
+     * @param v        The increment to the matrix element.
+     * @param scaling  Scaling factor for the increment value for adding to matrix element 
+     */
+    public abstract void addScaled(int row, int col, T increment, double scaling);
+
+    /**
+     * Adds a scaled value to the matrix element at the specified row, column index in the matrix.
+     * 
+     * @param row      row index of matrix element
+     * @param idx      The (row, col) index of the matrix element to be incremented.
+     * @param scaling  Scaling factor for the increment value for adding to matrix element 
+     */
+    public final void addScaledValue(Index2D idx, T increment, double scaling) { addScaled(idx.i(),idx.j(), increment, scaling); }
+    
+  
+    public abstract void scale(int i, int j, double factor);
+    
+    
+    public final void scale(Index2D idx, double factor) {
+        scale(idx.i(),idx.j(), factor);
+    }
+    
+    public abstract void multiplyBy(int i, int j, T factor);
+    
+    public final void multiplyBy(Index2D idx, T factor) {
+        multiplyBy(idx.i(),idx.j(), factor);
+    }
+
+	/**
+	 * Sets the data in the matrix to zeroes (or empty values).
+	 * 
+	 */
+	public void clear() { zero(); }
+	
+    /**
+     * Multiply all matrix elements by a factor of the same element type.
+     * 
+     * @param factor       The factor to scale matrix elements with.
+     */
+    public void scale(T factor) {
+        for(int i=0; i<rows(); i++) scaleRow(i, factor);
+    }
+    
+   
+	
+    @Override
+    public boolean isNull() {
+        for(int i=0; i<rows(); i++) if(!isNullRow(i)) return false;
+        return true;        
+    }
+    
+
+
 	@Override
     public final void setIdentity() {
         if(!isSquare()) throw new SquareMatrixException();
@@ -147,288 +387,252 @@ CopiableContent<AbstractMatrix<T>>, Iterable<T>, NumberFormating, DecimalFormati
 	@Override
     public final void subtractIdentity() { addIdentity(-1.0); }
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.Product#setProduct(java.lang.Object, java.lang.Object)
-	 */
 	@Override
-	public void setProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) {
+	public void setProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) { 
 		if(A.isScalar()) {
 			try { setData(ArrayUtil.copyOf(B.getData())); }
 			catch(Exception e) { Util.error(this, e); }
-			T scalar = A.getValue(0, 0);		
-			if(scalar instanceof Double) ArrayUtil.scale(getData(), ((Double) scalar).doubleValue());
-			else ArrayUtil.scale(getData(), (Multiplicative<?>) scalar);
+			scale(A.get(0, 0));
 		}
 		else if(B.isScalar()) setProduct(B, A);
-		
-		if(A.cols() != B.rows()) 
-			throw new IllegalArgumentException("Incompatible Dimensions: " + A + "," + B);
-		
-		int n = A.rows();
-		int m = B.cols();
-		
-		setData(ArrayUtil.createArray(getType(), new int[] {n, m}));
-		addProduct(A, B);
+		else {
+		    if(A.cols() != B.rows()) throw new ShapeException("Incompatible Dimensions: " + A + "," + B);
+		    zero();
+		    addProduct(A, B);
+		}
 	}
 	
-
+	/**
+	 * Add the product of matrices A and B to what is already contained in this matrix.
+	 * 
+	 * @param A    Left-hand matrix in product.
+	 * @param B    Right-hand matrix in product.
+	 */
 	protected abstract void addProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B);
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.MatrixAlgebra#dot(java.lang.Object)
-	 */
 	@Override
-	public AbstractMatrix<T> dot(AbstractMatrix<? extends T> B) {
-		AbstractMatrix<T> product = clone();
-		product.setProduct(this, B);
-		return product;
-	}
+    public AbstractMatrix<T> dot(AbstractMatrix<? extends T> B) {
+        AbstractMatrix<T> P = createMatrix(rows(), B.cols(), false);
+        P.setProduct(this, B);
+        return P;
+    }
+
+
+	public abstract Object getRow(int i);
+
 	
-	
-	// Keeps the underlying rows intact. Changes to the component rows will result in changes to
-	// the resulting matrix!
-	@SuppressWarnings("unchecked")
-	public void addRows(AbstractMatrix<? extends T> b) {		
-		if(cols() != b.cols()) throw new IllegalArgumentException("Mismatched matrix dimensions.");
-		T[][] composite = (T[][]) Array.newInstance(getRow(0).getClass(), new int[] { rows() + b.rows() });
-		System.arraycopy(getData(), 0, composite, 0, rows());
-		System.arraycopy(b.getData(), 0, composite, rows(), b.rows());
-	}
-	
-	// Resulting matrix is independent of the component ones. Changes to the components will not result in
-	// changes to the result.
-	@SuppressWarnings("unchecked")
-	public void addColumns(AbstractMatrix<? extends T> b) {		
-		if(rows() != b.rows())
-			throw new IllegalArgumentException("Mismatched matrix dimensions.");
-		T[][] composite = (T[][]) ArrayUtil.createArray(getType(), new int[] { rows(), cols() + b.cols() });
-		
-		for(int i=0; i<rows(); i++) {
-			System.arraycopy(getRow(i), 0, composite[i], 0, cols());
-			System.arraycopy(b.getRow(i), 0, composite[i], cols(), b.cols());
-		}
-	}
-	
-	
-	public int[] getDimensions() { return new int[] { rows(), cols() }; }
+	/**
+	 * Copies a row of this matrix into the supplied buffer. The buffer is expected to be a 1D array
+	 * (such as double[] or T[]) of size that matches the column dimension of this matrix.
+	 * 
+	 * @param i        row index
+	 * @param buffer   A simple array of the underlying type (e.g. double[] or T[]) to hold the row's data. 
+	 */
+	public abstract void getRowTo(int i, Object buffer) throws ShapeException;
 	
 
-	public abstract Object getData();
+	/**
+     * Copies a the contents of the supplied buffer into a row of this matrix. 
+     * The buffer is expected to be a 1D array (such as double[] or T[]) of size that matches the column 
+     * dimension of this matrix.
+     * 
+     * @param i         row index
+     * @param buffer    A simple array of the underlying type (e.g. double[] or T[]) with the new row data. 
+     */
+	public abstract void setRow(int i, Object value) throws ShapeException;
 	
-
-	public abstract void setData(Object data);
 	
-
-	@SuppressWarnings("unchecked")
-	public Object getRow(int j) {
-		T[] row = null;
-		try { 
-			row = (T[]) Array.newInstance(getType(), cols()); 
-			getRow(j, row);
-		}
-		catch(Exception e) { Util.error(this, e); }
-		return row;
-	}
-	
-
-	public abstract void getRow(int i, Object buffer);
-	
-
-	public abstract void setRow(int i, Object value) throws IllegalArgumentException;
-	
-
-	public void switchRows(int i, int j) {
+	/**
+	 * Swaps two rows in the matrix.
+	 * 
+	 * @param i    A row index
+	 * @param j    Another row index.
+	 */
+	public void swapRows(int i, int j) {
 		Object temp = getRow(i);
 		setRow(i, getRow(j));
 		setRow(j, temp);		
 	}
 	
 
-	public void switchElements(int i1, int j1, int i2, int j2) {
-		T temp = getValue(i1, j1);
-		setValue(i1, j1, getValue(i2, j2));
-		setValue(i2, j2, temp);	
+	/**
+	 * Swaps two elements in this matrix
+	 * 
+	 * @param i1   row index of first element  
+	 * @param j1   column index of first element
+	 * @param i2   row index of second element
+	 * @param j2   column index of second element
+	 */
+	public void swapElements(int i1, int j1, int i2, int j2) {
+		T temp = get(i1, j1);
+		set(i1, j1, get(i2, j2));
+		set(i2, j2, temp);	
 	}
 	
-	
-	public void switchElements(Index2D i1, Index2D i2) {
-	    switchElements(i1.i(), i1.j(), i2.i(), i2.j());
+	/**
+	 * Swaps two elements in this matrix
+	 * 
+	 * @param i1   (row, col) index of first element
+	 * @param i2   (row, col) index of second element.
+	 */
+	public final void swapElements(Index2D i1, Index2D i2) {
+	    swapElements(i1.i(), i1.j(), i2.i(), i2.j());
 	}
 
-	public abstract void addMultipleOfRow(int row, int toRow, double scaling); 
+	/**
+	 * Add a scalar multiple of one row to another row. It's one of many row operations used e.g. for decompositions.
+	 * 
+	 * @param row          Index of the row that will be used for adding
+	 * @param scaling      Scaling factor
+	 * @param toRow        Index of row to which the scaled other row is added. 
+	 */
+	public abstract void addMultipleOfRow(int row, double scaling, int toRow); 
 	
 
-	public abstract void addMultipleOfRow(int row, int toRow, T scaling); 
+	/**
+     * Add a the product of an element and a row's elements to another row. It's one of many row operations used e.g. for decompositions.
+     * 
+     * @param row          Index of the row that will be used for adding
+     * @param scaling      Multiplying element element
+     * @param toRow        Index of row to which the multiplied other row is added. 
+     */
+	public abstract void addMultipleOfRow(int row, T scaling, int toRow); 
 	
-
+	/**
+	 * Adds a the contents of a row to those of another row in this matrix.
+	 * 
+	 * @param row          index of row to be added
+	 * @param toRow        index of row to which the other row is added.
+	 */
 	public void addRow(int row, int toRow) {
-		addMultipleOfRow(row, toRow, 1.0);		
+		addMultipleOfRow(row, 1.0, toRow);		
 	}
 	
 
+	/**
+     * Subtracts a the contents of a row from those of another row in this matrix.
+     * 
+     * @param row          index of row to be subtracted
+     * @param toRow        index of row from which the other row is subtracted.
+     */
 	public void subtractRow(int row, int fromRow) {
-		addMultipleOfRow(row, fromRow, -1.0);		
+		addMultipleOfRow(row, -1.0, fromRow);		
 	}
 	
-
+	/**
+	 * Sets all elements of a row to zero (or empty values).
+	 * 
+	 * @param i        Index of row to be zeroed.
+	 */
 	public abstract void zeroRow(int i);
 	
-
+	/**
+	 * Scales a row in this matrix by some scalar factor
+	 * 
+	 * @param i        Index of row to be rescaled
+	 * @param factor   Scalar factor
+	 */
 	public abstract void scaleRow(int i, double factor);
 	
-
+	/**
+	 * Multiplies all elements of a row with the an element of the same type.
+	 * 
+	 * @param i        Index of row to be multiplied
+	 * @param factor   Multiplicative factor element.
+	 */
 	public abstract void scaleRow(int i, T factor);
 
 	
-	@SuppressWarnings("unchecked")
-	public Object getColumn(int j) {
-		T[] column = null;
-		try { 
-			column = (T[]) Array.newInstance(getType(), rows()); 
-			getColumn(j, column);
-		}
-		catch(Exception e) { Util.error(this, e); }
-		return column;
-	}
+	/**
+     * Copies a column of this matrix into the supplied buffer. The buffer is expected to be a 1D array
+     * (such as double[] or T[]) of size that matches the row dimension of this matrix.
+     * 
+     * @param j        column index
+     * @param buffer   A simple array of the underlying type (e.g. double[] or T[]) to hold the column's data. 
+     */
+	public abstract void getColumnTo(int j, Object buffer);
 	
-
-	public abstract void getColumn(int j, Object buffer);
-	
-
+	/**
+     * Copies a the contents of the supplied buffer into a column of this matrix. 
+     * The buffer is expected to be a 1D array (such as double[] or T[]) of size that matches the row 
+     * dimension of this matrix.
+     * 
+     * @param j         column index
+     * @param buffer    A simple array of the underlying type (e.g. double[] or T[]) with the new column data. 
+     */
 	public abstract void setColumn(int j, Object value) throws IllegalArgumentException;
-	
-
-	public abstract T getValue(int row, int col);
-	
-	public abstract void setValue(int row, int col, T v);
-	
-	public final T getValue(Index2D idx) { return getValue(idx.i(), idx.j()); }
-    
-    public final void setValue(Index2D idx, T value) { setValue(idx.i(),idx.j(), value); }
-	
-    
-    public abstract void addValue(int row, int col, T increment);
-
-    public final void addValue(Index2D idx, T increment) { addValue(idx.i(),idx.j(), increment); }
-    
-    public abstract void addScaledValue(int row, int col, T increment, double scaling);
-
-    public final void addScaledValue(Index2D idx, T increment, double scaling) { addScaledValue(idx.i(),idx.j(), increment, scaling); }
-    
-	public void addPatch(AbstractMatrix<? extends T> patch, int fromRow, int fromCol) {
-		addPatch(patch, fromRow, fromCol, 1.0);
-	}
 	
 
 	public void paste(AbstractMatrix<? extends T> patch, int fromRow, int fromCol) {
 		ArrayUtil.paste(patch.getData(), getData(), new int[] { fromRow, fromCol});
 	}
 	
-
-	public void addPatch(AbstractMatrix<? extends T> patch, int fromRow, int fromCol, double scaling) {
-		ArrayUtil.add(getData(), new int[] { fromRow, fromCol } , patch.getData());
+	
+	public AbstractMatrix<T> subspace(int[] rows, int[] cols) {
+	    AbstractMatrix<T> sub = createMatrix(rows.length, cols.length, false);
+	    
+	    for(int i=rows.length; --i >= 0; ) for(int j = cols.length; --j >= 0; )
+	        sub.set(i,  j, copyOf(i, j));
+	    
+	    return sub;
 	}
-	
 
-	public AbstractMatrix<T> getPatch(int fromRow, int fromCol, int toRow, int toCol) {
-		AbstractMatrix<T> patch = clone();
-		patch.setData(ArrayUtil.subArray(getData(), new int[] { fromRow, toRow }, new int[] { fromCol, toCol }));
-		return patch;
-	}
-	
-	// TODO Various decompositions.
-	
-	// TODO implement fast multiplication?
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
+
+	/**
+	 * Gets a string representation of the size of this matrix.
+	 * 
+	 * @return     String representation of this matrix's size.
 	 */
 	@Override
-	public java.util.Iterator<T> iterator() { return new Iterator(); }
-	
-
-	public final static int ROW_VECTOR = 0;
-
-	public final static int COLUMN_VECTOR = 1;
-
-
-
-	public abstract int cols();
-
-
-	public abstract int rows();
-	
-	public boolean isSquare() { return rows() == cols(); }
-	 
-	//public abstract void gaussJordan();
-	
-
-	public String getDimensionString() {
+    public String getSizeString() {
 		return "[" + rows() + "x" + cols() + "]";
 	}
 	
-
-	public String getShortString() {
-		return getClass().getSimpleName() + getDimensionString();
+	/**
+	 * Gets a string representation of this matrix type and size.
+	 * 
+	 * @return     String representation of the type and size of this matrix.
+	 */
+	public String getIDString() {
+		return getClass().getSimpleName() + getSizeString();
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
-		return getShortString() + ":\n" + ArrayUtil.toString((Object[][]) getData());
+		return getIDString() + ":\n" + ArrayUtil.toString((Object[][]) getData());
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.text.NumberFormating#toString(java.text.NumberFormat)
-	 */
+
 	@Override
 	public String toString(NumberFormat nf) {
-		return getShortString() + ":\n" + ArrayUtil.toString((NumberFormating[][]) getData(), nf);
+		return getIDString() + ":\n" + ArrayUtil.toString((NumberFormating[][]) getData(), nf);
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.text.DecimalFormating#toString(int)
-	 */
+
 	@Override
 	public String toString(int decimals) {
-		return getShortString() + ":\n" + ArrayUtil.toString(getData(), decimals);
+		return getIDString() + ":\n" + ArrayUtil.toString(getData(), decimals);
 	}
 		
 	
-	/* (non-Javadoc)
-	 * @see kovacs.text.Parser#parse(java.lang.String)
+	/**
+	 * Gets the transpose of this matrix.
+	 * 
+	 * @return     A new matrix that is the transpose of this matrix. Two transpose should contain
+	 *             copies of this matrices elements, s.t. any modifications to the transpose do
+	 *             not affect the contents of this matrix and vice versa.
 	 */
-	@Override
-	public void parse(String text, ParsePosition pos) throws IllegalArgumentException {
-	    // TODO need to update parseposition...
-	    try { setData(ArrayUtil.parse(text.substring(pos.getIndex()), getType())); }
-		catch(ParseException e) { throw new NumberFormatException(e.getMessage()); }
-	    catch(Exception e) { Util.error(this, e); }
+	public AbstractMatrix<T> getTranspose() {
+	    AbstractMatrix<T> transpose = createMatrix(cols(), rows(), false);
+	    for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) transpose.set(j, i, copyOf(i, j));
+	    return transpose;
 	}
 
-	
-
-	public abstract AbstractMatrix<T> getTransposed();
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.MatrixAlgebra#transpose()
-	 */
-	@Override
-	public final void transpose() {
-		setData(getTransposed().getData());
-	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.MatrixAlgebra#gauss()
-	 */
 	@Override
 	public final void gauss() { gaussJordan(); }
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.MatrixAlgebra#getRank()
-	 */
+
 	@Override
 	public int getRank() {
 		AbstractMatrix<T> copy = copy();
@@ -439,61 +643,21 @@ CopiableContent<AbstractMatrix<T>>, Iterable<T>, NumberFormating, DecimalFormati
 	}
 	
 
+	/**
+	 * Gets the vector basis of this matrix.
+	 * 
+	 * @return
+	 */
 	public abstract AbstractVectorBasis<T> getBasis();
 	
-
-	public abstract boolean isNullRow(int i);
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.LinearAlgebra#isNull()
+	/**
+	 * Check if a row is empty (all zeroes or empty values).
+	 * 
+	 * @param i    Index of row
+	 * @return     <code>true</code> if the row contains only zero (empty) elements. Otherwise <code>false</code>
 	 */
-	@Override
-	public boolean isNull() {
-		for(int i=0; i<rows(); i++) if(!isNullRow(i)) return false;
-		return true;		
-	}
-	
+	public abstract boolean isNullRow(int i);
 
-	public void scale(T scalar) {
-		for(int i=0; i<rows(); i++) scaleRow(i, scalar);
-	}
-	
-
-    private class Iterator implements java.util.Iterator<T> {
-        private int rows = rows(), cols = cols();
-        private int i=0, j=-1;
-        
-        /* (non-Javadoc)
-         * @see java.util.Iterator#hasNext()
-         */
-        @Override
-        public final boolean hasNext() {
-            if(i < rows) return true;
-            return j < cols;
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.Iterator#next()
-         */
-        @Override
-        public final T next() {
-            j++;
-            if(j >= cols) {
-                j=0;
-                i++;
-            }
-            return getValue(i, j);
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.Iterator#remove()
-         */
-        @Override
-        public final void remove() {
-            throw new UnsupportedOperationException("Cannot remove elements from a matrix type object.");
-        }
-
-    }
 	
 	
 }

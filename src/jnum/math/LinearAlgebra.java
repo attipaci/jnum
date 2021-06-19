@@ -36,8 +36,8 @@ public interface LinearAlgebra<DataType> extends ZeroValue, Scalable, Additive<D
 	/**
 	 * Add a multiple of the argument.
 	 *
-	 * @param o the argument
-	 * @param factor the multiple
+	 * @param o        argument to be added with scaling
+	 * @param factor   scalar multiple
 	 */
 	public void addScaled(DataType o, double factor);
 	

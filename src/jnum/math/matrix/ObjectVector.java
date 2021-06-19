@@ -30,6 +30,7 @@ import java.util.Arrays;
 import jnum.Copiable;
 import jnum.ShapeException;
 import jnum.Util;
+import jnum.data.ArrayUtil;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.Coordinates;
@@ -44,7 +45,7 @@ import jnum.math.MathVector;
  * @param <T> the generic type
  */
 @SuppressWarnings("unchecked")
-public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVector<T> {
+public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVector<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4341703980593410457L;
@@ -60,7 +61,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 *
 	 * @param type the type
 	 */
-	public GenericVector(Class<T> type) {
+	public ObjectVector(Class<T> type) {
 		this.type = type;
 	}
 	
@@ -70,9 +71,9 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 * @param type the type
 	 * @param size the size
 	 */
-	public GenericVector(Class<T> type, int size) {
+	public ObjectVector(Class<T> type, int size) {
 		this(type);
-		setSize(size);
+		component = (T[]) ArrayUtil.createArray(type, size);
 	}
 	
 	/**
@@ -80,22 +81,38 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 *
 	 * @param data the data
 	 */
-	public GenericVector(T[] data) { setData(data); }
+	public ObjectVector(T[] data) { setData(data); }
 	
 	
 	@Override
-    public GenericVector<T> clone() {
-        return (GenericVector<T>) super.clone();
-    }
-    
-    @Override
-    public GenericVector<T> copy() {
-        return (GenericVector<T>) super.copy();
+    public ObjectVector<T> clone() {
+        return (ObjectVector<T>) super.clone();
     }
 	
+	
+	@Override
+	public ObjectVector<T> copy(boolean withContent) {
+	    ObjectVector<T> copy = clone();
+	    if(withContent) {
+	        try { 
+	            copy.component = (T[]) ArrayUtil.copyOf(component); 
+	            return copy;
+	        }
+	        catch(Exception e) { Util.error(this, e); }
+	    }
+	    else {
+	        try { 
+	            copy.setData(ArrayUtil.createArray(getType(), size())); 
+	            return copy;
+	        }
+	        catch(Exception e) { Util.error(this, e); }
+	    }
+	    return null;
+	}
+    
 	@Override
     public void copy(Coordinates<? extends T> v) {
-	    setSize(v.size());
+	    assertSize(v.size());
 	    for(int i=size(); --i >= 0; ) component[i] = (T) v.getComponent(i).copy();
 	}
 		
@@ -139,6 +156,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public void setData(Object data) { 
+	    assertSize(((Object[]) data).length);
 		component = (T[]) data; 
 		type = (Class<T>) component[0].getClass();
 	}
@@ -196,7 +214,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 		try { 
 			T[][] array = (T[][]) Array.newInstance(component.getClass(), 1);
 			array[0] = component;
-			return new GenericMatrix<>(array);
+			return new ObjectMatrix<>(array);
 		}
 		catch(Exception e) { return null; }
 
@@ -207,7 +225,7 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
 	 */
 	@Override
 	public AbstractMatrix<T> asColumnVector() {
-		GenericMatrix<T> M = new GenericMatrix<>(getType(), component.length, 1);
+		ObjectMatrix<T> M = new ObjectMatrix<>(getType(), component.length, 1);
 		M.setColumn(0, component);
 		return M;
 	}
@@ -317,15 +335,6 @@ public class GenericVector<T extends Copiable<? super T> & LinearAlgebra<? super
         scale(scaling);
     }
 
-
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#setSize(int)
-	 */
-	@Override
-	public void setSize(int size) {
-		try { component = (T[]) Array.newInstance(getType(), size ); }
-		catch(Exception e) { Util.error(this, e); }
-	}
 
 	/* (non-Javadoc)
 	 * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)

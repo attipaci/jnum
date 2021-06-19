@@ -48,9 +48,10 @@ public class CorrelationMatrix extends Matrix {
      * @param C the covariance matrix
      */
     public CorrelationMatrix(CovarianceMatrix C) {
+        super(C.rows());
+        
         if(!C.isSquare()) throw new SquareMatrixException();
-        this.setSize(C.rows());
-       
+
         parameters = C.getParameters();
         isigma = new double[C.rows()];
         
@@ -63,13 +64,20 @@ public class CorrelationMatrix extends Matrix {
      * @param C the covariance matrix
      */
     private void calcFrom(CovarianceMatrix C) {
-       if(!C.isSquare()) throw new SquareMatrixException();
+        if(!C.isSquare()) throw new SquareMatrixException();
+        assertSize(C.rows(), C.cols());
         
-       for(int i=rows(); --i >= 0; ) isigma[i] = 1.0 / Math.sqrt(C.getValue(i, i));
-      
-       for(int i=rows(); --i >= 0; ) for(int j=rows(); --j >= 0; )
-           setValue(i, j, C.getValue(i,  j) * isigma[i] * isigma[j]);
-        
+        for(int i=rows(); --i >= 0; ) isigma[i] = 1.0 / Math.sqrt(C.get(i, i));
+
+        for(int i=rows(); --i >= 0; ) for(int j=rows(); --j >= 0; )
+            set(i, j, C.get(i,  j) * isigma[i] * isigma[j]);
+
+    }
+    
+    public double[] getSigmas() {
+        double[] s = new double[isigma.length];
+        for(int i=s.length; --i >= 0; ) s[i] = 1.0 / isigma[i];
+        return s;
     }
    
     

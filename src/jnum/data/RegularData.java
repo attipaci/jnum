@@ -123,7 +123,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     // I' = sum(wBI)/sum(wB)
     // rms = Math.sqrt(1 / sum(wB))
     public void getSmoothedValueAtIndex(final VectorType index, final RegularData<IndexType, VectorType> beam, final VectorType refIndex, 
-            final IndexedValues<IndexType> weight, final SplineSet<VectorType> splines, final WeightedPoint result) {   
+            final IndexedValues<IndexType, ?> weight, final SplineSet<VectorType> splines, final WeightedPoint result) {   
 
         final VectorType i0 = getVectorInstance();
         i0.setDifference(index, refIndex);
@@ -164,12 +164,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     public abstract int getPointSmoothOps(int beamPoints, int interpolationType);
 
     public final RegularData<IndexType, VectorType> getSmoothed(final Referenced<IndexType, VectorType> beam, 
-            final IndexedValues<IndexType> weight, final IndexedValues<IndexType> smoothedWeights) {
+            final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
         return getSmoothed(beam.getData(), beam.getReferenceIndex(), weight, smoothedWeights);
     }
 
     public final RegularData<IndexType, VectorType> getSmoothed(final RegularData<IndexType, VectorType> beam, final VectorType refIndex, 
-            final IndexedValues<IndexType> weight, final IndexedValues<IndexType> smoothedWeights) {
+            final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
         
         final RegularData<IndexType, VectorType> convolved = newImage();
 
@@ -206,12 +206,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
 
     public final RegularData<IndexType, VectorType> getFastSmoothed(final Referenced<IndexType, VectorType> beam,
-            final IndexType step, final IndexedValues<IndexType> weight, final IndexedValues<IndexType> smoothedWeights) {
+            final IndexType step, final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
         return getFastSmoothed(beam.getData(), beam.getReferenceIndex(), step, weight, smoothedWeights);
     }
 
     public RegularData<IndexType, VectorType> getFastSmoothed(final RegularData<IndexType, VectorType> beam, final VectorType refIndex,
-            final IndexType step, final IndexedValues<IndexType> weight, final IndexedValues<IndexType> smoothedWeights) {
+            final IndexType step, final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
         if(step.getVolume() == 1) return getSmoothed(beam, refIndex, weight, smoothedWeights);
 
         final IndexType n = getIndexInstance();
@@ -287,7 +287,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
 
     public synchronized void resampleFrom(final RegularData<IndexType, VectorType> image, final Transforming<VectorType> toSourceIndex, 
-            final Referenced<IndexType, VectorType> beam, final IndexedValues<IndexType> weight) {
+            final Referenced<IndexType, VectorType> beam, final IndexedValues<IndexType, ?> weight) {
         
         if(beam != null) resampleFrom(image, toSourceIndex, beam.getData(), beam.getReferenceIndex(), weight);
         else resampleFrom(image, toSourceIndex, null, null, weight);
@@ -295,7 +295,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
 
     public synchronized void resampleFrom(final RegularData<IndexType, VectorType> image, final Transforming<VectorType> toSourceIndex, 
-            final RegularData<IndexType, VectorType> beam, final VectorType refIndex, final IndexedValues<IndexType> weight) {
+            final RegularData<IndexType, VectorType> beam, final VectorType refIndex, final IndexedValues<IndexType, ?> weight) {
            
         Interpolation interpolation = new Interpolation() {
             private VectorType v;
@@ -422,7 +422,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         despike(threshold, null);
     }
 
-    public synchronized void despike(final double significance, final IndexedValues<IndexType> noiseWeight) {
+    public synchronized void despike(final double significance, final IndexedValues<IndexType, ?> noiseWeight) {
         final Referenced<IndexType, VectorType> neighbours = getNeighbors();
 
         Interpolation op = new Interpolation() {  

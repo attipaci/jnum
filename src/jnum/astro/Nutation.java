@@ -208,8 +208,6 @@ public abstract class Nutation {
             for(Term T : psi) dpsi += T.getProduct(t, m, pl, L);
             for(Term T : eps) deps += T.getProduct(t, m, pl, L);
             
-            //System.err.println("### NUT " + dpsi / Unit.arcsec + ", " + deps/Unit.arcsec);
-            
             return new Vector2D(dpsi, deps);
         }
         

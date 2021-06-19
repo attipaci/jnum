@@ -58,7 +58,7 @@ public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
 		M.assertSize(get(0).size(), size());
 		for(int j=0; j<size(); j++) {
 			AbstractVector<T> v = get(j);
-			for(int i=0; i<v.size(); i++) M.setValue(i, j, v.getComponent(i));
+			for(int i=0; i<v.size(); i++) M.set(i, j, v.getComponent(i));
 		}		
 	}
 	

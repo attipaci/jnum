@@ -25,33 +25,27 @@ package jnum.math.matrix;
 
 import java.io.Serializable;
 
-import jnum.Copiable;
-import jnum.Util;
-import jnum.data.ArrayUtil;
+import jnum.CopiableContent;
+import jnum.ShapeException;
+import jnum.data.IndexedValues;
+import jnum.data.samples.Index1D;
 import jnum.math.MathVector;
 
 
 
-public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
-Cloneable, Copiable<AbstractVector<T>> {
+public abstract class AbstractVector<T> implements MathVector<T>, Serializable, Cloneable, CopiableContent<AbstractVector<T>> {
 
 	private static final long serialVersionUID = 785522803183758105L;
 
-	public AbstractVector() {}
+	protected AbstractVector() {}
 
 	public abstract Class<T> getType();
 	
-
 	public abstract Object getData();
 	
-
 	public abstract void setData(Object data);
 		
-	
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@SuppressWarnings("unchecked")
     @Override
 	public AbstractVector<T> clone() {
@@ -59,45 +53,27 @@ Cloneable, Copiable<AbstractVector<T>> {
 		catch(CloneNotSupportedException e) { return null; }		
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.Copiable#copy()
-	 */
 	@Override
-	public AbstractVector<T> copy() {
-		AbstractVector<T> copy = clone();
-		try { 
-			copy.setData(ArrayUtil.copyOf(getData())); 
-			return copy;
-		}
-		catch(Exception e) { Util.error(this, e); }
-		return null;
+    public AbstractVector<T> copy() {
+	    return copy(true);
 	}
 
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbsoluteValue#abs()
-	 */
 	@Override
 	public double abs() {
 		return Math.sqrt(absSquared());
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.Normalizable#normalize()
-	 */
+
 	@Override
 	public double normalize() {
 	    double l = abs();
 		scale(1.0/l);
 		return l;
 	}
-		
 
-	public abstract void setSize(int size);
-	
 
 	public void assertSize(int size) { 
-		if(size() != size) setSize(size);		
+		if(size() != size) throw new ShapeException("Vector has wrong size " + size() + ". Expected " + size + ".");	
 	}
 
 	@Override
@@ -114,5 +90,80 @@ Cloneable, Copiable<AbstractVector<T>> {
         addScaled(ortho, -2.0);        
     }
     
+    @Override
+    public final int capacity() {
+        return size();
+    }
+
+
+    @Override
+    public final int dimension() {
+        return 1;
+    }
+
+
+    @Override
+    public final Index1D getSize() {
+        return new Index1D(size());
+    }
+
+
+    @Override
+    public final T get(Index1D index) {
+        return getComponent(index.i());
+    }
+
+
+    @Override
+    public void set(Index1D index, T value) {
+        setComponent(index.i(), value);
+    }
+
+
+    @Override
+    public final Index1D getIndexInstance() {
+        return new Index1D();
+    }
+
+
+    @Override
+    public final Index1D copyOfIndex(Index1D index) {
+        return index.copy();
+    }
+
+
+    @Override
+    public final boolean conformsTo(Index1D size) {
+        return size.i() == size();
+    }
+
+
+    @Override
+    public final boolean conformsTo(IndexedValues<Index1D, ?> data) {
+        return data.getSize().i() == size();
+    }
+
+
+    @Override
+    public String getSizeString() {
+        return "[" + size() + "]";
+     }
+
+
+    @Override
+    public boolean containsIndex(Index1D index) {
+        int i = index.getValue(0);
+        if(i < 0) return false;
+        if(i >= size()) return false;
+        return true;
+    }
+
+    
+
+    public final static int ROW_VECTOR = 0;
+
+    public final static int COLUMN_VECTOR = 1;
+
+
 	
 }

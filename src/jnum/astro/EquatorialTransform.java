@@ -230,7 +230,7 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
         }
 
         else if((to instanceof FK4) || (to instanceof FK5)) {
-            if(!(from instanceof FK5) && !(from instanceof FK5)) {
+            if(!(from instanceof FK4) && !(from instanceof FK5)) {
                 transform(from, ICRS);
                 ICRStoFK5();
             }

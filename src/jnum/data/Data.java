@@ -55,7 +55,7 @@ import nom.tam.util.Cursor;
 
 public abstract class Data<IndexType extends Index<IndexType>>
 extends ParallelObject 
-implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter.Entries {
+implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableFormatter.Entries {
 
     static {
         Locale.setDefault(Locale.US);
@@ -221,20 +221,10 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
 
     }
 
-
-
-
-    @Override
-    public Number getLowestCompareValue() { return Long.MIN_VALUE; }
-
-    @Override
-    public Number getHighestCompareValue() { return Long.MAX_VALUE; }
-
-
     @Override
     public int compare(Number a, Number b) {
-        if(a.longValue() == b.longValue()) return 0;
-        return a.longValue() < b.longValue() ? -1 : 1;
+        if(a.doubleValue() == b.doubleValue()) return 0;
+        return a.doubleValue() < b.doubleValue() ? -1 : 1;
     }
 
 
@@ -342,7 +332,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
      */
 
     @Override
-    public final boolean conformsTo(IndexedValues<IndexType> data) { return conformsTo(data.getSize()); }
+    public final boolean conformsTo(IndexedValues<IndexType, ?> data) { return conformsTo(data.getSize()); }
 
     @Override
     public final boolean conformsTo(IndexType size) {
@@ -462,7 +452,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
 
             @Override
             protected void init() {
-                min = getHighestCompareValue();
+                min = Double.MAX_VALUE;
             }
 
             @Override
@@ -488,7 +478,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
 
             @Override
             protected void init() {
-                max = getLowestCompareValue();
+                max = Double.MIN_VALUE;
             }
 
             @Override
@@ -552,7 +542,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             @Override
             protected void init() {
                 minIndex = null;
-                min = getHighestCompareValue();
+                min = Double.MAX_VALUE;
             }
 
             @Override
@@ -595,7 +585,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             @Override
             protected void init() {
                 maxIndex = null;
-                max = getLowestCompareValue();
+                max = Double.MIN_VALUE;
             }
 
             @Override
@@ -638,7 +628,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
             @Override
             protected void init() {
                 maxIndex = null;
-                max = getLowestCompareValue();
+                max = Double.MIN_VALUE;
             }
 
             @Override
@@ -684,7 +674,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         });
     }
 
-    public final WeightedPoint getWeightedMean(final IndexedValues<IndexType> weights) {
+    public final WeightedPoint getWeightedMean(final IndexedValues<IndexType, ?> weights) {
         return smartFork(new ParallelPointOp.Average<IndexType>() {
             @Override
             public final double getValue(IndexType index) {
@@ -705,7 +695,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         return new WeightedPoint(Statistics.Inplace.median(temp, 0, temp.length), temp.length);      
     }
 
-    public final WeightedPoint getWeightedMedian(final IndexedValues<IndexType> weights) {   
+    public final WeightedPoint getWeightedMedian(final IndexedValues<IndexType, ?> weights) {   
         final WeightedPoint[] temp = getValidSortingArray(weights);
         if(temp.length == 0) return new WeightedPoint(Double.NaN, 0.0);
         return Statistics.Inplace.median(temp, 0, temp.length);      
@@ -743,7 +733,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
         return sorter;
     }
 
-    private WeightedPoint[] getValidSortingArray(final IndexedValues<IndexType> weights) {    
+    private WeightedPoint[] getValidSortingArray(final IndexedValues<IndexType, ?> weights) {    
         final WeightedPoint[] sorter = new WeightedPoint[countPoints()];
 
         if(sorter.length == 0) return sorter;
@@ -889,7 +879,7 @@ implements Verbosity, IndexedValues<IndexType>, Iterable<Number>, TableFormatter
 
 
     // TODO Make default method in Observations
-    public void memCorrect(final IndexedValues<IndexType> model, final IndexedValues<IndexType> noise, final double lambda) {
+    public void memCorrect(final IndexedValues<IndexType, ?> model, final IndexedValues<IndexType, ?> noise, final double lambda) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
 
             @Override

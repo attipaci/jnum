@@ -67,7 +67,7 @@ CopiableContent<FlagCompanion<? extends IndexType>> {
         return getData().conformsTo(size);
     }
     
-    public final boolean conformsTo(IndexedValues<IndexType> data) {
+    public final boolean conformsTo(IndexedValues<IndexType, ?> data) {
         return conformsTo(data.getSize());
     }
     

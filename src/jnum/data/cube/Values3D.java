@@ -25,7 +25,7 @@ package jnum.data.cube;
 
 import jnum.data.IndexedValues;
 
-public interface Values3D extends IndexedValues<Index3D>, Validating3D {
+public interface Values3D extends IndexedValues<Index3D, Number>, Validating3D {
    
     public int sizeX();
     

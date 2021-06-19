@@ -53,16 +53,15 @@ public interface SquareMatrixAlgebra<T> extends Inversion, IdentityValue {
 	// TODO implement alternative inversions, choose best?
 	
 
+    AbstractMatrix<T> getInverse();
+    
 	public void addIdentity(double scaling);
 
 	public void addIdentity();
 	
 	public void subtractIdentity();
 	
-	public void solve(AbstractVector<T>[] inputVectors);
-	
-	//public void getLUdecomposition();
-	
+	public MatrixInverter<T> getLUDecomposition();
 	
 	
 }

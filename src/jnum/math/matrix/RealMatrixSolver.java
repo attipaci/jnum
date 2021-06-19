@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,26 +21,17 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
+
 package jnum.math.matrix;
 
-import jnum.math.IdentityValue;
-import jnum.math.LinearAlgebra;
-import jnum.math.Metric;
-import jnum.math.Product;
+public interface RealMatrixSolver extends MatrixSolver<Double> {
 
+    public abstract double[] solveFor(double[] y);
+    
+    public abstract void solveFor(double[] y, double[] x);
+   
+    public abstract RealVector solveFor(RealVector y);
+    
+    public abstract void solveFor(RealVector y, RealVector x);
 
-public interface MatrixAlgebra<T> extends LinearAlgebra<T>, Product<T, T>, Metric<T>, IdentityValue {
-
-
-	public T dot(T B);
-	
-
-	public int getRank();
-	
-
-	public void gauss();
-	
-
-	public void gaussJordan();
-	
 }

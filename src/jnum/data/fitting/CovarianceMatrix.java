@@ -25,7 +25,6 @@ package jnum.data.fitting;
 
 
 import jnum.data.ArrayUtil;
-import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 import jnum.math.matrix.SquareMatrixException;
 
@@ -48,6 +47,8 @@ public class CovarianceMatrix extends Matrix {
      * @param A the Hessian matrix.
      */
     public CovarianceMatrix(HessianMatrix A) {
+        super(A.rows());
+        setData(A.getSVDInverse().getData());
         this.parameters = A.getParameters();
     }
     
@@ -57,6 +58,8 @@ public class CovarianceMatrix extends Matrix {
      * @param R the correlation matrix.
      */
     public CovarianceMatrix(CorrelationMatrix R) {
+        super(R.rows());
+        calcFrom(R);
         this.parameters = R.getParameters();
     }
     
@@ -79,7 +82,8 @@ public class CovarianceMatrix extends Matrix {
      * @param stepFraction the fraction of the parameters' natural step size (see @link Parameter#geStepSize()}) used
      *        for evaluating the second derivatives.
      */
-    public CovarianceMatrix(Parametric<Double> function, Parameter[] p, double stepFraction) {    
+    public CovarianceMatrix(Parametric<Double> function, Parameter[] p, double stepFraction) {  
+        super(p.length);
         this.parameters = p;
         setData(new HessianMatrix(function, parameters, stepFraction).getSVDInverse().getData());
     }
@@ -88,7 +92,7 @@ public class CovarianceMatrix extends Matrix {
      * @see jnum.math.AbstractMatrix#copy(boolean)
      */
     @Override
-    public AbstractMatrix<Double> copy(boolean withContents) {
+    public CovarianceMatrix copy(boolean withContents) {
         CovarianceMatrix P = (CovarianceMatrix) super.copy(withContents);
         if(parameters != null) {
             if(withContents) P.parameters = new Parameter[parameters.length];
@@ -100,6 +104,23 @@ public class CovarianceMatrix extends Matrix {
         return P;
     }
   
+    /**
+     * Calculates the correlation matrix from a covariance matrix.
+     *
+     * @param C the covariance matrix
+     */
+    private void calcFrom(CorrelationMatrix R) {
+        if(!R.isSquare()) throw new SquareMatrixException();
+        
+        
+        assertSize(R.rows(), R.rows());
+
+        double[] sigma = R.getSigmas();
+
+        for(int i=rows(); --i >= 0; ) for(int j=rows(); --j >= 0; )
+            set(i, j, R.get(i, j) * sigma[i] * sigma[j]);
+    }
+
     
     /**
      * Gets the parameters represented by this covariance matrix.
@@ -113,7 +134,7 @@ public class CovarianceMatrix extends Matrix {
      */
     public void setParameterErrors() {
         if(!isSquare()) throw new SquareMatrixException();
-        for(int i=rows(); --i >= 0; ) parameters[i].setWeight(1.0 / getValue(i, i));
+        for(int i=rows(); --i >= 0; ) parameters[i].setWeight(1.0 / get(i, i));
     }
     
     /**

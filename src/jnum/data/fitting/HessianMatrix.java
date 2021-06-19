@@ -57,7 +57,8 @@ public class HessianMatrix extends Matrix {
      *        evaluated at +/- h from the nominal parameter values, where h is this specified fraction times the value
      *        returned by {@link Parameter#getStepSize()}
      */
-    public HessianMatrix(Parametric<Double> function, Parameter[] p, double stepFraction) {    
+    public HessianMatrix(Parametric<Double> function, Parameter[] p, double stepFraction) {   
+        super(p.length);
         this.parameters = p;
         calc(function, stepFraction);
     }
@@ -67,9 +68,10 @@ public class HessianMatrix extends Matrix {
      *
      * @param C the covariance matrix for a set of parameters.
      */
-    public HessianMatrix(CovarianceMatrix C) {    
-        this.parameters = C.getParameters();
+    public HessianMatrix(CovarianceMatrix C) {
+        super(C.rows());
         setData(C.getSVDInverse().getData());
+        this.parameters = C.getParameters();
     }
     
     /**

@@ -31,19 +31,19 @@ import jnum.math.LinearAlgebra;
 import jnum.math.Metric;
 
 
-public class GenericVectorBasis<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVectorBasis<T> {
+public class ObjectVectorBasis<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVectorBasis<T> {
 
 	private static final long serialVersionUID = 196973970496491957L;
 
 	
-	public GenericVectorBasis() {}
+	public ObjectVectorBasis() {}
 	
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractVectorBasis#asMatrix()
 	 */
 	@Override
-	public GenericMatrix<T> asMatrix() {
-		GenericMatrix<T> M = new GenericMatrix<>(get(0).getType());
+	public ObjectMatrix<T> asMatrix() {
+		ObjectMatrix<T> M = new ObjectMatrix<>(get(0).getType());
 		asMatrix(M);
 		return M;
 	}

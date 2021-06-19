@@ -24,8 +24,11 @@
 package jnum.math;
 
 import jnum.CopyCat;
+import jnum.data.IndexedEntries;
+import jnum.data.samples.Index1D;
 
-public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>> {
+
+public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, IndexedEntries<Index1D, T>  {
 
     public int size();
     

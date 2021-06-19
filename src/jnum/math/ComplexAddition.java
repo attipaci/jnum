@@ -31,14 +31,14 @@ public interface ComplexAddition {
 	/**
 	 * Add a complex value to this object.
 	 *
-	 * @param x the complex value to be added.
+	 * @param x    the complex value to be added.
 	 */
 	public void addComplex(Complex x);
 	
 	/**
 	 * Subtract a complex value from this object.
 	 *
-	 * @param x the complex value to be subtracted.
+	 * @param x    the complex value to be subtracted.
 	 */
 	public void subtractComplex(Complex x);
 	

@@ -117,16 +117,6 @@ public class Overlay3D extends Data3D {
     public void add(int i, int j, int k, Number value) {
         values.add(i, j, k, value);
     }
-    
-    @Override
-    public final Number getLowestCompareValue() {
-        return values.getLowestCompareValue();
-    }
-
-    @Override
-    public final Number getHighestCompareValue() {
-        return values.getHighestCompareValue();
-    }
 
     @Override
     public final int compare(Number a, Number b) {

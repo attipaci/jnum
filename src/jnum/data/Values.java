@@ -27,9 +27,6 @@ public interface Values {
     
     public Class<? extends Number> getElementType();
 
-    public Number getLowestCompareValue(); 
-    
-    public Number getHighestCompareValue();
     
     public int compare(Number a, Number b);
     

@@ -63,6 +63,11 @@
   	difference, which is not yet used. Nutation and high-precision LST 
 	calculations are not yet implemented, but stay tuned.
 
+	[NEW] {jnum.math.matrix} New MatrixSolver and MatrixInverter classes
+	for solving matrix equations (finding x given y, for y = M.x) and
+	for calculating matrix inverses (e.g. via LU decomposition, SVD
+ 	or GaussJordan elimination).
+
 	[NEW] {Vector3D} Added efficient implementation of 3D rotation by 
 	very small angles.
 
@@ -85,6 +90,18 @@
 	[NEW] {GeocentricCoordinates} Added radius as 3rd coordinate.
 
 	[NEW] {GeodeticCoordinates} Added altitude as 3rd coordinate. 
+
+	[RENAME] {jnum.math.matrix} A lot of renaming, both classes and
+	funtions.
+
+	[CHANGE] {jnum.math.matrix} Matrices and Vectors now have fixed sizes
+	during their lifetimes to provide more predictable behavior, and 
+	reduce the possibility of introducing nasty bugs do to inadvertent 
+	resizing of these objects.
+
+	[CHANGE] {jnum.math} Matrix and vector type classes now have better
+	hierarchies, and implement more common interfaces, increasing their
+	versatility, and consistency.
 
 	[CHANGE] {SphericalCoordinates} Changed what longitude convention is
 	considered normal and reversed. Now normal is what goes clockwise 
@@ -110,6 +127,10 @@
 	representing a vector in the mathematical sense (vs the Java Vector
 	class that represents a dynamically sized array).
 
+	[FIX] {jnum.math.matrix} Many fixes to matrix and vector classes.
+	(Some mistakes, some inefficiencies, and overall better safety with
+	copies replacing references where it is appropriate).
+
 	[FIX] {GeodeticCoordinates} not have proper toCartesian() conversion
 	into 3D rectangular xyz coordinates.
 
@@ -120,7 +141,7 @@
 	correctly dealt with.
 	
 	[FIX] Many potential flaws fixed with the help of FindBugs.
- 
+
 	[TWEAK] {jnum.math.matrix} Many slight improvements and tweaks to 
 	Matrix and vector representation classes, targeting improved 
 	performance and ease of use.

@@ -381,12 +381,6 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
 
         
         @Override
-        public Number getLowestCompareValue() { return Double.NEGATIVE_INFINITY; }
-        
-        @Override
-        public Number getHighestCompareValue() { return Double.POSITIVE_INFINITY; }
-        
-        @Override
         public int compare(Number a, Number b) {
             return Double.compare(a.doubleValue(), b.doubleValue());
         }
@@ -461,12 +455,6 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         private static final long serialVersionUID = 5524602044246595852L;
         private float[][][] data;
 
-        
-        @Override
-        public Number getLowestCompareValue() { return Float.NEGATIVE_INFINITY; }
-        
-        @Override
-        public Number getHighestCompareValue() { return Float.POSITIVE_INFINITY; }
         
         @Override
         public int compare(Number a, Number b) {

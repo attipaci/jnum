@@ -25,6 +25,11 @@ package jnum.math;
 
 public interface ComplexMultiplication<Type> extends Multiplication<Complex>, Product<Complex, Type> {
 	
+    /**
+     * Multiplies this object by the square root of -1, and returns itself as a result (s.t. further operations
+     * can be chained).
+     * 
+     */
 	public void multiplyByI();
 	
 }

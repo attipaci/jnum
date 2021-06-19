@@ -130,16 +130,6 @@ public class Overlay2D extends Data2D implements CopiableContent<Overlay2D> {
     public void add(int i, int j, Number value) {
         values.add(i, j, value);
     }
-    
-    @Override
-    public final Number getLowestCompareValue() {
-        return values.getLowestCompareValue();
-    }
-
-    @Override
-    public final Number getHighestCompareValue() {
-        return values.getHighestCompareValue();
-    }
 
     @Override
     public final int compare(Number a, Number b) {

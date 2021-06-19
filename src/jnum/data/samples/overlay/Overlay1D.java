@@ -104,16 +104,6 @@ public class Overlay1D extends Data1D {
     public void add(int i, Number value) {
         values.add(i, value);
     }
-    
-    @Override
-    public final Number getLowestCompareValue() {
-        return values.getLowestCompareValue();
-    }
-
-    @Override
-    public final Number getHighestCompareValue() {
-        return values.getHighestCompareValue();
-    }
 
     @Override
     public final int compare(Number a, Number b) {
