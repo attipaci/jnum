@@ -31,6 +31,7 @@ import jnum.Copiable;
 import jnum.ShapeException;
 import jnum.Util;
 import jnum.data.ArrayUtil;
+import jnum.data.samples.Index1D;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.Coordinates;
@@ -115,6 +116,21 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
 	    assertSize(v.size());
 	    for(int i=size(); --i >= 0; ) component[i] = (T) v.getComponent(i).copy();
 	}
+	
+    public T getComponentInstance() {
+        try { return getType().getConstructor().newInstance(); }
+        catch(Exception e) { 
+            Util.error(this, e);
+            return null;
+        }   
+    }
+
+    @Override
+    public ObjectVector<T> getVectorInstance(int size) {
+        return new ObjectVector<>(getType(), size);
+    }
+    
+	
 		
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractVector#getType()
@@ -131,6 +147,12 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
 	
 	@Override
     public final T z() { return component[2]; }
+	
+    @Override
+    public final T copyOf(Index1D index) {
+        return (T) get(index).copy();
+    }
+
 	
 	/**
 	 * New entry.
@@ -373,6 +395,8 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
     public void setValues(T... values) {
         component = values;
     }
-	
+    
+    
+
 
 }

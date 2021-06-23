@@ -59,12 +59,12 @@ public class MatrixTest {
 		Matrix P = Matrix.product(M, I);
 		System.out.println("M * M-1: " + P.toString(Util.f3));
 		
-		SVD decomposed = new SVD(M);
+		SVD decomposed = M.getSVD();
 		System.out.println("SVD reconst: " + decomposed.getReconstructedMatrix().toString(Util.f3));
 		System.out.println("SVD inverse: " + decomposed.getInverseMatrix().toString(Util.f3));
 		
-		LUDecomposition LU = new LUDecomposition(M);
-		System.out.println("LU decomp: " + LU.getLU().toString(Util.f3));
+		LUDecomposition<Double> LU = M.getLUDecomposition();
+		System.out.println("LU decomp: " + LU.getMatrix().toString(Util.f3));
 		System.out.println("LU inverse: " + LU.getInverseMatrix().toString(Util.f3));
 		
 		System.out.println("Gauss inverse: " + M.getGaussInverse().toString(Util.f3));

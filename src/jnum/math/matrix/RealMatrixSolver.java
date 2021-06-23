@@ -33,5 +33,6 @@ public interface RealMatrixSolver extends MatrixSolver<Double> {
     public abstract RealVector solveFor(RealVector y);
     
     public abstract void solveFor(RealVector y, RealVector x);
+   
 
 }

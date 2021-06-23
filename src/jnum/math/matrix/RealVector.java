@@ -67,6 +67,13 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
         if(withContent) System.arraycopy(component, 0, copy.component, 0, size());
         return copy;
     }
+
+    
+    @Override
+    public AbstractVector<Double> getVectorInstance(int size) {
+        return new RealVector(size);
+    }
+
     
     @Override
     public final Double x() { return component[0]; }
@@ -129,6 +136,9 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     
     @Override
     public final void incrementValue(int i, Double x) { component[i] += x; }
+
+    @Override
+    public final Double copyOf(Index1D index) { return get(index); }
 
     
     @Override
@@ -352,6 +362,8 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     public void add(Index1D index, Number value) {
         component[index.i()] += value.doubleValue();
     }
+
+
 
    
 

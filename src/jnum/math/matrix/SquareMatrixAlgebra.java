@@ -31,28 +31,13 @@ public interface SquareMatrixAlgebra<T> extends Inversion, IdentityValue {
 	
 	// TODO
 	// Polynomial getCharacterizticPolynomial()
-	
-	// TODO Gaussian Elimination for triangular form...
-	
+		
 	// TODO
-	//Type determinant();
+	// Type determinant();
 	
 	// TODO 
 	// public double[] findEigenValues();
 	
-	// TODO
-	// diagonalizes and returns the transformation matrix for diagonalization...
-	// public Matrix diagonalize() 
-	
-	// TODO
-	// jordanizes and returns the jordanizing transformation matrix...
-	// public Matrix jordanize()
-	
-	// public double[] eigenValues()
-	
-	// TODO implement alternative inversions, choose best?
-	
-
     AbstractMatrix<T> getInverse();
     
 	public void addIdentity(double scaling);
@@ -61,7 +46,8 @@ public interface SquareMatrixAlgebra<T> extends Inversion, IdentityValue {
 	
 	public void subtractIdentity();
 	
-	public MatrixInverter<T> getLUDecomposition();
-	
+	public LUDecomposition<T> getLUDecomposition();
+
+	public GaussInverter<T> getGaussInverter();
 	
 }

@@ -307,7 +307,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 
     @Override
     public final Index1D getSize() {
-        return new Index1D(size());
+        return size;
     }
 
 
@@ -389,7 +389,8 @@ ViewableAsDoubles, Parser, NumberFormating {
         return copy;
     }
     
-
+    private final static Index1D size = new Index1D(2);
+    
     public static final int X = 0;    
     public static final int Y = 1;
     public static final int Z = 2;    

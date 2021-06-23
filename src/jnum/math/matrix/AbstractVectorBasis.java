@@ -34,7 +34,8 @@ public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
 
 	public AbstractVectorBasis() {}
 	
-
+	public abstract AbstractVector<T> getVectorInstance(int size);
+	
 	public void orthogonalize() {
 		for(int i=1; i<size(); i++) for(int j=0; j<i; j++) get(i).orthogonalizeTo(get(j));	
 	}
@@ -49,7 +50,6 @@ public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
 		orthogonalize();
 		normalize();		
 	}
-	
 
 	public abstract AbstractMatrix<T> asMatrix();
 

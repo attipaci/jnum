@@ -44,8 +44,10 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
 	public abstract Object getData();
 	
 	public abstract void setData(Object data);
-		
 
+	public abstract AbstractVector<T> getVectorInstance(int size);
+	
+	
 	@SuppressWarnings("unchecked")
     @Override
 	public AbstractVector<T> clone() {
@@ -113,6 +115,9 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
         return getComponent(index.i());
     }
 
+   
+    public abstract T copyOf(Index1D index);
+ 
 
     @Override
     public void set(Index1D index, T value) {

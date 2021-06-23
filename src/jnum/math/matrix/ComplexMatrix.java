@@ -34,9 +34,8 @@ import jnum.math.Complex;
 import jnum.math.ComplexAddition;
 import jnum.math.ComplexConjugate;
 import jnum.math.ComplexScaling;
+import jnum.math.MathVector;
 import jnum.math.Multiplication;
-
-
 
 
 public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
@@ -55,12 +54,17 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         super(data);
     }
 
+    public ComplexMatrix(Matrix M) {
+        this(M.rows(), M.cols());
+        for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).set(M.get(i, j), 0.0);  
+    }
+    
     public ComplexMatrix(String text, ParsePosition pos) throws ParseException, Exception {
         super(Complex.class, text, pos);
     }
 
     @Override
-    protected ComplexMatrix createMatrix(int rows, int cols, boolean initialize) {
+    public ComplexMatrix getMatrixInstance(int rows, int cols, boolean initialize) {
         if(initialize) return new ComplexMatrix(rows, cols);
         return new ComplexMatrix((Complex[][]) Array.newInstance(Complex.class, new int[] { rows, cols }));
     }
@@ -73,6 +77,16 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     @Override
     public ComplexMatrix copy() {
         return (ComplexMatrix) super.copy();
+    }
+    
+    @Override
+    public LU getLUDecomposition() {
+        return new LU();
+    }
+    
+    @Override
+    public Gauss getGaussInverter() {
+        return new Gauss();
     }
 
     public double[][] getRealPart() {
@@ -165,11 +179,25 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         return product;
     }
 
+    public ComplexMatrix dot(ComplexMatrix B) {
+        return (ComplexMatrix) super.dot(B);
+    }
+    
     @Override
-    public ComplexMatrix dot(AbstractMatrix<? extends Complex> B) {
+    public ComplexMatrix dot(Matrix B) {
         return (ComplexMatrix) super.dot(B);
     }
 
+    @Override
+    public ComplexVector dot(MathVector<Complex> v) {
+        return (ComplexVector) super.dot(v);
+    }
+    
+    @Override
+    public ComplexVector dot(RealVector v) {
+        return (ComplexVector) super.dot(v);
+    }   
+    
     @Override
     public ComplexMatrix getTranspose() {        
         return (ComplexMatrix) super.getTranspose();
@@ -190,6 +218,8 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         return (ComplexMatrix) super.getLUInverse();
     }
 
+    @Override
+    public final void scale(Complex x) { multiplyBy(x); }
 
     /* (non-Javadoc)
      * @see kovacs.math.Multiplication#multiplyBy(java.lang.Object)
@@ -237,6 +267,44 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
        if(data instanceof float[][]) return fromReal((float[][]) data);
        if(data instanceof ViewableAsDoubles) return fromReal(((ViewableAsDoubles) data).viewAsDoubles());
        throw new IllegalArgumentException(" Cannot convert " + data.getClass().getSimpleName() + " into double[][] format.");    
+    }
+    
+    public class LU extends ObjectMatrix<Complex>.LU {
+
+        @Override
+        public ComplexMatrix getMatrix() {
+            return (ComplexMatrix) super.getMatrix();
+        }
+
+
+        @Override
+        public ComplexMatrix getInverseMatrix() {
+            return (ComplexMatrix) super.getInverseMatrix();
+        }
+        
+        @Override
+        public ComplexVector solveFor(MathVector<Complex> y) {
+            return (ComplexVector) super.solveFor(y);
+        }        
+    }
+
+    public class Gauss extends ObjectMatrix<Complex>.Gauss {
+
+        @Override
+        public ComplexMatrix getI() {
+            return (ComplexMatrix) super.getI();
+        }
+
+        @Override
+        public ComplexMatrix getInverseMatrix() {
+            return (ComplexMatrix) super.getInverseMatrix();
+        }
+
+        @Override
+        public ComplexVector solveFor(MathVector<Complex> y) {
+            return getI().dot(y);
+        }
+
     }
     
 }

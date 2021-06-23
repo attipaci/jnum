@@ -23,6 +23,7 @@
 
 package jnum.data.samples;
 
+import jnum.data.IndexedValues;
 import jnum.math.Coordinates;
 import jnum.math.MathVector;
 import jnum.math.matrix.AbstractMatrix;
@@ -174,6 +175,65 @@ public class Offset1D implements MathVector<Double> {
         if(idx == 0) x += increment;
     }
 
+    @Override
+    public int capacity() {
+        return 1;
+    }
+
+    @Override
+    public int dimension() {
+        return 1;
+    }
+
+    @Override
+    public Index1D getSize() {
+        return size;
+    }
+
+    @Override
+    public Double get(Index1D index) {
+       if(index.i() == 0) return x;
+       return 0.0;
+    }
+
+    @Override
+    public void set(Index1D index, Double value) {
+        if(index.i() == 0) x = value;
+    }
+
+    @Override
+    public Index1D getIndexInstance() {
+        return new Index1D();
+    }
+
+    @Override
+    public Index1D copyOfIndex(Index1D index) {
+        return index.copy();
+    }
+
+    @Override
+    public boolean conformsTo(Index1D size) {
+        if(size.i() == 1) return true;
+        return false;
+    }
+
+    @Override
+    public boolean conformsTo(IndexedValues<Index1D, ?> data) {
+        return conformsTo(data.getSize());
+    }
+
+    @Override
+    public String getSizeString() {
+        return "[1]";
+    }
+
+    @Override
+    public boolean containsIndex(Index1D index) {
+        if(index.i() == 0) return true;
+        return false;
+    }
+
    
+    private final static Index1D size = new Index1D(1);
 
 }

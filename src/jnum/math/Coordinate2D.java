@@ -389,7 +389,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 
     @Override
     public final Index1D getSize() {
-        return new Index1D(size());
+        return size;
     }
 
 
@@ -397,8 +397,7 @@ ViewableAsDoubles, Parser, NumberFormating {
     public final Double get(Index1D index) {
         return getComponent(index.i());
     }
-
-
+    
     @Override
     public void set(Index1D index, Double value) {
         setComponent(index.i(), value);
@@ -470,7 +469,7 @@ ViewableAsDoubles, Parser, NumberFormating {
         return copy;
     }
 	
-    
+    private final static Index1D size = new Index1D(2);
    
 	public static final int X = 0;
 	

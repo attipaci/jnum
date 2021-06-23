@@ -24,21 +24,3 @@
 
 package jnum.math.matrix;
 
-
-public class VectorBasis extends AbstractVectorBasis<Double> {
-
-	private static final long serialVersionUID = 2039401048091817380L;
-
-	public VectorBasis() {}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVectorBasis#asMatrix()
-	 */
-	@Override
-	public Matrix asMatrix() {
-		Matrix M = new Matrix(size());
-		asMatrix(M);
-		return M;
-	}
-
-}

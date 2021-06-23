@@ -26,12 +26,13 @@ package jnum.math.matrix;
 
 
 import java.text.*;
+import java.util.Arrays;
+
 import java.io.Serializable;
 
 import jnum.CopiableContent;
 import jnum.CopyCat;
 import jnum.ShapeException;
-import jnum.Util;
 import jnum.data.ArrayUtil;
 import jnum.data.IndexedEntries;
 import jnum.data.IndexedValues;
@@ -51,11 +52,12 @@ import jnum.text.NumberFormating;
  *
  * @param <T>       The generic type of the elements in a matrix.
  */
-public abstract class AbstractMatrix<T> implements IndexedEntries<Index2D, T>, MatrixAlgebra<AbstractMatrix<? extends T>>, SquareMatrixAlgebra<T>, Serializable, 
+public abstract class AbstractMatrix<T> implements IndexedEntries<Index2D, T>, MatrixAlgebra<AbstractMatrix<? extends T>, T>, SquareMatrixAlgebra<T>, Serializable, 
 Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, NumberFormating, DecimalFormating {
 
 	private static final long serialVersionUID = 8165960625207147822L;
 
+	
 	/**
 	 * Constructor that subclasses can rely on but should never be publicly accessible...
 	 */
@@ -120,20 +122,60 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 
 
     /**
-     * Creates a new genetic type matrix element.
+     * Creates a new genetic type matrix entry.
      *
-     * @return the t
+     * @return  A new generic type enty in this matrix.
      */
-    protected T createElement() {
-        try { return getElementType().getConstructor().newInstance(); }
-        catch(Exception e) { 
-            Util.error(this, e);
-            return null;
-        }   
-    }
+    public abstract T getEntryInstance(); 
     
+    /**
+     * Creates a matrix element object that can be used to represent and manipulate values
+     * contained in this matrix.
+     * 
+     * @return  
+     */
+    public abstract MatrixElement<T> getElementInstance();
+
+    /**
+     * Creates a vector of the same generic type as the elements in this matrix.
+     * 
+     * @param size  The size of the vector
+     * @return      A new vector with the same generic type as the entries in this matrix.
+     */
+    public abstract AbstractVector<T> getVectorInstance(int size);
     
-    protected abstract AbstractMatrix<T> createMatrix(int rows, int cols, boolean initialize);
+    /**
+     * Creates a vector basis object of the same generic type as the elements in this matrix.
+     * 
+     * @return      A new vector basis with the same generic type as the entries in this matrix.
+     */
+    public abstract AbstractVectorBasis<T> getVectorBasisInstance();
+    
+    /**
+     * Creates a new matrix of the same generic type as this one.
+     * 
+     * @param rows          Number of rows in the new matrix
+     * @param cols          Number of columns in the new matrix
+     * @param initialize    If true, the matrix is going to be populated with the generic type elements
+     *                      created with the standard generic type constructor. If false only the
+     *                      Generic type container object (array) is created, but with the slots
+     *                      populated with null values. Theoption hasd no effect for Matrices that
+     *                      have backing arrays of primitive types, since those do not hold references
+     *                      but rather primitive values which are always initialized to zero by
+     *                      default at creation.
+     *                      
+     * @return
+     */
+    public abstract AbstractMatrix<T> getMatrixInstance(int rows, int cols, boolean initialize);
+
+    
+    /**
+     * Gets the number of rows in this matrix.
+     * 
+     * @return     Nmber of rows in this matrix.
+     */
+    public abstract int rows();
+    
     
     /**
      * Gets the number of columns in this matrix
@@ -142,13 +184,6 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      */
     public abstract int cols();
 
-    /**
-     * Gets the number of rows in this matrix.
-     * 
-     * @return     Nmber of rows in this matrix.
-     */
-    public abstract int rows();
-    
     
     @Override
     public int capacity() { return rows() * cols(); }
@@ -193,16 +228,6 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      */
     public boolean isSquare() { return rows() == cols(); }
      
-    
-
-    /**
-     * Checks if the matrix is effectively a scalar enclosed in a matrix object, i.e. if it is a 1x1 matrix with
-     * a single element.
-     * 
-     * @return
-     */
-    public boolean isScalar() { return rows() * cols() == 1; }
-    
 
     /**
      * Gets the dimensions (rows, cols) of this matrix.
@@ -243,12 +268,11 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * @param M
      * @return
      */
-    public boolean isEqualSize(AbstractMatrix<?> M) {
+    public boolean conformsTo(AbstractMatrix<?> M) {
         return M.isSize(rows(), cols());
     }
        
-	   
-
+	  
     /**
      * Gets the matrix element at the specified row, column index in the matrix.
      * 
@@ -259,15 +283,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      */
     public abstract T get(int row, int col);
     
-    /**
-     * Sets the matrix element at the specified row, column index in the matrix to the specified new value.
-     * 
-     * @param row      row index of matrix element
-     * @param col      column index of matrix element.
-     * @param v        The new matrix element to set. (For object types the matrix will hold a reference
-     *                 to the specified value).
-     */
-    public abstract void set(int row, int col, T v);
+   
     
     /**
      * Gets the matrix element at the specified row, column index in the matrix.
@@ -278,11 +294,19 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      */
     @Override
     public final T get(Index2D idx) { return get(idx.i(), idx.j()); }
+   
     
-    protected abstract T copyOf(int i, int j);
-    
-    
-    
+    /**
+     * Sets the matrix element at the specified row, column index in the matrix to the specified new value.
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element.
+     * @param v        The new matrix element to set. (For object types the matrix will hold a reference
+     *                 to the specified value).
+     */
+    public abstract void set(int row, int col, T v);
+   
+   
     /**
     * Sets the matrix element at the specified row, column index in the matrix to the specified new value.
     * 
@@ -292,86 +316,186 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     */
     @Override
     public final void set(Index2D idx, T value) { set(idx.i(),idx.j(), value); }
+   
+    /**
+     * Gets an independent copy of an entry in this matrix.
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element
+     * @return         A deep copy of the value at the specified location.
+     */
+    public abstract T copyOf(int row, int col);
     
+    /**
+     * Gets an independent copy of an entry in this matrix.
+     * 
+     * @param idx      The (row,col) index of matrix element
+     * @return         A deep copy of the value at the specified location.
+     */
+    public final T copyOf(Index2D index) { return copyOf(index.i(), index.j()); }
+   
+    /**
+     * Adds a value of the same generic type to an element of this matrix.
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element
+     */
+    public abstract void add(int row, int col, T v);
+    
+    /**
+     * Adds a value of the same generic type to an element of this matrix.
+     * 
+     * @param idx      The (row,col) index of matrix element
+     */
+    public final void add(Index2D idx, T value) { add(idx.i(),idx.j(), value); }
+    
+
+    /**
+     * Adds a scalar value to an element of this matrix. For non-number types, this
+     * means adding an identity element scaled by the specified scalar value. I.e.
+     * M[i][j] -> M[i][j] + v * I, where I is the identity element.
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element
+     */
+    public abstract void add(int row, int col, double v);
+    
+    /**
+     * Adds a scalar value to an element of this matrix. For non-number types, this
+     * means adding an identity element scaled by the specified scalar value. I.e.
+     * M[i][j] -> M[i][j] + v * I, where I is the identity element.
+     * 
+     * @param idx      The (row,col) index of matrix element
+     */
+    public final void add(Index2D idx, double value) { add(idx.i(),idx.j(), value); }
+    
+    /**
+     * Clears (sets to zeroes) an entry in this matrix.
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element
+     */
     public abstract void clear(int i, int j);
     
-    public final void clear(Index2D index) {
-        clear(index.i(), index.j());
-    }
-    
     /**
-     * Adds a value to the matrix element at the specified row, column index in the matrix.
+     * Clears (sets to zeroes) an entry in this matrix.
      * 
-     * @param row      row index of matrix element
-     * @param col      column index of matrix element.
-     * @param v        The increment to the matrix element.
+     * @param idx      The (row,col) index of matrix element
      */
-    public abstract void add(int row, int col, T increment);
+    public final void clear(Index2D idx) { clear(idx.i(),idx.j()); }
 
     /**
-     * Adds a value to the matrix element at the specified row, column index in the matrix.
-     * 
-     * @param idx      The (row, col) index of the matrix element.
-     * @param v        The increment to the matrix element.
-     */
-    public final void add(Index2D idx, T increment) { add(idx.i(),idx.j(), increment); }
-    
-    /**
-     * Adds a scaled value to the matrix element at the specified row, column index in the matrix.
+     * Scales an entry in this matrix by the specified scalar factor.
      * 
      * @param row      row index of matrix element
-     * @param col      column index of matrix element.
-     * @param v        The increment to the matrix element.
-     * @param scaling  Scaling factor for the increment value for adding to matrix element 
+     * @param col      column index of matrix element
      */
-    public abstract void addScaled(int row, int col, T increment, double scaling);
-
-    /**
-     * Adds a scaled value to the matrix element at the specified row, column index in the matrix.
-     * 
-     * @param row      row index of matrix element
-     * @param idx      The (row, col) index of the matrix element to be incremented.
-     * @param scaling  Scaling factor for the increment value for adding to matrix element 
-     */
-    public final void addScaledValue(Index2D idx, T increment, double scaling) { addScaled(idx.i(),idx.j(), increment, scaling); }
-    
-  
     public abstract void scale(int i, int j, double factor);
     
-    
-    public final void scale(Index2D idx, double factor) {
-        scale(idx.i(),idx.j(), factor);
-    }
-    
-    public abstract void multiplyBy(int i, int j, T factor);
-    
-    public final void multiplyBy(Index2D idx, T factor) {
-        multiplyBy(idx.i(),idx.j(), factor);
-    }
+    /**
+     * Scales an entry in this matrix by the specified scalar factor.
+     * 
+     * @param idx      The (row,col) index of matrix element
+     */
+    public final void scale(Index2D idx, double factor) { scale(idx.i(),idx.j(), factor); }
 
+    /**
+     * Checks if an entry in this matrix is a 'null' (zeroed) 
+     * 
+     * @param row      row index of matrix element
+     * @param col      column index of matrix element
+     */
+    public abstract boolean isNull(int i, int j);
+       
+    /**
+     * Checks if an entry in this matrix is a 'null' (zeroed) 
+     * 
+     * @param idx      The (row,col) index of matrix element
+     */
+    public final boolean isNull(Index2D idx) { return isNull(idx.i(), idx.j()); }
+    
+    
 	/**
-	 * Sets the data in the matrix to zeroes (or empty values).
+	 * Sets the data in the matrix to zeroes (or empty values). Same as {@link #zero()}
 	 * 
 	 */
-	public void clear() { zero(); }
-	
-    /**
-     * Multiply all matrix elements by a factor of the same element type.
-     * 
-     * @param factor       The factor to scale matrix elements with.
-     */
-    public void scale(T factor) {
-        for(int i=0; i<rows(); i++) scaleRow(i, factor);
-    }
-    
-   
+	public final void clear() { zero(); }
 	
     @Override
+    public final void zero() { for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) clear(i, j); }
+
+    
+    @Override
+    public void add(AbstractMatrix<? extends T> o) {
+        assertSize(o.rows(), o.cols());
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) add(i, j, o.get(i, j));
+    }
+
+    /**
+     * Adds another matrix containing real values to this one. For matrices with non-number types
+     * this means adding, for every element in this matrix, an identity element scaled by the 
+     * matching element in the real valued matrix argument for each
+     * element. I.e. M[i][j] -> M[i][j] + o[i][j] * I, where I is the identity element.
+     * 
+     * @param o     The real valued matrix to add to this one. 
+     */
+    public void add(Matrix o) {
+        assertSize(o.rows(), o.cols()); 
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) add(i, j, o.get(i, j));       
+    }
+
+    /**
+     * Adds another matrix containing real values to this one, with an overall scaling factor. 
+     * For matrices with non-number types this means adding, for every element in this matrix, 
+     * an identity element scaled by the product of the scaling factor and the matching element 
+     * in the real valued matrix argument for each
+     * element. I.e. M[i][j] -> M[i][j] + (factor * o[i][j]) * I, where I is the identity element.
+     * 
+     * @param o     The real valued matrix to add to this one with the scaling factor. 
+     */
+    public void addScaled(Matrix o, double factor) {
+        assertSize(o.rows(), o.cols()); 
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) add(i, j, o.get(i, j) * factor);
+            
+    }  
+    
+    
+    /**
+     * Subtracts another matrix containing real values to this one. For matrices with non-number types
+     * this means subtracting, from every element in this matrix, an identity element scaled by the 
+     * matching element in the real valued matrix argument for each
+     * element. I.e. M[i][j] -> M[i][j] - o[i][j] * I, where I is the identity element.
+     * 
+     * @param o     The real valued matrix to subtract to this one. 
+     */
+    public void subtract(Matrix o) {
+        assertSize(o.rows(), o.cols()); 
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) add(i, j, -o.get(i, j));
+            
+    }
+
+    @Override
+    public void scale(double factor) {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) scale(i, j, factor);
+    }
+    
+    @Override
     public boolean isNull() {
-        for(int i=0; i<rows(); i++) if(!isNullRow(i)) return false;
+        for(int i=0; i<rows(); i++) for(int j=cols(); --j >= 0; ) if(!isNull(i, j)) return false;
         return true;        
     }
     
+    public double getMagnitude() {
+        double mag = 0.0;
+        MatrixElement<T> e = getElementInstance();
+        
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
+            double a2 = e.from(i, j).absSquared();
+            if(a2 > mag) mag = a2;
+        }
+        
+        return Math.sqrt(mag);        
+    }
 
 
 	@Override
@@ -388,20 +512,14 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     public final void subtractIdentity() { addIdentity(-1.0); }
 	
 	@Override
-	public void setProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) { 
-		if(A.isScalar()) {
-			try { setData(ArrayUtil.copyOf(B.getData())); }
-			catch(Exception e) { Util.error(this, e); }
-			scale(A.get(0, 0));
-		}
-		else if(B.isScalar()) setProduct(B, A);
-		else {
-		    if(A.cols() != B.rows()) throw new ShapeException("Incompatible Dimensions: " + A + "," + B);
-		    zero();
-		    addProduct(A, B);
-		}
+	public void setProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) {
+	    if(A.cols() != B.rows()) throw new ShapeException("Incompatible product term sizes: " + A + " dot " + B);
+	    assertSize(A.rows(), B.cols());
+	    zero();
+	    addProduct(A, B);
 	}
 	
+
 	/**
 	 * Add the product of matrices A and B to what is already contained in this matrix.
 	 * 
@@ -409,15 +527,25 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	 * @param B    Right-hand matrix in product.
 	 */
 	protected abstract void addProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B);
+
+    
 	
 	@Override
     public AbstractMatrix<T> dot(AbstractMatrix<? extends T> B) {
-        AbstractMatrix<T> P = createMatrix(rows(), B.cols(), false);
+        AbstractMatrix<T> P = getMatrixInstance(rows(), B.cols(), false);
         P.setProduct(this, B);
         return P;
     }
+ 
 
-
+	/**
+	 * Returns the reference to the array (e.g. double[] or T[]) containing the underlying data
+	 * of the row with the specified index. Changes to the data in this row will result in
+	 * changes of the matrix directly.
+	 * 
+	 * @param i    Index of row to retrieve
+	 * @return     Reference to the underlying array that holds data for that row.
+	 */
 	public abstract Object getRow(int i);
 
 	
@@ -440,7 +568,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * @param buffer    A simple array of the underlying type (e.g. double[] or T[]) with the new row data. 
      */
 	public abstract void setRow(int i, Object value) throws ShapeException;
-	
+
 	
 	/**
 	 * Swaps two rows in the matrix.
@@ -448,12 +576,11 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	 * @param i    A row index
 	 * @param j    Another row index.
 	 */
-	public void swapRows(int i, int j) {
-		Object temp = getRow(i);
+	public final void swapRows(int i, int j) {
+		Object rowi = getRow(i);
 		setRow(i, getRow(j));
-		setRow(j, temp);		
+		setRow(j, rowi);		
 	}
-	
 
 	/**
 	 * Swaps two elements in this matrix
@@ -463,10 +590,10 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	 * @param i2   row index of second element
 	 * @param j2   column index of second element
 	 */
-	public void swapElements(int i1, int j1, int i2, int j2) {
-		T temp = get(i1, j1);
+	public final void swapElements(int i1, int j1, int i2, int j2) {
+		T i1j1 = get(i1, j1);
 		set(i1, j1, get(i2, j2));
-		set(i2, j2, temp);	
+		set(i2, j2, i1j1);	
 	}
 	
 	/**
@@ -479,68 +606,6 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	    swapElements(i1.i(), i1.j(), i2.i(), i2.j());
 	}
 
-	/**
-	 * Add a scalar multiple of one row to another row. It's one of many row operations used e.g. for decompositions.
-	 * 
-	 * @param row          Index of the row that will be used for adding
-	 * @param scaling      Scaling factor
-	 * @param toRow        Index of row to which the scaled other row is added. 
-	 */
-	public abstract void addMultipleOfRow(int row, double scaling, int toRow); 
-	
-
-	/**
-     * Add a the product of an element and a row's elements to another row. It's one of many row operations used e.g. for decompositions.
-     * 
-     * @param row          Index of the row that will be used for adding
-     * @param scaling      Multiplying element element
-     * @param toRow        Index of row to which the multiplied other row is added. 
-     */
-	public abstract void addMultipleOfRow(int row, T scaling, int toRow); 
-	
-	/**
-	 * Adds a the contents of a row to those of another row in this matrix.
-	 * 
-	 * @param row          index of row to be added
-	 * @param toRow        index of row to which the other row is added.
-	 */
-	public void addRow(int row, int toRow) {
-		addMultipleOfRow(row, 1.0, toRow);		
-	}
-	
-
-	/**
-     * Subtracts a the contents of a row from those of another row in this matrix.
-     * 
-     * @param row          index of row to be subtracted
-     * @param toRow        index of row from which the other row is subtracted.
-     */
-	public void subtractRow(int row, int fromRow) {
-		addMultipleOfRow(row, -1.0, fromRow);		
-	}
-	
-	/**
-	 * Sets all elements of a row to zero (or empty values).
-	 * 
-	 * @param i        Index of row to be zeroed.
-	 */
-	public abstract void zeroRow(int i);
-	
-	/**
-	 * Scales a row in this matrix by some scalar factor
-	 * 
-	 * @param i        Index of row to be rescaled
-	 * @param factor   Scalar factor
-	 */
-	public abstract void scaleRow(int i, double factor);
-	
-	/**
-	 * Multiplies all elements of a row with the an element of the same type.
-	 * 
-	 * @param i        Index of row to be multiplied
-	 * @param factor   Multiplicative factor element.
-	 */
-	public abstract void scaleRow(int i, T factor);
 
 	
 	/**
@@ -562,18 +627,29 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      */
 	public abstract void setColumn(int j, Object value) throws IllegalArgumentException;
 	
-
+	
+	/**
+	 * Copies the data (references) of another matrix into a subscape of this matrix.
+	 * 
+	 * @param patch    The subspace matrix
+	 * @param fromRow  The starting row index of the subspace in this matrix.
+	 * @param fromCol  The starting colum index of the subspace in this matrix.
+	 */
 	public void paste(AbstractMatrix<? extends T> patch, int fromRow, int fromCol) {
 		ArrayUtil.paste(patch.getData(), getData(), new int[] { fromRow, fromCol});
 	}
 	
-	
+	/**
+	 * Returns a subspace of this matrix as a new matrix.
+	 * 
+	 * @param rows     An integer array containing the row indices in this matrix of the subspace.
+	 * @param cols     An integer array containing the row indices in this matrix of the subspace.
+	 * @return     A new matrix contaiing only the selected rows and columns of this matrix in the specified
+	 *             order.
+	 */
 	public AbstractMatrix<T> subspace(int[] rows, int[] cols) {
-	    AbstractMatrix<T> sub = createMatrix(rows.length, cols.length, false);
-	    
-	    for(int i=rows.length; --i >= 0; ) for(int j = cols.length; --j >= 0; )
-	        sub.set(i,  j, copyOf(i, j));
-	    
+	    AbstractMatrix<T> sub = getMatrixInstance(rows.length, cols.length, false);
+	    for(int i=rows.length; --i >= 0; ) for(int j = cols.length; --j >= 0; ) sub.set(i,  j, copyOf(i, j));
 	    return sub;
 	}
 
@@ -624,40 +700,147 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	 *             not affect the contents of this matrix and vice versa.
 	 */
 	public AbstractMatrix<T> getTranspose() {
-	    AbstractMatrix<T> transpose = createMatrix(cols(), rows(), false);
+	    AbstractMatrix<T> transpose = getMatrixInstance(cols(), rows(), false);
 	    for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) transpose.set(j, i, copyOf(i, j));
 	    return transpose;
 	}
 
-	@Override
-	public final void gauss() { gaussJordan(); }
-	
 
-	@Override
-	public int getRank() {
-		AbstractMatrix<T> copy = copy();
-		copy.gauss();
-		int rank = 0;
-		for(int i=0; i<rows(); i++) if(!isNullRow(i)) rank++;
-		return rank;
+	
+	public void gaussJordan() { 
+	    final Index2D[] idx = new Index2D[rows()];
+	    final int[] ipiv = new int[rows()];
+
+	    MatrixElement<T> e = getElementInstance();
+	    MatrixElement<T> product = getElementInstance();
+	    
+	    Arrays.fill(ipiv, -1);
+
+	    for(int i=rows(); --i >= 0; ) {
+	        int icol=-1, irow=-1;
+	        double big=0.0;
+	        for(int j=rows(); --j >= 0; ) if(ipiv[j] != 0) for(int k=rows(); --k >= 0; ) {
+	            if(ipiv[k] == -1) {
+	                double mag = e.from(get(i, j)).abs();
+	                if(mag >= big) {
+	                    big=mag;
+	                    irow=j;
+	                    icol=k;
+	                }
+	            } 
+	            else if(ipiv[k] > 0) throw new IllegalArgumentException("Singular Matrix-1 during Gauss-Jordan elimination.");
+	        }
+	        ++(ipiv[icol]);
+	        if(irow != icol) swapRows(irow, icol);
+
+	        idx[i] = new Index2D(irow, icol);
+	        
+	        if(e.from(icol, icol).isNull()) throw new IllegalArgumentException("Singular Matrix-2 during Gauss-Jordan elimination.");
+
+	        T pinv = e.getInverse();
+	        e.setIdentity();
+	        e.applyTo(icol, icol);
+	        
+	        for(int j=cols(); --j >= 0; ) {
+	            product.setProduct(pinv, get(icol, j));
+	            product.applyTo(icol, j);
+	        }
+	        
+	        for(int ll=rows(); --ll >= 0; ) if(ll != icol) {
+	            e.copy(ll, icol);
+	            e.scale(-1.0);
+	            
+	            for(int j=cols(); --j >= 0; ) {
+	                product.setProduct(e.value(), get(icol, j));
+	                add(ll, j, product.value());
+	            }
+	        }
+	    }
+	    for(int l=rows(); -- l>= 0; ) {
+	        Index2D index = idx[l];
+	        if(index.i() != index.j()) for(int k=rows(); --k >= 0; ) swapElements(k, index.i(), k, index.j());
+	    }
 	}
 	
 
-	/**
-	 * Gets the vector basis of this matrix.
-	 * 
-	 * @return
-	 */
-	public abstract AbstractVectorBasis<T> getBasis();
-	
-	/**
-	 * Check if a row is empty (all zeroes or empty values).
-	 * 
-	 * @param i    Index of row
-	 * @return     <code>true</code> if the row contains only zero (empty) elements. Otherwise <code>false</code>
-	 */
-	public abstract boolean isNullRow(int i);
+    @Override
+    public AbstractMatrix<T> getInverse() {
+        return getLUInverse();
+    }
+   
+    /**
+     * Returns the inverse of this matrix, calculated via LU decomposition.
+     * 
+     * @return  The inverse of this matrix.
+     */
+    public AbstractMatrix<T> getLUInverse() {
+        return getLUDecomposition().getInverseMatrix();
+    }
 
-	
-	
+
+    /**
+     * Returns the inverse of this matrix calculated via Gauss-Jordan elimination,
+     * 
+     * @return  The inverse of this matrix.
+     */
+    public AbstractMatrix<T> getGaussInverse() {
+        return getGaussInverter().getInverseMatrix();
+    }
+    
+    
+    /**
+     * Gets the rank of the matrix, that is the dimension of the space the matrix spans, that
+     * is also the number of independent rows in the matrix that cannot b expressed as a linear 
+     * combination of other rows.
+     * 
+     * @return      the rank of this matrix
+     */
+    public final int getRank() {
+        AbstractMatrix<T> copy = copy();
+        copy.gaussJordan();
+        
+        double tiny2 = 1e-12 * copy.getMagnitude();
+        tiny2 *= tiny2;
+       
+        MatrixElement<T> e = getElementInstance();
+        
+        int rank = 0;
+        for(int i=rows(); --i >= 0; ) 
+            for(int j=cols(); --j >= 0; ) if(e.from(i, j).absSquared() > tiny2) {
+                rank++;
+                break;
+            }
+        
+        return rank;
+    }
+    
+    /**
+     * Gets the basis vectors of this matrix, that is the set of vectors on which this matrix acts
+     * as a scalar with the corresponding eigenvalue.
+     * 
+     * @return  The vector basis for this matrix.
+     */
+    public final AbstractVectorBasis<T> getBasis() {
+        AbstractVectorBasis<T> basis = getVectorBasisInstance();
+        AbstractMatrix<T> copy = copy();
+        copy.gaussJordan();
+
+        double tiny2 = 1e-12 * copy.getMagnitude();
+        tiny2 *= tiny2;
+        
+        MatrixElement<T> e = getElementInstance();
+        
+        int col = 0;
+        for(int i=0; i<rows(); i++)
+            for(int j=col; j<cols(); j++) if(e.from(i, j).absSquared() > tiny2) {
+                AbstractVector<T> v = basis.getVectorInstance(cols());
+                getColumnTo(j, v.getData());
+                basis.add(v);
+                col = j+1;
+                break;
+            }
+        
+        return basis;
+    }  
 }
+
