@@ -144,7 +144,7 @@ public class ImagerTest {
 			
 			
 			
-			root.add(imager, 0);
+			root.addDiagonal(imager, 0);
 			root.add(cross, 0);
 			
 			

@@ -178,18 +178,18 @@ extends AbstractMatrix<T> {
 
     @Override
     public final T get(int row, int col) { return data[row][col]; }
-
+    
     @Override
     public final T copyOf(int row, int col) { return (T) get(row, col).copy(); }
 
     @Override
-    public final void set(int row, int col, T v) { data[row][col] = v; }
+    public final void set(int row, int col, T v) { data[row][col] = (v == null) ? newEntry() : v; }
 
     @Override
     public void clear(int i, int j) { data[i][j].zero(); }
 
     @Override
-    public void add(int i, int j, T increment) { data[i][j].add(increment); }
+    public void add(int i, int j, T increment) { if(!isNull(increment)) data[i][j].add(increment); }
 
     @Override
     public void add(int i, int j, double increment) { if(increment != 0.0) data[i][j].addScaled(identity, increment); }
@@ -201,7 +201,11 @@ extends AbstractMatrix<T> {
     @Override
     public boolean isNull(int i, int j) { return data[i][j].isNull(); }
 
-
+    protected boolean isNull(T v) {
+        if(v == null) return true;
+        return v.isNull();
+    }
+    
     protected void checkShape(T[][] x) throws ShapeException {
         if(x == null) return;
         if(x.length == 0) return;
@@ -211,22 +215,8 @@ extends AbstractMatrix<T> {
 
 
 
-    public void setProduct(Matrix A, AbstractMatrix<? extends T> B) {
-        // TODO
-    }
-
-    public void setProduct(AbstractMatrix<? extends T> A,Matrix B) {
-        // TODO
-    }
-
-    public void setProduct(Matrix A, Matrix B) {
-        // TODO
-    }
-
-
-
     @Override
-    protected synchronized void addProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) {		
+    protected synchronized void addProduct(MatrixAlgebra<?, ? extends T> A, MatrixAlgebra<?, ? extends T> B) {		
 
         T product = newEntry();
 
@@ -235,8 +225,12 @@ extends AbstractMatrix<T> {
 
             for(int k=A.cols(); --k >= 0; ) {
                 final T a = A.get(i, k);
+                if(isNull(a)) continue;
+                
                 for(int j=B.cols(); --j >= 0; ) {
                     final T b = B.get(k, j);
+                    if(isNull(b)) continue;
+                
                     product.setProduct(a, b);
                     row[j].add(product);
                 }
@@ -244,6 +238,14 @@ extends AbstractMatrix<T> {
         }
     }
 
+    
+    @Override
+    public T trace() throws SquareMatrixException {
+        T sum = newEntry();
+        for(int i=rows(); --i >= 0; ) sum.add(data[i][i]);
+        return sum;
+    }
+    
     public ObjectMatrix<T> dot(ObjectMatrix<? extends T> B) {
         return (ObjectMatrix<T>) super.dot(B);
     }
@@ -254,13 +256,15 @@ extends AbstractMatrix<T> {
 
         for(int i=rows(); --i >= 0; ) for(int k=cols(); --k >= 0; ) {
             final T a = get(i, k);
-            if(!a.isNull()) for(int j=B.cols(); --j >= 0; ) {
+            if(isNull(a)) continue;
+            
+            for(int j=B.cols(); --j >= 0; ) {
                 final double b = B.get(k, j);
-                if(b != 0.0) {
-                    T p = (T) a.copy();
-                    p.scale(b);
-                    P.add(i, j, p);
-                }
+                if(b == 0.0) continue;
+                
+                T p = (T) a.copy();
+                p.scale(b);
+                P.add(i, j, p);
             }
         }
 
@@ -268,6 +272,16 @@ extends AbstractMatrix<T> {
     }
 
 
+    @Override
+    public ObjectMatrix<T> dot(DiagonalMatrix.Real B) {
+        return (ObjectMatrix<T>) B.dot(this);
+    }
+    
+    @Override
+    public ObjectMatrix<T> dot(DiagonalMatrix<T> B) {
+        return (ObjectMatrix<T>) B.dot(this);
+    }
+    
 
     @Override
     public T[] dot(double[] v) {
@@ -407,7 +421,7 @@ extends AbstractMatrix<T> {
     }
 
     @Override
-    public ObjectVector<T> dot(MathVector<T> v) {
+    public ObjectVector<T> dot(MathVector<? extends T> v) {
         ObjectVector<T> result = getVectorInstance(rows());
         dot(v, result);
         return result;
@@ -415,7 +429,7 @@ extends AbstractMatrix<T> {
 
 
     @Override
-    public void dot(MathVector<T> v, MathVector<T> result) {
+    public void dot(MathVector<? extends T> v, MathVector<T> result) {
         if(v.size() != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
         if(result.size() != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
 
@@ -441,7 +455,7 @@ extends AbstractMatrix<T> {
     }
 
     @Override
-    public void addScaled(AbstractMatrix<? extends T> o, double factor) {
+    public void addScaled(MatrixAlgebra<?, ? extends T> o, double factor) {
         assertSize(o.rows(), o.cols());
 
         if(Number.class.isAssignableFrom(o.getElementType())) 
@@ -456,34 +470,43 @@ extends AbstractMatrix<T> {
 
 
     @Override
-    public void subtract(AbstractMatrix<? extends T> o) {
+    public void subtract(MatrixAlgebra<?, ? extends T> o) {
         assertSize(o.rows(), o.cols());
 
         if(Number.class.isAssignableFrom(o.getElementType())) addScaled(o, -1.0);
         else for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) data[i][j].subtract((T) o.get(i, j));
     }
-
-
+    
     @Override
-    public double distanceTo(AbstractMatrix<? extends T> o) {
-        double d2 = 0.0;
-
-        if(Number.class.isAssignableFrom(o.getElementType())) {
-            T v = newEntry();
-
+    public double distanceTo(MatrixAlgebra<?, ?> o) {
+        if(o instanceof DiagonalMatrix) return ((DiagonalMatrix<?>) o).distanceTo(this);
+        if(o.getElementType().isAssignableFrom(type)) return o.distanceTo(this);
+        
+        assertSize(o.rows(), o.cols());   
+        
+        T v = newEntry();
+        
+        if(type.isAssignableFrom(o.getElementType())) {
+            double d2 = 0.0;
+            for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
+                v.setDifference(get(i, j), (T) o.get(i, j));
+                d2 += v.absSquared();
+            }
+            return Math.sqrt(d2);
+        }
+        
+        if(Number.class.isAssignableFrom(o.getElementType())) {   
+            double d2 = 0.0;
             for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
                 v.setIdentity();
                 v.scale(((Number) o.get(i, j)).doubleValue());
-
-                double d = data[i][j].distanceTo(v);
-                d2 += d*d;
+                v.subtract(get(i, j));
+                d2 += v.absSquared();
             }
+            return Math.sqrt(d2);
         }
-        else for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
-            double d = data[i][j].distanceTo((T) o.get(i, j));
-            d2 += d*d;
-        }
-        return Math.sqrt(d2);
+        
+        return Double.NaN;
     }
 
 
@@ -536,7 +559,7 @@ extends AbstractMatrix<T> {
 
 
     @Override
-    public void setSum(AbstractMatrix<? extends T> a, AbstractMatrix<? extends T> b) {
+    public void setSum(MatrixAlgebra<?, ? extends T> a, MatrixAlgebra<?, ? extends T> b) {
         if(!a.conformsTo(b))	throw new ShapeException("different size matrices.");
 
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
@@ -547,7 +570,7 @@ extends AbstractMatrix<T> {
 
 
     @Override
-    public void setDifference(AbstractMatrix<? extends T> a, AbstractMatrix<? extends T> b) {
+    public void setDifference(MatrixAlgebra<?, ? extends T> a, MatrixAlgebra<?, ? extends T> b) {
         if(!a.conformsTo(b)) throw new ShapeException("different size matrices.");
 
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
@@ -791,7 +814,7 @@ extends AbstractMatrix<T> {
 
 
     public class LU extends LUDecomposition<T> {
-
+        private ObjectMatrix<T> inverse;
 
         public LU() {
             super(ObjectMatrix.this);
@@ -809,7 +832,21 @@ extends AbstractMatrix<T> {
 
         @Override
         public ObjectMatrix<T> getInverseMatrix() {
-            return (ObjectMatrix<T>) super.getInverseMatrix();
+            if(inverse == null) {
+                inverse = ObjectMatrix.this.getMatrixInstance(size(), size(), false);
+                T[] v = (T[]) Array.newInstance(LU.getElementType(), size());
+
+                for(int i=size(); --i >= 0; ) {
+                    v[i] = LU.newEntry();
+
+                    if(i > 0) for(int k=size(); --k >=0; ) v[k].zero();
+                    v[i].setIdentity();
+                    solve(v);
+                    for(int j=size(); --j >= 0; ) inverse.set(j, i, v[j]);
+                }
+
+            }
+            return inverse;
         }
 
         @Override
@@ -883,25 +920,7 @@ extends AbstractMatrix<T> {
             }
         }
 
-        @Override
-        public void getInverseTo(AbstractMatrix<T> inverse) {       
-            if(!inverse.isSquare()) throw new SquareMatrixException();
-            final int n = size();
 
-            if(inverse.rows() != n) throw new ShapeException("mismatched inverse matrix size.");
-
-            T[] v = (T[]) Array.newInstance(LU.getElementType(), n);
-
-            for(int i=0; i<n; i++) {
-                v[i] = LU.newEntry();
-
-                if(i > 0) for(int k=n; --k >=0; ) v[k].zero();
-                v[i].setIdentity();
-                solve(v);
-                for(int j=n; --j >= 0; ) inverse.set(j, i, v[j]);
-            }
-
-        }
     }
 
 

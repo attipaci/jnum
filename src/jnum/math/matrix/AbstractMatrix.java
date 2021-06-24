@@ -33,7 +33,6 @@ import java.io.Serializable;
 import jnum.CopiableContent;
 import jnum.CopyCat;
 import jnum.data.ArrayUtil;
-import jnum.data.IndexedEntries;
 import jnum.data.IndexedValues;
 import jnum.data.image.Index2D;
 import jnum.text.DecimalFormating;
@@ -51,7 +50,7 @@ import jnum.text.NumberFormating;
  *
  * @param <T>       The generic type of the elements in a matrix.
  */
-public abstract class AbstractMatrix<T> implements IndexedEntries<Index2D, T>, MatrixAlgebra<AbstractMatrix<? extends T>, T>, SquareMatrixAlgebra<T>, Serializable, 
+public abstract class AbstractMatrix<T> implements SquareMatrixAlgebra<MatrixAlgebra<?, ? extends T>, T>, Serializable, 
 Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, NumberFormating, DecimalFormating {
 
 	private static final long serialVersionUID = 8165960625207147822L;
@@ -95,13 +94,6 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	    for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >=0; ) set(i, j, M.copyOf(i, j));
 	}
 
-	
-	/**
-     * Gets the class of elements contained in this matrix.
-     * 
-     * @return     The class of elements contained in this matrix.
-     */
-    public abstract Class<T> getElementType();
     
     /**
      * Returns the underlying data object (usually a 2D array of sorts) that holds the matrix elements
@@ -167,20 +159,15 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      */
     public abstract AbstractMatrix<T> getMatrixInstance(int rows, int cols, boolean initialize);
 
+    public abstract LUDecomposition<T> getLUDecomposition();
+
+    public abstract GaussInverter<T> getGaussInverter();
     
-    /**
-     * Gets the number of rows in this matrix.
-     * 
-     * @return     Nmber of rows in this matrix.
-     */
+    @Override
     public abstract int rows();
     
-    
-    /**
-     * Gets the number of columns in this matrix
-     * 
-     * @return     Number of columns in this matrix.
-     */
+
+    @Override
     public abstract int cols();
 
     
@@ -220,13 +207,17 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     }
    
     
-    /**
-     * Checks if this is a square matrix (i.e. it has the same number of rows and columns.).
-     * 
-     * @return     <code>true</code> if this is a square matrix otherwise <code>false</code>.
-     */
+
+    @Override
     public boolean isSquare() { return rows() == cols(); }
      
+    
+    @Override
+    public boolean isDiagonal() {
+        if(!isSquare()) return false;
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) if(i != j) if(!isNull(i, j)) return false;
+        return true;
+    }
 
     /**
      * Gets the dimensions (rows, cols) of this matrix.
@@ -237,13 +228,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     @Override
     public Index2D getSize() { return new Index2D(rows(), cols()); }
     
-    /** 
-     * Checks if the size matches what is expected
-     * 
-     * @param rows     Number of expected rows.
-     * @param cols     Number of expected columns
-     * @return         true if the matrix contains the same number of rows and columns as specified. Otherwise false.
-     */
+
+    @Override
     public boolean isSize(int rows, int cols) {
         return rows == rows() && cols == cols();        
     }
@@ -260,26 +246,15 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     }
     
 
-    /**
-     * Checks if this matrix is equal in size to another matrix. I.e. both matrices have the same number of rows
-     * and columns. (But the two matrices could have elements of very different types...)
-     * 
-     * @param M
-     * @return
-     */
-    public boolean conformsTo(AbstractMatrix<?> M) {
+
+    @Override
+    public boolean conformsTo(MatrixAlgebra<?, ?> M) {
         return M.isSize(rows(), cols());
     }
        
 	  
-    /**
-     * Gets the matrix element at the specified row, column index in the matrix.
-     * 
-     * @param row      row index of matrix element
-     * @param col      column index of matrix element.
-     * @return         The matrix element at the specified row/col index. It is a reference to an object or
-     *                 else a primitive value.
-     */
+
+    @Override
     public abstract T get(int row, int col);
     
    
@@ -294,18 +269,12 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     @Override
     public final T get(Index2D idx) { return get(idx.i(), idx.j()); }
    
-    
-    /**
-     * Sets the matrix element at the specified row, column index in the matrix to the specified new value.
-     * 
-     * @param row      row index of matrix element
-     * @param col      column index of matrix element.
-     * @param v        The new matrix element to set. (For object types the matrix will hold a reference
-     *                 to the specified value).
-     */
+ 
+
+    @Override
     public abstract void set(int row, int col, T v);
    
-   
+    
     /**
     * Sets the matrix element at the specified row, column index in the matrix to the specified new value.
     * 
@@ -316,6 +285,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     @Override
     public final void set(Index2D idx, T value) { set(idx.i(),idx.j(), value); }
    
+    
+  
     /**
      * Gets an independent copy of an entry in this matrix.
      * 
@@ -414,6 +385,44 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     public final boolean isNull(Index2D idx) { return isNull(idx.i(), idx.j()); }
     
     
+    @Override
+    public final T getDiagonal(int i) {
+        return get(i, i);
+    }
+    
+    @Override
+    public void setDiagonal(int i, T value) {
+        set(i, i, value);
+    }
+    
+    
+    @Override
+    public final T copyOfDiagonal(int i) {
+        return get(i, i);
+    }
+    
+    @Override
+    public void addDiagonal(int i, T value) {
+        add(i, i, value);
+    }
+    
+    @Override
+    public void scaleDiagonal(int i, double factor) {
+        scale(i, i, factor);
+    }
+    
+    @Override
+    public void zeroDiagonal(int i) {
+        clear(i, i);
+    }
+    
+    @Override
+    public boolean isNullDiagonal(int i) {
+        return isNull(i, i);
+    }
+    
+    
+    
 	/**
 	 * Sets the data in the matrix to zeroes (or empty values). Same as {@link #zero()}
 	 * 
@@ -424,8 +433,9 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     public final void zero() { for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) clear(i, j); }
 
     
+    
     @Override
-    public void add(AbstractMatrix<? extends T> o) {
+    public void add(MatrixAlgebra<?, ? extends T> o) {
         assertSize(o.rows(), o.cols());
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) add(i, j, o.get(i, j));
     }
@@ -453,6 +463,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * @param o     The real valued matrix to add to this one with the scaling factor. 
      */
     public void addScaled(Matrix o, double factor) {
+        if(factor == 0.0) return;
         assertSize(o.rows(), o.cols()); 
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) add(i, j, o.get(i, j) * factor);
             
@@ -484,6 +495,17 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         return true;        
     }
     
+    
+
+    /**
+     * Gets the largest absolute value from the matrix elements in a subspace of the matrix.
+     * 
+     * @param fromi     Inclusive row index of subspace start.
+     * @param fromj     Inclusive column index of subspace start.
+     * @param toi       Exclusive row index of subspace end.
+     * @param toj       Exclusive colun index of subspace end.
+     * @return          The largest absolute value among the elements in the subspace.
+     */
     public double getMagnitude(int fromi, int fromj, int toi, int toj) {
         double mag = 0.0;
         MatrixElement<T> e = getElementInstance();
@@ -496,6 +518,11 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         return Math.sqrt(mag);        
     }
     
+    /**
+     * Gets the largest absolute value from among all the matrix elements in this matrix.
+     * 
+     * @return      The largest absolute value among the matrix elements.
+     */
     public final double getMagnitude() {
         return getMagnitude(0, 0, rows(), cols());
     }
@@ -514,34 +541,39 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	
 	@Override
     public final void subtractIdentity() { addIdentity(-1.0); }
-	
-	@Override
-	public void setProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) {
-	    if(A.cols() != B.rows()) throw new ShapeException("Incompatible product term sizes: " + A + " dot " + B);
-	    assertSize(A.rows(), B.cols());
-	    zero();
-	    addProduct(A, B);
-	}
-	
 
-	/**
-	 * Add the product of matrices A and B to what is already contained in this matrix.
-	 * 
-	 * @param A    Left-hand matrix in product.
-	 * @param B    Right-hand matrix in product.
-	 */
-	protected abstract void addProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B);
-
-    
 	
-	@Override
-    public AbstractMatrix<T> dot(AbstractMatrix<? extends T> B) {
+	@SuppressWarnings("unchecked")
+    @Override
+    public AbstractMatrix<T> dot(MatrixAlgebra<?, ? extends T> B) {
+	    if(B instanceof DiagonalMatrix) return (((DiagonalMatrix<T>) B).dot(this));
+	    
         AbstractMatrix<T> P = getMatrixInstance(rows(), B.cols(), false);
-        P.setProduct(this, B);
+        P.addProduct(this, B);
+            
         return P;
     }
  
 
+	public AbstractMatrix<T> dot(DiagonalMatrix<T> B) {
+	    return B.dot(this);
+	}
+	
+	
+	public abstract AbstractMatrix<T> dot(DiagonalMatrix.Real B);
+	
+	
+    /**
+     * Add the product of matrices A and B to what is already contained in this matrix.
+     * 
+     * @param A    Left-hand matrix in product.
+     * @param B    Right-hand matrix in product.
+     */
+    protected abstract void addProduct(MatrixAlgebra<?, ? extends T> A, MatrixAlgebra<?, ? extends T> B);
+
+    
+	
+	
 	/**
 	 * Returns the reference to the array (e.g. double[] or T[]) containing the underlying data
 	 * of the row with the specified index. Changes to the data in this row will result in
@@ -644,7 +676,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	}
 	
 	/**
-	 * Returns a subspace of this matrix as a new matrix.
+	 * Returns a subspace of this matrix as a new matrix of the same class.
 	 * 
 	 * @param rows     An integer array containing the row indices in this matrix of the subspace.
 	 * @param cols     An integer array containing the row indices in this matrix of the subspace.
@@ -657,12 +689,30 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	    return sub;
 	}
 
+	/**
+	 * Returns a subspace of this matrix as a new matrix of the same class.
+	 * 
+	 * @param fromRow      Inclusive starting row index of subspace.
+	 * @param fromCol      Inclusive starting column index of subspace.
+	 * @param toRow        Exclusive ending row index of subspace.
+	 * @param toCol        Exclusive ending column index of subspace.
+	 * @return     A new matrix contaiing only the selected rows and columns of this matrix in the specified
+     *             order.
+	 */
 	public AbstractMatrix<T> subspace(int fromRow, int fromCol, int toRow, int toCol) {
 	    AbstractMatrix<T> sub = getMatrixInstance(toRow - fromRow, toCol - fromCol, false);
         for(int i=fromRow; i < toRow; i++) for(int j = fromCol; j < toCol; j++) sub.set(i,  j, copyOf(i, j));
         return sub;
 	}
 
+	/**
+	 * Returns a subspace of this matrix as a new matrix of the same class.
+	 * 
+	 * @param from     Inclusive starting (row, col) index of subspace.
+	 * @param to       Exclusive ending (row, col) index of subspace.
+	 * @return     A new matrix contaiing only the selected rows and columns of this matrix in the specified
+     *             order.
+	 */
 	public AbstractMatrix<T> subspace(Index2D from, Index2D to) {
 	    return subspace(from.i(), from.j(), to.i(), to.j()); 
 	}
@@ -779,7 +829,9 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	    }
 	}
 	
-	public T getDeterminant() {
+
+	@Override
+    public T getDeterminant() {
 	    return getLUDecomposition().getDeterminant();
 	}
 

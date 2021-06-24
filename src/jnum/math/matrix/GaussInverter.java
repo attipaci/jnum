@@ -74,8 +74,6 @@ public class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
        
     }
 
-    private int size() { return inverse.rows(); }
-
     protected AbstractMatrix<T> getI() {
        return inverse; 
     }
@@ -84,13 +82,6 @@ public class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
     public AbstractMatrix<T> getInverseMatrix() {
         return inverse.copy();
     }
-
-    @Override
-    public void getInverseTo(AbstractMatrix<T> inverse) {
-        inverse.assertSize(size(), size());
-        inverse.setData(inverse.getData());
-    }
-
 
     public final synchronized int getRank() {
         return rank;

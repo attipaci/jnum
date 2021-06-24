@@ -212,13 +212,6 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         return transpose;
     }
 
-
-    public static ComplexMatrix product(ComplexMatrix A, ComplexMatrix B) {
-        ComplexMatrix product = new ComplexMatrix(A.rows(), B.cols());
-        product.setProduct(A, B);
-        return product;
-    }
-
     public ComplexMatrix dot(ComplexMatrix B) {
         return (ComplexMatrix) super.dot(B);
     }
@@ -227,9 +220,18 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     public ComplexMatrix dot(Matrix B) {
         return (ComplexMatrix) super.dot(B);
     }
+    
+    @Override
+    public ComplexMatrix dot(DiagonalMatrix.Real B) {
+        return (ComplexMatrix) B.dot(this);
+    }
+    
+    public ComplexMatrix dot(DiagonalMatrix.Complex B) {
+        return B.dot(this);
+    }
 
     @Override
-    public ComplexVector dot(MathVector<Complex> v) {
+    public ComplexVector dot(MathVector<? extends Complex> v) {
         return (ComplexVector) super.dot(v);
     }
     
@@ -349,7 +351,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     
     public class JacobiTransform implements EigenSystem<Complex, Double> {
         RealVector eigenValues;
-        ComplexVector[] eigenVectors;
+        ComplexMatrix B, iB;
         
         private JacobiTransform() throws SquareMatrixException, SymmetryException, ConvergenceException {
             this(100);
@@ -373,7 +375,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
             if(!M.isSquare()) throw new SquareMatrixException();
             if(!M.isHermitian()) throw new SymmetryException();
             
-            int n=  M.rows();
+            int n = M.rows();
             
             Matrix C = new Matrix(2 * n, 2 * n);
             Matrix re = new Matrix(n, n);
@@ -395,13 +397,11 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
             RealVector[] v = (RealVector[]) e.getEigenVectors();
             
             eigenValues = new RealVector(n);
-            eigenVectors = new ComplexVector[n];
+            B = M.getMatrixInstance(n, n, true);
             
             for(int i=n; --i >= 0; ) {
                 eigenValues.setComponent(i, l.getComponent(i));
-                ComplexVector ei = new ComplexVector(n);
-                for(int j=n; --j >= 0; ) ei.getComponent(j).set(v[i].getComponent(j), v[n+i].getComponent(j));
-                eigenVectors[i] = ei;
+                for(int j=n; --j >= 0; ) B.get(i, j).set(v[i].getComponent(j), v[n+i].getComponent(j));
             }
         }
         
@@ -412,11 +412,37 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
 
         @Override
         public ComplexVector[] getEigenVectors() {
-            ComplexVector[] e = new ComplexVector[eigenVectors.length];
-            for(int i=e.length; --i >= 0; ) e[i] = eigenVectors[i].copy();
+            ComplexVector[] e = new ComplexVector[eigenValues.size()];
+            for(int i=e.length; --i >= 0; ) {
+                e[i] = new ComplexVector(eigenValues.size());
+                B.getColumnTo(i, e[i].getData());
+            }
             return e;
         }
     
+        @Override
+        public ComplexMatrix toEigenBasis() {
+            return B.copy();
+        }
+        
+        @Override
+        public ComplexMatrix fromEigenBasis() {
+            if(iB == null) iB = B.getInverse();
+            return iB.copy();
+        }
+        
+        @Override
+        public MathVector<Complex> toEigenBasis(MathVector<Complex> v) {
+            return B.dot(v);
+        }
+        
+        @Override
+        public MathVector<Complex> fromEigenBasis(MathVector<Complex> v) {
+            if(iB == null) iB = B.getInverse();
+            return iB.dot(v);
+        }
+        
+        
     }
     
 }

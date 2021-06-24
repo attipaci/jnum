@@ -20,7 +20,6 @@
 	been simplified and improved to be more user friendly.
 	--------------------------------------------------------------------- 
 
-
 	[NEW] {EquatorialSystem} New class representing the specific equatorial
 	coordinate system, with static subclasses for ICRS, GCRS, FK4, FK5,
 	Dynamical (CIRS) and Topocentric (Local apparent) systems. The system
@@ -63,6 +62,20 @@
   	difference, which is not yet used. Nutation and high-precision LST 
 	calculations are not yet implemented, but stay tuned.
 
+	[NEW] {jnum.math.matrix} Dot products between any two types of matrices
+	(real with anything, diagonal with non-diagonal), and vectors (real
+	with anything, or else matching type). the return value is
+	automatically the matrix of the expected type (e.g. Complex dotted with
+	real returns ComplexMatrix, etc.)
+
+	[NEW] {jnum.math.matrix} trace and determinant methods.
+
+	[NEW] {jnum.math.matrix} New DiagonalMatrix classes for more efficient
+	matrix multiplications without diagonal elements..
+
+	[NEW] {jnum.math.matrix} EigenSystem and JacobiTransform classes
+	to find eigenvalues and eigenvectors of a square matrix
+
 	[NEW] {jnum.math.matrix} New MatrixSolver and MatrixInverter classes
 	for solving matrix equations (finding x given y, for y = M.x) and
 	for calculating matrix inverses (e.g. via LU decomposition, SVD
@@ -93,6 +106,9 @@
 
 	[RENAME] {jnum.math.matrix} A lot of renaming, both classes and
 	funtions.
+
+	[CHANGE] {jnum.math.matrix} Entire class hierarchy of matrices has been
+	reimagined and re-implemented for more versatility.
 
 	[CHANGE] {jnum.math.matrix} Matrices and Vectors now have fixed sizes
 	during their lifetimes to provide more predictable behavior, and 

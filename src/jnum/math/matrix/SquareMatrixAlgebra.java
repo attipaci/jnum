@@ -27,18 +27,33 @@ import jnum.math.IdentityValue;
 import jnum.math.Inversion;
 
 
-public interface SquareMatrixAlgebra<T> extends Inversion, IdentityValue {
+public interface SquareMatrixAlgebra<M, T> extends MatrixAlgebra<M, T>, Inversion, IdentityValue {
 	
-	// TODO
-	// Polynomial getCharacterizticPolynomial()
-		
-	// TODO
-	// Type determinant();
-	
-	// TODO 
-	// public double[] findEigenValues();
-	
-    AbstractMatrix<T> getInverse();
+    public T getDiagonal(int i);
+    
+    public void setDiagonal(int i, T value);
+    
+    public T copyOfDiagonal(int i);
+    
+    public void addDiagonal(int i, T value);
+    
+    public void scaleDiagonal(int i, double factor);
+
+    public void zeroDiagonal(int i);
+    
+    public boolean isNullDiagonal(int i);
+    
+    
+    public T trace();
+    
+    /**
+     * Gets the determinant of this matrix.
+     * 
+     * @return the determinant.
+     */
+    public T getDeterminant();
+    
+    SquareMatrixAlgebra<M, T> getInverse();
     
 	public void addIdentity(double scaling);
 
@@ -46,8 +61,8 @@ public interface SquareMatrixAlgebra<T> extends Inversion, IdentityValue {
 	
 	public void subtractIdentity();
 	
-	public LUDecomposition<T> getLUDecomposition();
 
-	public GaussInverter<T> getGaussInverter();
+	
+
 	
 }

@@ -47,6 +47,15 @@ public interface EigenSystem<E, V> {
      * @return  the unnormalized eigenvectors (in matching order to the eigenvectors returned by {@link #getEigenValues()}.
      */
     public MathVector<E>[] getEigenVectors();
+    
+    
+    public AbstractMatrix<E> toEigenBasis();
+    
+    public AbstractMatrix<E> fromEigenBasis();
+    
+    public MathVector<E> toEigenBasis(MathVector<E> v);
+    
+    public MathVector<E> fromEigenBasis(MathVector<E> v);
  
     // TODO refine eigenvalues/vectors via reverse iteration method.
 }

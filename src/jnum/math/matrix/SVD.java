@@ -168,22 +168,14 @@ public class SVD implements MatrixInverter<Double>, MatrixSolver<Double>, RealMa
     @Override
     public Matrix getInverseMatrix() {
         if(inverse == null) {    
-            inverse = new Matrix(w.length);
-            getInverseTo(inverse);
+            final int n = w.length;
+            if(u.rows() != n) throw new SquareMatrixException("Cannot invert non-square matrix.");
+            Matrix iwuT = u.getMatrixInstance(n, n, false);
+            for(int i=n; --i >= 0; ) for(int j=n; --j >= 0; ) iwuT.set(i, j, 1.0 / w[i] * u.get(j, i));
+            inverse = v.dot(iwuT);
         }
         return inverse.copy();      
     }
-
-
-    @Override
-    public void getInverseTo(AbstractMatrix<Double> inverse) {  
-        final int n = w.length;
-        if(u.rows() != n) throw new SquareMatrixException("Cannot invert non-square matrix.");
-        Matrix iwuT = u.getMatrixInstance(n, n, false);
-        for(int i=n; --i >= 0; ) for(int j=n; --j >= 0; ) iwuT.set(i, j, 1.0 / w[i] * u.get(j, i));
-        inverse.setProduct(v, iwuT);
-    }
-
 
     // A = U * diag(w) * V^T
     // square A --> A^-1 = V * diag(1/w) * U^T

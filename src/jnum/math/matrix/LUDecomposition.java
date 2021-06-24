@@ -25,7 +25,7 @@ package jnum.math.matrix;
 
 
 public abstract class LUDecomposition<T> implements MatrixInverter<T>, MatrixSolver<T> {
-    protected AbstractMatrix<T> LU, inverse;
+    protected AbstractMatrix<T> LU;
     protected int[] index;
     protected boolean evenChanges;
     
@@ -119,17 +119,4 @@ public abstract class LUDecomposition<T> implements MatrixInverter<T>, MatrixSol
         }
     }   
     
-    
-    @Override
-    public AbstractMatrix<T> getInverseMatrix() {
-        if(inverse == null) {
-            inverse = LU.getMatrixInstance(size(), size(), false);
-            getInverseTo(inverse);
-        }
-        return inverse.copy();
-    }
-
-    @Override
-    public abstract void getInverseTo(AbstractMatrix<T> inverse);
-
 }

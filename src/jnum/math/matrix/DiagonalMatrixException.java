@@ -21,28 +21,31 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-
 package jnum.math.matrix;
 
-/**
- * Interface for obtaining a matrix inverse via some method or another.
- * 
- * @author Attila Kovacs <attila@sigmyne.com>
- *
- * @param <T>   The generic type matrix element (both in the matrix and its inverse).
- */
-public interface MatrixInverter<T> extends MatrixSolver<T> {
-    
+public class DiagonalMatrixException extends SquareMatrixException {
     /**
-     * Gets the inverse of a matrix as a new independent instance. If the implementing class has
-     * a readyly calculated inverse matrix, it should return a copy of that, to ensure
-     * that any operations performed on the returned value do not corrupt the internally
-     * stored inverse.
      * 
-     * @return  An independent instance of the inverse matrix, that the caller should be
-     *          free to manipulate to their pleasure.
      */
-    public AbstractMatrix<T> getInverseMatrix();
+    private static final long serialVersionUID = -8024324298675264092L;
     
     
+    public DiagonalMatrixException() {
+        super(defaultMessage);
+    }
+
+    public DiagonalMatrixException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public DiagonalMatrixException(String s) {
+        super(s);
+    }
+
+    public DiagonalMatrixException(Throwable cause) {
+        super(defaultMessage, cause);
+    }
+
+    public static String defaultMessage = "diagonal matrix operation on a non-diagonal matrix.";
+        
 }

@@ -58,7 +58,7 @@ public class MatrixTest {
 		Matrix I = M.getInverse();
 		System.out.println("inverse: " + I.toString(Util.f3));
 	
-		Matrix P = Matrix.product(M, I);
+		Matrix P = M.dot(I);
 		System.out.println("M * M-1: " + P.toString(Util.f3));
 		
 		SVD decomposed = M.getSVD();
