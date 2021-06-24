@@ -26,45 +26,27 @@ package jnum.math.matrix;
 import jnum.math.MathVector;
 
 /**
- * Interface for solving matrix equations of the form y = M * x, finding vector x given vector y 
- * for a generic matrix M.
  * 
  * @author Attila Kovacs <attila@sigmyne.com>
  *
- * @param <T>   Generic type of elements in the matrix and vectors. 
+ * @param <E>   Generic matrix element type
+ * @param <V>   Generic eigenvalue type
  */
-public interface MatrixSolver<T> {
+public interface EigenSystem<E, V> {
     
     /**
-     * Returns the vector x given y, in y = M * x for some matrix M.
+     * Returns the eigenvalues for this system.
      * 
-     * @param y     The vector y.
-     * @return      The vector x as a simple array of elements.
+     * @return  the eigenvalues (in matching order to the eigenvectors returned by {@link #getEigenVectors()}.
      */
-    public abstract T[] solveFor(T[] y);
+    public MathVector<V> getEigenValues();
     
     /**
-     * Returns the vector x given y, in y = M * x for some matrix M.
+     * Returns the unnormalized eigenvectors for this system.
      * 
-     * @param y     The vector y.
-     * @param x     a simple array of elements in which to return x.
+     * @return  the unnormalized eigenvectors (in matching order to the eigenvectors returned by {@link #getEigenValues()}.
      */
-    public abstract void solveFor(T[] y, T[] x);
-   
-    /**
-     * Returns the vector x given y, in y = M * x for some matrix M.
-     * 
-     * @param y     The vector y.
-     * @return      The vector x.
-     */
-    public abstract MathVector<T> solveFor(MathVector<T> y);
-    
-    /**
-     * Returns the vector x given y, in y = M * x for some matrix M.
-     * 
-     * @param y     The vector y
-     * @param x     generic type vector in which to return x.
-     */
-    public abstract void solveFor(MathVector<T> y, MathVector<T> x);
-       
+    public MathVector<E>[] getEigenVectors();
+ 
+    // TODO refine eigenvalues/vectors via reverse iteration method.
 }

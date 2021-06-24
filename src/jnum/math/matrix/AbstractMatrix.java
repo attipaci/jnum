@@ -32,7 +32,6 @@ import java.io.Serializable;
 
 import jnum.CopiableContent;
 import jnum.CopyCat;
-import jnum.ShapeException;
 import jnum.data.ArrayUtil;
 import jnum.data.IndexedEntries;
 import jnum.data.IndexedValues;
@@ -42,7 +41,7 @@ import jnum.text.NumberFormating;
 
 
 /**
- * An abstract Matrix class representing a matrix for some generic element type. It has two principal subclasses, {@link Matrix}, which
+ * An abstract Matrix class representing a matrix for some generic type element. It has two principal subclasses, {@link Matrix}, which
  * is a real-valued matrix with essentially primitive double elements, and {@link GenerixMatrix}, which handles matrices for generic type 
  * objects as long as they provide the required algebra to support matrix operation. For example {@link ComplexMatrix} with {@link Complex}
  * elements is an example subtype, but one could construct matrices e.g. with {@link Matrix} or {@link ObjectMatrix} elements (for a 
@@ -126,7 +125,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      *
      * @return  A new generic type enty in this matrix.
      */
-    public abstract T getEntryInstance(); 
+    public abstract T newEntry(); 
     
     /**
      * Creates a matrix element object that can be used to represent and manipulate values
@@ -485,18 +484,23 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         return true;        
     }
     
-    public double getMagnitude() {
+    public double getMagnitude(int fromi, int fromj, int toi, int toj) {
         double mag = 0.0;
         MatrixElement<T> e = getElementInstance();
         
-        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
+        for(int i=toi; --i >= fromi; ) for(int j=toj; --j >= toj; ) {
             double a2 = e.from(i, j).absSquared();
             if(a2 > mag) mag = a2;
         }
         
         return Math.sqrt(mag);        
     }
-
+    
+    public final double getMagnitude() {
+        return getMagnitude(0, 0, rows(), cols());
+    }
+    
+    
 
 	@Override
     public final void setIdentity() {
@@ -653,7 +657,17 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	    return sub;
 	}
 
+	public AbstractMatrix<T> subspace(int fromRow, int fromCol, int toRow, int toCol) {
+	    AbstractMatrix<T> sub = getMatrixInstance(toRow - fromRow, toCol - fromCol, false);
+        for(int i=fromRow; i < toRow; i++) for(int j = fromCol; j < toCol; j++) sub.set(i,  j, copyOf(i, j));
+        return sub;
+	}
 
+	public AbstractMatrix<T> subspace(Index2D from, Index2D to) {
+	    return subspace(from.i(), from.j(), to.i(), to.j()); 
+	}
+	
+	
 	/**
 	 * Gets a string representation of the size of this matrix.
 	 * 
@@ -706,7 +720,10 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	}
 
 
-	
+	/**
+	 * Get the matrix into row-echelon form, using Gauss-Jordan elimination.
+	 * 
+	 */
 	public void gaussJordan() { 
 	    final Index2D[] idx = new Index2D[rows()];
 	    final int[] ipiv = new int[rows()];
@@ -762,6 +779,9 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	    }
 	}
 	
+	public T getDeterminant() {
+	    return getLUDecomposition().getDeterminant();
+	}
 
     @Override
     public AbstractMatrix<T> getInverse() {
@@ -787,6 +807,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         return getGaussInverter().getInverseMatrix();
     }
     
+   
     
     /**
      * Gets the rank of the matrix, that is the dimension of the space the matrix spans, that

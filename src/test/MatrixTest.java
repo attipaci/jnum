@@ -27,8 +27,10 @@ package test;
 import java.util.Random;
 
 import jnum.Util;
+import jnum.math.matrix.EigenSystem;
 import jnum.math.matrix.LUDecomposition;
 import jnum.math.matrix.Matrix;
+import jnum.math.matrix.RealVector;
 import jnum.math.matrix.SVD;
 
 
@@ -68,6 +70,22 @@ public class MatrixTest {
 		System.out.println("LU inverse: " + LU.getInverseMatrix().toString(Util.f3));
 		
 		System.out.println("Gauss inverse: " + M.getGaussInverse().toString(Util.f3));
+	
+		System.out.println("D: " + M.getDeterminant() + "\n");
+		System.out.println("I: " + LU.getInverseMatrix().getDeterminant() + "\n");
+		
+		for(int i=data.length; --i >=0; ) for(int j=i; --j >=0; ) data[i][j] = data[j][i];
+		System.out.println("symmetric: " + M.toString(Util.f3));
+		
+		EigenSystem<Double, Double> E = M.getJacobiTransform();
+		System.out.println("eigenvalues: " + ((RealVector) E.getEigenValues()).toString(4));
+		
+		RealVector e = (RealVector) E.getEigenVectors()[0];
+		System.out.println("eigenvector[0]: " + e);
+		
+		RealVector e1 = M.dot(e);
+		e1.scale(1.0 / E.getEigenValues().getComponent(0));
+		System.out.println("transformed[0]: " + e1);
 		
 	}
 	

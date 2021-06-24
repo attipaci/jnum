@@ -24,13 +24,15 @@
 package jnum.math.matrix;
 
 
+import java.text.NumberFormat;
 import java.util.Arrays;
 
-import jnum.ShapeException;
+import jnum.Util;
 import jnum.ViewableAsDoubles;
 import jnum.data.IndexedValues;
 import jnum.data.samples.Index1D;
 import jnum.math.Coordinates;
+import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;
 
 
@@ -59,6 +61,10 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
         return (RealVector) super.clone();
     }
     
+    @Override
+    public RealVector copy() {
+        return copy(true);
+    }
     
     @Override
     public RealVector copy(boolean withContent) {
@@ -161,6 +167,47 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
         for(int i=size(); --i >= 0; ) sum += component[i] * v.getComponent(i);
         return sum;
     }
+
+    public <T extends LinearAlgebra<? super T>> T dot(AbstractVector<T> v) {
+        assertSize(v.size());
+        
+        try {  
+            @SuppressWarnings("unchecked")
+            T sum =(T) getElementType().getConstructor().newInstance(); 
+            for(int i=size(); --i >= 0; ) sum.addScaled(v.getComponent(i), getComponent(i));
+            return sum;            
+        }
+        catch(Exception e) { 
+            Util.error(this, e);
+            return null;
+        }   
+    }
+
+    @Override
+    public Double dot(Double[] v) {
+        assertSize(v.length);
+        
+        double sum = 0.0;
+        for(int i=size(); --i >= 0; ) sum += v[i] * getComponent(i);
+        return sum;
+    }
+    
+    public double dot(double[] v) {
+        assertSize(v.length);
+        
+        double sum = 0.0;
+        for(int i=size(); --i >= 0; ) sum += v[i] * getComponent(i);
+        return sum;
+    }
+    
+    public double dot(float[] v) {
+        assertSize(v.length);
+        
+        double sum = 0.0;
+        for(int i=size(); --i >= 0; ) sum += v[i] * getComponent(i);
+        return sum;
+    }
+    
     
     /* (non-Javadoc)
      * @see kovacs.math.AbstractVector#asRowVector()
@@ -327,6 +374,11 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
         System.arraycopy(d, 0, component, 0, size());
     }
 
+    @Override
+    public String toString(int i, NumberFormat nf) {
+        if(nf == null) return Double.toString(getComponent(i));
+        return nf.format(getComponent(i));
+    }
 
     @Override
     public final Class<? extends Number> getElementType() {

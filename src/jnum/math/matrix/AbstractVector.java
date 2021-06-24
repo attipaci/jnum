@@ -24,16 +24,18 @@
 package jnum.math.matrix;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
 
 import jnum.CopiableContent;
-import jnum.ShapeException;
+import jnum.Util;
 import jnum.data.IndexedValues;
 import jnum.data.samples.Index1D;
 import jnum.math.MathVector;
+import jnum.text.DecimalFormating;
 
 
 
-public abstract class AbstractVector<T> implements MathVector<T>, Serializable, Cloneable, CopiableContent<AbstractVector<T>> {
+public abstract class AbstractVector<T> implements MathVector<T>, Serializable, Cloneable, CopiableContent<AbstractVector<T>>, DecimalFormating {
 
 	private static final long serialVersionUID = 785522803183758105L;
 
@@ -163,6 +165,33 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
         return true;
     }
 
+    public abstract String toString(int i, NumberFormat nf);
+    
+    @Override
+    public String toString() {
+        return toString(Util.s4);
+    }
+    
+    @Override
+    public String toString(int decimals) {
+        return toString(Util.s[decimals+1]);
+    }
+    
+    @Override
+    public String toString(NumberFormat nf) {
+        StringBuffer buf = new StringBuffer();
+        
+        buf.append(getClass().getSimpleName());
+        buf.append(getSizeString());
+        buf.append(": {");
+        for(int i=0; i<size(); i++) {
+            if(i > 0) buf.append(',');
+            buf.append(' ');
+            buf.append(toString(i, nf));
+        }
+        buf.append(" }");
+        return new String(buf);
+    }
     
 
     public final static int ROW_VECTOR = 0;

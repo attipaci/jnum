@@ -268,6 +268,13 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
         if(v.size() != 2) throw new NonConformingException("dot product with vector of different size.");
         return x() * v.x() + y() * v.y();
     }
+    
+    
+    @Override
+    public final Double dot(Double[] v) throws NonConformingException {
+        if(v.length != 2) throw new NonConformingException("dot product with vector of different size.");
+        return x() * v[X] + y() * v[Y];
+    }
 
 
     @Override

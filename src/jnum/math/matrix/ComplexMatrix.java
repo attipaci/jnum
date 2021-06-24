@@ -28,14 +28,16 @@ import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.ParsePosition;
 
-import jnum.ShapeException;
 import jnum.ViewableAsDoubles;
+import jnum.data.fitting.ConvergenceException;
+import jnum.data.image.Index2D;
 import jnum.math.Complex;
 import jnum.math.ComplexAddition;
 import jnum.math.ComplexConjugate;
 import jnum.math.ComplexScaling;
 import jnum.math.MathVector;
 import jnum.math.Multiplication;
+import jnum.math.SymmetryException;
 
 
 public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
@@ -79,6 +81,14 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         return (ComplexMatrix) super.copy();
     }
     
+    public JacobiTransform getJacobiTransform() throws SquareMatrixException, SymmetryException, ConvergenceException {
+        return new JacobiTransform();
+    }
+    
+    public EigenSystem<Complex, ?> getEigenSystem() throws SquareMatrixException, SymmetryException, ConvergenceException {
+        return new JacobiTransform();
+    }
+    
     @Override
     public LU getLUDecomposition() {
         return new LU();
@@ -88,6 +98,36 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     public Gauss getGaussInverter() {
         return new Gauss();
     }
+    
+    public boolean isHermitian() {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j > i; ) {
+            Complex a = get(i, j);
+            Complex b = get(j, i);
+            
+            if(a.re() != b.re()) return false;
+            if(a.im() + b.im() != 0.0) return false;
+            
+            return false;
+        }
+        return true;
+    }
+
+    
+    @Override
+    public ComplexMatrix subspace(int[] rows, int[] cols) {
+        return (ComplexMatrix) super.subspace(rows, cols);    
+    }
+
+    @Override
+    public ComplexMatrix subspace(int fromRow, int fromCol, int toRow, int toCol) {
+        return (ComplexMatrix) super.subspace(fromRow, fromCol, toRow, toCol);
+    }
+
+    @Override
+    public ComplexMatrix subspace(Index2D from, Index2D to) {
+        return (ComplexMatrix) super.subspace(from, to);
+    }
+
 
     public double[][] getRealPart() {
         double[][] dst = new double[rows()][cols()];
@@ -305,6 +345,78 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
             return getI().dot(y);
         }
 
+    }
+    
+    public class JacobiTransform implements EigenSystem<Complex, Double> {
+        RealVector eigenValues;
+        ComplexVector[] eigenVectors;
+        
+        private JacobiTransform() throws SquareMatrixException, SymmetryException, ConvergenceException {
+            this(100);
+        }
+        
+        private JacobiTransform(int maxIterations) throws SquareMatrixException, SymmetryException, ConvergenceException {
+               transform(ComplexMatrix.this, maxIterations);
+        }
+        
+        /**
+         * Based on Numerical Recipes for C (second edition) Section 11.4. It represents the Hermitian NxN complex matrix
+         * as a real 2Nx2N real matrix, with a slight overhead (2x) in size and perhaps less than that in speed.
+         * 
+         * @param M                         Matrix to transform
+         * @param maxIterations             Maximum number of iterations (~100 is typically sufficient)
+         * @throws SquareMatrixException    If the input matrix is not a square matrix
+         * @throws SymmetryException        If the input matrix is not a symmetric matrix
+         * @throws ConvergenceException     If the transformation is not complete within the set ceiling for iterations.
+         */
+        private void transform(ComplexMatrix M, int maxIterations)  throws SquareMatrixException, SymmetryException, ConvergenceException{
+            if(!M.isSquare()) throw new SquareMatrixException();
+            if(!M.isHermitian()) throw new SymmetryException();
+            
+            int n=  M.rows();
+            
+            Matrix C = new Matrix(2 * n, 2 * n);
+            Matrix re = new Matrix(n, n);
+            Matrix im = re.copy();
+            
+            M.getRealPart(re.getData());
+            M.getImaginaryPart(im.getData());
+            
+            C.paste(re, 0, 0);
+            C.paste(re, n, n);
+            C.paste(im, n, 0);
+            
+            im.scale(-1.0);
+            C.paste(im, 0, n);
+            
+            EigenSystem<Double, Double> e = C.new JacobiTransform(maxIterations);
+            
+            RealVector l = (RealVector) e.getEigenValues();
+            RealVector[] v = (RealVector[]) e.getEigenVectors();
+            
+            eigenValues = new RealVector(n);
+            eigenVectors = new ComplexVector[n];
+            
+            for(int i=n; --i >= 0; ) {
+                eigenValues.setComponent(i, l.getComponent(i));
+                ComplexVector ei = new ComplexVector(n);
+                for(int j=n; --j >= 0; ) ei.getComponent(j).set(v[i].getComponent(j), v[n+i].getComponent(j));
+                eigenVectors[i] = ei;
+            }
+        }
+        
+        @Override
+        public RealVector getEigenValues() {
+           return eigenValues.copy();
+        }
+
+        @Override
+        public ComplexVector[] getEigenVectors() {
+            ComplexVector[] e = new ComplexVector[eigenVectors.length];
+            for(int i=e.length; --i >= 0; ) e[i] = eigenVectors[i].copy();
+            return e;
+        }
+    
     }
     
 }

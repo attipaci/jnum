@@ -27,10 +27,10 @@ package jnum.math.matrix;
 import java.util.*;
 
 import jnum.Copiable;
-import jnum.ShapeException;
 import jnum.ViewableAsDoubles;
 import jnum.data.ArrayUtil;
 import jnum.data.IndexedValues;
+import jnum.data.fitting.ConvergenceException;
 import jnum.data.image.Index2D;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
@@ -38,6 +38,7 @@ import jnum.math.Complex;
 import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;
 import jnum.math.Metric;
+import jnum.math.SymmetryException;
 import jnum.math.Vector2D;
 import jnum.math.Vector3D;
 import jnum.util.HashCode;
@@ -92,7 +93,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     
 
     @Override
-    public Double getEntryInstance() { 
+    public Double newEntry() { 
         throw new UnsupportedOperationException("Cannot create matrix element object for matrix of double type.");
     }
 
@@ -143,7 +144,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
 
 
     @Override
-    public Object getData() { return data; }
+    public double[][] getData() { return data; }
 
 
     @Override
@@ -203,8 +204,18 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     @Override
     public Matrix getTranspose() { return (Matrix) super.getTranspose(); }
 
+    public boolean isSymmetric() {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j > i; ) if(data[i][j] != data[j][i]) return false;
+        return true;
+    }
 
+    public boolean isAntiSymmetric() {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j > i; ) if((data[i][j] + data[j][i]) != 0.0) return false;
+        return true;
+    }
 
+    
+    
     @Override
     public void addScaled(AbstractMatrix<? extends Double> o, double factor) {
         assertSize(o.rows(), o.cols());
@@ -569,6 +580,14 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         if(!isSquare()) throw new SquareMatrixException();
         for(int i=rows(); --i >= 0; ) data[i][i] += scaling;
     }
+    
+    public JacobiTransform getJacobiTransform() throws SquareMatrixException, SymmetryException, ConvergenceException {
+        return new JacobiTransform();
+    }
+    
+    public EigenSystem<Double, ?> getEigenSystem() throws SquareMatrixException, SymmetryException, ConvergenceException {
+        return new JacobiTransform();
+    }
 
     @Override
     public LU getLUDecomposition() {
@@ -587,6 +606,21 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     @Override
     public int compare(Number a, Number b) {
         return Double.compare(a.doubleValue(), b.doubleValue());
+    }
+    
+    @Override
+    public Matrix subspace(int[] rows, int[] cols) {
+        return (Matrix) super.subspace(rows, cols);    
+    }
+
+    @Override
+    public Matrix subspace(int fromRow, int fromCol, int toRow, int toCol) {
+        return (Matrix) super.subspace(fromRow, fromCol, toRow, toCol);
+    }
+
+    @Override
+    public Matrix subspace(Index2D from, Index2D to) {
+        return (Matrix) super.subspace(from, to);
     }
 
 
@@ -830,6 +864,13 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         public Matrix getInverseMatrix() { return (Matrix) super.getInverseMatrix(); }
 
         @Override
+        public Double getDeterminant() {
+            double D = evenChanges ? 1.0 : -1.0;
+            for(int i=size(); --i >= 0; ) D *= LU.get(i, i);
+            return D;
+        }
+        
+        @Override
         public void getInverseTo(AbstractMatrix<Double> inverse) {
             if(!inverse.isSquare()) throw new SquareMatrixException();
 
@@ -990,5 +1031,147 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         }   
     }
 
+    
+    public class JacobiTransform implements EigenSystem<Double, Double> {
+        private RealVector[] eigenVectors;
+        private double[] d;
+        
+        public JacobiTransform() throws SquareMatrixException, SymmetryException, ConvergenceException {          
+            this(100);   
+        }
+        
+        public JacobiTransform(int maxIterations) throws SquareMatrixException, SymmetryException, ConvergenceException {          
+            transform(Matrix.this, 100);   
+        }
+        
+        @Override
+        public RealVector getEigenValues() {
+            RealVector l = new RealVector(size());
+            System.arraycopy(d, 0, l.getData(), 0, size());
+            return l;
+        }
+        
+        @Override
+        public RealVector[] getEigenVectors() {
+            RealVector[] e = new RealVector[size()];
+            for(int i=size(); --i >= 0; ) e[i] = eigenVectors[i].copy();
+            return e;
+        }
+        
+        private int size() {
+            return d.length;
+        }
+        
+        /**
+         * Based on Numerical Recipes in C (second edition) jacobi() routine.
+         * 
+         * 
+         * @param M                         Matrix to transform
+         * @param maxIterations             Maximum number of iterations (~100 is typically sufficient)
+         * @return      Number of rotation performed.
+         * @throws SquareMatrixException    If the input matrix is not a square matrix
+         * @throws SymmetryException        If the input matrix is not a symmetric matrix
+         * @throws ConvergenceException     If the transformation is not complete within the set ceiling for iterations.
+         */
+        private int transform(Matrix M, int maxIterations) throws SquareMatrixException, SymmetryException, ConvergenceException {
+            if(!M.isSquare()) throw new SquareMatrixException();
+            if(!M.isSymmetric()) throw new SymmetryException();
+            
+            final int n = M.rows();
+            
+            d = new double[n];
+            Matrix A = Matrix.this.copy();
+            Matrix v = A.getMatrixInstance(n, n, true);
+            v.addIdentity();
+            
+            final double[] b = new double[n];
+            final double[] z = new double[n];
+           
+            for(int i = 0; i < n; i++) b[i] = d[i] = A.get(i, i);
+
+            Rotation r = new Rotation();
+            int nrot = 0;
+            
+            for(int k=0; k < maxIterations; k++) {
+                double sum = 0.0;
+                
+                for (int i = 0; i < n-1; i++) for (int j = i+1; j < n; j++) sum += Math.abs(A.get(i, j));
+                
+                if(sum == 0.0) {
+                    eigenVectors = new RealVector[size()];
+
+                    for(int j=size(); --j >= 0; ) {
+                        RealVector ej = new RealVector(size());
+                        v.getColumnTo(j, ej.getData());
+                        eigenVectors[j] = ej;
+                    }
+
+                    return nrot;
+                }
+                
+                final double tresh = (k < 4) ? 0.2 * sum / (n * n) : 0.0;
+
+                for(int i = 0; i < n-1; i++) for(int j = i+1; j < n; j++) {
+                    final double g = 100.0 * Math.abs(A.get(i, j));
+                 
+                    if(k > 4 && (Math.abs(d[i]) + g) == Math.abs(d[i]) && (Math.abs(d[j]) + g) == Math.abs(d[j])) 
+                        A.clear(i, j);
+                    
+                    else if (Math.abs(A.get(i, j)) < tresh) continue;
+
+                    double h = d[j] - d[i];
+                    double t = 0.0;
+                    
+                    if((Math.abs(h)+g) == Math.abs(h)) t = A.get(i, j) / h;
+                    else {
+                        double theta = 0.5 * h / (A.get(i, j));
+                        t = 1.0 / (Math.abs(theta) + Math.sqrt(1.0 + theta*theta));
+                        if (theta < 0.0) t = -t;
+                    }
+                    
+                    final double c = 1.0 / Math.sqrt(1.0 + t*t);
+
+                    r.s = t * c;
+                    r.tau = r.s / (1.0 + c);
+
+                    h = t * A.get(i, j);
+
+                    z[i] -= h;
+                    z[j] += h;
+                    d[i] -= h;
+                    d[j] += h;
+
+                    A.clear(i, j);
+
+                    for(int m = 0; m < i; m++) r.rotate(A, m, i, m, j);
+                    for(int m = i+1; m < j; m++) r.rotate(A, i, m, m, j);
+                    for(int m = j+1; m < n; m++) r.rotate(A, i, m, j, m);
+                    for(int m = 0; m < n; m++) r.rotate(v, m, i, m, j);
+                    
+                    nrot++;
+                }
+                
+                for(int ip = n; --ip >= 0; ) {
+                    b[ip] += z[ip];
+                    d[ip] = b[ip];
+                    z[ip] = 0.0;
+                }                
+            }
+            throw new ConvergenceException("Too many iterations");
+        }
+        
+        private class Rotation {
+            double s, tau;
+            
+            void rotate(Matrix M, int i, int j, int k, int l) {
+                double g = M.get(i, j);
+                double h = M.get(k, l);
+                M.add(i,  j, -s * (h + g * tau));
+                M.add(k,  l, s * (g - h * tau));
+            }
+        }
+    }
+
+    
 }
 

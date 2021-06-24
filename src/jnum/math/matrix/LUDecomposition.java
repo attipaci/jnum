@@ -48,6 +48,8 @@ public abstract class LUDecomposition<T> implements MatrixInverter<T>, MatrixSol
     
     protected final int size() { return LU.rows(); }
     
+    public abstract T getDeterminant();
+    
     private void decompose(double tinyValue) {
         final int n = size();
         

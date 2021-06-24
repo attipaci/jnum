@@ -26,9 +26,9 @@ package jnum.math.matrix;
 
 
 import jnum.Copiable;
-import jnum.ShapeException;
 import jnum.Util;
 import jnum.data.ArrayUtil;
+import jnum.data.image.Index2D;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.LinearAlgebra;
@@ -70,7 +70,7 @@ extends AbstractMatrix<T> {
      */
     public ObjectMatrix(Class<T> type) { 
         this.type = type; 
-        identity = getEntryInstance();
+        identity = newEntry();
         identity.setIdentity();
     }
 
@@ -123,7 +123,7 @@ extends AbstractMatrix<T> {
     }
 
     @Override
-    public T getEntryInstance() {
+    public T newEntry() {
         try { return getElementType().getConstructor().newInstance(); }
         catch(Exception e) { 
             Util.error(this, e);
@@ -133,7 +133,7 @@ extends AbstractMatrix<T> {
 
     @Override
     public MatrixElement<T> getElementInstance() {
-        return new Element(getEntryInstance());
+        return new Element(newEntry());
     }
 
     @Override
@@ -228,7 +228,7 @@ extends AbstractMatrix<T> {
     @Override
     protected synchronized void addProduct(AbstractMatrix<? extends T> A, AbstractMatrix<? extends T> B) {		
 
-        T product = getEntryInstance();
+        T product = newEntry();
 
         for(int i=A.rows(); --i >= 0; ) {
             final T[] row = data[i];
@@ -344,7 +344,7 @@ extends AbstractMatrix<T> {
         if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
         if(result.length != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
 
-        final T P = getEntryInstance();
+        final T P = newEntry();
 
         for(int i=rows(); --i >= 0; ) {
             final T[] row = data[i];
@@ -362,7 +362,7 @@ extends AbstractMatrix<T> {
         if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
         if(result.size() != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
 
-        final T P = getEntryInstance();
+        final T P = newEntry();
 
         for(int i=rows(); --i >= 0; ) {
             final T[] row = data[i];
@@ -419,8 +419,8 @@ extends AbstractMatrix<T> {
         if(v.size() != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
         if(result.size() != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
 
-        final T P = getEntryInstance();
-        final T sum = getEntryInstance();
+        final T P = newEntry();
+        final T sum = newEntry();
 
         for(int i=rows(); --i >= 0; ) {
             final T[] row = data[i];
@@ -469,7 +469,7 @@ extends AbstractMatrix<T> {
         double d2 = 0.0;
 
         if(Number.class.isAssignableFrom(o.getElementType())) {
-            T v = getEntryInstance();
+            T v = newEntry();
 
             for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
                 v.setIdentity();
@@ -540,7 +540,7 @@ extends AbstractMatrix<T> {
         if(!a.conformsTo(b))	throw new ShapeException("different size matrices.");
 
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
-            if(data[i][j] == null) data[i][j] = getEntryInstance();
+            if(data[i][j] == null) data[i][j] = newEntry();
             data[i][j].setSum(a.get(i, j), b.get(i,  j));
         }
     }
@@ -551,7 +551,7 @@ extends AbstractMatrix<T> {
         if(!a.conformsTo(b)) throw new ShapeException("different size matrices.");
 
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
-            if(data[i][j] == null) data[i][j] = getEntryInstance();
+            if(data[i][j] == null) data[i][j] = newEntry();
             data[i][j].setDifference(a.get(i, j), b.get(i, j));
         }
     }
@@ -563,6 +563,17 @@ extends AbstractMatrix<T> {
         return (ObjectMatrix<T>) super.subspace(rows, cols);
     }
 
+    @Override
+    public ObjectMatrix<T> subspace(int fromRow, int fromCol, int toRow, int toCol) {
+        return (ObjectMatrix<T>) super.subspace(fromRow, fromCol, toRow, toCol);
+    }
+
+    @Override
+    public ObjectMatrix<T> subspace(Index2D from, Index2D to) {
+        return (ObjectMatrix<T>) super.subspace(from, to);
+    }
+
+    
     @Override
     public ObjectMatrix<T> getInverse() {
         return getLUInverse();
@@ -587,7 +598,7 @@ extends AbstractMatrix<T> {
     @Override
     public void addIdentity(double scaling) {
         if(!isSquare()) throw new SquareMatrixException();
-        T increment = getEntryInstance();
+        T increment = newEntry();
         increment.setIdentity();
         increment.scale(scaling);
         for(int i=rows(); --i >= 0; ) data[i][i].add(increment);
@@ -618,7 +629,7 @@ extends AbstractMatrix<T> {
 
         @Override
         public MatrixElement<T> fresh() {
-            value = ObjectMatrix.this.getEntryInstance();
+            value = ObjectMatrix.this.newEntry();
             return this;
         }
 
@@ -801,6 +812,14 @@ extends AbstractMatrix<T> {
             return (ObjectMatrix<T>) super.getInverseMatrix();
         }
 
+        @Override
+        public T getDeterminant() {
+            T D = LU.newEntry();
+            D.setIdentity();
+            if(evenChanges) D.scale(-1.0);
+            for(int i=size(); --i >= 0; ) D.multiplyBy(LU.get(i, i));
+            return D;
+        }
 
         @Override
         public T[] solveFor(T[] y) {
@@ -841,7 +860,7 @@ extends AbstractMatrix<T> {
             int n = size();
 
 
-            T term = LU.getEntryInstance();
+            T term = LU.newEntry();
 
             for(int i=0; i<n; i++) {
                 int ip = index[i];
@@ -874,7 +893,7 @@ extends AbstractMatrix<T> {
             T[] v = (T[]) Array.newInstance(LU.getElementType(), n);
 
             for(int i=0; i<n; i++) {
-                v[i] = LU.getEntryInstance();
+                v[i] = LU.newEntry();
 
                 if(i > 0) for(int k=n; --k >=0; ) v[k].zero();
                 v[i].setIdentity();

@@ -24,11 +24,34 @@
 
 package jnum.math.matrix;
 
+/**
+ * Interface for obtaining a matrix inverse via some method or another.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>   The generic type matrix element (both in the matrix and its inverse).
+ */
 public interface MatrixInverter<T> extends MatrixSolver<T> {
     
+    /**
+     * Gets the inverse of a matrix as a new independent instance. If the implementing class has
+     * a readyly calculated inverse matrix, it should return a copy of that, to ensure
+     * that any operations performed on the returned value do not corrupt the internally
+     * stored inverse.
+     * 
+     * @return  An independent instance of the inverse matrix, that the caller should be
+     *          free to manipulate to their pleasure.
+     */
     public AbstractMatrix<T> getInverseMatrix();
     
-    public void getInverseTo(AbstractMatrix<T> inverse);
+    /**
+     * Gets the inverse of a matrix into the specified other matrix.
+     * 
+     * @param inverse           Matrix that is to be set to contain the inverse.
+     * @throws ShapeException   If the supplied matrix is not the right shape/size to contain
+     *                          the requested inverse
+     */
+    public void getInverseTo(AbstractMatrix<T> inverse) throws ShapeException;
     
     
 }

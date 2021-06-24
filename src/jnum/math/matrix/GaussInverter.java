@@ -51,7 +51,7 @@ public class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
         MatrixElement<T> e = combo.getElementInstance();
         rank = 0;
         
-        double tiny2 = 1e-12 * combo.getMagnitude();
+        double tiny2 = 1e-12 * combo.getMagnitude(0, 0, size, size);
         tiny2 *= tiny2;
         
         // Get the basis vectors from the irreducible columns of the original matrix
@@ -66,7 +66,11 @@ public class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
         if(rank != size) throw new IllegalArgumentException("Singular imput matrix.");
         
         // Get the inverse as the second half of columns in this matrix...
-        for(int i=size; --i >= 0; ) for(int j=size; --j >= 0; ) inverse.set(i, j, combo.get(i, size + j));
+        // Elements that are zero within rounding errors are set to zero.
+        for(int i=size; --i >= 0; ) for(int j=size; --j >= 0; ) {
+            if(e.from(i, j).absSquared() > tiny2) inverse.set(i, j, combo.get(i, size + j));
+            else inverse.clear(i, j);
+        }
        
     }
 
@@ -99,8 +103,7 @@ public class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
 
     @Override
     public void solveFor(T[] y, T[] x) {
-
-
+        inverse.dot(y, x);
     }
 
     @Override

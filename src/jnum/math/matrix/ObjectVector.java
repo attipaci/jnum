@@ -25,10 +25,10 @@
 package jnum.math.matrix;
 
 import java.lang.reflect.*;
+import java.text.NumberFormat;
 import java.util.Arrays;
 
 import jnum.Copiable;
-import jnum.ShapeException;
 import jnum.Util;
 import jnum.data.ArrayUtil;
 import jnum.data.samples.Index1D;
@@ -37,6 +37,7 @@ import jnum.math.AbstractAlgebra;
 import jnum.math.Coordinates;
 import jnum.math.LinearAlgebra;
 import jnum.math.Metric;
+import jnum.text.DecimalFormating;
 import jnum.math.MathVector;
 
 // TODO: Auto-generated Javadoc
@@ -46,7 +47,8 @@ import jnum.math.MathVector;
  * @param <T> the generic type
  */
 @SuppressWarnings("unchecked")
-public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> extends AbstractVector<T> {
+public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> 
+extends AbstractVector<T> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4341703980593410457L;
@@ -117,7 +119,7 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
 	    for(int i=size(); --i >= 0; ) component[i] = (T) v.getComponent(i).copy();
 	}
 	
-    public T getComponentInstance() {
+    public T newComponent() {
         try { return getType().getConstructor().newInstance(); }
         catch(Exception e) { 
             Util.error(this, e);
@@ -130,6 +132,11 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
         return new ObjectVector<>(getType(), size);
     }
     
+    @Override
+    public String toString(int i, NumberFormat nf) {
+        if(nf == null || !DecimalFormating.class.isAssignableFrom(getType())) return getComponent(i).toString();
+        return ((DecimalFormating) getComponent(i)).toString(nf);
+    }
 	
 		
 	/* (non-Javadoc)
@@ -153,19 +160,6 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
         return (T) get(index).copy();
     }
 
-	
-	/**
-	 * New entry.
-	 *
-	 * @return the t
-	 */
-	public T newEntry() {
-		try { return type.getConstructor().newInstance(); }
-		catch(Exception e) {
-			Util.error(this, e);
-			return null;
-		}
-	}
 	
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractVector#getData()
@@ -205,7 +199,7 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
     public final void incrementValue(int i, T x) { component[i].add(x); }
 	
     @Override
-    public synchronized void multiplyByComponentsOf(Coordinates<? extends T> v) { 
+    public void multiplyByComponentsOf(Coordinates<? extends T> v) { 
         for(int i=component.length; --i >= 0; ) component[i].multiplyBy(v.getComponent(i));
     }
 	
@@ -213,20 +207,69 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
 	 * @see kovacs.math.AbstractVector#dot(kovacs.math.AbstractVector)
 	 */
 	@Override
-	public synchronized T dot(Coordinates<? extends T> v) {	
-		T term = newEntry();
-		T sum = newEntry();
+	public T dot(Coordinates<? extends T> v) {
+	    assertSize(v.size());
+	    
+		T p = newComponent();
+		T sum = newComponent();
 		
 		sum.zero();
 		
-		for(int i=component.length; --i >= 0; ) {
+		for(int i=size(); --i >= 0; ) if(!component[i].isNull()) {
 		    T vi = v.getComponent(i);
-		    if(vi == null) continue;
-			term.setProduct(component[i], vi);
-			sum.add(term);
+		    if(vi.isNull()) continue;
+			p.setProduct(component[i], vi);
+			sum.add(p);
 		}
 		return sum;
 	}
+	
+	@Override
+    public T dot(T[] v) {
+	    assertSize(v.length);
+	    
+	    T p = newComponent();
+	    T sum = newComponent();
+	    
+	    for(int i=size(); --i >= 0; ) if(!component[i].isNull()) {
+	        T vi = v[i];
+            if(vi.isNull()) continue;
+            p.setProduct(component[i], vi);
+            sum.add(p);
+	    }
+	    
+	    return sum;
+	}
+
+	public T dot(RealVector v) {
+	    assertSize(v.size());
+	    
+	    T sum = newComponent();
+	    
+	    for(int i=size(); --i >= 0; ) if(!component[i].isNull()) {
+	        double vi = v.getComponent(i);
+	        if(vi != 0.0) sum.addScaled(component[i], vi);
+	    }
+	    
+	    return sum;
+	}
+
+	public T dot(double[] v) {
+	    assertSize(v.length);
+        
+        T sum = newComponent();        
+        for(int i=size(); --i >= 0; ) if(!component[i].isNull()) if(v[i] != 0.0) sum.addScaled(component[i], v[i]);
+        return sum;
+    }
+    
+	public T dot(float[] v) {
+	    assertSize(v.length);
+        
+        T sum = newComponent();        
+        for(int i=size(); --i >= 0; ) if(!component[i].isNull()) if(v[i] != 0.0) sum.addScaled(component[i], v[i]);
+        return sum;
+    }
+	
 	
 	/* (non-Javadoc)
 	 * @see kovacs.math.AbstractVector#asRowVector()
@@ -279,7 +322,7 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
 	@Override
 	public void zero() {
 		for(int i=component.length; --i >= 0; ) {
-			if(component[i] == null) component[i] = newEntry();
+			if(component[i] == null) component[i] = newComponent();
 			component[i].zero();
 		}
 	}
@@ -366,7 +409,7 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
 		if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
 		
 		for(int i=component.length; --i >= 0; ) {
-			if(component[i] == null) component[i] = newEntry();
+			if(component[i] == null) component[i] = newComponent();
 			component[i].setSum(a.getComponent(i), b.getComponent(i));
 		}
 		
@@ -380,7 +423,7 @@ public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super 
 		if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
 		
 		for(int i=component.length; --i >= 0; ) {
-			if(component[i] == null) component[i] = newEntry();
+			if(component[i] == null) component[i] = newComponent();
 			component[i].setDifference(a.getComponent(i), b.getComponent(i));
 		}
 		

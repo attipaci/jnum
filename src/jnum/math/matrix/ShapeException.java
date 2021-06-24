@@ -21,7 +21,9 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum;
+package jnum.math.matrix;
+
+import jnum.NonConformingException;
 
 /**
  * An expection that indicates that there is something about the shape of the object (e.g. a matrix)
@@ -31,7 +33,7 @@ package jnum;
  * @author Attila Kovacs <attila@sigmyne.com>
  *
  */
-public class ShapeException extends IllegalArgumentException {
+public class ShapeException extends NonConformingException {
 
     /**
      * 

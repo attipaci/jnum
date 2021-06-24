@@ -23,7 +23,6 @@
 
 package jnum.math.matrix;
 
-import jnum.ShapeException;
 import jnum.math.DotProduct;
 import jnum.math.IdentityValue;
 import jnum.math.LinearAlgebra;

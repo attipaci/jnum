@@ -35,6 +35,8 @@ public interface MathVector<T> extends Coordinates<T>, AbsoluteValue, Normalizab
     
     public T dot(Coordinates<? extends T> v); // TODO default method.
     
+    public T dot(T[] v); // TODO default method.
+    
     public void orthogonalizeTo(MathVector<? extends T> v); // TODO default method.
     
     public void projectOn(final MathVector<? extends T> v); // TODO default method.

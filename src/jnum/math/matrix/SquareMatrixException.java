@@ -23,8 +23,6 @@
 
 package jnum.math.matrix;
 
-import jnum.ShapeException;
-
 public class SquareMatrixException extends ShapeException {
 
     public SquareMatrixException() {

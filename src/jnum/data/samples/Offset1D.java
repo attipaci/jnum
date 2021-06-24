@@ -139,6 +139,9 @@ public class Offset1D implements MathVector<Double> {
     
     @Override
     public Double dot(Coordinates<? extends Double> v) { return x * v.x(); }
+    
+    @Override
+    public Double dot(Double[] v) { return x * v[0]; }
 
     @Override
     public void orthogonalizeTo(MathVector<? extends Double> v) { x = 0.0; }

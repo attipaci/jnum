@@ -24,14 +24,46 @@
 
 package jnum.math.matrix;
 
+/**
+ * Interface for solving matrix equations of the form y = M * x, finding vector x given vector y 
+ * for a real-valued matrix M.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>   Generic type of elements in the matrix and vectors. 
+ */
 public interface RealMatrixSolver extends MatrixSolver<Double> {
 
+    /**
+     * Returns the vector x given y, in y = M * x for some matrix M.
+     * 
+     * @param y     The vector y.
+     * @return      The vector x.
+     */
     public abstract double[] solveFor(double[] y);
     
+    /**
+     * Returns the vector x given y, in y = M * x for some matrix M.
+     * 
+     * @param y     The vector y
+     * @param x     array in which to return x.
+     */
     public abstract void solveFor(double[] y, double[] x);
    
+    /**
+     * Returns the vector x given y, in y = M * x for some matrix M.
+     * 
+     * @param y     The vector y.
+     * @return      The vector x.
+     */
     public abstract RealVector solveFor(RealVector y);
     
+    /**
+     * Returns the vector x given y, in y = M * x for some matrix M.
+     * 
+     * @param y     The vector y
+     * @param x     vector in which to return x.
+     */
     public abstract void solveFor(RealVector y, RealVector x);
    
 

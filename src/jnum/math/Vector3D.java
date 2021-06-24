@@ -227,7 +227,12 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
         return x() * v.getComponent(0) + y() * v.getComponent(1) + z() * v.getComponent(2);
     }
     
-     
+    @Override
+    public final Double dot(Double[] v) throws NonConformingException {
+        if(v.length != 3) throw new NonConformingException("dot product with vector of different size.");
+        return x() * v[X] + y() * v[Y] + z() * v[Z];
+    } 
+    
     @Override
     public void orthogonalizeTo(MathVector<? extends Double> v) {
         addScaled(v, -dot(v) / (abs() * v.abs()));
