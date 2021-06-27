@@ -23,22 +23,20 @@
 
 package jnum.math.matrix;
 
-public class SquareMatrixException extends ShapeException {
+/**
+ * An exception thrown when attempting a square matrix operation on a non-square matrix. 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
+public class SquareMatrixException extends ArithmeticException {
 
     public SquareMatrixException() {
         super(defaultMessage);
     }
 
-    public SquareMatrixException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public SquareMatrixException(String s) {
         super(s);
-    }
-
-    public SquareMatrixException(Throwable cause) {
-        super(defaultMessage, cause);
     }
 
     private static String defaultMessage = "square matrix operation on a non-square matrix.";

@@ -71,7 +71,7 @@ public class MatrixTest {
 		
 		System.out.println("Gauss inverse: " + M.getGaussInverse().toString(Util.f3));
 	
-		System.out.println("D: " + M.getDeterminant() + "\n");
+		System.out.println("D: " + LU.getDeterminant() + "\n");
 		System.out.println("I: " + LU.getInverseMatrix().getDeterminant() + "\n");
 		
 		for(int i=data.length; --i >=0; ) for(int j=i; --j >=0; ) data[i][j] = data[j][i];

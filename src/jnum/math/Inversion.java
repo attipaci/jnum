@@ -22,10 +22,6 @@
  ******************************************************************************/
 package jnum.math;
 
-// TODO: Auto-generated Javadoc
-// Not to be confused with inverse().
-// invert() is meant as a spatial inversion
-// whereas inverse is a mathematical inverse under multiplication.
 
 /**
  * Interface for all objects that implement a spatial inversion operation. Not to be confused with {@link jnum.math.InverseValue}.

@@ -75,7 +75,7 @@ public class Transform3D<T extends SphericalCoordinates> implements Cloneable, S
 	
 	
 	protected final Transform3D<T> smallRotate(double ax, double ay, double az) {
-	    final double[][] cols = (double[][]) M.getData();
+	    final double[][] cols = M.getData();
         final double Ax = ax * ax, Ay = ay * ay, Az = az * az;  ///< Squares of the rotation angles
         
         for(int i=3; --i >=0; ) {

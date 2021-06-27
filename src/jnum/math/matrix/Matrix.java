@@ -196,7 +196,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * be of a different size than the existing matrix.
      * 
      * @param data              The new backing data storage for this matrix.
-     * @throws ShapeException
+     * @throws ShapeException   If the shape and/or size of the data object differs from that of this matrix
      */
     public void setData(double[][] data) throws ShapeException {
         assertSize(data.length, data[0].length);
@@ -204,19 +204,39 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         this.data = data;
     }
 
-    
-    public void copyData(ViewableAsDoubles data) {
-        copyData((double[][]) data.viewAsDoubles());   
+    /**
+     * Copies the data from the <code>double[][]</code> representation of some object with the same
+     * size and shape as this matrix.
+     * 
+     * @param data      The <code>double[][]</code> representation of the new data.
+     * @throws ShapeException   If the shape and/or size of the data object differs from that of this matrix
+     */
+    public void copyDataFrom(ViewableAsDoubles data) throws ShapeException {
+        copyDataFrom((double[][]) data.viewAsDoubles());   
     }
 
-
-    public void copyData(double[][] data) {
+    /**
+     * Copies the data from another 2D array of the same size and shape as this matrix. The matrix will
+     * be fully decoupled from the argument array, that is subsequent changes to the array's rows or
+     * elements will not affect the matrix in any way, and vice-versa. 
+     * 
+     * @param data              The array that defines the new matrix elements.
+     * @throws ShapeException   If the shape and/or size of the data object differs from that of this matrix
+     */
+    public void copyDataFrom(double[][] data) throws ShapeException {
         assertSize(data.length, data[0].length);
         try { setData((double[][]) ArrayUtil.copyOf(data)); } catch (Exception e) { e.printStackTrace(); }
     }
 
-
-    public void copyData(float[][] data) {
+    /**
+     * Copies the data from another 2D array of the same size and shape as this matrix. The matrix will
+     * be fully decoupled from the argument array, that is subsequent changes to the array's rows or
+     * elements will not affect the matrix in any way, and vice-versa. 
+     * 
+     * @param data              The array that defines the new matrix elements.
+     * @throws ShapeException   If the shape and/or size of the data object differs from that of this matrix
+     */
+    public void copyDataFrom(float[][] data) {
         assertSize(data.length, data[0].length);
         setData((double[][]) ArrayUtil.asDouble(data));		
     }
@@ -312,12 +332,12 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
 
     @Override
     public Matrix dot(DiagonalMatrix<Double> B) {
-        return (Matrix) B.dot(this);
+        return (Matrix) B.dotFromLeft(this);
     }
     
     @Override
     public Matrix dot(DiagonalMatrix.Real B) {
-        return B.dot(this);
+        return B.dotFromLeft(this);
     }
  
     /**
@@ -359,7 +379,13 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         return (ComplexMatrix) dot((ObjectMatrix<? extends Complex>) B);
     }
    
-    
+    /**
+     * Gets the dot product of this matrix with 
+     * 
+     * @param <T>
+     * @param B
+     * @return
+     */
     public <T extends Copiable<? super T> & AbstractAlgebra<? super T> & LinearAlgebra<? super T> & Metric<? super T> & AbsoluteValue>
     ObjectMatrix<T> dot(DiagonalMatrix.Generic<T> B) {
         return B.dot(this);
@@ -375,12 +401,25 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     
     
     @Override
-    public double[] dot(double[] v) {
-        double[] result = new double[rows()];
-        dot(v, result);
-        return result;
+    public RealVector dot(double[] v) {
+        return (RealVector) super.dot(v);
+    }
+    
+    @Override
+    public RealVector dot(float[] v) {
+        return (RealVector) super.dot(v);
     }
 
+    @Override
+    public RealVector dot(RealVector v) {
+        return (RealVector) super.dot(v);
+    }
+    
+    @Override
+    public RealVector dot(MathVector<? extends Double> v) {
+        return (RealVector) super.dot(v);
+    }
+    
 
     public void dot(double[] v, double[] result) {
         if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
@@ -393,14 +432,6 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
             for(int j=cols(); --j >= 0; ) if(row[j] != 0.0) if(v[j] != 0.0) sum += row[j] * v[j];
             result[i] = sum;
         }
-    }
-
-    
-    @Override
-    public Double[] dot(Double[] v) {
-        Double[] result = new Double[rows()];
-        dot(v, result);
-        return result;
     }
 
 
@@ -418,6 +449,20 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         }
     }
 
+    @Override
+    public void dot(Double[] v, MathVector<Double> result) {
+        if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
+        if(result.size() != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
+
+        // TODO parallelize on i;
+        for(int i=rows(); --i >= 0; ) {
+            final double[] row = data[i];
+            double sum = 0.0;
+            for(int j=cols(); --j >= 0; ) if(row[j] != 0.0) if(v[j] != 0.0) sum += row[j] * v[j];
+            result.setComponent(i, sum);
+        }
+    }
+    
 
     @Override
     public void dot(double[] v, MathVector<Double> result) {
@@ -434,14 +479,6 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     }
 
     
-    @Override
-    public float[] dot(float[] v) {
-        float[] result = new float[rows()];
-        dot(v, result);
-        return result;
-    }
-
-
     public void dot(float[] v, float[] result) {
         if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
         if(result.length != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
@@ -470,19 +507,6 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
 
 
     @Override
-    public RealVector dot(MathVector<? extends Double> v) {
-        RealVector result = new RealVector(rows());
-        dot(v, result);
-        return result;
-    }
-    
-    @Override
-    public RealVector dot(RealVector v) {
-        return dot((MathVector<Double>) v);
-    }
-
-
-    @Override
     public void dot(MathVector<? extends Double> v, MathVector<Double> result) throws ShapeException {
         if(v.size() != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
         if(result.size() != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
@@ -498,31 +522,39 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         }
     }
     
+    
     @Override
-    public void dot(RealVector v, MathVector<Double> result) {
-        if(v.size() != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
-        if(result.size() != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
-
-        // TODO parallelize on i;
-        for(int i=rows(); --i >= 0; ) {
-            final double[] row = data[i];
-            double sum = 0.0;
-            for(int j=cols(); --j >= 0; ) if(row[j] != 0.0) {
-                double vj = v.getComponent(j);
-                if(vj != 0.0) sum += row[j] * vj;
-            }
-            result.setComponent(i, sum);
+    public double getMagnitude(int fromi, int fromj, int toi, int toj) {
+        double mag = 0.0;
+     
+        for(int i=toi; --i >= fromi; ) for(int j=toj; --j >= toj; ) {
+            double a = Math.abs(data[i][j]);
+            if(a > mag) mag = a;
         }
+        
+        return mag;        
     }
     
-    
     @Override
-    public Double trace() throws SquareMatrixException {
+    public Double getTrace() throws SquareMatrixException {
         double sum = 0.0;
         for(int i=rows(); --i >= 0; ) sum += data[i][i];
         return sum;
     }
 
+    @Override
+    public boolean isTraceless() throws SquareMatrixException {
+        double sum = 0.0, mag = 0.0;
+        for(int i=rows(); --i >= 0; ) {
+            double v = data[i][i];
+            sum += v;
+            if(Math.abs(v) > mag) mag = Math.abs(v);
+        }
+            
+        return Math.abs(sum) <= 1e-12 * mag;
+    }
+    
+    
     @Override
     public double distanceTo(MatrixAlgebra<?, ?> o) {
         if(o instanceof DiagonalMatrix) return ((DiagonalMatrix<?>) o).distanceTo(this);
@@ -540,24 +572,87 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         
         return o.distanceTo(this);
     }
-
-
-
+    
     @Override
-    public void getColumnTo(int j, Object buffer) {
-        if(buffer instanceof double[]) getColumnTo(j, (double[]) buffer);
-        else if(buffer instanceof float[]) getColumnTo(j, (float[]) buffer);
-        else throw new IllegalArgumentException(" Cannot get " + getClass().getSimpleName() + " column into  " + buffer.getClass().getSimpleName() + ".");
+    public final void swapRows(int i, int j) {
+        double[] rowi = data[i];
+        data[i] = data[j];
+        data[j] = rowi;
+    }
+
+    /**
+     * Gets the native row as referenced by this matrix. Any changes to the contents of the
+     * returned row will necessarily affect the matrix and vice versa.
+     * 
+     * @param i     Matrix row index.
+     * @return      The underlying array that stored the data of the matrix row.
+     */
+    public final double[] getRow(int i) {
+        return data[i];
+    }
+
+    /**
+     * Sets the underlying storage of a matrix row to a new array. 
+     * 
+     * @param i     Matrix row index
+     * @param row   The nwew data array for the row.
+     */
+    public final void setRow(int i, double[] row) {
+        if(row.length != cols()) throw new ShapeException("Cannot set mismatched matrix row.");
+    }
+    
+    /**
+     * Copies the contents of a matrix row into the supplied buffer.
+     * 
+     * @param i         Matrix row index whose data is to be retrieved
+     * @param buffer    Array into which the column data is copied. The array is not checked for size.
+     */
+    public void copyRowTo(int i, double[] buffer) {
+        for(int j=cols(); --j >= 0; ) buffer[j] = data[i][j];       
+    }
+
+    /**
+     * Copies the contents of a matrix row into the supplied buffer.
+     * 
+     * @param i         Matrix row index whose data is to be retrieved
+     * @param buffer    Array into which the column data is copied. The array is not checked for size.
+     */
+    public void copyRowTo(int i, float[] buffer) {
+        for(int j=cols(); --j >= 0; ) buffer[j] = (float) data[i][j];       
+    }
+    
+
+    /**
+     * Copies the contents of the supplied array into a matrix row.
+     * 
+     * @param i         Matrix row index
+     * @param v         Array with the new contents for the matrix row.
+     */
+    public void setRowData(int i, double[] v) throws ShapeException {
+        if(v.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
+        for(int j=cols(); --j >= 0; ) data[i][j] = v[j];
+    }
+
+    /**
+     * Copies the contents of the supplied array into a matrix row.
+     * 
+     * @param i         Matrix row index
+     * @param v         Array with the new contents for the matrix row.
+     */
+    public void setRowData(int i, float[] v) throws ShapeException {
+        if(v.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
+        for(int j=cols(); --j >= 0; ) data[i][j] = v[j];
     }
 
 
+    
     /**
      * Copies the contents of a matrix column into the supplied buffer.
      * 
      * @param j         Matrix column index whose data is to be retrieved
-     * @param buffer    Array into which the column data is copied. The supplied array is not checked for size.
+     * @param buffer    Array into which the column data is copied. The array is not checked for size.
      */
-    public void getColumnTo(int j, double[] buffer) {
+    public void copyColumnTo(int j, double[] buffer) {
         for(int i=rows(); --i >= 0; ) buffer[i] = data[i][j];		
     }
 
@@ -565,52 +660,12 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * Copies the contents of a matrix column into the supplied buffer.
      * 
      * @param j         Matrix column index whose data is to be retrieved
-     * @param buffer    Array into which the column data is copied. The supplied array is not checked for size.
+     * @param buffer    Array into which the column data is copied. The array is not checked for size.
      */
-    public void getColumnTo(int j, float[] buffer) {
+    public void copyColumnTo(int j, float[] buffer) {
         for(int i=rows(); --i >=0; ) buffer[i] = (float) data[i][j];		
     }
-
-
-    @Override
-    public void getRowTo(int j, Object buffer) {
-        if(buffer instanceof double[]) getRowTo(j, (double[]) buffer);
-        else if(buffer instanceof float[]) getRowTo(j, (float[]) buffer);
-        else throw new IllegalArgumentException(" Cannot get " + getClass().getSimpleName() + " column into  " + buffer.getClass().getSimpleName() + ".");
-    }
-
-
-    @Override
-    public final double[] getRow(int i) { return data[i]; }
-
-    /**
-     * Copies the contents of a matrix row into the supplied buffer.
-     * 
-     * @param i         Matrix row index whose data is to be retrieved
-     * @param buffer    Array into which the column data is copied. The supplied array is not checked for size.
-     */
-    public void getRowTo(int i, double[] buffer) {
-        for(int j=cols(); --j >= 0; ) buffer[j] = data[i][j];		
-    }
-
-    /**
-     * Copies the contents of a matrix row into the supplied buffer.
-     * 
-     * @param i         Matrix row index whose data is to be retrieved
-     * @param buffer    Array into which the column data is copied. The supplied array is not checked for size.
-     */
-    public void getRowTo(int i, float[] buffer) {
-        for(int j=cols(); --j >= 0; ) buffer[j] = (float) data[i][j];		
-    }
-
-
-    @Override
-    public void setColumn(int j, Object value) throws IllegalArgumentException {		
-        if(value instanceof double[]) setColumn(j, (double[]) value);
-        else if(value instanceof float[]) setColumn(j, (float[]) value);
-        else throw new IllegalArgumentException(" Cannot use " + value.getClass().getSimpleName() + " to specify " + getClass().getSimpleName() + " column.");
-    }
-
+    
     /**
      * Sets the matrix column to the values provided in the argument. The argument itself is not referenced,
      * the primitive values from it are copied. As such subsequent changes to the supplied array after the 
@@ -620,7 +675,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * @param value         Array containing that data that is to be copied into the matric column.
      * @throws ShapeException   If the supplied array does not match the matrix column in size.
      */
-    public void setColumn(int j, double[] value) throws ShapeException {
+    public void setColumnData(int j, double[] value) throws ShapeException {
         if(value.length != rows()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
         for(int i=rows(); --i >= 0; ) data[i][j] = value[i];		
     }
@@ -634,29 +689,9 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * @param value         Array containing that data that is to be copied into the matric column.
      * @throws ShapeException   If the supplied array does not match the matrix column in size.
      */
-    public void setColumn(int j, float[] value) throws ShapeException {
+    public void setColumnData(int j, float[] value) throws ShapeException {
         if(value.length != rows()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
         for(int i=rows(); --i >= 0; ) data[i][j] = value[i];		
-    }
-
-
-    @Override
-    public void setRow(int j, Object value) throws IllegalArgumentException {		
-        if(value instanceof double[]) setRow(j, (double[]) value);
-        else if(value instanceof float[]) setRow(j, (float[]) value);
-        else throw new IllegalArgumentException(" Cannot use " + value.getClass().getSimpleName() + " to specify " + getClass().getSimpleName() + " row.");
-    }
-
-
-    public void setRow(int i, double[] value) throws ShapeException {
-        if(value.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
-        data[i] = value;
-    }
-
-
-    public void setRow(int i, float[] value) throws ShapeException {
-        if(value.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
-        for(int j=cols(); --j >= 0; ) data[i][j] = value[j];
     }
 
 
@@ -969,35 +1004,65 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
 
     }
 
-
+    /**
+     * The vector basis class for the parent matrix.
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     */
     public class VectorBasis extends AbstractVectorBasis<Double> {
         private static final long serialVersionUID = 2039401048091817380L;
 
-        public VectorBasis() {}
-
+        public VectorBasis() {
+            super(Matrix.this.rows());
+        }
+        
         /* (non-Javadoc)
          * @see kovacs.math.AbstractVectorBasis#asMatrix()
          */
         @Override
-        public Matrix asMatrix() {
+        public Matrix asRowVector() {
             Matrix M = new Matrix(size());
-            asMatrix(M);
+            toMatrix(M);
             return M;
         }
 
         @Override
-        public AbstractVector<Double> getVectorInstance(int size) {
-            return new RealVector(size);
+        public AbstractVector<Double> getVectorInstance() {
+            return new RealVector(getVectorSize());
         }
     }
 
 
+    /**
+     * The LU decomposition class of the parent matrix.
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     */
     public class LU extends LUDecomposition<Double> implements RealMatrixSolver {
         private Matrix inverse;
         
-        public LU() { super(Matrix.this); }
+        /**
+         * Constructs an LU decomposition of the parent matrix.
+         * 
+         * @throws SquareMatrixException    If the matrix argument is not of the required square shape for decomposition
+         * @throws SingularMatrixException  If the matrix argument is singular (degenerate) 
+         */
+        public LU() throws SquareMatrixException, SingularMatrixException { 
+            super(Matrix.this);     
+        }
 
-        public LU(double tinyValue) {
+        /**
+         * Constructs an LU decomposition of the parent matrix, using the specified small
+         * numerical value that is used for substituting zeroes in the arithmetic.
+         * 
+         * @param tinyValue     A very small numerical value to replce zeroes in the matrix
+         *                      for algorithmic stability.
+         * @throws SquareMatrixException    If the matrix argument is not of the required square shape for decomposition
+         * @throws SingularMatrixException  If the matrix argument is singular (degenerate)
+         */
+        public LU(double tinyValue) throws SquareMatrixException, SingularMatrixException {
             super(Matrix.this, tinyValue);
         }
 
@@ -1011,10 +1076,10 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
                 double[] v = new double[size()];
 
                 for(int i=size(); --i >= 0; ) {
-                    if(i > 0) Arrays.fill(v, 0.0);
                     v[i] = 1.0;
                     solve(v);
-                    for(int j=size(); --j >= 0; ) inverse.set(j, i, v[j]);
+                    inverse.setColumnData(i, v);
+                    if(i > 0) Arrays.fill(v, 0.0);
                 }
             }
             return inverse;
@@ -1039,7 +1104,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         @Override
         public double[] solveFor(double[] y) {
             LU.assertSize(y.length, y.length);
-            double[] x = new double[y.length];
+            double[] x =  new double[y.length];
             solveFor(y, x);
             return x;
         }
@@ -1063,15 +1128,15 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
 
 
         @Override
-        public RealVector solveFor(MathVector<Double> y) {
+        public RealVector solveFor(MathVector<? extends Double> y) {
             LU.assertSize(y.size(), y.size());
-            RealVector x = new RealVector(y.size());
+            RealVector x = getVectorInstance(y.size());
             solve(x.getData());
             return x;        
         }
 
         @Override
-        public void solveFor(MathVector<Double> y, MathVector<Double> x) {
+        public void solveFor(MathVector<? extends Double> y, MathVector<Double> x) {
             LU.assertSize(x.size(), y.size());
             double[] v = new double[size()];
             for(int i=size(); --i >=0 ; ) v[i] = y.getComponent(i);
@@ -1118,6 +1183,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
                 else if(sum != 0.0) ii = i;
                 v[i] = sum;
             }
+            
             for(int i=n; --i >= 0; ) {
                 double sum = v[i];
                 for(int j=i+1; j<n; j++) sum -= LU.get(i, j) * v[j];
@@ -1127,16 +1193,27 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
 
     } 
     
-    
+    /**
+     * The Gauss inverter class for the parent matrix.
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     */
     public class Gauss extends GaussInverter<Double> implements RealMatrixSolver {
         
-        public Gauss() {
+        /**
+         * Construct a matrix inverter object for the parent matrix using Gauss-Jordan elimination.
+         * 
+         * @throws SquareMatrixException    If the matrix argument is not of the required square shape for matrix inversion
+         * @throws SingularMatrixException  If the matrix argument is singular (degenerate)
+         */
+        public Gauss() throws SquareMatrixException, SingularMatrixException {
             super(Matrix.this);
         }
         
         @Override
-        public Matrix getI() {
-            return (Matrix) super.getI();
+        public Matrix getMasterInverse() {
+            return (Matrix) super.getMasterInverse();
         }
         
         @Override
@@ -1145,32 +1222,48 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         }
 
         @Override
-        public RealVector solveFor(MathVector<Double> y) {
-            return getI().dot(y);
+        public RealVector solveFor(MathVector<? extends Double> y) {
+            return getMasterInverse().dot(y);
         }
         
         @Override
         public double[] solveFor(double[] y) {
-            return getI().dot(y);
+            return getMasterInverse().dot(y).getData();
         }
 
         @Override
         public void solveFor(double[] y, double[] x) {
-            getI().dot(y, x);
+            getMasterInverse().dot(y, x);
         }
 
         @Override
         public RealVector solveFor(RealVector y) {
-            return getI().dot(y);
+            return getMasterInverse().dot(y);
         }
 
         @Override
         public void solveFor(RealVector y, RealVector x) {
-            getI().dot(y, x);
+            getMasterInverse().dot(y, x);
+        }
+
+        @Override
+        public Double[] solveFor(Double[] y) {
+            getMasterInverse().assertSize(y.length, y.length);
+            double[] Y = new double[y.length];
+            double[] X = new double[y.length];
+            solveFor(Y, X);
+            Double[] x = new Double[X.length];
+            for(int i=x.length; --i >= 0; ) x[i] = X[i];
+            return x;
         }   
     }
 
-    
+    /**
+     * The Jacobi transform class of the parent matrix.
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     */ 
     public class JacobiTransform implements EigenSystem<Double, Double> {
         private Matrix B, iB;
         private double[] eigenValues;
@@ -1196,13 +1289,19 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
 
             for(int j=size(); --j >= 0; ) {
                 RealVector ej = new RealVector(size());
-                B.getColumnTo(j, ej.getData());
+                B.copyColumnTo(j, ej.getData());
                 e[j] = ej;
             }
 
             return e;
         }
         
+        @Override
+        public Double getDeterminant() {
+            double D = 1.0;
+            for(int j=size(); --j >= 0; ) D *= eigenValues[j];
+            return D;
+        }
         
         @Override
         public Matrix toEigenBasis() {
@@ -1216,14 +1315,25 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         }
         
         @Override
-        public MathVector<Double> toEigenBasis(MathVector<Double> v) {
+        public RealVector toEigenBasis(MathVector<? extends Double> v) {
             return B.dot(v);
         }
         
         @Override
-        public MathVector<Double> fromEigenBasis(MathVector<Double> v) {
+        public RealVector fromEigenBasis(MathVector<? extends Double> v) {
             if(iB == null) iB = B.getInverse();
             return iB.dot(v);
+        }
+        
+        @Override
+        public DiagonalMatrix.Real getDiagonalMatrix() {
+            return new DiagonalMatrix.Real(Arrays.copyOf(eigenValues, eigenValues.length));
+        }
+        
+        
+        public Matrix getReconstructedMatrix() {
+            if(iB == null) iB = B.getInverse();
+            return B.dot(new DiagonalMatrix.Real(eigenValues)).dot(iB);
         }
         
         private int size() {

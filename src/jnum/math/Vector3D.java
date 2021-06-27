@@ -205,13 +205,6 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
     public AbstractMatrix<Double> asRowVector() { 
         return new Matrix(new double[][] {{ x(), y(), z() }});
     }
-    
-
-    @Override
-    public AbstractMatrix<Double> asColumnVector() {
-        return new Matrix(new double[][] { {x()}, {y()}, {z()} });
-    }
-    
        
     @Override
     public final void multiplyByComponentsOf(Coordinates<? extends Double> v) throws NonConformingException {

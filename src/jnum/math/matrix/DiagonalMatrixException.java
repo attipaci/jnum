@@ -23,6 +23,13 @@
 
 package jnum.math.matrix;
 
+/**
+ * An exception thrown when trying to set or modify off-diagonal elements in
+ * a diagonal matrix.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class DiagonalMatrixException extends SquareMatrixException {
     /**
      * 
@@ -34,16 +41,8 @@ public class DiagonalMatrixException extends SquareMatrixException {
         super(defaultMessage);
     }
 
-    public DiagonalMatrixException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public DiagonalMatrixException(String s) {
         super(s);
-    }
-
-    public DiagonalMatrixException(Throwable cause) {
-        super(defaultMessage, cause);
     }
 
     public static String defaultMessage = "diagonal matrix operation on a non-diagonal matrix.";

@@ -37,6 +37,21 @@ import jnum.math.MathVector;
 import jnum.math.Metric;
 import jnum.math.Scalable;
 
+
+/**
+ * A matrix class for diagonal matrices. As opposed to generic matrix implementations, such as {@link AbstractMatrix} and
+ * it sub-classes, which have <i>N</i><sup>2</sup> matrix elements for square matrices of dimension <i>N</i>, diagonal
+ * matrices have only <i>N</i> diagonal elements. Thus all matrix operations with diagonal matrices can be performed
+ * on the order of <i>N</i> times faster than implementing the same diagonal matrix as a generic full-fledged 2D matrix
+ * (with a whole lot of zero elements). This performance advantage is a main and only good reason why diagonal 
+ * matrices are implemented as a separate class of their own.
+ * 
+ * You can nevertheless intermingle normal fully 2D matrices and diagonal matrices in dot products etc.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>   The generic type of the matrix elements in this diagonal matrix.
+ */
 public abstract class DiagonalMatrix<T> implements SquareMatrixAlgebra<DiagonalMatrix<? extends T>, T>,
 Cloneable, CopiableContent<DiagonalMatrix<T>> {
 
@@ -52,16 +67,47 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         return copy(true);
     }
     
+    @Override
     public abstract AbstractVector<T> getVectorInstance(int size);
     
+    /**
+     * Gets a new diagonal matrix of the same type as this matrix and of the specified size.
+     * The new diagonal matrix is initialized with zeroes.
+     * 
+     * @param size  The size of the new diagonal matrix instance
+     * @return      A new diagonal matrix of the same type as this matrix, and of the specified size.
+     */
     public abstract DiagonalMatrix<T> getDiagonalMatrixInstance(int size);
     
+    /**
+     * Gets a full-2D matrix instance of the same generic type as this matrix and the
+     * specified rectangular size. The new matrix can be initialized with zero elements
+     * or created just as an an uninitialized container containing <code>null</code>
+     * references in every slot.
+     * 
+     * @param rows          Number of matrix rows.
+     * @param cols          Number of matrix columns.
+     * @param initialize    Whether the matrix should be populated with 'zero' objects
+     *                      or left empty with <code>null</code> references.
+     * @return              A new full 2D matrix of the same type as this and the requested size.
+     */
     public abstract AbstractMatrix<T> getMatrixInstance(int rows, int cols, boolean initialize);
     
-    
+    /**
+     * Gets the size of this matrix, i.e. the number of diagonal elements it contains.
+     * 
+     * @return      The size (rows and columns) in this matrix.
+     */
     public abstract int size();
     
-    public void assertSize(int size) {
+    /**
+     * Checks if this matrix is of the expected size before attempting an operation, and
+     * throws an exception if the size if the sizes mismatch.
+     * 
+     * @param size      The expected size of this matrix
+     * @throws ShapeException   If the size of this matrix does not match the specified size.
+     */
+    public void assertSize(int size) throws ShapeException {
         if(size != size()) throw new ShapeException("Wrong size " + size() + ". Expected " + size);
     }
     
@@ -127,9 +173,23 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         return true;
     }
     
-    
+
+    /**
+     * Increments a value on the matrix diagonal with a scaled instance of the specified generic type value.
+     * That is the value at <code>[i][i]</code> is incremented by <code>factor * value</code>.
+     * 
+     * @param i         The diagonal element index.
+     * @param value     The generic type value part of the increment
+     * @param factor    The scaling factor for the added value.
+     */
     public abstract void addDiagonalScaled(int i, T value, double factor);
     
+    /**
+     * Multiplies (from the right) a diagonal element in this matrix with the specified generic type value
+     * 
+     * @param i         The diagonal element index.
+     * @param value     The scaling factor for the added value.
+     */
     public abstract void multiplyDiagonalBy(int i, T value);
 
     
@@ -150,38 +210,54 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     }
     
     @Override
-    public T[] dot(T[] v) {
+    public final AbstractVector<T> dot(T[] v) {
         assertSize(v.length);
-        @SuppressWarnings("unchecked")
-        T[] result = (T[]) Array.newInstance(getElementType(), size());
+        AbstractVector<T> result = getVectorInstance(size());
         dot(v, result);
         return result;
     }
     
+   
     @Override
-    public MathVector<T> dot(MathVector<? extends T> v) throws ShapeException {
-        assertSize(v.size());
-        MathVector<T> result = getVectorInstance(size());
+    public AbstractVector<T> dot(double[] v) {
+        assertSize(v.length);
+        AbstractVector<T> result = getVectorInstance(size());
         dot(v, result);
         return result;
     }
-    
+
+    @Override
+    public AbstractVector<T> dot(float[] v) {
+        assertSize(v.length);
+        AbstractVector<T> result = getVectorInstance(size());
+        dot(v, result);
+        return result;
+    }
     
 
     @Override
-    public MathVector<T> dot(RealVector v) {
+    public AbstractVector<T> dot(RealVector v) {
         assertSize(v.size());
-        MathVector<T> result = getVectorInstance(size());
+        AbstractVector<T> result = getVectorInstance(size());
         dot(v, result);
         return result;
     }
     
     @Override
-    public void dot(RealVector v, MathVector<T> result) {
+    public AbstractVector<T> dot(MathVector<? extends T> v) throws ShapeException {
+        assertSize(v.size());
+        AbstractVector<T> result = getVectorInstance(size());
+        dot(v, result);
+        return result;
+    }
+    
+    
+    @Override
+    public final void dot(RealVector v, MathVector<T> result) {
         dot(v.getData(), result);
     }
   
-
+     
     
     @Override
     public void addScaled(DiagonalMatrix<? extends T> o, double factor) {
@@ -237,28 +313,76 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         return P;
     }
 
-   
-    public abstract AbstractMatrix<T> dot(MatrixAlgebra<?, ? extends T> righthand);
+    /**
+     * Gets the dot product of this diagonal matrix with any other matrix.
+     * 
+     * @param righthand     The matrix (of any kind) on the right-hand side of product.
+     * @return              The dot product with the specified other matrix on the righ-hand side.
+     * @throws ShapeException   If the matrices have incompatible dimensions for a dot product.
+     */
+    public abstract AbstractMatrix<T> dot(MatrixAlgebra<?, ? extends T> righthand) throws ShapeException;
     
+    /**
+     * Gets the dot product of the other matrix (on the left) and this diagonal matrix (on the right).
+     * 
+     * @param lefthand      The matrix (of any kind) on the left-hand side of product.
+     * @return              The dot product of the specified other matrix (on the left) and this matrix (on the right).
+     * @throws ShapeException   If the matrices have incompatible dimensions for a dot product.
+     */
+    public abstract AbstractMatrix<T> dotFromLeft(MatrixAlgebra<?, ? extends T> lefthand) throws ShapeException;
+    
+    
+    /**
+     * Converts this diagonal matrix into a full 2D matrix, in which it is possible to set off-diagonal
+     * elements also.
+     * 
+     * @return      The full 2D representation of this diagonal matrix.
+     */
     public AbstractMatrix<T> toFullMatrix() {
         AbstractMatrix<T> M = getMatrixInstance(size(), size(), true);
         for(int i=size(); --i >= 0; ) M.setDiagonal(i, getDiagonal(i));        
         return M;
     }
     
+    /**
+     * Gets the real-valued identity matrix as a diagonal matrix.
+     * 
+     * @param size      The size (number of diagonal elements) of the new identity matrix.
+     * @return          A new identity matrix.
+     */
+    public static DiagonalMatrix.Real indentity(int size) {
+        DiagonalMatrix.Real I = new DiagonalMatrix.Real(size);
+        I.addIdentity();
+        return I;
+    }
     
     
-    
-    
-    
-    
+    /**
+     * A class of diagonal matrices with real numbers (<code>double</code>) elements. It is backed by a
+     * <code>double[]</code> array storage. 
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     */
     public static class Real extends DiagonalMatrix<Double> {
         private double[] data;
         
+        /**
+         * Constructs a real-valued diagonal matrix with the specified size (numbber of diagonal elements).
+         * 
+         * @param size      Number of diagonal elements in this matrix.
+         */
         public Real(int size) {
             data = new double[size];
         }
         
+        /**
+         * Constructs a real-valued diagonal matrix with the specified array as the backing data.
+         * The supplied array is referenced in the new matrix. As such any changes to the data
+         * elements will necessarily affect the diagonal values of the matrix and vice versa.
+         * 
+         * @param data      The array that will be holding the diagonal values of this matrix.
+         */
         public Real(double[] data) {
             this.data = data;
         }
@@ -297,6 +421,16 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         public RealVector dot(RealVector v) {
             return (RealVector) super.dot(v);
         }
+        
+        @Override
+        public RealVector dot(double[] v) {
+            return (RealVector) super.dot(v);
+        }
+        
+        @Override
+        public RealVector dot(float[] v) {
+            return (RealVector) super.dot(v);
+        }
 
         @Override
         public Real getDiagonalMatrixInstance(int size) {
@@ -320,18 +454,36 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         
         @Override
         public Matrix dot(MatrixAlgebra<?, ? extends Double> righthand) {
-            assertSize(righthand.cols());
-            Matrix P = getMatrixInstance(size(), righthand.cols(), false);
-            for(int i=size(); --i >= 0; ) for(int j=righthand.cols(); --j >= 0; ) {
+            assertSize(righthand.rows());
+            Matrix P = getMatrixInstance(righthand.rows(), righthand.cols(), false);
+            for(int i=righthand.rows(); --i >= 0; ) for(int j=righthand.cols(); --j >= 0; ) {
                 P.set(i, j, getDiagonal(i) * righthand.get(i, j));
             }
             return P; 
         }
         
+        @Override
+        public Matrix dotFromLeft(MatrixAlgebra<?, ? extends Double> lefthand) {
+            assertSize(lefthand.cols());
+            Matrix P = getMatrixInstance(lefthand.rows(), lefthand.cols(), false);
+            for(int i=lefthand.rows(); --i >= 0; ) for(int j=lefthand.cols(); --j >= 0; ) {
+                P.set(i, j, lefthand.get(i, j) * getDiagonal(i));
+            }
+            return P; 
+        }
+        
+        /**
+         * Returns the dot product of this diagonal matrix and a full 2D generic type matrix
+         * on the right-hand side as a new 2D generic type matrix of the same class as the argument.
+         * 
+         * @param <T>       The generic type of elements in the specified matrix argument, and returned matrix.
+         * @param righthand The matrix that multiplies this matrix from the right-hand side.
+         * @return          A matrix of the same class as the argument, with the result of the dot product.
+         */
         public <T extends Scalable> AbstractMatrix<T> dot(AbstractMatrix<T> righthand) {
-            assertSize(righthand.cols());
-            AbstractMatrix<T> P = righthand.getMatrixInstance(size(), righthand.cols(), false);
-            for(int i=size(); --i >= 0; ) for(int j=righthand.cols(); --j >= 0; ) {
+            assertSize(righthand.rows());
+            AbstractMatrix<T> P = righthand.getMatrixInstance(righthand.rows(), righthand.cols(), false);
+            for(int i=righthand.rows(); --i >= 0; ) for(int j=righthand.cols(); --j >= 0; ) {
                 T e = righthand.copyOf(i, j);
                 e.scale(getDiagonal(i));
                 P.set(i, j, e);
@@ -339,18 +491,77 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             return P; 
         }
         
+        
+        /**
+         * Returns the dot product of a full 2D generic type matrix (on the left) and this diagonal matrix
+         * (on the right) as a new 2D generic type matrix of the same class as the argument.
+         * 
+         * @param <T>       The generic type of elements in the specified matrix argument, and returned matrix.
+         * @param righthand The matrix that multiplies this matrix from the left-hand side.
+         * @return          A matrix of the same class as the argument, with the result of the dot product.
+         */
+        public <T extends Scalable> AbstractMatrix<T> dotFromLeft(AbstractMatrix<T> lefthand) {
+            assertSize(lefthand.cols());
+            AbstractMatrix<T> P = lefthand.getMatrixInstance(lefthand.rows(), lefthand.cols(),  false);
+            for(int i=lefthand.rows(); --i >= 0; ) for(int j=lefthand.cols(); --j >= 0; ) {
+                T e = lefthand.copyOf(i, j);
+                e.scale(getDiagonal(i));
+                P.set(i, j, e);
+            }
+            return P; 
+        }
+        
         @Override
-        public Double trace() {
+        public Double getTrace() {
             double sum = 0.0;
             for(int i = size(); --i >= 0; ) sum += data[i];
             return sum;
         }
 
         @Override
+        public boolean isTraceless() throws SquareMatrixException {
+            double sum = 0.0, mag = 0.0;
+            for(int i=rows(); --i >= 0; ) {
+                double v = data[i];
+                sum += v;
+                if(Math.abs(v) > mag) mag = Math.abs(v);
+            }
+                
+            return Math.abs(sum) <= 1e-12 * mag;
+        }
+        
+        @Override
         public Double getDeterminant() {
             double det = 1.0;
             for(int i = size(); --i >= 0; ) det *= data[i];
             return det;
+        }
+        
+        @Override
+        public final double getMagnitude() {
+            double mag = 0.0;
+            for(int i = size(); --i >= 0; ) if(Math.abs(data[i]) > mag) mag = Math.abs(data[i]);
+            return mag;
+        }
+        
+        @Override
+        public final int getRank() {
+            double tiny = 1e-12 * getMagnitude();
+            
+            int rank = 0;
+            for(int i=rows(); --i >= 0; ) 
+                for(int j=cols(); --j >= 0; ) if(Math.abs(data[i]) > tiny) {
+                    rank++;
+                    break;
+                }
+            
+            return rank;
+        }
+        
+        @Override
+        public void sanitize() {
+            double tiny = 1e-12 * getMagnitude();
+            for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) if(Math.abs(data[i]) < tiny) data[i] = 0.0;
         }
 
         @Override
@@ -385,6 +596,13 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         }
 
         @Override
+        public void dot(Double[] v, MathVector<Double> result) {
+            assertSize(v.length);
+            assertSize(result.size());
+            for(int i = size(); --i >= 0; ) result.setComponent(i, data[i] * v[i]);
+        }
+        
+        @Override
         public void dot(double[] v, MathVector<Double> result) {
             assertSize(v.length);
             assertSize(result.size());
@@ -396,22 +614,6 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             assertSize(v.length);
             assertSize(result.size());
             for(int i = size(); --i >= 0; ) result.setComponent(i, data[i] * v[i]);
-        }
-
-        @Override
-        public double[] dot(double[] v) {
-            assertSize(v.length);
-            double[] result = new double[size()];
-            for(int i = size(); --i >= 0; ) result[i] = data[i] * v[i];
-            return result;
-        }
-
-        @Override
-        public float[] dot(float[] v) {
-            assertSize(v.length);
-            float[] result = new float[size()];
-            for(int i = size(); --i >= 0; ) result[i] = (float) (data[i] * v[i]);
-            return result;
         }
 
         @Override
@@ -484,7 +686,15 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             return data[i] == 0.0;
         }
 
-
+        /**
+         * Gets the distance to another diagonal matrix of any generic type. The distance is
+         * the square-root of the square sum of all elements in the difference matrix of this matrix 
+         * and the supplied  matrix argument. It is a measure of how far the entries of the
+         * two matrices differ from one another.
+         * 
+         * @param o     The other matrix to which the distance is to be measured
+         * @return      The square-root of the square-sum of the difference of matrix elements.
+         */
         public double distanceTo(DiagonalMatrix<?> o) {
             assertSize(o.size());
             
@@ -526,18 +736,41 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     }
     
     
-    
+    /**
+     * A class of diagonal matrices with non-primitive generic type values.
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     * @param <T>       The generic type of elements in this diagonal matrix. The typer must be capable of supporting
+     *                  a set of basic mathematical operations in order to support a matrix algebra.
+     */
     public static class Generic<T extends Copiable<? super T> & AbstractAlgebra<? super T> & LinearAlgebra<? super T> & Metric<? super T> & AbsoluteValue> 
     extends DiagonalMatrix<T> {
         private Class<T> type;
         private T[] data;
         private T identity;
 
+        /**
+         * Constructs a new generic-valued diagonal matrix for a given class of elements and the specified
+         * size (number of diagonal elements).
+         * 
+         * @param type      The class of objects contained in this matrix.
+         * @param size      The size (number of diagonal elements) of this matrix.
+         */
         @SuppressWarnings("unchecked")
         public Generic(Class<T> type, int size) {
             this(type, (T[]) Array.newInstance(type, size));
         }
         
+        /**
+         * Constructs a new generic-valued diagonal matrix a given class of elements and with the specified
+         * object array holding the references to the diagonal matrix elements. Thus, changes to the elements
+         * contained in the array will necessarily affect the diagonal values contained in this matrix
+         * and vice versa.
+         * 
+         * @param type      The class of objects contained in this matrix.
+         * @param data      The array that will be holding the diagonal elements in this matrix.
+         */
         public Generic(Class<T> type, T[] data) {
             this.type = type;
             this.data = data;
@@ -577,10 +810,24 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
 
         
         @Override
-        public final T trace() {
+        public final T getTrace() {
             T sum = newEntry();
             for(int i=size(); --i >= 0; ) sum.add(getDiagonal(i));
             return sum;
+        }
+        
+        @Override
+        public boolean isTraceless() throws SquareMatrixException {
+            T sum = newEntry();
+            double mag2 = 0.0;
+            for(int i=rows(); --i >= 0; ) {
+                T v = data[i];
+                sum.add(v);
+                double a2 = v.absSquared();
+                if(a2 > mag2) mag2 = a2;
+            }
+                
+            return sum.absSquared() <= 1e-24 * mag2;
         }
 
         @Override
@@ -589,6 +836,38 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             det.setIdentity();
             for(int i=size(); --i >= 0; ) det.multiplyBy(getDiagonal(i));
             return det;
+        }
+        
+        @Override
+        public final double getMagnitude() {
+            double mag = 0.0;
+            for(int i = size(); --i >= 0; ) {
+                double a = data[i].abs();
+                if(a > mag) mag = a;
+            }
+            return mag;
+        }
+        
+        @Override
+        public final int getRank() {
+            double tiny2 = 1e-12 * getMagnitude();
+            tiny2 *= tiny2;
+            
+            int rank = 0;
+            for(int i=rows(); --i >= 0; ) 
+                for(int j=cols(); --j >= 0; ) if(data[i].absSquared() > tiny2) {
+                    rank++;
+                    break;
+                }
+            
+            return rank;
+        }
+        
+        @Override
+        public void sanitize() {
+            double tiny2 = 1e-12 * getMagnitude();
+            tiny2 *= tiny2;
+            for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) if(data[i].absSquared() < tiny2) data[i].zero();
         }
         
         @Override
@@ -618,14 +897,31 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         
         @Override
         public ObjectMatrix<T> dot(MatrixAlgebra<?, ? extends T> righthand) {
-            assertSize(righthand.cols());
-            ObjectMatrix<T> P = getMatrixInstance(size(), righthand.cols(), true);
-            for(int i=size(); --i >= 0; ) for(int j=righthand.cols(); --j >= 0; ) {
+            assertSize(righthand.rows());
+            ObjectMatrix<T> P = getMatrixInstance(righthand.rows(), righthand.cols(), true);
+            for(int i=righthand.rows(); --i >= 0; ) for(int j=righthand.cols(); --j >= 0; ) {
                 P.get(i, j).setProduct(getDiagonal(i), righthand.get(i, j));
             }
             return P;            
         }
         
+        @Override
+        public ObjectMatrix<T> dotFromLeft(MatrixAlgebra<?, ? extends T> lefthand) {
+            assertSize(lefthand.cols());
+            ObjectMatrix<T> P = getMatrixInstance(lefthand.rows(), lefthand.cols(), true);
+            for(int i=lefthand.rows(); --i >= 0; ) for(int j=lefthand.cols(); --j >= 0; ) {
+                P.get(i, j).setProduct(lefthand.get(i, j), getDiagonal(i));
+            }
+            return P;            
+        }
+             
+        
+        /**
+         * Gets the dot product of this diagonal matrix and a real-valued other matrix.
+         * 
+         * @param M     The real-valued other matrix in the dot product.
+         * @return      A full 2D matrix of the same element type as this one, with the result of the dot product.
+         */
         public ObjectMatrix<T> dot(Matrix M) {
             assertSize(M.cols());
             ObjectMatrix<T> P = getMatrixInstance(size(), M.cols(), false);
@@ -646,6 +942,17 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         public ObjectVector<T> dot(RealVector v) {
             return (ObjectVector<T>) super.dot(v);
         }
+        
+        @Override
+        public ObjectVector<T> dot(double[] v) {
+            return (ObjectVector<T>) super.dot(v);
+        }
+        
+        @Override
+        public ObjectVector<T> dot(float[] v) {
+            return (ObjectVector<T>) super.dot(v);
+        }
+        
 
         @Override
         public void dot(MathVector<? extends T> v, MathVector<T> result) throws ShapeException {
@@ -659,6 +966,13 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             assertSize(v.length);
             assertSize(result.length);
             for(int i=size(); --i >= 0; ) result[i].setProduct(getDiagonal(i), v[i]);            
+        }
+        
+        @Override
+        public void dot(T[] v, MathVector<T> result) {
+            assertSize(v.length);
+            assertSize(result.size());
+            for(int i=size(); --i >= 0; ) result.getComponent(i).setProduct(getDiagonal(i), v[i]);            
         }
 
         @Override
@@ -683,31 +997,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             }
         }
 
-        @Override
-        public T[] dot(double[] v) {
-            @SuppressWarnings("unchecked")
-            T[] result = (T[]) Array.newInstance(type, size());
-            for(int i=size(); --i >= 0; ) {
-                T p = copyOfDiagonal(i);
-                p.scale(v[i]);
-                result[i] = p;
-            }
-            return result;
-        }
-
-        @Override
-        public T[] dot(float[] v) {
-            @SuppressWarnings("unchecked")
-            T[] result = (T[]) Array.newInstance(type, size());
-            for(int i=size(); --i >= 0; ) {
-                T p = copyOfDiagonal(i);
-                p.scale(v[i]);
-                result[i] = p;
-            }
-            return result;
-        }
-
-
+    
         @Override
         public void setSum(DiagonalMatrix<? extends T> a, DiagonalMatrix<? extends T> b) {
             assertSize(a.size());
@@ -853,13 +1143,30 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         
     }
     
-    
+    /**
+     * A diagonal matrix class with complex-valued elements.
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     */
     public static class Complex extends Generic<jnum.math.Complex> {
         
+        /**
+         * Construct a new diagonal matrix with complex elements with the specified size (number of diagonal elements).
+         * 
+         * @param size      Number of diagonal elements in the matrix.
+         */
         public Complex(int size) {
             super(jnum.math.Complex.class, size);
         }
  
+        /**
+         * Constructs a diagonal matrix with complex elements and with the specified object array holding the 
+         * references to the diagonal matrix elements. Thus, changes to the elements contained in the array will 
+         * necessarily affect the diagonal values contained in this matrix and vice versa.
+         * 
+         * @param data      The array that will be holding the diagonal elements in this matrix.
+         */
         public Complex(jnum.math.Complex[] data) {
             super(jnum.math.Complex.class, data);
         }

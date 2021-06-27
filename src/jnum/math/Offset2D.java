@@ -42,9 +42,6 @@ public class Offset2D extends Vector2D {
         copy(offset);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.math.Coordinate2D#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -54,9 +51,6 @@ public class Offset2D extends Vector2D {
         return super.equals(o);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.math.Coordinate2D#hashCode()
-     */
     @Override
     public int hashCode() { return super.hashCode() ^ reference.hashCode(); }
 

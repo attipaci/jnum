@@ -26,7 +26,7 @@ package jnum.math.matrix;
 import jnum.NonConformingException;
 
 /**
- * An expection that indicates that there is something about the shape of the object (e.g. a matrix)
+ * An expection that indicates that there is something about the shape of the argument (e.g. a matrix)
  * or objects (e.g. a matrix and a vector) that makes the operation operation impossible to
  * perform as requested.
  * 

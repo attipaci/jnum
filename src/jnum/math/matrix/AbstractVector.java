@@ -34,19 +34,53 @@ import jnum.math.MathVector;
 import jnum.text.DecimalFormating;
 
 
-
+/**
+ * An abstract vector class representing a mathematical vector for some generic type element. It has two principal 
+ * subclasses, {@link RealVector}, which is a real-valued vector with essentially primitive <code>double</code> 
+ * elements, and {@link ObjectVector}, which handles vector for generic type objects as long as they provide the 
+ * required algebra to support matrix operation. For example {@link ComplexVector} with {@link Complex} elements 
+ * is an example subtype, but one could construct vectors e.g. with {@link Matrix} or {@link ObjectMatrix} elements 
+ * (for a vecor of matrices), or vectors with other more complex types...
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>       The generic type of the elements in this vector.
+ */
 public abstract class AbstractVector<T> implements MathVector<T>, Serializable, Cloneable, CopiableContent<AbstractVector<T>>, DecimalFormating {
 
 	private static final long serialVersionUID = 785522803183758105L;
 
-	protected AbstractVector() {}
-
+	/**
+	 * Gets the class of elements contained in this vector.
+	 * 
+	 * @return     Class of generic type elements.
+	 */
 	public abstract Class<T> getType();
 	
+	/**
+	 * Gets the underlying data object, normally an simple array, either and object array of type T[]
+	 * or a primitive array such as double[].
+	 * 
+	 * @return     The data object (array) that holds the underlying data of this vector.
+	 */
 	public abstract Object getData();
 	
+	/**
+	 * Sets the underlying data in this vector to the specified data object, which is usually a simple
+	 * array, either an object array T[], or a primitive array such as double[]. Whatever it is
+	 * it expected the type of object as returned by {@link #getData()}.
+	 * 
+	 * @param data     The new data object (array) for this vector.
+	 */
 	public abstract void setData(Object data);
 
+	/**
+	 * Gets a new instance of a vector of the same type as this one, with the specified size. The new 
+	 * vector is initialized with zero content.
+	 * 
+	 * @param size     The size (number of components) of the new vector instance.
+	 * @return         A new vetor of the same type as this, with the specified size, and zero inital values.
+	 */
 	public abstract AbstractVector<T> getVectorInstance(int size);
 	
 	
@@ -75,7 +109,12 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
 		return l;
 	}
 
-
+	/**
+     * Checks if the vector has the expected size for some operation. If not a {@link ShapeException} is thrown.
+     * 
+     * @param size
+     * @throws ShapeException
+     */
 	public void assertSize(int size) { 
 		if(size() != size) throw new ShapeException("Vector has wrong size " + size() + ". Expected " + size + ".");	
 	}
@@ -117,9 +156,23 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
         return getComponent(index.i());
     }
 
-   
-    public abstract T copyOf(Index1D index);
+    /**
+     * Gets an independent copy of a component in this vector.
+     * 
+     * @param i        The index of the component
+     * @return         A deep copy of the value at the specified location.
+     */
+    public abstract T copyOf(int i);
  
+    /**
+     * Gets an independent copy of a component in this vector.
+     * 
+     * @param idx      The index of the component
+     * @return         A deep copy of the value at the specified location.
+     */
+    public final T copyOf(Index1D idx) {
+        return copyOf(idx.i());
+    }
 
     @Override
     public void set(Index1D index, T value) {
@@ -165,7 +218,29 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
         return true;
     }
 
+    /**
+     * Attempts to convert a component in this vector to a string of the specified number format.
+     * If the component is not a {@link Number} type, or if it does not support 
+     * {@link jnum.text.DecimalFormating} then then this method it will simply return the
+     * component calling its default {@link Object#toString()} implementation.
+     * 
+     * @param i     Index of component
+     * @param nf    Number formating specification. It can be null to simply call {@link Object#toString()} on the component.
+     * @return      The string representation of the vector component.
+     */
     public abstract String toString(int i, NumberFormat nf);
+    
+    /**
+     * Same as {@link #toString(int, NumberFormat)} but with an {@link Index1D} specifying the
+     * component index.
+     * 
+     * @param idx   Index of component
+     * @param nf    Number formating specification. It can be null to simply call {@link Object#toString()} on the component.
+     * @return      The string representation of the vector component.
+     */
+    public final String toString(Index1D idx, NumberFormat nf) {
+        return toString(idx.i(), nf);
+    }
     
     @Override
     public String toString() {
@@ -192,12 +267,5 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
         buf.append(" }");
         return new String(buf);
     }
-    
-
-    public final static int ROW_VECTOR = 0;
-
-    public final static int COLUMN_VECTOR = 1;
-
-
-	
+   
 }

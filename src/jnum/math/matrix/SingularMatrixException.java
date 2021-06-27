@@ -21,6 +21,29 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-
 package jnum.math.matrix;
 
+/**
+ * An exception thrown when a singularity (degeneracy) in the matrix prevents
+ * performing an operation, such as a matrix inversion.. 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
+public class SingularMatrixException extends ArithmeticException {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5112498399596176163L;
+
+    public SingularMatrixException() {
+        super(defaultMessage);
+    }
+
+    public SingularMatrixException(String s) {
+        super(s);
+    }
+
+    private static String defaultMessage = "Cannot perform operation: singular input matrix.";
+}

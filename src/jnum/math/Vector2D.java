@@ -248,12 +248,6 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
     public AbstractMatrix<Double> asRowVector() { 
         return new Matrix(new double[][] {{ x(), y() }});
     }
-
-
-    @Override
-    public AbstractMatrix<Double> asColumnVector() {
-        return new Matrix(new double[][] { {x()}, {y()} });
-    }
     
     @Override
     public final void multiplyByComponentsOf(Coordinates<? extends Double> v) throws NonConformingException {

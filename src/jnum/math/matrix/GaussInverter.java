@@ -23,17 +23,37 @@
 
 package jnum.math.matrix;
 
+
 import jnum.math.MathVector;
 
-public class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
+
+/**
+ * An intermediate object class for calculating the inverse of a matrix using Gauss-Jordan
+ * elimination. Apart from providing the inverse, and matrix solutions, it can also
+ * be used for obtaining the rank of the matrix at very little extra cost.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>
+ */
+public abstract class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
     private AbstractMatrix<T> inverse;
     private int rank = -1;
 
-    protected GaussInverter(AbstractMatrix<T> M) {
+    /**
+     * Construct a new matrix inverter object for the specified matrix. The inverse
+     * is calculated by Gauss-Jordan elimination of a matrix constructed of
+     * the argument and the identity matrix adjoint to it.
+     * 
+     * @param M                         The matrix that is to be inverted.
+     * @throws SquareMatrixException    If the matrix argument is not a square matrix.
+     * @throws SingularMatrixException  If the matrix argument cannot be inverted because it is singular (degenerate).
+     */
+    protected GaussInverter(AbstractMatrix<T> M) throws SquareMatrixException, SingularMatrixException {
         eliminate(M);
     }
 
-    private void eliminate(AbstractMatrix<T> M) {
+    private void eliminate(AbstractMatrix<T> M) throws SquareMatrixException, SingularMatrixException {
         if(!M.isSquare()) throw new SquareMatrixException();
 
         final int size = M.rows();
@@ -63,7 +83,7 @@ public class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
             }
         }
         
-        if(rank != size) throw new IllegalArgumentException("Singular imput matrix.");
+        if(rank != size) throw new SingularMatrixException();
         
         // Get the inverse as the second half of columns in this matrix...
         // Elements that are zero within rounding errors are set to zero.
@@ -74,7 +94,15 @@ public class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
        
     }
 
-    protected AbstractMatrix<T> getI() {
+    /**
+     * Gets the master inverse matrix. This is for use by sub-class implementations only, and only
+     * as long as they do not modify the returned master, which should never be corrupted.
+     * Any operations that do require modifying the returned inverse should call {@link #getInverseMatrix()}
+     * instead. 
+     * 
+     * @return
+     */
+    protected AbstractMatrix<T> getMasterInverse() {
        return inverse; 
     }
     
@@ -83,27 +111,18 @@ public class GaussInverter<T> implements MatrixInverter<T>, MatrixSolver<T> {
         return inverse.copy();
     }
 
-    public final synchronized int getRank() {
-        return rank;
-    }
-
-    @Override
-    public T[] solveFor(T[] y) {
-        return inverse.dot(y);
-    }
-
     @Override
     public void solveFor(T[] y, T[] x) {
         inverse.dot(y, x);
     }
 
     @Override
-    public MathVector<T> solveFor(MathVector<T> y) {
+    public AbstractVector<T> solveFor(MathVector<? extends T> y) {
         return inverse.dot(y);
     }
 
     @Override
-    public void solveFor(MathVector<T> y, MathVector<T> x) {
+    public void solveFor(MathVector<? extends T> y, MathVector<T> x) {
         inverse.dot(y, x);        
     }  
 

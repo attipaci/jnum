@@ -24,30 +24,72 @@
 package jnum.math.matrix;
 
 
+/**
+ * A class for handling the LU decomposition of full 2D matrices of any generic type.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>       The generic type of matrix element
+ */
 public abstract class LUDecomposition<T> implements MatrixInverter<T>, MatrixSolver<T> {
     protected AbstractMatrix<T> LU;
     protected int[] index;
     protected boolean evenChanges;
     
+    /**
+     * A very small numerical value, much smaller than what any reasonable matrix element would
+     * otherwise be.
+     * 
+     */
     public static double defaultTinyValue = 1e-200;
     
-    protected LUDecomposition(AbstractMatrix<T> M) {
+    /**
+     * Constructs a new LU decomposition of a matrix.
+     * 
+     * @param M                         The 2D matrix that is to be decomposed.
+     * @throws SquareMatrixException    If the matrix argument is not of the required square shape for decomposition
+     * @throws SingularMatrixException  If the matrix argument is singular (degenerate)
+     */
+    protected LUDecomposition(AbstractMatrix<T> M) throws SquareMatrixException, SingularMatrixException {
         this(M, defaultTinyValue);
     }
     
-    protected LUDecomposition(AbstractMatrix<T> M, double tinyValue) throws SquareMatrixException {
+    /**
+     * Constructs a new LU decomposition of a matrix, specifying what very small numerical value should be used
+     * to substitute instead of zeroes for the arithmetic
+     * 
+     * @param M                         The 2D matrix that is to be decomposed.
+     * @throws SquareMatrixException    If the matrix argument is not of the required square shape for decomposition
+     * @throws SingularMatrixException  If the matrix argument is singular (degenerate)
+     */
+    protected LUDecomposition(AbstractMatrix<T> M, double tinyValue) throws SquareMatrixException, SingularMatrixException {
         if(!M.isSquare()) throw new SquareMatrixException();
         LU = M.copy();
         index = new int[size()];
         evenChanges = true;
         decompose(tinyValue);
+        LU.sanitize();
     }
     
-    
+    /**
+     * Gets the decomposed L and U matrices co-existing in the same LU representation.
+     * 
+     * @return  The LU matrix
+     */
     public AbstractMatrix<T> getMatrix() { return LU; }
     
+    /**
+     * Gets the square size of the parent matrix and its decomposition.
+     * 
+     * @return  The size (rows and cols) of the original and LU matrices.
+     */
     protected final int size() { return LU.rows(); }
     
+    /**
+     * Gets the determinant of the parent matrix, easily calculated from its decomposition.
+     * 
+     * @return  The determinant of the parent matrix.
+     */
     public abstract T getDeterminant();
     
     private void decompose(double tinyValue) {
@@ -67,7 +109,7 @@ public abstract class LUDecomposition<T> implements MatrixInverter<T>, MatrixSol
                 final double mag = e.from(i, j).abs();
                 if(mag > big) big = mag;
             }
-            if(big == 0.0) throw new IllegalStateException("Singular matrix in LU decomposition.");
+            if(big == 0.0) throw new SingularMatrixException();
             v[i] = 1.0 / big;
         }
         for(int j=0; j<n; j++ ) {

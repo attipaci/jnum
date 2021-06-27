@@ -36,10 +36,9 @@ public class SVD implements MatrixInverter<Double>, MatrixSolver<Double>, RealMa
 
     private Matrix u;
     private Matrix v;  // square
-
-    private Matrix inverse;
-
     private double[] w;
+    
+    private Matrix inverse;
     
     public static int defaultMaxIterations = 100;
 
@@ -105,7 +104,6 @@ public class SVD implements MatrixInverter<Double>, MatrixSolver<Double>, RealMa
 
     }
 
-
     @Override
     public Double[] solveFor(Double[] y) {
         u.assertSize(y.length, cols());
@@ -117,29 +115,24 @@ public class SVD implements MatrixInverter<Double>, MatrixSolver<Double>, RealMa
     @Override
     public void solveFor(Double[] y, Double[] x) {
         u.assertSize(y.length, cols());
-        double[] a = new double[y.length];
-        for(int i=y.length; --i >= 0; ) a[i] = y[i];
-        a = solveFor(a);
-        for(int i=x.length; --i >= 0; ) x[i] = a[i]; 
+        double[] v = new double[y.length];
+        for(int i=y.length; --i >= 0; ) v[i] = y[i];
+        v = solveFor(v);
+        for(int i=x.length; --i >= 0; ) x[i] = v[i]; 
     }
 
     @Override
-    public RealVector solveFor(MathVector<Double> y) {
+    public RealVector solveFor(MathVector<? extends Double> y) {
         u.assertSize(y.size(), cols());
         RealVector x = new RealVector(cols());
         solveFor(y, x);
         return x;
     }
 
-
-
     @Override
-    public void solveFor(MathVector<Double> y, MathVector<Double> x) {
-        u.assertSize(y.size(), x.size());
-        double[] a = new double[y.size()];
-        for(int i=y.size(); --i >=0 ; ) a[i] = y.getComponent(i);
-        a = solveFor(a);
-        for(int i=x.size(); --i >=0 ; ) x.setComponent(i, a[i]);
+    public void solveFor(MathVector<? extends Double> y, MathVector<Double> x) {
+        RealVector vx = solveFor(y);
+        for(int i=x.size(); --i >=0 ; ) x.setComponent(i, vx.getComponent(i));
     }
 
 

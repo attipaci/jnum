@@ -91,23 +91,14 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     public final Double z() { return component.length > 1 ? component[2] : 0.0; }
 
 
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#getType()
-     */
     @Override
     public Class<Double> getType() { return double.class; }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#getData()
-     */
     @Override
     public double[] getData() {
         return component;
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#setData(java.lang.Object)
-     */
     @Override
     public void setData(Object data) { 
         double[] array = (double[]) data;
@@ -118,21 +109,13 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     
     public void setData(double[] data) { component = data; }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#size()
-     */
     @Override
     public final int size() { return component.length; }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#getComponent(int)
-     */
     @Override
     public final Double getComponent(int i) { return component[i]; }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#setComponent(int, java.lang.Object)
-     */
+
     @Override
     public final void setComponent(int i, Double x) { component[i] = x; }
     
@@ -144,7 +127,7 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     public final void incrementValue(int i, Double x) { component[i] += x; }
 
     @Override
-    public final Double copyOf(Index1D index) { return get(index); }
+    public final Double copyOf(int i) { return component[i]; }
 
     
     @Override
@@ -158,9 +141,6 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
         for(int i=size(); --i >= 0; ) component[i] *= v.getComponent(i);
     }
     
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#dot(kovacs.math.AbstractVector)
-     */
     @Override
     public Double dot(Coordinates<? extends Double> v) {
         double sum = 0.0;
@@ -209,9 +189,6 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     }
     
     
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#asRowVector()
-     */
     @Override
     public Matrix asRowVector() { 
         double[][] array = new double[1][];
@@ -219,76 +196,47 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
         return new Matrix(array);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#asColumnVector()
-     */
-    @Override
-    public Matrix asColumnVector() {
-        Matrix M = new Matrix(size(), 1);
-        M.setColumn(0, component);
-        return M;
-    }
-
-    /* (non-Javadoc)
-     * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
-     */
     @Override
     public void addScaled(MathVector<? extends Double> o, double factor) {
         for(int i=size(); --i >= 0; ) component[i] += o.getComponent(i) * factor;		
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.LinearAlgebra#isNull()
-     */
     @Override
     public boolean isNull() {
         for(int i=size(); --i >= 0; ) if(component[i] != 0.0) return false;
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.LinearAlgebra#zero()
-     */
     @Override
     public void zero() {
         for(int i=size(); --i >= 0; ) component[i] = 0.0;
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Additive#subtract(java.lang.Object)
-     */
+
     @Override
     public void subtract(MathVector<? extends Double> o) {
         for(int i=size(); --i >= 0; ) component[i] -= o.getComponent(i);	
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Additive#add(java.lang.Object)
-     */
+
     @Override
     public void add(MathVector<? extends Double> o) {
         for(int i=component.length; --i >= 0; ) component[i] += o.getComponent(i);	
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Scalable#scale(double)
-     */
+
     @Override
     public void scale(double factor) {
         for(int i=component.length; --i >= 0; ) component[i] *= factor;		
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.AbsoluteValue#norm()
-     */
+
     @Override
     public double absSquared() {
         return dot(this);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Metric#distanceTo(java.lang.Object)
-     */
+
     @Override
     public double distanceTo(MathVector<? extends Double> v) {
         double d2 = 0.0;
@@ -299,9 +247,7 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
         return Math.sqrt(d2);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.AbstractVector#orthogonalizeTo(kovacs.math.AbstractVector)
-     */
+
     @Override
     public void orthogonalizeTo(MathVector<? extends Double> v) {
         addScaled(v, -dot(v) / (abs() * v.abs()));
@@ -316,18 +262,13 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     }
 
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
-     */
     @Override
     public void setSum(MathVector<? extends Double> a, MathVector<? extends Double> b) {
         if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
         for(int i=size(); --i >= 0; ) component[i] = a.getComponent(i) - b.getComponent(i);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Additive#setDifference(java.lang.Object, java.lang.Object)
-     */
+
     @Override
     public void setDifference(MathVector<? extends Double> a, MathVector<? extends Double> b) {
         if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
@@ -413,10 +354,6 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     @Override
     public void add(Index1D index, Number value) {
         component[index.i()] += value.doubleValue();
-    }
-
-
-
-   
+    }   
 
 }

@@ -31,7 +31,15 @@ import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;
 import jnum.math.Metric;
 
-
+/**
+ * A base interface for matrix representation. It specifies a set of basic matrix operations. In other
+ * words, it provides the core matrix API that all matrix implementation will provide.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <M>   The generic type of the matrix object in this algebra
+ * @param <E>   The generic type of the matrix element in this algebra.
+ */
 public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearAlgebra<M>, DotProduct<M, M>, Metric<MatrixAlgebra<?, ?>>, IdentityValue {
     
     /**
@@ -40,6 +48,16 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      * @return     The class of elements contained in this matrix.
      */
     public Class<E> getElementType();
+    
+    
+    /**
+     * Gets a new vector of the same generic type as the element type supported by this matrix.
+     * The returned vector is initialized to contain all zero valued components.
+     * 
+     * @param size  The size (number of component) of the vector
+     * @return      A new vector of the requested size and of the same generic type as this matrix. 
+     */
+    public AbstractVector<E> getVectorInstance(int size);
     
     /**
      * Gets the number of rows in this matrix.
@@ -83,8 +101,6 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
     public boolean isSquare();
     
     
-    public boolean isDiagonal();
-    
     /**
      * Gets the matrix element at the specified row, column index in the matrix.
      * 
@@ -105,28 +121,181 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      *                 to the specified value).
      */
     public void set(int i, int j, E value);
+ 
+    /**
+     * Checks if this matrix is a diagonal matrix, with all off-diagonal elements being zeroes.
+     * 
+     * @return  <code>true</code> if this matrix is of diagonal form, otherwise <code>false</code>.
+     */
+    public boolean isDiagonal();
     
 
-   
-    public MathVector<E> dot(MathVector<? extends E> v) throws ShapeException;
+    /**
+     * Gets the largest absolute value from among all the matrix elements in this matrix.
+     * 
+     * @return      The largest absolute value among the matrix elements.
+     */
+    public double getMagnitude();
     
+    /**
+     * Gets the rank of the matrix, that is the dimension of the space the matrix spans, that
+     * is also the number of independent rows in the matrix that cannot b expressed as a linear 
+     * combination of other rows.
+     * 
+     * @return      the rank of this matrix
+     */
+    public int getRank();
+    
+    /**
+     * Replace relatively tiny matrix element values (relative to the highest magnitude matrix element
+     * with zeroes, since these tiny values may just be rounding errors...
+     * 
+     */
+    public void sanitize();
+      
+
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
+     * side. I.e. it returns <b>M</b> <i>dot</i> <b>v</b>.
+     * 
+     * @param v         Vector to operate on.
+     * @return          The vector result of this matrix operated on the input vector. The returned
+     *                  vector will be of the type returned by {@link #getVectorInstance(int)}.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix for the product to be calculated.
+     */
+    public AbstractVector<E> dot(MathVector<? extends E> v) throws ShapeException;
+    
+
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
+     * side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the specified second
+     * vector argument.
+     * 
+     * @param v         Vector to operate on.
+     * @param result    The vector in which to return the result.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */
     public void dot(MathVector<? extends E> v, MathVector<E> result) throws ShapeException;
     
-    public E[] dot(E[] v);
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
+     * side. I.e. it returns <b>M</b> <i>dot</i> <b>v</b>.
+     * 
+     * @param v         Vector to operate on.
+     * @return          The Java array containing the result of this matrix operated on the input vector. 
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix for the product to be calculated.
+     */
+    public AbstractVector<E> dot(E[] v) throws ShapeException;
     
-    public void dot(E[] v, E[] result);
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
+     * side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the specified second
+     * vector argument.
+     * 
+     * @param v         Vector to operate on.
+     * @param result    The array in which to return the result.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */
+    public void dot(E[] v, E[] result) throws ShapeException;
     
-    public void dot(double[] v, MathVector<E> result);
     
-    public void dot(float[] v, MathVector<E> result);
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
+     * side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the specified second
+     * vector argument.
+     * 
+     * @param v         Vector to operate on.
+     * @param result    The array in which to return the result.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */
+    public void dot(E[] v, MathVector<E> result) throws ShapeException;
     
-    public Object dot(double[] v);
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) 
+     * on the right-hand side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the 
+     * specified second vector argument.
+     * 
+     * @param v         Real-valued vector to operate on.
+     * @param result    The vector in which to return the result.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */
+    public void dot(double[] v, MathVector<E> result) throws ShapeException;
     
-    public Object dot(float[] v);
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) on the right-hand
+     * side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the specified second
+     * vector argument.
+     * 
+     * @param v         Real-valued vector to operate on.
+     * @param result    The vector in which to return the result.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */
+    public void dot(float[] v, MathVector<E> result) throws ShapeException;
     
-    public void dot(RealVector v, MathVector<E> result);
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) on the right-hand
+     * side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the specified second
+     * vector argument.
+     * 
+     * @param v         Real-valued vector to operate on.
+     * @return          The vector result of this matrix operated on the input vector. The returned
+     *                  vector will be of the type returned by {@link #getVectorInstance(int)}.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */
+    public AbstractVector<E> dot(double[] v) throws ShapeException;
     
-    public MathVector<E> dot(RealVector v);
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) on the right-hand
+     * side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the specified second
+     * vector argument.
+     * 
+     * @param v         Real-valued vector to operate on.
+     * @return          The vector result of this matrix operated on the input vector. The returned
+     *                  vector will be of the type returned by {@link #getVectorInstance(int)}.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */
+    public AbstractVector<E> dot(float[] v) throws ShapeException;
+    
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
+     * side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the specified second
+     * vector argument.
+     * 
+     * @param v         Real-valued vector to operate on.
+     * @param result    The vector in which to return the result.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */
+    public void dot(RealVector v, MathVector<E> result) throws ShapeException;
+    
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
+     * side. I.e. it returns <b>M</b> <i>dot</i> <b>v</b>.
+     * 
+     * @param v         real-valued vector to operate on.
+     * @return          The vector result of this matrix operated on the input vector. The returned
+     *                  vector will be of the type returned by {@link #getVectorInstance(int)}
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix for the product to be calculated.
+     */
+    public AbstractVector<E> dot(RealVector v) throws ShapeException;
        
     
 }

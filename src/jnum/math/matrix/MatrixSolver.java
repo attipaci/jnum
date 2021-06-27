@@ -57,7 +57,7 @@ public interface MatrixSolver<T> {
      * @param y     The vector y.
      * @return      The vector x.
      */
-    public abstract MathVector<T> solveFor(MathVector<T> y);
+    public abstract AbstractVector<T> solveFor(MathVector<? extends T> y);
     
     /**
      * Returns the vector x given y, in y = M * x for some matrix M.
@@ -65,6 +65,6 @@ public interface MatrixSolver<T> {
      * @param y     The vector y
      * @param x     generic type vector in which to return x.
      */
-    public abstract void solveFor(MathVector<T> y, MathVector<T> x);
+    public abstract void solveFor(MathVector<? extends T> y, MathVector<T> x);
        
 }

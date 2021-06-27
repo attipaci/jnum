@@ -35,20 +35,22 @@ import jnum.CopyCat;
 import jnum.data.ArrayUtil;
 import jnum.data.IndexedValues;
 import jnum.data.image.Index2D;
+import jnum.math.MathVector;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 
 
 /**
- * An abstract Matrix class representing a matrix for some generic type element. It has two principal subclasses, {@link Matrix}, which
- * is a real-valued matrix with essentially primitive double elements, and {@link GenerixMatrix}, which handles matrices for generic type 
- * objects as long as they provide the required algebra to support matrix operation. For example {@link ComplexMatrix} with {@link Complex}
- * elements is an example subtype, but one could construct matrices e.g. with {@link Matrix} or {@link ObjectMatrix} elements (for a 
+ * An abstract Matrix class representing a matrix for some generic type element. It has two principal subclasses, 
+ * {@link Matrix}, which is a real-valued matrix with essentially primitive <code>double</code> elements, and 
+ * {@link ObjectMatrix}, which handles matrices for generic type objects as long as they provide the required algebra 
+ * to support matrix operation. For example {@link ComplexMatrix} with {@link Complex} elements is an example subtype, 
+ * but one could construct matrices e.g. with {@link WeightedPoint} or even {@link Matrix} elements (for example a 
  * matrix of matrices), or matrices with other more complex types...
  * 
  * @author Attila Kovacs <attila@sigmyne.com>
  *
- * @param <T>       The generic type of the elements in a matrix.
+ * @param <T>       The generic type of the elements in this matrix.
  */
 public abstract class AbstractMatrix<T> implements SquareMatrixAlgebra<MatrixAlgebra<?, ? extends T>, T>, Serializable, 
 Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, NumberFormating, DecimalFormating {
@@ -133,6 +135,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * @param size  The size of the vector
      * @return      A new vector with the same generic type as the entries in this matrix.
      */
+    @Override
     public abstract AbstractVector<T> getVectorInstance(int size);
     
     /**
@@ -159,8 +162,23 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      */
     public abstract AbstractMatrix<T> getMatrixInstance(int rows, int cols, boolean initialize);
 
-    public abstract LUDecomposition<T> getLUDecomposition();
+    /**
+     * Gets the LU decomposition of this matrix of this matrix, if possible. LU decompositions
+     * offer an efficient way to obtain the determinant of the matrix or to calculate its 
+     * inverse. 
+     * 
+     * @return      The LU decomposition of this matrix.
+     * @throws SquareMatrixException    If the operartion is attempted on a non-square matrix.  
+     */
+    public abstract LUDecomposition<T> getLUDecomposition() throws SquareMatrixException;
 
+    /**
+     * Gets a matrix inverter object for this matrix using Gauss-Jordan elimination to
+     * calculate the inverse. The returned object can also readily provide the rank
+     * of this matrix at no additional cost.
+     * 
+     * @return      An intermediate matrix inversion object with some additional benefits.
+     */
     public abstract GaussInverter<T> getGaussInverter();
     
     @Override
@@ -172,33 +190,33 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 
     
     @Override
-    public int capacity() { return rows() * cols(); }
+    public final int capacity() { return rows() * cols(); }
     
     @Override
     public final int dimension() { return 2; }
     
     @Override
-    public Index2D getIndexInstance() {
+    public final Index2D getIndexInstance() {
         return new Index2D();
     }
 
     @Override
-    public Index2D copyOfIndex(Index2D index) {
+    public final Index2D copyOfIndex(Index2D index) {
          return index.copy();
     }
 
     @Override
-    public boolean conformsTo(Index2D size) {
+    public final boolean conformsTo(Index2D size) {
         return size.i() == rows() && size.j() == cols();
     }
 
     @Override
-    public boolean conformsTo(IndexedValues<Index2D, ?> data) {
+    public final boolean conformsTo(IndexedValues<Index2D, ?> data) {
         return conformsTo(data.getSize());
     }
 
     @Override
-    public boolean containsIndex(Index2D index) {
+    public final boolean containsIndex(Index2D index) {
         if(index.i() < 0.0) return false;
         if(index.i() > rows()) return false;
         if(index.j() < 0.0) return false;
@@ -209,11 +227,11 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     
 
     @Override
-    public boolean isSquare() { return rows() == cols(); }
+    public final boolean isSquare() { return rows() == cols(); }
      
     
     @Override
-    public boolean isDiagonal() {
+    public final boolean isDiagonal() {
         if(!isSquare()) return false;
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) if(i != j) if(!isNull(i, j)) return false;
         return true;
@@ -226,20 +244,20 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      *             respectively in this matrix.
      */
     @Override
-    public Index2D getSize() { return new Index2D(rows(), cols()); }
+    public final Index2D getSize() { return new Index2D(rows(), cols()); }
     
 
     @Override
-    public boolean isSize(int rows, int cols) {
+    public final boolean isSize(int rows, int cols) {
         return rows == rows() && cols == cols();        
     }
     
     /**
      * Checks if the matrix has the expected size for some operation. If not a {@link ShapeException} is thrown.
      * 
-     * @param rows
-     * @param cols
-     * @throws ShapeException
+     * @param rows          The expected number of rows in this matrix
+     * @param cols          The expected number of columns in this matrix.
+     * @throws ShapeException   If the matrix has a different shape or size than what's expected.
      */
     public void assertSize(int rows, int cols) throws ShapeException {
         if(!isSize(rows, cols)) throw new ShapeException("Matrix has wrong size " + getSizeString() + ". Expected " + rows + "x" + cols +".");
@@ -248,7 +266,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 
 
     @Override
-    public boolean conformsTo(MatrixAlgebra<?, ?> M) {
+    public final boolean conformsTo(MatrixAlgebra<?, ?> M) {
         return M.isSize(rows(), cols());
     }
        
@@ -424,7 +442,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     
     
 	/**
-	 * Sets the data in the matrix to zeroes (or empty values). Same as {@link #zero()}
+	 * Sets the data in the matrix to zeroes (or empty values). Same as {@link #zero()}.
 	 * 
 	 */
 	public final void clear() { zero(); }
@@ -486,7 +504,9 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 
     @Override
     public void scale(double factor) {
-        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) scale(i, j, factor);
+        if(factor == 0.0) clear();
+        else if(factor == 1.0) return;
+        else for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) scale(i, j, factor);
     }
     
     @Override
@@ -495,8 +515,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         return true;        
     }
     
-    
-
+  
     /**
      * Gets the largest absolute value from the matrix elements in a subspace of the matrix.
      * 
@@ -506,29 +525,14 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * @param toj       Exclusive colun index of subspace end.
      * @return          The largest absolute value among the elements in the subspace.
      */
-    public double getMagnitude(int fromi, int fromj, int toi, int toj) {
-        double mag = 0.0;
-        MatrixElement<T> e = getElementInstance();
-        
-        for(int i=toi; --i >= fromi; ) for(int j=toj; --j >= toj; ) {
-            double a2 = e.from(i, j).absSquared();
-            if(a2 > mag) mag = a2;
-        }
-        
-        return Math.sqrt(mag);        
-    }
+    public abstract double getMagnitude(int fromi, int fromj, int toi, int toj);
     
-    /**
-     * Gets the largest absolute value from among all the matrix elements in this matrix.
-     * 
-     * @return      The largest absolute value among the matrix elements.
-     */
+
+    @Override
     public final double getMagnitude() {
         return getMagnitude(0, 0, rows(), cols());
     }
     
-    
-
 	@Override
     public final void setIdentity() {
         if(!isSquare()) throw new SquareMatrixException();
@@ -554,15 +558,71 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         return P;
     }
  
-
+	/**
+	 * Calculates the dot product of this matrix (<b>M</b>) with the diagonal matrix argument (<b>B</b>). That is
+	 * it returns <b>M</b> <i>dot</i> <b>B</b>.
+	 * 
+	 * @param B        Diagonal matrix on the right-hand side of dot product
+	 * @return         this matrix dotted with <b>B</b> from the right hand side.
+	 */
 	public AbstractMatrix<T> dot(DiagonalMatrix<T> B) {
 	    return B.dot(this);
 	}
 	
-	
+	/**
+	 * Calculates the dot product of this matrix (<b>M</b>) with the real-valued diagonal matrix argument 
+	 * (<b>B</b>). That is it returns <b>M</b> <i>dot</i> <b>B</b>.
+     * 
+     * @param B        Real-valued diagonal matrix on the right-hand side of dot product
+     * @return         this matrix dotted with <b>B</b> from the right hand side.
+	 */
 	public abstract AbstractMatrix<T> dot(DiagonalMatrix.Real B);
 	
 	
+    @Override
+    public AbstractVector<T> dot(double[] v) {
+        AbstractVector<T> result = getVectorInstance(rows());
+        dot(v, result);
+        return result;
+    }
+	
+    
+    @Override
+    public AbstractVector<T> dot(float[] v) {
+        AbstractVector<T> result = getVectorInstance(rows());
+        dot(v, result);
+        return result;
+    }
+
+    
+    @Override
+    public AbstractVector<T> dot(T[] v) {
+        AbstractVector<T> result = getVectorInstance(rows());
+        dot(v, result);
+        return result;
+    }
+
+
+    @Override
+    public AbstractVector<T> dot(MathVector<? extends T> v) {
+        AbstractVector<T> result = getVectorInstance(rows());
+        dot(v, result);
+        return result;
+    }
+    
+    @Override
+    public AbstractVector<T> dot(RealVector v) {
+        AbstractVector<T> result = getVectorInstance(rows());
+        dot(v, result);
+        return result;
+    }
+
+    @Override
+    public final void dot(RealVector v, MathVector<T> result) {
+        dot(v.getData(), result);
+    }
+    
+    
     /**
      * Add the product of matrices A and B to what is already contained in this matrix.
      * 
@@ -571,52 +631,6 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      */
     protected abstract void addProduct(MatrixAlgebra<?, ? extends T> A, MatrixAlgebra<?, ? extends T> B);
 
-    
-	
-	
-	/**
-	 * Returns the reference to the array (e.g. double[] or T[]) containing the underlying data
-	 * of the row with the specified index. Changes to the data in this row will result in
-	 * changes of the matrix directly.
-	 * 
-	 * @param i    Index of row to retrieve
-	 * @return     Reference to the underlying array that holds data for that row.
-	 */
-	public abstract Object getRow(int i);
-
-	
-	/**
-	 * Copies a row of this matrix into the supplied buffer. The buffer is expected to be a 1D array
-	 * (such as double[] or T[]) of size that matches the column dimension of this matrix.
-	 * 
-	 * @param i        row index
-	 * @param buffer   A simple array of the underlying type (e.g. double[] or T[]) to hold the row's data. 
-	 */
-	public abstract void getRowTo(int i, Object buffer) throws ShapeException;
-	
-
-	/**
-     * Copies a the contents of the supplied buffer into a row of this matrix. 
-     * The buffer is expected to be a 1D array (such as double[] or T[]) of size that matches the column 
-     * dimension of this matrix.
-     * 
-     * @param i         row index
-     * @param buffer    A simple array of the underlying type (e.g. double[] or T[]) with the new row data. 
-     */
-	public abstract void setRow(int i, Object value) throws ShapeException;
-
-	
-	/**
-	 * Swaps two rows in the matrix.
-	 * 
-	 * @param i    A row index
-	 * @param j    Another row index.
-	 */
-	public final void swapRows(int i, int j) {
-		Object rowi = getRow(i);
-		setRow(i, getRow(j));
-		setRow(j, rowi);		
-	}
 
 	/**
 	 * Swaps two elements in this matrix
@@ -641,28 +655,144 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	public final void swapElements(Index2D i1, Index2D i2) {
 	    swapElements(i1.i(), i1.j(), i2.i(), i2.j());
 	}
+	
 
+    /**
+     * Swaps two rows in the matrix.
+     * 
+     * @param i    A row index
+     * @param j    Another row index.
+     */
+    public abstract void swapRows(int i, int j);
+	   
+    /**
+     * Copies a row of this matrix into the supplied vector of the same element type as 
+     * that of this matrix. The vector will contain fully independent copies of the 
+     * matrix's data, s.t. subsequent changes to the returned vector will not affect the 
+     * matrix content.
+     * 
+     * @param i     row index
+     * @param v     A vector into which to return the elements of the matrix row.  
+     */
+    public final void copyRowTo(int i, MathVector<T> v) throws ShapeException {
+        for(int j=cols(); --j >= 0; ) v.setComponent(j, copyOf(i, j));
+    }
+    
+    /**
+     * Copies the contents of a matrix row into the supplied buffer. 
+     * 
+     * @param i         Matrix row index whose data is to be retrieved
+     * @param buffer    Array into which the column data is copied. The array is not checked for size.
+     */
+    public void copyRowTo(int i, T[] v) {
+        for(int j=cols(); --j >= 0; ) v[j] = copyOf(i, j);
+    }
 
+    /**
+     * Returns the contents of the matrix row as a vector of the same generic type elements 
+     * as this matrix. The underlying storage of the matrix row references that underlying
+     * row array of the matrix. Thus, changes to the data in this row will result in
+     * changes of the matrix directly, and vice versa.
+     * 
+     * @param i    Index of row to retrieve
+     * @return     Reference to the underlying array that holds data for that row.
+     */
+    public final AbstractVector<T> copyOfRow(int i) {
+        AbstractVector<T> v = getVectorInstance(cols());
+        copyRowTo(i, v);
+        return v;
+    }
+
+    
+    /**
+     * Copies the contents of a vector into a row of this matrix. For objects
+     * type elements references are copied into the matrix.
+     * 
+     * @param i     row index
+     * @param v     A vector holding the new data for the matrix row.  
+     */
+    public final void setRowData(int i, MathVector<T> v) throws ShapeException {
+        if(v.size() != cols()) throw new ShapeException("Cannot set mismatched row.");
+        for(int j=cols(); --j >= 0; ) set(i, j, v.getComponent(j));
+    }
+
+    /**
+     * Sets the matrix row to the values provided in the argument. The argument itself is not referenced,
+     * but the values in it are.
+     * 
+     * @param i             The index of the row to update
+     * @param v             Array containing that data that is to be copied into the matrix row.
+     * @throws ShapeException   If the supplied array does not match the matrix column in size.
+     */
+    public void setRowData(int i, T[] v) {
+        if(v.length != cols()) throw new ShapeException("Cannot set mismatched row.");
+        for(int j=cols(); --j >= 0; ) set(i, j, v[j]);
+    }
+
+    
 	
 	/**
-     * Copies a column of this matrix into the supplied buffer. The buffer is expected to be a 1D array
-     * (such as double[] or T[]) of size that matches the row dimension of this matrix.
+     * Copies a column of this matrix into the supplied vector of the same element type
+     * as that of this matrix. The vector will contain fully independent copies of the 
+     * matrix's data, s.t. subsequent changes to the returned vector will not affect the 
+     * matrix content.
      * 
-     * @param j        column index
-     * @param buffer   A simple array of the underlying type (e.g. double[] or T[]) to hold the column's data. 
+     * @param j     column index
+     * @param v     A vector into which to return the elements of the matrix column.   
      */
-	public abstract void getColumnTo(int j, Object buffer);
+	public final void copyColumnTo(int j, MathVector<T> v) throws ShapeException {
+	    for(int i=rows(); --i >= 0; ) v.setComponent(i, copyOf(i, j));
+	}
+	
+	   /**
+     * Copies the contents of a matrix column into the supplied buffer.
+     * 
+     * @param j         Matrix column index whose data is to be retrieved
+     * @param buffer    Array into which the column data is copied. The array is not checked for size.
+     */
+    public void copyColumnTo(int j, T[] v) {
+        for(int i=rows(); --i >= 0; ) v[i] = copyOf(i, j);
+    }
 	
 	/**
-     * Copies a the contents of the supplied buffer into a column of this matrix. 
-     * The buffer is expected to be a 1D array (such as double[] or T[]) of size that matches the row 
-     * dimension of this matrix.
-     * 
-     * @param j         column index
-     * @param buffer    A simple array of the underlying type (e.g. double[] or T[]) with the new column data. 
-     */
-	public abstract void setColumn(int j, Object value) throws IllegalArgumentException;
+	 * Gets the data from a colum of this matrix as a vector of matching generic type.
+	 * The vector will contain fully independent copies of the matrix's data, s.t.
+	 * subsequent changes to the returned vector will not affect the matrix content.
+	 * 
+	 * @param j
+	 * @return
+	 */
+	public final AbstractVector<T> copyOfColumn(int j) {
+	    AbstractVector<T> v = getVectorInstance(rows());
+	    copyColumnTo(j, v);
+	    return v;
+	}
 	
+	/**
+     * Copies a the contents of a vector into a column of this matrix. For object type
+     * elements, the references are copied into the matrix.
+     * 
+     * @param j     column index
+     * @param v     A vector with the new data for the matrix column.
+     */
+	public final void setColumnData(int j, MathVector<T> v) throws ShapeException {
+        if(v.size() != cols()) throw new ShapeException("Cannot set mismatched column.");
+        for(int i=rows(); --i >= 0; ) set(i, j, v.getComponent(i));
+	}
+
+    
+    /**
+     * Sets the matrix column to the values provided in the argument. The argument itself is not referenced,
+     * but the values in it are.
+     * 
+     * @param j             The index of the column to update
+     * @param value         Array containing that data that is to be copied into the matrix column.
+     * @throws ShapeException   If the supplied array does not match the matrix column in size.
+     */
+    public void setColumnData(int j, T[] v) {
+        if(v.length != cols()) throw new ShapeException("Cannot set mismatched column.");
+        for(int i=rows(); --i >= 0; ) set(i, j, v[i]);
+    }
 	
 	/**
 	 * Copies the data (references) of another matrix into a subscape of this matrix.
@@ -860,14 +990,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     }
     
    
-    
-    /**
-     * Gets the rank of the matrix, that is the dimension of the space the matrix spans, that
-     * is also the number of independent rows in the matrix that cannot b expressed as a linear 
-     * combination of other rows.
-     * 
-     * @return      the rank of this matrix
-     */
+    @Override
     public final int getRank() {
         AbstractMatrix<T> copy = copy();
         copy.gaussJordan();
@@ -885,6 +1008,15 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
             }
         
         return rank;
+    }
+    
+    @Override
+    public void sanitize() {
+        double tiny2 = 1e-12 * getMagnitude();
+        tiny2 *= tiny2;
+        
+        MatrixElement<T> e = getElementInstance();
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) if(e.from(i, j).absSquared() < tiny2) clear(i, j);
     }
     
     /**
@@ -906,8 +1038,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         int col = 0;
         for(int i=0; i<rows(); i++)
             for(int j=col; j<cols(); j++) if(e.from(i, j).absSquared() > tiny2) {
-                AbstractVector<T> v = basis.getVectorInstance(cols());
-                getColumnTo(j, v.getData());
+                AbstractVector<T> v = basis.getVectorInstance();
+                copyColumnTo(j, v);
                 basis.add(v);
                 col = j+1;
                 break;
@@ -915,5 +1047,6 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         
         return basis;
     }  
+    
 }
 

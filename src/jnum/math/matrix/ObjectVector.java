@@ -31,7 +31,6 @@ import java.util.Arrays;
 import jnum.Copiable;
 import jnum.Util;
 import jnum.data.ArrayUtil;
-import jnum.data.samples.Index1D;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.Coordinates;
@@ -50,13 +49,10 @@ import jnum.math.MathVector;
 public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> 
 extends AbstractVector<T> {
 	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 4341703980593410457L;
 
-	/** The component. */
 	private T[] component;
 	
-	/** The type. */
 	protected Class<T> type;
 		
 	/**
@@ -138,10 +134,7 @@ extends AbstractVector<T> {
         return ((DecimalFormating) getComponent(i)).toString(nf);
     }
 	
-		
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#getType()
-	 */
+
 	@Override
 	public Class<T> getType() { return (Class<T>) component[0].getClass(); }
 	
@@ -156,20 +149,15 @@ extends AbstractVector<T> {
     public final T z() { return component[2]; }
 	
     @Override
-    public final T copyOf(Index1D index) {
-        return (T) get(index).copy();
+    public final T copyOf(int i) {
+        return (T) component[i].copy();
     }
 
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#getData()
-	 */
+
 	@Override
 	public T[] getData() { return component; }
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#setData(java.lang.Object)
-	 */
+
 	@Override
 	public void setData(Object data) { 
 	    assertSize(((Object[]) data).length);
@@ -177,21 +165,15 @@ extends AbstractVector<T> {
 		type = (Class<T>) component[0].getClass();
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#size()
-	 */
+
 	@Override
 	public final int size() { return component.length; }
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#getComponent(int)
-	 */
+
 	@Override
 	public final T getComponent(int i) { return component[i]; }
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#setComponent(int, java.lang.Object)
-	 */
+
 	@Override
 	public final void setComponent(int i, T x) { component[i] = x; }
 
@@ -203,9 +185,7 @@ extends AbstractVector<T> {
         for(int i=component.length; --i >= 0; ) component[i].multiplyBy(v.getComponent(i));
     }
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#dot(kovacs.math.AbstractVector)
-	 */
+
 	@Override
 	public T dot(Coordinates<? extends T> v) {
 	    assertSize(v.size());
@@ -271,9 +251,6 @@ extends AbstractVector<T> {
     }
 	
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#asRowVector()
-	 */
 	@Override
 	public AbstractMatrix<T> asRowVector() {
 		try { 
@@ -284,20 +261,8 @@ extends AbstractVector<T> {
 		catch(Exception e) { return null; }
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#asColumnVector()
-	 */
-	@Override
-	public AbstractMatrix<T> asColumnVector() {
-		ObjectMatrix<T> M = new ObjectMatrix<>(getType(), component.length, 1);
-		M.setColumn(0, component);
-		return M;
-	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
-	 */
+
 	@Override
 	public void addScaled(MathVector<? extends T> o, double factor) {
 		for(int i=component.length; --i >= 0; ) {
@@ -307,18 +272,14 @@ extends AbstractVector<T> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.LinearAlgebra#isNull()
-	 */
+
 	@Override
 	public boolean isNull() {
 		for(int i=component.length; --i >= 0; ) if(!component[i].isNull()) return false;
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.LinearAlgebra#zero()
-	 */
+
 	@Override
 	public void zero() {
 		for(int i=component.length; --i >= 0; ) {
@@ -327,9 +288,7 @@ extends AbstractVector<T> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Additive#subtract(java.lang.Object)
-	 */
+
 	@Override
 	public void subtract(MathVector<? extends T> o) {
 		for(int i=component.length; --i >= 0; ) {
@@ -339,9 +298,7 @@ extends AbstractVector<T> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Additive#add(java.lang.Object)
-	 */
+
 	@Override
 	public void add(MathVector<? extends T> o) {
 		for(int i=component.length; --i >= 0; ) {
@@ -351,17 +308,13 @@ extends AbstractVector<T> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Scalable#scale(double)
-	 */
+
 	@Override
 	public void scale(double factor) {
 		for(int i=component.length; --i >= 0; ) component[i].scale(factor);		
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbsoluteValue#norm()
-	 */
+
 	@Override
 	public double absSquared() {
 		double norm = 0.0;
@@ -370,9 +323,6 @@ extends AbstractVector<T> {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Metric#distanceTo(java.lang.Object)
-	 */
 	@Override
 	public double distanceTo(MathVector<? extends T> v) {
 		double d2 = 0.0;
@@ -385,9 +335,7 @@ extends AbstractVector<T> {
 		return Math.sqrt(d2);
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbstractVector#orthogonalizeTo(kovacs.math.AbstractVector)
-	 */
+
 	@Override
 	public void orthogonalizeTo(MathVector<? extends T> v) {
 		addScaled(v, -dot(v).abs() / (abs() * v.abs()));
@@ -401,9 +349,6 @@ extends AbstractVector<T> {
     }
 
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void setSum(MathVector<? extends T> a, MathVector<? extends T> b) {
 		if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
@@ -415,9 +360,7 @@ extends AbstractVector<T> {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Additive#setDifference(java.lang.Object, java.lang.Object)
-	 */
+
 	@Override
 	public void setDifference(MathVector<? extends T> a, MathVector<? extends T> b) {
 		if(size() != a.size() || size() != b.size()) throw new ShapeException("different size vectors.");
@@ -438,8 +381,5 @@ extends AbstractVector<T> {
     public void setValues(T... values) {
         component = values;
     }
-    
-    
-
-
+   
 }

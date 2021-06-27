@@ -26,6 +26,9 @@ package jnum.math.matrix;
 import jnum.math.MathVector;
 
 /**
+ * A class preresenting the eigenvalues and eigenvectors of a square matrix. The eigen representation
+ * is equivalent to the diagonalized form of the matrix from which it is derived, with the change
+ * of basis transformations to and from the orihinal basis and the diagonalized matrix basis.
  * 
  * @author Attila Kovacs <attila@sigmyne.com>
  *
@@ -35,27 +38,63 @@ import jnum.math.MathVector;
 public interface EigenSystem<E, V> {
     
     /**
-     * Returns the eigenvalues for this system.
+     * Gets the eigenvalues for this system.
      * 
      * @return  the eigenvalues (in matching order to the eigenvectors returned by {@link #getEigenVectors()}.
      */
-    public MathVector<V> getEigenValues();
+    public AbstractVector<V> getEigenValues();
     
     /**
-     * Returns the unnormalized eigenvectors for this system.
+     * Gets the unnormalized eigenvectors for this system.
      * 
      * @return  the unnormalized eigenvectors (in matching order to the eigenvectors returned by {@link #getEigenValues()}.
      */
-    public MathVector<E>[] getEigenVectors();
+    public AbstractVector<E>[] getEigenVectors();
     
-    
+    /**
+     * Gets the change of basis matrix that converts vectors from the original basis to the eigenbasis
+     * of the diagonalized matrix.
+     *  
+     * @return      The change of basis matrix from the original to the eigenbasis.
+     */
     public AbstractMatrix<E> toEigenBasis();
     
+    /**
+     * Gets the change of basis matrix that converts vectors from the eigenbasis back to the basis
+     * of the original matrix.
+     *  
+     * @return      The change of basis matrix from the eigenbasis to the basis of the original matrix.
+     */
     public AbstractMatrix<E> fromEigenBasis();
     
-    public MathVector<E> toEigenBasis(MathVector<E> v);
+    /**
+     * Converts a vector from the original basis to the eigenbasis.
+     * 
+     * @param v     Vector in the basis of the original matrics
+     * @return      Same vector in the eigenbasis of the diagonalized matrix.
+     */
+    public AbstractVector<E> toEigenBasis(MathVector<? extends E> v);
     
-    public MathVector<E> fromEigenBasis(MathVector<E> v);
+    /**
+     * Converts a vector from the eigenbasis to the original basis.
+     * 
+     * @param v     Vector in the eigenbasis.
+     * @return      Same vector in the basis of the original matrix.
+     */
+    public AbstractVector<E> fromEigenBasis(MathVector<? extends E> v);
  
-    // TODO refine eigenvalues/vectors via reverse iteration method.
+    /**
+     * Gets the determiants, simply as the product of the eigenvalues.
+     * 
+     * @return      The matrix determinant.
+     */
+    public V getDeterminant();
+    
+    /**
+     * Gets the diagonalized matrix form, in which the eigenvalues populate
+     * the diagonal matrix elements.
+     * 
+     * @return      The diagonalized matrix.
+     */
+    public DiagonalMatrix<V> getDiagonalMatrix();
 }

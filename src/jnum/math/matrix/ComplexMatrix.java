@@ -27,6 +27,7 @@ package jnum.math.matrix;
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.ParsePosition;
+import java.util.Arrays;
 
 import jnum.ViewableAsDoubles;
 import jnum.data.fitting.ConvergenceException;
@@ -39,28 +40,73 @@ import jnum.math.MathVector;
 import jnum.math.Multiplication;
 import jnum.math.SymmetryException;
 
-
+/**
+ * A class representing a complex valued full matrix. At every slot in this matrix there is a {@link Complex} type
+ * matrix element. Complex matrices are otherwise very much like their real counterparts, providing almost identical
+ * functionality and support for heterogeneous cross products, as well as transforming both real-valued and 
+ * complex-valued vectors alike.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
 
     private static final long serialVersionUID = 8842229635231169797L;
 
+    /**
+     * Constructs a new complex matrix with the specified dimensions. All elements are intialized to zero values.
+     * 
+     * @param rows      Number of rows in this matrix
+     * @param cols      Number of columns in this matrix
+     */
     public ComplexMatrix(int rows, int cols) {
         super(Complex.class, rows, cols);
     }
 
+    /**
+     * Constructs a new complex matrix of square shape, with the specified size.
+     * 
+     * @param size      Size of square matrix.
+     */
     public ComplexMatrix(int size) {
         super(Complex.class, size, size);
     }
 
+    /**
+     * Constructs a new complex matrix with the specified 2D complex array as the backing data element.
+     * The matrix will reference the specified array, so changes to the elements in the array will
+     * necessarily become changes to the matrix itself.
+     * 
+     * @param data              The 2D complex array to serve as the backing storage for this matrix.
+     * @throws ShapeException   If the supplied data has non-rectangular shape, i.e. has rows of
+     *                          different length.
+     */
     public ComplexMatrix(Complex[][] data) throws ShapeException {
         super(data);
     }
 
+    /**
+     * Constructs a new Complex matrix from a real-valued matrix. The complex data in this
+     * matrix is initialized with the real part supplied by the specified matrix, and with
+     * imaginary parts initialized to zero for all elements.
+     * 
+     * @param M     The real-valued matrix that specifies the real parts of this complex matrix.
+     */
     public ComplexMatrix(Matrix M) {
         this(M.rows(), M.cols());
         for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).set(M.get(i, j), 0.0);  
     }
     
+    /**
+     * Constructs a new complex matrix from a string representation, which must be in the expected
+     * format
+     * 
+     * @param text          String representation of a complex matrix.
+     * @param pos           Position in string at which to begin parsing. The parse position
+     *                      will be updated to the last character parsed successfully.
+     * @throws ParseException   If there was some problem with parsing the matrix from the 
+     *                          supplied string.
+     */
     public ComplexMatrix(String text, ParsePosition pos) throws ParseException, Exception {
         super(Complex.class, text, pos);
     }
@@ -81,12 +127,37 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         return (ComplexMatrix) super.copy();
     }
     
+    /**
+     * Gets the Jacobi transform of this complex matrix. The transform requires that this matrix is
+     * a Hermitian matrix (square matrix in which the the element at <code>[i][j]</code> is the complex conjugate
+     * of the element at <code>[j][i]</code> for all <code>i != j</code>).
+     * 
+     * The Jacobi transform is a series of element rotations that are used to bring the matrix
+     * into a diagonal form, and hence can be used to obtain the {@link EigenSystem} of this
+     * matrix. It is a O(<i>N</i><sup>3</sup>) process, which is not the fastest, but it is foolproof. 
+     * 
+     * @return          The diagonalized Jacobi transform of this matrix, if possible.
+     * @throws SquareMatrixException    If this matrix is not a square matrix
+     * @throws SymmetryException        If this matrix is not Hermitian
+     * @throws ConvergenceException     If the Jacobi transform did not converge within the alotted number of attempts.
+     */
     public JacobiTransform getJacobiTransform() throws SquareMatrixException, SymmetryException, ConvergenceException {
         return new JacobiTransform();
     }
     
+    /**
+     * Gets the eigenvalues, and eigenvectors of this matrix. Essentially the diagonalized form of
+     * this matrix, and the basis transformations to and from its eigen basis. Currently it will
+     * return the Jacobi transform (i.e. the same as {@link #getJacobiTransform()}.
+     * 
+     * @return          The eigen system of this matrix, if possible.
+     * @throws SquareMatrixException    If this matrix is not a square matrix
+     * @throws SymmetryException        If this matrix does not have the required symmetry to perform the operation
+     *                                  (e.g. if eigen systems are only avagilable for Hermitian matrices).
+     * @throws ConvergenceException     If the diagonalizaton attempt did not converge.
+     */
     public EigenSystem<Complex, ?> getEigenSystem() throws SquareMatrixException, SymmetryException, ConvergenceException {
-        return new JacobiTransform();
+        return getJacobiTransform();
     }
     
     @Override
@@ -99,6 +170,12 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         return new Gauss();
     }
     
+    /**
+     * Checks if this matrix is Hermitian, i.e. the values at <code>[i][j]</code> are the complex conjugate 
+     * of the values at <code>[j][i]</code> for all elements <code>i != j</code>.
+     * 
+     * @return      <code>true</code> if this matrix is Hermitian. Ortherwise <code>false</code>.
+     */
     public boolean isHermitian() {
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j > i; ) {
             Complex a = get(i, j);
@@ -111,8 +188,8 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         }
         return true;
     }
-
     
+
     @Override
     public ComplexMatrix subspace(int[] rows, int[] cols) {
         return (ComplexMatrix) super.subspace(rows, cols);    
@@ -127,48 +204,116 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     public ComplexMatrix subspace(Index2D from, Index2D to) {
         return (ComplexMatrix) super.subspace(from, to);
     }
+    
 
-
+    /**
+     * Gets the real part of this matrix as a simple 2D Java array.
+     * 
+     * @return  The real part of this matrix.
+     */
     public double[][] getRealPart() {
         double[][] dst = new double[rows()][cols()];
         getRealPart(dst);
         return dst;
     }
 
+    /**
+     * Gets the imaginary part of this matrix as a simple 2D Java array.
+     * 
+     * @return  The imaginary part of this matrix.
+     */
     public double[][] getImaginaryPart() {
         double[][] dst = new double[rows()][cols()];
         getImaginaryPart(dst);
         return dst;
     }
+    
+    
+    /**
+     * Gets the real part of this matrix as a new matrix.
+     * 
+     * @return      The real part of this matrix.
+     */
+    public final Matrix re() {
+        return new Matrix(getRealPart());
+    }
 
+    /**
+     * Gets the imaginary part of this matrix as a new matrix.
+     * 
+     * @return      The imaginary part of this matrix.
+     */
+    public final Matrix im() {
+        return new Matrix(getImaginaryPart());
+    }
 
+    /**
+     * Sets the real part of this matrix to the specified values.
+     * 
+     * @param re                2D array of values to be used for the real parts.
+     * @throws ShapeException   If the supplied array has a shape or size different from this matrix.
+     */
     public void setRealPart(double[][] re) throws ShapeException {
         assertSize(re.length, re[0].length);
         for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).setRealPart(re[i][j]);
     }
 
+    /**
+     * Sets the real part of this matrix to the specified values.
+     * 
+     * @param re                2D array of values to be used for the real parts.
+     * @throws ShapeException   If the supplied array has a shape or size different from this matrix.
+     */
     public void setRealPart(float[][] re) throws ShapeException {
         assertSize(re.length, re[0].length);
         for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).setRealPart(re[i][j]);
     }
 
-    public void setRealPart(Object data) {
+    /**
+     * Sets the real part of this matrix to the specified data. The data must be either <code>double[][]</code>
+     * or <code>float[][]</code> type or else implement {@link ViewableAsDoubles} with 
+     * {@link ViewableAsDoubles#viewAsDoubles()} returning a <code>double[][]</code>.
+     * 
+     * @param data                          A suitable representation of 2D real values.
+     * @throws IllegalArgumentException     If the type of data is not supported by this method.
+     */
+    public void setRealPart(Object data) throws IllegalArgumentException {
         if(data instanceof double[][]) setRealPart((double[][]) data);
         else if(data instanceof float[][]) setRealPart((float[][]) data);
         else if(data instanceof ViewableAsDoubles) setRealPart(((ViewableAsDoubles) data).viewAsDoubles());
         else throw new IllegalArgumentException(" Cannot convert " + data.getClass().getSimpleName() + " into double[][] format.");   
     }
     
+    /**
+     * Sets the imaginary part of this matrix to the specified values.
+     * 
+     * @param re                2D array of values to be used for the real parts.
+     * @throws ShapeException   If the supplied array has a shape or size different from this matrix.
+     */
     public void setImaginaryPart(double[][] im) throws ShapeException {
         assertSize(im.length, im[0].length);
         for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).setImaginaryPart(im[i][j]);
     }
 
+    /**
+     * Sets the imaginary part of this matrix to the specified values.
+     * 
+     * @param re                2D array of values to be used for the real parts.
+     * @throws ShapeException   If the supplied array has a shape or size different from this matrix.
+     */
     public void setImaginaryPart(float[][] im) throws ShapeException {
         assertSize(im.length, im[0].length);
         for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) get(i, j).setImaginaryPart(im[i][j]);
     }
     
+    /**
+     * Sets the imaginary part of this matrix to the specified data. The data must be either <code>double[][]</code>
+     * or <code>float[][]</code> type or else implement {@link ViewableAsDoubles} with 
+     * {@link ViewableAsDoubles#viewAsDoubles()} returning a <code>double[][]</code>.
+     * 
+     * @param data                          A suitable representation of 2D real values.
+     * @throws IllegalArgumentException     If the type of data is not supported by this method.
+     */
     public void setImaginaryPart(Object data) {
         if(data instanceof double[][]) setImaginaryPart((double[][]) data);
         else if(data instanceof float[][]) setImaginaryPart((float[][]) data);
@@ -197,22 +342,35 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     }
 
 
-    /* (non-Javadoc)
-     * @see kovacs.math.ComplexConjugate#conjugate()
-     */
     @Override
     public void conjugate() {
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).conjugate(); 
     }
+    
+    /**
+     * Gets the conjugate of this matrix as a new matrix.
+     * 
+     * @return  A new, fully independent, matrix containing the complex conjugate of this matrix.
+     */
+    public final ComplexMatrix getConjugate() {
+        ComplexMatrix C = copy();
+        C.conjugate();
+        return C;
+    }
 
-
-    public ComplexMatrix getHermitian() {
+    /**
+     * Gets the conjugate transpose (a.k.a. Hermitian transpose) of this matrix as a new matrix.
+     * 
+     * @return  A new, fully independent, matrix containg the Hermitian transpose of this matrix.
+     */
+    public ComplexMatrix getConjugateTranspose() {
         ComplexMatrix transpose = getTranspose();
         transpose.conjugate();
         return transpose;
     }
 
-    public ComplexMatrix dot(ComplexMatrix B) {
+    @Override
+    public ComplexMatrix dot(MatrixAlgebra<?, ? extends Complex> B) {
         return (ComplexMatrix) super.dot(B);
     }
     
@@ -226,19 +384,36 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         return (ComplexMatrix) B.dot(this);
     }
     
+    /**
+     * Returns the dot product of this matrix and a complex diagonal matrix.
+     * 
+     * @param B     A complex diagonal matrix
+     * @return      The product of this matrix and the argument.
+     */
     public ComplexMatrix dot(DiagonalMatrix.Complex B) {
         return B.dot(this);
     }
 
     @Override
-    public ComplexVector dot(MathVector<? extends Complex> v) {
+    public ComplexVector dot(double[] v) {
         return (ComplexVector) super.dot(v);
     }
     
     @Override
+    public ComplexVector dot(float[] v) {
+        return (ComplexVector) super.dot(v);
+    }
+
+    @Override
     public ComplexVector dot(RealVector v) {
         return (ComplexVector) super.dot(v);
-    }   
+    }
+    
+    @Override
+    public ComplexVector dot(MathVector<? extends Complex> v) {
+        return (ComplexVector) super.dot(v);
+    }
+    
     
     @Override
     public ComplexMatrix getTranspose() {        
@@ -263,35 +438,30 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     @Override
     public final void scale(Complex x) { multiplyBy(x); }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Multiplication#multiplyBy(java.lang.Object)
-     */
+
     @Override
     public void multiplyBy(Complex factor) {
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).multiplyBy(factor);
     }
 
-
+    /**
+     * Multiplies all elements in this matrix by the square-root of -1, i.e. by <i>i</i>.
+     */
     public void multiplyByI() {
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).multiplyByI();
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.ComplexAddition#addComplex(kovacs.math.Complex)
-     */
     @Override
     public void addComplex(Complex z) {
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).addComplex(z);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.ComplexAddition#subtractComplex(kovacs.math.Complex)
-     */
     @Override
     public void subtractComplex(Complex z) {
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).subtractComplex(z);
     }
 
+    
     public static ComplexMatrix fromReal(double[][] data) {
         ComplexMatrix M = new ComplexMatrix(data.length, data[0].length);
         M.setRealPart(data);
@@ -311,8 +481,38 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
        throw new IllegalArgumentException(" Cannot convert " + data.getClass().getSimpleName() + " into double[][] format.");    
     }
     
+    
+    
+    
+    /**
+     * The LU decomposition of the parent complex matrix.
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     */
     public class LU extends ObjectMatrix<Complex>.LU {
 
+        /**
+         * Constructs an LU decomposition of the parent matrix.
+         * 
+         * @throws SquareMatrixException    If the matrix argument is not of the required square shape for decomposition
+         * @throws SingularMatrixException  If the matrix argument is singular (degenerate)
+         */
+        public LU()throws SquareMatrixException, SingularMatrixException  {}
+
+        /**
+         * Constructs an LU decomposition of the parent matrix, using the specified small
+         * numerical value that is used for substituting zeroes in the arithmetic.
+         * 
+         * @param tinyValue     A very small numerical value to replce zeroes in the matrix
+         *                      for algorithmic stability.
+         * @throws SquareMatrixException    If the matrix argument is not of the required square shape for decomposition
+         * @throws SingularMatrixException  If the matrix argument is singular (degenerate)
+         */
+        public LU(double tinyValue) throws SquareMatrixException, SingularMatrixException {
+            super(tinyValue);
+        }
+        
         @Override
         public ComplexMatrix getMatrix() {
             return (ComplexMatrix) super.getMatrix();
@@ -325,16 +525,22 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         }
         
         @Override
-        public ComplexVector solveFor(MathVector<Complex> y) {
+        public ComplexVector solveFor(MathVector<? extends Complex> y) {
             return (ComplexVector) super.solveFor(y);
         }        
     }
 
+    /**
+     * The Gauss inverter object for the parent complex matrix.
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     */
     public class Gauss extends ObjectMatrix<Complex>.Gauss {
 
         @Override
-        public ComplexMatrix getI() {
-            return (ComplexMatrix) super.getI();
+        public ComplexMatrix getMasterInverse() {
+            return (ComplexMatrix) super.getMasterInverse();
         }
 
         @Override
@@ -343,12 +549,18 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         }
 
         @Override
-        public ComplexVector solveFor(MathVector<Complex> y) {
-            return getI().dot(y);
+        public ComplexVector solveFor(MathVector<? extends Complex> y) {
+            return getMasterInverse().dot(y);
         }
 
     }
     
+    /**
+     * The Jacobi transform of the parent complex matrix.
+     * 
+     * @author Attila Kovacs <attila@sigmyne.com>
+     *
+     */
     public class JacobiTransform implements EigenSystem<Complex, Double> {
         RealVector eigenValues;
         ComplexMatrix B, iB;
@@ -406,6 +618,13 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         }
         
         @Override
+        public Double getDeterminant() {
+            double D = 1.0;
+            for(int j=eigenValues.size(); --j >= 0; ) D *= eigenValues.getComponent(j);
+            return D;
+        }
+        
+        @Override
         public RealVector getEigenValues() {
            return eigenValues.copy();
         }
@@ -415,7 +634,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
             ComplexVector[] e = new ComplexVector[eigenValues.size()];
             for(int i=e.length; --i >= 0; ) {
                 e[i] = new ComplexVector(eigenValues.size());
-                B.getColumnTo(i, e[i].getData());
+                B.copyColumnTo(i, e[i]);
             }
             return e;
         }
@@ -432,16 +651,25 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         }
         
         @Override
-        public MathVector<Complex> toEigenBasis(MathVector<Complex> v) {
+        public ComplexVector toEigenBasis(MathVector<? extends Complex> v) {
             return B.dot(v);
         }
         
         @Override
-        public MathVector<Complex> fromEigenBasis(MathVector<Complex> v) {
+        public ComplexVector fromEigenBasis(MathVector<? extends Complex> v) {
             if(iB == null) iB = B.getInverse();
             return iB.dot(v);
         }
         
+        @Override
+        public DiagonalMatrix.Real getDiagonalMatrix() {
+            return new DiagonalMatrix.Real(Arrays.copyOf(eigenValues.getData(), eigenValues.size()));
+        }
+        
+        public ComplexMatrix getReconstructedMatrix() {
+            if(iB == null) iB = B.getInverse();
+            return B.dot(new DiagonalMatrix.Real(eigenValues.getData())).dot(iB);
+        }
         
     }
     

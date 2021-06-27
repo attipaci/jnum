@@ -44,8 +44,6 @@ public interface MathVector<T> extends Coordinates<T>, AbsoluteValue, Normalizab
     public void reflectOn(final MathVector<? extends T> v); // TODO default method. 
     
     public AbstractMatrix<T> asRowVector(); // TODO default method.
-   
-    public AbstractMatrix<T> asColumnVector(); // TODO default method.
     
     public void fill(T value); // TODO default method.
     

@@ -26,35 +26,90 @@ package jnum.math.matrix;
 
 import java.util.*;
 
-
+/**
+ * A base class for representing a set of basis vectors spanning some space.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>   The generic type of components in the basis vectors.
+ */
 public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
 
 	private static final long serialVersionUID = -4045327046654212525L;
-
-
-	public AbstractVectorBasis() {}
 	
-	public abstract AbstractVector<T> getVectorInstance(int size);
+	private int dim;
 	
+	/**
+	 * Creates a vector basis with for vectors with the specified dimension.
+	 * 
+	 * @param dim      The dimension of vectors in this basis.
+	 */
+	public AbstractVectorBasis(int dim) {
+	    this.dim = dim;
+	}
+	
+	/**
+	 * Gets a new vector of the type supported by this basis.
+	 * 
+	 * @param size     The size of the new vector instance.
+	 * @return
+	 */
+	public abstract AbstractVector<T> getVectorInstance();
+	
+	/**
+	 * Gets the size (dimension) of vectors supported by this vector basis.
+	 *    
+	 * @return     Size (dimension) of vectors in this basis.
+	 */
+    public final int getVectorSize() {
+        return dim;
+    }
+	
+	/**
+	 * Orthogonalize the vectors via Gram-Schmidt. After orthogonalization the vectors
+	 * in this basis will span the same space as before, but will ve mutually orthogonal
+	 * to one another. That is the dot product of any two vectors in this bases
+	 * will be zero after the orthogonalization.
+	 * 
+	 */
 	public void orthogonalize() {
 		for(int i=1; i<size(); i++) for(int j=0; j<i; j++) get(i).orthogonalizeTo(get(j));	
 	}
 	
 
+	/**
+	 * Normalizes the vectors in this basis. That is they are scaled to be of unit
+	 * length, without affecting their directions.
+	 * 
+	 */
 	public void normalize() {
 		for(int i=0; i<size(); i++) get(i).normalize();
 	}
 	
-
+	/**
+	 * Orthogonalizes and normalizes the vectors in this basis. Same as calling {@link #orthogonalize()}
+	 * followed by {@link #normalize()}.
+	 * 
+	 */
 	public void orthonormalize() { 
 		orthogonalize();
 		normalize();		
 	}
 
-	public abstract AbstractMatrix<T> asMatrix();
-
-
-	public void asMatrix(AbstractMatrix<T> M) {
+	public final AbstractMatrix<T> getTransposed() {
+	    return asRowVector();
+	}
+	
+	/**
+	 * Returns the basis set as a matrix, in which the basis vectors constitute the 
+	 * matrix columns.
+	 * 
+	 * @return
+	 */
+	public abstract AbstractMatrix<T> asRowVector();
+	
+	
+	protected final void toMatrix(AbstractMatrix<T> M) {
 		M.assertSize(get(0).size(), size());
 		for(int j=0; j<size(); j++) {
 			AbstractVector<T> v = get(j);
