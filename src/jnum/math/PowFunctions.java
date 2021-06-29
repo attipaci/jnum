@@ -22,15 +22,13 @@
  ******************************************************************************/
 package jnum.math;
 
+/**
+* Interface for objects that implement power/exponential functions on themselves. 
+* The methods are acted on the object itself. For example, 
+* for object <code>x</code>, the call <code>x.exp()</code> will replace the contents of x with exp(x).
+*/
+public interface PowFunctions extends AbsoluteValue {
 
-public interface PowFunctions {
-
-	/**
-	 * abs(x).
-	 *
-	 * @return the absolute value
-	 */
-	public double abs();
 	
 	/**
 	 * x^n.
@@ -42,7 +40,7 @@ public interface PowFunctions {
 	/**
 	 * 1/x.
 	 */
-	public void invert();
+	public void inverse();
 	
 	/**
 	 * x^2.

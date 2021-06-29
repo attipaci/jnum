@@ -749,7 +749,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     
 
     @Override
-    public void invert() {
+    public void flip() {
         data = getInverse().data;
     }
 

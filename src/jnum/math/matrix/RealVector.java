@@ -92,7 +92,7 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
 
 
     @Override
-    public Class<Double> getType() { return double.class; }
+    public Class<Double> getComponentType() { return double.class; }
 
     @Override
     public double[] getData() {

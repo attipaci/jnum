@@ -594,7 +594,7 @@ extends AbstractMatrix<T> {
     }
 
     @Override
-    public void invert() {
+    public void flip() {
         data = getInverse().data;
     }
 

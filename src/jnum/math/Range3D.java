@@ -29,6 +29,13 @@ import java.text.NumberFormat;
 import jnum.Copiable;
 import jnum.Util;
 
+/**
+ * A class representing a range of points in 3D space, with inclusive minimum and
+ * and exclusive maximum corners.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Range3D implements Cloneable, Copiable<Range3D>, Serializable {
     /**
      * 

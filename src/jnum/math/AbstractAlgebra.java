@@ -28,7 +28,7 @@ package jnum.math;
  * the product of an element and its inverse are the identity.
  * 
  *
- * @param <Type> the generic type
+ * @param <Type> the generic type of element for this algebra
  */
 public interface AbstractAlgebra<Type> extends Multiplicative<Type>, IdentityValue, InverseValue<Type> {
 

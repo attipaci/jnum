@@ -329,6 +329,11 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
     public double abs() {
         return Math.abs(value());
     }
+    
+    @Override
+    public double absSquared() {
+        return value() * value();
+    }
 
 
     @Override
@@ -341,7 +346,7 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
 
 
     @Override
-    public void invert() {
+    public void inverse() {
         double x2 = value() * value();
         setValue(1.0 / value());
         scaleWeight(x2 * x2);

@@ -452,13 +452,18 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     }
 
     @Override
-    public void addComplex(Complex z) {
-        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).addComplex(z);
+    public void add(double re, double im) {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).add(re, im);
+    }
+    
+    @Override
+    public void add(Complex z) {
+        add(z.re(), z.im());
     }
 
     @Override
-    public void subtractComplex(Complex z) {
-        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).subtractComplex(z);
+    public void subtract(Complex z) {
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).subtract(z);
     }
 
     

@@ -29,17 +29,26 @@ package jnum.math;
 public interface ComplexAddition {
 
 	/**
-	 * Add a complex value to this object.
+	 * Adds a complex value to this object.
 	 *
 	 * @param x    the complex value to be added.
 	 */
-	public void addComplex(Complex x);
+	public void add(Complex x);
 	
 	/**
-	 * Subtract a complex value from this object.
+	 * Subtracts a complex value from this object.
 	 *
 	 * @param x    the complex value to be subtracted.
 	 */
-	public void subtractComplex(Complex x);
+	public void subtract(Complex x);
+	
+	
+	/**
+     * Adds a complex value to this object.
+     *
+     * @param re    real value of complex argument
+     * @param im    imaginary value of complex argument
+     */
+	public void add(double re, double im);
 	
 }

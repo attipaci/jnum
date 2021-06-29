@@ -116,13 +116,13 @@ public final class ZetaFunction {
 		*/
 		
 		// Temporarily replace z -> -z
-		z.invert();
+		z.flip();
 
 		double sum1r = 0.0, sum1i = 0.0, sum2r = 0.0, sum2i = 0.0;
 		for(int k=n; --k > 0; ) {
 			result.set(k, 0.0);
 			result.pow(z);
-			if((k & 1) == 0) result.invert();
+			if((k & 1) == 0) result.flip();
 			
 			sum1r += result.re();
 			sum1i += result.im();
@@ -143,7 +143,7 @@ public final class ZetaFunction {
 		result.set(1.0 - zr, -zi);
 		z.pow(result);
 		z.subtractX(1.0);
-		z.invert();
+		z.flip();
 		
 		result.set(sum1r + sum2r, sum1i + sum2i);
 		result.divideBy(z);

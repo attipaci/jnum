@@ -96,7 +96,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     public void jackknife() {
         final Random random = new Random();
         random.setSeed(202009110301L);
-        values().parallelStream().filter(e -> random.nextGaussian() < 0.5).forEach(Visibility::invert);
+        values().parallelStream().filter(e -> random.nextGaussian() < 0.5).forEach(Visibility::flip);
     }
 
     /**
@@ -232,7 +232,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
         }
          
         @Override
-        public void invert() {
+        public void flip() {
             wre *= -1.0;
             wim *= -1.0;
         }

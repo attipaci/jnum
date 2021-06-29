@@ -47,9 +47,12 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 
-//Add parsing
-
-
+/**
+ * A base class for 2D coordinates of all types. That is basically anything with a pair of real values.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Coordinate2D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate2D>, 
 ViewableAsDoubles, Parser, NumberFormating {
 	
@@ -57,57 +60,77 @@ ViewableAsDoubles, Parser, NumberFormating {
 
 	private double x, y;
 
+	
+	/**
+	 * Constructs a new pair of coordinates initialized to zeroes.
+	 * 
+	 */
 	public Coordinate2D() {}
 	
-
+	/**
+	 * Constructs a new pair of coordinates with the specified pair of values.
+	 * 
+	 * @param X    the first (x-type) coordinate value
+	 * @param Y    the second (y-type) coordinate value
+	 */
     public Coordinate2D(double X, double Y) { 
         this();
         set(X, Y);  
     }
     
+    /**
+     * Constructs a new pair of coordinates based on some other coordinates. The argument
+     * may represent coordinates of any type or dimension. Only up to the first two coordinate 
+     * components of the argument are used for initializing the new coordinate pair.
+     * 
+     * @param v     Coordinates whose first 1 or 2 components will define the new coordinate pair.
+     */
     public Coordinate2D(Coordinates<Double> v) {
         this(v.x(), v.y());
     }
 	
 
+    /**
+     * Constructs a new pair of coordinates from a Java {@link Point2D} object. The
+     * <code>Coordinate2D</code> class is closely resembling the Java {@link Point2D}
+     * class but unlike that one, we allow changing the coordinate values at a later
+     * time, something that {@link Point2D} does not support.
+     * 
+     * @param point     The {@link Point2D} representation of the same two coordinates.
+     */
 	public Coordinate2D(Point2D point) { this(point.getX(), point.getY()); }
 	
-
+	/**
+     * Constructs a new pair of coordinates based on another pair of coordinates. The newly
+     * created coordinates will be initialized with the same coordinate values, but may
+     * otherwise represent anentirely distinct class of coordinates from those of the
+     * argument.
+     * 
+     * @param v     The pair of coordinates to mimic, but the argument may be of an entirely
+     *              different (and even incopatible type) of coordinates. 
+     */
 	public Coordinate2D(Coordinate2D template) { this(template.x, template.y); }
 	
-
+	/**
+	 * Constructs a new pair of coordinates based on its textual representation, if
+	 * possible.
+	 * 
+	 * @param text     The text representation of the coordinates, normally two comma
+	 *                 separated values, possible in brackets.
+	 * @throws NumberFormatException  If the coordinates could not be parse from the text.
+	 */
     public Coordinate2D(String text) throws NumberFormatException { parse(text); }
 
-
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object o) {
-		return equals(o, 0.0);
-	}
-	
-	public boolean equals(Object o, double precision) {
-		if(o == this) return true;
-		if(!(o instanceof Coordinate2D)) return false;
-		
-		final Coordinate2D coord = (Coordinate2D) o;
-	
-		if(Math.abs(x - coord.x) > precision) return false;
-		if(Math.abs(y - coord.y) > precision) return false;
-		
-		return true;
-	}
-	
-	
+    @Override
+    public final Class<Double> getComponentType() {
+        return Double.class;
+    }
+   
 	@Override
     public void copy(Coordinates<? extends Double> other) {
         setX(other.x());
         setY(other.y());
     }
-	
-
 
 	@Override
     public final Double x() { return x; }
@@ -118,15 +141,13 @@ ViewableAsDoubles, Parser, NumberFormating {
 	@Override
     public final Double z() { return 0.0; }
 	
-
+	
 	public void setX(final double value) { x = value; }
 	
-
 	public void setY(final double value) { y = value; }
 	
 	public void addX(final double value) { x += value; }
 	
-
 	public void addY(final double value) { y += value; }
 	
 	public void subtractX(final double value) { x -= value; }
@@ -137,27 +158,17 @@ ViewableAsDoubles, Parser, NumberFormating {
 	
 	public final void scaleY(final double value) { y *= value; }
 	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return HashCode.from(x) ^ ~HashCode.from(y);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Coordinate2D clone() {
 		try { return (Coordinate2D) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.Copiable#copy()
-	 */
 	@Override
 	public Coordinate2D copy() { return clone(); }
 	
@@ -285,9 +296,6 @@ ViewableAsDoubles, Parser, NumberFormating {
 		return "(" + nf.format(x) + "," + nf.format(y) + ")";
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() { 
 		return "(" + x + "," + y + ")";
@@ -443,8 +451,6 @@ ViewableAsDoubles, Parser, NumberFormating {
     }
 
     
-    
-    
     @Override
     public final Double getComponent(final int index) {
         switch(index) {
@@ -472,8 +478,5 @@ ViewableAsDoubles, Parser, NumberFormating {
     private final static Index1D size = new Index1D(2);
    
 	public static final int X = 0;
-	
 	public static final int Y = 1;
-
-  
 }

@@ -27,6 +27,12 @@ import java.util.stream.IntStream;
 
 import jnum.Util;
 
+/**
+ * A vector class representing a 2D offset from some reference coordinate.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Offset2D extends Vector2D {
 
     private static final long serialVersionUID = -2072131491069589417L;

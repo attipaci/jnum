@@ -40,7 +40,6 @@ import javax.swing.JComponent;
 
 import jnum.Constant;
 import jnum.Util;
-import jnum.math.Scale;
 
 
 public abstract class FancyRuler extends BasicRuler implements Arrangeable {

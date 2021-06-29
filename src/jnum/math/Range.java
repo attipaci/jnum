@@ -30,7 +30,13 @@ import java.util.StringTokenizer;
 import jnum.Copiable;
 import jnum.util.HashCode;
 
-
+/**
+ * A class representing a range of real values, with an inclusive minimum and
+ * and exclusive maximum value.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Range implements Serializable, Scalable, Cloneable, Copiable<Range> {
 
 	private static final long serialVersionUID = 7215369530550677188L;

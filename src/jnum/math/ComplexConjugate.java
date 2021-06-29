@@ -22,10 +22,18 @@
  ******************************************************************************/
 package jnum.math;
 
-
+/**
+ * An interface that provides a complex conjugate operation for classes that implement it.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public interface ComplexConjugate {
 
-    
+    /**
+     * Converts this object to its complex conjugate.
+     * 
+     */
 	public void conjugate();
 	
 }

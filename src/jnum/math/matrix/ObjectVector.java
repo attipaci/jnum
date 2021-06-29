@@ -101,7 +101,7 @@ extends AbstractVector<T> {
 	    }
 	    else {
 	        try { 
-	            copy.setData(ArrayUtil.createArray(getType(), size())); 
+	            copy.setData(ArrayUtil.createArray(getComponentType(), size())); 
 	            return copy;
 	        }
 	        catch(Exception e) { Util.error(this, e); }
@@ -116,7 +116,7 @@ extends AbstractVector<T> {
 	}
 	
     public T newComponent() {
-        try { return getType().getConstructor().newInstance(); }
+        try { return getComponentType().getConstructor().newInstance(); }
         catch(Exception e) { 
             Util.error(this, e);
             return null;
@@ -125,18 +125,20 @@ extends AbstractVector<T> {
 
     @Override
     public ObjectVector<T> getVectorInstance(int size) {
-        return new ObjectVector<>(getType(), size);
+        return new ObjectVector<>(getComponentType(), size);
     }
     
     @Override
     public String toString(int i, NumberFormat nf) {
-        if(nf == null || !DecimalFormating.class.isAssignableFrom(getType())) return getComponent(i).toString();
+        if(nf == null || !DecimalFormating.class.isAssignableFrom(getComponentType())) return getComponent(i).toString();
         return ((DecimalFormating) getComponent(i)).toString(nf);
     }
 	
 
 	@Override
-	public Class<T> getType() { return (Class<T>) component[0].getClass(); }
+	public Class<T> getComponentType() { return (Class<T>) component[0].getClass(); }
+	
+	
 	
 	
 	@Override

@@ -23,10 +23,23 @@
 package jnum.math;
 
 
-
+/**
+ * Interface for classes that can represent the product of sorts.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <LeftType>    the generic type of the argument on the lefthand-side of the product.
+ * @param <RightType>   the generic type of the argument on the righthand-side of the product.
+ */
 public interface Product<LeftType, RightType> {
 
-
+    /**
+     * Sets the contents of this object to the product of the two arguments. That is, the
+     * object will be set to contain the value of a*b.
+     * 
+     * @param a     The left-hand side argument in the product.
+     * @param b     The right-hand side argument in the product.
+     */
 	public void setProduct(LeftType a, RightType b);
 	
 }

@@ -1,4 +1,4 @@
-0.40-a1 (devel.1)
+0.40-a1 (devel.7)
 
 
 	Overview
@@ -143,6 +143,9 @@
 	representing a vector in the mathematical sense (vs the Java Vector
 	class that represents a dynamically sized array).
 
+	[FIX] {jnum.math} A fait bit of cleanup in the math package with
+	some simplifications, and a whole lot of new Javadoc.
+
 	[FIX] {jnum.math.matrix} Many fixes to matrix and vector classes.
 	(Some mistakes, some inefficiencies, and overall better safety with
 	copies replacing references where it is appropriate).
@@ -150,8 +153,8 @@
 	[FIX] {GeodeticCoordinates} not have proper toCartesian() conversion
 	into 3D rectangular xyz coordinates.
 
-	[FIX] {Vector2D} normalize() had incorrect normalization, not resulting
-	in a unit vector as expected.
+	[FIX] {Vector2D} normalize() had incorrect normalization, not 
+	resulting in a unit vector as expected.
 
 	[FIX] {AngleFormat} Wrapping and non-negative format options now
 	correctly dealt with.
@@ -162,8 +165,8 @@
 	Matrix and vector representation classes, targeting improved 
 	performance and ease of use.
 	
-	[TWEAK] {AstroTime} New formulas for GST/GMST and LST/LMST calculations
-	in accordance with IERS Technical Note 36 (2010).
+	[TWEAK] {AstroTime} New formulas for GST/GMST and LST/LMST 
+	calculations in accordance with IERS Technical Note 36 (2010).
 
 	[TWEAK] Overall cleanup of SphericalCoordinate classes and their
 	coordinate systems.

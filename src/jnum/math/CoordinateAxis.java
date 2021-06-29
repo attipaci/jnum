@@ -34,6 +34,12 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 
+/**
+ * A class representation of a coordinate axis in a coordinate system.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class CoordinateAxis implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 7273239690459736139L;
@@ -58,15 +64,29 @@ public class CoordinateAxis implements Serializable, Cloneable {
 	
 	public Unit unit = Unit.arbitrary;
 	
-
+	/**
+	 * Creates a new coordinate axis with a default generic label.
+	 * 
+	 */
 	public CoordinateAxis() { this("unspecified axis"); }
 
-
+	/**
+	 * Creates a new coordinate axis with a fully descriptive label.
+	 * 
+	 * @param longLabel       A descriptive axis label, e.g. "Total output power (kW)".
+	 */
 	public CoordinateAxis(String longLabel) {
 	    this(longLabel, null, null);
 	}
 	
-
+	/**
+	 * Creates a new coordinate axis with with short, long, and fancy labels
+	 * 
+	 * @param longLabel        A descriptive axis label, e.g. "Right ascention (J2000)".
+	 * @param shortLabel       A short version, e.g. "R.A."
+	 * @param fancyLabel       A label for graphical displays with more extended character sets,
+	 *                         e.g., the Greek letter alpha via {@link jnum.text.GreekLetter#alpha}.
+	 */
 	public CoordinateAxis(String longLabel, String shortLabel, String fancyLabel) { 
 		defaults();
 		setShortLabel(shortLabel);
@@ -74,18 +94,14 @@ public class CoordinateAxis implements Serializable, Cloneable {
 		setLabel(longLabel); 
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
+
 	@Override
 	public CoordinateAxis clone() { 
 		try { return (CoordinateAxis) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
-	/**
-	 * Defaults.
-	 */
+
 	public void defaults() {
 		reverse = false;
 		multiples = new double[] { 1.0, 2.0, 5.0 }; // The multiples of the fundamental tickunits that can be used.

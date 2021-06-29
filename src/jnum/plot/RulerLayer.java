@@ -29,7 +29,6 @@ import java.awt.geom.Point2D;
 
 import jnum.math.Coordinate2D;
 import jnum.math.Range;
-import jnum.math.Scale;
 import jnum.math.Vector2D;
 
 

@@ -55,7 +55,7 @@ import jnum.math.Additive;
 import jnum.math.Complex;
 import jnum.math.LinearAlgebra;
 import jnum.math.Multiplicative;
-import jnum.math.RealOffset;
+import jnum.math.RealAddition;
 import jnum.math.Scalar;
 import jnum.math.Scalable;
 import jnum.text.BracketedListTokenizer;
@@ -1019,13 +1019,13 @@ public final class ArrayUtil {
     }
 
     @SafeVarargs
-    public static <T extends RealOffset> Object offset(double constant, T... data) {
+    public static <T extends RealAddition> Object offset(double constant, T... data) {
         Stream.of(data).parallel().filter(x -> x != null).forEach(x -> x.add(constant));
         return data;
     }	
 
 
-    public static <T extends RealOffset> List<T> offset(List<T> data, double constant) {
+    public static <T extends RealAddition> List<T> offset(List<T> data, double constant) {
         data.parallelStream().forEach(e -> e.add(constant));
         return data;
     }

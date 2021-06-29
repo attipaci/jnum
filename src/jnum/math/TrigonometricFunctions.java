@@ -25,24 +25,25 @@ package jnum.math;
 
 
 /**
- * Interface for objects that implement trogonometric functions. The methods are acted on the object itself. For example, 
- * for object x, the call x.sin() will replace x --> sin(x).
+ * Interface for objects that implement trigonometric functions on themselves. 
+ * The methods are acted on the object itself. For example, 
+ * for object <code>x</code>, the call <code>x.asin()</code> will replace the contents of x with that of asin(x).
  */
 public interface TrigonometricFunctions {
 
 	/**
-	 * Calculate the sine of this object.
+	 * Transforms this object to its sine. I.e. <i>x</i> becomes sin(<i>x</i>).
 	 */
 	public void sin();
 	
 	/**
-	 * Calculate the cosine of this object.
-	 */
+     * Transforms this object to its cosine. I.e. <i>x</i> becomes cos(<i>x</i>).
+     */
 	public void cos();
 	
 	/**
-	 * Calculate the tangent of this object.
-	 */
+     * Transforms this object to its tangent. I.e. <i>x</i> becomes tan(<i>x</i>).
+     */
 	public void tan();
 	
 }

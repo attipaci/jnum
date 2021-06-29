@@ -27,12 +27,21 @@ import jnum.ConsiderateFunction;
 import jnum.Function;
 import jnum.Util;
 
-
+/**
+ * An adapter class that represents any considerate function as a regular function. Regular functions
+ * take an argument object and return a new object with the result. Considerate functions, on the other
+ * hand, return their result into a return object supplied by the caller (i.e. they do not create
+ * a new object at each call -- that is why they are considerate). 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <ArgType>
+ * @param <ReturnType>
+ */
 public class ConsiderateFunctionAdapter<ArgType, ReturnType> implements Function<ArgType, ReturnType> {
 
-	ConsiderateFunction<ArgType, ReturnType> function;
-
-	Class<ReturnType> returnType;
+	private ConsiderateFunction<ArgType, ReturnType> function;
+	private Class<ReturnType> returnType;
 	
 
 	@SuppressWarnings("unchecked")
@@ -41,9 +50,6 @@ public class ConsiderateFunctionAdapter<ArgType, ReturnType> implements Function
 		returnType = (Class<ReturnType>) template.getClass(); 
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Function#valueAt(java.lang.Object)
-	 */
 	@Override
 	public synchronized ReturnType valueAt(ArgType parms) {
 		try { 

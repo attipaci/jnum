@@ -22,12 +22,17 @@
  ******************************************************************************/
 package jnum.math;
 
-
+/**
+ * Interface for objects that implement multiplicaton with an complex (imaginary) number.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <Type>
+ */
 public interface ComplexMultiplication<Type> extends Multiplication<Complex>, Product<Complex, Type> {
 	
     /**
-     * Multiplies this object by the square root of -1, and returns itself as a result (s.t. further operations
-     * can be chained).
+     * Multiplies this object by the square root of -1.
      * 
      */
 	public void multiplyByI();

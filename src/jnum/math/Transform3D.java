@@ -27,7 +27,15 @@ import java.io.Serializable;
 
 import jnum.math.matrix.Matrix;
 
-
+/**
+ * A class representing transfotmations for 3D Cartesian vectors, and shperical coordinates. This base class implements 
+ * linear algebraic (matrix) transformations, powered by a square {@link Matrix} of size 3 doing all the work.
+ * 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>       The generic type spherical coordinates on thich this transform may operate.
+ */
 public class Transform3D<T extends SphericalCoordinates> implements Cloneable, Serializable, InverseValue<Transform3D<T>> {
     /**
      * 
@@ -49,6 +57,14 @@ public class Transform3D<T extends SphericalCoordinates> implements Cloneable, S
 	
 	public Matrix getMatrix() { return M; }
 	
+	/**
+	 * Aggregates a counter clockwise around the <i>x</i> axis, as seen looking in towards the origin from the direction 
+	 * of that axis. This is the usual convention for the Euler rotation about <i>x</i>. Note, however,that it has an opposite
+	 * sign convention from the <i>R</i><sub>1</sub> convention used widely in astronomy and geodesy.
+	 * 
+	 * @param angle    (rad) Angle by which to rotate around the <i>x</i> axis.
+	 * @return         itself.
+	 */
 	public final Transform3D<T> Rx(double angle) {
 	    double c = Math.cos(angle);
 	    double s = Math.sin(angle);
@@ -57,6 +73,14 @@ public class Transform3D<T extends SphericalCoordinates> implements Cloneable, S
 	    return this;
 	}
 
+	/**
+     * Aggregates a counter clockwise around the <i>y</i> axis, as seen looking in towards the origin from the direction 
+     * of that axis. This is the usual convention for the Euler rotation about <i>y</i>. Note, however,that it has an opposite
+     * sign convention from the <i>R</i><sub>2</sub> convention used widely in astronomy and geodesy.
+     * 
+     * @param angle    (rad) Angle by which to rotate around the <i>y</i> axis.
+     * @return         itself.
+     */
 	public final Transform3D<T> Ry(double angle) {
 	    double c = Math.cos(angle);
 	    double s = Math.sin(angle);
@@ -65,6 +89,14 @@ public class Transform3D<T extends SphericalCoordinates> implements Cloneable, S
 	    return this;
 	}
 
+	/**
+     * Aggregates a counter clockwise around the <i>z</i> axis, as seen looking in towards the origin from the direction 
+     * of that axis. This is the usual convention for the Euler rotation about <i>z</i>. Note, however,that it has an opposite
+     * sign convention from the <i>R</i><sub>3</sub> convention used widely in astronomy and geodesy.
+     * 
+     * @param angle    (rad) Angle by which to rotate around the <i>z</i> axis.
+     * @return         itself.
+     */
 	public final Transform3D<T> Rz(double angle) {
 	    double c = Math.cos(angle);
 	    double s = Math.sin(angle);
@@ -74,6 +106,17 @@ public class Transform3D<T extends SphericalCoordinates> implements Cloneable, S
 	}
 	
 	
+	/**
+	 * Applies a small angle rotation about all three axes. The angles must be sufficiently tiny that the
+	 * terms containing the products of two sines can be neglected without harm. I.e. to maintain close to
+	 * full double precision accuracy (to at least ~10 significant figures, the argument angles should be 
+	 * typically at the 1 arcsecond level or below).
+	 * 
+	 * @param ax   (rad) rotation angle around <i>x</i> (counter clockwise when looking in from <i>x</i>).
+	 * @param ay   (rad) rotation angle around <i>y</i> (counter clockwise when looking in from <i>y</i>).
+	 * @param az   (rad) rotation angle around <i>z</i> (counter clockwise when looking in from <i>z</i>).
+	 * @return     itself.
+	 */
 	protected final Transform3D<T> smallRotate(double ax, double ay, double az) {
 	    final double[][] cols = M.getData();
         final double Ax = ax * ax, Ay = ay * ay, Az = az * az;  ///< Squares of the rotation angles
@@ -88,12 +131,24 @@ public class Transform3D<T extends SphericalCoordinates> implements Cloneable, S
 	    return this;
 	}
 	
+	/**
+	 * Gets a transformed Cartesian 3D vector
+	 * 
+	 * @param v    3D input Cartesian vector.
+	 * @return     a new 3D Cartesian vector containing the transformed input vector.
+	 */
 	public Vector3D getTransformed(Vector3D v) {
 	    Vector3D result = new Vector3D();
 	    M.dot(v, result);
 	    return result;
 	}
 	
+	/**
+	 * Gets transformed spherical coordinates of the same generic type as the input.
+	 * 
+	 * @param coords   The input spherical coordinates of the supported type.
+	 * @return         transfomed new spherical coordinates of the same type as the input 
+	 */
 	public final T getTransformed(final T coords) {
 	    @SuppressWarnings("unchecked")
         T result = (T) coords.copy();
@@ -101,6 +156,12 @@ public class Transform3D<T extends SphericalCoordinates> implements Cloneable, S
 	    return result;	    
 	}
 	
+	/**
+	 * Transforms the supported generic type of spherical coordinates in place. The is
+	 * the result replaces the original value in the input vector itself.
+	 * 
+	 * @param coords   The vector to be transformed in situ.
+	 */
 	public void transform(final T coords) {	
 	    coords.fromCartesian(getTransformed(coords.toCartesian()));
 	}

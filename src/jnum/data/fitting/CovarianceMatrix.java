@@ -23,8 +23,6 @@
 
 package jnum.data.fitting;
 
-
-import jnum.data.ArrayUtil;
 import jnum.math.matrix.Matrix;
 import jnum.math.matrix.SquareMatrixException;
 
@@ -96,10 +94,7 @@ public class CovarianceMatrix extends Matrix {
         CovarianceMatrix P = (CovarianceMatrix) super.copy(withContents);
         if(parameters != null) {
             if(withContents) P.parameters = new Parameter[parameters.length];
-            else {
-                try { P.parameters = (Parameter[]) ArrayUtil.copyOf(parameters); }
-                catch(Exception e) { P.parameters = null; }
-            }
+            else P.parameters = Parameter.copyOf(parameters);
         }
         return P;
     }

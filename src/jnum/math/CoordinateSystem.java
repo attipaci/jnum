@@ -26,7 +26,12 @@ package jnum.math;
 
 import java.util.Vector;
 
-
+/**
+ * A class representation of a coordinate system a collection of Coordinate axes.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class CoordinateSystem extends Vector<CoordinateAxis> {
 
 	private static final long serialVersionUID = 7965280172336615563L;

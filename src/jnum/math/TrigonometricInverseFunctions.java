@@ -25,23 +25,24 @@ package jnum.math;
 
 
 /**
-* Interface for objects that implement trogonometric functions. The methods are acted on the object itself. For example, 
-* for object x, the call x.sin() will replace x --> sin(x).
+* Interface for objects that implement trigonometric functions on themselves. 
+* The methods are acted on the object itself. For example, 
+* for object <code>x</code>, the call <code>x.sin()</code> will replace the contents of x with that of sin(x).
 */
 public interface TrigonometricInverseFunctions {
 
 	/**
-	 * Inverse sine.
+	 * Transform this object to its inverse sine. I.e. <i>x</i> becomes asin(<i>x</i>).
 	 */
 	public void asin();
 	
 	/**
-	 * Inverse cosine.
+	 * Transform this object to its inverse cosine. I.e. <i>x</i> becomes acos(<i>x</i>).
 	 */
 	public void acos();
 	
 	/**
-	 * Inverse tangent.
+	 * Transform this object to its inverse tangent. I.e. <i>x</i> becomes atan(<i>x</i>).
 	 */
 	public void atan();
 	

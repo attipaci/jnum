@@ -23,24 +23,39 @@
 
 package jnum.math;
 
-
+/**
+ * A class representing a standard Cartesian coordinate system.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class CartesianSystem extends CoordinateSystem {
 
 	private static final long serialVersionUID = 487281387200705838L;
 
-
+	/**
+	 * Constructs a Cartesian coordinate system with the specified number of axes and 
+	 * default axes labels (assigned in order as 'x', 'y', 'z', 'u', 'v', 'w', 't', 
+	 * 't1', 't2'...).  
+	 * 
+	 * @param axes     The number of axes in this Cartesian system.
+	 */
 	public CartesianSystem(int axes) {
 		super("Cartesian Coordinates");
-		int n1 = Math.min(axes, labels.length);
-		for(int i=0; i < n1; i++) add(new CoordinateAxis(labels[i]));
-		for(int i=labels.length; i<axes; i++) add(new CoordinateAxis("t" + (i-labels.length+1)));
+		int n1 = Math.min(axes, defaultLabels.length);
+		for(int i=0; i < n1; i++) add(new CoordinateAxis(defaultLabels[i]));
+		for(int i=defaultLabels.length; i<axes; i++) add(new CoordinateAxis("t" + (i-defaultLabels.length+1)));
 	}
 	
-
-	public CartesianSystem(String[] names) {
-		for(int i=0; i< names.length; i++) add(new CoordinateAxis(names[i]));		
+	/**
+	 * Constructs a Cartesian coordinate system with the named axes specified.
+	 * 
+	 * @param names    An array or comma-separated list of axis names.
+	 */
+	public CartesianSystem(String... names) {
+	    for(int i=0; i< names.length; i++) add(new CoordinateAxis(names[i]));  
 	}
 
-	String[] labels = { "x", "y", "z", "u", "v", "w", "t" };
+	private final String[] defaultLabels = { "x", "y", "z", "u", "v", "w", "t" };
 	
 }

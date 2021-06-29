@@ -84,24 +84,21 @@ public class WeightedComplex extends Complex implements Accumulating<WeightedCom
 
     @Override
     public void accumulate(WeightedComplex x) {
-        addReal(x.weight * x.re());
-        addImaginary(x.weight *x.im());
+        add(x.weight * x.re(), x.weight * x.im());
         addWeight(x.weight);
     }
 
     @Override
     public void accumulate(WeightedComplex x, double w) {
         w *= x.weight;
-        addReal(w * x.re());
-        addImaginary(w *x.im());
+        add(w * x.re(), w *x.im());
         addWeight(w);
     }
 
     @Override
     public void accumulate(WeightedComplex x, double w, double G) {
         w *= x.weight * G;
-        addReal(w * x.re());
-        addImaginary(w *x.im());
+        add(w * x.re(), w *x.im());
         addWeight(w * G);        
     }
 

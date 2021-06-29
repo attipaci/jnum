@@ -27,12 +27,12 @@ import java.io.Serializable;
 
 import jnum.Copiable;
 import jnum.Util;
-import jnum.math.RealMath;
+import jnum.math.RealAlgebra;
 import jnum.math.ZeroValue;
 import jnum.util.HashCode;
 
 public class RealValue implements Cloneable, Serializable, Copiable<RealValue>, Comparable<RealValue>, 
-ZeroValue, RealMath {
+ZeroValue, RealAlgebra {
     /**
      * 
      */
@@ -79,6 +79,7 @@ ZeroValue, RealMath {
     @Override
     public void add(double x) { value += x; }
     
+    @Override
     public void subtract(double x) { value -= x; }
     
     @Override

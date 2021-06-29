@@ -32,7 +32,13 @@ import java.util.StringTokenizer;
 import jnum.Copiable;
 import jnum.Util;
 
-
+/**
+ * A class representing a range of points on a 2D plane, with inclusive minimum and
+ * and exclusive maximum corners.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scalable {
 
     private static final long serialVersionUID = 7648489968457196160L;

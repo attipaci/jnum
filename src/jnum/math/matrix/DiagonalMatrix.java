@@ -283,7 +283,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     }
 
     @Override
-    public void invert() {
+    public void flip() {
         scale(-1.0);
     }
     

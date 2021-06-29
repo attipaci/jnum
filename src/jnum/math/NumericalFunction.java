@@ -25,7 +25,7 @@ package jnum.math;
 import jnum.Function;
 
 /**
- * Numerical functions with tunable precision.
+ * A base class for numerical functions with tunable precision.
  *
  * @param <ArgType> the generic type of the function's parameters
  * @param <ReturnType> the generic type of the function's return value
@@ -33,12 +33,19 @@ import jnum.Function;
 public interface NumericalFunction<ArgType, ReturnType> extends Function<ArgType, ReturnType> {
 
 	/**
-	 * Sets the precision.
+	 * Sets the precision to which results are to be obtained..
 	 *
 	 * @param digits the new precision
 	 */
 	public void setPrecision(int digits);
 	
-	
+	/**
+	 * Gets the maximum number of significant figures that may be obtainable
+	 * by this numerical evaluation at the given ordinate.
+	 * 
+	 * @param x    The ordinate this function may be evaluated at
+	 * @return     The maximum number of significantfigures that may be available when the
+	 *             numberical function is evaluated at the specified ordinate.
+	 */
 	public int getMaxPrecisionAt(ArgType x);
 }

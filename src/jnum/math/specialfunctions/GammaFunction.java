@@ -124,7 +124,7 @@ public final class GammaFunction {
 			z.log();
 
 			result.subtract(z);
-			result.addReal(Constant.logPi);
+			result.add(Constant.logPi);
 
 			z.set(zr, zi);
 			return;
@@ -148,14 +148,14 @@ public final class GammaFunction {
 		z.set(zr - 0.5, zi);
 		result.multiplyBy(z);
 
-		result.subtractReal(zr + g - 0.5);
+		result.subtract(zr + g - 0.5);
 		result.subtractImaginary(zi);
 
 		z.set(sumr, sumi);
 		z.log();
 		result.add(z);
 
-		result.addReal(0.5 * Constant.logTwoPi);
+		result.add(0.5 * Constant.logTwoPi);
 
 		// Return z back to its original value...
 		z.set(zr, zi);	

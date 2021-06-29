@@ -22,8 +22,18 @@
  ******************************************************************************/
 package jnum.math;
 
-
+/**
+ * An interface for classes that implement a scaling by a real value.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public interface Scalable {
 	
+    /**
+     * Scales this object by the specified real-valued factor.
+     * 
+     * @param factor        The scalar facor.
+     */
 	public void scale(double factor);
 }

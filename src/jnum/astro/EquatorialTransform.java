@@ -100,8 +100,8 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
     public void inverse() {
         super.inverse();
         toGCRS *= -1;
-        dvEarth.invert();
-        dpEarth.invert();
+        dvEarth.flip();
+        dpEarth.flip();
         EquatorialSystem tmp = from;
         from = to;
         to = tmp;
@@ -426,7 +426,7 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
         else {
             // For extrasolar, q is just the unit vector from the source...
             q = p.copy();
-            q.invert();    
+            q.flip();    
         }
         
         // Make e a unit vector from observer to gravitating body.

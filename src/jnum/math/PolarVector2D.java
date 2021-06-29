@@ -29,7 +29,12 @@ import java.util.stream.IntStream;
 import jnum.ExtraMath;
 
 
-
+/**
+ * A class representing 2D vectors as polar coordinates, with a radius and an angle.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, Normalizable {
 
 	private static final long serialVersionUID = 6615579007848120214L;
@@ -79,7 +84,7 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	}
 
 	@Override
-	public final void invert() { addY(Math.PI); }
+	public final void flip() { addY(Math.PI); }
 
 	public final void projectOn(PolarVector2D v) {
 		setX(dot(v) / v.x());

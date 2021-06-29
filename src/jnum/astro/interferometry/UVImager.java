@@ -319,8 +319,7 @@ public class UVImager {
 
         WeightedComplex z = this.vis[i][j];
 
-        z.addReal(scaling * vis.wre);
-        z.addImaginary(scaling * (isMirror ? -vis.wim : vis.wim));
+        z.add(scaling * vis.wre, scaling * (isMirror ? -vis.wim : vis.wim));
         z.addWeight(scaling * scaling * vis.w);
     }
 
@@ -570,7 +569,7 @@ public class UVImager {
      */
     public void jackknife() {
         final Random random = new Random();
-        streamValid().filter(z -> random.nextDouble() < 0.5).forEach(WeightedComplex::invert);
+        streamValid().filter(z -> random.nextDouble() < 0.5).forEach(WeightedComplex::flip);
     }
 
     /**

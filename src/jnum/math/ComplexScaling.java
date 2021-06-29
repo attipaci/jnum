@@ -30,7 +30,7 @@ package jnum.math;
 public interface ComplexScaling {
 
 	/**
-	 * Scale this object by a complex value.
+	 * Scales this object by a complex argument.
 	 *
 	 * @param x the complex scaling factor.
 	 */

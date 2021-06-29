@@ -23,6 +23,7 @@
 package jnum.data.fitting;
 
 import java.text.NumberFormat;
+import java.util.stream.IntStream;
 
 import jnum.Util;
 import jnum.data.DataPoint;
@@ -243,5 +244,19 @@ public class Parameter extends DataPoint implements Penalty {
 		return name + " = " + (isExact() ? f.format(value()) : super.toString(f));		
 	}
 	
+    
+    /**
+     * Gets a deep copy of a parameter array, which is identical to the argument but shares
+     * no references with the original. In other words its returns a completely independent
+     * copy of the original parameter array.
+     * 
+     * @param array    The parameter array to copy.
+     * @return         An independent copy of the supplied original array.
+     */
+    public static Parameter[] copyOf(Parameter[] array) {
+        Parameter[] copy = new Parameter[array.length];
+        IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
+        return copy;
+    }
 	
 }

@@ -23,8 +23,24 @@
 package jnum.math;
 
 
+/**
+ * An interface for classes that can be set to contain the value of a division operation
+ * on some generic type elements.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <NumeratorType>       the generic type of the numerator
+ * @param <DenominatorType>     the generic type of the denominator
+ */
 public interface Ratio<NumeratorType, DenominatorType> {
 
+    /**
+     * Sets the contents of this object to contain the result of the division of the
+     * specified arguments.
+     * 
+     * @param numerator     the numerator in the ratio.
+     * @param denominator   the denominator in the ratio.
+     */
 	public void setRatio(NumeratorType numerator, DenominatorType denominator);
 	
 }

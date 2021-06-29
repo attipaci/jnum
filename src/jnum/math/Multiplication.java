@@ -24,14 +24,15 @@ package jnum.math;
 
 
 /**
- * The Interface Multiplication.
+ * The Interface that implememt a multiplication by an argument of some generic type.
  *
  * @param <Type> the generic type
  */
 public interface Multiplication<Type> {
 
 	/**
-	 * Multiply by.
+	 * Multiplies this object with the generic type argument. For non-commutative algebras
+	 * this should normally mean multiplication from the right-hand side
 	 *
 	 * @param factor the factor to multiply with.
 	 */

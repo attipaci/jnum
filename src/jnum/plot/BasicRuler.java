@@ -41,7 +41,6 @@ import javax.swing.JComponent;
 import jnum.Unit;
 import jnum.Util;
 import jnum.math.Range;
-import jnum.math.Scale;
 import jnum.math.Vector2D;
 import jnum.util.PrefixedUnit;
 

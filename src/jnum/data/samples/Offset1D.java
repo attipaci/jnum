@@ -37,7 +37,10 @@ public class Offset1D implements MathVector<Double> {
     
     public Offset1D(double value) { this.x = value; }
     
-    // TODO hashCode and equals and compare...
+    @Override
+    public Class<Double> getComponentType() {
+        return Double.class;
+    }
     
     @Override
     public int hashCode() {
@@ -99,7 +102,7 @@ public class Offset1D implements MathVector<Double> {
     }
 
     @Override
-    public void invert() { x *= -1.0; }
+    public void flip() { x *= -1.0; }
 
     @Override
     public final double distanceTo(MathVector<? extends Double> point) {
@@ -165,11 +168,6 @@ public class Offset1D implements MathVector<Double> {
     
     @Override
     public AbstractMatrix<Double> asRowVector() {
-        return new Matrix(new double[][] {{ x }});
-    }
-
-    @Override
-    public AbstractMatrix<Double> asColumnVector() {
         return new Matrix(new double[][] {{ x }});
     }
 

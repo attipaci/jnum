@@ -32,5 +32,5 @@ public interface Inversion {
 	/**
 	 * Invert this object about the origin.
 	 */
-	public void invert();
+	public void flip();
 }

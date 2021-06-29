@@ -25,19 +25,24 @@ package jnum.math;
 
 
 /**
-* Inverse Hyperbolic Functions, which are acted on the object itself. For example, for object x, the call x.asinh() 
-* will replace x --> asinh(x).
+* Inverse Hyperbolic Functions, which are acted on the object itself. For example, 
+* for object x, the call x.asinh() will replace the contents of x with that of asinh(x).
 */
-
 public interface HyperbolicInverseFunctions {
 
-
+    /**
+     * Inverse hyperbolic sine.
+     */
 	public void asinh();
 	
-	
+	/**
+     * Inverse hyperbolic cosine.
+     */
 	public void acosh();
 	
-	
+	/**
+     * Inverse hyperbolic tangent.
+     */
 	public void atanh();
 	
 }

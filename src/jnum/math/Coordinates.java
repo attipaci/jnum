@@ -27,19 +27,65 @@ import jnum.CopyCat;
 import jnum.data.IndexedEntries;
 import jnum.data.samples.Index1D;
 
-
+/**
+ * An interface representing coordinates of generic type.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <T>   The generic type of a coordinate in this set
+ */
 public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, IndexedEntries<Index1D, T>  {
 
+    /**
+     * Gets the number of coordinate components in this set.
+     * 
+     * @return  The number of elements constituting this set of coordinates.
+     */
     public int size();
     
+    /**
+     * Gets the class of components in these coordinates. 
+     * 
+     * @return
+     */
+    public Class<T> getComponentType();
+    
+    /**
+     * Gets one of the coordinate element.
+     * 
+     * @param index     Index of the coordinate element
+     * @return          The coordinate element at the given index, or 0.0 if the index is beyonf the 
+     *                  span of coordinate elements supported by this class.
+     */
     public T getComponent(int index);
     
+    /**
+     * Sets one coordinate to the specified generic type value.
+     * 
+     * @param index     Index of the coordinate element
+     * @param value     The new value for the coordinate element at the given index.
+     */
     public void setComponent(int index, T value);
     
+    /**
+     * Gets the 'x' coordinate (index 0) from a usual set of x,y,z coordinates. 
+     * 
+     * @return  The 'x' coordinate.
+     */
     public T x();
     
+    /**
+     * Gets the 'y' coordinate (index 1) from a usual set of x,y,z coordinates. 
+     * 
+     * @return  The 'y' coordinate, or 0.0 if this set of coodinates does not have a 'y' type element.
+     */
     public T y();
     
+    /**
+     * Gets the 'z' coordinate (index 2) from a usual set of x,y,z coordinates. 
+     * 
+     * @return  The 'z' coordinate, or 0.0 if this set of coodinates does not have a 'z' type element.
+     */
     public T z();
 
    

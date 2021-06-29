@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,8 +20,16 @@
  * Contributors:
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
-package jnum.devel.symbolic;
 
-public interface BooleanAssignment {
-    public void set(VariableLookup variables, String id, boolean value);
+package jnum.math;
+
+/**
+ * An interface for objects that implement a basic alegbra (addition, subtraction, multiplication) with
+ * real number arguments.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
+public interface RealAlgebra extends RealAddition, Scalable {
+
 }

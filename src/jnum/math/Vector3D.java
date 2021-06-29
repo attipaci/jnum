@@ -30,6 +30,12 @@ import jnum.NonConformingException;
 import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 
+/**
+ * A class representing a Cartesian vector in 3D space, i.e. with <i>x</i>, <i>y</i>, and <i>z</i> components.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Vector3D extends Coordinate3D implements MathVector<Double> { 
     /**
      * 
@@ -158,19 +164,31 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
         rotateZ(phi);
     }
     
+    public void add(double x, double y, double z) {
+        addX(x);
+        addY(y);
+        addZ(z);
+    }
+    
     @Override
     public void add(final MathVector<? extends Double> v) {
-        set(x() + v.x(), y() + v.y(), z() + v.z());
+        addX(v.x());
+        addY(v.y());
+        addZ(v.z());
     }
     
     @Override
     public void subtract(final MathVector<? extends Double> v) {
-        set(x() - v.x(), y() - v.y(), z() - v.z());
+        addX(-v.x());
+        addY(-v.y());
+        addZ(-v.z());
     }
     
     @Override
     public void addScaled(final MathVector<? extends Double> v, final double factor) {
-        set(x() + factor * v.x(), y() + factor * v.y(), z() + factor * v.z());
+        addX(factor * v.x());
+        addY(factor * v.y());
+        addZ(factor * v.z());
     }
     
     @Override
@@ -190,7 +208,7 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
     }
     
     @Override
-    public void invert() {
+    public void flip() {
         set(-x(), -y(), -z());
     }
     

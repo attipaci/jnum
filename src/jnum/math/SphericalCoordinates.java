@@ -396,7 +396,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
      * @see jnum.math.Invertible#invert()
      */
     @Override
-    public void invert() {
+    public void flip() {
         invertX(); invertY();
     }
     

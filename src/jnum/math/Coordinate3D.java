@@ -42,7 +42,12 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-
+/**
+ * A base class for 3D coordinates of all types. That is basically anything with a triplet of real values.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Coordinate3D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate3D>, 
 ViewableAsDoubles, Parser, NumberFormating {
 
@@ -60,6 +65,12 @@ ViewableAsDoubles, Parser, NumberFormating {
 	public Coordinate3D(Coordinates<Double> v) {
 	    this(v.x(), v.y(), v.z());
 	}
+	
+    @Override
+    public final Class<Double> getComponentType() {
+        return Double.class;
+    }
+    
 
 	@Override
     public Coordinate3D clone() {

@@ -69,12 +69,17 @@ public class ComplexMesh extends Vector2DMesh<Complex> implements ComplexAdditio
     }
 
     @Override
-    public void addComplex(final Complex x) {
-        add(x);
+    public void add(final Complex x) {
+        super.add(x);
+    }
+    
+    @Override
+    public void add(double re, double im) {
+        add(new Complex(re, im));
     }
 
     @Override
-    public void subtractComplex(final Complex x) {
+    public void subtract(final Complex x) {
        subtract(x);
     }
 

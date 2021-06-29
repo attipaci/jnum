@@ -33,7 +33,12 @@ import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 
 
-
+/**
+ * A class representing a Cartesian vector in a 2D plane, i.e. with <i>x</i>, and <i>y</i> components.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Vector2D extends Coordinate2D implements MathVector<Double> {
 
 
@@ -56,7 +61,7 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
     public Vector2D copy() {
         return (Vector2D) super.copy();
     }
-
+    
 
     public final double length() { return ExtraMath.hypot(x(), y()); }
 
@@ -84,6 +89,10 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
 
     public final PolarVector2D polar() { return new PolarVector2D(length(), angle()); }
 
+    public void add(double x, double y) {
+        addX(x);
+        addY(y);
+    }
 
     @Override
     public final void add(final MathVector<? extends Double> v) { addX(v.x()); addY(v.y()); }
@@ -171,7 +180,7 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
     }
 
     @Override
-    public final void invert() { scale(-1.0); }	
+    public final void flip() { scale(-1.0); }	
 
 
     @Override

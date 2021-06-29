@@ -22,7 +22,12 @@
  ******************************************************************************/
 package jnum.math;
 
-
+/**
+ * An interface for classes that have an aboslute value or magnitude.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public interface AbsoluteValue {
 	
 	/**

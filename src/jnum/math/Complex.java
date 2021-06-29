@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
 
 
 /**
- * The class for handling complex numbers (x + i*y). 
+ * A class for handling complex numbers, with real and imaginary parts, i.e. as z = (a + i * b). 
  * 
  * Complex numbers are a natural extension of 2D vectors ({@link jnum.math.Vector2D})
  * with complex arithmetic operations added on top. 
@@ -66,7 +66,7 @@ public class Complex extends Vector2D implements
 	/**
 	 * Instantiates a new complex representation of a real number.
 	 *
-	 * @param real Complex representation of this real value.
+	 * @param real     real value whose complex representation is to be constructed.
 	 */
 	public Complex(final double real) { super(real, 0.0); }
 
@@ -92,28 +92,28 @@ public class Complex extends Vector2D implements
 	public final double im() { return y(); }
 	
 	/**
-	 * Set the real part.
+	 * Sets the real part of this complex number.
 	 *
 	 * @param value the new real part
 	 */
 	public final void setRealPart(final double value) { setX(value); }
 	
 	/**
-	 * Set the imaginary part.
+	 * Sets the imaginary part of this complex number.
 	 *
 	 * @param value the new imaginary part
 	 */
 	public final void setImaginaryPart(final double value) { setY(value); }
 	
 	/**
-	 * Check if is real.
+	 * Checks if this complex number is a real number, i.e. if its imaginary part is zero.
 	 *
 	 * @return true, if is real
 	 */
 	public final boolean isReal() { return y() == 0.0; }
 	
 	/**
-	 * Check if is imaginary.
+	 * Checks if this complex number is an imaginary number, i.e. if its real part is zero.
 	 *
 	 * @return true, if is imaginary
 	 */
@@ -131,74 +131,46 @@ public class Complex extends Vector2D implements
 		return x() == value;
 	}
 	
-	/**
-	 * Add a real value.
-	 *
-	 * @param value the value
-	 */
+
 	@Override
-	public final void addReal(final double value) { addX(value); }
+	public final void add(final double value) { addX(value); }
 	
 	/**
-	 * Add an imaginary value.
+	 * Adds an imaginary value to this complex number.
 	 *
-	 * @param value the value
+	 * @param value    increment to imaginary part.
 	 */
 	public final void addImaginary(final double value) { addY(value); }
 	
-	/**
-	 * Subtract a real value.
-	 *
-	 * @param value the value
-	 */
+
 	@Override
-	public final void subtractReal(final double value) { subtractX(value); }
+	public final void subtract(final double value) { subtractX(value); }
 	
 	/**
-	 * Subtract an imaginary value.
+	 * Subtracts an imaginary value from this complex number.
 	 *
-	 * @param value the value
+	 * @param value    decrement to imaginary part.
 	 */
 	public final void subtractImaginary(final double value) { subtractY(value); }
 
-		
-	/**
-	 * Complex conjugate.
-	 * 
-	 * a + i*b becomes a - i*b.
-	 */
+
 	@Override
 	public final void conjugate() { scaleY(-1.0); }
 
-	/**
-	 * Calculate the conjugate of a complex number.
-	 *
-	 * @param z a Complex number.
-	 * @return the the conjugate of the argument.
-	 */
-	public static Complex conjugate(final Complex z) {
-		final Complex c = (Complex) z.clone();
-		c.conjugate();
-		return c;
-	}
-
-	/**
-	 * Negate.
-	 */
-	public final void negate() { invert(); }
 	
 	/**
-	 * 1/z (the inverse under multiplication).
+	 * Negates this complex number, i.e. z becomes -z.
 	 */
+	public final void negate() { flip(); }
+	
+
 	@Override
 	public void inverse() { 
 		conjugate();
 		scale(1.0 / absSquared());
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.math.InverseValue#getInverse()
-	 */
+
 	@Override
 	public final Complex getInverse() {
 		final Complex c = (Complex) clone();
@@ -206,56 +178,29 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 	
-	/**
-	 * Calculate the inverse of a complex number under multiplication.
-	 *
-	 * @param z a Complex number
-	 * @return 1/z
-	 */
+
 	public static Complex getInverse(final Complex z) {
 		return z.getInverse();
 	}
 	
-	/**
-	 * Complex multiplication.
-	 *
-	 * @param z the Complex number to multiply with.
-	 */
 	@Override
 	public final void multiplyBy(final Complex z) {
 		setProduct(this, z);
 	}
 	
-	/**
-	 * Set this complex number to be the product of the two complex arguments (a*b).
-	 *
-	 * @param a the a
-	 * @param b the b
-	 */
+
 	@Override
 	public final void setProduct(final Complex a, final Complex b) {
-		set(
-				a.x() * b.x() - a.y() * b.y(),
-				a.x() * b.y() + a.y() * b.x()
-		);
+		set(a.x() * b.x() - a.y() * b.y(), a.x() * b.y() + a.y() * b.x());
 	}
 	
-	/**
-	 * Complex division.
-	 *
-	 * @param z the complex number to divide by.
-	 */
+
 	@Override
 	public final void divideBy(final Complex z) {
 		setRatio(this, z);
 	}
 	
-	/**
-	 * Set this complex number to be the ratio of the two complex arguments (a/b).
-	 *
-	 * @param a the complex numerator.
-	 * @param b the complex denominator.
-	 */
+
 	@Override
 	public final void setRatio(final Complex a, final Complex b) {
 		final double A = 1.0 / b.absSquared();
@@ -267,7 +212,7 @@ public class Complex extends Vector2D implements
 	}
 	
 	/**
-	 * Set this complex number to be the result of the specified operation between the two complex arguments.
+	 * Sets this complex number to be the result of the specified operation between the two complex arguments.
 	 *
 	 * @param a the first complex argument.
 	 * @param op the operation: '+', '-', '*', '/' or '^'.
@@ -283,30 +228,19 @@ public class Complex extends Vector2D implements
 	}
 	
 	
-	
-	/**
-	 * Multiply by i.
-	 */
 	@Override
 	public final void multiplyByI() {
 		set(-y(), x());
 	}
 	
 	/**
-	 * Divide by i.
+	 * Divides by this complex number by i (the imaginary unit).
 	 */
 	public final void divideByI() {
 		set(y(), -x());
 	}
 
 
-	/**
-	 * z<sup>y</sup>. 
-	 * 
-	 * Raise this complex number to the y<sup>th</sup> power.
-	 *
-	 * @param y the power exponent.
-	 */
 	@Override
 	public void pow(final double y) {
 		setPolar(Math.pow(length(), y), y * angle());
@@ -324,7 +258,19 @@ public class Complex extends Vector2D implements
 	}
 	
 	/**
-	 * Calculate the n<sup>th</sup> power of the complex argument.
+     * Gets the conjugate of a complex number.
+     *
+     * @param z a Complex number.
+     * @return the the conjugate of the argument.
+     */
+    public static Complex conjugateOf(final Complex z) {
+        final Complex c = (Complex) z.clone();
+        c.conjugate();
+        return c;
+    }
+	
+	/**
+	 * Calculates the n<sup>th</sup> power of the complex argument.
 	 *
 	 * @param z the complex argument to raise.
 	 * @param exp the power exponent.
@@ -337,7 +283,7 @@ public class Complex extends Vector2D implements
 	}
 
 	/**
-	 * Calculate the complex n<sup>th</sup> power of a complex number.
+	 * Calculates the complex n<sup>th</sup> power of a complex number.
 	 *
 	 * @param z the complex argument
 	 * @param exp the complex power exponent
@@ -349,29 +295,22 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-	/**
-	 * sqrt(z). 
-	 * 
-	 * 
-	 * Take the square-root of this complex number.
-	 */
+
 	@Override
 	public final void sqrt() { 
 		setPolar(Math.sqrt(length()), 0.5 * angle());
 	}
 
 	/**
-	 * cbrt(z). 
+	 * Takes the cubic root of this complex number i.e., z becomes cbrt(z). 
 	 * 
-	 * 
-	 * Take the cubic root of this complex number.
 	 */
 	public final void cbrt() { 
 		setPolar(Math.cbrt(length()), 0.33333333333333 * angle());
 	}
 	
 	/**
-	 * Return the square-root of the Complex argument.
+	 * Gets the square-root of the Complex argument.
 	 *
 	 * @param z the complex argument.
 	 * @return the square-root of the argument.
@@ -383,7 +322,7 @@ public class Complex extends Vector2D implements
 	}	
 
 	/**
-	 * Return the cubic root of the Complex argument.
+	 * Gets the cubic root of the Complex argument.
 	 *
 	 * @param z the complex argument.
 	 * @return the cubic root of the argument.
@@ -395,16 +334,13 @@ public class Complex extends Vector2D implements
 	}	
 	
 	
-	/**
-	 * exp(z).
-	 */
 	@Override
 	public final void exp() {
 		setPolar(Math.exp(x()), y());
 	}	
 
 	/**
-	 * Calculates the exponential of the argument.
+	 * Gets the exponential of the argument.
 	 *
 	 * @param z the Complex argument
 	 * @return exp(z)
@@ -415,9 +351,7 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-	/**
-     * exp(z)-1.
-     */
+
 	@Override
     public final void expm1() {
         if(y() == 0) setX(Math.expm1(x()));
@@ -439,18 +373,14 @@ public class Complex extends Vector2D implements
         return c;
     }
 	
-	
-	/**
-	 * log(z).
-	 * 
-	 */
+
 	@Override
 	public final void log() {
 		set(Math.log(length()), angle());
 	}
 
 	/**
-	 * Calculates the natural logarithm of the complex argument.
+	 * Gets the natural logarithm of the complex argument.
 	 *
 	 * @param z the complex argument
 	 * @return log(z).
@@ -461,10 +391,6 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-	/**
-     * log(1+z).
-     * 
-     */
 	@Override
     public final void log1p() {
         if(y() == 0.0) setX(Math.log1p(x()));
@@ -473,7 +399,7 @@ public class Complex extends Vector2D implements
 	
 	
 	/**
-     * Calculates the natural log(1+z) of the complex argument z.
+     * Gets the natural log(1+z) of the complex argument z.
      *
      * @param z the complex argument
      * @return log(1+z).
@@ -484,9 +410,7 @@ public class Complex extends Vector2D implements
         return c;
     }
 	
-	/**
-	 * cos(z).
-	 */
+
 	@Override
 	public final void cos() {
 		final Complex e = (Complex) clone();
@@ -497,7 +421,7 @@ public class Complex extends Vector2D implements
 	}
 
 	/**
-	 * Calculates the cosine of the complex argument.
+	 * Gets the cosine of the complex argument.
 	 *
 	 * @param z the complex argument
 	 * @return the cos(z)
@@ -508,9 +432,6 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-	/**
-	 * sin(z).
-	 */
 	@Override
 	public final void sin() {
 		final Complex e = (Complex) clone();
@@ -522,7 +443,7 @@ public class Complex extends Vector2D implements
 	}
 
 	/**
-	 * Calculates the sine of the complex argument.
+	 * Gets the sine of the complex argument.
 	 *
 	 * @param z the complex argument
 	 * @return sin(z)
@@ -533,9 +454,7 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-	/**
-	 * tan(z).
-	 */
+
 	@Override
 	public final void tan() {
 		final Complex c = cos(this);
@@ -544,7 +463,7 @@ public class Complex extends Vector2D implements
 	}
 
 	/**
-	 * Calculates the tangent of the complex argument.
+	 * Gets the tangent of the complex argument.
 	 *
 	 * @param z the complex argument.
 	 * @return tan(z)
@@ -556,9 +475,6 @@ public class Complex extends Vector2D implements
 	}
 
 
-	/**
-	 * cosh(z).
-	 */
 	@Override
 	public final void cosh() {
 		final Complex e = exp(this);
@@ -567,7 +483,7 @@ public class Complex extends Vector2D implements
 	}
 
 	/**
-	 * Calculates the hyperbolic cosine of the complex argument.
+	 * Gets the hyperbolic cosine of the complex argument.
 	 *
 	 * @param z the complex argument
 	 * @return the cosh(z)
@@ -578,9 +494,7 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-	/**
-	 * sinh(z).
-	 */
+
 	@Override
 	public final void sinh() {
 		final Complex e = exp(this);
@@ -590,7 +504,7 @@ public class Complex extends Vector2D implements
 	}
 
 	/**
-	 * Calculates the hyperbolic sine of the complex argument.
+	 * Gets the hyperbolic sine of the complex argument.
 	 *
 	 * @param z the complex argument
 	 * @return sinh(z)
@@ -601,9 +515,7 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-	/**
-	 * tanh(z).
-	 */
+	
 	@Override
 	public final void tanh() {
 		final Complex c = cos(this);
@@ -612,7 +524,7 @@ public class Complex extends Vector2D implements
 	}
 
 	/**
-	 * Calculates the hyperbolic tangent of the complex argument.
+	 * Gets the hyperbolic tangent of the complex argument.
 	 *
 	 * @param z the complex argument
 	 * @return tanh(z)
@@ -667,9 +579,6 @@ public class Complex extends Vector2D implements
 	}
 
 
-	/* (non-Javadoc)
-	 * @see jnum.Vector2D#math(char, double)
-	 */
 	@Override
 	public final void math(char op, double b) throws IllegalArgumentException {
 		switch(op) {
@@ -705,59 +614,66 @@ public class Complex extends Vector2D implements
 	@Override
 	public final String toString(NumberFormat nf) { return nf.format(x()) + (y() < 0 ? "" : "+") + nf.format(y()) + "i"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#toString()
-	 */
+
 	@Override
 	public final String toString() { return x() + (y() < 0 ? "" : "+") + y() + "i"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.math.IdentityValue#setIdentity()
-	 */
+
 	@Override
 	public void setIdentity() {
 		set(1.0, 0.0);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.ComplexScaling#scale(kovacs.math.Complex)
-	 */
+
 	@Override
 	public void scale(Complex x) {
 		multiplyBy(x);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.ComplexAddition#addComplex(kovacs.math.Complex)
-	 */
+
 	@Override
-	public void addComplex(Complex x) {
+	public void add(Complex x) {
 		add(x);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.ComplexAddition#subtractComplex(kovacs.math.Complex)
-	 */
 	@Override
-	public void subtractComplex(Complex x) {
+    public void add(double re, double im) {
+	    super.add(re, im);
+	}
+
+	@Override
+	public void subtract(Complex x) {
 		subtract(x);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.PowFunctions#square()
-	 */
+
 	@Override
 	public void square() {
 		set(x() * x() - y() * y(), 2.0 * x() * y());
 	}
 		
 
+	/**
+	 * Creates a an initialized array of complex numbers and of the specified size. The
+	 * Array is initialized with references to independent zero complex values in every slot.
+	 * 
+	 * @param size     the number of complex elements in the new array
+	 * @return         a new initialized complex array. 
+	 */
 	public static Complex[] createArray(int size) {
 		final Complex[] z = new Complex[size];
 		IntStream.range(0,  z.length).parallel().forEach(i -> z[i] = new Complex());
 		return z;
 	}
 	
+	/**
+	 * Gets a deep copy of a complex array, which is identical to the argument but shares
+	 * no references with the original. In other words its returns a completely independent
+	 * copy of the original complex array.
+	 * 
+	 * @param array    The complex array to copy.
+	 * @return         An independent copy of the supplied original array.
+	 */
     public static Complex[] copyOf(Complex[] array) {
         Complex[] copy = new Complex[array.length];
         IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());

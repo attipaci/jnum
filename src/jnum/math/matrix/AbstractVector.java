@@ -51,13 +51,6 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
 	private static final long serialVersionUID = 785522803183758105L;
 
 	/**
-	 * Gets the class of elements contained in this vector.
-	 * 
-	 * @return     Class of generic type elements.
-	 */
-	public abstract Class<T> getType();
-	
-	/**
 	 * Gets the underlying data object, normally an simple array, either and object array of type T[]
 	 * or a primitive array such as double[].
 	 * 
@@ -120,7 +113,7 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
 	}
 
 	@Override
-    public void invert() {
+    public void flip() {
 	    scale(-1.0);
 	}
 	

@@ -27,28 +27,48 @@ import java.io.Serializable;
 
 import jnum.Constant;
 import jnum.Copiable;
+import jnum.CopyCat;
 import jnum.Util;
 import jnum.util.HashCode;
 
 
-
-public class Angle implements Cloneable, Serializable, Copiable<Angle>, Additive<Angle>, Inversion, Metric<Angle>,
+/**
+ * A class representing an angle, with its sine and cosine readily calculate for frequent use.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
+public class Angle implements Cloneable, Serializable, Copiable<Angle>, CopyCat<Angle>, Additive<Angle>, Inversion, Metric<Angle>,
 Comparable<Angle> {
 
     private static final long serialVersionUID = -3107020652545972613L;
 
     private double value, c, s;
     
-
-    public Angle() {}
+    /**
+     * Constructs a new angle initialized to 0.
+     * 
+     */
+    public Angle() {
+        c = 1.0;
+    }
     
 
+    /**
+     * Constructs a new angle with the specified value in radians.
+     * 
+     * @param value     (rad) The numerical value of this angle
+     */
     public Angle(double value) {
-        this();
         set(value);
     }
    
 
+    /**
+     * Constructs a new angle based on the position angle of 2D vector.
+     * 
+     * @param v     The vector whose angle defines this angle.
+     */
     public Angle(Vector2D v) {
         value = v.angle();
         double l = v.length();
@@ -56,32 +76,23 @@ Comparable<Angle> {
         s = v.y() / l;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
+
     @Override
     public Angle clone() {
         try { return (Angle) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
     
-    /* (non-Javadoc)
-     * @see jnum.Copiable#copy()
-     */
     @Override
     public Angle copy() {
         return clone();
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() { return HashCode.from(value); }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -90,113 +101,138 @@ Comparable<Angle> {
     }
     
 
+    @Override
     public void copy(Angle a) {
         value = a.value;
         c = a.c;
         s = a.s;
     }
     
-
+    /**
+     * Sets a new angle, and recalculates the sine and cosine terms for it
+     * 
+     * @param value    (rad) The new angle.
+     */
     public void set(double value) {
         this.value = value;
         c = Math.cos(value);
         s = Math.sin(value);
     }
     
-
     private final void setCosSin(final double c, final double s) {
         this.c = c;
         this.s = s;
     }
 
-    
+    /**
+     * Canonizes the angle to [-Pi:Pi] range.
+     * 
+     */
     public final void canonize() {
         value = Math.IEEEremainder(value, Constant.twoPi);
     }
     
-
+    /**
+     * Gets the numerical value of this angle.
+     * 
+     * @return      (rad) The angle represented by this object
+     */
     public final double value() { return value; }
     
-
+    /**
+     * Gets the precalculated cosine of this angle.
+     * 
+     * @return  The cosine of this angle.
+     */
     public final double cos() { return c; }
     
 
+    /**
+     * Gets the precalculated sine of this angle.
+     * 
+     * @return  The sine of this angle.
+     */
     public final double sin() { return s; }
     
 
+    /**
+     * Gets the tangent of this angle from it's precacluated sine and cosine.
+     * 
+     * @return  The tangent of this angle.
+     */
     public final double tan() { return s/c; }
     
-
+    /**
+     * Gets a representation of this angle as a complex value, with the specified
+     * absolute value L, i.e. z = L * exp(i*angle).
+     * 
+     * @param length    The absolute value of the complex representation.
+     * @return          The complex value equal to z = L * exp(i * angle).
+     */
     public Complex toComplex(double length) {
         return new Complex(c * length, s * length);
     }
     
-
+    /**
+     * Increments this angle by the specified amount.
+     * 
+     * @param theta     (rad) The angle to add to this one.
+     */
     public void add(double theta) {
         set(value() + theta);
     }
  
-    /* (non-Javadoc)
-     * @see jnum.math.Additive#add(java.lang.Object)
-     */
+
     @Override
     public void add(Angle theta) {
         value += theta.value();
         setCosSin(c * theta.c - s * theta.s, s * theta.c + c * theta.s);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.math.Additive#subtract(java.lang.Object)
-     */
+
     @Override
     public void subtract(Angle theta) {
         value -= theta.value();
         setCosSin(c * theta.c + s * theta.s, s * theta.c - c * theta.s);
     }
     
-
+    /**
+     * Deccrements this angle by the specified amount.
+     * 
+     * @param theta     (rad) The angle to add to this one.
+     */
     public void subtract(double theta) {
         set(value() - theta);
     }
     
-    /* (non-Javadoc)
-     * @see jnum.math.Inversion#invert()
-     */
+
     @Override
-    public void invert() { 
+    public void flip() { 
         value *= -1.0;
         s *= -1.0;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.math.Additive#setSum(java.lang.Object, java.lang.Object)
-     */
+
     @Override
     public void setSum(Angle a, Angle b) {
         copy(a);
         add(b);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.math.Additive#setDifference(java.lang.Object, java.lang.Object)
-     */
+
     @Override
     public void setDifference(Angle a, Angle b) {
         copy(a);
         subtract(b);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
+
     @Override
     public int compareTo(Angle a) {
         return Double.compare(value, a.value);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.math.Metric#distanceTo(java.lang.Object)
-     */
+
     @Override
     public double distanceTo(Angle other) {
         return Math.abs(Math.IEEEremainder(value - other.value, Constant.twoPi));

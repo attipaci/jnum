@@ -107,7 +107,7 @@ public class ComplexVector extends ObjectVector<Complex> implements ComplexScali
     }
 	
 	@Override
-	public Class<Complex> getType() { return Complex.class; }
+	public Class<Complex> getComponentType() { return Complex.class; }
 	
 	@Override
 	public void conjugate() {

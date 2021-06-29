@@ -22,11 +22,13 @@
  ******************************************************************************/
 // Copyright (c) 2010 Attila Kovacs 
 
-package jnum.math;
+package jnum.plot;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import jnum.math.Range;
 
 // TODO: Auto-generated Javadoc
 // TODO Better handling of custom divisions (all vs within range)

@@ -23,21 +23,26 @@
 
 package jnum.math;
 
-
+/**
+ * And interface for objects that allow adding and subtracting real values.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public interface RealAddition {
-
+    
 	/**
-	 * Add the argument to this object.
+	 * Adds the argument to this object.
 	 *
 	 * @param x the value to be added.
 	 */
-	public void addReal(double x);
+	public void add(double x);
 	
 	/**
-	 * Subtract the argument from this object.
+	 * Subtracts the argument from this object.
 	 *
 	 * @param x the value to be subtracted.
 	 */
-	public void subtractReal(double x);
+	public void subtract(double x);
 	
 }

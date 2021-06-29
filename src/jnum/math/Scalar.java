@@ -41,6 +41,13 @@ import java.io.Serializable;
 import java.lang.reflect.*;
 
 
+/**
+ * An object representing a single real number value (i.e. a scalar). It is similar to the built-in Java {@link java.langDouble}
+ * but with mutable ocntent, and implementation of the various jnum interfaces that apply to scalar type values. 
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar>, AbstractAlgebra<Scalar>, AbsoluteValue, Copiable<Scalar>, CopyCat<Scalar>, Cloneable, BlankingValue, 
 	PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions,
 	NumberFormating, DecimalFormating, Parser, Metric<Scalar>, Comparable<Scalar> {
@@ -80,9 +87,6 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	    return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Scalar clone() {
 		try { return (Scalar) super.clone(); }
@@ -97,33 +101,21 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		this.value = value;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.CopyCat#copy(java.lang.Object)
-	 */
 	@Override
 	public final void copy(Scalar template) {
 		value = template.value;
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
-	 */
 	@Override
 	public final void addScaled(Scalar o, double factor) {
 		value += factor * o.value;		
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Additive#subtract(java.lang.Object)
-	 */
 	@Override
 	public final void subtract(Scalar o) {
 		value -= o.value;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Additive#add(java.lang.Object)
-	 */
 	@Override
 	public final void add(Scalar o) {
 		value += o.value;
@@ -139,177 +131,107 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		value += x;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Scalable#scale(double)
-	 */
 	@Override
 	public final void scale(double factor) {
 		value *= factor;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbsoluteValue#abs()
-	 */
 	@Override
 	public final double abs() {
 		return Math.abs(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.TrigonometricInverseFunctions#acos()
-	 */
 	@Override
 	public final void acos() {
 		value = Math.acos(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.TrigonometricInverseFunctions#asin()
-	 */
 	@Override
 	public final void asin() {
 		value = Math.asin(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.TrigonometricInverseFunctions#atan()
-	 */
 	@Override
 	public final void atan() {
 		value = Math.atan(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.TrigonometricFunctions#cos()
-	 */
 	@Override
 	public final void cos() {
 		value = Math.cos(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.HyperbolicFunctions#cosh()
-	 */
 	@Override
 	public final void cosh() {
 		value = Math.cosh(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.PowFunctions#exp()
-	 */
 	@Override
 	public final void exp() {
 		value = Math.exp(value);
 	}
 
-	/* (non-Javadoc)
-     * @see kovacs.math.PowFunctions#expm1()
-     */
     @Override
     public final void expm1() {
         value = Math.expm1(value);
     }
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.PowFunctions#invert()
-	 */
-	@Override
-	public final void invert() {
-		value = 1.0/value;
-	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.PowFunctions#log()
-	 */
 	@Override
 	public final void log() {
 		value = Math.log(value);
 	}
 
-	/* (non-Javadoc)
-     * @see kovacs.math.PowFunctions#log1p()
-     */
     @Override
     public final void log1p() {
         value = Math.log1p(value);
     }
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.PowFunctions#pow(double)
-	 */
+
 	@Override
 	public final void pow(double n) {
 		value = Math.pow(value, n);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.TrigonometricFunctions#sin()
-	 */
 	@Override
 	public final void sin() {
 		value = Math.sin(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.HyperbolicFunctions#sinh()
-	 */
 	@Override
 	public final void sinh() {
 		value = Math.sinh(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.PowFunctions#sqrt()
-	 */
 	@Override
 	public final void sqrt() {
 		value = Math.sqrt(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.PowFunctions#square()
-	 */
 	@Override
 	public final void square() {
 		value = value * value;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.TrigonometricFunctions#tan()
-	 */
 	@Override
 	public final void tan() {
 		value = Math.tan(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.HyperbolicFunctions#tanh()
-	 */
 	@Override
 	public final void tanh() {
 		value = Math.tanh(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Multiplicative#multiplyBy(java.lang.Object)
-	 */
 	@Override
 	public final void multiplyBy(Scalar o) {
 		value *= o.value;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Copiable#copy()
-	 */
 	@Override
 	public final Scalar copy() {
 		return clone();
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.data.BlankingValue#isNaN()
-	 */
 	@Override
 	public final boolean isNaN() {
 		return Double.isNaN(value);
@@ -320,82 +242,53 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		return value;
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.text.NumberFormating#toString(java.text.NumberFormat)
-	 */
 	@Override
 	public final String toString(NumberFormat nf) {
 		return nf.format(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.text.DecimalFormating#toString(int)
-	 */
 	@Override
 	public final String toString(int decimals) {
 		return Util.f[decimals].format(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.text.Parser#parse(java.lang.String)
-	 */
 	@Override
 	public final void parse(String text, ParsePosition pos) throws IllegalArgumentException {
 	    // TODO redo without Parser creation...
 	    value = Double.parseDouble(new StringParser(text, pos).nextToken());		
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Metric#distanceTo(java.lang.Object)
-	 */
 	@Override
 	public final double distanceTo(Scalar point) {
 		return point.value - value;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.IdentityValue#setIdentity()
-	 */
+
 	@Override
 	public final void setIdentity() {
 		value = 1.0;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.InverseValue#getInverse()
-	 */
 	@Override
 	public final Scalar getInverse() {
 		return new Scalar(1.0 / value);
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.math.InverseValue#inverse()
-	 */
 	@Override
 	public void inverse() {
 		value = 1.0 / value;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Product#setProduct(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public final void setProduct(Scalar a, Scalar b) {
 		value = a.value * b.value;		
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public final int compareTo(Scalar o) {
 		return Double.compare(this.value, o.value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.LinearAlgebra#isNull()
-	 */
 	@Override
 	public boolean isNull() {
 		return value == 0.0;
@@ -406,9 +299,6 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		return new Scalar(value * scalar.value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.AbsoluteValue#norm()
-	 */
 	@Override
 	public double absSquared() {
 		return value * value;
@@ -465,81 +355,51 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		return floats;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public final void setSum(Scalar a, Scalar b) {
 		value = a.value + b.value;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.Additive#setDifference(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public final void setDifference(Scalar a, Scalar b) {
 		value = a.value - b.value;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.LinearAlgebra#zero()
-	 */
 	@Override
 	public final void zero() {
 		value = 0.0;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.HyperbolicInverseFunctions#asinh()
-	 */
 	@Override
 	public final void asinh() {
 		value = ExtraMath.asinh(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.HyperbolicInverseFunctions#acosh()
-	 */
 	@Override
 	public final void acosh() {
 		value = ExtraMath.acosh(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.math.HyperbolicInverseFunctions#atanh()
-	 */
 	@Override
 	public final void atanh() {
 		value = ExtraMath.atanh(value);
 	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Number#doubleValue()
-     */
     @Override
     public double doubleValue() {
         return value;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Number#floatValue()
-     */
     @Override
     public float floatValue() {
         return (float) value;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Number#intValue()
-     */
     @Override
     public int intValue() {
         return (int) value;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Number#longValue()
-     */
     @Override
     public long longValue() {
         return (long) value;
