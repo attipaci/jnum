@@ -28,6 +28,7 @@ import jnum.PointOp;
 import jnum.Util;
 import jnum.data.transform.Stretch;
 import jnum.math.MathVector;
+import jnum.math.Transforming;
 import jnum.parallel.ParallelPointOp;
 
 public abstract class RegularData<IndexType extends Index<IndexType>, VectorType extends MathVector<Double>> extends Data<IndexType> {

@@ -35,31 +35,20 @@ public class HammerAitoff extends CylindricalProjection {
 
 	public HammerAitoff() {}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() { return "AIT"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFullName()
-	 */
+
 	@Override
 	public String getFullName() { return "Hammer-Aitoff"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#phi(jnum.Coordinate2D)
-	 */
 	@Override
 	protected final void getPhiTheta(final Coordinate2D offset, final SphericalCoordinates phiTheta) {
 		final double Z2 = Z2(offset);
 		final double Z = Math.sqrt(Z2);
 		phiTheta.setNative(2.0 * Math.atan2(0.5 * Z * offset.x(), 2.0 * Z2 - 1.0), asin(offset.y() * Z));
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#getOffsets(double, double, jnum.Coordinate2D)
-	 */
+
 	@Override
 	protected final void getOffsets(final double theta, final double phi, final Coordinate2D toOffset) {
 		final double gamma = gamma(theta, phi);

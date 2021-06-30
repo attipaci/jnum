@@ -21,12 +21,16 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.mesh;
+package jnum.math;
 
-import jnum.Function;
+public interface Transforming<CoordinateType> {
 
-public interface Overlayable<T> {
+    /**
+     * Transforms the supported generic type of coordinates in place. The is
+     * the result replaces the original value in the input vector itself.
+     * 
+     * @param coords   The vector to be transformed in situ.
+     */
+    public void transform(CoordinateType coords);
     
-    public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize);
-
 }

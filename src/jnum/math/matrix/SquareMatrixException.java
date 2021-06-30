@@ -26,7 +26,7 @@ package jnum.math.matrix;
 /**
  * An exception thrown when attempting a square matrix operation on a non-square matrix. 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class SquareMatrixException extends ArithmeticException {

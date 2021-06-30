@@ -35,7 +35,6 @@ import jnum.data.DataPoint;
 import jnum.data.Referenced;
 import jnum.data.RegularData;
 import jnum.data.Resizable;
-import jnum.data.Transforming;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
 import jnum.data.image.overlay.RangeRestricted2D;
@@ -48,6 +47,7 @@ import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.IntRange;
 import jnum.math.Range;
+import jnum.math.Transforming;
 import jnum.math.Vector2D;
 import jnum.projection.DefaultProjection2D;
 import jnum.projection.Projection2D;
@@ -66,7 +66,7 @@ import nom.tam.util.Cursor;
  * 2D image base class with FITS I/O, simple units, and 2D grid...
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <ImageType>
  * @param <ElementType>

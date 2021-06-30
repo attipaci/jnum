@@ -53,10 +53,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		IntStream.range(0, data.length).parallel().forEach(i -> set(i, data[i]));
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
+
 	@SuppressWarnings("unchecked")
     @Override
 	public FauxComplexArray<Type> clone() {
@@ -64,15 +61,9 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 		catch(CloneNotSupportedException e) { return null; }
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Copiable#copy()
-	 */
 	@Override
 	public final FauxComplexArray<Type> copy() { return copy(true); }
 	
-	/* (non-Javadoc)
-	 * @see jnum.CopiableContent#copy(boolean)
-	 */
 	@Override
 	public abstract FauxComplexArray<Type> copy(boolean fill);
 		
@@ -236,18 +227,12 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 			if((data.length & 1) != 0) throw new IllegalArgumentException("Cannot create complex array from odd-sized float[].");
 			this.data = data;
 		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
+
 		@Override
 		public int hashCode() {
 			return super.hashCode() ^ HashCode.sampleFrom(data);
 		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
+
 		@Override
 		public boolean equals(Object o) {
 			if(o == this) return true;
@@ -256,11 +241,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 			FauxComplexArray.Float array = (FauxComplexArray.Float) o;
 			return Arrays.equals(data, array.data);
 		}
-		
-		
-		/* (non-Javadoc)
-		 * @see kovacs.data.FauxComplexArray#copy(boolean)
-		 */
+
 		@Override
 		public FauxComplexArray<float[]> copy(boolean fill) {
 			Float copy = (Float) clone();
@@ -268,26 +249,17 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 			if(fill) System.arraycopy(data, 0, copy.data, 0, data.length);
 			return copy;
 		}
-		
-		/* (non-Javadoc)
-		 * @see jnum.data.FauxComplexArray#getData()
-		 */
+
 		@Override
 		public float[] getData() {
 			return data;
 		}
 
-		/* (non-Javadoc)
-		 * @see jnum.data.FauxComplexArray#get(int)
-		 */
 		@Override
 		protected final double get(int i) {
 			return data[i];
 		}
 
-		/* (non-Javadoc)
-		 * @see jnum.data.FauxComplexArray#set(int, double)
-		 */
 		@Override
 		protected final void set(int i, double value) {
 			data[i] = (float) value;
@@ -326,18 +298,12 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 			if((data.length & 1) != 0) throw new IllegalArgumentException("Cannot create complex array from odd-sized double[].");
 			this.data = data;
 		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
+
 		@Override
 		public int hashCode() {
 			return super.hashCode() ^ HashCode.sampleFrom(data);
 		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
+
 		@Override
 		public boolean equals(Object o) {
 			if(o == this) return true;
@@ -346,10 +312,7 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 			FauxComplexArray.Double array = (FauxComplexArray.Double) o;
 			return Arrays.equals(data, array.data);
 		}
-		
-		/* (non-Javadoc)
-		 * @see kovacs.data.FauxComplexArray#copy(boolean)
-		 */
+
 		@Override
 		public FauxComplexArray<double[]> copy(boolean fill) {
 			Double copy = (Double) clone();
@@ -357,26 +320,17 @@ public abstract class FauxComplexArray<Type> implements Serializable, Cloneable,
 			if(fill) System.arraycopy(data, 0, copy.data, 0, data.length);
 			return copy;
 		}
-		
-		/* (non-Javadoc)
-		 * @see jnum.data.FauxComplexArray#getData()
-		 */
+
 		@Override
 		public double[] getData() {
 			return data;
 		}
 
-		/* (non-Javadoc)
-		 * @see jnum.data.FauxComplexArray#get(int)
-		 */
 		@Override
 		protected final double get(int i) {
 			return data[i];
 		}
 
-		/* (non-Javadoc)
-		 * @see jnum.data.FauxComplexArray#set(int, double)
-		 */
 		@Override
 		protected final void set(int i, double value) {
 			data[i] = value;

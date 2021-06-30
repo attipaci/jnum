@@ -116,9 +116,6 @@ public class Parameter extends DataPoint implements Penalty {
 	    return (Parameter) super.clone();
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.data.WeightedPoint#copy()
-	 */
 	@Override
     public Parameter copy() {
 	    Parameter copy = (Parameter) super.copy();
@@ -126,9 +123,6 @@ public class Parameter extends DataPoint implements Penalty {
 	    return copy;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.WeightedPoint#hashCode()
-	 */
 	@Override
     public int hashCode() {
 	    int hash = super.hashCode();
@@ -136,10 +130,7 @@ public class Parameter extends DataPoint implements Penalty {
 	    if(range != null) hash ^= range.hashCode();
 	    return hash;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.data.WeightedPoint#equals(java.lang.Object)
-	 */
+
 	@Override
     public boolean equals(Object o) {
 	    if(this == o) return true;
@@ -152,9 +143,6 @@ public class Parameter extends DataPoint implements Penalty {
 	    return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.fitting.Penalty#penalty()
-	 */
 	@Override
     public double penalty() {
 	    if(range == null) return 0.0;
@@ -170,7 +158,7 @@ public class Parameter extends DataPoint implements Penalty {
 	 * @param r the range of acceptable parameter values.
 	 * @return 'true' if the current value is within the specified range, or false otherwise.
 	 * 
-	 * @see {@link #getRange()}
+	 * @see #getRange()
 	 */
 	public boolean setRange(Range r) { 
 	    this.range = r; 
@@ -187,7 +175,7 @@ public class Parameter extends DataPoint implements Penalty {
 	 *
 	 * @return the range of acceptable parameter values or null if unrestricted.
 	 * 
-	 * @see {@link #setRange(Range)}
+	 * @see #setRange(Range)
 	 */
 	public Range getRange() { return range; }
 	
@@ -203,7 +191,8 @@ public class Parameter extends DataPoint implements Penalty {
 	/**
 	 * Sets the default step size for this parameter, which is calculated either based on the restricted (and bounded)
 	 * range of acceptable values (if any), or the current magnitude of the parameter.
-	 * @see {@link #setStepSize(double)}
+	 * 
+	 * @see #setStepSize(double)
 	 */
 	public void setDefaultStepSize() { stepSize = Double.NaN; }
 	
@@ -213,7 +202,8 @@ public class Parameter extends DataPoint implements Penalty {
 	 *
 	 * @return the recommended step size for exploring the parameter space during fitting...
 	 * 
-	 * @see {@link #setStepSize(double)}, {@link #setDefaultStepSize()}
+	 * @see #setStepSize(double)
+	 * @see #setDefaultStepSize()
 	 */
 	public double getStepSize() {
 	    if(!Double.isNaN(stepSize)) return stepSize;
@@ -228,17 +218,12 @@ public class Parameter extends DataPoint implements Penalty {
 	 */
 	public String name() { return name; }
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.WeightedPoint#toString()
-	 */
+
 	@Override
 	public String toString() {
 		return name + " = " + (isExact() ? Double.toString(value()) : super.toString());		
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.WeightedPoint#toString(java.text.NumberFormat)
-	 */
 	@Override
 	public String toString(NumberFormat f) {
 		return name + " = " + (isExact() ? f.format(value()) : super.toString(f));		

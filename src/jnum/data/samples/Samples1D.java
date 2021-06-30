@@ -42,7 +42,7 @@ import nom.tam.util.Cursor;
 * A generic light-weight 1D data class implementation with FITS I/O support.
 * 
 * 
-* @author Attila Kovacs <attila@sigmyne.com>
+* @author Attila Kovacs
 *
 */
 public abstract class Samples1D extends Data1D implements Serializable, Resizable1D, CopiableContent<Samples1D> {

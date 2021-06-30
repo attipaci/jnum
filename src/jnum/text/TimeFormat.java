@@ -44,10 +44,7 @@ public class TimeFormat extends AngleFormat {
 		marks = hmsMarks;
 		isPositiveOnly = true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.text.AngleFormat#setSeparator(int)
-	 */
+
 	@Override
 	public void setMarks(int type) {
 		switch(type) {
@@ -58,10 +55,7 @@ public class TimeFormat extends AngleFormat {
 		default: marks = colonMarks;
 		}	
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.text.AngleFormat#getSeparator()
-	 */
+
 	@Override
 	public int getMarks() {
 		if(marks == colonMarks) return FORMAT_COLONS;
@@ -80,16 +74,10 @@ public class TimeFormat extends AngleFormat {
         default: return Double.NaN;
         } 
     }
-	
-	/* (non-Javadoc)
-	 * @see jnum.text.AngleFormat#colons()
-	 */
+
 	@Override
 	public void colons() { marks = colonMarks; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.text.AngleFormat#letters()
-	 */
+
 	@Override
 	public void letters() { marks = hmsMarks; }
 	
@@ -112,20 +100,13 @@ public class TimeFormat extends AngleFormat {
         default: return colonMarks;
         }  
     }
-    
-    
-	/* (non-Javadoc)
-	 * @see jnum.text.AngleFormat#setTopLevel(int)
-	 */
+
 	@Override
 	public void setTopLevel(int level) { 
 		if(level < LEVEL_HOUR || level > LEVEL_SECOND) throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " level.");
 		topLevel = level; 	
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.text.AngleFormat#setBottomLevel(int)
-	 */
+
 	@Override
 	public void setBottomLevel(int level) { 
 		if(level < LEVEL_HOUR || level > LEVEL_SECOND) throw new IllegalArgumentException("Undefined " + getClass().getSimpleName() + " level.");

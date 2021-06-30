@@ -51,11 +51,7 @@ public class GridImageLayer extends BufferedImageLayer {
 	public void setGrid(Grid2D<?> grid) { this.grid = grid; }
 	
 	public Grid2D<?> getGrid() { return grid; }
-	
-	
-	/* (non-Javadoc)
-	 * @see kovacs.plot.ImageLayer#setContentArea(kovacs.plot.ContentArea)
-	 */
+
 	@Override
 	public void setContentArea(ContentArea<?> area) {
 		super.setContentArea(area);

@@ -82,9 +82,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates {
         this.system = system;
     }
     
-    /* (non-Javadoc)
-     * @see jnum.math.Coordinate2D#hashCode()
-     */
+
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -92,9 +90,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates {
         return hash;
     }
     
-    /* (non-Javadoc)
-     * @see jnum.math.Coordinate2D#equals(java.lang.Object)
-     */
+
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -107,10 +103,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates {
     
     public double getEpochYear() { return system.getJulianYear(); }
    
-  
-    /* (non-Javadoc)
-     * @see jnum.SphericalCoordinates#copy(jnum.Coordinate2D)
-     */
+
     @Override
     public void copy(Coordinates<? extends Double> coords) {
         super.copy(coords);
@@ -128,9 +121,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates {
         equatorial.setSystem(system);
     }
     
-    /* (non-Javadoc)
-     * @see jnum.astro.CelestialCoordinates#fromEquatorial(jnum.astro.EquatorialCoordinates)
-     */
+
     @Override
     public void fromEquatorial(EquatorialCoordinates equatorial) {
         super.fromEquatorial(equatorial);
@@ -154,27 +145,19 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates {
         transformTo(EquatorialSystem.ICRS);
     }    
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#toString(int)
-     */
+
     @Override
     public String toString(int decimals) {
         return super.toString(decimals) + (system == null ? "" : " " + system);
     }
     
-    /* (non-Javadoc)
-     * @see jnum.SphericalCoordinates#toString(java.text.NumberFormat)
-     */
+
     @Override
     public String toString(NumberFormat nf) {
         return super.toString(nf) + (system == null ? "" : " " + system);   
     }
     
 
-    
-    /* (non-Javadoc)
-     * @see jnum.SphericalCoordinates#parse(java.lang.String)
-     */
     @Override
     public void parseDirect(StringParser parser) throws IllegalArgumentException {
         // Assume no epoch prior to parsing...
@@ -200,19 +183,13 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates {
     }
     
  
-    
-    /* (non-Javadoc)
-     * @see jnum.SphericalCoordinates#edit(nom.tam.util.Cursor, java.lang.String)
-     */
     @Override
     public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
         super.editHeader(header, keyStem, alt);
         system.editHeader(header, alt);
     }
     
-    /* (non-Javadoc)
-     * @see jnum.SphericalCoordinates#parse(nom.tam.fits.Header, java.lang.String)
-     */
+
     @Override
     public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
         super.parseHeader(header, keyStem, alt, defaultValue);

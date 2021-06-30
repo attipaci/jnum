@@ -1078,7 +1078,7 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
     * However, in case when none of the above suffice, this class provides an explicit way to cycle though
     * multidimensional indices.
     * 
-    * @author Attila Kovacs <attila@sigmyne.com>
+    * @author Attila Kovacs
     *
     */
    public class IndexIterator implements Iterator<IndexType> {
@@ -1095,9 +1095,8 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
        /**
         * Constructor for iterating though a sub-section of the 
         * 
-        * @param from
-        * @param to
-        * @param size
+        * @param from   The inclusive starting data index for the iterator
+        * @param to     The exclusive ending data index for the iterator
         */
        public IndexIterator(IndexType from, IndexType to) {
            setRange(from, to);

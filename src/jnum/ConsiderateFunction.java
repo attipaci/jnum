@@ -25,15 +25,15 @@
 package jnum;
 
 /**
- * An interface for considerate functions, i.e. functions that do not create new objects to return. Instead, considerate
+ * An interface for considerate functions, that is functions that do not create new objects to return. Instead, considerate
  * functions place the result into a caller-supplied object. By avoiding the creation of return objects, considerate 
  * functions can offer superior performance compared to regular functions (see {@link Function}).
- * <p>
+ * 
  * 
  * The practical recommendation is to use considerate functions, when possible, inside loops where the return value
  * is restricted in scope to the loop body. In such case, the loop can benefit from the performance boost offered
  * by the considerate function's design, without the possibility of mis-using the same return value outside of it.
- * <p>
+ * 
  * 
  * considerate functions can be easily converted into the safer form of regular function by the 
  * {@link jnum.math.ConsiderateFunctionAdapter} class, without having to create a separate regular implementation.

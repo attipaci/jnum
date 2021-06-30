@@ -37,15 +37,10 @@ public class BesselianEpoch extends CoordinateEpoch {
 	public BesselianEpoch(double epoch) { super(epoch); }
 
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.CoordinateEpoch#getBesselianYear()
-	 */
 	@Override
 	public double getBesselianYear() { return getYear(); }
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.CoordinateEpoch#getJulianYear()
-	 */
+
 	@Override
 	public double getJulianYear() { return JulianEpoch.getYearForMJD(getMJD()); }
 
@@ -54,20 +49,12 @@ public class BesselianEpoch extends CoordinateEpoch {
 	}
 	
 	//  B = 1900.0 + (JD - 2415020.31352) / 365.242198781
-
-
-	/* (non-Javadoc)
-	 * @see jnum.astro.CoordinateEpoch#getMJD()
-	 */
 	@Override
 	public double getMJD() {
 		return getMJDForYear(getYear());
 	}
 	
-	
-	/* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() { return toString(Util.f1); }
     

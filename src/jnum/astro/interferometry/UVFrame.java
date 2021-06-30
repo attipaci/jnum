@@ -41,7 +41,7 @@ import jnum.math.ZeroValue;
  * Class representing a set of binned interferometric measurements at a single binned frequency.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements Comparable<UVFrame> {
@@ -141,7 +141,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
      * 
      * @param u     u coordinate index
      * @param v     v coordinate index
-     * @return
+     * @return      A unique virtual index (for hashing) for the u,v index pair 
      */
     private int getVirtualIndex(int u, int v) {
         return (u & 0xff) << 16 | (v & 0xff);
@@ -176,7 +176,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
      * @param uvres     (1/rad) New square uv grid size. 
      * @return          New frame with the resampled uv visibilities. 
      * 
-     * @see getResampled(Vector2D)
+     * @see #getResampled(Vector2D)
      */
     public final UVFrame getResampled(double uvres) {
         return getResampled(new Vector2D(uvres, uvres));
@@ -188,7 +188,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
      * @param uvres     (1/rad) New square uv grid size. 
      * @return          New frame with the resampled uv visibilities. 
      * 
-     * @see getResampled(double)
+     * @see #getResampled(double)
      */
     public UVFrame getResampled(Vector2D uvres) {
         UVFrame resampled = (UVFrame) clone();
@@ -208,7 +208,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
      * Binned, weighted visibility entries in this uv frame.
      * 
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class Visibility implements Accumulating<Visibility>, Inversion, ComplexConjugate, ZeroValue {
@@ -243,22 +243,13 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
         }
 
         /**
-         * Gets the frequency for this visibility. Same as {@link UVFrame#getFrequency() for the parent frame.
+         * Gets the frequency for this frame.
          * 
-         * @return  (Hz) Frequency for this visibility.
-         * 
-         * @see UVFrame.getFrequency()
+         * @return  (Hz) Frequency for this frame.
          */
         public final double getFrequency() {
-            return getFrame().getFrequency();
+            return frequency;
         }
-        
-        /**
-         * Gets the uv frame to which this visibility belongs.
-         * 
-         * @return  The parent uv frame.
-         */
-        public UVFrame getFrame() { return UVFrame.this; }
 
         /**
          * Returns the u coordinate for this visibility bin.

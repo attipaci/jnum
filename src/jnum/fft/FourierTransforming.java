@@ -25,7 +25,12 @@ package jnum.fft;
 
 import jnum.math.Scalable;
 
-
+/**
+ * Interface for classes that implement Fourier Transform on themselves.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public interface FourierTransforming {
 
 

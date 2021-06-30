@@ -40,15 +40,6 @@ import jnum.util.HashCode;
 
 
 
-/**
- *	
- */
-
-/*
- *  UTC routines are approximate but consistent (btw. getUTC() and setUTC(), and currentTime())
- *  only UTC <===> (MJD, TT) conversion is approximate...
- *  Use (quadratic) fit to leap? This should give some accuracy for UTC...
- */
 public class AstroTime implements Serializable, Comparable<AstroTime> {
 
     private static final long serialVersionUID = 890383504654665623L;
@@ -58,17 +49,11 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 
     public AstroTime() {}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return super.hashCode() ^ HashCode.from(MJD);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -76,9 +61,6 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
         return MJD == ((AstroTime) o).MJD;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
     @Override
     public int compareTo(AstroTime time) {
         return Double.compare(MJD, time.MJD);
@@ -208,7 +190,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
      * 
      * See Eq. 5.15 IN IERS Technical Note 36, based on Capitaine et al. (2000), 
      * 
-     * @param dUT1  (sec) UT1-UTC time difference (-0.5s < dUT1 < 0.5s).
+     * @param dUT1  (sec) UT1-UTC time difference (-0.5s &lt; dUT1 &lt; 0.5s).
      * 
      * @return      (rad) Earth rotation angle
      */
@@ -232,7 +214,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
      * Gets the Local Sidereal Time
      * 
      * @param longitude    (radian) The geodetic longitude of the observer
-     * @param dUT1         (s) UT1 - UTC time difference (-0.5s < dUT1 < 0.5s)
+     * @param dUT1         (s) UT1 - UTC time difference (-0.5s &lt; dUT1 &lt; 0.5s)
      * @return             (s) the LMST
      */
     public final double getLST(double longitude, double dUT1) {
@@ -245,7 +227,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
     /**
      * Greenwich Mean Sidereal time, according to the IERS Technical Note 36 (2010).
      * 
-     * @param dUT1  (sec) UT1-UTC time difference (-0.5s < dUT1 < 0.5s).
+     * @param dUT1  (sec) UT1-UTC time difference (-0.5s &lt; dUT1 &lt; 0.5s).
      * @return      (s) GMST time
      */
     public double getGMST(double dUT1) {
@@ -258,7 +240,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
      * Gets the Local Mean Sidereal Time
      * 
      * @param longitude    (radian) The geodetic longitude of the observer
-     * @param dUT1         (s) UT1 - UTC time difference (-0.5s < dUT1 < 0.5s)
+     * @param dUT1         (s) UT1 - UTC time difference (-0.5s &lt; dUT1 &lt; 0.5s)
      * @return             (s) the LMST
      */
     public final double getLMST(double longitude, double dUT1) {

@@ -56,35 +56,23 @@ public class AIPSLegacyProjection extends SphericalProjection {
 	    clone.referenceOffsets = (Vector2D) referenceOffsets.clone();
 	    return clone;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFitsID()
-	 */
+
 	@Override
 	public String getFitsID() {
 		return fitsID;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() {
 		return name;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#setReference(jnum.SphericalCoordinates, jnum.SphericalCoordinates)
-	 */
+
 	@Override
 	public void setReference(SphericalCoordinates coords) {
 		baseProjection.project(coords, referenceOffsets);
 		super.setReference(coords);
 	}
-		
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#project(jnum.SphericalCoordinates, jnum.Coordinate2D)
-	 */
+
 	@Override
 	public final void project(SphericalCoordinates coords, Coordinate2D toProjected) {
 	    if(referenceOffsets == null) throw new IllegalStateException("null reference in " + getClass().getSimpleName());
@@ -92,10 +80,7 @@ public class AIPSLegacyProjection extends SphericalProjection {
 		toProjected.subtractX(referenceOffsets.x());
 		toProjected.subtractY(referenceOffsets.y());
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#deproject(jnum.Coordinate2D, jnum.SphericalCoordinates)
-	 */
+
 	@Override
 	public final void deproject(Coordinate2D projected, SphericalCoordinates toCoords) {
 	    if(referenceOffsets == null) throw new IllegalStateException("null reference in " + getClass().getSimpleName());
@@ -104,18 +89,11 @@ public class AIPSLegacyProjection extends SphericalProjection {
 		baseProjection.deproject(projected, toCoords);		
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#getOffsets(double, double, jnum.Coordinate2D)
-	 */
 	@Override
 	public final void getOffsets(double theta, double phi, Coordinate2D toOffset) {
 		baseProjection.getOffsets(theta, phi, toOffset);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#phi(jnum.Coordinate2D)
-	 */
 	@Override
 	public final void getPhiTheta(Coordinate2D offset, SphericalCoordinates phiTheta) {
 		baseProjection.getPhiTheta(offset, phiTheta);

@@ -29,10 +29,10 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel J0 function. Adapted from Numerical Recipes in C.
+	 * Bessel J<sub>0</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param x the x
-	 * @return the double
+	 * @param x        the argument of the Bessel function
+	 * @return         the value of Bessel J<sub>0</sub>(x).
 	 */
 	public static double J0(final double x) {
 		final double ax = Math.abs(x);
@@ -54,10 +54,10 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel J1 function. Adapted from Numerical Recipes in C.
+	 * Bessel J<sub>1</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param x the x
-	 * @return the double
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel J<sub>1</sub>(x).
 	 */
 	public static double J1(final double x) {
 		final double ax = Math.abs(x);
@@ -79,30 +79,16 @@ public final class Bessel {
 
 
 	/**
-	 * The Bessel J_n function class.
+	 * The Bessel J<sub>n</sub> function class.
 	 */
 	public static class J implements Function<Double, Double> {
 
-		/** The order. */
 		private int order;
 
-		/**
-		 * Instantiates a new j.
-		 *
-		 * @param order the order
-		 */
 		public J(int order) { this.order = order; }
 
-		/**
-		 * Gets the order.
-		 *
-		 * @return the order
-		 */
 		public int getOrder() { return order; }
 
-		/* (non-Javadoc)
-		 * @see jnum.math.Function#valueAt(java.lang.Object)
-		 */
 		@Override
 		public Double valueAt(Double x) {
 			return J(order, x);
@@ -110,11 +96,11 @@ public final class Bessel {
 	}
 
 	/**
-	 * Bessel J_n function. Adapted from Numerical Recipes in C.
+	 * Bessel J<sub>n</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param n the n
-	 * @param x the x
-	 * @return the double
+	 * @param n        the index selection the Bessel function J<sub>n</sub>().
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel J<sub>n</sub>(x).
 	 */
 	public static double J(int n, double x) {
 
@@ -168,10 +154,10 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel Y0 function. Adapted from Numerical Recipes in C.
+	 * Bessel Y<sub>0</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param x the x
-	 * @return the double
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel Y<sub>0</sub>(x).
 	 */
 	public static double Y0(final double x) {
 		if(x < 8.0) {
@@ -192,10 +178,10 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel Y1 function. Adapted from Numerical Recipes in C.
+	 * Bessel Y<sub>1</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param x the x
-	 * @return the double
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel Y<sub>1</sub>(x).
 	 */
 	public static double Y1(final double x) {
 		if(x < 8.0) {
@@ -215,11 +201,11 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel Y_n function. Adapted from Numerical Recipes in C.
+	 * Bessel Y<sub>n</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param n the n
-	 * @param x the x
-	 * @return the double
+	 * @param n        the index selecting the Bessel function Y<sub>n</sub>().
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel J<sub>n</sub>(x).
 	 */
 	public static double Y(int n, double x) {	
 		if(n < 2) {
@@ -239,31 +225,16 @@ public final class Bessel {
 		return by;
 	}
 
-	/**
-	 * Bessel Y_n function class.
-	 */
+
 	public static class Y implements Function<Double, Double> {
 
-		/** The order. */
+
 		private int order;
 
-		/**
-		 * Instantiates a new y.
-		 *
-		 * @param order the order
-		 */
 		public Y(int order) { this.order = order; }
 
-		/**
-		 * Gets the order.
-		 *
-		 * @return the order
-		 */
 		public int getOrder() { return order; }
 
-		/* (non-Javadoc)
-		 * @see jnum.math.Function#valueAt(java.lang.Object)
-		 */
 		@Override
 		public Double valueAt(Double x) {
 			return Y(order, x);
@@ -272,10 +243,10 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel I0 function. Adapted from Numerical Recipes in C.
+	 * Bessel I<sub>0</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param x the x
-	 * @return the double
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel I<sub>0</sub>(x).
 	 */
 	public static double I0(double x) {
 		final double ax = Math.abs(x);
@@ -292,10 +263,10 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel I1 function. Adapted from Numerical Recipes in C.
+	 * Bessel I<sub>1</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param x the x
-	 * @return the double
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel I<sub>1</sub>(x).
 	 */
 	public static double I1(double x) {
 		final double ax = Math.abs(x);
@@ -319,11 +290,11 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel I_n function. Adapted from Numerical Recipes in C.
+	 * Bessel I<sub>n</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param n the n
-	 * @param x the x
-	 * @return the double
+	 * @param n        the index selecting the Bessel function I<sub>n</sub>().
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel I<sub>n</sub>(x).
 	 */
 	public static double I(int n, double x) {
 		if(n < 2) {
@@ -352,31 +323,14 @@ public final class Bessel {
 		return x < 0.0 && ((n & 1) > 0) ? -value : value;
 	}
 
-	/**
-	 * The Bessel I_n function class.
-	 */
 	public static class I implements Function<Double, Double> {
 
-		/** The order. */
 		private int order;
 
-		/**
-		 * Instantiates a new i.
-		 *
-		 * @param order the order
-		 */
 		public I(int order) { this.order = order; }
 
-		/**
-		 * Gets the order.
-		 *
-		 * @return the order
-		 */
 		public int getOrder() { return order; }
 
-		/* (non-Javadoc)
-		 * @see jnum.math.Function#valueAt(java.lang.Object)
-		 */
 		@Override
 		public Double valueAt(Double x) {
 			return I(order, x);
@@ -384,10 +338,10 @@ public final class Bessel {
 	}
 
 	/**
-	 * Bessel K0 function. Adapted from Numerical Recipes in C.
+	 * Bessel K<sub>0</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param x the x
-	 * @return the double
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel K<sub>0</sub>(x).
 	 */
 	public static double K0(double x) {
 		if (x <= 2.0) {
@@ -406,10 +360,10 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel K1 function. Adapted from Numerical Recipes in C.
+	 * Bessel K<sub>1</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param x the x
-	 * @return the double
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel K<sub>1</sub>(x).
 	 */
 	public static double K1(double x) {
 		if (x <= 2.0) {
@@ -426,11 +380,11 @@ public final class Bessel {
 
 
 	/**
-	 * Bessel K_n function. Adapted from Numerical Recipes in C.
+	 * Bessel K<sub>n</sub> function. Adapted from Numerical Recipes in C.
 	 *
-	 * @param n the n
-	 * @param x the x
-	 * @return the double
+	 * @param n        the index selecting the Bessel function K<sub>n</sub>.
+	 * @param x        the argument of the Bessel function
+     * @return         the value of Bessel K<sub>n</sub>(x).
 	 */
 	public static double K(int n, double x) {
 		if(n < 2) {
@@ -449,9 +403,7 @@ public final class Bessel {
 		return bk;
 	}
 
-	/**
-	 * Bessel K_n function class.
-	 */
+
 	public static class K implements Function<Double, Double> {
 
 		private int order;
@@ -462,9 +414,6 @@ public final class Bessel {
 
 		public int getOrder() { return order; }
 
-		/* (non-Javadoc)
-		 * @see jnum.math.Function#valueAt(java.lang.Object)
-		 */
 		@Override
 		public Double valueAt(Double x) {
 			return K(order, x);

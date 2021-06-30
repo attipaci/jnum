@@ -28,15 +28,15 @@ import jnum.data.WeightedPoint;
 /**
  * Represents a self-contained operation with a point argument of a generic type. The operation produces a result
  * of another generic type object.
- * <p>
+ * 
  * Point operations are used for processing object data in generic sequential loops in a generic way without needing
  * a separate per-loop implemetation each time. By providing a common implementation for typical loop operations, it
  * reduces the chance of bugs that may arise from divergent individual loop implementations.
- * <p>
+ * 
  * For parallel processing with similar features, see {@link jnum.parallel.ParallelPointOp}
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <PointType>   The generic type of the point upon which the operation acts.
  * @param <ReturnType>  The generic return type of the operation/
@@ -96,10 +96,10 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
     
     /**
      * Applies the operation to the given point of the expected generic type. 
-     * <p>
+     * 
      * 
      * The processing does not throw an exception, so as to prevent halting operation. Instead, if an exception occurs 
-     * during the operation, it should be caught, and assigned to the {@link #excpetion} field allowing post-mortem investigation.
+     * during the operation, it should be caught, and assigned to the {@link #exception} field allowing post-mortem investigation.
      * 
      * 
      * @param point     The point upon which to act the operation.
@@ -122,9 +122,9 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
      * 
      * <ul>
      *  <li>any unary operator (e.g. ++, --, !, ~)
-     *  <li>any binary operator (e.g. +, *, /, %, <<, >>>, ^, & ...)
-     *  <li>any assignment operator (e.g. =, +=, &=, ^= ...)
-     *  <li>any comparison (e.g. ||, &&, !=, ==, <, >= ...)
+     *  <li>any binary operator (e.g. +, *, /, %, &lt;&lt;, &gt;&gt;&gt;, ^, &amp; ...)
+     *  <li>any assignment operator (e.g. =, +=, &amp;=, ^= ...)
+     *  <li>any comparison (e.g. ||, &amp;&amp;, !=, ==, &amp;lt;, &gt;= ...)
      *  <li>any return statements
      * </ul>
      * 
@@ -140,7 +140,7 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
      * A simple cumulative integer counter. It is summular to the double-precision {@link Sum} operation
      * except that it accumulates over a <code>long</code> integer counter.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      * @param <PointType>   The generic type of the point object on which this operation acts.
      * 
@@ -179,7 +179,7 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
      * A simple abstract class of point operations with no return type (i.e. return type of {@link Void}).
      * 
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      * @param <PointType> The generic type of the point object on which this operation acts.
      */
@@ -197,7 +197,7 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
     /**
      * An operation that simply counts the number of points it is called with.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      * @param <PointType>   The generic type of the point object on which this operation acts.
      */
@@ -213,7 +213,7 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
      * accumulates a double-precision floating point value instead of an integer type.
      * 
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      * @param <PointType>   The generic type of the point object on which this operation acts.
      * 
@@ -253,7 +253,7 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
      * averageing recipe.
      * 
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      * @param <PointType>   The generic type of the point object on which this operation acts.
      * 

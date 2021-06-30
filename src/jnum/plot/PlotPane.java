@@ -27,60 +27,26 @@ import java.awt.geom.Point2D;
 import javax.swing.JComponent;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class PlotPane.
- */
 public class PlotPane extends JComponent {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 3614256696574188825L;
-	
-	/** The plot. */
+
 	private Plot<?> plot;
 
-	/**
-	 * Instantiates a new plot pane.
-	 *
-	 * @param plot the plot
-	 */
 	public PlotPane(Plot<?> plot) { 
 		setPlot(plot);
 	}
 	
-	/**
-	 * Sets the plot.
-	 *
-	 * @param plot the new plot
-	 */
+
 	public void setPlot(Plot<?> plot) { this.plot = plot; }
 	
-	/**
-	 * Gets the plot.
-	 *
-	 * @return the plot
-	 */
+
 	public Plot<?> getPlot() { return plot; }
-	
-	/**
-	 * Gets the content area.
-	 *
-	 * @return the content area
-	 */
+
 	public ContentArea<?> getContentArea() { return plot.getContent(); }
-	
-	/**
-	 * To coordinates.
-	 *
-	 * @param point the point
-	 */
+
 	public void toCoordinates(Point2D point) { getContentArea().toCoordinates(point); }
-	
-	/**
-	 * To display.
-	 *
-	 * @param point the point
-	 */
+
 	public void toDisplay(Point2D point) { getContentArea().toCoordinates(point); }
 
 	

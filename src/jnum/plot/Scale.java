@@ -30,7 +30,6 @@ import java.util.Collection;
 
 import jnum.math.Range;
 
-// TODO: Auto-generated Javadoc
 // TODO Better handling of custom divisions (all vs within range)
 
 public class Scale extends ArrayList<Scale.Division> implements Cloneable {
@@ -182,10 +181,7 @@ public class Scale extends ArrayList<Scale.Division> implements Cloneable {
 		
 
 		public double getValue() { return value; }
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
+
 		@Override
 		public String toString() {
 			if(label != null) return label;
@@ -194,9 +190,6 @@ public class Scale extends ArrayList<Scale.Division> implements Cloneable {
 			return Double.toString(value);
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
 		@Override
 		public int compareTo(Division div) {
 			return Double.compare(getValue(), div.getValue());

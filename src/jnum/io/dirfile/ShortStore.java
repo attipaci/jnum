@@ -37,9 +37,6 @@ public class ShortStore extends RawStore<Short> {
 		bytes = 2;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Short get(long n) throws IOException {
 		return getShort(n);

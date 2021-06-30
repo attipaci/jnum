@@ -35,25 +35,21 @@ public class FlagConflictException extends IllegalArgumentException {
 
     public FlagConflictException() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 
     public FlagConflictException(String arg0, Throwable arg1) {
         super(arg0, arg1);
-        // TODO Auto-generated constructor stub
     }
 
 
     public FlagConflictException(String s) {
         super(s);
-        // TODO Auto-generated constructor stub
     }
 
 
     public FlagConflictException(Throwable cause) {
         super(cause);
-        // TODO Auto-generated constructor stub
     }
 
 }

@@ -51,15 +51,10 @@ public class TelescopeCoordinates extends SphericalCoordinates {
     public TelescopeCoordinates copy() { return (TelescopeCoordinates) super.copy(); }
     
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
-     */
     @Override
     public String getFITSLongitudeStem() { return "TLON"; }
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-     */
+
     @Override
     public String getFITSLatitudeStem() { return "TLAT"; }
 

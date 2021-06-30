@@ -44,17 +44,11 @@ public class PhaseShiftedStore<Type extends Number> extends DataStore<Type> {
 		this.shift = shift;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ data.hashCode() ^ HashCode.from(shift);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -65,26 +59,17 @@ public class PhaseShiftedStore<Type extends Number> extends DataStore<Type> {
 		if(shift != store.shift) return false;
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
+
 	@Override
 	public Type get(long n) throws IOException {
 		return data.get(n + shift);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#getSamples()
-	 */
 	@Override
 	public int getSamples() {
 		return data.getSamples();
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#length()
-	 */
 	@Override
 	public long length() throws IOException {
 		return data.length();

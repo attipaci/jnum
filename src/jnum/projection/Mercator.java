@@ -35,29 +35,17 @@ public class Mercator extends CylindricalProjection {
 
 	public Mercator() {}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() { return "MER"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() { return "Mercator"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#phi(jnum.Coordinate2D)
-	 */
 	@Override
 	protected final void getPhiTheta(final Coordinate2D offset, final SphericalCoordinates phiTheta) { 
 		phiTheta.setNative(offset.x(), 2.0 * Math.atan(Math.exp(offset.y())) - rightAngle);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#getOffsets(double, double, jnum.Coordinate2D)
-	 */
+
 	@Override
 	protected final void getOffsets(final double theta, final double phi, final Coordinate2D toOffset) {
 		toOffset.set(phi, Math.log(Math.tan(0.5*(rightAngle + theta))));

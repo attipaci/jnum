@@ -53,15 +53,10 @@ public class HorizontalCoordinates extends SphericalCoordinates {
     public HorizontalCoordinates copy() { return (HorizontalCoordinates) super.copy(); }
 
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
-     */
     @Override
     public String getFITSLongitudeStem() { return "ALON"; }
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-     */
+
     @Override
     public String getFITSLatitudeStem() { return "ALAT"; }
 

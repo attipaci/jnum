@@ -25,10 +25,7 @@ public class PrefixedUnit extends Unit {
         setMultiplier(m);
         this.baseUnit = baseUnit;
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() {
         return super.hashCode() ^ multiplier.hashCode();
@@ -206,9 +203,5 @@ public class PrefixedUnit extends Unit {
         }
 
     }
-
-    
-    
-
     
 }

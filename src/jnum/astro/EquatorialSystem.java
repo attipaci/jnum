@@ -49,7 +49,7 @@ import nom.tam.util.Cursor;
  * equatorial coordinate systems.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public abstract class EquatorialSystem  implements FitsHeaderEditing {
@@ -244,17 +244,17 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
      *   ICRS               
      *   HCRS                   Hipparcos equivalent to ICRS, mapped to ICRS
      *   BCRS                   mapped to ICRS (assuming proper motions are applied to coordinates)
-     *   ""                     empty string -> defaults to ICRS
+     *   ""                     empty string defaults to ICRS
      *   FK5 J2000              FK5 at J2000   
      *   fk5 (J2021.333)        FK5 at J2021.3333
      *   FK5                    FK5 at default epoch (J2000)
      *   J2021.243              FK5 at J2021.243  
-     *   2021.765               FK5 at 2021.765 (>= 1984.0) 
+     *   2021.765               FK5 at 2021.765 (&gt;= 1984.0) 
      *   FK4(1900)              FK4 at B1900
      *   FK4                    FK4 at default epoch (B9150)
      *   FK4 1966.12            FK4 at B1966.12
      *   b1950                  FK4 at B1950 
-     *   1966.12                FK4 at 1966.12 (<1984.0)
+     *   1966.12                FK4 at 1966.12 (&lt;1984.0)
      *   CIRS 2021.443          Dynamical (CIRS) at J2021.443
      *   ErS(J2021.443)         "
      *   GAPPT 2021.443         "
@@ -264,8 +264,8 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
      * 
      * @param id    String representation of the coordinate system
      * @return      The best match coordinate system
-     * @throw       An IllegalArgumentException if the coordinate system could not be determined from the
-     *              string argument.
+     * @throw IllegalArgumentException  if the coordinate system could not be determined from the
+     *                                  string argument.
      */
     public static EquatorialSystem forString(String id) {
         StringTokenizer tokens = new StringTokenizer(id, "()");

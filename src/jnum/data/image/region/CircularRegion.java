@@ -78,9 +78,6 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         parse(line, format);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.Region#hashCode()
-     */
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -89,9 +86,6 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         return hash;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.Region#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -103,10 +97,6 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         return true;
     }
 
-
-    /* (non-Javadoc)
-     * @see jnum.data.Region#clone()
-     */ 
     @Override
     public CircularRegion clone() {
         CircularRegion clone = (CircularRegion) super.clone();
@@ -119,46 +109,20 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         coords = converted;
     }
 
-
-
-    /**
-     * Gets the coordinates.
-     *
-     * @return the coordinates
-     */
     public Coordinate2D getCoordinates() {
         return coords;
     }
 
-    /**
-     * Sets the coordinates.
-     *
-     * @param coords the new coordinates
-     */
+
     public void setCoordinates(Coordinate2D coords) {
         setCoordinateClass(coords.getClass());
         this.coords = coords;
     }
 
-    /**
-     * Gets the radius.
-     *
-     * @return the radius
-     */
     public DataPoint getRadius() { return radius; }
 
-    /**
-     * Sets the radius.
-     *
-     * @param r the new radius
-     */
     public void setRadius(DataPoint r) { this.radius = r; }
 
-    /**
-     * Sets the radius.
-     *
-     * @param r the new radius
-     */
     public void setRadius(double r) { 
         if(radius == null) radius = new DataPoint();
         else radius.setWeight(0.0);
@@ -299,10 +263,7 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
         Data2D image = values instanceof Data2D ? (Data2D) values : new Overlay2D(values);
         return r.getAsymmetry2D(image, angle, radialRange);
     }
-    
-    /* (non-Javadoc)
-     * @see jnum.text.TableFormatter.Entries#getFormattedEntry(java.lang.String, java.lang.String)
-     */
+
     @Override
     public Object getTableEntry(String name) {
         if(name.equals("r")) return radius.value();

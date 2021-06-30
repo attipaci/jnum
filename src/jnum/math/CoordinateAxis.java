@@ -37,7 +37,7 @@ import nom.tam.util.Cursor;
 /**
  * A class representation of a coordinate axis in a coordinate system.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class CoordinateAxis implements Serializable, Cloneable {

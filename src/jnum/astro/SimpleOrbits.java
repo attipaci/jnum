@@ -32,7 +32,7 @@ import jnum.math.Vector3D;
  * Simple orbital parameters calculations for Sun/Earth and the SSB.
  * Based on NOVAS solarsystem(), and sun_eph() functions in solsys3.c.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public final class SimpleOrbits {
@@ -153,7 +153,7 @@ public final class SimpleOrbits {
     /**
      * An abstract class representing an orbital body in this simple orbital model.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public static abstract class Body {
@@ -246,7 +246,7 @@ public final class SimpleOrbits {
          * the result in the supplied 3D vector.
          * 
          * @param mjd   (day) Modified Julian date of observation
-         * @return      (m/s) Heliocentric equatorial velocity vector.
+         * @param vel   (m/s) The returned heliocentric equatorial velocity vector.
          */
         public void getVel(double mjd, Vector3D vel) {
             if (mjd < 0.0 || mjd > 100000.0) throw new IllegalArgumentException("MJD " + mjd + " is out of range.");
@@ -258,7 +258,7 @@ public final class SimpleOrbits {
          * and returns the result in the supplied 3D vector.
          * 
          * @param mjd   (day) Modified Julian date of observation
-         * @param pos   (m/s) Solar-system barycentric equatorial velocity vector.
+         * @param vel   (m/s) Solar-system barycentric equatorial velocity vector.
          */
         public void getSSBVel(double mjd, Vector3D vel) {
             getPos(mjd, vel);
@@ -279,7 +279,7 @@ public final class SimpleOrbits {
     /**
      * Class representing the orbital motion of the Sun.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public static class Sun extends Body {
@@ -425,7 +425,7 @@ public final class SimpleOrbits {
     /**
      * Class representing the perturbed orbital motion of Earth in the Solar system.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public static class Earth extends Body {

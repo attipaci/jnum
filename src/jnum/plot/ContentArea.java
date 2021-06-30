@@ -171,9 +171,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		return layers;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.plot.Arrangeable#arrange()
-	 */
+
 	@Override
 	public void arrange() {
 	}
@@ -287,9 +285,7 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 		return (int) Math.round(0.5 * getHeight());
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.Component#setSize(int, int)
-	 */
+
 	@Override
 	public void setSize(int w, int h) {
 		super.setSize(w, h);
@@ -340,9 +336,6 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#paint(java.awt.Graphics)
-	 */
 	@Override
 	public void paint(Graphics g) {	
 		if(!initialized) initialize();
@@ -392,9 +385,6 @@ public class ContentArea<ContentType extends ContentLayer> extends JPanel implem
 	protected void setInitialized() { initialized = true; }
 
 	// Assume that children overlap...
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#isOptimizedDrawingEnabled()
-	 */
 	@Override
 	public boolean isOptimizedDrawingEnabled() { return false; }
 

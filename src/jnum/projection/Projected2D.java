@@ -45,9 +45,7 @@ public class Projected2D<CoordinateType extends Coordinate2D> extends Offset2D {
         this.projection = projection;
     }
     
-    /* (non-Javadoc)
-     * @see jnum.math.Offset2D#equals(java.lang.Object)
-     */
+
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -57,9 +55,6 @@ public class Projected2D<CoordinateType extends Coordinate2D> extends Offset2D {
         return super.equals(o);
     }
     
-    /* (non-Javadoc)
-     * @see jnum.math.Offset2D#hashCode()
-     */
     @Override
     public int hashCode() { return super.hashCode() ^ projection.hashCode(); }
     

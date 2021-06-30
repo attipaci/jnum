@@ -85,10 +85,7 @@ public class CovarianceMatrix extends Matrix {
         this.parameters = p;
         setData(new HessianMatrix(function, parameters, stepFraction).getSVDInverse().getData());
     }
-    
-    /* (non-Javadoc)
-     * @see jnum.math.AbstractMatrix#copy(boolean)
-     */
+
     @Override
     public CovarianceMatrix copy(boolean withContents) {
         CovarianceMatrix P = (CovarianceMatrix) super.copy(withContents);

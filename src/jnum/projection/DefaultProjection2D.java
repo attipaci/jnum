@@ -40,59 +40,37 @@ public class DefaultProjection2D extends Projection2D<Coordinate2D> {
 	    super();
 	    setReference(reference);
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getCoordinateInstance()
-	 */
+
 	@Override
 	public Coordinate2D getCoordinateInstance() {
 		return new Coordinate2D();
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#project(jnum.Coordinate2D, jnum.Coordinate2D)
-	 */
 	@Override
 	public void project(Coordinate2D coords, Coordinate2D toProjected) {
 		toProjected.copy(coords);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#deproject(jnum.Coordinate2D, jnum.Coordinate2D)
-	 */
 	@Override
 	public void deproject(Coordinate2D projected, Coordinate2D toCoords) {
 		toCoords.copy(projected);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() {
 		return "Cartesian";
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#parse(nom.tam.fits.Header, java.lang.String)
-	 */
 	@Override
 	public void parseHeader(Header header, String alt) {
 		// TODO Auto-generated method stub
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
 	@Override
 	public void editHeader(Header header, String alt) throws HeaderCardException {
 		// TODO Auto-generated method stub

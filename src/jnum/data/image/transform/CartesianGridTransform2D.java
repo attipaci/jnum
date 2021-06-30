@@ -23,8 +23,8 @@
 
 package jnum.data.image.transform;
 
-import jnum.data.Transforming;
 import jnum.data.image.Grid2D;
+import jnum.math.Transforming;
 import jnum.math.Vector2D;
 
 public class CartesianGridTransform2D implements Transforming<Vector2D> {

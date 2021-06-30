@@ -45,7 +45,7 @@ import nom.tam.util.Cursor;
 /**
  * A base class for 3D coordinates of all types. That is basically anything with a triplet of real values.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Coordinate3D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate3D>, 
@@ -146,9 +146,6 @@ ViewableAsDoubles, Parser, NumberFormating {
         return "(" + nf.format(x) + "," + nf.format(y) + "," + nf.format(z) + ")";
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() { 
         return "(" + x + "," + y + "," + z + ")";
@@ -167,26 +164,26 @@ ViewableAsDoubles, Parser, NumberFormating {
     
     /**
      * Parses text x,y,z 3D coordinate representations that are in the format(s) of:
-     * <p>
+     * 
      * <pre>
      * {@code
      *     x,y,z / x y z
      * }
      * </pre>
-     * <p>
+     * 
      * or
-     * <p>
+     * 
      * <pre>
      * {@code
      *     (x,y,z) / (x y z)
      * }
      * </pre>
-     * <p>
+     * 
      * More specifically, the x, y, and z values may be separated either by comma(s) or white space(s) (including 
      * tabs line breaks, carriage returns), or a combination of both. The pair of values may be bracketed (or 
      * not). Any number of white spaces may exists between the elements (brackets and pair of values), or 
      * precede the text element. Thus, the following will parse as a proper x,y,z (1.0,-2.0,3.0) pair:
-     * <p>
+     * 
      * <pre>
      * {@code
      *     (  \t\n 1.0 ,,, \r , \t -2.0 \t 3.0   \n  )
@@ -271,13 +268,6 @@ ViewableAsDoubles, Parser, NumberFormating {
     }
     
     
-    /**
-     * Edits the.
-     *
-     * @param cursor the cursor
-     * @param alt the alt
-     * @throws HeaderCardException the header card exception
-     */
     public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         c.add(new HeaderCard(keyStem + "1" + alt, x, "The reference x coordinate in SI units."));
@@ -286,12 +276,6 @@ ViewableAsDoubles, Parser, NumberFormating {
     }
     
 
-    /**
-     * Parses the.
-     *
-     * @param header the header
-     * @param alt the alt
-     */
     public void parseHeader(Header header, String keyStem, String alt, Coordinate3D defaultValue) {
         x = header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x());
         y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());

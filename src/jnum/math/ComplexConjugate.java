@@ -25,7 +25,7 @@ package jnum.math;
 /**
  * An interface that provides a complex conjugate operation for classes that implement it.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public interface ComplexConjugate {

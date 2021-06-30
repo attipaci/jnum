@@ -63,7 +63,7 @@ import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
 
-// TODO: Auto-generated Javadoc
+
 // TODO Eliminate calls to getRank(), getClass(), and getDimension() inside recursive methods. 
 // Also Arrays.copyOf() and Arrays.copyOfRange() on indeces...
 // This should result in improved performance.

@@ -35,9 +35,8 @@ import jnum.math.SphericalCoordinates;
 import jnum.math.Vector3D;
 import jnum.text.GreekLetter;
 
-// TODO: Auto-generated Javadoc
-// TODO Needs updating
-// ... rename to GeographicCoordinates
+
+// TODO 
 // ... toString() formatting, and parse with N,S,E,W
 
 

@@ -38,16 +38,10 @@ public abstract class DataStore<Type extends Number> implements Serializable {
 	public DataStore(String name) {
 		this.name = name; 
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() { return super.hashCode() ^ name.hashCode(); }
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

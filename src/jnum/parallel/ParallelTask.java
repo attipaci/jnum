@@ -57,9 +57,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		reduction.setParallel(this);
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
+
 	@Override
 	public ParallelTask<ReturnType> clone() {
 		try { 
@@ -169,10 +167,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		if(reduction != null) return reduction.getResult();
 		return null;
 	}	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
+
 	@Override
 	public final void run() {
 		isAlive = true;

@@ -34,22 +34,12 @@ public class GlobalSinusoidal extends SphericalProjection {
 
 	public GlobalSinusoidal() {}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() { return "GLS"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() { return "Global Sinusoidal"; }
 
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#project(jnum.SphericalCoordinates, jnum.Coordinate2D)
-	 */
 	@Override
 	public final void project(final SphericalCoordinates coords, final Coordinate2D toProjected) {
 		toProjected.set(
@@ -58,28 +48,18 @@ public class GlobalSinusoidal extends SphericalProjection {
 		);
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#deproject(jnum.Coordinate2D, jnum.SphericalCoordinates)
-	 */
 	@Override
 	public final void deproject(final Coordinate2D projected, final SphericalCoordinates toCoords) {
 		toCoords.setY(getReference().y() + projected.y());
 		toCoords.setX(getReference().x() + projected.x() / toCoords.cosLat());
 	}
 	
-	
 	// These are not used thanks to the overriding of the projection equations...
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#getOffsets(double, double, jnum.Coordinate2D)
-	 */
 	@Override
 	protected void getOffsets(final double theta, final double phi, Coordinate2D toOffset) {
 		throw new UnsupportedOperationException("Not implemented.");
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#phi(jnum.Coordinate2D)
-	 */
 	@Override
 	protected void getPhiTheta(Coordinate2D offset, SphericalCoordinates phiTheta) {
 		throw new UnsupportedOperationException("Not implemented.");

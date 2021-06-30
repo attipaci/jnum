@@ -38,7 +38,7 @@ import java.awt.image.RenderedImage;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-// TODO: Auto-generated Javadoc
+
 // TODO dragging boundaries to adjust component sizes?
 
 
@@ -127,9 +127,6 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 		setDefaults();
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#setBackground(java.awt.Color)
-	 */
 	@Override
 	public void setBackground(Color color) {
 		super.setBackground(color);
@@ -167,10 +164,7 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 	public void setDefaults() {
 		setFont(defaultFont);
 	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#paint(java.awt.Graphics)
-	 */
+
 	@Override
 	public void paint(Graphics g) {
 		contentArea.setSize(center.getSize());		

@@ -34,30 +34,18 @@ public class SansonFlamsteed extends CylindricalProjection {
 
 	public SansonFlamsteed() {}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() { return "SFL"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() { return "Sanson-Flamsteed"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#phi(jnum.Coordinate2D)
-	 */
 	@Override
 	protected final void getPhiTheta(final Coordinate2D offset, final SphericalCoordinates phiTheta) {
 		phiTheta.setY(offset.y());
 		phiTheta.setX(offset.x() / phiTheta.cosLat());
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#getOffsets(double, double, jnum.Coordinate2D)
-	 */
+
 	@Override
 	protected final void getOffsets(final double theta, final double phi, final Coordinate2D toOffset) {
 		toOffset.set(phi * Math.cos(theta), theta);

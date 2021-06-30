@@ -31,34 +31,20 @@ public class ZenithalEqualArea extends ZenithalProjection {
 
 	public ZenithalEqualArea() {}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.ZenithalProjection#R(double)
-	 */
 	@Override
 	protected final double R(double theta) {
 		return Math.sqrt(2.0*(1.0-Math.sin(theta)));
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.ZenithalProjection#thetaOfR(double)
-	 */
 	@Override
 	protected final double thetaOfR(double value) {
 		return rightAngle - 2.0*asin(0.5*value);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() { return "ZEA"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() { return "Zenithal Equal-Area"; }
 
-
-	
 }

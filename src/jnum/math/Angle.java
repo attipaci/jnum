@@ -35,7 +35,7 @@ import jnum.util.HashCode;
 /**
  * A class representing an angle, with its sine and cosine readily calculate for frequent use.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Angle implements Cloneable, Serializable, Copiable<Angle>, CopyCat<Angle>, Additive<Angle>, Inversion, Metric<Angle>,

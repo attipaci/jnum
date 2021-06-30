@@ -29,33 +29,21 @@ public class Stereographic extends ZenithalProjection {
 
 	private static final long serialVersionUID = -4479302641810029811L;
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.ZenithalProjection#R(double)
-	 */
 	@Override
 	protected double R(final double theta) {
 		return 2.0 * Math.tan(0.5 * (rightAngle - theta));
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.ZenithalProjection#thetaOfR(double)
-	 */
 	@Override
 	protected double thetaOfR(final double value) {
 		return rightAngle - 2.0 * Math.atan(0.5 * value);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() {
 		return "STG";
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() {
 		return "Stereographic";

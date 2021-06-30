@@ -55,9 +55,7 @@ public class InfoPanel extends JPanel {
     	for(int i=0; i<lines.length; i++) lines[i] = "";
     }
      
-    /* (non-Javadoc)
-     * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-     */
+
     @Override
 	public void paintComponent(Graphics g) {
     	FontMetrics fm = g.getFontMetrics(font);

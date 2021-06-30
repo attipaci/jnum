@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 201 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -40,10 +40,6 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 
-// TODO: Auto-generated Javadoc
-// TODO Read fits Headers (for extra information on projection parameters)...
-// TODO Implement a few more projections...
-
 // Based on Calabretta & Greisen 2002
 public abstract class SphericalProjection extends Projection2D<SphericalCoordinates> {
 
@@ -65,27 +61,19 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	private int selectSolution = SELECT_NEAREST_POLE;	
 	
 	
-	
-	/**
-	 * Instantiates a new spherical projection.
-	 */
 	public SphericalProjection() {
 		nativeReference = new SphericalCoordinates(0.0, 0.0); // phi0, theta0;
 		nativePole = new SphericalCoordinates(0.0, rightAngle); // phip, thetap;		
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#clone()
-	 */
+
 	@Override
 	public SphericalProjection clone() {
 		SphericalProjection clone = (SphericalProjection) super.clone();
 		return clone;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -100,9 +88,6 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		return super.equals(o);		
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode() ^ (userPole ? 1 : 0);
@@ -112,9 +97,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		return hash;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#copy()
-	 */
+
 	@Override
 	public SphericalProjection copy() {
 		SphericalProjection copy = (SphericalProjection) super.copy();
@@ -124,20 +107,11 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		return copy;
 	}
 
-	
-	/**
-	 * Checks if is right angle pole.
-	 *
-	 * @return true, if is right angle pole
-	 */
+
 	public boolean isRightAnglePole() {
 		return SphericalCoordinates.equalAngles(Math.abs(celestialPole.y()), rightAngle);
 	}
 	
-	// Global projection
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#project(jnum.Coordinate2D, jnum.Coordinate2D)
-	 */
 	@Override
 	public void project(final SphericalCoordinates coords, final Coordinate2D toProjected) {		
 		final double dLON = coords.x() - celestialPole.x();
@@ -168,10 +142,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		getOffsets(theta, phi, toProjected);
 	}
 	
-	// Global deprojection
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#deproject(jnum.Coordinate2D, jnum.Coordinate2D)
-	 */
+
 	@Override
 	public void deproject(final Coordinate2D projected, final SphericalCoordinates toCoords) {	
 		getPhiTheta(projected, toCoords);
@@ -200,30 +171,13 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		toCoords.standardize();
 	}
 	
-	
-	/**
-	 * Convert offsets to phi, theta.
-	 *
-	 * @param offset the offset
-	 * @param mirror Use mirror projection
-	 * @param phiTheta the phi theta
-	 * @return the double
-	 */
+
 	protected abstract void getPhiTheta(Coordinate2D offset, SphericalCoordinates phiTheta);
 	
-	/**
-	 * Gets the offsets.
-	 *
-	 * @param theta the theta
-	 * @param phi the phi
-	 * @param toOffset the to offset
-	 * @return the offsets
-	 */
+
 	protected abstract void getOffsets(double theta, double phi, Coordinate2D toOffset);
 	
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#setReference(jnum.Coordinate2D)
-	 */
+
 	@Override
 	public void setReference(SphericalCoordinates coords) {
 		super.setReference(coords); 
@@ -232,9 +186,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		calcCelestialPole();	
 	}
 	
-	/**
-	 * Calc celestial pole.
-	 */
+
 	protected void calcCelestialPole() {
 		celestialPole = new SphericalCoordinates();	
 		SphericalCoordinates reference = getReference();
@@ -289,60 +241,32 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		celestialPole.standardize();
 	}
 	
-	
-		
-	/**
-	 * Gets the native pole.
-	 *
-	 * @return the native pole
-	 */
+
 	public SphericalCoordinates getNativePole() { return nativePole; }
 	
-	/**
-	 * Gets the celestial pole.
-	 *
-	 * @return the celestial pole
-	 */
+
 	public SphericalCoordinates getCelestialPole() { return celestialPole; }
 	
-	/**
-	 * Gets the native reference.
-	 *
-	 * @return the native reference
-	 */
+
 	protected SphericalCoordinates getNativeReference() { return nativeReference; }
 	
-	
-	/**
-	 * Sets the native pole.
-	 *
-	 * @param nativeCoords the new native pole
-	 */
+
 	public void setNativePole(SphericalCoordinates nativeCoords) {
 		userPole = true;
 		nativePole = nativeCoords;
 	}
 	
-	/**
-	 * Sets the default native pole.
-	 */
+
 	public void setDefaultNativePole() {
 		userPole = false;
 		SphericalCoordinates reference = getReference();
 		if(reference != null) nativePole.setX(reference.y() >= nativeReference.y() ? 0 : Math.PI); 
 	}
 	
-	/**
-	 * Sets the celestial pole.
-	 *
-	 * @param coords the new celestial pole
-	 */
+
 	public void setCelestialPole(SphericalCoordinates coords) { this.celestialPole = coords; }
-	
-	
-	/**
-	 * Sets the default pole.
-	 */
+
+
 	public void setDefaultPole() {
 		userPole = false;
 		nativePole.zero();
@@ -350,9 +274,6 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
 	@Override
 	public void editHeader(Header header, String alt) throws HeaderCardException {		
 		SphericalCoordinates reference = getReference();
@@ -375,28 +296,17 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		}	
 	}
 	
-	/**
-	 * Gets the longitude parameter prefix.
-	 *
-	 * @return the longitude parameter prefix
-	 */
+
 	protected String getLongitudeParameterPrefix() {
 		return "PV" + (invertedFITSAxes ? 2 : 1) + "_";
 	}
 	
-	/**
-	 * Gets the latitude parameter prefix.
-	 *
-	 * @return the latitude parameter prefix
-	 */
+
 	protected String getLatitudeParameterPrefix() {
 		return "PV" + (invertedFITSAxes ? 1 : 2) + "_";
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#parse(nom.tam.fits.Header, java.lang.String)
-	 */
+
 	@Override
 	public void parseHeader(Header header, String alt) {
 		String axis1 = header.getStringValue("CTYPE1" + alt).toLowerCase();
@@ -443,11 +353,6 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		// TODO reference offset PV0_j should be used also...		
 	}
 	
-	/**
-	 * Sets the native pole latitude.
-	 *
-	 * @param value the new native pole latitude
-	 */
 	private void setNativePoleLatitude(double value) {
 		if(Math.abs(value) <= rightAngle) {
 			nativePole.setY(value);
@@ -456,33 +361,18 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		else selectSolution = value > 0.0 ? SELECT_NORTHERN_POLE : SELECT_SOUTHERN_POLE;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getCoordinateInstance()
-	 */
 	@Override
 	public SphericalCoordinates getCoordinateInstance() {
 		return new SphericalCoordinates();
 	}
 	
 	// Safe asin and acos for when rounding errors make values fall outside of -1:1 range.
-	/**
-	 * Asin.
-	 *
-	 * @param value the value
-	 * @return the double
-	 */
 	protected final static double asin(double value) {
 		if(value < -1.0) value = -1.0;
 		else if(value > 1.0) value = 1.0;
 		return Math.asin(value);
 	}
-	
-	/**
-	 * Acos.
-	 *
-	 * @param value the value
-	 * @return the double
-	 */
+
 	protected final static double acos(double value) {
 		if(value < -1.0) value = -1.0;
 		else if(value > 1.0) value = 1.0;
@@ -511,11 +401,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 		register(new ParabolicProjection()); // PAR
 	}
 	
-	/**
-	 * Register.
-	 *
-	 * @param projection the projection
-	 */
+
 	public static void register(SphericalProjection projection) {
 		registry.put(projection.getFitsID(), projection.getClass());
 		registry.put(projection.getFullName().toLowerCase(), projection.getClass());
@@ -523,18 +409,6 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	}
 	
 	// Find projection by FITS name, full name, or class name...
-	/**
-	 * For name.
-	 *
-	 * @param name the name
-	 * @return the spherical projection
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
 	public static SphericalProjection forName(String name) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Class<? extends SphericalProjection> projectionClass = registry.get(name);
 		if(projectionClass != null) return projectionClass.getConstructor().newInstance();
@@ -542,19 +416,17 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	}
 
 
-	/** The Constant twoPI. */
+	/** the Constant 2*pi */
 	public final static double twoPI = Constant.twoPi;
 	
-	/** The Constant rightAngle. */
+	/** The Constant for right angle (pi/2). */
 	public final static double rightAngle = Constant.rightAngle;
 
-	/** The Constant SELECT_NEAREST_POLE. */
+
 	public final static int SELECT_NEAREST_POLE = 0;
 	
-	/** The Constant SELECT_NORTHERN_POLE. */
 	public final static int SELECT_NORTHERN_POLE = 1;
-	
-	/** The Constant SELECT_SOUTHERN_POLE. */
+
 	public final static int SELECT_SOUTHERN_POLE = -1;
 	
 }

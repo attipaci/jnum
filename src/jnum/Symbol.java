@@ -29,7 +29,7 @@ package jnum;
  *  For more symbols, check out {@link jnum.text.GreekLetter} and {@link jnum.text.Brackets}, {@jnum.textQuotationMarks}.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  * 
  * @see jnum.text.GreekLetter
  * @see jnum.text.Brackets

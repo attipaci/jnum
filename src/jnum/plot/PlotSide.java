@@ -22,38 +22,15 @@
  ******************************************************************************/
 package jnum.plot;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Interface PlotSide.
- */
+
 public interface PlotSide {
 
-	/**
-	 * Gets the side.
-	 *
-	 * @return the side
-	 */
 	public int getSide();
 	
-	/**
-	 * Sets the side.
-	 *
-	 * @param side the new side
-	 */
 	public void setSide(int side);
-		
-	/**
-	 * Checks if is horizontal.
-	 *
-	 * @return true, if is horizontal
-	 */
+
 	public boolean isHorizontal();
-	
-	/**
-	 * Checks if is vertical.
-	 *
-	 * @return true, if is vertical
-	 */
+
 	public boolean isVertical(); 
 	
 }

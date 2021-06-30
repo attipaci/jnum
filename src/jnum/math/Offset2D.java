@@ -30,7 +30,7 @@ import jnum.Util;
 /**
  * A vector class representing a 2D offset from some reference coordinate.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Offset2D extends Vector2D {

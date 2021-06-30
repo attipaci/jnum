@@ -4,7 +4,7 @@ package jnum.math;
 /**
  * An interface for objects that implement a dot product, such as matricesa and vectors.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <V>   the generic type of value that can be dotted with this object (from the right).
  * @param <R>   the generic type of result. 

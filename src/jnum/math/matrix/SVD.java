@@ -27,11 +27,13 @@ import jnum.data.fitting.ConvergenceException;
 import jnum.math.MathVector;
 
 
-//TODO: Auto-generated Javadoc
+
 // Decomposes Matrix A as:
 // A = U * diag(w) * V^T
 // square A --> A^-1 = V * diag(1/w) * U^T 
 // where U is column-orthogonal and V is orthogonal
+
+
 public class SVD implements MatrixInverter<Double>, MatrixSolver<Double>, RealMatrixSolver {
 
     private Matrix u;

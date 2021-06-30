@@ -70,7 +70,7 @@ import nom.tam.util.Cursor;
  * Class for imaging interferometric data from measured visibilities in the uv plane.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class UVImager {    
@@ -131,10 +131,10 @@ public class UVImager {
      * 
      * @return      Associated FITS properties.
      * 
-     * @see setTelescopeName()
-     * @see setInstrumentName()
-     * @see setOrganization()
-     * @see setSourceName()
+     * @see FitsProperties#setTelescopeName(String)
+     * @see FitsProperties#setInstrumentName(String)
+     * @see FitsProperties#setOrganization(String)
+     * @see FitsProperties#setObjectName(String)
      */
     public final FitsProperties getFitsProperties() {
         return fitsProperties;
@@ -145,8 +145,8 @@ public class UVImager {
      * 
      * @param d     (1/rad) Common grid cell size for u and v. 
      * 
-     * @see setUVResolution(Vector2D)
-     * @see getUVResolution()
+     * @see #setUVResolution(Vector2D)
+     * @see #getUVResolution()
      */
     public void setUVResolution(double d) {
         setUVResolution(new Vector2D(d, d));
@@ -157,8 +157,8 @@ public class UVImager {
      * 
      * @param d     (1/rad) independent u and v grid cell sized. 
      * 
-     * @see setUVResolution(double)
-     * @see getUVResolution()
+     * @see #setUVResolution(double)
+     * @see #getUVResolution()
      */
     public void setUVResolution(Vector2D d) {
         delta = d.copy();
@@ -169,8 +169,8 @@ public class UVImager {
      * 
      * @return  (1/rad) u and v cell sizes for grid.
      * 
-     * @see setUVResolution(Vector2D)
-     * @see setUVResolution(double)
+     * @see #setUVResolution(Vector2D)
+     * @see #setUVResolution(double)
      */
     public Vector2D getUVResolution() {
         return delta;
@@ -182,7 +182,7 @@ public class UVImager {
      * 
      * @param name      Name of the telescope, e.g. "SMA"
      * 
-     * @see getFitsProperties()
+     * @see #getFitsProperties()
      */
     public void setTelescope(String name) {
         fitsProperties.setTelescopeName(name);
@@ -193,7 +193,7 @@ public class UVImager {
      * 
      * @param name      Name of organization, e.g. "Center for Astrophysics | Harvard and Smithsonian".
      * 
-     * @see getFitsProperties()
+     * @see #getFitsProperties()
      */
     public void setOrganization(String name) {
         fitsProperties.setOrganization(name);
@@ -204,7 +204,7 @@ public class UVImager {
      * 
      * @param name      Instrument name or list, e.g. "Rx230, Rx345".
      * 
-     * @see getFitsProperties()
+     * @see #getFitsProperties()
      */
     public void setInstrument(String name) {
         fitsProperties.setInstrumentName(name);
@@ -214,9 +214,9 @@ public class UVImager {
     /**
      * Sets the name of the observed source (for the standard FITS header).
      * 
-     * @param name      Source name, e.g. "3c84".
+     * @param value      Source name, e.g. "3c84".
      * 
-     * @see getFitsProperties()
+     * @see #getFitsProperties()
      */
     public void setSourceName(String value) {
         sourceName = value;
@@ -265,7 +265,7 @@ public class UVImager {
      * 
      * @param uv    Frame to include in image set.
      * 
-     * @see add(UVFrame, double)
+     * @see #add(UVFrame, double)
      */
     public void add(UVFrame uv) {
         add(uv, 1.0);
@@ -278,8 +278,8 @@ public class UVImager {
      * @param uv        Frame to include in image set.
      * @param scaling   Multiplicative scaling factor to apply when adding.
      * 
-     * @see add(UVFrame)
-     * @see add(UVFrame.Visibility, double)
+     * @see #add(UVFrame)
+     * @see #add(UVFrame.Visibility, double)
      */
     public void add(UVFrame uv, double scaling) {
         double w = uv.getWeightSum();
@@ -329,7 +329,7 @@ public class UVImager {
      * 
      * @return      Grid size in the u coordinate direction. 
      * 
-     * @see sizeV()
+     * @see #sizeV()
      */
     public final int sizeU() { return vis.length; }
 
@@ -338,7 +338,7 @@ public class UVImager {
      * 
      * @return      Grid size in the v coordinate direction. 
      * 
-     * @see sizeU()
+     * @see #sizeU()
      */
     public final int sizeV() { return vis[0].length; }
 
@@ -365,8 +365,8 @@ public class UVImager {
      * 
      * @return  A stream of all visibilities in this image set.
      * 
-     * @see streamValid()
-     * @see parallelStream()
+     * @see #streamValid()
+     * @see #parallelStream()
      * 
      */
     public final Stream<WeightedComplex> stream() {
@@ -378,8 +378,8 @@ public class UVImager {
      * 
      * @return  A stream of the populated visibilities in this image set.
      * 
-     * @see stream()
-     * @see parallelStreamValid()
+     * @see #stream()
+     * @see #parallelStreamValid()
      */
     public final Stream<WeightedComplex> streamValid() {
         return stream().filter(vis -> isValid(vis));
@@ -391,8 +391,8 @@ public class UVImager {
      * 
      * @return  A parallel stream of all visibilities in this image set.
      * 
-     * @see parallelStreamValid()
-     * @see stream()
+     * @see #parallelStreamValid()
+     * @see #stream()
      * 
      */
     public final Stream<WeightedComplex> parallelStream() {
@@ -405,8 +405,8 @@ public class UVImager {
      * 
      * @return  A parallel stream of the populated visibilities in this image set.
      * 
-     * @see streamValid()
-     * @see parallelStream()
+     * @see #streamValid()
+     * @see #parallelStream()
      */
     public final Stream<WeightedComplex> parallelStreamValid() {
         return parallelStream().filter(vis -> isValid(vis));
@@ -418,7 +418,7 @@ public class UVImager {
      * @param vis   Visibility to check
      * @return      true if valid (populated), otherwise false.
      * 
-     * @see isValid(int, int)
+     * @see #isValid(int, int)
      */
     public boolean isValid(WeightedComplex vis) {
         return vis.weight() > 0.0;
@@ -431,7 +431,7 @@ public class UVImager {
      * @param j     Index in the v coordinate direction.
      * @return      true if valid (populated), otherwise false.
      * 
-     * @see isValid(WeightedComplex)
+     * @see #isValid(WeightedComplex)
      */
     public final boolean isValid(int i, int j) {
         return isValid(vis[i][j]);
@@ -443,8 +443,8 @@ public class UVImager {
      * @param u     Coordinate value in the u-direction
      * @return      First grid index corresponding to the u coordinate.
      * 
-     * @see getJ()
-     * @see getX()
+     * @see #getJ(double)
+     * @see #getX(int)
      */
     public final int getI(double u) {
         int iu = (int) Math.round(u / delta.x());
@@ -458,8 +458,8 @@ public class UVImager {
      * @param v     Coordinate value in the v-direction
      * @return      Second grid index corresponding to the v coordinate.
      * 
-     * @see getI()
-     * @see getY()
+     * @see #getI(double)
+     * @see #getY(int)
      */
     public final int getJ(double v) {
         int iv = (int) Math.round(v / delta.y());
@@ -474,9 +474,9 @@ public class UVImager {
      * @param i     First grid index.
      * @return      Signed coordinate bin for u.
      * 
-     * @see getI()
-     * @see getY()
-     * @see getResolution()
+     * @see #getI(double)
+     * @see #getY(int)
+     * @see #getUVResolution()
      */
     public final int getX(int i) {
         if((i<<1) <= sizeU()) return i;
@@ -490,9 +490,9 @@ public class UVImager {
      * @param j     Second grid index.
      * @return      Signed coordinate bin for v.
      * 
-     * @see getJ()
-     * @see getX()
-     * @see getResolution()
+     * @see #getJ(double)
+     * @see #getX(int)
+     * @see #getUVResolution()
      */
     public final int getY(int j) {
         if((j<<1) <= sizeV()) return j;
@@ -799,8 +799,8 @@ public class UVImager {
      * 
      * @return      true if the image is naturally (noise) weighted, otherwise false.
      * 
-     * @see isUniformWeigted()
-     * @see isRobustWeighted()
+     * @see #isUniformWeighted()
+     * @see #isRobustWeighted()
      */
     public final boolean isNaturalWeighted() { return weighting == 0.0; }
 
@@ -810,12 +810,12 @@ public class UVImager {
      * 
      * @return      true if the image is uniformly weighted, otherwise false.
      * 
-     * @see isNaturalWeigted()
-     * @see isRobustWeighted()
-     * @see uniformWeight()
+     * @see #isNaturalWeighted()
+     * @see #isRobustWeighted()
+     * @see #uniformWeight()
      * 
      */
-    public final boolean isdUniformWeighted() { return weighting < 0.0; }
+    public final boolean isUniformWeighted() { return weighting < 0.0; }
 
     /**
      * Checks if the image is robust weighted to providing an intermediate trade-off between 
@@ -823,9 +823,9 @@ public class UVImager {
      * 
      * @return      true if the image is robust weighted, otherwise false.
      * 
-     * @see isNaturalWeigted()
-     * @see isUniformWeighted()
-     * @see robustWeight(double)
+     * @see #isNaturalWeighted()
+     * @see #isUniformWeighted()
+     * @see #robustWeight(double)
      * 
      */
     public final boolean isRobustWeighted() { return weighting > 0.0; }
@@ -841,8 +841,8 @@ public class UVImager {
      * 
      * @param threshold     Relative to typical weight at which to level of downweighting. E.g. 10.0.
      * 
-     * @see isRobustWeighted()
-     * @see uniformWeight()
+     * @see #isRobustWeighted()
+     * @see #uniformWeight()
      */
     public void robustWeight(double threshold) {   
         if(weighting == threshold) return;
@@ -856,8 +856,8 @@ public class UVImager {
      * Change the weights from natural to uniform, to provide maximum spatial resolution at the cost
      * of significantly reduced sensitivity.
      * 
-     * @see isUniformWeighted()
-     * @see robustWeight()
+     * @see #isUniformWeighted()
+     * @see #robustWeight(double)
      * 
      */
     public void uniformWeight() {
@@ -931,7 +931,7 @@ public class UVImager {
         c.add(new HeaderCard("FMAX", frequencyRange.max() / Unit.GHz, "(GHz) Highest contributing frequency"));
 
         if(isNaturalWeighted()) c.add(new HeaderCard("WEIGHTS", "natural", "Visibility Weighting mode."));
-        else if(isdUniformWeighted()) c.add(new HeaderCard("WEIGHTS", "uniform", "Visibility Weighting mode."));
+        else if(isUniformWeighted()) c.add(new HeaderCard("WEIGHTS", "uniform", "Visibility Weighting mode."));
         else c.add(new HeaderCard("WEIGHTS", "robust:" + weighting, "Visibility Weighting mode."));
     }
 
@@ -943,7 +943,7 @@ public class UVImager {
      * It also inserting extra header information specific to interferometric imaging in FITS outputs.
      * 
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class UVImage2D extends Observation2D {
@@ -986,7 +986,7 @@ public class UVImager {
      * interferometric imaging in FITS outputs.
      * 
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class SynthesizedImage2D extends Observation2D {

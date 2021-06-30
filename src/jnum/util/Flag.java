@@ -30,13 +30,13 @@ import java.io.Serializable;
  * The Class representing a bitwise flag in a flag-space of an integer-type container. The flag has a unique letter
  * code identifying it in the flag-space it belongs to, and has a human-readable descriptive name. These allow
  * for human tracking, if desired, of which flags have been set.
- * <p>
+ * 
  * 
  * For more basic bit-wise flagging, see the {@link jnum.data.Flagging} interface.
  * 
  * @param <Type> the generic integer type supporting this flag space.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  * 
  * @see jnum.data.Flagging
  */
@@ -97,16 +97,10 @@ public abstract class Flag<Type extends Number> implements Serializable {
         return value;
     }
    
-    /**
-     * Sets the value.
-     *
-     * @param value the new value
-     */
+
     protected abstract void setValue(Type value); 
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -117,10 +111,7 @@ public abstract class Flag<Type extends Number> implements Serializable {
         if(f.letterCode != letterCode) return false;
         return true;
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() { return super.hashCode() ^ HashCode.from(value().longValue()) ^ HashCode.from(letterCode); }
     
@@ -152,219 +143,117 @@ public abstract class Flag<Type extends Number> implements Serializable {
      */
     public final String name() { return name; }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         return "'" + letterCode + "' - 0x" + toHexString() + " - " + name;
     }
 
-    /**
-     * To hex string.
-     *
-     * @return the string
-     */
     protected abstract String toHexString();
     
     
-    /**
-     * The Class Byte.
-     */
     public static class Byte extends Flag<java.lang.Byte> {
         
-        /** The Constant serialVersionUID. */
+
         private static final long serialVersionUID = 579083092124948222L;
-        
-        /** The value. */
+
         private byte value;
         
-        /**
-         * Instantiates a new byte.
-         *
-         * @param space the space
-         * @param value the value
-         * @param letterCode the letter code
-         * @param name the name
-         * @throws IllegalArgumentException the illegal argument exception
-         * @throws FlagConflictException the flag conflict exception
-         */
         protected Byte(FlagSpace<java.lang.Byte> space, byte value, char letterCode, String name) throws IllegalArgumentException {
             super(space, value, letterCode, name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#setValue(java.lang.Number)
-         */
         @Override
         protected void setValue(java.lang.Byte value) {
             this.value = value;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#value()
-         */
         @Override
         public java.lang.Byte value() {
             return value;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#toHexString()
-         */
         @Override
         protected String toHexString() {
             return "0x" + java.lang.Integer.toHexString(value);
         }
         
     }
-    
-    /**
-     * The Class Short.
-     */
+
     public static class Short extends Flag<java.lang.Short> {  
-        
-        /** The Constant serialVersionUID. */
+
         private static final long serialVersionUID = 5971322398411509726L;
-        
-        /** The value. */
+
         private short value;
         
-        /**
-         * Instantiates a new short.
-         *
-         * @param space the space
-         * @param value the value
-         * @param letterCode the letter code
-         * @param name the name
-         * @throws IllegalArgumentException the illegal argument exception
-         * @throws FlagConflictException the flag conflict exception
-         */
         protected Short(FlagSpace<java.lang.Short> space, short value, char letterCode, String name) throws IllegalArgumentException {
             super(space, value, letterCode, name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#setValue(java.lang.Number)
-         */
         @Override
         protected void setValue(java.lang.Short value) {
             this.value = value;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#value()
-         */
         @Override
         public java.lang.Short value() {
             return value;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#toHexString()
-         */
         @Override
         protected String toHexString() {
             return "0x" + java.lang.Integer.toHexString(value);
         }
         
     }
-    
-    /**
-     * The Class Integer.
-     */
+
     public static class Integer extends Flag<java.lang.Integer> {
-        
-        /** The Constant serialVersionUID. */
+
         private static final long serialVersionUID = -6037190445957697347L;
 
-        /** The value. */
         private int value;
-        
-        /**
-         * Instantiates a new integer.
-         *
-         * @param space the space
-         * @param value the value
-         * @param letterCode the letter code
-         * @param name the name
-         * @throws IllegalArgumentException the illegal argument exception
-         * @throws FlagConflictException the flag conflict exception
-         */
+
         protected Integer(FlagSpace<java.lang.Integer> space, int value, char letterCode, String name) throws IllegalArgumentException {
             super(space, value, letterCode, name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#setValue(java.lang.Number)
-         */
         @Override
         protected void setValue(java.lang.Integer value) {
             this.value = value;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#value()
-         */
         @Override
         public java.lang.Integer value() {
             return value;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#toHexString()
-         */
         @Override
         protected String toHexString() {
             return "0x" + java.lang.Integer.toHexString(value);
         }
         
     }
-    
-    /**
-     * The Class Long.
-     */
+
     public static class Long extends Flag<java.lang.Long> {
-        
-        /** The Constant serialVersionUID. */
+
         private static final long serialVersionUID = 7872780970527048382L;
-        
-        /** The value. */
+
         private long value;
-        
-        /**
-         * Instantiates a new long.
-         *
-         * @param space the space
-         * @param value the value
-         * @param letterCode the letter code
-         * @param name the name
-         * @throws IllegalArgumentException the illegal argument exception
-         * @throws FlagConflictException the flag conflict exception
-         */
+
         protected Long(FlagSpace<java.lang.Long> space, long value, char letterCode, String name) throws IllegalArgumentException {
             super(space, value, letterCode, name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#setValue(java.lang.Number)
-         */
         @Override
         protected void setValue(java.lang.Long value) {
             this.value = value;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#value()
-         */
         @Override
         public java.lang.Long value() {
             return value;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.Flag#toHexString()
-         */
         @Override
         protected String toHexString() {
             return "0x" + java.lang.Long.toHexString(value);

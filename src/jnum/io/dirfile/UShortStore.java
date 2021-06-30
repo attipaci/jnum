@@ -37,9 +37,6 @@ public class UShortStore extends RawStore<Integer> {
 		bytes = 2;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Integer get(long n) throws IOException {
 		return getUnsignedShort(n);

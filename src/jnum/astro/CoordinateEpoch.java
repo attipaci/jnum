@@ -44,9 +44,7 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 
 	public CoordinateEpoch(double epoch) { year = epoch; }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -55,17 +53,13 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 		return year == ((CoordinateEpoch) o).year;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ HashCode.from(year);
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
+
 	@Override
 	public int compareTo(CoordinateEpoch epoch) {
 		double y1 = getJulianYear();

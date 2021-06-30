@@ -29,7 +29,5 @@ import java.text.NumberFormat;
 
 public interface NumberFormating {
 
-
-	public String toString(NumberFormat nf);
-	
+	public String toString(NumberFormat nf);	
 }

@@ -65,10 +65,7 @@ public class Grid1D extends CartesianGrid<Scalar> {
         
         return true;
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
+
     @Override
     public Grid1D clone() {
         try { return (Grid1D) super.clone(); }
@@ -77,10 +74,7 @@ public class Grid1D extends CartesianGrid<Scalar> {
     
     @Override
     public final int dimension() { return 1; }
-    
-    /* (non-Javadoc)
-     * @see jnum.data.Grid#indexOf(java.lang.Object)
-     */
+
     @Override
     public void indexOf(Scalar coord, Scalar toIndex) {
         toIndex.setValue(indexOf(coord.value()));
@@ -89,10 +83,7 @@ public class Grid1D extends CartesianGrid<Scalar> {
     public double indexOf(double coord) {
         return (coord - refValue.value()) / resolution.value() + refIndex.value();
     }
-    
-    /* (non-Javadoc)
-     * @see jnum.data.Grid#valueAt(java.lang.Object)
-     */
+
     @Override
     public void coordsAt(Scalar index, Scalar toCoord) {
         toCoord.setValue(coordAt(index.value()));
@@ -102,9 +93,6 @@ public class Grid1D extends CartesianGrid<Scalar> {
         return (index - refIndex.value()) * resolution.value() + refValue.value();
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.Grid#setReference(java.lang.Object)
-     */
     @Override
     public void setReference(Scalar coords) {
         refValue = coords;
@@ -113,19 +101,12 @@ public class Grid1D extends CartesianGrid<Scalar> {
     public void setReference(double value) {
         setReference(new Scalar(value));
     }
-    
 
-    /* (non-Javadoc)
-     * @see jnum.data.Grid#getReference()
-     */
     @Override
     public Scalar getReference() {
         return refValue;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.Grid#setReferenceIndex(java.lang.Object)
-     */
     @Override
     public void setReferenceIndex(Scalar index) {
         refIndex = index;
@@ -135,17 +116,11 @@ public class Grid1D extends CartesianGrid<Scalar> {
         setReferenceIndex(new Scalar(index));
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.Grid#getReferenceIndex()
-     */
     @Override
     public Scalar getReferenceIndex() {
         return refIndex;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.Grid#setResolution(java.lang.Object)
-     */
     @Override
     public void setResolution(Scalar delta) {
         resolution = delta;
@@ -155,9 +130,6 @@ public class Grid1D extends CartesianGrid<Scalar> {
         setResolution(new Scalar(delta));
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.Grid#getResolution()
-     */
     @Override
     public Scalar getResolution() {
        return resolution;

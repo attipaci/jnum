@@ -52,35 +52,23 @@ public class ObjectMesh<T> extends Mesh<T> {
 		super(data);
 	}
 	
-	  /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#newInstance()
-     */
     @Override
     public Mesh<T> newInstance() {
         return new ObjectMesh<>(elementClass);
     }
-	
-	/* (non-Javadoc)
-	 * @see kovacs.data.AbstractArray#lineElementAt(java.lang.Object, int)
-	 */
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected T linearElementAt(Object linearArray, int index) {
 		return ((T[]) linearArray)[index];
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.data.AbstractArray#setLineElementAt(java.lang.Object, int, java.lang.Object)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void setLinearElementAt(Object linearArray, int index, T value) {
 		((T[]) linearArray)[index] = value;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.data.AbstractArray#parseElement(java.lang.String)
-	 */
 	@Override
 	public T parseElement(String text) throws InstantiationException, InvocationException, InvocationTargetException, NoSuchMethodException, IllegalAccessException  {
 		T value = elementClass.getDeclaredConstructor().newInstance();

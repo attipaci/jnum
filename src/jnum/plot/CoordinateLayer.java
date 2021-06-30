@@ -28,7 +28,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-// TODO: Auto-generated Javadoc
 // TODO Enclosing box. Ticks handled by ruler...
 
 
@@ -39,10 +38,7 @@ public class CoordinateLayer extends PlotLayer {
 	Color penColor = Color.BLACK;
 
 	int borderWidth = 0;
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotLayer#paintComponent(java.awt.Graphics)
-	 */
+
 	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;	
@@ -51,9 +47,6 @@ public class CoordinateLayer extends PlotLayer {
 		g2.draw(new Rectangle(0, 0, getContentArea().getWidth(), getContentArea().getHeight()));
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotLayer#defaults()
-	 */
 	@Override
 	public void defaults() {
 

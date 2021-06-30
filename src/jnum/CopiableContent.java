@@ -26,12 +26,12 @@ package jnum;
  * Generates a fully independent copy of the present object (see {@link Copiable}), with the option to omit carrying over 
  * all of the original objects content/data into the copy. For any data not carried over, the copy should be 
  * set to an appropriate initial state.
- * <p>
+ * 
  * 
  * The possibility of exempting some part of the object's data from the copy can have performance advantages when
  * the affected data is going to be overwritten after the copying anyways.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <Type>    The generic type of the copies created.
  * 

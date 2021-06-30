@@ -32,7 +32,7 @@ import jnum.parallel.Parallelizable;
 
 
 /**
-/* Split radix (2 & 4) FFT algorithms. For example, see Numerical recipes,
+ * Split radix (2 & 4) FFT for double-precision real-valued data with 2<sup>n</sup> elements. For example, see Numerical recipes,
  * and Chu, E: Computation Oriented Parallel FFT Algorithms (COPF)
  * 
  * @author Attila Kovacs <attila[AT]sigmyne.com>
@@ -53,7 +53,6 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
     public DoubleFFT(Parallelizable processing) {
         super(processing);
     }
-    
     
     @Override
     final void swap(final double[] data, int i, int j) {
@@ -78,27 +77,21 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
         return Integer.highestOneBit(data.length);
     }
     
-    
-    /* (non-Javadoc)
-     * @see kovacs.fft.FFT#getTwiddleMask()
-     */
     @Override
     protected int getTwiddleMask() {
         return (super.getTwiddleMask() << 1);
     }
 
-   
-
-    // Blockbit is the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
-    // Two consecutive blocks are merged by the algorithm into one larger block...
+    
     /**
-     * Merge2.
+     * Performs a radix-2 iteration on a section of the supplied data.
      *
-     * @param data the data
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     * @param blkbit the blkbit
+     * @param data      The data to be transformed.
+     * @param from      the data section starting index for the radix-2 processing.
+     * @param to        the data section ending index (exclusive) for the radix-2 processing
+     * @param isForward <code>true</code> if it is a forward transform, otherwise <code>false</code>
+     * @param blkbit    the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
+     *                  four consecutive blocks are merged by the algorithm into one larger block...
      */
     @Override
     protected void radix2(final double[] data, int from, int to, final boolean isForward, final int blkbit) {	
@@ -183,19 +176,15 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
 
 
-
-
-
-    // Blockbit is the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
-    // Four consecutive blocks are merged by the algorithm into one larger block...
     /**
-     * Merge4.
+     * Performs a radix-4 iteration on a section of the supplied data.
      *
-     * @param data the data
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     * @param blkbit the blkbit
+     * @param data      The data to be transformed.
+     * @param from      the data section starting index for the radix-4 processing.
+     * @param to        the data section ending index (exclusive) for the radix-4 processing
+     * @param isForward <code>true</code> if it is a forward transform, otherwise <code>false</code>
+     * @param blkbit    the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
+     *                  four consecutive blocks are merged by the algorithm into one larger block...
      */
     @Override
     protected void radix4(final double[] data, int from, int to, final boolean isForward, final int blkbit) {	
@@ -324,15 +313,7 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
     }
 
-    /**
-     * Load real.
-     *
-     * @param data the data
-     * @param addressBits the address bits
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     */
+
     private void loadReal(final double[] data, final int addressBits, int from, int to, final boolean isForward) {
         int length = 2<<addressBits;
         to = Math.min(to, length);
@@ -385,10 +366,6 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
     }
 
     
-    
-    /* (non-Javadoc)
-     * @see jnum.fft.RealFFT#realTransform(java.lang.Object, boolean)
-     */
     @Override
     public final void realTransform(final double data[], final boolean isForward) {
         realTransform(data, getAddressBits(data), isForward);
@@ -396,12 +373,11 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
 
     /**
-     * Real transform.
+     * Real transform (multi-threaded).
      *
-     * @param data the data
-     * @param addressBits the address bits
-     * @param isForward the is forward
-     * @param chunks the chunks
+     * @param data          the data to transform
+     * @param addressBits   the number address bits in use for data elements
+     * @param isForward     <code>true</code> if it is a forward transform, otherwise <code>false</code>
      */
     final void realTransform(final double[] data, final int addressBits, final boolean isForward) {	
         if(getParallel() < 2) sequentialRealTransform(data, addressBits, isForward);
@@ -431,12 +407,6 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
     }
 
-    /**
-     * Sequential real transform.
-     *
-     * @param data the data
-     * @param isForward the is forward
-     */
     @Override
     public final void sequentialRealTransform(final double[] data, final boolean isForward) {
         sequentialRealTransform(data, getAddressBits(data), isForward);
@@ -444,11 +414,11 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
 
     /**
-     * Sequential real transform.
+     * Sequential real transform in a single thread. 
      *
-     * @param data the data
-     * @param addressBits the address bits
-     * @param isForward the is forward
+     * @param data          the data to transform
+     * @param addressBits   the number address bits in use for data elements
+     * @param isForward     <code>true</code> if it is a forward transform, otherwise <code>false</code>
      */
     void sequentialRealTransform(final double[] data, final int addressBits, final boolean isForward) {
         if(isForward) sequentialComplexTransform(data, addressBits, FORWARD); 
@@ -470,12 +440,11 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
 
     /**
-     * Scale.
+     * Scale a number of element in an array of doubles by a specified factor.
      *
-     * @param data the data
-     * @param length the length
-     * @param value the value
-     * @param threads the threads
+     * @param data      the data to scale 
+     * @param length    the number of elements to scale in data.
+     * @param value     the scaling factor
      */
     protected void scale(final double[] data, final int length, final double value) {
         if(getParallel() < 2) {
@@ -491,10 +460,6 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
         
     }
 
-
-    /* (non-Javadoc)
-     * @see jnum.fft.RealFFT#real2Amplitude(java.lang.Object)
-     */
     @Override
     public void real2Amplitude(final double[] data) {
         final int addressBits = getAddressBits(data);
@@ -503,20 +468,12 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
         scale(data, n, 2.0F / n);
     }
 
-   
-    /* (non-Javadoc)
-     * @see jnum.fft.RealFFT#amplitude2Real(java.lang.Object)
-     */
+ 
     @Override
     public void amplitude2Real(final double[] spectrum) { 
         realTransform(spectrum, FFT.BACK); 
     }
 
-
-    // Rewritten to skip costly intermediate Complex storage...
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#averagePower(java.lang.Object, double[])
-     */
     @Override
     public double[] averagePower(final double[] data, final double[] w) {
         final int windowSize = w.length;
@@ -560,16 +517,9 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
         return spectrum;	
     }
 
-
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#addressSizeOf(java.lang.Object)
-     */
     @Override
     final int addressSizeOf(final double[] data) { return getPoints(data) >>> 1; }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getPadded(java.lang.Object, int)
-     */
     @Override
     public double[] getPadded(final double[] data, final int n) {
         if(data.length == n) return data;
@@ -581,9 +531,6 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
         return padded;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getMaxErrorBitsFor(java.lang.Object)
-     */
     @Override
     protected int countFlops(double[] data) {
         int addressBits = getAddressBits(data);
@@ -608,17 +555,11 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
 
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getMaxSignificantBits()
-     */
     @Override
     final int getMaxSignificantBitsFor(double[] data) {
         return 53;	
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT1D#sizeOf(java.lang.Object)
-     */
     @Override
     public int sizeOf(double[] data) {
         return data.length;
@@ -650,10 +591,6 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
             return Integer.highestOneBit(data.length - 2);
         }
         
-     
-        /* (non-Javadoc)
-         * @see jnum.fft.DoubleFFT#realTransform(double[], int, boolean, int)
-         */
         @Override
         void parallelRealTransform(final double[] data, final int addressBits, final boolean isForward) {   
             final int n = 2<<addressBits;
@@ -671,9 +608,7 @@ public class DoubleFFT extends FFT1D<double[]> implements RealFFT<double[]> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see jnum.fft.DoubleFFT#sequentialRealTransform(double[], int, boolean)
-         */
+ 
         @Override
         void sequentialRealTransform(final double[] data, final int addressBits, final boolean isForward) {
             final int n = 2<<addressBits;

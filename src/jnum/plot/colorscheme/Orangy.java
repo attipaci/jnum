@@ -32,9 +32,6 @@ import jnum.plot.ColorScheme;
 
 public class Orangy extends ColorScheme {
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.ColorScheme#getRGB(double)
-	 */
 	@Override
 	public int getRGB(double scaled) {
 		if(Double.isNaN(scaled)) return noData;
@@ -46,9 +43,6 @@ public class Orangy extends ColorScheme {
 		return Color.HSBtoRGB(1.0F/15.0F, 2.0F - 2.0F * (float) scaled, 1.0F);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.ColorScheme#getHighlight()
-	 */
 	@Override
 	public Color getHighlight() {
 		return Color.CYAN;

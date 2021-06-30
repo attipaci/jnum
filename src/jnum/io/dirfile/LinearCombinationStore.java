@@ -45,10 +45,7 @@ public class LinearCombinationStore extends DataStore<Double> {
 	public LinearCombinationStore(String name) {
 		super(name);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -58,9 +55,6 @@ public class LinearCombinationStore extends DataStore<Double> {
 		return hash;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -87,9 +81,6 @@ public class LinearCombinationStore extends DataStore<Double> {
 		else indexScale.add((double) store.getSamples() / getSamples());
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Double get(long n) throws IOException {
 		double value = 0.0;
@@ -102,17 +93,11 @@ public class LinearCombinationStore extends DataStore<Double> {
 		return value;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#getSamples()
-	 */
 	@Override
 	public int getSamples() {
 		return terms.get(0).getSamples();
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#length()
-	 */
+
 	@Override
 	public long length() throws IOException {
 		return terms.get(0).length();

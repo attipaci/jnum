@@ -31,35 +31,22 @@ import jnum.projection.SphericalProjection;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class SphericalGrid.
- */
+
 public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8833326375584103801L;
 
-	/**
-	 * Instantiates a new spherical grid.
-	 */
+
 	public SphericalGrid() { }
 	
-	   
-    /**
-     * Instantiates a new spherical grid.
-     *
-     * @param reference the reference
-     */
+
     public SphericalGrid(SphericalCoordinates reference) {
         this();
         setReference(reference);
     }
     
-	
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid2D#defaults()
-	 */
+
 	@Override
 	protected void defaults() {
 		super.defaults();
@@ -72,39 +59,25 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 	@Override
     public final Unit fitsYUnit() { return SphericalCoordinates.degree; }
 
-	/* (non-Javadoc)
-	 * @see kovacs.data.Grid2D#setReference(kovacs.math.Coordinate2D)
-	 */
 	@Override
 	public void setReference(SphericalCoordinates reference) {
 		super.setReference(reference);
 		setCoordinateSystem(reference.getCoordinateSystem());
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid2D#isReverseX()
-	 * 
-	 */
+
 	@Override
 	public boolean isReverseX() { return getReference().isReverseLongitude(); }
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid2D#isReverseY()
-	 */
+
 	@Override
 	public boolean isReverseY() { return getReference().isReverseLatitude(); }
 	
-	
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid2D#getDefaultFITSAxisUnit()
-	 */
+
 	@Override
 	public Unit getDefaultUnit() { return SphericalCoordinates.degree; }
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid2D#parseProjection(nom.tam.fits.Header)
-	 */
+
 	@Override
 	public void parseProjection(Header header) throws HeaderCardException {
 		String type = header.getStringValue("CTYPE1" + getFitsID());
@@ -113,9 +86,7 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 		catch(Exception e) { Util.error(this, "Unknown projection " + type.substring(5, 8)); }
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid2D#getCoordinateInstanceFor(java.lang.String)
-	 */
+
 	@Override
 	public SphericalCoordinates getCoordinateInstanceFor(String type) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Class<? extends SphericalCoordinates> coordClass = SphericalCoordinates.getFITSClass(type);

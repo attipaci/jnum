@@ -149,10 +149,7 @@ public class CircularBuffer<Type> implements Iterable<Type>, Serializable {
 	public final synchronized Type getReverse(int i) {
 		return data[reverseToUnderlyingIndex(i)];
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
-	 */
+
 	@Override
 	public Iterator<Type> iterator() {
 		return new Iterator<Type>() {

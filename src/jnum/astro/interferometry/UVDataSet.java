@@ -50,7 +50,7 @@ import nom.tam.util.ArrayDataInput;
  * measurements for a specific frequency bin. The data may be loaded in from a standard FITS calibrated UV table.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class UVDataSet extends ArrayList<UVFrame> {
@@ -123,8 +123,8 @@ public class UVDataSet extends ArrayList<UVFrame> {
      * @throws IOException      If there was an error accessing the file.
      * @throws FitsException    If the FITS file is corrupted or malformed.
      * 
-     * @see compact()
-     * @see sort()
+     * @see #compact()
+     * @see #sort()
      */
     public void read(String fileName) throws IOException, FitsException {
         clear();
@@ -289,9 +289,9 @@ public class UVDataSet extends ArrayList<UVFrame> {
      * 
      * @return      The first frame in the dataset (or null).
      * 
-     * @see compact()
-     * @see sort()
-     * @see last()
+     * @see #compact()
+     * @see #sort()
+     * @see #last()
      */
     public final UVFrame first() { return get(0); }
     
@@ -301,9 +301,9 @@ public class UVDataSet extends ArrayList<UVFrame> {
      * 
      * @return      The first frame in the dataset (or null).
      * 
-     * @see compact()
-     * @see sort()
-     * @see first()
+     * @see #compact()
+     * @see #sort()
+     * @see #first()
      */
     public final UVFrame last() { return get(size() - 1); }
     
@@ -363,7 +363,7 @@ public class UVDataSet extends ArrayList<UVFrame> {
     /**
      * Randomly invert the sign of visibility amplitudes in this dataset.
      * 
-     * @see UVFrame.jackknife()
+     * @see UVFrame#jackknife()
      * 
      */
     public void jackknife() {
@@ -375,7 +375,7 @@ public class UVDataSet extends ArrayList<UVFrame> {
      * 
      * @return  (Hz) The noise weighted mean frequency of this dataset.
      * 
-     * @see getMeanFrequency(int, int)
+     * @see #getMeanFrequency(int, int)
      * 
      */
     public double getMeanFrequency() {
@@ -387,7 +387,7 @@ public class UVDataSet extends ArrayList<UVFrame> {
      * 
      * @return  (Hz) The noise weighted mean frequency over the selected frames.
      * 
-     * @see getMeanFrequency()
+     * @see #getMeanFrequency()
      * 
      */
     public double getMeanFrequency(int from, int to) {

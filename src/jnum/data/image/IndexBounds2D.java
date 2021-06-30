@@ -25,16 +25,11 @@ package jnum.data.image;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Bounds.
- */
+
 public class IndexBounds2D implements Serializable {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -602716444281795130L;
 	
-	/** The toj. */
 	public int fromi, toi, fromj, toj;
 	
 	public IndexBounds2D() {}
@@ -50,17 +45,11 @@ public class IndexBounds2D implements Serializable {
         set(fromi, fromj, toi, toj);
     }
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ fromi ^ toi ^ fromj ^ toj;
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

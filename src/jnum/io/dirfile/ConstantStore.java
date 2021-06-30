@@ -56,16 +56,10 @@ public class ConstantStore extends DataStore<Number> {
 		
 		isFloating = !Double.isNaN(fValue);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#hashCode()
-	 */
+
 	@Override
 	public int hashCode() { return super.hashCode() ^ HashCode.from(iValue) ^ HashCode.from(fValue) ^ (isFloating ? 1 : 0); }
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -77,26 +71,17 @@ public class ConstantStore extends DataStore<Number> {
 		if(fValue != c.fValue) return false;
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
+
 	@Override
 	public Number get(long n) throws IOException {
 		return isFloating ? fValue : iValue;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#getSamples()
-	 */
+
 	@Override
 	public int getSamples() {
 		return 1;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#length()
-	 */
+
 	@Override
 	public long length() throws IOException {
 		return 1L;

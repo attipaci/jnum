@@ -31,9 +31,6 @@ public class VAXDataInputStream extends LittleEndianDataInputStream {
 		super(stream);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.io.LittleEndianDataInputStream#readDouble()
-	 */
 	@Override
 	public final double readDouble() throws IOException {
 		// The first 32-bits are the same as for a VAX float. So use the built-in float-to-double
@@ -49,9 +46,6 @@ public class VAXDataInputStream extends LittleEndianDataInputStream {
 		return Double.longBitsToDouble(l);	
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.io.LittleEndianDataInputStream#readFloat()
-	 */
 	@Override
 	public final float readFloat() throws IOException {
 		int i = read4Bytes();

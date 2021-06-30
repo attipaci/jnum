@@ -48,15 +48,10 @@ public class BitStore extends DataStore<Long> {
 		shift = position;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#hashCode()
-	 */
+
 	@Override
 	public int hashCode() { return super.hashCode() ^ container.hashCode() ^ shift ^ HashCode.from(mask); }
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -77,25 +72,16 @@ public class BitStore extends DataStore<Long> {
 		for(int i=0; i<n; i++, from++) mask |= 1 << from;
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Long get(long n) throws IOException {
 		return (container.get(n).longValue() & mask) >>> shift;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#getSamples()
-	 */
 	@Override
 	public int getSamples() {
 		return container.getSamples();
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#length()
-	 */
+
 	@Override
 	public long length() throws IOException {
 		return container.length();

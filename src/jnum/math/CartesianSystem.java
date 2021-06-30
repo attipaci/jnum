@@ -26,7 +26,7 @@ package jnum.math;
 /**
  * A class representing a standard Cartesian coordinate system.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class CartesianSystem extends CoordinateSystem {

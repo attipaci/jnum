@@ -31,29 +31,17 @@ public class SlantOrthographic  extends ZenithalProjection {
 
 	public SlantOrthographic() { }
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() { return "SIN"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() { return "Slant Orthographic"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.ZenithalProjection#R(double)
-	 */
 	@Override
 	protected final double R(double theta) {
 		return Math.cos(theta);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.ZenithalProjection#thetaOfR(double)
-	 */
 	@Override
 	protected final double thetaOfR(double value) {
 		return acos(value);

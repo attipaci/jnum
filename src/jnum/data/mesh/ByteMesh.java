@@ -48,41 +48,26 @@ public class ByteMesh extends NumberMesh.IntegerType<Byte> {
     @Override
     public final Byte cast(Number x) { return x.byteValue(); }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
-     */
     @Override
     protected final Byte zeroValue() {
         return (byte) 0;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#baseLineElementAt(java.lang.Object, int)
-     */
     @Override
     protected final Byte linearElementAt(Object simpleArray, int index) {
         return ((byte[]) simpleArray)[index];
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#setBaseLineElementAt(java.lang.Object, int, java.lang.Number)
-     */
     @Override
     protected final void setLinearElementAt(Object simpleArray, int index, Byte value) {
         ((byte[]) simpleArray)[index] = value;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#parseElement(java.lang.String)
-     */
     @Override
     public Byte parseElement(String text) throws Exception {
         return Byte.decode(text);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#newInstance()
-     */
     @Override
     public Mesh<Byte> newInstance() {
         return new ByteMesh();

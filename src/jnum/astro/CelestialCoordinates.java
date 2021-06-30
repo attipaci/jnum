@@ -29,7 +29,7 @@ import jnum.Util;
 import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
-// TODO: Auto-generated Javadoc
+
 // This is an abstract class for coordinate systems that are fixed (except perhaps a precession)
 // w.r.t the distant stars (quasars)...
 public abstract class CelestialCoordinates extends SphericalCoordinates {

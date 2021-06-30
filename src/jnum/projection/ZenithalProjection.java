@@ -37,50 +37,26 @@ public abstract class ZenithalProjection extends SphericalProjection {
 	public ZenithalProjection() { 
 		getNativeReference().setNative(0.0, rightAngle);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#calcCelestialPole()
-	 */
+
 	@Override 
 	public void calcCelestialPole() {
 		setCelestialPole(getReference());
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#phi(jnum.Coordinate2D)
-	 */
+
 	@Override
 	protected final void getPhiTheta(final Coordinate2D offset, final SphericalCoordinates phiTheta) {
 		phiTheta.setNative(Math.atan2(offset.x(), -offset.y()), thetaOfR(ExtraMath.hypot(offset.x(), offset.y())));
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see jnum.SphericalProjection#getOffsets(double, double, jnum.Coordinate2D)
-	 */
+
 	@Override
 	protected final void getOffsets(final double theta, final double phi, final Coordinate2D toOffset) {
 		final double R = R(theta);
 		// What is in Calabretta and Greisen 2002
 		toOffset.set(R * Math.sin(phi), -R * Math.cos(phi));
 	}
-	
-	
-	/**
-	 * R.
-	 *
-	 * @param theta the theta
-	 * @return the double
-	 */
+
 	protected abstract double R(double theta);
-	
-	/**
-	 * Theta of r.
-	 *
-	 * @param value the value
-	 * @return the double
-	 */
+
 	protected abstract double thetaOfR(double value);
-	
 
 }

@@ -30,10 +30,7 @@ import jnum.plot.ColorScheme;
 
 
 public class DayTime extends ColorScheme {
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.ColorScheme#getRGB(double)
-	 */
+
 	@Override
 	public int getRGB(double scaledI) {
 		if(Double.isNaN(scaledI)) return Color.DARK_GRAY.getRGB();
@@ -59,10 +56,7 @@ public class DayTime extends ColorScheme {
 		
 		return ColorScheme.getRGB(r, g, b);	
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.ColorScheme#getHighlight()
-	 */
+
 	@Override
 	public Color getHighlight() {
 		return Color.BLUE; 

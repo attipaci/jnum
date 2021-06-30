@@ -52,25 +52,15 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
         this.toIndex = to;
     }
     
-   
-    /* (non-Javadoc)
-     * @see kovacs.data.DataManager#reset()
-     */
     @Override
     public abstract void reset();
 
 
     protected abstract void setArray(Object data) throws IllegalArgumentException; 
 
-    /* (non-Javadoc)
-     * @see kovacs.data.DataManager#setElement(java.lang.Object)
-     */
     @Override
     public abstract void setCurrent(T element);
-    
-    /* (non-Javadoc)
-     * @see java.util.Iterator#remove()
-     */
+
     @Override
     public void remove() {
         throw new UnsupportedOperationException("Cannot remove elements from a mesh.");
@@ -177,10 +167,7 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
             super.getPosition(index, depth);
             if(child != null) child.getPosition(index, depth+1);
         }
-        
-        /* (non-Javadoc)
-         * @see kovacs.data.ArrayIterator#reset()
-         */
+
         @Override
         public void reset() {
             if(child == null) setLeadPosition(fromIndex-1);
@@ -190,9 +177,6 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see java.util.Iterator#hasNext()
-         */
         @Override
         public boolean hasNext() {
             if(currentIndex+1 < toIndex) return true;
@@ -200,9 +184,6 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
             return false;
         }
 
-        /* (non-Javadoc)
-         * @see kovacs.data.ArrayIterator#setArray(java.lang.Object)
-         */
         @Override
         public void setArray(Object data) throws IllegalArgumentException {
             if(!(data instanceof Object[])) throw new IllegalArgumentException("Not and Object[].");
@@ -219,10 +200,6 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
         }
          */
 
-
-        /* (non-Javadoc)
-         * @see java.util.Iterator#next()
-         */
         @Override
         @SuppressWarnings("unchecked")
         public T next() throws NoSuchElementException {
@@ -243,19 +220,12 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
             }
         }
 
-     
-        /* (non-Javadoc)
-         * @see kovacs.data.ArrayIterator#setElement(java.lang.Object)
-         */
         @Override
         public void setCurrent(T element) {
             if(child == null) array[currentIndex] = element;
             else child.setCurrent(element);     
         }
 
-        /* (non-Javadoc)
-         * @see kovacs.data.ArrayIterator#setIndex(int[], int)
-         */
         @Override
         protected void setPosition(int[] index, int pos) {
             setLeadPosition(index[pos]);
@@ -266,9 +236,6 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
 
         }
 
-        /* (non-Javadoc)
-         * @see kovacs.data.ArrayIterator#setIndex(int)
-         */
         @Override
         protected void setLeadPosition(int i) {
             currentIndex = i;
@@ -279,9 +246,6 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see kovacs.data.DataManager#getData()
-         */
         @Override
         public Object getData() {
             return array;

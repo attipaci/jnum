@@ -31,53 +31,34 @@ import jnum.data.AbstractIndex;
 import jnum.math.MathVector;
 import jnum.math.Vector2D;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Index2D.
- */
+
 public class Index2D extends AbstractIndex<Index2D> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -364862939591997831L;
 
-    /** The j. */
     private int i,j;
 
-    /**
-     * Instantiates a new index2 d.
-     */
+
     public Index2D() { this(0, 0); }
 
-    /**
-     * Instantiates a new index2 d.
-     *
-     * @param i the i
-     * @param j the j
-     */
+
     public Index2D(int i, int j) {
         set(i, j);
     }
 
-    /**
-     * Instantiates a new index2 d.
-     *
-     * @param index the index
-     */
+
     public Index2D(Vector2D index) {
         this((int)Math.round(index.x()), (int)Math.round(index.y()));
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() {
         return super.hashCode() ^ i ^ j;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -89,27 +70,10 @@ public class Index2D extends AbstractIndex<Index2D> {
         return true;		
     }
 
-    /**
-     * Sets the.
-     *
-     * @param i the i
-     * @param j the j
-     */
     public void set(int i, int j) { this.i = i; this.j = j; }
 
-    
-    /**
-     * I.
-     *
-     * @return the int
-     */
     public final int i() { return i; }
 
-    /**
-     * J.
-     *
-     * @return the int
-     */
     public final int j() { return j; }
 
 

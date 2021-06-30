@@ -35,19 +35,19 @@ import jnum.math.Metric;
  * A base interface for matrix representation. It specifies a set of basic matrix operations. In other
  * words, it provides the core matrix API that all matrix implementation will provide.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
- * @param <M>   The generic type of the matrix object in this algebra
- * @param <E>   The generic type of the matrix element in this algebra.
+ * @param <MatrixType>    The generic type of the matrix object in this algebra
+ * @param <ElementType>   The generic type of the matrix element in this algebra.
  */
-public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearAlgebra<M>, DotProduct<M, M>, Metric<MatrixAlgebra<?, ?>>, IdentityValue {
+public interface MatrixAlgebra<MatrixType, ElementType> extends IndexedEntries<Index2D, ElementType>, LinearAlgebra<MatrixType>, DotProduct<MatrixType, MatrixType>, Metric<MatrixAlgebra<?, ?>>, IdentityValue {
     
     /**
      * Gets the class of elements contained in this matrix.
      * 
      * @return     The class of elements contained in this matrix.
      */
-    public Class<E> getElementType();
+    public Class<ElementType> getElementType();
     
     
     /**
@@ -57,7 +57,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      * @param size  The size (number of component) of the vector
      * @return      A new vector of the requested size and of the same generic type as this matrix. 
      */
-    public AbstractVector<E> getVectorInstance(int size);
+    public AbstractVector<ElementType> getVectorInstance(int size);
     
     /**
      * Gets the number of rows in this matrix.
@@ -109,7 +109,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      * @return         The matrix element at the specified row/col index. It is a reference to an object or
      *                 else a primitive value.
      */
-    public E get(int i, int j);
+    public ElementType get(int i, int j);
     
     
     /**
@@ -120,7 +120,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      * @param v        The new matrix element to set. (For object types the matrix will hold a reference
      *                 to the specified value).
      */
-    public void set(int i, int j, E value);
+    public void set(int i, int j, ElementType value);
  
     /**
      * Checks if this matrix is a diagonal matrix, with all off-diagonal elements being zeroes.
@@ -164,7 +164,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      * @throws ShapeException   If the input vector's size does not match the number of rows in this
      *                          matrix for the product to be calculated.
      */
-    public AbstractVector<E> dot(MathVector<? extends E> v) throws ShapeException;
+    public AbstractVector<ElementType> dot(MathVector<? extends ElementType> v) throws ShapeException;
     
 
     /**
@@ -178,7 +178,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public void dot(MathVector<? extends E> v, MathVector<E> result) throws ShapeException;
+    public void dot(MathVector<? extends ElementType> v, MathVector<ElementType> result) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
@@ -189,7 +189,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      * @throws ShapeException   If the input vector's size does not match the number of rows in this
      *                          matrix for the product to be calculated.
      */
-    public AbstractVector<E> dot(E[] v) throws ShapeException;
+    public AbstractVector<ElementType> dot(ElementType[] v) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
@@ -202,7 +202,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public void dot(E[] v, E[] result) throws ShapeException;
+    public void dot(ElementType[] v, ElementType[] result) throws ShapeException;
     
     
     /**
@@ -216,7 +216,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public void dot(E[] v, MathVector<E> result) throws ShapeException;
+    public void dot(ElementType[] v, MathVector<ElementType> result) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) 
@@ -229,7 +229,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public void dot(double[] v, MathVector<E> result) throws ShapeException;
+    public void dot(double[] v, MathVector<ElementType> result) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) on the right-hand
@@ -242,7 +242,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public void dot(float[] v, MathVector<E> result) throws ShapeException;
+    public void dot(float[] v, MathVector<ElementType> result) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) on the right-hand
@@ -256,7 +256,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public AbstractVector<E> dot(double[] v) throws ShapeException;
+    public AbstractVector<ElementType> dot(double[] v) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) on the right-hand
@@ -270,7 +270,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public AbstractVector<E> dot(float[] v) throws ShapeException;
+    public AbstractVector<ElementType> dot(float[] v) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
@@ -283,7 +283,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public void dot(RealVector v, MathVector<E> result) throws ShapeException;
+    public void dot(RealVector v, MathVector<ElementType> result) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand
@@ -295,7 +295,7 @@ public interface MatrixAlgebra<M, E> extends IndexedEntries<Index2D, E>, LinearA
      * @throws ShapeException   If the input vector's size does not match the number of rows in this
      *                          matrix for the product to be calculated.
      */
-    public AbstractVector<E> dot(RealVector v) throws ShapeException;
+    public AbstractVector<ElementType> dot(RealVector v) throws ShapeException;
        
     
 }

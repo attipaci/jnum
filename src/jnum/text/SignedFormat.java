@@ -37,9 +37,6 @@ public class SignedFormat extends NumberFormat {
 		this.nf = nf;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.text.NumberFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
-	 */
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo,
 			FieldPosition pos) {
@@ -52,9 +49,6 @@ public class SignedFormat extends NumberFormat {
 		return toAppendTo;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.text.NumberFormat#format(long, java.lang.StringBuffer, java.text.FieldPosition)
-	 */
 	@Override
 	public StringBuffer format(long number, StringBuffer toAppendTo,
 			FieldPosition pos) {
@@ -67,9 +61,6 @@ public class SignedFormat extends NumberFormat {
 		return toAppendTo;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.text.NumberFormat#parse(java.lang.String, java.text.ParsePosition)
-	 */
 	@Override
 	public Number parse(String source, ParsePosition parsePosition) {
 		return nf.parse(source, parsePosition);

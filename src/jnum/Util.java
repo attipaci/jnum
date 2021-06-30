@@ -47,14 +47,14 @@ import jnum.text.TimeFormat;
 /**
  * A collection of static utility funtions to use anywhere and everywhere.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  */
 public final class Util {
 
 
     public final static String version = "0.40-a1";
     
-    public final static String revision = "devel.7";
+    public final static String revision = "devel.8";
     
     public final static String copyright = "(c)2021 Attila Kovacs"; 
     
@@ -133,7 +133,6 @@ public final class Util {
      * 
      * @see #HMS(double)
      */ 
-
     public static double HMS(final int H, final int M, final double S) {
         return H*Unit.hour + M * Unit.minute + S * Unit.second;
     } 

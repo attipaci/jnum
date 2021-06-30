@@ -26,7 +26,7 @@ package jnum.math;
 /**
  * Interface for classes that can represent the product of sorts.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <LeftType>    the generic type of the argument on the lefthand-side of the product.
  * @param <RightType>   the generic type of the argument on the righthand-side of the product.

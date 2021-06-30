@@ -32,10 +32,7 @@ import jnum.text.TableFormatter;
 public class DataTable extends Hashtable<String, DataTable.Entry> implements TableFormatter.Entries {
 
 	private static final long serialVersionUID = 2131139489959923852L;
-	
-	/* (non-Javadoc)
-	 * @see jnum.text.TableFormatter.Entries#getFormattedEntry(java.lang.String, java.lang.String)
-	 */
+
 	@Override
 	public Object getTableEntry(String name) {
 		if(!containsKey(name)) return TableFormatter.NO_SUCH_DATA;
@@ -91,15 +88,11 @@ public class DataTable extends Hashtable<String, DataTable.Entry> implements Tab
 		
 
 		public void setComment(String value) { this.comment = value; }
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
+
 		@Override
 		public String toString() {
 			return name + " = " + value + " " + unitName + (comment.length() > 0 ? " (" + comment + ")" : "");
-		}
-		
+		}	
 
 		public String toString(NumberFormat nf) {
 			return name + " = " + nf.format(value) + " " + unitName + (comment.length() > 0 ? " (" + comment + ")" : "");

@@ -198,7 +198,6 @@ public class IntRange implements Serializable, Scalable, Cloneable, Copiable<Int
      *
      * @param text the input text specifying the range. The minimim and maximum values must be separated by one
      *     or more colons ':'. E.g. "0:1" or "0:::1". 
-     * @return the new range according to the specification
      */
     public final void parse(String text) {
         from(text, false);

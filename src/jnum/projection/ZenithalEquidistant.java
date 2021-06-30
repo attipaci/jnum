@@ -28,33 +28,21 @@ public class ZenithalEquidistant extends ZenithalProjection {
 
 	private static final long serialVersionUID = -5179501947703322697L;
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.ZenithalProjection#R(double)
-	 */
 	@Override
 	protected double R(final double theta) {
 		return rightAngle - theta;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.ZenithalProjection#thetaOfR(double)
-	 */
 	@Override
 	protected double thetaOfR(final double value) {
 		return rightAngle - value;
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() {
 		return "ARC";
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() {
 		return "Zenithal Equidistant";

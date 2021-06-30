@@ -44,18 +44,12 @@ public class ProductStore extends DataStore<Double> {
 		this.b = b;
 		indexScale = b.getSamples() / a.getSamples();
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ a.hashCode() ^ b.hashCode() ^ HashCode.from(indexScale);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -67,26 +61,17 @@ public class ProductStore extends DataStore<Double> {
 		if(!b.equals(store.b)) return false;
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
+
 	@Override
 	public Double get(long n) throws IOException {
 		return a.get(n).doubleValue() * b.get(Math.round(indexScale * n)).doubleValue();
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#getSamples()
-	 */
 	@Override
 	public int getSamples() {
 		return a.getSamples();
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#length()
-	 */
 	@Override
 	public long length() throws IOException {
 		return a.length();

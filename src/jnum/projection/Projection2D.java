@@ -40,21 +40,14 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	private static final long serialVersionUID = 4215964283613898581L;
 
 	private CoordinateType reference;
-	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
+
 	@SuppressWarnings("unchecked")
     @Override
 	public Projection2D<CoordinateType> clone() {
 		try { return (Projection2D<CoordinateType>) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -65,23 +58,14 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 		
 		return true;		
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
 		if(reference != null) hash ^= reference.hashCode();
 		return hash;
 	}
-	
 
-	/**
-	 * Copy.
-	 *
-	 * @return the projection2 d
-	 */
 	@SuppressWarnings("unchecked")
 	public Projection2D<CoordinateType> copy() {
 		Projection2D<CoordinateType> copy = clone();

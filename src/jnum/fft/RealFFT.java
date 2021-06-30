@@ -22,11 +22,17 @@
  ******************************************************************************/
 package jnum.fft;
 
-
+/**
+ * Interface for classes that implement an an-place FFT of real-valued data.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <Type>
+ */
 public interface RealFFT<Type> {
 	
 	/**
-	 * Real transform.
+	 * Real transform (muilti-threaded).
 	 *
 	 * @param data the data
 	 * @param isForward true if forward transform, false for back transform.
@@ -35,7 +41,7 @@ public interface RealFFT<Type> {
 	
 		
 	/**
-	 * sequential real transform.
+	 * Sequential real transform (in single thread).
 	 *
 	 * @param data the data
 	 * @param isForward true if forward transform, false for back transform.

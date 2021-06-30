@@ -33,7 +33,7 @@ import jnum.Util;
  * A class representing a range of points in 3D space, with inclusive minimum and
  * and exclusive maximum corners.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Range3D implements Cloneable, Copiable<Range3D>, Serializable {
@@ -170,11 +170,7 @@ public class Range3D implements Cloneable, Copiable<Range3D>, Serializable {
         zRange.include(z);
     }
     
-    /**
-     * Include.
-     *
-     * @param coord the coord
-     */
+
     public final void include(Coordinate3D coord) {
         include(coord.x(), coord.y(), coord.z());
     }

@@ -33,7 +33,7 @@ import jnum.Util;
  * hand, return their result into a return object supplied by the caller (i.e. they do not create
  * a new object at each call -- that is why they are considerate). 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <ArgType>
  * @param <ReturnType>

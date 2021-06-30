@@ -37,42 +37,27 @@ public class CylindricalEqualArea extends CylindricalProjection {
 	private static final long serialVersionUID = -6111486646040480793L;
 
 	double lambda = 1.0;
-	
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#getPhiTheta(kovacs.math.Coordinate2D, kovacs.math.SphericalCoordinates)
-	 */
+
 	@Override
 	protected final void getPhiTheta(final Coordinate2D offset, final SphericalCoordinates phiTheta) {
 		phiTheta.setNative(offset.x(), asin(lambda * offset.y()));
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#getOffsets(double, double, kovacs.math.Coordinate2D)
-	 */
 	@Override
 	protected final void getOffsets(final double theta, final double phi, final Coordinate2D toOffset) {
 		toOffset.set(phi, Math.sin(theta) / lambda);
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() {
 		return "CEA";
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() {
 		return "Cylindrical Equal Area";
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#parse(nom.tam.fits.Header, java.lang.String)
-	 */
+
 	@Override
 	public void parseHeader(Header header, String alt) {
 		super.parseHeader(header, alt);
@@ -80,10 +65,7 @@ public class CylindricalEqualArea extends CylindricalProjection {
 		String parName = getLatitudeParameterPrefix() + "1" + alt;
 		if(header.containsKey(parName)) lambda = header.getDoubleValue(parName);		
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
+
 	@Override
 	public void editHeader(Header header, String alt) throws HeaderCardException {		
 		super.editHeader(header, alt);

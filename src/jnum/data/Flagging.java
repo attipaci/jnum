@@ -27,7 +27,7 @@ package jnum.data;
  * with support for other domains, and labeling see {@link jnum.util.FlagSpace}.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @see jnum.util.FlagSpace
  *
@@ -41,9 +41,9 @@ public interface Flagging {
      * @return          <code>true</code> if the implementing object has any of the <code>pattern</code> flags set, or
      *                  <code>false</code> in none of the flags checked for are enabled.
      *                  
-     * @see #isUnflagged(pattern)
-     * @see #flag(int)
-     * @see #unflag(int)
+     * @see #isUnflagged(long)
+     * @see #flag(long)
+     * @see #unflag(long)
      * @see #isFlagged()
      */
 	public boolean isFlagged(long pattern);	
@@ -55,9 +55,9 @@ public interface Flagging {
      * @return          <code>true</code> if the implementing object has all of the <code>pattern</code> flags disabled, or
      *                  <code>false</code> in any of the flags checked for are enabled.
      *                  
-     * @see #isFlagged(int)
-     * @see #flag(int)
-     * @see #unflag(int)
+     * @see #isFlagged(long)
+     * @see #flag(long)
+     * @see #unflag(long)
      * @see #isUnflagged()
      */
 	public boolean isUnflagged(long pattern);
@@ -65,14 +65,13 @@ public interface Flagging {
     /**
      * Checks if the implementing object has any of the flags set.
      * 
-     * @param pattern   The bit-wise flag pattern to check for.
      * @return          <code>true</code> if the implementing object has any flags set, or
      *                  <code>false</code> in none of the flags are enabled.
      *                  
      * @see #isUnflagged()
-     * @see #flag(int)
-     * @see #unflag(int)
-     * @see #isFlagged(int)
+     * @see #flag(long)
+     * @see #unflag(long)
+     * @see #isFlagged(long)
      */
 	public boolean isFlagged();
 
@@ -80,14 +79,13 @@ public interface Flagging {
     /**
      * Checks if the implementing object has all of the bit-wise flags unset.
      * 
-     * @param pattern   The bit-wise flag pattern to check for.
      * @return          <code>true</code> if the implementing object has all flags disabled, or
      *                  <code>false</code> in any of the flags are enabled.
      *                  
      * @see #isFlagged()
-     * @see #flag(int)
-     * @see #unflag(int)
-     * @see #isUnflagged(int)
+     * @see #flag(long)
+     * @see #unflag(long)
+     * @see #isUnflagged(long)
      */
 	public boolean isUnflagged();
 	
@@ -97,9 +95,9 @@ public interface Flagging {
 	 * 
 	 * @param pattern      The bit-wise pattern of flags to enable.
 	 * 
-	 * @see #unflag(int)
-	 * @see #isFlagged(int)
-	 * @see #isUnflagged(int)
+	 * @see #unflag(long)
+	 * @see #isFlagged(long)
+	 * @see #isUnflagged(long)
 	 * 
 	 */
 	public void flag(long pattern);
@@ -110,9 +108,9 @@ public interface Flagging {
      * 
      * @param pattern      The bit-wise pattern of flags to disable.
      * 
-     * @see #flag(int)
-     * @see #isFlagged(int)
-     * @see #isUnflagged(int)
+     * @see #flag(long)
+     * @see #isFlagged(long)
+     * @see #isUnflagged(long)
      * 
      */
 	public void unflag(long pattern);
@@ -120,7 +118,7 @@ public interface Flagging {
 	/**
 	 * Unsets all bit-wise flags on the implementing object.
 	 * 
-	 * @see #unflag(int)
+	 * @see #unflag(long)
 	 * @see #isFlagged()
 	 * 
 	 */

@@ -45,7 +45,7 @@ import java.lang.reflect.*;
  * An object representing a single real number value (i.e. a scalar). It is similar to the built-in Java {@link java.langDouble}
  * but with mutable ocntent, and implementation of the various jnum interfaces that apply to scalar type values. 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar>, AbstractAlgebra<Scalar>, AbsoluteValue, Copiable<Scalar>, CopyCat<Scalar>, Cloneable, BlankingValue, 

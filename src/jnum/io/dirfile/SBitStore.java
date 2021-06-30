@@ -47,17 +47,12 @@ public class SBitStore extends DataStore<Long> {
 		cmask = 1; 
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ container.hashCode() ^ HashCode.from(mask) ^ HashCode.from(cmask) ^ shift;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -79,27 +74,18 @@ public class SBitStore extends DataStore<Long> {
 		for(int i=0; i<n-1; i++) mask |= 1 << i;
 		cmask = 1 << (n-1);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
+
 	@Override
 	public Long get(long n) throws IOException {
 		long value = container.get(n).longValue() >>> shift;
 		return (value & mask) - (value & cmask);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#getSamples()
-	 */
 	@Override
 	public int getSamples() {
 		return container.getSamples();
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#length()
-	 */
+
 	@Override
 	public long length() throws IOException {
 		return container.length();

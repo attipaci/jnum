@@ -28,9 +28,7 @@ import jnum.data.WeightedPoint;
 
 public class Averaging<ReturnType extends WeightedPoint> extends ParallelReduction<ReturnType> {
 
-	/* (non-Javadoc)
-	 * @see jnum.parallel.ParallelReduction#getResult()
-	 */
+
 	@Override
 	public ReturnType getResult() {
 		ReturnType result = null;

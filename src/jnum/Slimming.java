@@ -28,7 +28,7 @@ package jnum;
  * An interface that allows slimming, i.e. purging unused, invalid, or irrelevant data, in order to reduce the
  * volume of data under processing.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public interface Slimming {

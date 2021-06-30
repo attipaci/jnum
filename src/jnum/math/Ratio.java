@@ -27,7 +27,7 @@ package jnum.math;
  * An interface for classes that can be set to contain the value of a division operation
  * on some generic type elements.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <NumeratorType>       the generic type of the numerator
  * @param <DenominatorType>     the generic type of the denominator

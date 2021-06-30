@@ -39,12 +39,7 @@ import jnum.math.Metric;
 import jnum.text.DecimalFormating;
 import jnum.math.MathVector;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GenericVector.
- *
- * @param <T> the generic type
- */
+
 @SuppressWarnings("unchecked")
 public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> 
 extends AbstractVector<T> {

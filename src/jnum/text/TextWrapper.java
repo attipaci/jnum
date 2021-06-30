@@ -202,45 +202,28 @@ public class TextWrapper {
     public String getWhiteSpaceChars() { return whiteSpaces; }
      
     
-    /**
-     * Wrap the specified input text.
-     *
-     * @param text the input text
-     * @return the text after wrapping.
-     */
+
     public String wrap(String text) {
         return wrap(text, 0);
     }
 
-    /**
-     * Wrap.
-     *
-     * @param text the input text
-     * @param lineHeader the line header for all output lines.
-     * @return the string
-     */
+
     public String wrap(String text, String lineHeader) {
         return wrap(text, lineHeader, 0);
     }
 
-    /**
-     * Wrap.
-     *
-     * @param text the text
-     * @param indent the indentation for wrapped lines (not the first line).
-     * @return the string
-     */
+ 
     public String wrap(String text, int indent) {
         return wrap(text, "", indent);
     }
     
     /**
-     * Wrap.
+     * Wraps the specified text with the format specifications...
      *
-     * @param text the text
-     * @param lineHeader the line header for all output lines.
-     * @param indent the indentation for wrapped lines (not the first line).
-     * @return the string
+     * @param text          the unwrapped text
+     * @param lineHeader    the line header for all output lines.
+     * @param indent        the indentation for wrapped lines (not the first line).
+     * @return the          the wrapped string.
      */
     public String wrap(String text, String lineHeader, int indent) {
         ParsePosition pos = new ParsePosition(0);
@@ -310,13 +293,7 @@ public class TextWrapper {
         
     }
    
-    /**
-     * Justify.
-     *
-     * @param text the text
-     * @param size the size
-     * @return the string
-     */
+
     private String justify(String text, int size) {
         StringTokenizer tokens = new StringTokenizer(text, whiteSpaces);
         final int words = tokens.countTokens();
@@ -352,9 +329,9 @@ public class TextWrapper {
     /**
      * Checks if is breakable at the given position.
      *
-     * @param text the text
-     * @param index the position in the string
-     * @return true, if is breakable at the given position.
+     * @param text      the text
+     * @param index     the position in the string
+     * @return          <code>true</code> if the text can be broken at the given position. Otherwise <code>false</code>.
      * 
      * @see #getWrapBeforeChars()
      * @see #getWrapAfterChars()
@@ -371,62 +348,27 @@ public class TextWrapper {
         return false;
     }
     
-    /**
-     * Checks if a string contains a given character.
-     *
-     * @param s the string
-     * @param c the character
-     * @return true, if the string contains the character.
-     */
+
     private boolean contains(String s, char c) {
         for(int i = s.length(); --i >= 0; ) if(s.charAt(i) == c) return true;
         return false;
     }
     
-    /**
-     * Remove the trailing white spaces from a String.
-     *
-     * @param text the text
-     * @return the text with the trailing white spaces removed, or the input string itself it it has no trailing spaces.
-     */
+
     private String trimEnd(String text) {
         int n = text.length();
         for( ; --n >= 0; ) if(!isWhiteSpace(text.charAt(n))) return n == text.length()-1 ? text : text.substring(0, n+1);
         return "";
     }
-    
-    
-    /**
-     * Checks if the given character is a white space.
-     *
-     * @param c the character
-     * @return true, if the character is a white space.
-     * 
-     * @see #getWhiteSpaceChars()
-     */
+
     private boolean isWhiteSpace(char c) { return contains(getWhiteSpaceChars(), c); }
      
-    /**
-     * Checks if is breakable before the given character.
-     *
-     * @param c the character
-     * @return true, if is breakable before the given character
-     * 
-     * @see #getWrapBeforeChars()
-     */
+
     private boolean canWrapBefore(char c) {
         if(contains(getWrapBeforeChars(), c)) return true;
         return isWhiteSpace(c);
     }
 
-    /**
-     * Checks if text is breakable after the given character.
-     *
-     * @param c the character
-     * @return true, if is breakable after the given character
-     * 
-     * @see #getWrapAfterChars()
-     */
     private boolean canWrapAfter(char c) {
         if(contains(getWrapAfterChars(), c)) return true;
         return isWhiteSpace(c);

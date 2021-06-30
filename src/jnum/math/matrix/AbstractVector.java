@@ -42,7 +42,7 @@ import jnum.text.DecimalFormating;
  * is an example subtype, but one could construct vectors e.g. with {@link Matrix} or {@link ObjectMatrix} elements 
  * (for a vecor of matrices), or vectors with other more complex types...
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>       The generic type of the elements in this vector.
  */

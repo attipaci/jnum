@@ -33,32 +33,20 @@ public class Gnomonic extends ZenithalProjection {
 
 	public Gnomonic() {}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.ZenithalProjection#R(double)
-	 */
 	@Override
 	protected final double R(final double theta) {
 		if(SphericalCoordinates.equalAngles(theta, rightAngle)) return 0.0;
 		return 1.0 / Math.tan(theta);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.ZenithalProjection#thetaOfR(double)
-	 */
 	@Override
 	protected final double thetaOfR(final double value) {
 		return Math.atan2(1.0, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() { return "TAN"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() { return "Gnomonic"; }	
 

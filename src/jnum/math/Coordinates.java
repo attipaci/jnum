@@ -30,7 +30,7 @@ import jnum.data.samples.Index1D;
 /**
  * An interface representing coordinates of generic type.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>   The generic type of a coordinate in this set
  */

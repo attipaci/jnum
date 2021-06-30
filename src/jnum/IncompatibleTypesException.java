@@ -28,7 +28,7 @@ package jnum;
  * and an internal variable.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class IncompatibleTypesException extends IllegalArgumentException {

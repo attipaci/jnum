@@ -48,10 +48,7 @@ public class BonnesProjection extends SphericalProjection {
 		getNativeReference().setY(theta1);
 		Y0 = 1.0 / Math.tan(theta1) + theta1;
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#getPhiTheta(kovacs.math.Coordinate2D, kovacs.math.SphericalCoordinates)
-	 */
+
 	@Override
 	protected final void getPhiTheta(final Coordinate2D offset, final SphericalCoordinates phiTheta) {
 		final double R = Math.copySign(ExtraMath.hypot(offset.x(), Y0 - offset.y()), theta1);
@@ -61,9 +58,6 @@ public class BonnesProjection extends SphericalProjection {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#getOffsets(double, double, kovacs.math.Coordinate2D)
-	 */
 	@Override
 	protected final void getOffsets(final double theta, final double phi, final Coordinate2D toOffset) {
 		final double R = Y0 - theta;
@@ -71,35 +65,23 @@ public class BonnesProjection extends SphericalProjection {
 		toOffset.set(R * Math.sin(A), Y0 - R * Math.cos(A));
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() {
 		return "BON";
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() {
 		return "Bonne's Projection";
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#parse(nom.tam.fits.Header, java.lang.String)
-	 */
 	@Override
 	public void parseHeader(Header header, String alt) {
 		super.parseHeader(header, alt);
 		String parName = getLatitudeParameterPrefix() + "1" + alt;
 		if(header.containsKey(parName)) setTheta1(header.getDoubleValue(parName) * Unit.deg);
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
+
 	@Override
 	public void editHeader(Header header, String alt) throws HeaderCardException {		
 		super.editHeader(header, alt);

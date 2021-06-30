@@ -40,7 +40,7 @@ import jnum.math.Vector2D;
 /**
  * A class for calculating nutation corrections for a given time of observation.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public abstract class Nutation {
@@ -187,7 +187,7 @@ public abstract class Nutation {
      * The full IAU2000A precession model, as descrived in IERS Technical Note 36 (2010), Eq 5.35
      * using tables tab5.3a.txt and tab5.3b.txt available from the IERS Conventions Centre site.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     private static class IAU2000A extends Nutation {
@@ -339,7 +339,7 @@ public abstract class Nutation {
     /**
      * Like the IAU2000A, but with terms with amplitude below a threshold (for 1950-2050) ignored.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     private static class IAU2000ATruncated extends IAU2000A {

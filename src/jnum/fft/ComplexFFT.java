@@ -31,9 +31,8 @@ import jnum.math.Complex;
 import jnum.parallel.Parallelizable;
 
 
-// TODO: Auto-generated Javadoc
 /**
-/* Split radix (2 & 4) FFT algorithms. For example, see Numerical recipes,
+ * Split radix (2 & 4) FFT for complex data with 2<sup>n</sup> elements. For example, see Numerical recipes,
  * and Chu, E: Computation Oriented Parallel FFT Algorithms (COPF)
  * 
  * @author Attila Kovacs <attila[AT]sigmyne.com>
@@ -76,37 +75,12 @@ public class ComplexFFT extends FFT1D<Complex[]> {
     @Override
     protected final int getPointSize(Complex[] data) { return 32; }
 
-    /**
-     * Forward.
-     *
-     * @param data the data
-     * @param nyquist the nyquist
-     * @throws InterruptedException the interrupted exception
-     */
+
     public void forward(final Complex[] data, final Complex nyquist) throws InterruptedException { complexForward(data); }
 
-    /**
-     * Back.
-     *
-     * @param data the data
-     * @param nyquist the nyquist
-     * @throws InterruptedException the interrupted exception
-     */
     public void back(final Complex[] data, final Complex nyquist) throws InterruptedException { complexBack(data); }
 
 
-
-    // Blockbit is the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
-    // Two consecutive blocks are merged by the algorithm into one larger block...
-    /**
-     * Merge2.
-     *
-     * @param data the data
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     * @param blkbit the blkbit
-     */
     @Override
     protected void radix2(final Complex[] data, int from, int to, final boolean isForward, int blkbit) {	
 
@@ -178,20 +152,6 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 
 
 
-
-
-
-    // Blockbit is the size of a merge block in bit shifts (e.g. size 2 is bit 1, size 4 is bit 2, etc.)
-    // Four consecutive blocks are merged by the algorithm into one larger block...
-    /**
-     * Merge4.
-     *
-     * @param data the data
-     * @param from the from
-     * @param to the to
-     * @param isForward the is forward
-     * @param blkbit the blkbit
-     */
     @Override
     protected void radix4(final Complex[] data, int from, int to, final boolean isForward, int blkbit) {	
 
@@ -293,33 +253,18 @@ public class ComplexFFT extends FFT1D<Complex[]> {
 
     }
 
-    /**
-     * To amplitudes.
-     *
-     * @param data the data
-     */
+
     public void toAmplitudes(final Complex[] data) {
         complexTransform(data, true);
         scale(data, 2.0 / data.length);
     }	
 
-    /**
-     * From amplitudes.
-     *
-     * @param data the data
-     */
+
     public void fromAmplitudes(final Complex[] data) { 
         complexTransform(data, false); 
     }
 
 
-    /**
-     * Scale.
-     *
-     * @param data the data
-     * @param value the value
-     * @param threads the threads
-     */
     private void scale(final Complex[] data, final double value) {
         if(getParallel() < 2) {
             for(int i=data.length; --i >= 0; ) data[i].scale(value);
@@ -334,10 +279,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
         }.process();
     }
 
-    // Rewritten to skip costly intermediate Complex storage...
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#averagePower(java.lang.Object, double[])
-     */
+
     @Override
     public double[] averagePower(final Complex[] data, final double[] w) {
         final int windowSize = w.length;
@@ -376,15 +318,11 @@ public class ComplexFFT extends FFT1D<Complex[]> {
         return spectrum;	
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#addressSizeOf(java.lang.Object)
-     */
+
     @Override
     final int addressSizeOf(final Complex[] data) { return getPoints(data); }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getPadded(java.lang.Object, int)
-     */
+
     @Override
     public Complex[] getPadded(final Complex[] data, final int n) {
         if(data.length == n) return data;
@@ -397,9 +335,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
         return padded;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getMaxErrorBitsFor(java.lang.Object)
-     */
+
     @Override
     protected int countFlops(Complex[] data) {
         int addressBits = getAddressBits(data);
@@ -423,23 +359,17 @@ public class ComplexFFT extends FFT1D<Complex[]> {
         return ops;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getMaxSignificantBits()
-     */
+
     @Override
     final int getMaxSignificantBitsFor(Complex[] data) {
         return 53;	
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT1D#sizeOf(java.lang.Object)
-     */
+
     @Override
     public int sizeOf(Complex[] data) {
         return data.length;
     }
-
-
 
     //private final static int yieldMask = 0xFFF;
 

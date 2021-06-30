@@ -42,9 +42,7 @@ public class Histogram implements Cloneable {
 		this.resolution = Math.abs(resolution);	
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
+
 	@Override
 	public Histogram clone() {
 		try { return (Histogram) super.clone(); }
@@ -107,10 +105,7 @@ public class Histogram implements Cloneable {
 		return resolution * max;		
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
 		String text = "# value\tcounts\terr\n";

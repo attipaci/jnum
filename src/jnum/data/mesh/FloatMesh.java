@@ -50,49 +50,31 @@ public class FloatMesh extends NumberMesh.FloatingType<Float> {
     @Override
     public final Float cast(Number x) { return x.floatValue(); }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
-     */
     @Override
     protected final Float zeroValue() {
         return 0.0F;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#baseLineElementAt(java.lang.Object, int)
-     */
     @Override
     protected Float linearElementAt(Object simpleArray, int index) {
         return ((float[]) simpleArray)[index];
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#setBaseLineElementAt(java.lang.Object, int, java.lang.Number)
-     */
     @Override
     protected final void setLinearElementAt(Object simpleArray, int index, Float value) {
         ((float[]) simpleArray)[index] = value;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#parseElement(java.lang.String)
-     */
     @Override
     public Float parseElement(String text) throws Exception {
         return Float.parseFloat(text);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#subarrayAt(int[])
-     */
     @Override
     public Mesh<Float> subarrayAt(int[] index) {
         return new FloatMesh(subarrayDataAt(index));
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#newInstance()
-     */
     @Override
     public Mesh<Float> newInstance() {
         return new FloatMesh();

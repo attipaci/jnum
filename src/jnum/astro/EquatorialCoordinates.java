@@ -37,7 +37,6 @@ import jnum.text.GreekLetter;
 import jnum.text.HourAngleFormat;
 
 
-// TODO: Auto-generated Javadoc
 // x, y kept in longitude,latitude form
 // use RA(), DEC(), setRA() and setDEC(functions) to for RA, DEC coordinates...
 
@@ -82,16 +81,10 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     public EquatorialCoordinates copy() { return (EquatorialCoordinates) super.copy(); }
 
 
-
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
-     */
     @Override
     public String getFITSLongitudeStem() { return "RA--"; }
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-     */
+    
     @Override
     public String getFITSLatitudeStem() { return "DEC-"; }
 
@@ -154,26 +147,18 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
        return precessionPARate * (getSystem().getJulianYear() - 2000.0) * Math.sin(RA()) / cosLat();
     }
     
-    /* (non-Javadoc)
-     * @see jnum.astro.CelestialCoordinates#getEquatorialPositionAngle()
-     */
+
     @Override
     public final double getEquatorialPositionAngle() {
         return 0.0;
     }
 
 
-    /* (non-Javadoc)
-     * @see jnum.astro.CelestialCoordinates#toEquatorial(jnum.astro.EquatorialCoordinates)
-     */
     @Override
     public void toEquatorial(EquatorialCoordinates equatorial) {
         equatorial.copy(this);	
     }
 
-    /* (non-Javadoc)
-     * @see jnum.astro.CelestialCoordinates#fromEquatorial(jnum.astro.EquatorialCoordinates)
-     */
     @Override
     public void fromEquatorial(EquatorialCoordinates equatorial) {	
         copy(equatorial);
@@ -222,15 +207,9 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     }
 
       
-    /* (non-Javadoc)
-     * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
-     */
     @Override
     public EquatorialCoordinates getEquatorialPole() { return equatorialPole; }
 
-    /* (non-Javadoc)
-     * @see jnum.astro.CelestialCoordinates#getZeroLongitude()
-     */
     @Override
     public double getZeroLongitude() { return 0.0; }
 

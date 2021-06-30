@@ -46,18 +46,12 @@ public class FlagBlock<Type extends Number> implements Serializable {
         this.space = space;
         setBits(fromBit, toBit);
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() { 
         return super.hashCode() ^ space.hashCode() ^ HashCode.from(mask) ^ HashCode.from(nextBit);  
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -110,10 +104,7 @@ public class FlagBlock<Type extends Number> implements Serializable {
     
 
     public final long getMask() { return mask; }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         return space.toString() + "[" + fromBit + ":" + toBit + "]";

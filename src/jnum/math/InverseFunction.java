@@ -24,6 +24,6 @@ package jnum.math;
 
 
 public interface InverseFunction<ArgType, ReturnType> {	
-		// throw IllegalArgumentException if the dimension of the arguments is incorrect...
-		public ReturnType inverseValueAt(ArgType parms);
+    // throw IllegalArgumentException if the dimension of the arguments is incorrect...
+    public ReturnType inverseValueAt(ArgType parms);
 }

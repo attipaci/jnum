@@ -32,9 +32,7 @@ import jnum.plot.ColorScheme;
 
 public class GreyScale extends ColorScheme {
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.ColorScheme#getRGB(double)
-	 */
+
 	@Override
 	public int getRGB(double scaled) {
 		if(Double.isNaN(scaled)) return noData;
@@ -47,9 +45,6 @@ public class GreyScale extends ColorScheme {
 		return Color.HSBtoRGB(0.0F, 0.0F, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.ColorScheme#getHighlight()
-	 */
 	@Override
 	public Color getHighlight() {
 		return Color.red;

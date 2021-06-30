@@ -27,7 +27,7 @@ import jnum.Function;
 import jnum.NonConformingException;
 import jnum.math.Additive;
 
-public class AdditiveMesh<T extends Additive<? super T>> extends ObjectMesh<T> implements Additive<Mesh<T>>, Overlayable<T> {
+public class AdditiveMesh<T extends Additive<? super T>> extends ObjectMesh<T> implements Additive<Mesh<T>>, Patchable<T> {
 
     /**
      * 

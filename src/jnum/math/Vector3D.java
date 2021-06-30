@@ -33,7 +33,7 @@ import jnum.math.matrix.Matrix;
 /**
  * A class representing a Cartesian vector in 3D space, i.e. with <i>x</i>, <i>y</i>, and <i>z</i> components.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Vector3D extends Coordinate3D implements MathVector<Double> { 
@@ -102,7 +102,8 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
    
     /**
      * Computationally efficient implementation of 3D rotation with small angles. 
-     * All angles must be <<1 for this small angle approximation to work.
+     * All angles must be much smaller than 1 for this small angle approximation to work.
+     * Angles around 1 arcsecond will result in errors in about 1 part per 10<sup>12</sup>.
      * 
      * @param ax    (radian) rotation angle around X. 
      * @param ay    (radian) rotation angle around Y. 
@@ -120,7 +121,9 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
     /**
      * Computationally efficient implementation of 3D rotation with small angles.
      * 
-     * @param a     (radian) 3D rotation angles around X,Y,Z. All of them must be <<1 for this small angle approximation to work.
+     * @param a     (radian) 3D rotation angles around X,Y,Z. All of them must be much smaller than 1 for this small 
+     *              angle approximation to work. Angles around 1 arcsecond will result in errors in about 1 part
+     *              per 10<sup>12</sup>.
      */
     public void smallRotate3D(double[] a) {
         smallRotate3D(a[0], a[1], a[2]);
@@ -129,7 +132,9 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
     /**
      * Computationally efficient implementation of 3D rotation with small angles.
      * 
-     * @param a     (radian) 3D rotation angles around X,Y,Z. All of them must be <<1 for this small angle approximation to work.
+     * @param a     (radian) 3D rotation angles around X,Y,Z. All of them must be much smaller 1 for this small 
+     *              angle approximation to work. Angles around 1 arcsecond will result in errors in about 1 part
+     *              per 10<sup>12</sup>.
      */
     public void smallRotate3D(MathVector<Double> a) {
         smallRotate3D(a.x(), a.y(), a.z());

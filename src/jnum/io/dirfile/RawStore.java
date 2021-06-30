@@ -30,7 +30,7 @@ import java.io.RandomAccessFile;
 
 import jnum.Util;
 
-// TODO: Auto-generated Javadoc
+
 // Reads Little-Endian from stream...
 public abstract class RawStore<Type extends Number> extends DataStore<Type> {
 
@@ -52,18 +52,12 @@ public abstract class RawStore<Type extends Number> extends DataStore<Type> {
 		this.path = path;
 		samples = arraySize;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ file.hashCode() ^ bytes ^ samples ^ (isBigEndian ? 1 : 0);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -91,18 +85,12 @@ public abstract class RawStore<Type extends Number> extends DataStore<Type> {
 	public File getFile() {
 		return new File(path + File.separator + name);		
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#getSamples()
-	 */
+
 	@Override
 	public int getSamples() {
 		return samples;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#length()
-	 */
 	@Override
 	public long length() throws IOException {
 		if(file != null) return file.length() / bytes;

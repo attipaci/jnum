@@ -28,54 +28,23 @@ import java.awt.geom.AffineTransform;
 import javax.swing.JComponent;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class PlotLayer.
- */
 public abstract class PlotLayer extends JComponent {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1331038094866703152L;
 
-	/** The content area. */
 	private ContentArea<?> contentArea;
-	
-	/**
-	 * Defaults.
-	 */
+
 	public abstract void defaults();
-	
-	/**
-	 * Gets the content area.
-	 *
-	 * @return the content area
-	 */
+
 	public ContentArea<?> getContentArea() { return contentArea; }
-	
-	/**
-	 * Sets the content area.
-	 *
-	 * @param area the new content area
-	 */
+
 	public void setContentArea(ContentArea<?> area) { this.contentArea = area; }
-	
-	/**
-	 * To display.
-	 *
-	 * @return the affine transform
-	 */
+
 	public AffineTransform toDisplay() { return getContentArea().toDisplay(); }
-	
-	/**
-	 * To coordinates.
-	 *
-	 * @return the affine transform
-	 */
+
 	public AffineTransform toCoordinates() { return getContentArea().toCoordinates(); }
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-	 */
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);	

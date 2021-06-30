@@ -30,7 +30,7 @@ import jnum.math.LinearAlgebra;
 
 
 
-public abstract class NumberMesh<T extends Number> extends Mesh<T> implements CopyCat<Mesh<? extends Number>>, LinearAlgebra<Mesh<? extends Number>>, Overlayable<T> {
+public abstract class NumberMesh<T extends Number> extends Mesh<T> implements CopyCat<Mesh<? extends Number>>, LinearAlgebra<Mesh<? extends Number>>, Patchable<T> {
 
 	private static final long serialVersionUID = 8401121783922804093L;
 
@@ -48,30 +48,20 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Co
 	public NumberMesh(Object data) {
 		super(data);
 	}
-		
-	/* (non-Javadoc)
-	 * @see kovacs.math.LinearAlgebra#isNull()
-	 */
+
 	@Override
 	public boolean isNull() {
 		for(Number value : this) if(value.doubleValue() != 0.0) return false;
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.LinearAlgebra#zero()
-	 */
+
 	@Override
     public void zero() {
         final MeshCrawler<T> iterator = iterator();
         final T zeroValue = zeroValue();
         while(iterator.hasNext()) iterator.setNext(zeroValue);
     }
-	
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.Scalable#scale(double)
-	 */
+
 	@Override
     public void scale(double factor) {
         final MeshCrawler<T> iterator = iterator();

@@ -31,17 +31,11 @@ public class Polyconic extends SphericalProjection {
 
 	private static final long serialVersionUID = 2600070844940523551L;
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#getPhiTheta(kovacs.math.Coordinate2D, kovacs.math.SphericalCoordinates)
-	 */
 	@Override
 	protected final void getPhiTheta(final Coordinate2D offset, final SphericalCoordinates phiTheta) {
 		throw new UnsupportedOperationException("Polyconic deprojection not implemented");
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#getOffsets(double, double, kovacs.math.Coordinate2D)
-	 */
 	@Override
 	protected final void getOffsets(final double theta, final double phi, final Coordinate2D toOffset) {
 		double t = Math.tan(theta);
@@ -50,17 +44,11 @@ public class Polyconic extends SphericalProjection {
 		toOffset.set(cotTheta * Math.sin(t), theta + cotTheta * (1.0 - Math.cos(t)));
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() {
 		return "PCO";
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() {
 		return "Polyconic";

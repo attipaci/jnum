@@ -48,22 +48,14 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class Grid2D.
- *
- * @param <CoordinateType> the generic type
- */
+
 public abstract class Grid2D<CoordinateType extends Coordinate2D> extends Grid<CoordinateType, Vector2D> 
 implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8109608722575396734L;
 
-    /** The projection. */
     private Projection2D<CoordinateType> projection;
 
-    /** The ref index. */
     private Vector2D refIndex = new Vector2D();
 
     // These are transformation matrix elements to native offsets
@@ -71,34 +63,17 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
     private double m11, m12, m21, m22, i11, i12, i21, i22;
 
 
-
-    /**
-     * Instantiates a new grid2 d.
-     */
     public Grid2D() {
         defaults();
     }
 
-    /**
-     * Defaults.
-     */
     protected void defaults() {
         m11 = m22 = i11 = i22 = 1.0;
         m12 = m21 = i12 = i21 = 0.0; 
         refIndex.zero();
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
 
-
-    /**
-     * Equals.
-     *
-     * @param o the o
-     * @return true, if successful
-     */
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -117,9 +92,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() {
         int hash = super.hashCode() ^ HashCode.from(m11) ^ HashCode.from(m22) ^ HashCode.from(m12) ^ HashCode.from(m21);		
@@ -128,9 +101,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
         return hash;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
+
     @SuppressWarnings("unchecked")
     @Override
     public Grid2D<CoordinateType> clone() {
@@ -138,11 +109,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
         catch(CloneNotSupportedException e) { return null; }
     }
 
-    /**
-     * Copy.
-     *
-     * @return the grid2 d
-     */
+
     @Override
     public Grid2D<CoordinateType> copy() {
         Grid2D<CoordinateType> copy = clone();
@@ -165,61 +132,33 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
     }
 
 
-    /**
-     * Gets the pixel area.
-     *
-     * @return the pixel area
-     */
     public double getPixelArea() { return Math.abs(m11 * m22 - m12 * m21); }
 
-    /**
-     * Sets the resolution.
-     *
-     * @param delta the new resolution
-     */
+
     public final void setResolution(double delta) {
         setResolution(delta, delta);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.Grid#setResolution(java.lang.Object)
-     */
+
     @Override
     public final void setResolution(Vector2D delta) { setResolution(delta.x(), delta.y()); }
 
-    /**
-     * Gets the transform.
-     *
-     * @return the transform
-     */
+
     public final double[][] getTransform() {
         return new double[][] {{ m11, m12 }, { m21, m22 }};
     }
 
-    /**
-     * Gets the inverse transform.
-     *
-     * @return the inverse transform
-     */
+
     public final double[][] getInverseTransform() {
         return new double[][] {{ i11, i12 }, { i21, i22 }};
     }
 
-    /**
-     * Checks if is rectilinear.
-     *
-     * @return true, if is rectilinear
-     */
+
     public boolean isRectilinear() {
         return m12 == 0.0 && m21 == 0.0;
     }
 
 
-    /**
-     * Sets the transform.
-     *
-     * @param M the new transform
-     */
     public void setTransform(float[][] M) {
         if(M.length != 2) throw new IllegalArgumentException("Coordinate transform should a 2x2 matrix.");
         if(M[0].length != 2) throw new IllegalArgumentException("Coordinate transform should a 2x2 matrix.");
@@ -231,11 +170,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
         calcInverseTransform();
     }
 
-    /**
-     * Sets the transform.
-     *
-     * @param M the new transform
-     */
+
     public void setTransform(double[][] M) {
         if(M.length != 2) throw new IllegalArgumentException("Coordinate transform should a 2x2 matrix.");
         if(M[0].length != 2) throw new IllegalArgumentException("Coordinate transform should a 2x2 matrix.");
@@ -247,12 +182,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
         calcInverseTransform();
     }
 
-    /**
-     * Sets the resolution.
-     *
-     * @param dx the dx
-     * @param dy the dy
-     */
+
     public void setResolution(double dx, double dy) {
         m11 = dx;
         m22 = dy;
@@ -260,89 +190,51 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
         calcInverseTransform();
     }
 
-    /**
-     * Checks if is horizontal.
-     *
-     * @return true, if is horizontal
-     */
+
     public boolean isHorizontal() {
         return getReference() instanceof HorizontalCoordinates;
     }
 
-    /**
-     * Checks if is equatorial.
-     *
-     * @return true, if is equatorial
-     */
+
     public boolean isEquatorial() {
         return getReference() instanceof EquatorialCoordinates;
     }
 
-    /**
-     * Checks if is ecliptic.
-     *
-     * @return true, if is ecliptic
-     */
+
     public boolean isEcliptic() {
         return getReference() instanceof EclipticCoordinates;
     }
 
-    /**
-     * Checks if is galactic.
-     *
-     * @return true, if is galactic
-     */
+
     public boolean isGalactic() {
         return getReference() instanceof GalacticCoordinates;
     }
 
-    /**
-     * Checks if is super galactic.
-     *
-     * @return true, if is super galactic
-     */
+
     public boolean isSuperGalactic() {
         return getReference() instanceof SuperGalacticCoordinates;
     }
 
-    /**
-     * Gets the local affine transform.
-     *
-     * @return the local affine transform
-     */
+
     public AffineTransform getLocalAffineTransform() {
         final double dx = m11 * refIndex.x() + m12 * refIndex.y();
         final double dy = m22 * refIndex.y() + m21 * refIndex.x();
         return new AffineTransform(m11, m12, m21, m22, -dx, -dy);
     }
 
-    /**
-     * Gets the resolution.
-     *
-     * @return the resolution
-     */
+
     @Override
     public Vector2D getResolution() {
         return new Vector2D(m11, m22);
     }
 
-    /**
-     * Pixel size x.
-     *
-     * @return the double
-     */
+
     public double pixelSizeX() { return Math.abs(m11); }
 
-    /**
-     * Pixel size y.
-     *
-     * @return the double
-     */
+
     public double pixelSizeY() { return Math.abs(m22); }
 
-    /**
-     * Calc inverse transform.
-     */
+
     public void calcInverseTransform() {
         final double idet = 1.0 / getPixelArea();
         i11 = m22 * idet;
@@ -352,11 +244,6 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
     }
 
     // Generalize to non-square pixels...
-    /**
-     * Rotate.
-     *
-     * @param angle the angle
-     */
     public void rotate(double angle) {
         if(angle == 0.0) return;
 
@@ -374,18 +261,10 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 
     }
 
-    /**
-     * Checks if is reverse x.
-     *
-     * @return true, if is reverse x
-     */
+
     public boolean isReverseX() { return false; }
 
-    /**
-     * Checks if is reverse y.
-     *
-     * @return true, if is reverse y
-     */
+
     public boolean isReverseY() { return false; }
 
 
@@ -393,13 +272,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 
     public Unit fitsYUnit() { return yAxis().getUnit(); }
 
-    /**
-     * Edits the header.
-     *
-     * @param header the header
-     * @param cursor the cursor
-     * @throws HeaderCardException the header card exception
-     */
+
     @Override
     public void editHeader(Header header) throws HeaderCardException {	
         String alt = getFitsID();
@@ -436,26 +309,10 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 
     }
 
-    /**
-     * Parses the projection.
-     *
-     * @param header the header
-     * @throws HeaderCardException the header card exception
-     */
+
     public abstract void parseProjection(Header header) throws HeaderCardException;
 
-    /**
-     * Gets the coordinate instance for.
-     *
-     * @param type the type
-     * @return the coordinate instance for
-     * @throws InstantiationException the instantiation exception
-     * @throws IllegalAccessException the illegal access exception
-     * @throws NoSuchMethodException 
-     * @throws InvocationTargetException 
-     * @throws SecurityException 
-     * @throws IllegalArgumentException 
-     */
+
     public abstract CoordinateType getCoordinateInstanceFor(String type) throws Exception;
 
     public CoordinateAxis xAxis() { return getCoordinateSystem().get(0); }
@@ -464,14 +321,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 
     public Unit getDefaultUnit() { return Unit.unity; }
 
-    /**
-     * Parses the header.
-     *
-     * @param header the header
-     * @throws HeaderCardException the header card exception
-     * @throws InstantiationException the instantiation exception
-     * @throws IllegalAccessException the illegal access exception
-     */
+
     @Override
     public void parseHeader(Header header) throws Exception {
         String alt = getFitsID();
@@ -529,42 +379,23 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
         calcInverseTransform();
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {	
         return toString(Util.s3, xAxis().getUnit(), yAxis().getUnit());
     }
 
-    /**
-     * To string.
-     *
-     * @param nf the nf
-     * @return the string
-     */
+
     public String toString(NumberFormat nf) {
         return toString(nf, xAxis().getUnit(), yAxis().getUnit());
     }
 
-    /**
-     * To string.
-     *
-     * @param u the u
-     * @return the string
-     */
+
     public String toString(Unit u) {
         return toString(Util.s3, u, u);
     }
 
-    /**
-     * To string.
-     *
-     * @param nf the nf
-     * @param ux the ux
-     * @param uy the uy
-     * @return the string
-     */
+
     public String toString(NumberFormat nf, Unit ux, Unit uy) {	
         CoordinateType reference = projection.getReference();
         String projectionName = reference.getClass().getSimpleName();
@@ -586,21 +417,11 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
     }
 
 
-    /**
-     * To index.
-     *
-     * @param offset the offset
-     */
     public final void toIndex(final Vector2D offset) {
         offsetToIndex(offset, offset);
     }
 
-    /**
-     * Offset to index.
-     *
-     * @param offset the offset
-     * @param index the index
-     */
+
     public final void offsetToIndex(final Vector2D offset, final Vector2D index) {
         index.set(
                 i11 * offset.x() + i12 * offset.y() + refIndex.x(),
@@ -608,21 +429,12 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
                 );
     }
 
-    /**
-     * To offset.
-     *
-     * @param index the index
-     */
+    
     public final void toOffset(final Vector2D index) {
         indexToOffset(index, index);
     }
 
-    /**
-     * Index to offset.
-     *
-     * @param index the index
-     * @param offset the offset
-     */
+
     public final void indexToOffset(final Vector2D index, final Vector2D offset) {		
         final double di = index.x() - refIndex.x();
         final double dj = index.y() - refIndex.y();		
@@ -630,19 +442,13 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
     }
 
 
-
-    /* (non-Javadoc)
-     * @see jnum.data.FastGridAccess#indexOf(java.lang.Object, java.lang.Object)
-     */
     @Override
     public void indexOf(CoordinateType value, Vector2D toIndex) {
         projection.project(value, toIndex);
         toIndex(toIndex);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.FastGridAccess#valueAt(java.lang.Object, java.lang.Object)
-     */
+
     @Override
     public void coordsAt(Vector2D index, CoordinateType toValue) {
         toOffset(index);
@@ -651,72 +457,34 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
     }
 
 
-    /**
-     * Gets the reference.
-     *
-     * @return the reference
-     */
     @Override
     public final CoordinateType getReference() { return projection.getReference(); }
 
-    /**
-     * Sets the reference.
-     *
-     * @param reference the new reference
-     */
+
     @Override
     public void setReference(CoordinateType reference) { projection.setReference(reference); }
 
-    /**
-     * Gets the reference index.
-     *
-     * @return the reference index
-     */
+
     @Override
     public Vector2D getReferenceIndex() { return refIndex; }
 
-    /**
-     * Sets the reference index.
-     *
-     * @param v the new reference index
-     */
+
     @Override
     public void setReferenceIndex(Vector2D v) { refIndex = v; }
 
-    /**
-     * Gets the projection.
-     *
-     * @return the projection
-     */
+
     public final Projection2D<CoordinateType> getProjection() { return projection; }
 
-    /**
-     * Sets the projection.
-     *
-     * @param p the new projection
-     */
+
     public void setProjection(Projection2D<CoordinateType> p) { this.projection = p; }
 
 
-    /**
-     * Gets the index.
-     *
-     * @param coords the coords
-     * @param index the index
-     * @return the index
-     */
     public final void getIndex(final CoordinateType coords, final Vector2D index) {
         projection.project(coords, index);
         toIndex(index);
     }
 
-    /**
-     * Gets the coords.
-     *
-     * @param index the index
-     * @param coords the coords
-     * @return the coords
-     */
+
     public final void getCoords(final Vector2D index, final CoordinateType coords) {
         final double i = index.x();
         final double j = index.y(); 
@@ -728,13 +496,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
         index.setY(j);
     }
 
-    /**
-     * Gets the index.
-     *
-     * @param offset the offset
-     * @param index the index
-     * @return the index
-     */
+
     public final void getIndex(final Vector2D offset, final Index2D index) {
         final double x = offset.x();
         final double y = offset.y();
@@ -743,28 +505,17 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
         offset.set(x, y);
     }
 
-    /**
-     * Gets the offset.
-     *
-     * @param index the index
-     * @param offset the offset
-     * @return the offset
-     */
+
     public final void getOffset(final Index2D index, final Vector2D offset) {
         offset.set(index.i(), index.j());
         toOffset(offset);       
     }
 
-    /**
-     * Toggle native.
-     *
-     * @param offset the offset
-     */
+
     public void toggleNative(final Vector2D offset) {
         if(isReverseX()) offset.scaleX(-1.0);
         if(isReverseY()) offset.scaleY(-1.0);
     }
-
 
 
     public Unit getPixelAreaUnit() { 
@@ -794,13 +545,6 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
     }
 
 
-    /**
-     * Gets the grid2 d instance for.
-     *
-     * @param type1 the type1
-     * @param type2 the type2
-     * @return the grid2 d instance for
-     */
     private static Grid2D<?> getGrid2DInstanceFor(String type1, String type2) {
         // Check if the types conform to projected WCS coordinates, according to Calabretta & Greisen (2002)
         // If so, return a SphericalGrid, else a regular Cartesian grid.

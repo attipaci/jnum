@@ -36,7 +36,6 @@ import javax.swing.JComponent;
 import jnum.math.Vector2D;
 
 
-// TODO: Auto-generated Javadoc
 // TODO
 // 	*	Right click --> make editable (Directly or through dialog)
 //  *	"%u" to symbolize unit...

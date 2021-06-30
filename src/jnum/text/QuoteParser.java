@@ -30,9 +30,7 @@ public class QuoteParser extends EnclosureParser {
 
     private boolean isGermanStyle = false;
     
-    /* (non-Javadoc)
-     * @see jnum.text.EnclosureParser#isOpening(char)
-     */
+
     @Override
     protected boolean isOpening(char c) {
         switch(c) {
@@ -53,19 +51,12 @@ public class QuoteParser extends EnclosureParser {
         default : return false;
         }
     }
-    
-    /* (non-Javadoc)
-     * @see jnum.text.EnclosureParser#isClosing(char)
-     */
+
     @Override
     protected boolean isClosing(char c) {
         return false; 
     }
-    
-    
-    /* (non-Javadoc)
-     * @see jnum.text.EnclosureParser#getCloserFor(char)
-     */
+
     @Override
     protected char getCloserFor(char opener) {
         switch(opener) {
@@ -92,7 +83,5 @@ public class QuoteParser extends EnclosureParser {
     
 
     public void setGermanStyle(boolean value) { isGermanStyle = value; }
-    
-    
-    
+       
 }

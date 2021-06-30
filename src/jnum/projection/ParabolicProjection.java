@@ -31,44 +31,27 @@ public class ParabolicProjection extends CylindricalProjection {
 
 	private static final long serialVersionUID = -9078430471620050294L;
 
-
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#getPhiTheta(kovacs.math.Coordinate2D, kovacs.math.SphericalCoordinates)
-	 */
 	@Override
 	protected final void getPhiTheta(final Coordinate2D offset, final SphericalCoordinates phiTheta) {
 		final double Y = offset.y() / Math.PI;
 		phiTheta.setNative(offset.x() / (1.0 - 4.0 * Y * Y), 3.0 * asin(Y));
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.SphericalProjection#getOffsets(double, double, kovacs.math.Coordinate2D)
-	 */
 	@Override
 	protected final void getOffsets(final double theta, final double phi, final Coordinate2D toOffset) {
 		toOffset.set(phi * (2.0 * Math.cos(twoThirds * theta) - 1.0), Math.PI * Math.sin(third * theta));
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFitsID()
-	 */
 	@Override
 	public String getFitsID() {
 		return "PAR";
 	}
 
-	/* (non-Javadoc)
-	 * @see kovacs.projection.Projection2D#getFullName()
-	 */
 	@Override
 	public String getFullName() {
 		return "Parabolic Projection";
 	}
 
-	
-	/** The Constant twoThirds. */
 	private final static double twoThirds = 2.0 / 3.0;
-	
-	/** The Constant third. */
 	private final static double third = 1.0 / 3.0;
 }

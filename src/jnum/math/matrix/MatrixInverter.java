@@ -27,7 +27,7 @@ package jnum.math.matrix;
 /**
  * Interface for obtaining a matrix inverse via some method or another.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>   The generic type matrix element (both in the matrix and its inverse).
  */

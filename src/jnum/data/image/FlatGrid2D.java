@@ -34,19 +34,11 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class CartesianGrid.
- */
 public class FlatGrid2D extends Grid2D<Coordinate2D> {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -3604375577514529903L;
 
 
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid2D#defaults()
-	 */
 	@Override
 	public void defaults() {
 	    setCoordinateSystem(new CartesianSystem(2));
@@ -65,25 +57,19 @@ public class FlatGrid2D extends Grid2D<Coordinate2D> {
 	    super.setProjection(projection);
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid2D#parseProjection(nom.tam.fits.Header)
-	 */
+
 	@Override
 	public void parseProjection(Header header) throws HeaderCardException {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.data.Grid2D#getCoordinateInstanceFor(java.lang.String)
-	 */
+
 	@Override
 	public Coordinate2D getCoordinateInstanceFor(String type) throws InstantiationException, IllegalAccessException {
 		return new Coordinate2D();
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.data.Grid2D#parseHeader(nom.tam.fits.Header)
-	 */
+
 	@Override
 	public void parseHeader(Header header) throws Exception {
 		super.parseHeader(header);
@@ -94,9 +80,7 @@ public class FlatGrid2D extends Grid2D<Coordinate2D> {
 		if(header.containsKey("CTYPE2" + alt)) yAxis().setShortLabel(header.getStringValue("CTYPE2" + alt));
 	}
 	
-	/* (non-Javadoc)
-	 * @see kovacs.data.Grid2D#editHeader(nom.tam.util.Cursor)
-	 */
+
 	@Override
 	public void editHeader(Header header) throws HeaderCardException {		
 		super.editHeader(header);

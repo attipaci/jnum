@@ -41,19 +41,14 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
     private boolean isEnclosed;
 
 
-
     public ExponentUnit(Unit base) {
         this(base, 1.0);
     }
     
-
     public ExponentUnit(Unit base, double power) {
         set(base, power);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.Unit#copy()
-     */
     @Override
     public ExponentUnit copy() {
         ExponentUnit u = (ExponentUnit) super.copy();
@@ -69,9 +64,6 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         isEnclosed = CompoundUnit.class.isAssignableFrom(base.getClass());
     }
 
-    /* (non-Javadoc)
-     * @see jnum.Unit#name()
-     */
     @Override
     public String name() {		
 
@@ -105,9 +97,6 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         return new String(buf);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.Unit#value()
-     */
     @Override
     public double value() {
         return Math.pow(base.value(), exponent);
@@ -140,9 +129,6 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         return u;
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.InverseValue#getInverse()
-     */
     @Override
     public ExponentUnit getInverse() {
         ExponentUnit u = copy();
@@ -150,9 +136,6 @@ public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
         return u;
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.InverseValue#inverse()
-     */
     @Override
     public void inverse() {
         exponent *= -1;

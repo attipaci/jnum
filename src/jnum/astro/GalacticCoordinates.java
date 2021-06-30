@@ -54,16 +54,11 @@ public class GalacticCoordinates extends CelestialCoordinates {
     @Override
     public GalacticCoordinates copy() { return (GalacticCoordinates) super.copy(); }
     
-    
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
-     */
+
     @Override
 	public String getFITSLongitudeStem() { return "GLON"; }
 	
-	/* (non-Javadoc)
-	 * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-	 */
+
 	@Override
 	public String getFITSLatitudeStem() { return "GLAT"; }
     
@@ -82,17 +77,12 @@ public class GalacticCoordinates extends CelestialCoordinates {
 	}
 
 
-    /* (non-Javadoc)
-     * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
-     */
     @Override
 	public EquatorialCoordinates getEquatorialPole() {
     	return equatorialPole;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.CelestialCoordinates#getZeroLongitude()
-	 */
+
 	@Override
 	public double getZeroLongitude() {
 		return phi0;

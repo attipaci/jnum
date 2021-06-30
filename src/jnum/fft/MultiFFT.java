@@ -37,7 +37,12 @@ import jnum.math.ComplexMultiplication;
 import jnum.math.Scalable;
 import jnum.parallel.Parallelizable;
 
-
+/**
+ * FFT for multi-dimensional arrays, and objects of generic types.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ */
 public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
 
     private static final long serialVersionUID = -3679294695088014282L;
@@ -88,9 +93,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         return Integer.highestOneBit(data.length) * ((FFT) getChildFor(data[0])).getPoints(data[0]);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getMaxErrorBitsFor(java.lang.Object)
-     */
+
     @Override
     protected int countFlops(Object[] data) {
         int addressBits = getAddressBits(data);
@@ -120,18 +123,12 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     }
 
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getMaxSignificantBits()
-     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     final int getMaxSignificantBitsFor(Object[] data) {
         return ((FFT) getChildFor(data[0])).getMaxSignificantBitsFor(data[0]);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.fft.FFT#addressSizeOf(java.lang.Object)
-     */
     @Override
     // TODO allowing n+1 size in first index....
     int addressSizeOf(Object[] data) {
@@ -172,9 +169,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         return reuseChild;
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.fft.FFT#sequentialComplexTransform(java.lang.Object, boolean)
-     */
+
     @Override
     void sequentialComplexTransform(final Object[] data, final int addressBits, final boolean isForward) {	
         // Perform FFT of each element
@@ -197,9 +192,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         super.sequentialComplexTransform(data, addressBits, isForward);
     }	
 
-    /* (non-Javadoc)
-     * @see kovacs.fft.FFT#complexTransform(java.lang.Object, boolean, int)
-     */
+
     @Override
     void parallelComplexTransform(final Object[] data, final int addressBits, final boolean isForward) {
         final FFT child = getChildFor(data[0]);	
@@ -627,9 +620,6 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     }
 
 
-    /* (non-Javadoc)
-     * @see kovacs.fft.RealFFT#sequentialRealTransform(java.lang.Object, boolean)
-     */
     @Override
     public void sequentialRealTransform(final Object[] data, final boolean isForward) throws FFTTypeException {
         final int addressBits = getAddressBits(data);
@@ -670,10 +660,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         else throw new IllegalArgumentException("Cannot scale: " + data.getClass().getSimpleName());
     }
 
-    
-    /* (non-Javadoc)
-     * @see jnum.fft.RealFFT#real2Amplitude(java.lang.Object)
-     */
+
     @Override
     public void real2Amplitude(Object[] data) {
         realTransform(data, FFT.FORWARD);  
@@ -681,10 +668,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         scale(data, norm);
     }	
 
-    
-    /* (non-Javadoc)
-     * @see jnum.fft.RealFFT#amplitude2Real(java.lang.Object)
-     */
+
     @Override
     public void amplitude2Real(Object[] data) {	
         realTransform(data, FFT.BACK);

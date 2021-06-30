@@ -48,41 +48,26 @@ public class IntMesh extends NumberMesh.IntegerType<Integer> {
     @Override
     public final Integer cast(Number x) { return x.intValue(); }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
-     */
     @Override
     protected final Integer zeroValue() {
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#baseLineElementAt(java.lang.Object, int)
-     */
     @Override
     protected final Integer linearElementAt(Object simpleArray, int index) {
         return ((int[]) simpleArray)[index];
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#setBaseLineElementAt(java.lang.Object, int, java.lang.Number)
-     */
     @Override
     protected final void setLinearElementAt(Object simpleArray, int index, Integer value) {
         ((int[]) simpleArray)[index] = value;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#parseElement(java.lang.String)
-     */
     @Override
     public Integer parseElement(String text) throws Exception {
         return Integer.decode(text);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#newInstance()
-     */
     @Override
     public Mesh<Integer> newInstance() {
         return new IntMesh();

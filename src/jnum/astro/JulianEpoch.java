@@ -38,15 +38,10 @@ public class JulianEpoch extends CoordinateEpoch {
 	public JulianEpoch(double epoch) { super(epoch); }
 
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.CoordinateEpoch#getJulianYear()
-	 */
 	@Override
 	public double getJulianYear() { return getYear(); }
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.CoordinateEpoch#getBesselianYear()
-	 */
+
 	@Override
 	public double getBesselianYear() { return BesselianEpoch.getYearForMJD(getMJD()); }
 
@@ -56,17 +51,12 @@ public class JulianEpoch extends CoordinateEpoch {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.CoordinateEpoch#getMJD()
-	 */
 	@Override
 	public double getMJD() {
 		return getMJDForYear(getYear());
 	}
 	
-	/* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() { return toString(Util.f1); }
     

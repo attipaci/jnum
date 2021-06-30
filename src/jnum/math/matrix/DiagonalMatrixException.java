@@ -27,7 +27,7 @@ package jnum.math.matrix;
  * An exception thrown when trying to set or modify off-diagonal elements in
  * a diagonal matrix.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class DiagonalMatrixException extends SquareMatrixException {

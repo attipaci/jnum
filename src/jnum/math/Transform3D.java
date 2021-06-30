@@ -32,11 +32,11 @@ import jnum.math.matrix.Matrix;
  * linear algebraic (matrix) transformations, powered by a square {@link Matrix} of size 3 doing all the work.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>       The generic type spherical coordinates on thich this transform may operate.
  */
-public class Transform3D<T extends SphericalCoordinates> implements Cloneable, Serializable, InverseValue<Transform3D<T>> {
+public class Transform3D<T extends SphericalCoordinates> implements Transforming<T>, Cloneable, Serializable, InverseValue<Transform3D<T>> {
     /**
      * 
      */
@@ -156,13 +156,9 @@ public class Transform3D<T extends SphericalCoordinates> implements Cloneable, S
 	    return result;	    
 	}
 	
-	/**
-	 * Transforms the supported generic type of spherical coordinates in place. The is
-	 * the result replaces the original value in the input vector itself.
-	 * 
-	 * @param coords   The vector to be transformed in situ.
-	 */
-	public void transform(final T coords) {	
+
+	@Override
+    public void transform(final T coords) {	
 	    coords.fromCartesian(getTransformed(coords.toCartesian()));
 	}
 	

@@ -32,7 +32,7 @@ import jnum.math.MathVector;
  * elimination. Apart from providing the inverse, and matrix solutions, it can also
  * be used for obtaining the rank of the matrix at very little extra cost.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>
  */

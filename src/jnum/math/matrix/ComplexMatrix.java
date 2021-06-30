@@ -46,7 +46,37 @@ import jnum.math.SymmetryException;
  * functionality and support for heterogeneous cross products, as well as transforming both real-valued and 
  * complex-valued vectors alike.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * <h3>Complex Matrices</h3>
+ * 
+ * Complex matrices work very similarly to their real counterparts, with the exception that they operate
+ * with complex numbers and algebra. Nearly all operations of {@link Matrix} can also be performed on 
+ * {@link ComplexMatrix} including LU decomposition, inversion, or real-valued eigensystem determination 
+ * (for Hermitian) matrices, using Jacobi transforms. The notable exception is SVD, which is implemented only for
+ * real-valued {@link Matrix} objects at this time.
+ * 
+ * Best of all, you can intermingle real and complex matrices at your pleasure, such as when calculating 
+ * a heterogeneous dot product:
+ * 
+ * <pre>
+ *  ComplexMatrix C = new ComplexMatrix(3, 3);
+ *  Matrix R = new Matrix(3, 5);
+ *  
+ *  // populate matrices with data
+ *  // ...
+ *  
+ *  ComplexMatrix P = C.dot(R);
+ * </pre>
+ * 
+ * or operating the real matrix on a complex vector:
+ * 
+ * <pre>
+ *  ComplexVector v = new ComplexVector(...);
+ *  Matrix M = new Matrix(...);
+ *  
+ *  ComplexVector transformed = M.dot(v);
+ * </pre>
+ * 
+ * @author Attila Kovacs
  *
  */
 public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScaling, ComplexConjugate, Multiplication<Complex>, ComplexAddition {
@@ -287,7 +317,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     /**
      * Sets the imaginary part of this matrix to the specified values.
      * 
-     * @param re                2D array of values to be used for the real parts.
+     * @param im                2D array of values to be used for the imaginary parts.
      * @throws ShapeException   If the supplied array has a shape or size different from this matrix.
      */
     public void setImaginaryPart(double[][] im) throws ShapeException {
@@ -298,7 +328,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     /**
      * Sets the imaginary part of this matrix to the specified values.
      * 
-     * @param re                2D array of values to be used for the real parts.
+     * @param im                2D array of values to be used for the imaginary parts.
      * @throws ShapeException   If the supplied array has a shape or size different from this matrix.
      */
     public void setImaginaryPart(float[][] im) throws ShapeException {
@@ -492,7 +522,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     /**
      * The LU decomposition of the parent complex matrix.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class LU extends ObjectMatrix<Complex>.LU {
@@ -538,7 +568,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     /**
      * The Gauss inverter object for the parent complex matrix.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class Gauss extends ObjectMatrix<Complex>.Gauss {
@@ -563,7 +593,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     /**
      * The Jacobi transform of the parent complex matrix.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class JacobiTransform implements EigenSystem<Complex, Double> {

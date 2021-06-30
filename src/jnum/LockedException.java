@@ -28,7 +28,7 @@ package jnum;
  * An class for signaling thay some operation failed because a lock on the object or value prevented the desired change.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class LockedException extends Exception {

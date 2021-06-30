@@ -29,7 +29,7 @@ import jnum.math.Complex;
 /**
  * The Class ZetaFunction. Based on Gourdon and Sebah (2003).
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  */
 public final class ZetaFunction {
 	

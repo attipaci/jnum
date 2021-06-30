@@ -16,7 +16,5 @@ public class SymmetryException extends ArithmeticException {
     public SymmetryException(String s) {
         super(s);
     }
-
-    
-    
+ 
 }

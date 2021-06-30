@@ -27,7 +27,7 @@ package jnum.math;
  * An interface for objects that implement a basic alegbra (addition, subtraction, multiplication) with
  * real number arguments.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public interface RealAlgebra extends RealAddition, Scalable {

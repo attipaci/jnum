@@ -28,7 +28,13 @@ import java.util.concurrent.ExecutorService;
 import jnum.data.WindowFunction;
 import jnum.parallel.Parallelizable;
 
-
+/**
+ * Abstract base class for all 1D FFT implementations.
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
+ * @param <Type>    The generic type of the data elements in Fourier Transforms
+ */
 public abstract class FFT1D<Type> extends FFT<Type> {
 
 	private static final long serialVersionUID = -1722639496940144592L;

@@ -49,17 +49,18 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Gaussian2D.
+ * A class representing 2D Gaussians, such as for point-spread functions (PSFs).
+ * 
+ * @author Attila Kovacs <attila@sigmyne.com>
+ *
  */
 public class Gaussian2D implements Serializable, Cloneable, Copiable<Gaussian2D>, CopyCat<Gaussian2D>, Scalable, 
 Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D>, Ratio<Gaussian2D, Gaussian2D> {
 
-    /** The Constant serialVersionUID. */
+
     private static final long serialVersionUID = -1182818146658831916L;
 
-    /** The position angle. */
     private double majorFWHM, minorFWHM, positionAngle;
 
 
@@ -88,17 +89,11 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         set(a, b, angle);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return super.hashCode() ^ HashCode.from(majorFWHM) ^ HashCode.from(minorFWHM) ^ HashCode.from(positionAngle);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object other) {
         if(other == this) return true;
@@ -111,36 +106,23 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
     public Gaussian2D clone() {
         try { return (Gaussian2D) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
 
-    /* (non-Javadoc)
-     * @see jnum.Copiable#copy()
-     */
     @Override
     public Gaussian2D copy() {
         return clone();
     }
 
-
-
-    /**
-     * Sets the.
-     *
-     * @param FWHM the fwhm
-     */
     public final void set(double FWHM) {
         set(FWHM, FWHM, 0.0);
     }
 
     /**
-     * Sets the.
+     * Sets new parameters for this 2D Gaussian PSF.
      *
      * @param a the full-width half-maximum of the primary elliptical axis.
      * @param b the full-width half-maximum of the secondary elliptical axis.
@@ -159,11 +141,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         }
     }
 
-    /**
-     * Sets the.
-     *
-     * @param psf the psf
-     */
+
     @Override
     public final void copy(Gaussian2D psf) {
         majorFWHM = psf.majorFWHM;
@@ -171,21 +149,13 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         positionAngle = psf.positionAngle;
     }
 
-    /**
-     * Encompass.
-     *
-     * @param FWHM the fwhm
-     */
+
     public void encompass(double FWHM) {
         if(majorFWHM < FWHM) majorFWHM = FWHM;
         if(minorFWHM < FWHM) minorFWHM = FWHM;
     }
 
-    /**
-     * Encompass.
-     *
-     * @param psf the psf
-     */
+
     public void encompass(Gaussian2D psf) {		
         double da = psf.positionAngle - this.positionAngle;
 
@@ -200,12 +170,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
 
     }
 
-    /**
-     * Checks if is encompassing.
-     *
-     * @param psf the psf
-     * @return true, if is encompassing
-     */
+
     public boolean isEncompassing(Gaussian2D psf) {
         double da = psf.positionAngle - this.positionAngle;
 
@@ -221,12 +186,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         return true;
     }
 
-    /**
-     * Checks if is encompassing.
-     *
-     * @param FWHM the fwhm
-     * @return true, if is encompassing
-     */
+
     public boolean isEncompassing(double FWHM) {
         if(majorFWHM < FWHM) return false;
         if(minorFWHM < FWHM) return false;
@@ -244,18 +204,11 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         positionAngle = Math.IEEEremainder(value, Math.PI);
     }
 
-    /**
-     * Rotate.
-     *
-     * @param angle the angle
-     */
     public void rotate(double angle) {
         setPositionAngle(positionAngle + angle);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Scalable#scale(double)
-     */
+
     @Override
     public void scale(double factor) {
         majorFWHM *= factor;
@@ -283,34 +236,18 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
      */
     public final double getMinorFWHM() { return minorFWHM; }
 
-    /**
-     * Gets the circular equivalent fwhm.
-     *
-     * @return the circular equivalent fwhm
-     */
+
     public final double getCircularEquivalentFWHM() {
         return Math.sqrt(majorFWHM * minorFWHM);
     }
 
-    /**
-     * Gets the axis product.
-     *
-     * @return the axis product
-     */
+
     public final double getAxisProduct() { return majorFWHM * getMinorFWHM(); }
 
-    /**
-     * Extent in x.
-     *
-     * @return the double
-     */
+
     public final double extentInX() { return ExtraMath.hypot(Math.cos(positionAngle) * majorFWHM, Math.sin(positionAngle) * minorFWHM); }
 
-    /**
-     * Extent in y.
-     *
-     * @return the double
-     */
+
     public final double extentInY() { return ExtraMath.hypot(Math.cos(positionAngle) * minorFWHM, Math.sin(positionAngle) * majorFWHM); }
 
 
@@ -331,8 +268,6 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
     public void setEquivalent(final Data<Index2D> beam, Coordinate2D pixelSize) {
         setArea(beam.getAbsSum() * pixelSize.x() * pixelSize.y());
     }
-
-
 
     /**
      * Gets the position angle of the elliptical beam major axis.
@@ -366,7 +301,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
     /**
      * Gets an image of the beam on the specified grid, with a default 3-sigma extent. The image
      * has odd number of points in both dimensions, and the center (reference) point of the beam
-     * is its mid-points (i.e., for a dimension N, the midpoint is c = (N>>>1);
+     * is its mid-points (i.e., for a dimension N, the midpoint is c = N/2;
      *
      * @param grid the grid
      * @return the beam image.
@@ -376,7 +311,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
     /**
      * Gets an image of the beam on the specified grid, with the specified extent. The image
      * has odd number of points in both dimensions, and the center (reference) point of the beam
-     * is its mid-points (i.e., for a dimension N, the midpoint is c = (N>>>1); 
+     * is its mid-points (i.e., for a dimension N, the midpoint is c = N/2; 
      *
      * @param grid the grid
      * @param sigmas the extent of the image in units of the standard-deviation (sigma).
@@ -386,11 +321,6 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         return getBeam(majorFWHM, minorFWHM, positionAngle, grid, sigmas);
     }
 
-    /**
-     * Invert.
-     *
-     * @param psf the psf
-     */
     /*
 	private void invert() {
 		double temp = minorFWHM;
@@ -400,41 +330,27 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
 	}
      */
 
-
-    /* (non-Javadoc)
-     * @see kovacs.math.Multiplication#multiplyBy(java.lang.Object)
-     */
     @Override
     public final void multiplyBy(Gaussian2D psf) {
         convolveWith(psf); 
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Product#setProduct(java.lang.Object, java.lang.Object)
-     */
     @Override
     public void setProduct(Gaussian2D a, Gaussian2D b) {
         set(a.majorFWHM, a.minorFWHM, a.positionAngle);
         multiplyBy(b);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Ratio#setRatio(java.lang.Object, java.lang.Object)
-     */
     @Override
     public void setRatio(Gaussian2D numerator, Gaussian2D denominator) {
         set(numerator.majorFWHM, numerator.minorFWHM, numerator.positionAngle);
         divideBy(denominator);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Division#divideBy(java.lang.Object)
-     */
     @Override
     public void divideBy(Gaussian2D psf) {
         deconvolveWith(psf);
     }
-
 
     /**
      * Convolve this PSF with another Gaussian PSF profile.
@@ -454,12 +370,6 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         combineWith(psf, true);
     }		
 
-    /**
-     * Combine with.
-     *
-     * @param psf the psf
-     * @param deconvolve the deconvolve
-     */
     private void combineWith(Gaussian2D psf, boolean deconvolve) {
         final double a2x = majorFWHM * majorFWHM;
         final double a2y = minorFWHM * minorFWHM;
@@ -514,12 +424,6 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
 	}
      */
 
-  
-    /**
-     * Parses the FITS header.
-     *
-     * @param header the FITS header
-     */
     public void parseHeader(Header header, String fitsID, double sizeUnit) {
         if(!header.containsKey(fitsID + "BMAJ")) throw new IllegalStateException("FITS header contains no beam description for type '" + fitsID + "'");
         majorFWHM = header.getDoubleValue(fitsID + "BMAJ", Double.NaN) * sizeUnit;
@@ -528,11 +432,13 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
     }	
 
     /**
-     * Edits the FITS header.
-     *
-     * @param header the header
-     * @param cursor the cursor where the FITS keys will be inserted into the header.
-     * @throws HeaderCardException the header card exception
+     * Adds information about this Gaussian PSF into the FITS header.
+     * 
+     * @param header        the FITS header
+     * @param name          a concise name for this Gaussian beam.
+     * @param fitsID        A standard letter ID for this type of beam in FITS. E.g. "S" for smoothing beam.
+     * @param sizeUnit      the physical unit to report beam sizes in.
+     * @throws HeaderCardException      if there was an error creating the entry in the FITS header.
      */
     public void editHeader(Header header, String name, String fitsID, Unit sizeUnit) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
@@ -543,42 +449,20 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         c.add(new HeaderCard(fitsID + "BPA", positionAngle / Unit.deg, "Beam position angle (deg)."));
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return toString(Util.s4);
     }
 
-    /**
-     * To string.
-     *
-     * @param nf the nf
-     * @return the string
-     */
     public String toString(NumberFormat nf) {
         if(isCircular()) return nf.format(majorFWHM);
         return nf.format(majorFWHM) + "x" + nf.format(minorFWHM) + " @ " + Util.f1.format(positionAngle / Unit.deg) + " deg.";
     }
 
-    /**
-     * To string.
-     *
-     * @param u the u
-     * @return the string
-     */
     public String toString(Unit u) {
         return toString(u, Util.s4);
     }
 
-    /**
-     * To string.
-     *
-     * @param u the u
-     * @param nf the nf
-     * @return the string
-     */
     public String toString(Unit u, NumberFormat nf) {	
         if(isCircular()) return nf.format(majorFWHM / u.value()) + " " + u.name();
         return nf.format(majorFWHM / u.value()) + "x" + nf.format(minorFWHM / u.value()) + " " + u.name() + " @ " + Util.f1.format(positionAngle / Unit.deg) + " deg.";
@@ -605,39 +489,14 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         return psf;
     }
 
-    /**
-     * Gets the beam.
-     *
-     * @param FWHM the fwhm
-     * @param grid the grid
-     * @return the beam
-     */
     public static Referenced2D getBeam(double FWHM, Grid2D<?> grid) {
         return getBeam(FWHM, grid, 3.0);
     }	
 
-    /**
-     * Gets the beam.
-     *
-     * @param FWHM the fwhm
-     * @param grid the grid
-     * @param sigmas the n beams
-     * @return the beam
-     */
     public static Referenced2D getBeam(double FWHM, Grid2D<?> grid, double sigmas) {
         return getBeam(FWHM, FWHM, 0.0, grid, sigmas);
     }
 
-    /**
-     * Gets the beam.
-     *
-     * @param majorFWHM the major fwhm
-     * @param minorFWHM the minor fwhm
-     * @param angle the angle
-     * @param grid the grid
-     * @param sigmas the n beams
-     * @return the beam
-     */
     // TODO sheared grids...
     public static Referenced2D getBeam(double majorFWHM, double minorFWHM, double angle, Grid2D<?> grid, double sigmas) {
         if(!grid.isRectilinear()) throw new IllegalArgumentException("GaussianPSF supports rectilinear grids only.");

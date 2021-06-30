@@ -37,9 +37,6 @@ public class ULongStore extends RawStore<Long> {
 		bytes = 8;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Long get(long n) throws IOException {
 		return getUnsignedLong(n);

@@ -34,10 +34,7 @@ public class VersionString implements Serializable, Comparable<VersionString> {
 	int major, minor, update, type;
 
 	public VersionString(String text) { parse(text); }
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
+
 	@Override
 	public int compareTo(VersionString other) {
 		if(major > other.major) return 1;

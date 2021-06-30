@@ -28,7 +28,7 @@ package jnum;
  * A simple interface for objects that can be represented as an array, of 1 or more dimensions, of primitive 
  * double-precission values.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public interface ViewableAsDoubles {

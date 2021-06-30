@@ -31,45 +31,25 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class PlotSidePane.
- */
 public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 940220609694011545L;
 	
-	/** The side. */
 	private int side = Plot.SIDE_UNDEFINED;
 
-	/** The ruler. */
 	private PlotSideRuler ruler;
-	
-	/** The far. */
+
 	private JComponent center, far;
 	
-	/**
-	 * Instantiates a new plot side pane.
-	 *
-	 * @param plot the plot
-	 * @param side the side
-	 */
 	public PlotSidePane(Plot<?> plot, int side) {
 		super(plot);
 		ruler = new PlotSideRuler(plot, side);
 		setSide(side);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#getSide()
-	 */
+
 	@Override
 	public int getSide() { return side; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#setSide(int)
-	 */
+
 	@Override
 	public void setSide(int side) {
 		if(this.side == side) return;
@@ -86,36 +66,17 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 		arrange();
 	}
 
-	
-	/**
-	 * Sets the ruler.
-	 *
-	 * @param value the new ruler
-	 */
 	public void setRuler(boolean value) {
 		if(value == hasRuler()) return;
 		if(value) ruler = new PlotSideRuler(getPlot(), side);
 		else ruler = null;
 		arrange();
 	}
-	
-	/**
-	 * Checks for ruler.
-	 *
-	 * @return true, if successful
-	 */
+
 	public boolean hasRuler() { return ruler != null; }
-	
-	/**
-	 * Gets the ruler.
-	 *
-	 * @return the ruler
-	 */
+
 	public PlotSideRuler getRuler() { return ruler; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.Arrangeable#arrange()
-	 */
+
 	@Override
 	public void arrange() {
 		removeAll();
@@ -145,20 +106,9 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 			c.setSize(w, c.getPreferredSize().height);
 	}
 	*/
-	
-	/**
-	 * Gets the center.
-	 *
-	 * @return the center
-	 */
+
 	public JComponent getCenter() { return center; }
-	
-	/**
-	 * Sets the center.
-	 *
-	 * @param c the c
-	 * @return the j component
-	 */
+
 	public JComponent setCenter(JComponent c) {
 		JComponent old = this.center;
 		this.center = c;
@@ -167,20 +117,9 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 		arrange();
 		return old;		
 	}
-	
-	/**
-	 * Gets the far.
-	 *
-	 * @return the far
-	 */
+
 	public JComponent getFar() { return far; }
-	
-	/**
-	 * Sets the far.
-	 *
-	 * @param c the c
-	 * @return the j component
-	 */
+
 	public JComponent setFar(JComponent c) {
 		JComponent old = this.far;
 		this.far = c;
@@ -189,63 +128,31 @@ public class PlotSidePane extends PlotPane implements PlotSide, Arrangeable {
 		arrange();
 		return old;		
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#isHorizontal()
-	 */
+
 	@Override
 	public boolean isHorizontal() { return side == Plot.TOP_SIDE || side == Plot.BOTTOM_SIDE; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#isVertical()
-	 */
+
 	@Override
 	public boolean isVertical() { return side == Plot.LEFT_SIDE || side == Plot.RIGHT_SIDE; }
 
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#setBackground(java.awt.Color)
-	 */
 	@Override
 	public void setBackground(Color color) {
 		super.setBackground(color);
 		for(Component c : getComponents()) c.setBackground(color);
 	}
-	
-	/**
-	 * The Class Spacer.
-	 */
+
 	public class Spacer extends JPanel {
-		
-		/** The Constant serialVersionUID. */
+
 		private static final long serialVersionUID = -1112347113472103728L;
-		
-		/** The size. */
+
 		private int size = 0;
-		
-		/**
-		 * Instantiates a new spacer.
-		 *
-		 * @param width the width
-		 */
+
 		public Spacer(int width) { setSpacing(width); }
-		
-		/**
-		 * Gets the spacing.
-		 *
-		 * @return the spacing
-		 */
+
 		public int getSpacing() { return size; }
-		
-		/**
-		 * Sets the spacing.
-		 *
-		 * @param width the new spacing
-		 */
+
 		public void setSpacing(int width) { this.size = width; }
-		
-		/* (non-Javadoc)
-		 * @see javax.swing.JComponent#getPreferredSize()
-		 */
+
 		@Override
 		public Dimension getPreferredSize() {
 			if(isHorizontal()) return new Dimension(0, size);

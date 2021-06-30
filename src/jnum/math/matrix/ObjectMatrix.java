@@ -768,7 +768,7 @@ extends AbstractMatrix<T> {
     /**
      * The vector basis class for the parent matrix of generic object elements
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class VectorBasis extends AbstractVectorBasis<T> {
@@ -797,7 +797,7 @@ extends AbstractMatrix<T> {
     /**
      * The LU decomposition class of the parent matrix of generic object elements.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class LU extends LUDecomposition<T> {
@@ -926,7 +926,7 @@ extends AbstractMatrix<T> {
     /**
      * The Gauss inverter class object for the parent matrix of generic object elements.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class Gauss extends GaussInverter<T> {

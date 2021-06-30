@@ -43,7 +43,6 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-// TODO: Auto-generated Javadoc
 // TODO add BinaryTableIO interface (with projections...)
 
 public class SphericalCoordinates extends Coordinate2D implements Metric<SphericalCoordinates>, Inversion {
@@ -74,9 +73,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 
 	public SphericalCoordinates(String text) { parse(text); }
 		
-	/* (non-Javadoc)
-     * @see jnum.Coordinate2D#copy(jnum.Coordinate2D)
-     */
     @Override
     public void copy(Coordinates<? extends Double> coords) {
         setX(coords.x());
@@ -102,22 +98,14 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	
 
 	public CoordinateSystem getLocalCoordinateSystem() { return defaultLocalCoordinateSystem; }
-	
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.Coordinate2D#setY(double)
-	 */
+
 	@Override
 	public final void setY(final double value) { 
 		super.setY(Math.IEEEremainder(value, Math.PI));
 		sinLat = Math.sin(value);
 		cosLat = Math.cos(value);
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#addY(double)
-	 */
+
 	@Override
 	public final void addY(final double value) { 
 		super.addY(Math.IEEEremainder(value, Math.PI));
@@ -125,32 +113,19 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		cosLat = Math.cos(y());
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#addY(double)
-	 */
 	@Override
 	public final void subtractY(final double value) { 
 		super.addY(Math.IEEEremainder(value, Math.PI));
 		sinLat = Math.sin(y());
 		cosLat = Math.cos(y());
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#zero()
-	 */
+
 	@Override
 	public void zero() { super.zero(); cosLat = 1.0; sinLat = 0.0; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#NaN()
-	 */
 	@Override
 	public void NaN() { super.NaN(); cosLat = Double.NaN; sinLat = Double.NaN; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#set(double, double)
-	 */
 	@Override
 	public void set(final double lon, final double lat) { setLongitude(lon); setLatitude(lat); }
 		
@@ -274,10 +249,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	public NumberFormat getLatitudeFormat(int decimals) {
 	    return Util.af[decimals];
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#toString()
-	 */
+
 	@Override
 	public String toString() {
 	    return toString(3);
@@ -288,17 +260,11 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		return getLongitudeFormat(decimals).format(longitude()) + " " + getLatitudeFormat(decimals).format(latitude());	
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#toString(java.text.NumberFormat)
-	 */
 	@Override
 	public String toString(NumberFormat nf) {
 		return nf.format(longitude()) + " " + nf.format(latitude());		
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#parse(java.lang.String)
-	 */
 	@Override
 	public void parse(StringParser parser) throws IllegalArgumentException {
 	    parser.skipWhiteSpaces();
@@ -340,11 +306,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         try { setLatitude(getLatitudeAxis().format.parse(spec).doubleValue()); }
         catch(ParseException e) { throw new NumberFormatException("Unparseable latitude: " + spec); }
     }
-	
-	
-	/* (non-Javadoc)
-	 * @see jnum.Metric#distanceTo(java.lang.Object)
-	 */
+
 	@Override
 	public double distanceTo(SphericalCoordinates point) {
 	    final double cosphi2cosdl = point.cosLat * Math.cos(point.x() - x());
@@ -357,10 +319,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	    return Math.atan2(ExtraMath.hypot(point.cosLat * Math.sin(point.x() - x()), cosLat * point.sinLat - sinLat * cosphi2cosdl),  c);
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#edit(nom.tam.util.Cursor, java.lang.String)
-	 */
 	@Override
 	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {	
 		// Always write longitude in the 0:2Pi range.
@@ -378,10 +336,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		//cursor.add(new HeaderCard("WCSNAME" + alt, getCoordinateSystem().getName(), "coordinate system description."));
 		if(alt.length() == 0) c.add(new HeaderCard("WCSAXES", 2, "Number of celestial coordinate axes."));
 	}
-		
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#parse(nom.tam.fits.Header, java.lang.String)
-	 */
+
 	@Override
 	public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
 		setLongitude(header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x()) * Unit.deg);
@@ -391,18 +346,12 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		//String name = header.getStringValue("WCSNAME");
 		//if(name != null) getCoordinateSystem().name = name;
 	}
-	
-	/* (non-Javadoc)
-     * @see jnum.math.Invertible#invert()
-     */
+
     @Override
     public void flip() {
         invertX(); invertY();
     }
-    
-    /* (non-Javadoc)
-     * @see kovacs.math.Coordinate2D#invertY()
-     */
+
     @Override
     public void invertY() {
         super.invertY();

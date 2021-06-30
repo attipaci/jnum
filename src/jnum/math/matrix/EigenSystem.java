@@ -30,26 +30,26 @@ import jnum.math.MathVector;
  * is equivalent to the diagonalized form of the matrix from which it is derived, with the change
  * of basis transformations to and from the orihinal basis and the diagonalized matrix basis.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
- * @param <E>   Generic matrix element type
- * @param <V>   Generic eigenvalue type
+ * @param <ElementType>   Generic matrix element type
+ * @param <ValueType>     Generic eigenvalue type
  */
-public interface EigenSystem<E, V> {
+public interface EigenSystem<ElementType, ValueType> {
     
     /**
      * Gets the eigenvalues for this system.
      * 
      * @return  the eigenvalues (in matching order to the eigenvectors returned by {@link #getEigenVectors()}.
      */
-    public AbstractVector<V> getEigenValues();
+    public AbstractVector<ValueType> getEigenValues();
     
     /**
      * Gets the unnormalized eigenvectors for this system.
      * 
      * @return  the unnormalized eigenvectors (in matching order to the eigenvectors returned by {@link #getEigenValues()}.
      */
-    public AbstractVector<E>[] getEigenVectors();
+    public AbstractVector<ElementType>[] getEigenVectors();
     
     /**
      * Gets the change of basis matrix that converts vectors from the original basis to the eigenbasis
@@ -57,7 +57,7 @@ public interface EigenSystem<E, V> {
      *  
      * @return      The change of basis matrix from the original to the eigenbasis.
      */
-    public AbstractMatrix<E> toEigenBasis();
+    public AbstractMatrix<ElementType> toEigenBasis();
     
     /**
      * Gets the change of basis matrix that converts vectors from the eigenbasis back to the basis
@@ -65,7 +65,7 @@ public interface EigenSystem<E, V> {
      *  
      * @return      The change of basis matrix from the eigenbasis to the basis of the original matrix.
      */
-    public AbstractMatrix<E> fromEigenBasis();
+    public AbstractMatrix<ElementType> fromEigenBasis();
     
     /**
      * Converts a vector from the original basis to the eigenbasis.
@@ -73,7 +73,7 @@ public interface EigenSystem<E, V> {
      * @param v     Vector in the basis of the original matrics
      * @return      Same vector in the eigenbasis of the diagonalized matrix.
      */
-    public AbstractVector<E> toEigenBasis(MathVector<? extends E> v);
+    public AbstractVector<ElementType> toEigenBasis(MathVector<? extends ElementType> v);
     
     /**
      * Converts a vector from the eigenbasis to the original basis.
@@ -81,14 +81,14 @@ public interface EigenSystem<E, V> {
      * @param v     Vector in the eigenbasis.
      * @return      Same vector in the basis of the original matrix.
      */
-    public AbstractVector<E> fromEigenBasis(MathVector<? extends E> v);
+    public AbstractVector<ElementType> fromEigenBasis(MathVector<? extends ElementType> v);
  
     /**
      * Gets the determiants, simply as the product of the eigenvalues.
      * 
      * @return      The matrix determinant.
      */
-    public V getDeterminant();
+    public ValueType getDeterminant();
     
     /**
      * Gets the diagonalized matrix form, in which the eigenvalues populate
@@ -96,5 +96,5 @@ public interface EigenSystem<E, V> {
      * 
      * @return      The diagonalized matrix.
      */
-    public DiagonalMatrix<V> getDiagonalMatrix();
+    public DiagonalMatrix<ValueType> getDiagonalMatrix();
 }

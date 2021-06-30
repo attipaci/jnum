@@ -36,7 +36,7 @@ import jnum.math.Scalar;
 /**
  * A mathematical vector class containing complex components.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class ComplexVector extends ObjectVector<Complex> implements ComplexScaling, ComplexConjugate, ComplexMultiplication<ComplexVector> {

@@ -38,16 +38,10 @@ public class InterpolatedStore extends DataStore<Double> implements Serializable
 		super(name);
 		this.values = values;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#hashCode()
-	 */
+
 	@Override
 	public int hashCode() { return super.hashCode() ^ values.hashCode(); }
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -71,17 +65,11 @@ public class InterpolatedStore extends DataStore<Double> implements Serializable
 		return values.length();
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Double get(long n) throws IOException {
 		return values.get(n).doubleValue();
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#getSamples()
-	 */
 	@Override
 	public int getSamples() {
 		return values.getSamples();

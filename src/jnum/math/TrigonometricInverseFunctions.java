@@ -32,17 +32,17 @@ package jnum.math;
 public interface TrigonometricInverseFunctions {
 
 	/**
-	 * Transform this object to its inverse sine. I.e. <i>x</i> becomes asin(<i>x</i>).
+	 * Transforms this object to its inverse sine. I.e. <i>x</i> becomes asin(<i>x</i>).
 	 */
 	public void asin();
 	
 	/**
-	 * Transform this object to its inverse cosine. I.e. <i>x</i> becomes acos(<i>x</i>).
+	 * Transforms this object to its inverse cosine. I.e. <i>x</i> becomes acos(<i>x</i>).
 	 */
 	public void acos();
 	
 	/**
-	 * Transform this object to its inverse tangent. I.e. <i>x</i> becomes atan(<i>x</i>).
+	 * Transforms this object to its inverse tangent. I.e. <i>x</i> becomes atan(<i>x</i>).
 	 */
 	public void atan();
 	

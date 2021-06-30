@@ -48,7 +48,7 @@ import jnum.math.Scalable;
  * 
  * You can nevertheless intermingle normal fully 2D matrices and diagonal matrices in dot products etc.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>   The generic type of the matrix elements in this diagonal matrix.
  */
@@ -361,7 +361,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
      * A class of diagonal matrices with real numbers (<code>double</code>) elements. It is backed by a
      * <code>double[]</code> array storage. 
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public static class Real extends DiagonalMatrix<Double> {
@@ -497,7 +497,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
          * (on the right) as a new 2D generic type matrix of the same class as the argument.
          * 
          * @param <T>       The generic type of elements in the specified matrix argument, and returned matrix.
-         * @param righthand The matrix that multiplies this matrix from the left-hand side.
+         * @param lefthand The matrix that multiplies this matrix from the left-hand side.
          * @return          A matrix of the same class as the argument, with the result of the dot product.
          */
         public <T extends Scalable> AbstractMatrix<T> dotFromLeft(AbstractMatrix<T> lefthand) {
@@ -739,7 +739,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     /**
      * A class of diagonal matrices with non-primitive generic type values.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      * @param <T>       The generic type of elements in this diagonal matrix. The typer must be capable of supporting
      *                  a set of basic mathematical operations in order to support a matrix algebra.
@@ -1146,7 +1146,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     /**
      * A diagonal matrix class with complex-valued elements.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public static class Complex extends Generic<jnum.math.Complex> {

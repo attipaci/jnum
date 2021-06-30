@@ -36,7 +36,7 @@ import jnum.math.matrix.Matrix;
 /**
  * A class representing a Cartesian vector in a 2D plane, i.e. with <i>x</i>, and <i>y</i> components.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Vector2D extends Coordinate2D implements MathVector<Double> {
@@ -215,11 +215,6 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
     }
 
 
-
-
-    /* (non-Javadoc)
-     * @see jnum.Coordinate2D#getValue(int)
-     */
     @Override
     public double getValue(int field) throws NoSuchFieldException {
         switch(field) {
@@ -230,9 +225,6 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
         }
     }
 
-    /* (non-Javadoc)
-     * @see jnum.Coordinate2D#setValue(int, double)
-     */
     @Override
     public void setValue(int field, double value) throws NoSuchFieldException {
         switch(field) {

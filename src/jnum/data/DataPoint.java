@@ -88,9 +88,6 @@ public class DataPoint extends WeightedPoint {
                 + before + Util.s[errorFigures].format(rms) + after + (unit == null ? "" : unit.name());   
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.WeightedPoint#toString(java.lang.String, java.lang.String)
-     */
     @Override
     public String toString(String before, String after) {
         return toString(this, null, before, after);

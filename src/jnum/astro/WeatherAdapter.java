@@ -26,49 +26,32 @@ package jnum.astro;
 
 public class WeatherAdapter implements Weather {
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.Weather#getAmbientHumidity()
-	 */
+
 	@Override
 	public double getAmbientHumidity() {
 		return Double.NaN;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.Weather#getAmbientPressure()
-	 */
 	@Override
 	public double getAmbientPressure() {
 		return Double.NaN;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.Weather#getAmbientTemperature()
-	 */
 	@Override
 	public double getAmbientKelvins() {
 		return Double.NaN;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.Weather#getWindDirection()
-	 */
 	@Override
 	public double getWindDirection() {
 		return Double.NaN;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.Weather#getWindPeak()
-	 */
 	@Override
 	public double getWindPeak() {
 		return Double.NaN;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.astro.Weather#getWindSpeed()
-	 */
 	@Override
 	public double getWindSpeed() {
 		return Double.NaN;

@@ -37,9 +37,6 @@ public class UIntegerStore extends RawStore<Long> {
 		bytes = 4;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Long get(long n) throws IOException {
 		return getUnsignedInt(n);

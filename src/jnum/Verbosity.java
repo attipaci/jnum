@@ -29,7 +29,7 @@ package jnum;
  * {@link jnum.reporting.Reporter} abstract class. 
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  * 
  * @see jnum.reporting.BasicMessaging
  * @see jnum.reporting.Reporter

@@ -44,7 +44,7 @@ import jnum.math.Range;
 import jnum.math.Vector2D;
 import jnum.util.PrefixedUnit;
 
-// TODO: Auto-generated Javadoc
+
 // TODO
 //   * 4 orientations (H & V, with alignment...)
 //   * update also content.getCoordinateLayer() if necessary for inward ticks
@@ -88,18 +88,12 @@ public abstract class BasicRuler extends JComponent implements PlotSide {
 		setSide(edge);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#setSide(int)
-	 */
 	@Override
 	public void setSide(int edge) {
 		this.side = edge;
 		tickMarks.setSide(edge);
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#getSide()
-	 */
 	@Override
 	public int getSide() { return side; }
 
@@ -110,16 +104,10 @@ public abstract class BasicRuler extends JComponent implements PlotSide {
 		else this.unit = new PrefixedUnit(u);
 		setRange(min, max);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#isHorizontal()
-	 */
+
 	@Override
 	public boolean isHorizontal() { return side == Plot.TOP_SIDE || side == Plot.BOTTOM_SIDE; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#isVertical()
-	 */
+
 	@Override
 	public boolean isVertical() { return side == Plot.LEFT_SIDE || side == Plot.RIGHT_SIDE; }
 	
@@ -173,10 +161,7 @@ public abstract class BasicRuler extends JComponent implements PlotSide {
 		if(mainDivisions != null) mainDivisions.update(min, max);
 		if(subDivisions != null) subDivisions.update(min, max);
 	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#setBackground(java.awt.Color)
-	 */
+
 	@Override
 	public void setBackground(Color color) {
 		super.setBackground(color);
@@ -252,9 +237,7 @@ public abstract class BasicRuler extends JComponent implements PlotSide {
 		}
 		
 		// TODO separate handling of CUSTOM subdivisions....
-		/* (non-Javadoc)
-		 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-		 */
+
 		@Override
 		public void paintComponent(Graphics g) {	
 			super.paintComponent(g);

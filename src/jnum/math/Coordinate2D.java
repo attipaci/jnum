@@ -50,7 +50,7 @@ import nom.tam.util.Cursor;
 /**
  * A base class for 2D coordinates of all types. That is basically anything with a pair of real values.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Coordinate2D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate2D>, 
@@ -106,8 +106,8 @@ ViewableAsDoubles, Parser, NumberFormating {
      * otherwise represent anentirely distinct class of coordinates from those of the
      * argument.
      * 
-     * @param v     The pair of coordinates to mimic, but the argument may be of an entirely
-     *              different (and even incopatible type) of coordinates. 
+     * @param template  The pair of coordinates to mimic, but the argument may be of an entirely
+     *                  different (and even incopatible type) of coordinates. 
      */
 	public Coordinate2D(Coordinate2D template) { this(template.x, template.y); }
 	
@@ -237,26 +237,26 @@ ViewableAsDoubles, Parser, NumberFormating {
 	
 	/**
 	 * Parses text x,y 2D coordinate representations that are in the format(s) of:
-	 * <p>
+	 * 
 	 * <pre>
 	 * {@code
 	 *     x,y / x y
 	 * }
 	 * </pre>
-	 * <p>
+	 * 
 	 * or
-	 * <p>
+	 * 
 	 * <pre>
 	 * {@code
 	 *     (x,y) / (x y)
 	 * }
 	 * </pre>
-	 * <p>
+	 * 
 	 * More specifically, the x and y values may be separated either by comma(s) or white space(s) (including 
 	 * tabs line breaks, carriage returns), or a combination of both. The pair of values may be bracketed (or 
 	 * not). Any number of white spaces may exists between the elements (brackets and pair of values), or 
 	 * precede the text element. Thus, the following will parse as a proper x,y (1.0,-2.0) pair:
-	 * <p>
+	 * 
 	 * <pre>
 	 * {@code
 	 *     (  \t\n 1.0 ,,, \r , \t -2.0    \n  )

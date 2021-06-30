@@ -30,7 +30,7 @@ package jnum;
  * typical rounding errors propagated through a moderate number of single-precision floating point operations
  * to the arguments.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  */
 public final class SafeMath {
 

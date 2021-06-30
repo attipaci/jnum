@@ -46,7 +46,7 @@ import jnum.util.HashCode;
  * An abstract 2D image class that operates solely via element access, but does not allow changing size
  * or access the backup storage object directly.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public abstract class Data2D extends RegularData<Index2D, Vector2D> implements Values2D {

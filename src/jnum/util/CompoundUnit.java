@@ -61,10 +61,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	    if(factors != null) clone.factors = (ArrayList<ExponentUnit>) factors.clone();
 	    return clone;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Unit#copy()
-	 */
+
 	@Override
 	public CompoundUnit copy() {
 		CompoundUnit copy = (CompoundUnit) super.copy();
@@ -72,10 +69,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		for(ExponentUnit factor : factors) copy.factors.add(factor.copy());
 		return copy;
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Unit#name()
-	 */
+
 	@Override
 	public String name() {
 		StringBuffer name = new StringBuffer();
@@ -107,10 +101,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	public void multiplyBy(Unit u) {
 		multiplyBy(u, false);
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.math.Division#divideBy(java.lang.Object)
-	 */
+
 	@Override
 	public void divideBy(Unit u) {
 		multiplyBy(u, true);
@@ -145,12 +136,6 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		factors.add(new ExponentUnit(u, exp));
 	}
 	
-	
-	
-	
-	/* (non-Javadoc)
-	 * @see jnum.Unit#value()
-	 */
 	@Override
 	public double value() {
 		double product = 1.0;
@@ -199,10 +184,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 		if(invert) u.setExponent(-u.getExponent());
 		factors.add(u);	
 	}
-		
-	/* (non-Javadoc)
-	 * @see kovacs.math.Multiplicative#setProduct(java.lang.Object, java.lang.Object)
-	 */
+
 	@Override
 	public void setProduct(Unit a, Unit b) {
 		factors.clear();

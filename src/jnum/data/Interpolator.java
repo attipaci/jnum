@@ -52,15 +52,10 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		validate();
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.util.AbstractList#hashCode()
-	 */
 	@Override
 	public int hashCode() { return super.hashCode() ^ fileName.hashCode() ^ (verbose ? 1 : 0); }
 	
-	/* (non-Javadoc)
-	 * @see java.util.AbstractList#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -182,9 +177,6 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 
 		public Data() {}
 		
-		/* (non-Javadoc)
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
 		@Override
 		public int compareTo(Data other) {
 			return Double.compare(ordinate, other.ordinate);

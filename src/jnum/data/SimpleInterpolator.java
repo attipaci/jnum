@@ -42,9 +42,7 @@ public class SimpleInterpolator extends Interpolator {
 		super(fileName);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.data.Interpolator#readData(java.lang.String)
-	 */
+
 	@Override
 	public void readData(String fileName) throws IOException {
 		new LineParser() {

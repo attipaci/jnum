@@ -52,9 +52,7 @@ public abstract class LocalizedData implements Serializable, Comparable<Localize
 	
 	public boolean isConsistentWith(LocalizedData other) { return true; }
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
+
 	@Override
 	public int compareTo(LocalizedData other) { return getLocality().compareTo(other.getLocality()); }
 	
@@ -66,9 +64,7 @@ public abstract class LocalizedData implements Serializable, Comparable<Localize
 		return getLocality().distanceTo(loc);
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.Metric#distanceTo(java.lang.Object)
-	 */
+
 	@Override
 	public double distanceTo(LocalizedData other) {
 		return distanceTo(other.getLocality());

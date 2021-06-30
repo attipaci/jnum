@@ -50,8 +50,8 @@ public abstract class Reporter {
     
     /**
      * Processes an informational message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the 
-     * object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). 
+     * The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
@@ -64,12 +64,12 @@ public abstract class Reporter {
    
     /**
      * Processes a notification message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). 
+     * The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * For example, a program may send a notification when it created a file, or connected to a network resource.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
@@ -79,12 +79,12 @@ public abstract class Reporter {
     
     /**
      * Processes a debugging message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). 
+     * The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * Debugging messages should normally be suppressed (not recorded to displayed to the user), except if the
      * program is being run in debugging mode.
      * 
@@ -95,12 +95,11 @@ public abstract class Reporter {
     
     /**
      * Processes a warning message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * Warnings are meant to report something that did not go as planned, but which do not present a critical
      * issue. They are often used to report certain types of Exceptions, although they are not necessarily linked
      * to an {@link Exception}.
@@ -115,12 +114,11 @@ public abstract class Reporter {
     
     /**
      * Processes an error message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * Like warnings, but indicating a more critical issue or error. The user may want to abort whatever process produced
      * the error, and exit the program or start fresh. Also like warnings, errors are often, but not always, linked
      * to an {@link Exception} and/or {@link Error}.
@@ -136,16 +134,15 @@ public abstract class Reporter {
 
     /**
      * Processes a trace that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * A trace may be generated when an {@link Exception} or a {@link Error} is encountered in a program, 
      * or they may be generated for
-     * monitoring or debugging purposes. They may often follow after {@lnik #warning(Object, String)} or 
-     * {@link #error(Object, String)String)} messages to provide
+     * monitoring or debugging purposes. They may often follow after {@link #warning(Object, String)} or 
+     * {@link #error(Object, String)} messages to provide
      * more detail about the particulars of the given error/warning.
      * 
      * @param e     The {@link Throwable} object, such as an {@link Exception} or {@link Error} whose trace is to be reported.
@@ -157,14 +154,14 @@ public abstract class Reporter {
     
 
     /**
-     * Processes an error linked to a {@link Thowable} (e.g. a Java {@link java.lang.Exception} or {@link Error}). 
+     * Processes an error linked to a {@link Throwable} (e.g. a Java {@link Exception} or {@link Error}). 
      * The default implementation here is to report the included message as an {@link #error(Object, String)}, 
      * and then provide a {@link #trace(Throwable)} if debug is set to true.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
      * @param e         The {@link Throwable} object, such as an {@link Exception} or {@link Error}, that 
      *                  contains the relevant information about the error.
-     * @param debug     Set to <tt>true</tt> if a trace should be reported for this error via a {@link #trace(Throwable)} call.
+     * @param debug     Set to <code>true</code> if a trace should be reported for this error via a {@link #trace(Throwable)} call.
      * 
      * @see #error(Object, Throwable, boolean)
      * @see #error(Object, String)
@@ -192,7 +189,7 @@ public abstract class Reporter {
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
      * @param e         The {@link Throwable} object, such as an {@link Exception}, that contains the relevant information about the error.
-     * @param debug     Set to <tt>true</tt> if a trace should be reported for this warning via a {@link #trace(Throwable)} call.
+     * @param debug     Set to <code>true</code> if a trace should be reported for this warning via a {@link #trace(Throwable)} call.
      * 
      * @see #warning(Object, Exception)
      * @see #warning(Object, String)
@@ -218,12 +215,11 @@ public abstract class Reporter {
 
     /**
      * Processes a status message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * A status message might for example report what stage or phase a program is currently in.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
@@ -233,12 +229,11 @@ public abstract class Reporter {
     
     /**
      * Processes a result that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * A result might be generated from a calculation, or may report the parameters of a fit to the data.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
@@ -249,12 +244,11 @@ public abstract class Reporter {
     
     /**
      * Processes a detail message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * Details are like informational messages, but with lesser importance. Generally speaking details should be
      * pretty safe to ignore, unless you want to scrutinize the details of what's happening. 
      * They are meant as a way to provide more verbose information about what is happening.
@@ -267,12 +261,11 @@ public abstract class Reporter {
     
     /**
      * Processes a value or values that were generated that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of /tt><tt>Foo<, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * For example, values may be reporting some input parameters, or values parsed from an input file. They may come
      * with extra text that defines their meaning and context.
      * 
@@ -283,12 +276,11 @@ public abstract class Reporter {
     
     /**
      * Processes a suggestion that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <tt>Foo</tt>, or it may be a class such as <tt>Foo.class</tt>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
      * 
-     * <p>
      * Suggestions are often generated following a {@link #warning(Object, String)} or {@link #error(Object, String)} call, 
      * and may provide information on what you may do to correct or work around some issue.
      * 

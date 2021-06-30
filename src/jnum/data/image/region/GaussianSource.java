@@ -50,12 +50,8 @@ import nom.tam.util.Cursor;
 
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class GaussianSource.
- *
- * @param <CoordinateType> the generic type
- */
+
+
 public class GaussianSource extends CircularRegion {
 
     private static final long serialVersionUID = 786127030179333921L;
@@ -181,27 +177,17 @@ public class GaussianSource extends CircularRegion {
         beam.deconvolveWith(psf);
         return beam;
     }
-    
-    
-    /* (non-Javadoc)
-     * @see jnum.data.CircularRegion#toCrushString(jnum.data.GridImage)
-     */
+
     @Override
     public String toCrushString() {
         return getID() + "\t" + super.toCrushString() + "  " + peak + " " + unitName;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.Region#getComment()
-     */
     @Override
     public String getComment() {
         return "s/n=" + Util.f2.format(peak.significance()) + " " + super.getComment();
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.CircularRegion#parseCrush(java.lang.String, jnum.data.GridImage)
-     */
     @Override
     public void parseCrush(StringParser parser) throws Exception {
         super.parseCrush(parser);

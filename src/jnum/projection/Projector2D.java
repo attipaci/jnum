@@ -72,7 +72,7 @@ public class Projector2D<CoordinateType extends Coordinate2D> implements Seriali
 	 * @return The coordinates that match the current offsets.
 	 * 
 	 * @see #getOffset()
-	 * @see #setOffset()
+	 * @see #setOffset(Vector2D)
 	 */
 	public CoordinateType getCoordinates() { return coords; }
 
@@ -101,7 +101,7 @@ public class Projector2D<CoordinateType extends Coordinate2D> implements Seriali
      * Sets the coordinates to the specified value and recalculates the projected offsets to match, so that
      * subsequent calls to {@link #getCoordinates()} and {@link #getOffset()} return consistent values.
      * 
-     * @param offset       The projected offsets to set.
+     * @param coords       The coordinates to project.
      */
 	public void setCoordinates(CoordinateType coords) {
 	    if(this.coords != coords) this.coords.copy(coords);

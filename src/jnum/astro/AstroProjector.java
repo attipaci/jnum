@@ -60,19 +60,13 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	    return clone;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
 		if(equatorial != null) if(equatorial != getCelestial()) hash ^= equatorial.hashCode();
 		return hash;
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -101,9 +95,7 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	
 	public final boolean isEquatorial() { return getCoordinates() instanceof EquatorialCoordinates; }
 	
-	/* (non-Javadoc)
-	 * @see jnum.Projector2D#setReferenceCoords()
-	 */
+
 	@Override
 	public void setReferenceCoords() {
 		super.setReferenceCoords();

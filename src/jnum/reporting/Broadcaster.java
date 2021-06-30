@@ -31,7 +31,7 @@ import java.util.Hashtable;
  * useful for managing message consumers which work independently, but process the same messages.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Broadcaster extends Reporter {
@@ -108,97 +108,60 @@ public class Broadcaster extends Reporter {
      *              reporter with the given ID was part of the broadcast. 
      */
     public synchronized Reporter remove(String id) { return reporters.remove(id); }
-    
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#info(java.lang.Object, java.lang.String)
-     */
+
     @Override
     public synchronized void info(Object owner, String message) {
         for(Reporter r : reporters.values()) r.info(owner, message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#notify(java.lang.Object, java.lang.String)
-     */
     @Override
     public synchronized void notify(Object owner, String message) {
         for(Reporter r : reporters.values()) r.notify(owner, message);
     }
-    
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#debug(java.lang.Object, java.lang.String)
-     */
+
     @Override
     public synchronized void debug(Object owner, String message) {
         for(Reporter r : reporters.values()) r.debug(owner, message);
     }
-    
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#warning(java.lang.Object, java.lang.String)
-     */
+
     @Override
     public synchronized void warning(Object owner, String message) {
-        for(Reporter r : reporters.values()) r.warning(owner, message);
-        
+        for(Reporter r : reporters.values()) r.warning(owner, message);     
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#error(java.lang.Object, java.lang.String)
-     */
     @Override
     public synchronized void error(Object owner, String message) {
         for(Reporter r : reporters.values()) r.error(owner, message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#trace(java.lang.Throwable)
-     */
     @Override
     public synchronized void trace(Throwable e) {
         for(Reporter r : reporters.values()) r.trace(e);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#status(java.lang.Object, java.lang.String)
-     */
     @Override
     public synchronized void status(Object owner, String message) {
         for(Reporter r : reporters.values()) r.status(owner, message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#result(java.lang.Object, java.lang.String)
-     */
     @Override
     public synchronized void result(Object owner, String message) {
         for(Reporter r : reporters.values()) r.result(owner, message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#detail(java.lang.Object, java.lang.String)
-     */
     @Override
     public synchronized void detail(Object owner, String message) {
         for(Reporter r : reporters.values()) r.detail(owner, message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#values(java.lang.Object, java.lang.String)
-     */
     @Override
     public synchronized void values(Object owner, String message) {
         for(Reporter r : reporters.values()) r.values(owner, message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#suggest(java.lang.Object, java.lang.String)
-     */
     @Override
     public synchronized void suggest(Object owner, String message) {
         for(Reporter r : reporters.values()) r.suggest(owner, message);
     }
-    
-    
-    
-  
+      
 }

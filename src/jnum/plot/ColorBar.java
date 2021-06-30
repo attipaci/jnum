@@ -62,37 +62,22 @@ public class ColorBar extends JComponent implements PlotSide {
 		setLayout(new BorderLayout());
 		//TODO set the unit on the ruler to that of the image...
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.Component#setName(java.lang.String)
-	 */
+
 	@Override
 	public void setName(String name) {
 		super.setName(name);
 		ruler.setName(name);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#isHorizontal()
-	 */
+
 	@Override
 	public boolean isHorizontal() { return side == Plot.TOP_SIDE || side == Plot.BOTTOM_SIDE; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#isVertical()
-	 */
+
 	@Override
 	public boolean isVertical() { return side == Plot.LEFT_SIDE || side == Plot.RIGHT_SIDE; }
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#getSide()
-	 */
+
 	@Override
 	public int getSide() { return side; }
-		
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotSide#setSide(int)
-	 */
+
 	@Override
 	public void setSide(int side) {
 		if(side == this.side) return;
@@ -121,10 +106,7 @@ public class ColorBar extends JComponent implements PlotSide {
 		
 		revalidate();
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.Container#validate()
-	 */
+
 	@Override
 	public void validate() {
 		arrange();
@@ -144,10 +126,7 @@ public class ColorBar extends JComponent implements PlotSide {
 			this.width = width;
 			setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		}
-		
-		/* (non-Javadoc)
-		 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-		 */
+
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponents(g);
@@ -186,10 +165,6 @@ public class ColorBar extends JComponent implements PlotSide {
 			else if(isHorizontal()) setPreferredSize( new Dimension(2, width));
 		}
 		
-
-		/* (non-Javadoc)
-		 * @see java.awt.Container#validate()
-		 */
 		@Override
 		public void validate() {
 			setPreferredSize();
@@ -218,9 +193,6 @@ public class ColorBar extends JComponent implements PlotSide {
 			super(ColorBar.this.getSide());
 		}
 
-		/* (non-Javadoc)
-		 * @see jnum.plot.BasicRuler#getPosition(double, java.awt.geom.Point2D)
-		 */
 		@Override
 		public void getPosition(double value, Point2D pos) {
 			double frac = (value - range.min()) / range.span();
@@ -228,9 +200,6 @@ public class ColorBar extends JComponent implements PlotSide {
 			else if(isVertical()) pos.setLocation(0, getHeight() * (1.0 - frac));
 		}
 
-		/* (non-Javadoc)
-		 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-		 */
 		@Override
 		public void paintComponent(Graphics g) {	
 			range = image.getRange();
@@ -239,10 +208,7 @@ public class ColorBar extends JComponent implements PlotSide {
 			super.paintComponent(g);
 			
 		}
-		
-		/* (non-Javadoc)
-		 * @see jnum.plot.BasicRuler#getValue(java.awt.geom.Point2D)
-		 */
+
 		@Override
 		public double getValue(Point2D pos) {
 			Range range = image.getRange();

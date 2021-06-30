@@ -40,9 +40,6 @@ public class AstroSystem implements Serializable {
 		this.system = coordType;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -53,9 +50,7 @@ public class AstroSystem implements Serializable {
 		return a.system.equals(system); 
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();

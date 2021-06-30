@@ -48,8 +48,88 @@ import java.text.*;
 /**
  * A matrix object containing real valued elements. The matrix is backed by a <code>double[][]</code> array storage.
  * 
+ * For example, you can start by creating a 3x4 matrix:
+ *  
+ *  <pre>
+ *   Matrix M = new Matrix(3, 4);
+ *  </pre>
+ *  
+ *  The above creates a 3x4 matrix with all zero elements initially. Alternatively, we can create the
+ *  another 4x3 matrix with the <code>double[][]</code> backing array that holds it's initial data:
+ *  
+ *  <pre>
+ *   Matrix B = new Matrix(new double[] { { 1, 0, 1, 2}, {2, -3, 1, 4}, {0, 1, 0, 4} });
+ *  </pre>
+ *  
+ *  Matrices stay fixed size throughout their life cycle. That is <b>B</b> will remain a 3x4
+ *  matrix as long as it exists, but we can make changes to it's elements, or even swap out the
+ *  backing array completely, as long as the new backing array has the same size and shape as
+ *  before (3x4). For example:
+ *  
+ *  <pre>
+ *   M.set(0, 3, -6.5);
+ *   M.addIdentity(2.2);
+ *   M.swap(0, 1, 2, 1);
+ *   M.swapRows(1, 2);
+ *   M.setColumn(1, new double[] { 3, -3, 2 });
+ *  </pre>
+ *  
+ *  Matrices are most often used for transforming vectors. And, <code>Matrix</code> can operate a several 
+ *  vector types, such as:
+ *  
+ *  <pre>
+ *   double[] d1 = B.dot(new double[] { 1.5, 2.5, -1.0 });
+ *   float[] f1 = B.dot(new float[] { 1.5, 2.5, -1.0 });
+ *   
+ *   RealVector v0 = ...
+ *   RealVector v1 = M.dot(v0);
+ *   
+ *   B.dot(new Vector3D(0.0, 1.0, 0.0), v1);
+ *  </pre>
+ *  
+ *  Just to give a few examples. We can also calculate the dot product <b>M</b> <i>dot</i> <b>B</b>:
+ *  
+ *  <pre>
+ *   Matrix P = M.dot(B)
+ *  </pre>
+ *  
+ *  You can print the dot product, e.g. with the your desired number format, such as using 3 significant
+ *  figures using {@link jnum.Util#s3}:
+ *  
+ *  <pre>
+ *   System.out.println(" M.B = " + P.toString(Util.s3));
+ *  </pre>
+ *  
+ *  And, since <b>P</b> is a square matrix, we can calculate it's inverse, simply as:
+ *  
+ *  <pre>
+ *   Matrix invP = P.getInverse();
+ *  </pre>
+ *  
+ *  The above calculates the inverse using an LU decomposition (which is fastest). But you can also
+ *  calculate the inverse using Gauss-Jordan elimination via {@link #getGaussInverse()}
+ *  or via singular-value decomposition {@link #getSVDInverse()}.
+ *  
+ *  While at it, instead of shooting directly for the inverse, you can get one of the intermediate
+ *  objects, such a the matrix's LU decomposition (via {@link #getLUDecomposition()}),
+ *  Gauss inverter {via {@link #getGaussInverter()}, or SVD (via {@link #getSVD()}.
+ *  These objects can give you the inverse again and again at no significant extra cost, and provide
+ *  additional useful functions, such as getting the determinant ({@link LU#getDeterminant()})
+ *  at minimal extra computational cost.
+ *  
+ *  Since <b>P</b> is a square matrix, we can also find its eigenvalues and eigenvectors via 
+ *  {@link #getEigenSystem} or via {@link #getJacobiTransform()}:
+ *  
+ *  <pre>
+ *   EigenSystem<Double, Double> e = P.getEigenSystem();
+ *   RealVector v = e.getEigenValues();
+ *   VectorBasis b = e.getEigenVectors();
+ *   Matrix B = e.toEigenBasis();       # Matrix that converts original vector to the eigen basis
+ *   Matrix iB = e.fromEigenBasis();    # Matrix that coverts from the eigen basis back to the original basis.
+ *  </pre>
+ *  
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles, IndexedValues<Index2D, Double> {
@@ -1007,7 +1087,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     /**
      * The vector basis class for the parent matrix.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class VectorBasis extends AbstractVectorBasis<Double> {
@@ -1017,9 +1097,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
             super(Matrix.this.rows());
         }
         
-        /* (non-Javadoc)
-         * @see kovacs.math.AbstractVectorBasis#asMatrix()
-         */
+
         @Override
         public Matrix asRowVector() {
             Matrix M = new Matrix(size());
@@ -1037,7 +1115,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     /**
      * The LU decomposition class of the parent matrix.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class LU extends LUDecomposition<Double> implements RealMatrixSolver {
@@ -1196,7 +1274,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     /**
      * The Gauss inverter class for the parent matrix.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */
     public class Gauss extends GaussInverter<Double> implements RealMatrixSolver {
@@ -1261,7 +1339,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     /**
      * The Jacobi transform class of the parent matrix.
      * 
-     * @author Attila Kovacs <attila@sigmyne.com>
+     * @author Attila Kovacs
      *
      */ 
     public class JacobiTransform implements EigenSystem<Double, Double> {

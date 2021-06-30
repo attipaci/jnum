@@ -27,7 +27,7 @@ package jnum.math.matrix;
 /**
  * A class for handling the LU decomposition of full 2D matrices of any generic type.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>       The generic type of matrix element
  */

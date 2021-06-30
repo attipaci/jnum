@@ -26,11 +26,11 @@ package jnum;
 /**
  * The interface for implementing standard deep copies of objects. Deep copies are useful for spawning a new, entirely
  * independent object from an object, while carrying over all of the original object properties.
- * <p>
+ * 
  * 
  * <b>The main principle of deep copies is to ensure that any changes to the copy will leave the original object uneffected, 
  * and vice-versa.</b> As such, deep copies must follow the following rules:
- * <p>
+ * 
  * 
  *  <ul>
  *  <li>The copy's class should match the original's class exactly.
@@ -43,7 +43,7 @@ package jnum;
  *  <li>Copies are most easily generated starting via {@link #clone()}. However, cloning is not required.
  *  </ul>
  *
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <Type> the generic type of the copies created.
  * 

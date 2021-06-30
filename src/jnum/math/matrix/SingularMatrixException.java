@@ -27,7 +27,7 @@ package jnum.math.matrix;
  * An exception thrown when a singularity (degeneracy) in the matrix prevents
  * performing an operation, such as a matrix inversion.. 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class SingularMatrixException extends ArithmeticException {

@@ -36,9 +36,6 @@ public class ByteStore extends RawStore<Byte> {
 		bytes = 1;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Byte get(long n) throws IOException {
 		return getByte(n);

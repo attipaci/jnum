@@ -32,9 +32,6 @@ import jnum.plot.ColorScheme;
 
 public class Colorful extends ColorScheme {
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.ColorScheme#getRGB(double)
-	 */
 	@Override
 	public int getRGB(double scaled) {
 		if(Double.isNaN(scaled)) return noData;
@@ -47,9 +44,6 @@ public class Colorful extends ColorScheme {
 		else return Color.HSBtoRGB(4.0F/3.0F*(0.8F - (float)scaled), 1.0F, 1.0F);		
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.ColorScheme#getHighlight()
-	 */
 	@Override
 	public Color getHighlight() {
 		return Color.WHITE;

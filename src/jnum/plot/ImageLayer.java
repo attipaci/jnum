@@ -49,10 +49,7 @@ public abstract class ImageLayer extends ContentLayer {
 	    logRange = new Range();
 	    sqrtRange = new Range();
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.plot.PlotLayer#setContentArea(kovacs.plot.ContentArea)
-	 */
+
 	@Override
 	public void setContentArea(ContentArea<?> area) {
 		super.setContentArea(area);
@@ -81,10 +78,6 @@ public abstract class ImageLayer extends ContentLayer {
 		return Double.isNaN(value) ? colorScheme.noData : colorScheme.getRGB(getScaled(value));
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotLayer#paintComponent(java.awt.Graphics)
-	 */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -104,10 +97,6 @@ public abstract class ImageLayer extends ContentLayer {
 		if(verbose) Util.info(this, "Setting scale to " + range);
 	}
 	
-
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotLayer#defaults()
-	 */
 	@Override
 	public void defaults() {
 		autoscale();

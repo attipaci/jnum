@@ -45,9 +45,6 @@ public class ExponentialIntegral implements NumericalFunction<Double, Double> {
 
     public int getOrder() { return order; }
 
-    /* (non-Javadoc)
-     * @see jnum.math.Function#valueAt(java.lang.Object)
-     */
     @Override
     public Double valueAt(Double x) {
 
@@ -102,17 +99,11 @@ public class ExponentialIntegral implements NumericalFunction<Double, Double> {
         return ans;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.math.NumericalFunction#getMaxPrecisionAt(java.lang.Object)
-     */
     @Override
     public int getMaxPrecisionAt(Double x) {
         return -(int)Math.ceil(Math.log10(precision));
     }
 
-    /* (non-Javadoc)
-     * @see jnum.math.NumericalFunction#setPrecision(int)
-     */
     @Override
     public void setPrecision(int digits) {
         precision = Math.pow(0.1, digits);

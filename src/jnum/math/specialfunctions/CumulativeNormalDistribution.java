@@ -24,7 +24,7 @@ package jnum.math.specialfunctions;
 
 import jnum.Constant;
 
-// TODO: Auto-generated Javadoc
+
 // Tested 1/12/09.
 
 public final class CumulativeNormalDistribution {

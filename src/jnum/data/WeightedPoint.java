@@ -73,9 +73,6 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         return (WeightedPoint) super.copy();
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -87,9 +84,6 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         return weight == p.weight;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return super.hashCode() ^ HashCode.from(weight);
@@ -149,9 +143,6 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         setDifference(this, x);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Additive#setSum(java.lang.Object, java.lang.Object)
-     */
     @Override
     public void setSum(final WeightedPoint a, final WeightedPoint b) {
         final double w = a.weight * b.weight;
@@ -159,9 +150,6 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         setValue(a.value() + b.value());
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Additive#setDifference(java.lang.Object, java.lang.Object)
-     */
     @Override
     public void setDifference(final WeightedPoint a, final WeightedPoint b) {
         final double w = a.weight * b.weight;
@@ -169,10 +157,6 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         setValue(a.value() - b.value());
     }
 
-
-    /* (non-Javadoc)
-     * @see jnum.math.LinearAlgebra#addMultipleOf(java.lang.Object, double)
-     */
     @Override
     public void addScaled(final WeightedPoint x, final double factor) {
         add(factor * x.value());
@@ -228,18 +212,11 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         weight /= x*x;
     }
 
-
-    /* (non-Javadoc)
-     * @see kovacs.math.Multiplicative#multiplyBy(java.lang.Object)
-     */
     @Override
     public final void multiplyBy(final WeightedPoint p) {
         setProduct(this, p);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Product#setProduct(java.lang.Object, java.lang.Object)
-     */
     @Override
     public final void setProduct(final WeightedPoint a, final WeightedPoint b) {
         final double w = a.weight * b.weight;
@@ -247,17 +224,11 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         setValue(a.value() * b.value());
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Division#divideBy(java.lang.Object)
-     */
     @Override
     public final void divideBy(final WeightedPoint p) {
         setRatio(this, p);
     }
 
-    /* (non-Javadoc)
-     * @see kovacs.math.Ratio#setRatio(java.lang.Object, java.lang.Object)
-     */
     @Override
     public void setRatio(final WeightedPoint a, final WeightedPoint b) {
         final double w = a.weight * b.weight;
@@ -305,19 +276,11 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         return result;
     }
     
-    
-    
-    /* (non-Javadoc)
-     * @see jnum.math.LinearAlgebra#isNull()
-     */
     @Override
     public boolean isNull() {
         return super.isNull() && isExact();
     }
 
-    /* (non-Javadoc)
-     * @see jnum.math.LinearAlgebra#zero()
-     */
     @Override
     public void zero() {
         super.zero();
@@ -478,11 +441,7 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         setValue(ExtraMath.atanh(value()));
     }
     
-    
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return toString(" +- ", ""); 
@@ -540,12 +499,5 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
     }
 
 
-
-
-    public final static WeightedPoint NaN = new WeightedPoint(0.0, 0.0);
-
-
-
-
-   
+    public final static WeightedPoint NaN = new WeightedPoint(0.0, 0.0);   
 }

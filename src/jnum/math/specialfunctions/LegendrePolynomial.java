@@ -36,10 +36,7 @@ public class LegendrePolynomial implements Function<Double, Double> {
 		this.l = l;
 		this.m = m;		
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.math.Function#valueAt(java.lang.Object)
-	 */
+
 	@Override
 	public Double valueAt(final Double x) {
 		return at(l, m, x);		

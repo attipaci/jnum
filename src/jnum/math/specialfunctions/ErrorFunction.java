@@ -24,14 +24,14 @@ package jnum.math.specialfunctions;
 
 import jnum.Constant;
 
-// TODO: Auto-generated Javadoc
+
 // Error function is defined s.t.
 //  erf(x) = 2/sqrt(pi) int{0, x} exp(-t^2) dt
 //
 //  erf(0) = 0
 //  erf(inf) = 1
 //  erf(-inf) = -1;
-//
+
 public final class ErrorFunction  {
 	
 

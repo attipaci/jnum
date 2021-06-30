@@ -47,17 +47,11 @@ public class LinearInterpolatorStore extends DataStore<Double> {
 		raw = value;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ raw.hashCode() ^ fileName.hashCode();
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.io.dirfile.DataStore#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -70,9 +64,6 @@ public class LinearInterpolatorStore extends DataStore<Double> {
 	}
 	
 	// Load interpolation table only upon request...
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Double get(long n) throws IOException {
 		if(table == null) load();
@@ -84,17 +75,11 @@ public class LinearInterpolatorStore extends DataStore<Double> {
 		table = new SimpleInterpolator(fileName);
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#getSamples()
-	 */
 	@Override
 	public int getSamples() {
 		return raw.getSamples();
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#length()
-	 */
+
 	@Override
 	public long length() throws IOException {
 		return raw.length();

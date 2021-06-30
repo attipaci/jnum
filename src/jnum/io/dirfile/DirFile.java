@@ -35,7 +35,6 @@ import java.util.Vector;
 
 import jnum.Util;
 
-// TODO: Auto-generated Javadoc
 // DirFile reading access
 // For documentation on the dirfile standard, see:
 //
@@ -119,18 +118,12 @@ public class DirFile extends Hashtable<String, DataStore<?>> {
 		
 		Util.info(this, size() + " fields parsed.");
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.Hashtable#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ (isBigEndian ? 1 : 0) ^ path.hashCode() ^ strings.hashCode() ^ pending.hashCode();
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.Hashtable#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;

@@ -26,7 +26,7 @@ package jnum.math;
 /**
  * An interface for objects that can be set to 'zero' value, or checked if they are zero.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public interface ZeroValue {

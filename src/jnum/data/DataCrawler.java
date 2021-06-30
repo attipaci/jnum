@@ -46,7 +46,7 @@ public interface DataCrawler<T> extends Iterator<T> {
 	 * was called to point to a valid element after initialization or {@link #reset()}.
 	 *
 	 * @param value the new element at the current crawl position.
-	 * @see Iterator#next();
+	 * @see Iterator#next()
 	 */
 	public void setCurrent(T value);
 	

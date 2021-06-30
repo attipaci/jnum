@@ -28,7 +28,7 @@ package jnum;
 public class Constant {
 
     // Mathematical Constants
-    /** The Constant Pi. Same as {@link Math#Pi}. */
+    /** The Constant Pi. Same as {@link Math#PI}. */
     public final static double Pi = Math.PI;
     
     /** 2.0 * Pi */

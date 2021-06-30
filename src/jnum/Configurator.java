@@ -52,18 +52,18 @@ import nom.tam.util.Cursor;
 /**
  * 
  * A configuration engine for programs that supports hierarchical configurations and conditional settings.
- * <p>
+ * 
  * 
  * Specific configuration options are nodes/endpoints on an option tree. Each node/endpoint can have a string value,
  * and may have further branches of related sub-options stemming from it. It also can host its own list of conditional
  * settings.
- * <p>
+ * 
  * 
  * See README.syntax in CRUSH (or on the CRUSH website) for details on the option syntax, and features. 
  *
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Configurator implements Serializable, Cloneable, Copiable<Configurator>, FitsHeaderEditing {
@@ -96,9 +96,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     public Configurator(Configurator root) { this.root = root; }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
     public Configurator clone() {
         try { return (Configurator) super.clone(); }
@@ -120,9 +117,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return copy;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -143,9 +137,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         isEnabled = isLocked = wasUsed = false;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() {
         return value.hashCode();
@@ -167,9 +159,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return value.equalsIgnoreCase(this.value);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         if(value == null) return "<none>";
@@ -198,10 +187,10 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     
     /**
-     * Set an option that is encapsulated by the corresponding single line of configuration entry such as would be
+     * Sets an option that is encapsulated by the corresponding single line of configuration entry such as would be
      * found in a configuration file.
      * 
-     * <p>
+     * 
      * It works just like {@link #parse(String)} but instead of throwing a {@link LockedException}, it simply returns 
      * <code>true</code> or <code>false</code> depending whether the option was successfully set, or else
      * blocked by an existing lock.
@@ -215,13 +204,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      *  key2 1,2,A,B
      * </pre>
      *
-     * <p>
+     * 
      * A conditional construct (or a chain of conditionals) may precede a single key/value setting. E.g.:
      * 
      * <pre>
      *   [condition] key1 = 3.0
      *   [cond1] key2.[cond2] mypath = /home/johndoe
-     * <pre>
+     * </pre>
      * 
      * 
      * @param line  The option specification as a &lt;key&gt;[=][&lt;value&gt;]. E.g. "faint" or "datapath=/home/data/".
@@ -574,10 +563,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * Forgets (unsets) the specified option under this configuration branch. The forgotten options can be
      * recalled to its prior state as long as no new value is set for it.
      * 
-     * @param key   The option <code>key</code> under this configuration branch to unset.
-     * 
-     * @return      <code>true</code> if the specified option was successfully unset, or <code>false</code> if
-     *              an existing lock prevented the operation.
+     * @param arg   The option <code>key</code> under this configuration branch to unset.
      *              
      * @see #forgetSilent(String)
      * @see #recall(String)
@@ -852,10 +838,10 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
     /**
-     * Returns the Configurator brack for a given CRUSH option, which may be an alias. Same as {@link get(String)} just with 
-     * a more obvious name...
+     * Returns the Configurator brack for a given CRUSH option, which may be an alias. Similar as {@link #get(String)} just with 
+     * a more obvious name, and with alias resolution.
      * 
-     * @param name  The option name or alias...     
+     * @param key  The option name or alias...     
      * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
      * 
      * @see #exactOption(String)
@@ -871,10 +857,10 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     /**
-     * Returns the Configurator brack for a given CRUSH option. Same as {@link get(String)} just with 
+     * Returns the Configurator branch for a given option. Same as {@link #get(String)} just with 
      * a more obvious name...
      * 
-     * @param name  The exact option name, NOT an alias.
+     * @param key  The exact option key name, NOT an alias.
      * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
      * 
      * @see #option(String)
@@ -890,7 +876,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     /**
      * Checks if the specified configuration option or alias exists under this configuration branch. It does not check whether or
      * not the option is enabled. It merely checks for existence, even if in a disabled state.
-     * <p>
+     * 
      * 
      * If you also want to check to see if the option is <i>enabled</i> beyond just <i>existence</i>, you should
      * use {@link #hasOption(String)} instead.
@@ -913,7 +899,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     /**
      * Checks if the specified configuration option (not alias!) exists under this configuration branch. 
      * It does not check whether or not the option is enabled. It merely checks for existence, even if in a disabled state.
-     * <p>
+     * 
      * 
      * If you also want to check to see if the option is <i>enabled</i> beyond just <i>existence</i>, you should
      * use {@link #hasOption(String)} instead.
@@ -938,8 +924,8 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * Similar to {@link #containsKey(String)} but checks that the option is <i>enabled</i> as well as <i>existence</i>.
      * 
      * 
-     * @param name  The option <tt>key</tt> or alias to check under this configuration branch.
-     * @return      <tt>true</tt> if the option <i>exists</i> and is <i>enabled</i>, or <tt>false</tt> otherwise.
+     * @param name  The option <code>key</code> or alias to check under this configuration branch.
+     * @return      <code>true</code> if the option <i>exists</i> and is <i>enabled</i>, or <code>false</code> otherwise.
      * 
      * @see #containsKey(String)
      * @see #containsExact(String)
@@ -1018,7 +1004,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     /**
      * Returns the resolved value for this configuration point. Dynamic references to other options are resolved
      * at call time, and are substituted as literal. 
-     * <p>
+     * 
      * 
      * Suppose this configuration point is set to the literal value: "<code>/home/{?user}/data</code>", and
      * <code>user</code> is set to "<code>johndoe</code>" when this method is called. Accordingly, the
@@ -1027,7 +1013,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * <pre>
      *   /home/johndoe/data
      * </pre>
-     * <p>
+     * 
      * 
      * @return  The value associated to this configuration point, with dynamic references to other options
      *          resolved and substituted as needed.
@@ -1100,7 +1086,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * Returns the value associated with this configuration point as an integer value. That parse rules of 
      * {@link Integer#decode(String)} are applied. I.e., the underlying string  value may be decimal (e.g. 1234), 
      * hex (e.g. 0xa0c7), binary (0b1001101), or octal (0777). 
-     * <p>
+     * 
      * 
      * A note of warning: you should avoid decimals starting with 0 (e.g. 0123 for decimal 123) as they will 
      * be interpreted as octal values.
@@ -1154,7 +1140,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     /**
      * Returns the value associated with this configuration point as a sign (1 or -1, 0). The
      * underlying String may be representing the sign in different ways:
-     * <p>
+     * 
      * 
      * <b>positive</b>: "+", "pos", "positive", "plus", "1", "325", "0.0333", "1.406e-27" <br>
      * <b>negative</b>: "-", "neg", "negative", "minus", "-1", "-325", "-0.0333", "-1.406e-27" <br>
@@ -1195,7 +1181,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * contain shorthands (such as "~" for the user's home folder), references to other configuration values (static
      * or dynamic), to environment variables, or Java properties. Both "/" and the Windows style "\" can be used
      * as a path separator to allow platform-independent parsing. 
-     * <p>
+     * 
      * 
      * See {@link #getValue()} for how references are
      * resolved, or {@link Util#getSystemPath(String)} for additional information on how paths are parsed.
@@ -1372,7 +1358,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @throws NumberFormatException    If the value could not be parsed as 2D dimension.
      * 
      * @see Vector2D
-     * @see #getValue()
+     * @see #getVector2D(double)
      * @see #getDimension2D(double)
      * @see #getDimension2D(Coordinate2D)
      * 
@@ -1395,7 +1381,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @throws NumberFormatException    If the value could not be parsed as 2D dimension.
      * 
      * @see Vector2D
-     * @see #getValue(double)
+     * @see #getVector2D(double)
      * @see #getDimension2D()
      * @see #getDimension2D(Coordinate2D)
      * 
@@ -1418,7 +1404,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @throws NumberFormatException    If the value could not be parsed as 2D dimension.
      * 
      * @see Vector2D
-     * @see #getValue(double)
+     * @see #getDouble()
      * @see #getDimension2D()
      * @see #getDimension2D(double)
      * 

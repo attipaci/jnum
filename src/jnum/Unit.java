@@ -32,7 +32,7 @@ import java.util.StringTokenizer;
 import jnum.util.HashCode;
 import jnum.util.PrefixedUnit;
 
-// TODO: Auto-generated Javadoc
+
 // TODO Convert to Enum?
 /**
  * The Class Unit.
@@ -76,27 +76,17 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         this.name = name; 
     }
    
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
     @Override
     public Unit clone() {
         try { return (Unit) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }        
     }
 
-    /* (non-Javadoc)
-     * @see jnum.Copiable#copy()
-     */
     @Override
     public Unit copy() {
         return clone();
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -112,19 +102,13 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() {
         return super.hashCode() ^ name().hashCode() ^ HashCode.from(value);
     }
 
-    /**
-     * Name.
-     *
-     * @return the string
-     */
+
     public String name() { return name; }
 
     
@@ -152,10 +136,6 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     }
  
   
-
-    /**
-     * Register.
-     */
     public void register() throws IllegalArgumentException {
         registerTo(standardUnits);
     }
@@ -188,24 +168,12 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         return false;
     }
 
-    /**
-     * Gets the.
-     *
-     * @param id the id
-     * @return the unit
-     */
+
     public static Unit get(String id) {
         return get(id, standardUnits);
     }
 
-    /**
-     * Gets the.
-     *
-     * @param id the id
-     * @param baseUnits the base units
-     * @return the unit
-     * @throws IllegalArgumentException the illegal argument exception
-     */
+
     public static Unit get(String id, Map<String, Unit> baseUnits) throws IllegalArgumentException {		
         if(baseUnits == null) return PrefixedUnit.createFrom(id, standardUnits);
         
@@ -215,11 +183,6 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
 
     
 
-  
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "[" + name() + "]";
@@ -1318,12 +1281,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
 
     
 
-    /**
-     * Register
-     *
-     * @param value the value
-     * @param names the names
-     */
+
     public static void register(double value, String names) {
         StringTokenizer tokens = new StringTokenizer(names, " \t,;");
         

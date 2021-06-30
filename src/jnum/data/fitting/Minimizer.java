@@ -182,9 +182,6 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
         return getFunction().evaluate() * (1.0 + penalty());
     }
     
-    /* (non-Javadoc)
-     * @see jnum.data.fitting.Penalty#penalty()
-     */
     @Override
     public double penalty() {
         double penalty = 0.0;
@@ -201,7 +198,8 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      *
      * @return the cost function, including any penalties applied.
      * 
-     * @see {@link #evaluate()}, {@link #penalty()}
+     * @see #evaluate() 
+     * @see #penalty()
      */
     public Parametric<Double> getCostFunction() { return costFunction; }
 
@@ -229,7 +227,8 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      *
      * @param constraint the applicable constraint
      * 
-     * @see {@link #getConstraints()}, {@link #clearConstraints()}
+     * @see #getConstraints()
+     * @see #clearConstraints()
      */
     public synchronized void addConstraint(Constraint constraint) {
         getConstraints().add(constraint);
@@ -238,7 +237,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
     /**
      * Remove all explicit constraints on the fit.
      * 
-     * @see {@link #addConstraint(Constraint)}
+     * @see #addConstraint(Constraint)
      */
     public synchronized void clearConstraints() { getConstraints().clear(); }
     
@@ -247,31 +246,23 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      *
      * @return the list of constraints
      * 
-     * @see {@link #addConstraint(Constraint)}
+     * @see #addConstraint(Constraint)
      */
     public ArrayList<Constraint> getConstraints() { return constraints; }
     
-    /* (non-Javadoc)
-     * @see jnum.data.PrecisionControl#setPrecision(double)
-     */
+  
     @Override
     public void setPrecision(double x) { precision = x; }
     
-    /* (non-Javadoc)
-     * @see jnum.data.PrecisionControl#getPrecision()
-     */
+
     @Override
     public double getPrecision() { return precision; }
     
-    /* (non-Javadoc)
-     * @see jnum.Verbosity#setVerbose(boolean)
-     */
+
     @Override
     public void setVerbose(boolean value) { verbose = value; }
     
-    /* (non-Javadoc)
-     * @see jnum.Verbosity#isVerbose()
-     */
+
     @Override
     public boolean isVerbose() { return verbose; }
      
@@ -342,9 +333,6 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
         out.println(toString(lead));
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public final String toString() {
         return toString("");

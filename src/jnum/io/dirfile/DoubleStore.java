@@ -37,9 +37,7 @@ public class DoubleStore extends RawStore<Double> {
 		bytes = 8;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
+
 	@Override
 	public Double get(long n) throws IOException {
 		return getDouble(n);

@@ -114,9 +114,7 @@ public class RelationalConstraint extends Constraint {
         this.tolerance = Math.abs(dx);
     }
     
-    /* (non-Javadoc)
-     * @see jnum.data.fitting.Constraint#penalty()
-     */
+    
     @Override
     public double penalty() {
         final double dev = (expression.evaluate() - target.evaluate()) / tolerance;

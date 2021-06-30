@@ -539,7 +539,7 @@ public class Complex extends Vector2D implements
 	/**
 	 * Performs the requested mathematical operation on this complex number object.
 	 *
-	 * The operation can be '+' or '-' ({@link jnum.math.Vector2D#math(char, Vector2D)}) and '*', '/', or '^' (for
+	 * The operation can be '+' or '-' ({@link Vector2D#math(char, MathVector)}) and '*', '/', or '^' (for
 	 * raising power).
 	 *
 	 * @param op the operator ('+', '-', '*', '/', '^').

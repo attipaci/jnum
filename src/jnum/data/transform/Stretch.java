@@ -23,8 +23,8 @@
 
 package jnum.data.transform;
 
-import jnum.data.Transforming;
 import jnum.math.MathVector;
+import jnum.math.Transforming;
 
 public class Stretch<V extends MathVector<Double>> implements Transforming<V> {
     private V scale;

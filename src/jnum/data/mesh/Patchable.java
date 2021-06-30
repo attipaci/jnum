@@ -21,10 +21,12 @@
  *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.data.mesh;
 
-public interface Transforming<CoordinateType> {
+import jnum.Function;
 
-    public void transform(CoordinateType coords);
+public interface Patchable<T> {
     
+    public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize);
+
 }

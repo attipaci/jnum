@@ -32,7 +32,6 @@ import jnum.Util;
 
 
 
-// TODO: Auto-generated Javadoc
 // Chooses the most compact format with the given number of significant figures
 // Keeps at least the required number of significant figures.
 // May keep more figures depending on the chosen format...
@@ -57,19 +56,13 @@ public class SignificantFiguresFormat extends NumberFormat {
 	
 
 	public boolean hasTrailingZeroes() { return trailingZeroes; }
- 	
-	/* (non-Javadoc)
-	 * @see java.text.DecimalFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
-	 */
+
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
 	    if(number == 0.0) return getZeroFormat().format(number, toAppendTo, pos);
 	    return getFormat((int)Math.floor(Math.log10(Math.abs(number)))).format(number, toAppendTo, pos);
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.text.DecimalFormat#format(long, java.lang.StringBuffer, java.text.FieldPosition)
-	 */
+
 	@Override
 	public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
 	    if(number == 0.0) return getZeroFormat().format(number, toAppendTo, pos);
@@ -100,9 +93,6 @@ public class SignificantFiguresFormat extends NumberFormat {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see java.text.DecimalFormat#parse(java.lang.String, java.text.ParsePosition)
-	 */
 	@Override
 	// TODO parse only so many significant figures?
 	public Number parse(String source, ParsePosition parsePosition) {

@@ -49,15 +49,10 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
     public FocalPlaneCoordinates copy() { return (FocalPlaneCoordinates) super.copy(); }
 
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
-     */
     @Override
     public String getFITSLongitudeStem() { return "FLON"; }
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-     */
+
     @Override
     public String getFITSLatitudeStem() { return "FLAT"; }
 

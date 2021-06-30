@@ -25,7 +25,7 @@ package jnum.math;
 /**
  * Interface for objects that implement multiplicaton with an complex (imaginary) number.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <Type>
  */

@@ -36,9 +36,6 @@ public class FloatStore extends RawStore<Float> {
 		bytes = 4;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Float get(long n) throws IOException {
 		return getFloat(n);

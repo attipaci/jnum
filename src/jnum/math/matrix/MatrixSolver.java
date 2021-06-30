@@ -29,7 +29,7 @@ import jnum.math.MathVector;
  * Interface for solving matrix equations of the form y = M * x, finding vector x given vector y 
  * for a generic matrix M.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>   Generic type of elements in the matrix and vectors. 
  */

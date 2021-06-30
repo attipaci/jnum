@@ -32,34 +32,21 @@ import jnum.math.Range;
 import jnum.math.Vector2D;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class RulerLayer.
- */
 public class RulerLayer extends PlotLayer {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = -792580560937914048L;
-	
-	/** The bottom. */
+
 	private Ruler left, right, top, bottom;
-	
-	/** The mirror y. */
+
 	private boolean mirrorX = true, mirrorY = true;
-	
-	/**
-	 * Instantiates a new ruler layer.
-	 */
+
 	public RulerLayer() {
 		left = new Ruler(Plot.LEFT_SIDE);
 		right = new Ruler(Plot.RIGHT_SIDE);
 		top = new Ruler(Plot.TOP_SIDE);
 		bottom = new Ruler(Plot.BOTTOM_SIDE);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotLayer#defaults()
-	 */
+
 	@Override
 	public void defaults() {
 		Scale xDivs = new Scale(1);
@@ -81,10 +68,7 @@ public class RulerLayer extends PlotLayer {
 		
 		updateDivisions();
 	}
-	
-	/**
-	 * Update divisions.
-	 */
+
 	public void updateDivisions() {
 		Rectangle bounds = this.getContentArea().getBounds();
 		Range xRange = new Range(bounds.getMinX(), bounds.getMaxX());
@@ -96,10 +80,7 @@ public class RulerLayer extends PlotLayer {
 		if(!mirrorY) right.setRange(xRange);
 		if(!mirrorX) bottom.setRange(yRange);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotLayer#paintComponent(java.awt.Graphics)
-	 */
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -118,26 +99,14 @@ public class RulerLayer extends PlotLayer {
 		bottom.paint(g);
 	}
 
-	/**
-	 * The Class Ruler.
-	 */
 	public class Ruler extends BasicRuler {
-		
-		/** The Constant serialVersionUID. */
+
 		private static final long serialVersionUID = -3305810445444215892L;
 
-		/**
-		 * Instantiates a new ruler.
-		 *
-		 * @param edge the edge
-		 */
 		public Ruler(int edge) {
 			super(edge);
 		}
-		
-		/* (non-Javadoc)
-		 * @see jnum.plot.BasicRuler#getPosition(double, java.awt.geom.Point2D)
-		 */
+
 		@Override
 		public void getPosition(double value, Point2D pos) {
 			ContentArea<?> contentArea = getContentArea(); 
@@ -151,9 +120,6 @@ public class RulerLayer extends PlotLayer {
 			contentArea.toDisplay(pos);
 		}
 
-		/* (non-Javadoc)
-		 * @see jnum.plot.BasicRuler#getValue(java.awt.geom.Point2D)
-		 */
 		@Override
 		public double getValue(Point2D pos) {
 			ContentArea<?> contentArea = getContentArea(); 
@@ -171,12 +137,7 @@ public class RulerLayer extends PlotLayer {
 			else if(isVertical()) return pos.getY();
 			else return Double.NaN;
 		}
-		
-		/**
-		 * Sets the plot.
-		 *
-		 * @param plot the new plot
-		 */
+
 		public void setPlot(Plot<?> plot) {
 			// TODO Auto-generated method stub
 			

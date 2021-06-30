@@ -49,41 +49,26 @@ public class DoubleMesh extends NumberMesh.FloatingType<Double> {
     @Override
     public final Double cast(Number x) { return x.doubleValue(); }
     
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
-     */
     @Override
     protected final Double zeroValue() {
         return 0.0;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#baseLineElementAt(java.lang.Object, int)
-     */
     @Override
     protected final Double linearElementAt(Object simpleArray, int index) {
         return ((double[]) simpleArray)[index];
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#setBaseLineElementAt(java.lang.Object, int, java.lang.Number)
-     */
     @Override
     protected final void setLinearElementAt(Object simpleArray, int index, Double value) {
         ((double[]) simpleArray)[index] = value;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#parseElement(java.lang.String)
-     */
     @Override
     public Double parseElement(String text) throws Exception {
         return Double.parseDouble(text);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#newInstance()
-     */
     @Override
     public Mesh<Double> newInstance() {
         return new DoubleMesh();

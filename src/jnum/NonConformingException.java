@@ -29,7 +29,7 @@ package jnum;
  * two image objects of the same class, but of different dimensions, may throw such an exception if the operation that
  * works on those two images cannot proceed because of their size difference. 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class NonConformingException extends IllegalArgumentException {

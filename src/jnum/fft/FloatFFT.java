@@ -32,7 +32,7 @@ import jnum.parallel.Parallelizable;
 
 
 /**
-/* Split radix (2 & 4) FFT algorithms. For example, see Numerical recipes,
+ * Split radix (2 & 4) FFT for sibgle-precision real-valued data with 2<sup>n</sup> elements. For example, see Numerical recipes,
  * and Chu, E: Computation Oriented Parallel FFT Algorithms (COPF)
  * 
  * @author Attila Kovacs <attila[AT]sigmyne.com>
@@ -338,9 +338,6 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
 
 
-    /* (non-Javadoc)
-     * @see kovacs.fft.RealFFT#realTransform(java.lang.Object, boolean, int)
-     */
     @Override
     public void realTransform(final float[] data, final boolean isForward) {
         realTransform(data, getAddressBits(data), isForward);
@@ -415,9 +412,6 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
     }
 
 
-    /* (non-Javadoc)
-     * @see jnum.fft.RealFFT#real2Amplitude(java.lang.Object)
-     */	
     @Override
     public void real2Amplitude(final float[] data) {
         final int addressBits = getAddressBits(data);
@@ -427,19 +421,12 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
     }
 
 
-    /* (non-Javadoc)
-     * @see jnum.fft.RealFFT#amplitude2Real(java.lang.Object)
-     */
     @Override
     public void amplitude2Real(final float[] data) { 
         realTransform(data, false); 
     }
 
 
-    // Rewritten to skip costly intermediate Complex storage...
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#averagePower(java.lang.Object, double[])
-     */
     @Override
     public double[] averagePower(float[] data, final double[] w) {
         int windowSize = w.length;
@@ -482,15 +469,10 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
     }
 
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#addressSizeOf(java.lang.Object)
-     */
     @Override
     final int addressSizeOf(final float[] data) { return getPoints(data) >>> 1; }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getPadded(java.lang.Object, int)
-     */
+
     @Override
     public float[] getPadded(final float[] data, final int n) {
         if(data.length == n) return data;
@@ -502,9 +484,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         return padded;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getMaxErrorBitsFor(java.lang.Object)
-     */
+
     @Override
     protected int countFlops(float[] data) {
         int addressBits = getAddressBits(data);
@@ -527,17 +507,13 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT#getMaxSignificantBits()
-     */
+
     @Override
     final int getMaxSignificantBitsFor(float[] data) {
         return 24;	
     }
 
-    /* (non-Javadoc)
-     * @see jnum.fft.FFT1D#sizeOf(java.lang.Object)
-     */
+
     @Override
     public int sizeOf(float[] data) {
         return data.length;
@@ -567,10 +543,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
             return Integer.highestOneBit(data.length - 2);
         }
         
-       
-        /* (non-Javadoc)
-         * @see jnum.fft.FloatFFT#realTransform(float[], int, boolean, int)
-         */
+  
         @Override
         void parallelRealTransform(final float[] data, final int addressBits, final boolean isForward) {
             if(getParallel() < 2)  {
@@ -593,9 +566,7 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
             }
         }
 
-        /* (non-Javadoc)
-         * @see jnum.fft.FloatFFT#sequentialRealTransform(float[], int, boolean)
-         */
+
         @Override
         void sequentialRealTransform(final float[] data, final int addressBits, final boolean isForward) {
             final int n = 2<<addressBits;

@@ -58,9 +58,7 @@ public class ProcessingQueue extends Thread {
 
 	public ExecutorService getExecutor() { return executor; }
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
+
 	@Override
 	public void run() {
 		while(!isInterrupted()) {			
@@ -139,20 +137,14 @@ public class ProcessingQueue extends Thread {
 			this.process = r;
 			processID = nextProcessID++;
 		}
-		
-		/* (non-Javadoc)
-		 * @see jnum.parallel.ProcessingQueue.Entry#process()
-		 */
+
 		@Override
 		void process() {
 			if(isComplete) throw new IllegalStateException("Cannot re-run process.");
 			activeProcesses.put(processID, this);
 			executor.submit(this);
 		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Runnable#run()
-		 */
+
 		@Override
 		public void run() {
 			process.run();
@@ -178,10 +170,7 @@ public class ProcessingQueue extends Thread {
 		
 
 		private Synchronization() {}
-		
-		/* (non-Javadoc)
-		 * @see jnum.parallel.ProcessingQueue.Entry#process()
-		 */
+
 		@Override
 		void process() {
 			try { waitCompleteCurrent(); }
@@ -201,17 +190,11 @@ public class ProcessingQueue extends Thread {
 			return isActivated;
 		}
 
-		/* (non-Javadoc)
-		 * @see jnum.parallel.ProcessingQueue.Entry#process()
-		 */
 		@Override
 		void process() {
 			new Thread(this).start();		
 		} 
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Runnable#run()
-		 */
+
 		@Override
 		public void run() {
 			try { waitCompleteCurrent(); }
@@ -241,10 +224,7 @@ public class ProcessingQueue extends Thread {
 		private Trigger(int eventID) {
 			this.eventID = eventID;
 		}
-		
-		/* (non-Javadoc)
-		 * @see jnum.parallel.ProcessingQueue.Event#generate()
-		 */
+
 		@Override
 		void generate() {
 			super.generate();

@@ -44,11 +44,11 @@ import jnum.text.NumberFormating;
  * An abstract Matrix class representing a matrix for some generic type element. It has two principal subclasses, 
  * {@link Matrix}, which is a real-valued matrix with essentially primitive <code>double</code> elements, and 
  * {@link ObjectMatrix}, which handles matrices for generic type objects as long as they provide the required algebra 
- * to support matrix operation. For example {@link ComplexMatrix} with {@link Complex} elements is an example subtype, 
- * but one could construct matrices e.g. with {@link WeightedPoint} or even {@link Matrix} elements (for example a 
+ * to support matrix operation. For example {@link ComplexMatrix} with {@link jnum.math.Complex} elements is an example subtype, 
+ * but one could construct matrices e.g. with {@link jnum.data.WeightedPoint} or even {@link Matrix} elements (for example a 
  * matrix of matrices), or matrices with other more complex types...
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>       The generic type of the elements in this matrix.
  */
@@ -462,7 +462,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * Adds another matrix containing real values to this one. For matrices with non-number types
      * this means adding, for every element in this matrix, an identity element scaled by the 
      * matching element in the real valued matrix argument for each
-     * element. I.e. M[i][j] -> M[i][j] + o[i][j] * I, where I is the identity element.
+     * element. I.e. <code>M[i][j]</code> is incremented by <code>o[i][j] * I</code>, 
+     * where I is the identity element.
      * 
      * @param o     The real valued matrix to add to this one. 
      */
@@ -476,7 +477,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * For matrices with non-number types this means adding, for every element in this matrix, 
      * an identity element scaled by the product of the scaling factor and the matching element 
      * in the real valued matrix argument for each
-     * element. I.e. M[i][j] -> M[i][j] + (factor * o[i][j]) * I, where I is the identity element.
+     * element. I.e. <code>M[i][j]</code> is incremenred by <code>(factor * o[i][j]) * I</code>, 
+     * where I is the identity element.
      * 
      * @param o     The real valued matrix to add to this one with the scaling factor. 
      */
@@ -492,7 +494,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * Subtracts another matrix containing real values to this one. For matrices with non-number types
      * this means subtracting, from every element in this matrix, an identity element scaled by the 
      * matching element in the real valued matrix argument for each
-     * element. I.e. M[i][j] -> M[i][j] - o[i][j] * I, where I is the identity element.
+     * element. I.e. <code>M[i][j]</code> is decremented by <code>o[i][j] * I</code>, 
+     * where I is the identity element.
      * 
      * @param o     The real valued matrix to subtract to this one. 
      */
@@ -682,7 +685,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * Copies the contents of a matrix row into the supplied buffer. 
      * 
      * @param i         Matrix row index whose data is to be retrieved
-     * @param buffer    Array into which the column data is copied. The array is not checked for size.
+     * @param v         Array into which the column data is copied. The array is not checked for size.
      */
     public void copyRowTo(int i, T[] v) {
         for(int j=cols(); --j >= 0; ) v[j] = copyOf(i, j);
@@ -748,7 +751,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * Copies the contents of a matrix column into the supplied buffer.
      * 
      * @param j         Matrix column index whose data is to be retrieved
-     * @param buffer    Array into which the column data is copied. The array is not checked for size.
+     * @param v         Array into which the column data is copied. The array is not checked for size.
      */
     public void copyColumnTo(int j, T[] v) {
         for(int i=rows(); --i >= 0; ) v[i] = copyOf(i, j);
@@ -786,7 +789,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * but the values in it are.
      * 
      * @param j             The index of the column to update
-     * @param value         Array containing that data that is to be copied into the matrix column.
+     * @param v             Array containing that data that is to be copied into the matrix column.
      * @throws ShapeException   If the supplied array does not match the matrix column in size.
      */
     public void setColumnData(int j, T[] v) {

@@ -34,10 +34,7 @@ public class CanvasLayer extends PlotLayer {
 	private static final long serialVersionUID = -6890933149678172692L;
 
 	Color color = null;
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotLayer#paintComponent(java.awt.Graphics)
-	 */
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -49,9 +46,6 @@ public class CanvasLayer extends PlotLayer {
 		g2.fill(new Rectangle(0, 0, getContentArea().getWidth(), getContentArea().getHeight()));
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.PlotLayer#defaults()
-	 */
 	@Override
 	public void defaults() {}
 }

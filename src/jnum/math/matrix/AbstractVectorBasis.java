@@ -29,7 +29,7 @@ import java.util.*;
 /**
  * A base class for representing a set of basis vectors spanning some space.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>   The generic type of components in the basis vectors.
  */
@@ -49,9 +49,8 @@ public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
 	}
 	
 	/**
-	 * Gets a new vector of the type supported by this basis.
-	 * 
-	 * @param size     The size of the new vector instance.
+	 * Gets a new vector of the type and size supported by this basis.
+     *
 	 * @return
 	 */
 	public abstract AbstractVector<T> getVectorInstance();

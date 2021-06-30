@@ -142,10 +142,7 @@ public class AngleFormat extends NumberFormat {
 	protected double getWrapValue() {
 	    return Constant.twoPi;
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.text.NumberFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
-	 */
+
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {		
 		if(wrap) {
@@ -158,10 +155,7 @@ public class AngleFormat extends NumberFormat {
 		pos.setEndIndex(toAppendTo.length());
 		return toAppendTo;
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.text.NumberFormat#format(long, java.lang.StringBuffer, java.text.FieldPosition)
-	 */
+
 	@Override
 	public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
 		// TODO Auto-generated method stub
@@ -177,9 +171,6 @@ public class AngleFormat extends NumberFormat {
 	
 	// Parse with any markers, and any level below the top level.
 	// The top level is then readjusted to the 
-	/* (non-Javadoc)
-	 * @see java.text.NumberFormat#parse(java.lang.String, java.text.ParsePosition)
-	 */
 	@Override
 	public final Number parse(String source, ParsePosition parsePosition) throws NumberFormatException {
 	    for(int format=0; format<MAX_FORMAT; format++) {
@@ -320,15 +311,10 @@ public class AngleFormat extends NumberFormat {
 	
 	public final static int MAX_DECIMALS = -1;
 
-	
-	
-	/** The Constant COLONS. */
 	public static final int FORMAT_COLONS = 0;
-	
-	/** The Constant DMS. */
+
 	public static final int FORMAT_DMS = 1;
-	
-	/** The Constant SYMBOLS. */
+
 	public static final int FORMAT_SYMBOLS = 2;
 	
 	public static final int FORMAT_FANCY = 3;

@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * A reporter implementation that forwards incoming messages to a {@link Logger} object.
  * 
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class LogReporter extends Reporter {
@@ -104,49 +104,32 @@ public class LogReporter extends Reporter {
         return new String(header);
     }
     
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#info(java.lang.Object, java.lang.String)
-     */
+
     @Override
     public void info(Object owner, String message) {
         logger.log(Level.INFO, getLabel(owner, "INFO") + message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#notify(java.lang.Object, java.lang.String)
-     */
     @Override
     public void notify(Object owner, String message) {
         logger.log(Level.INFO, getLabel(owner, "NOTE") + message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#debug(java.lang.Object, java.lang.String)
-     */
     @Override
     public void debug(Object owner, String message) {
         logger.log(Level.FINEST, getLabel(owner, "DEBUG") + message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#warning(java.lang.Object, java.lang.String)
-     */
     @Override
     public void warning(Object owner, String message) {
         logger.log(Level.WARNING, getLabel(owner, null) + message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#error(java.lang.Object, java.lang.String)
-     */
     @Override
     public void error(Object owner, String message) {
         logger.log(Level.SEVERE, getLabel(owner, null) + message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#trace(java.lang.Throwable)
-     */
     @Override
     public void trace(Throwable e) {
        String s = new String();
@@ -161,41 +144,26 @@ public class LogReporter extends Reporter {
       
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#status(java.lang.Object, java.lang.String)
-     */
     @Override
     public void status(Object owner, String message) {
         logger.log(Level.INFO, getLabel(owner, "STATUS") + message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#result(java.lang.Object, java.lang.String)
-     */
     @Override
     public void result(Object owner, String message) {
         logger.log(Level.INFO, getLabel(owner, "RESULT") + message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#detail(java.lang.Object, java.lang.String)
-     */
     @Override
     public void detail(Object owner, String message) {
         logger.log(Level.FINE, getLabel(owner, "DETAIL") + message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#values(java.lang.Object, java.lang.String)
-     */
     @Override
     public void values(Object owner, String message) {
         logger.log(Level.INFO, getLabel(owner, "VALUES") + message);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.reporting.Reporter#suggest(java.lang.Object, java.lang.String)
-     */
     @Override
     public void suggest(Object owner, String message) {
         logger.log(Level.FINE, getLabel(owner, "SUGGEST") + message);

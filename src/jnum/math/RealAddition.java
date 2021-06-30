@@ -26,7 +26,7 @@ package jnum.math;
 /**
  * And interface for objects that allow adding and subtracting real values.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public interface RealAddition {

@@ -93,9 +93,9 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
     }
 
     /**
-     * Gets the twiddle error bits.
+     * Gets the number of error bits that are tolarated in the twiddle factors.
      *
-     * @return the twiddle error bits
+     * @return the      The number of error bits resulting from the way twiddle factors.
      */
     public int getTwiddleErrorBits() { return twiddleErrorBits; }
 
@@ -109,8 +109,8 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
     /**
      * Count the necessary floating point operations (+,-,*,/) per element.
      *
-     * @param data the data
-     * @return the number of operations per FFT element.
+     * @param data          the data to transform
+     * @return the          number of operations per FFT element.
      */
     protected abstract int countFlops(Type data);
 
@@ -119,23 +119,21 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
 
     
     /**
-     * Complex transform.
+     * Complex transform (multi-threaded).
      *
-     * @param data the data
-     * @param isForward the is forward
-     * @param chunks the chunks
+     * @param data          the data to transform
+     * @param isForward     <code>true</code> if it is a forward transform, otherwise <code>false</code>
      */
     public final void complexTransform(final Type data, final boolean isForward) {
         complexTransform(data, getAddressBits(data), isForward);
     }
    
     /**
-     * Complex transform.
+     * Complex transform (multi-threaded).
      *
-     * @param data the data
-     * @param addressBits the address bits
-     * @param isForward the is forward
-     * @param chunks the number of parallel chunks
+     * @param data          the data to transform
+     * @param addressBits   the number address bits in use for data elements
+     * @param isForward t   <code>true</code> if it is a forward transform, otherwise <code>false</code>
      */ 
     private final void complexTransform(final Type data, final int addressBits, final boolean isForward) {    
         if(getParallel() == 1) sequentialComplexTransform(data, isForward);
@@ -144,21 +142,21 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
     
 
     /**
-     * Sequential complex transform.
+     * Sequential complex transform (in a single thread).
      *
-     * @param data the data
-     * @param isForward the is forward
+     * @param data          the data to transform
+     * @param isForward     <code>true</code> if it is a forward transform, otherwise <code>false</code>
      */
     public final void sequentialComplexTransform(final Type data, final boolean isForward) {	
         sequentialComplexTransform(data, getAddressBits(data), isForward);
     }
 
     /**
-     * Sequential complex transform.
+     * Sequential complex transform (in a single thread).
      *
-     * @param data the data
-     * @param addressBits the address bits
-     * @param isForward the is forward
+     * @param data          the data to transform.
+     * @param addressBits   the number address bits in use for data elements
+     * @param isForward     <code>true</code> if it is a forward transform, otherwise <code>false</code>
      */
     void sequentialComplexTransform(final Type data, final int addressBits, final boolean isForward) {	
         final int n = 1<<addressBits;
@@ -180,7 +178,13 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
         discardFrom(data, n);
     }
   
-   
+    /**
+     * Parallel complex transform (multi-threaded).
+     *
+     * @param data          the data to transform.
+     * @param addressBits   the number address bits in use for data elements
+     * @param isForward     <code>true</code> if it is a forward transform, otherwise <code>false</code>
+     */
     void parallelComplexTransform(final Type data, final int addressBits, final boolean isForward) {	
         // Don't make more chunks than there are processing blocks...
         final int n = 1<<addressBits;    
@@ -210,13 +214,30 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
     }
     
     
-
+    /**
+     * Swaps the data elements at two different locations.
+     * 
+     * @param data      The generic type array of the data
+     * @param i         Index of an element
+     * @param j         Index of the other element/
+     */
     abstract void swap(Type data, int i, int j);
  
-
+    /**
+     * Discards (zeroes) the data beyond an address (data index).
+     * 
+     * @param data      A generic type array containing data
+     * @param address   Index in array beyond which to zero out elements.
+     */
     abstract void discardFrom(final Type data, final int address);
 
-
+    /**
+     * Gets the address bits in use in a generic type data array. That is, if the data of size 2<sup>n</sup> or
+     * less than a factor of 2 below, it will return <i>n</i>.
+     * 
+     * @param data      A generic type array containing data
+     * @return          The number of bits to in use for addressing elements in the supplied array.
+     */
     abstract int addressSizeOf(Type data);
 
 

@@ -47,10 +47,7 @@ public class FixedLengthDecimalFormat extends DecimalFormat {
 		length = n;
 		for(int i=0; i<n; i++) error += "#";
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.text.DecimalFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
-	 */
+
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo,
 			FieldPosition pos) {
@@ -108,9 +105,6 @@ public class FixedLengthDecimalFormat extends DecimalFormat {
 			return toAppendTo;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.text.DecimalFormat#format(long, java.lang.StringBuffer, java.text.FieldPosition)
-	 */
 	@Override
 	public StringBuffer format(long number, StringBuffer toAppendTo,
 			FieldPosition pos) {
@@ -118,9 +112,6 @@ public class FixedLengthDecimalFormat extends DecimalFormat {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.text.DecimalFormat#parse(java.lang.String, java.text.ParsePosition)
-	 */
 	@Override
 	public Number parse(String source, ParsePosition parsePosition) {
 		// TODO Auto-generated method stub

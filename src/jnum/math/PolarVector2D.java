@@ -32,7 +32,7 @@ import jnum.ExtraMath;
 /**
  * A class representing 2D vectors as polar coordinates, with a radius and an angle.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, Normalizable {
@@ -51,10 +51,7 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
     public PolarVector2D copy() {
         return (PolarVector2D) super.copy();
     }
-	
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#isNull()
-	 */
+
 	@Override
 	public boolean isNull() { return x() == 0.0; }
 
@@ -125,9 +122,6 @@ public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, 
 	@Override
 	public String toString(NumberFormat nf) { return "(" + nf.format(x()) + " cis " + nf.format(y()) + ")"; }
 
-	/* (non-Javadoc)
-	 * @see jnum.Coordinate2D#toString()
-	 */
 	@Override
 	public String toString() { return "(" + x() + " cis " + y() + ")"; }
 

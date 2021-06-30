@@ -35,7 +35,7 @@ import jnum.math.Vector3D;
 /**
  * Transformation of equatorial coordinates between different systems.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
@@ -119,7 +119,7 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
      * 
      * @param v         (arb.u) 3D position vector defining direction (magnitude irrelevant) 
      * @param distance  (m) Distance of object. Parallax will be calculated as necessary for
-     *                  objects more distant than 1 ly. A distance <= 0 can be used for
+     *                  objects more distant than 1 ly. A distance &lt;= 0 can be used for
      *                  extragalactic sources, or other distant objects for which parallax
      *                  can be neglected. 
      */
@@ -528,40 +528,44 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
     
     private void R3(double angle) { Rz(-angle); }
     
+    /**
+     * The ICRS reference system.
+     * 
+     */
     public final static EquatorialSystem ICRS = EquatorialSystem.ICRS;
     
     /**
-     * Readily available trasform for FK4(B1950) to FK5(J2000) coordinate transformations
+     * Readily available transform for FK4(B1950) to FK5(J2000) coordinate transformations
      * 
      */
     public final static EquatorialTransform B1950toJ2000 = new EquatorialTransform(EquatorialSystem.FK4.B1950, EquatorialSystem.FK5.J2000);
 
     /**
-     * Readily available trasform for FK5(J2000) to FK4(B9150) coordinate transformations
+     * Readily available transform for FK5(J2000) to FK4(B9150) coordinate transformations
      * 
      */
     public final static EquatorialTransform J2000toB1950 = new EquatorialTransform(EquatorialSystem.FK5.J2000, EquatorialSystem.FK4.B1950);
     
     /**
-     * Readily available trasform for FK4(B1950) to ICRS coordinate transformations
+     * Readily available transform for FK4(B1950) to ICRS coordinate transformations
      * 
      */
     public final static EquatorialTransform B1950toICRS = new EquatorialTransform(EquatorialSystem.FK4.B1950, EquatorialSystem.ICRS);
     
     /**
-     * Readily available trasform for FK5(J2000) to ICRS coordinate transformations
+     * Readily available transform for FK5(J2000) to ICRS coordinate transformations
      * 
      */
     public final static EquatorialTransform J2000toICRS = new EquatorialTransform(EquatorialSystem.FK5.J2000, EquatorialSystem.ICRS);
     
     /**
-     * Readily available trasform for ICRS to FK4(B1950) coordinate transformations
+     * Readily available transform for ICRS to FK4(B1950) coordinate transformations
      * 
      */
     public final static EquatorialTransform ICRStoB1950 = new EquatorialTransform(EquatorialSystem.ICRS, EquatorialSystem.FK4.B1950);
     
     /**
-     * Readily available trasform for ICRS to FK5(J2000) coordinate transformations
+     * Readily available transform for ICRS to FK5(J2000) coordinate transformations
      * 
      */
     public final static EquatorialTransform ICRStoJ2000 = new EquatorialTransform(EquatorialSystem.ICRS, EquatorialSystem.FK5.J2000);

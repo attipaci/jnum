@@ -36,7 +36,7 @@ import jnum.Util;
  * A class representing a range of points on a 2D plane, with inclusive minimum and
  * and exclusive maximum corners.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scalable {
@@ -71,19 +71,13 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
     public Range2D(Coordinate2D coord) {
        this(coord.x(), coord.y());
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
+
     @Override
     public Range2D clone() {
         try { return  (Range2D) super.clone(); }
         catch(CloneNotSupportedException e) { return null; }
     }
-    
-    /* (non-Javadoc)
-     * @see jnum.Copiable#copy()
-     */
+
     @Override
     public Range2D copy() {
         Range2D copy = clone();
@@ -91,10 +85,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
         if(yRange != null) copy.yRange = yRange.copy();
         return copy;
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
@@ -106,10 +97,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
         if(!Util.equals(yRange, r.yRange)) return false;
         return true;
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
     public int hashCode() {
         return super.hashCode() ^ xRange.hashCode() ^ yRange.hashCode();
@@ -256,10 +244,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
     public Rectangle2D getRectange2D() {
         return new Rectangle2D.Double(xRange.min(), yRange.min(), xRange.span(), yRange.span());
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() { return xRange + ", " + yRange; }
     

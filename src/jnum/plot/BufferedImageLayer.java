@@ -106,10 +106,7 @@ public class BufferedImageLayer extends ImageLayer {
 		g2.drawImage(buffer, op, 0, 0);				
 	}
 
-	
-	/* (non-Javadoc)
-     * @see jnum.plot.ContentLayer#initialize()
-     */
+
     @Override
     public void initialize() {
         updateBuffer();
@@ -146,10 +143,7 @@ public class BufferedImageLayer extends ImageLayer {
 	public Point2D coordinatesToIndex(Point2D point) {
 		return coordsToIndex.transform(point, point);
 	}	
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.ContentLayer#getCoordinateBounds()
-	 */
+
 	@Override
 	public Rectangle2D getCoordinateBounds() {	
 		Point2D lb = indexToCoordinates(new Point2D.Double(0, buffer.getHeight()));

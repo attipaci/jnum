@@ -71,10 +71,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	public boolean conformsTo(Mesh<?> o) {
 	    return Arrays.equals(getSize(), o.getSize());
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
+
 	@SuppressWarnings("unchecked")
     @Override
 	public Mesh<T> clone() {
@@ -82,9 +79,6 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.Copiable#copy()
-	 */
 	@Override
 	public Mesh<T> copy() {
 		Mesh<T> copy = clone();
@@ -125,9 +119,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 
 	public final int getDimension() { return size.length; }
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
-	 */
+
 	@Override
 	public MeshCrawler<T> iterator() { return MeshCrawler.createFor(data); }
 	

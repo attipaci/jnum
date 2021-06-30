@@ -31,28 +31,14 @@ import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class PlotSideRuler.
- */
 public class PlotSideRuler extends FancyRuler {
-	
-	/** The Constant serialVersionUID. */
+
 	private static final long serialVersionUID = 3259644546352934697L;
-	
-	/** The plot. */
+
 	private Plot<?> plot;
-	
-	
-	/** The is inside. */
+
 	boolean isInside = true;
-	
-	/**
-	 * Instantiates a new plot side ruler.
-	 *
-	 * @param plot the plot
-	 * @param edge the edge
-	 */
+
 	public PlotSideRuler(Plot<?> plot, int edge) {
 		super(edge);
 		
@@ -62,26 +48,13 @@ public class PlotSideRuler extends FancyRuler {
 		
 		//System.err.println("### created side ruler " + edge);
 	}
-	
-	/**
-	 * Gets the plot.
-	 *
-	 * @return the plot
-	 */
+
 	public Plot<?> getPlot() { return plot; }
-	
-	/**
-	 * Sets the plot.
-	 *
-	 * @param plot the new plot
-	 */
+
 	public void setPlot(Plot<?> plot) { 
 		this.plot = plot; 
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.Container#validate()
-	 */
+
 	@Override
 	public void validate() {		
 		Rectangle2D bounds = plot.getCoordinateBounds(getSide());
@@ -103,37 +76,22 @@ public class PlotSideRuler extends FancyRuler {
 		
 		super.validate();
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#paint(java.awt.Graphics)
-	 */
+
 	@Override
 	public void paint(Graphics g) {
 		//System.err.println("### painting side ruler...");
 		validate();
 		super.paint(g);		
 	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-	 */
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);	
 	}
-	
-	
-	/**
-	 * Gets the content area.
-	 *
-	 * @return the content area
-	 */
+
 	public ContentArea<?> getContentArea() { return getPlot().getContent(); }
 	
-	/* (non-Javadoc)
-	 * @see jnum.plot.BasicRuler#getPosition(double, java.awt.geom.Point2D)
-	 */
+
 	@Override
 	public void getPosition(double value, Point2D pos) {
 		ContentArea<?> contentArea = getContentArea(); 
@@ -147,9 +105,6 @@ public class PlotSideRuler extends FancyRuler {
 		contentArea.toDisplay(pos);
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.plot.BasicRuler#getValue(java.awt.geom.Point2D)
-	 */
 	@Override
 	public double getValue(Point2D pos) {
 		ContentArea<?> contentArea = getContentArea(); 
@@ -167,10 +122,7 @@ public class PlotSideRuler extends FancyRuler {
 		else if(isVertical()) return pos.getY();
 		else return Double.NaN;
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.plot.FancyRuler#setRange(double, double)
-	 */
+
 	@Override
 	public void setRange(double min, double max) {
 		boolean isAutoAngles = isHorizontal() ? getContentArea().isAutoAngleX :  getContentArea().isAutoAngleY; 

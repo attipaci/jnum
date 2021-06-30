@@ -33,5 +33,4 @@ public interface Division<Type> {
 
 	public void divideBy(Type value);
 	
-	
 }

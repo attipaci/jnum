@@ -36,20 +36,13 @@ public class HourAngleFormat extends TimeFormat {
 
 	public HourAngleFormat() { super(); setPositiveOnly(true); }
 		
-
 	public HourAngleFormat(int decimals) { super(decimals); setPositiveOnly(true); }
-	
-	/* (non-Javadoc)
-	 * @see jnum.text.AngleFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
-	 */
+
 	@Override
 	public StringBuffer format(double angle, StringBuffer toAppendTo, FieldPosition pos) {
 		return super.format(angle / Unit.timeAngle, toAppendTo, pos);
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.text.AngleFormat#parse(java.lang.String, java.text.ParsePosition, int)
-	 */
+
 	@Override
 	public Number parse(String source, ParsePosition parsePosition, int format) {
 		return super.parse(source, parsePosition, format).doubleValue() * Unit.timeAngle;

@@ -34,7 +34,7 @@ import jnum.util.HashCode;
  * A class representing a range of real values, with an inclusive minimum and
  * and exclusive maximum value.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Range implements Serializable, Scalable, Cloneable, Copiable<Range> {
@@ -56,24 +56,16 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		setRange(minValue, maxValue);
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
+
 	@Override
 	public Range clone() {
 		try { return (Range) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
-	
-	/* (non-Javadoc)
-	 * @see jnum.Copiable#copy()
-	 */
+
 	@Override
 	public Range copy() { return clone(); }
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object o) {
 		if(o == this) return true;
@@ -86,10 +78,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		if(Double.compare(range.max, max) != 0) return false;
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		return super.hashCode() ^ HashCode.from(min) ^ HashCode.from(max);
@@ -255,11 +244,10 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	
 	
 	/**
-     * Creates a new range from text specification.
+     * Creates a new range from a text specification.
      *
      * @param text the input text specifying the range. The minimim and maximum values must be separated by one
      *     or more colons ':'. E.g. "0.0:1.0" or "0.0:::1.0". 
-     * @return the new range according to the specification
      */
     public final void parse(String text) throws NumberFormatException {
         from(text, false);
@@ -322,10 +310,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		min -= 0.5 * (factor-1.0) * span;
 		max += 0.5 * (factor-1.0) * span;		
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
 		return min + ":" + max;

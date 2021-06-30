@@ -56,10 +56,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 		tickLabels = new TickLabels();	
 		axisLabel = new AxisLabel(isVertical() ? "y" : "x");
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.Component#setName(java.lang.String)
-	 */
+
 	@Override
 	public void setName(String name) {
 		super.setName(name);
@@ -89,11 +86,6 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 		showTickLabels(value);
 	}
 	
-	
-	
-	/* (non-Javadoc)
-	 * @see jnum.plot.BasicRuler#setSide(int)
-	 */
 	@Override
 	public void setSide(int edge) {
 		super.setSide(edge);
@@ -104,9 +96,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 		arrange();
 	}
 	
-	/* (non-Javadoc)
-	 * @see jnum.plot.Arrangeable#arrange()
-	 */
+
 	@Override
 	public void arrange() {
 		removeAll();
@@ -136,10 +126,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 
 		revalidate();
 	}
-	
-	/* (non-Javadoc)
-	 * @see kovacs.plot.BasicRuler#setRange(double, double)
-	 */
+
 	@Override
 	public void setRange(double min, double max) {
 		super.setRange(min, max);
@@ -151,9 +138,6 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see java.awt.Container#validate()
-	 */
 	@Override
 	public void validate() {
 		arrange();
@@ -218,10 +202,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			setPreferredSize();
 		}
 	
-	
-		/* (non-Javadoc)
-		 * @see javax.swing.JComponent#setFont(java.awt.Font)
-		 */
+
 		@Override
 		public void setFont(Font font) {
 			super.setFont(font);
@@ -243,10 +224,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			}
 			
 		}
-		
-		/* (non-Javadoc)
-		 * @see java.awt.Container#validate()
-		 */
+
 		@Override
 		public void validate() {
 			setPreferredSize();
@@ -300,10 +278,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			}
 		}
 		
-		
-		/* (non-Javadoc)
-		 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-		 */
+
 		@Override
 		public void paintComponent(Graphics g) {	
 			super.paintComponent(g);
@@ -383,15 +358,9 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 				bounds = font.getStringBounds(text, getFontMetrics(font).getFontRenderContext());
 			}
 			
-			/* (non-Javadoc)
-			 * @see java.lang.Object#toString()
-			 */
 			@Override
 			public String toString() { return text; }
 
-			/* (non-Javadoc)
-			 * @see java.lang.Comparable#compareTo(java.lang.Object)
-			 */
 			@Override
 			public int compareTo(Entry o) {
 				return Double.compare(value, o.value);
@@ -439,11 +408,7 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 		public void setSide(int side) {
 			setPreferredSize();			
 		}
-		
-		
-		/* (non-Javadoc)
-		 * @see java.awt.Container#validate()
-		 */
+
 		@Override
 		public void validate() {
 			setPreferredSize();
@@ -459,18 +424,12 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 			else setPreferredSize(new Dimension(0, 0));
 		}
 		
-		/* (non-Javadoc)
-		 * @see java.awt.Component#setName(java.lang.String)
-		 */
 		@Override
 		public void setName(String value) { 
 			super.setName(value);
 			update();
 		}
 		
-		/* (non-Javadoc)
-		 * @see javax.swing.JComponent#setFont(java.awt.Font)
-		 */
 		@Override
 		public void setFont(Font font) {
 			super.setFont(font);
@@ -486,9 +445,6 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 
 		public boolean isShowingUnit() { return showUnit; }
 		
-		/* (non-Javadoc)
-		 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-		 */
 		@Override
 		public void paintComponent(Graphics g) {	
 			super.paintComponent(g);

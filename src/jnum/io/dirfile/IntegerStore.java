@@ -36,9 +36,6 @@ public class IntegerStore extends RawStore<Integer> {
 		bytes = 4;
 	}
 
-	/* (non-Javadoc)
-	 * @see jnum.dirfile.DataStore#get(long)
-	 */
 	@Override
 	public Integer get(long n) throws IOException {
 		return getInt(n);

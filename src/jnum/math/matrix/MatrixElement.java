@@ -13,7 +13,7 @@ import jnum.math.Normalizable;
  * the matrix entries, regardless if these are primitives (such as double values stored in {@link Matrix} 
  * or object references, such as in {@link ObjectMatrix} or {@link ComplexMatrix}).
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  * @param <T>       The generic type of matrix entries.
  */
@@ -49,13 +49,13 @@ public abstract class MatrixElement<T> implements LinearAlgebra<T>, AbstractAlge
          * Sets the matrix entry at (i, j) to the value wrapped in this element container. This is
          * mainly important when manipulating {@link Matrix} objects with primitives as underlying
          * elements. For example, consider the code for flipping the sign of all entries in
-         * an <code>AbstractMatrix<T> M</code>, regardless whether it has pritive or {@link Object}
+         * an <code>AbstractMatrix&lt;T&gt; M</code>, regardless whether it has pritive or {@link Object}
          * type entries:
          * 
          * <pre>
-         *   MatrixElement<?> e = M.getElementInstance();
+         *   MatrixElement&lt;?&gt; e = M.getElementInstance();
          *   
-         *   for(int j=M.rows(); --j >= 0; ) for(int j=cols(); --j >= 0; ) {
+         *   for(int j=M.rows(); --j &gt;= 0; ) for(int j=cols(); --j &gt;= 0; ) {
          *      e.from(i, j).scale(-1.0);
          *      a.applyTo(i, j);
          *   }

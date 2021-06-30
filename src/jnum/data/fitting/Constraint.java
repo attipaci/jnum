@@ -23,7 +23,7 @@
 
 package jnum.data.fitting;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * A class for formulating minimization constraints. Constraints are enforced via a penalty function, which increases
  * as the parameters stray from the constraining condition. The penalty ought to be 0.0 when the constraint is satisfied
@@ -32,7 +32,7 @@ package jnum.data.fitting;
  */
 public abstract class Constraint implements Penalty {
     
-    /** An human-readable identification of the constraint. */
+    /** A human-readable identification of the constraint. */
     public String id;
     
     /**
@@ -42,9 +42,7 @@ public abstract class Constraint implements Penalty {
      */
     public Constraint(String id) { this.id = id; }
     
-    /* (non-Javadoc)
-     * @see jnum.data.fitting.Penalty#penalty()
-     */
+
     @Override
     public abstract double penalty();
     

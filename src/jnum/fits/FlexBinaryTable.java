@@ -38,7 +38,7 @@ import nom.tam.util.Cursor;
 
 public class FlexBinaryTable {
 
-	Vector<Column> columns = new Vector<Column>();
+	Vector<Column> columns = new Vector<>();
 
 	int rows;
 
@@ -46,9 +46,7 @@ public class FlexBinaryTable {
 	
 
 	public static void main(String[] args) {
-		try {
-			Fits fits = new Fits(args[0]);
-			Fits out = new Fits();
+		try(Fits fits = new Fits(args[0]); Fits out = new Fits()) {		
 			BasicHDU<?>[] HDU = fits.read();
 			for(int i=0; i<HDU.length; i++) {
 				if(HDU[i] instanceof BinaryTableHDU) {
@@ -166,7 +164,7 @@ public class FlexBinaryTable {
 
 		private int index;
 
-		private Vector<ColumnCard> cards = new Vector<ColumnCard>();
+		private Vector<ColumnCard> cards = new Vector<>();
 
 		private Object data;
 		

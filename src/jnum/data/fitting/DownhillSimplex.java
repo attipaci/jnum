@@ -35,31 +35,19 @@ import jnum.math.Scalable;
  */
 public class DownhillSimplex extends Minimizer implements Scalable {        
     
-    /** The point. */
     private double[][] point;   // The simplex vertexes...
-    
-    /** The psum. */
     private double[] psum;      // The midpoint of the simplex.
-
-    /** The value. */
     private double[] value;     // The function values at the simplex points...
-    
-    /** The ilo. */
+
     private int ihi, ilo;
 
-    /** The steps. */
     private int steps;
-    
-    /** The max steps. */
     private int maxSteps = DEFAULT_MAXSTEPS;
     
-    /** The tiny value. */
     private double tinyValue;
-
-    /** The scale size. */
+    
     private double scaleSize = 1.0;
 
-    /** The random. */
     private Random random;
 
     /**
@@ -87,17 +75,18 @@ public class DownhillSimplex extends Minimizer implements Scalable {
      *
      * @return the steps taken to reach the minimum to the specified precision.
      * 
-     * @see {@link #setMaxSteps(int)}, {@link #setPrecision(double)}
+     * @see #setMaxSteps(int)
+     * @see #setPrecision(double)
      */
     public int getSteps() { return steps; }
 
     /**
      * Sets the maximum number of steps allowed for the minimization. If the simplex reaches this limit {@link #minimize()}
-     * will thrw a {@link ConvergenceException}. 
+     * will throw a {@link ConvergenceException}. 
      *
      * @param N the maximum number steps before giving up...
      * 
-     * @see {@link #getMaxSteps()}
+     * @see #getMaxSteps()
      */
     public void setMaxSteps(int N) { maxSteps = N; }
 
@@ -106,13 +95,11 @@ public class DownhillSimplex extends Minimizer implements Scalable {
      *
      * @return the max steps
      * 
-     * @see {@link #setMaxSteps(int)}
+     * @see #setMaxSteps(int)
      */
     public int getMaxSteps() { return maxSteps; }
 
-    /* (non-Javadoc)
-     * @see jnum.math.Scalable#scale(double)
-     */
+
     @Override
     public void scale(double factor) { scaleSize *= factor; }
 
@@ -122,7 +109,7 @@ public class DownhillSimplex extends Minimizer implements Scalable {
      *
      * @param x the new scale size
      * 
-     * @see {@link #getScaleSize()}
+     * @see #getScaleSize()
      */
     public void setScaleSize(double x) { scaleSize = x; }
     
@@ -131,22 +118,18 @@ public class DownhillSimplex extends Minimizer implements Scalable {
      *
      * @return the scale size
      * 
-     * @see {@link #setScaleSize(double)}
+     * @see #setScaleSize(double)
      */
     public double getScaleSize() { return scaleSize; }
 
-    /* (non-Javadoc)
-     * @see jnum.data.fitting.Minimizer#setPrecision(double)
-     */
+
     @Override
     public void setPrecision(double x) {
         super.setPrecision(x);
         tinyValue = 1e-25 * x;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.fitting.Minimizer#init()
-     */
+
     @Override
     protected void init() {
         super.init();
@@ -197,9 +180,7 @@ public class DownhillSimplex extends Minimizer implements Scalable {
 
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.fitting.Minimizer#reset()
-     */
+    
     @Override
     protected synchronized void reset() {
         super.reset();
@@ -214,7 +195,8 @@ public class DownhillSimplex extends Minimizer implements Scalable {
      * @param values the parameter values to use for the evaluation
      * @return the function value, including penalties, at the given point in parameter space.
      * 
-     * @see {@link #getCostFunction()}, {@link #penalty()}
+     * @see #getCostFunction()
+     * @see #penalty()
      */
     protected double evaluate(double[] values) {
         setValues(values);
@@ -231,9 +213,6 @@ public class DownhillSimplex extends Minimizer implements Scalable {
     }
 
 
-    /* (non-Javadoc)
-     * @see jnum.data.fitting.Minimizer#findMinimum()
-     */
     @Override
     protected synchronized void findMinimum() throws ConvergenceException {
         arm();
@@ -248,9 +227,7 @@ public class DownhillSimplex extends Minimizer implements Scalable {
         if(isVerbose()) Util.info(this, "Final --> " + Util.e6.format(value[ilo]));
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.fitting.Minimizer#getMinimum()
-     */
+
     @Override
     public double getMinimum() {
         return value[ilo];
@@ -345,9 +322,7 @@ public class DownhillSimplex extends Minimizer implements Scalable {
         return ytry;
     }   
 
-    /* (non-Javadoc)
-     * @see jnum.data.fitting.Minimizer#toString(java.lang.String)
-     */
+
     @Override
     public String toString(String lead) { 
         return super.toString(lead) + "\n  " + lead + (steps < maxSteps ? "converged in " + steps + " steps" : "not converged!");

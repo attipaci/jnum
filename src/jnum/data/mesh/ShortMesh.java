@@ -48,42 +48,27 @@ public class ShortMesh extends NumberMesh.IntegerType<Short> {
 
     @Override
     public final Short cast(Number x) { return x.shortValue(); }
-    
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
-     */
+
     @Override
     protected final Short zeroValue() {
         return (short) 0;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#baseLineElementAt(java.lang.Object, int)
-     */
     @Override
     protected final Short linearElementAt(Object simpleArray, int index) {
         return ((short[]) simpleArray)[index];
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#setBaseLineElementAt(java.lang.Object, int, java.lang.Number)
-     */
     @Override
     protected final void setLinearElementAt(Object simpleArray, int index, Short value) {
         ((int[]) simpleArray)[index] = value;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#parseElement(java.lang.String)
-     */
     @Override
     public Short parseElement(String text) throws Exception {
         return Short.decode(text);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#newInstance()
-     */
     @Override
     public Mesh<Short> newInstance() {
         return new ShortMesh();

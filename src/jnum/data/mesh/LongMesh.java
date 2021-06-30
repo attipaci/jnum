@@ -49,42 +49,27 @@ public class LongMesh extends NumberMesh.IntegerType<Long> {
     
     @Override
     public final Long cast(Number x) { return x.longValue(); }
-    
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#zeroValue()
-     */
+
     @Override
     protected final Long zeroValue() {
         return 0L;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#baseLineElementAt(java.lang.Object, int)
-     */
     @Override
     protected final Long linearElementAt(Object simpleArray, int index) {
         return ((long[]) simpleArray)[index];
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.PrimitiveMesh#setBaseLineElementAt(java.lang.Object, int, java.lang.Number)
-     */
     @Override
     protected final void setLinearElementAt(Object simpleArray, int index, Long value) {
         ((long[]) simpleArray)[index] = value;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#parseElement(java.lang.String)
-     */
     @Override
     public Long parseElement(String text) throws Exception {
         return Long.decode(text);
     }
 
-    /* (non-Javadoc)
-     * @see jnum.data.mesh.Mesh#newInstance()
-     */
     @Override
     public Mesh<Long> newInstance() {
         return new LongMesh();

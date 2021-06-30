@@ -30,7 +30,7 @@ import jnum.NonConformingException;
  * or objects (e.g. a matrix and a vector) that makes the operation operation impossible to
  * perform as requested.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class ShapeException extends NonConformingException {

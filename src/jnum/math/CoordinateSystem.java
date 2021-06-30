@@ -29,7 +29,7 @@ import java.util.Vector;
 /**
  * A class representation of a coordinate system a collection of Coordinate axes.
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class CoordinateSystem extends Vector<CoordinateAxis> {
@@ -49,30 +49,21 @@ public class CoordinateSystem extends Vector<CoordinateAxis> {
 			add(new CoordinateAxis(defaultLabel[i%defaultLabel.length] 
 			        + (dimension > defaultLabel.length ? i/defaultLabel.length + "" : "")));
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.Vector#add(java.lang.Object)
-	 */
+
 	@Override
 	public boolean add(CoordinateAxis axis) {
 	    if(contains(axis.getShortLabel()) || contains(axis.getLabel()) || contains(axis.getFancyLabel()))
 	        throw new IllegalArgumentException(getClass().getName() + " already has axis '" + axis.getShortLabel());
 		return super.add(axis);
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.Vector#add(int, java.lang.Object)
-	 */
+
 	@Override
 	public void add(int index, CoordinateAxis axis) {
 		if(contains(axis.getShortLabel()) || contains(axis.getLabel()) || contains(axis.getFancyLabel()))
 		    throw new IllegalArgumentException(getClass().getName() + " already has axis '" + axis.getShortLabel());
 		super.add(index, axis);
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.util.Vector#insertElementAt(java.lang.Object, int)
-	 */
+
 	@Override
 	public void insertElementAt(CoordinateAxis axis, int index) {
 		add(index, axis);

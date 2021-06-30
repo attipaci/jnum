@@ -30,7 +30,7 @@ import jnum.Unit;
  * Delaunay arguments, for Sun and Moon positions, commonly used for nutation calculations.
  * See Eq. 5.32 in IERS Technical Note 36 (2010)
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class DelaunayArguments {
@@ -51,7 +51,7 @@ public class DelaunayArguments {
      * 
      * @param mjd           (day) Modified Julian Date of observations.
      * @param isTruncated   If true, the arguments are calculated with the linear approximation of
-     *                      Capitaine & Wallace, (2008).
+     *                      Capitaine &amp; Wallace, (2008).
      */
     public DelaunayArguments(double mjd, boolean isTruncated) {
         final double t = (mjd - AstroTime.MJDJ2000) / AstroTime.JulianCenturyDays;
@@ -59,7 +59,7 @@ public class DelaunayArguments {
         f = new double[5];
     
         if(isTruncated) {
-            // Linear Delaunay arguments from Capitaine & Wallace, (2008)
+            // Linear Delaunay arguments from Capitaine &amp; Wallace (2008)
             f[0] = 2.3555557435 + t * 8328.6914257191;
             f[1] = 6.2400601269 + t * 628.3019551714;
             f[2] = 1.6279050815 + t * 8433.4661569164;

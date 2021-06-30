@@ -63,16 +63,9 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     
     protected abstract Flag<Type> createFlag(long value, char letterCode, String name);
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() { return super.hashCode() ^ name.hashCode(); }
-    
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -86,15 +79,10 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
 
     public final String getName() { return name; }
     
-
     public abstract int getBits();
     
-
     public abstract long getMask();
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() { return getClass().getSimpleName() + "(" + name + ")"; }
     
@@ -250,49 +238,31 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
             super(name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#createFlag(long, char, java.lang.String)
-         */
         @Override
         public Flag<java.lang.Byte> createFlag(long value, char letterCode, String name) {
             return new Flag.Byte(this, (byte) value, letterCode, name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getMask()
-         */
         @Override
         public long getMask() {
            return 0xFF;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#decode(java.lang.String)
-         */
         @Override
         public java.lang.Byte decode(String text) {
             return java.lang.Byte.decode(text);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#parseLetterCodes(java.lang.String)
-         */
         @Override
         public java.lang.Byte parseLetterCodes(String text) {
             return (byte) parseLongLetterCodes(text);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getBits()
-         */
         @Override
         public final int getBits() {
             return 8;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getValue(long)
-         */
         @Override
         public java.lang.Byte getValue(long lValue) {
             return (byte) (lValue & getMask());
@@ -310,49 +280,31 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
             super(name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#createFlag(long, char, java.lang.String)
-         */
         @Override
         public Flag<java.lang.Short> createFlag(long value, char letterCode, String name) {
             return new Flag.Short(this, (short) value, letterCode, name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getMask()
-         */
         @Override
         public long getMask() {
            return 0xFFFF;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#decode(java.lang.String)
-         */
         @Override
         public java.lang.Short decode(String text) {
             return java.lang.Short.decode(text);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#parseLetterCodes(java.lang.String)
-         */
         @Override
         public java.lang.Short parseLetterCodes(String text) {
             return (short) parseLongLetterCodes(text);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getBits()
-         */
         @Override
         public final int getBits() {
             return 16;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getValue(long)
-         */
         @Override
         public java.lang.Short getValue(long lValue) {
             return (short) (lValue & getMask());
@@ -370,49 +322,31 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
             super(name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#createFlag(long, char, java.lang.String)
-         */
         @Override
         public Flag<java.lang.Integer> createFlag(long value, char letterCode, String name) {
             return new Flag.Integer(this, (int) value, letterCode, name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getMask()
-         */
         @Override
         public long getMask() {
            return ~0L;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#decode(java.lang.String)
-         */
         @Override
         public java.lang.Integer decode(String text) {
             return java.lang.Integer.decode(text);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#parseLetterCodes(java.lang.String)
-         */
         @Override
         public java.lang.Integer parseLetterCodes(String text) {
             return (int) parseLongLetterCodes(text);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getBits()
-         */
         @Override
         public int getBits() {
             return 32;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getValue(long)
-         */
         @Override
         public java.lang.Integer getValue(long lValue) {
             return (int) (lValue & getMask());
@@ -430,49 +364,31 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
             super(name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#createFlag(long, char, java.lang.String)
-         */
         @Override
         public Flag<java.lang.Long> createFlag(long value, char letterCode, String name) {
             return new Flag.Long(this, value, letterCode, name);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getMask()
-         */
         @Override
         public long getMask() {
            return ~0L;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#decode(java.lang.String)
-         */
         @Override
         public java.lang.Long decode(String text) {
             return java.lang.Long.decode(text);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#parseLetterCodes(java.lang.String)
-         */
         @Override
         public java.lang.Long parseLetterCodes(String text) {
             return parseLongLetterCodes(text);
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getBits()
-         */
         @Override
         public int getBits() {
             return 64;
         }
 
-        /* (non-Javadoc)
-         * @see jnum.util.FlagSpace#getValue(long)
-         */
         @Override
         public java.lang.Long getValue(long lValue) {
             return lValue;

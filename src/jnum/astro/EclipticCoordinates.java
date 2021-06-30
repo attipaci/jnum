@@ -76,17 +76,11 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     @Override
     public EclipticCoordinates copy() { return (EclipticCoordinates) super.copy(); }
     
-    
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLongitudeStem()
-     */
     @Override
     public String getFITSLongitudeStem() { return "ELON"; }
 
-    /* (non-Javadoc)
-     * @see jnum.math.SphericalCoordinates#getFITSLatitudeStem()
-     */
+
     @Override
     public String getFITSLatitudeStem() { return "ELAT"; }
 
@@ -104,15 +98,9 @@ public class EclipticCoordinates extends PrecessingCoordinates {
         return defaultLocalCoordinateSystem;
     }
 
-    /* (non-Javadoc)
-     * @see jnum.astro.CelestialCoordinates#getEquatorialPole()
-     */
     @Override
     public EquatorialCoordinates getEquatorialPole() { return equatorialPole; }
 
-    /* (non-Javadoc)
-     * @see jnum.astro.CelestialCoordinates#getZeroLongitude()
-     */
     @Override
     public double getZeroLongitude() { return Constant.rightAngle; }
 

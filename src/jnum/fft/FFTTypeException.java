@@ -23,6 +23,7 @@
 
 package jnum.fft;
 
+
 public class FFTTypeException extends IllegalArgumentException {
 
     /**
