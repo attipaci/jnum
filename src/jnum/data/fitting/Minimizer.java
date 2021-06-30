@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.data.fitting;
@@ -95,7 +95,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      * The actual minimum-finding core procedure, that is the engine of the minimizer. 
      * Subclasses should implement this method with their particular minimum-finding approaches.
      * 
-     * @see {@link #minimize()}
+     * @see #minimize()
      */
     protected abstract void findMinimum();
     
@@ -104,7 +104,7 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      *
      * @return the lowest value of the function encountered during the minimization process. Implemented by subclasses.
      * 
-     * @see {@link #minimize()}
+     * @see #minimize()
      */
     public abstract double getMinimum();
     
@@ -114,8 +114,10 @@ public abstract class Minimizer implements PrecisionControl, Verbosity, Penalty 
      * and calculates the covariance matrix and the standard errors (when doing a {@link ChiSquared} fit) after. 
      *
      * @throws ConvergenceException if the fit did not converge.
-     * @see {@link #reset()}, {@link #findMinimum()}, {@link #calcCovarianceMatrix()}, 
-     *      {@link CovarianceMatrix#setParameterErrors()}
+     * @see #reset()
+     * @see #findMinimum()
+     * @see #getCovarianceMatrix()
+     * @see CovarianceMatrix#setParameterErrors()
      */
     public final void minimize() throws ConvergenceException {
         minimize(1);

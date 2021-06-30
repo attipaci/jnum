@@ -6,7 +6,7 @@ import jnum.data.samples.Data1D;
 import jnum.data.samples.Values1D;
 import jnum.parallel.Parallelizable;
 
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -26,7 +26,7 @@ import jnum.parallel.Parallelizable;
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 public class Overlay1D extends Data1D {

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.math.matrix;
@@ -297,7 +297,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     * Sets the matrix element at the specified row, column index in the matrix to the specified new value.
     * 
     * @param idx      The (row,col) index of matrix element
-    * @param v        The new matrix element to set. (For object types the matrix will hold a reference
+    * @param value    The new matrix element to set. (For object types the matrix will hold a reference
     *                 to the specified value).
     */
     @Override
@@ -317,7 +317,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     /**
      * Gets an independent copy of an entry in this matrix.
      * 
-     * @param idx      The (row,col) index of matrix element
+     * @param index    The (row,col) index of matrix element
      * @return         A deep copy of the value at the specified location.
      */
     public final T copyOf(Index2D index) { return copyOf(index.i(), index.j()); }
@@ -341,7 +341,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     /**
      * Adds a scalar value to an element of this matrix. For non-number types, this
      * means adding an identity element scaled by the specified scalar value. I.e.
-     * M[i][j] -> M[i][j] + v * I, where I is the identity element.
+     * <code>M[i][j]</code> is incremented by <code>v * I</code>, where I is the identity element.
      * 
      * @param row      row index of matrix element
      * @param col      column index of matrix element
@@ -351,7 +351,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     /**
      * Adds a scalar value to an element of this matrix. For non-number types, this
      * means adding an identity element scaled by the specified scalar value. I.e.
-     * M[i][j] -> M[i][j] + v * I, where I is the identity element.
+     * <code>M[i][j]</code> is incremented by <code>v * I</code>, where I is the identity element.
      * 
      * @param idx      The (row,col) index of matrix element
      */
@@ -360,8 +360,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     /**
      * Clears (sets to zeroes) an entry in this matrix.
      * 
-     * @param row      row index of matrix element
-     * @param col      column index of matrix element
+     * @param i      row index of matrix element
+     * @param j      column index of matrix element
      */
     public abstract void clear(int i, int j);
     
@@ -375,8 +375,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     /**
      * Scales an entry in this matrix by the specified scalar factor.
      * 
-     * @param row      row index of matrix element
-     * @param col      column index of matrix element
+     * @param i      row index of matrix element
+     * @param j      column index of matrix element
      */
     public abstract void scale(int i, int j, double factor);
     
@@ -390,8 +390,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     /**
      * Checks if an entry in this matrix is a 'null' (zeroed) 
      * 
-     * @param row      row index of matrix element
-     * @param col      column index of matrix element
+     * @param i      row index of matrix element
+     * @param j      column index of matrix element
      */
     public abstract boolean isNull(int i, int j);
        

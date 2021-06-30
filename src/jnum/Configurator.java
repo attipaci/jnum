@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 
@@ -152,7 +152,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @return          <code>true</code> if the option is enabled and its value matches the argument in a case-insensitive comparison.
      *                  Otherwise, <code>false</code>.
      *                  
-     * @see #hasOption(String);
+     * @see #hasOption(String)
      */
     public boolean is(String value) {
         if(!isEnabled) return false;
@@ -838,8 +838,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
     /**
-     * Returns the Configurator brack for a given CRUSH option, which may be an alias. Similar as {@link #get(String)} just with 
-     * a more obvious name, and with alias resolution.
+     * Returns the Configurator brack for a given CRUSH option, which may be an alias. 
      * 
      * @param key  The option name or alias...     
      * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
@@ -857,8 +856,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
     /**
-     * Returns the Configurator branch for a given option. Same as {@link #get(String)} just with 
-     * a more obvious name...
+     * Returns the Configurator branch for a given option.
      * 
      * @param key  The exact option key name, NOT an alias.
      * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
@@ -924,7 +922,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * Similar to {@link #containsKey(String)} but checks that the option is <i>enabled</i> as well as <i>existence</i>.
      * 
      * 
-     * @param name  The option <code>key</code> or alias to check under this configuration branch.
+     * @param key  The option <code>key</code> or alias to check under this configuration branch.
      * @return      <code>true</code> if the option <i>exists</i> and is <i>enabled</i>, or <code>false</code> otherwise.
      * 
      * @see #containsKey(String)

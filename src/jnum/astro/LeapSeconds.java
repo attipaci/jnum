@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.astro;
@@ -47,7 +47,7 @@ import jnum.text.SmartTokenizer;
  * NOTE: Under no circumstances should one query a NIST server more frequently than once every 4 seconds!!!
  *
  * Once the historical data has been loaded, you can retrieve the leap seconds value for any given 
- * {@link Date} using the {@link #get(long)} method, or the current value using the 
+ * {@link java.util.Date} using the {@link #get(long)} method, or the current value using the 
  * {@link #getCurrentLeap()} method. The method {@link #isCurrent()} can be used for checking if the current 
  * leap second value is up-to-date or not.
  * 

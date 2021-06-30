@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.math;
@@ -42,7 +42,7 @@ import java.lang.reflect.*;
 
 
 /**
- * An object representing a single real number value (i.e. a scalar). It is similar to the built-in Java {@link java.langDouble}
+ * An object representing a single real number value (i.e. a scalar). It is similar to the built-in Java {@link java.lang.Double}
  * but with mutable ocntent, and implementation of the various jnum interfaces that apply to scalar type values. 
  * 
  * @author Attila Kovacs

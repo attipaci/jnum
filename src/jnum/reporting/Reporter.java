@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.reporting;
@@ -27,13 +27,13 @@ package jnum.reporting;
 /**
  * 
  * Reporter is a convenient way of handling messages from your Java programs and methods. They should be preferred
- * to {@link System.out#println(String)} or {@link System.err#println(String)} statements, as 
- * you can always change how they are consumed (e.g. whether they are printed to {@link System.out}, or to 
- * {@link System.err}, or to some other {@link PrintStream}, or to a graphical GUI), or
+ * to <code>System.out.println()</code> or <code>System.err.println()</code> statements, as 
+ * you can always change how they are consumed (e.g. whether they are printed to {@link System#out}, or to 
+ * {@link System#err}, or to some other {@link java.io.PrintStream}, or to a graphical GUI), or
  * choose which messages are kept and which are suppressed).
  * 
- * There is a certain similarity to Java's built-in {@link Logger} class, but offering a somewhat different (better) set
- * of features.
+ * There is a certain similarity to Java's built-in {@link java.util.logging.Logger} class, but offering a somewhat 
+ * different (better) set of features.
  * 
  */
 public abstract class Reporter {

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 package jnum.fft;
 
@@ -32,10 +32,10 @@ import jnum.parallel.Parallelizable;
 
 
 /**
- * Split radix (2 & 4) FFT for complex data with 2<sup>n</sup> elements. For example, see Numerical recipes,
+ * Split radix (2 and 4) FFT for complex data with 2<sup>n</sup> elements. For example, see Numerical recipes,
  * and Chu, E: Computation Oriented Parallel FFT Algorithms (COPF)
  * 
- * @author Attila Kovacs <attila[AT]sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.math.matrix;
@@ -121,7 +121,7 @@ import java.text.*;
  *  {@link #getEigenSystem} or via {@link #getJacobiTransform()}:
  *  
  *  <pre>
- *   EigenSystem<Double, Double> e = P.getEigenSystem();
+ *   EigenSystem&lt;Double, Double&gt; e = P.getEigenSystem();
  *   RealVector v = e.getEigenValues();
  *   VectorBasis b = e.getEigenVectors();
  *   Matrix B = e.toEigenBasis();       # Matrix that converts original vector to the eigen basis
@@ -167,7 +167,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * Constructor for a square matrix with the same number of rows and columns. The matrix
      * is creted with all zeroes.
      * 
-     * @param size      The number of rows & columns in the matrix.
+     * @param size      The number of rows &amp; columns in the matrix.
      */
     public Matrix(int size) {
         this(size, size);

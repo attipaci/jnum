@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum;
@@ -26,7 +26,7 @@ package jnum;
 /**
  * A selection of commonly used unicode character symbols, especially for mathermatics, physics and astronomy.
  * 
- *  For more symbols, check out {@link jnum.text.GreekLetter} and {@link jnum.text.Brackets}, {@jnum.textQuotationMarks}.
+ *  For more symbols, check out {@link jnum.text.GreekLetter} and {@link jnum.text.Brackets}, {@link jnum.text.QuotationMarks}.
  * 
  * 
  * @author Attila Kovacs
@@ -34,8 +34,8 @@ package jnum;
  * @see jnum.text.GreekLetter
  * @see jnum.text.Brackets
  * @see jnum.text.QuotationMarks
- * @see jnum.text.Subscript
- * @see jnum.text.Superscript
+ * @see jnum.text.SubScript
+ * @see jnum.text.SuperScript
  *
  */
 public final class Symbol {

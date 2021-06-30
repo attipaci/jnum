@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.data.image;
@@ -67,9 +67,6 @@ import nom.tam.util.Cursor;
  * 
  * 
  * @author Attila Kovacs
- *
- * @param <ImageType>
- * @param <ElementType>
  */
 public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable, Referenced<Index2D, Vector2D> {
     /**

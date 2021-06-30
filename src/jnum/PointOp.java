@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum;
@@ -217,7 +217,7 @@ public abstract class PointOp<PointType, ReturnType> implements Cloneable {
      *
      * @param <PointType>   The generic type of the point object on which this operation acts.
      * 
-     * @see Count.
+     * @see Count
      */
     public abstract static class Sum<PointType> extends PointOp<PointType, Double> {
         private double sum;

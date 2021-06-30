@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 package jnum;
 
@@ -40,14 +40,14 @@ package jnum;
  *  <li>primitive fields are exempt, provided they were cloned (since these aren't references).
  *  <li>Inmutable fields are also exempt, since they cannot be used to change the state of the original object from the copy.
  *  object in the copy.
- *  <li>Copies are most easily generated starting via {@link #clone()}. However, cloning is not required.
+ *  <li>Copies are most easily generated starting via {@link Object#clone()}. However, cloning is not required.
  *  </ul>
  *
  * @author Attila Kovacs
  *
  * @param <Type> the generic type of the copies created.
  * 
- * @see #clone()
+ * @see Object#clone()
  */
 public interface Copiable<Type> {
 

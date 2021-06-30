@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum;
@@ -54,7 +54,7 @@ public final class Util {
 
     public final static String version = "0.40-a1";
     
-    public final static String revision = "devel.8";
+    public final static String revision = "devel.9";
     
     public final static String copyright = "(c)2021 Attila Kovacs"; 
     

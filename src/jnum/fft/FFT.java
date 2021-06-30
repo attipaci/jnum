@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 package jnum.fft;
 
@@ -34,8 +34,8 @@ import jnum.parallel.Parallelizable;
 
 
 /**
- * The root class for various Fast Fourier Transforms (FFTs) working on some data type designated by the <Type> parameter.
- *
+ * The root class for various Fast Fourier Transforms (FFTs) working on generic type data (usually arrays of sorts).
+ * 
  * @param <Type> the data type for the FFT.
  */
 public abstract class FFT<Type> extends ParallelObject implements Serializable {

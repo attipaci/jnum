@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.reporting;
@@ -26,7 +26,7 @@ package jnum.reporting;
 import jnum.text.TextWrapper;
 
 /**
- * A reporter implementation that routes incoming messages to the console (or more specifically to {@link System.err}).
+ * A reporter implementation that routes incoming messages to the console (or more specifically to {@link System#err}).
  * 
  * 
  * @author Attila Kovacs

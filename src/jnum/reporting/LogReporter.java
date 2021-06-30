@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.reporting;
@@ -84,7 +84,7 @@ public class LogReporter extends Reporter {
     
     /**
      * Gets the message label that is prepended before the actual message in the log. By default, the label comprises
-     * of an object id (Class{@link #getSimpleName()) when labeling by object is enabled (#setObjectLabeled(boolean)),
+     * of an object id ({@link Class#getSimpleName()} when labeling by object is enabled (see {@link #setObjectLabeled(boolean)}),
      * and the message type, when labeling by type is enabled (#setTypeLabeled(boolean)).
      *
      * @param owner the object from which the message originated from or belongs to....

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.math.matrix;
@@ -104,8 +104,8 @@ public interface MatrixAlgebra<MatrixType, ElementType> extends IndexedEntries<I
     /**
      * Gets the matrix element at the specified row, column index in the matrix.
      * 
-     * @param row      row index of matrix element
-     * @param col      column index of matrix element.
+     * @param i       row index of matrix element
+     * @param j        column index of matrix element.
      * @return         The matrix element at the specified row/col index. It is a reference to an object or
      *                 else a primitive value.
      */
@@ -115,9 +115,9 @@ public interface MatrixAlgebra<MatrixType, ElementType> extends IndexedEntries<I
     /**
      * Sets the matrix element at the specified row, column index in the matrix to the specified new value.
      * 
-     * @param row      row index of matrix element
-     * @param col      column index of matrix element.
-     * @param v        The new matrix element to set. (For object types the matrix will hold a reference
+     * @param i        row index of matrix element
+     * @param j        column index of matrix element.
+     * @param value    The new matrix element to set. (For object types the matrix will hold a reference
      *                 to the specified value).
      */
     public void set(int i, int j, ElementType value);

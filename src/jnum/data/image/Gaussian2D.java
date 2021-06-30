@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.data.image;
@@ -52,7 +52,7 @@ import nom.tam.util.Cursor;
 /**
  * A class representing 2D Gaussians, such as for point-spread functions (PSFs).
  * 
- * @author Attila Kovacs <attila@sigmyne.com>
+ * @author Attila Kovacs
  *
  */
 public class Gaussian2D implements Serializable, Cloneable, Copiable<Gaussian2D>, CopyCat<Gaussian2D>, Scalable, 

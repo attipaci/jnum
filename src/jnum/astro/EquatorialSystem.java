@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.astro;
@@ -264,10 +264,10 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
      * 
      * @param id    String representation of the coordinate system
      * @return      The best match coordinate system
-     * @throw IllegalArgumentException  if the coordinate system could not be determined from the
+     * @throws IllegalArgumentException  if the coordinate system could not be determined from the
      *                                  string argument.
      */
-    public static EquatorialSystem forString(String id) {
+    public static EquatorialSystem forString(String id) throws IllegalArgumentException {
         StringTokenizer tokens = new StringTokenizer(id, "()");
         
         if(!tokens.hasMoreTokens()) return null;

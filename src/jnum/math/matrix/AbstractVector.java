@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.math.matrix;
@@ -38,7 +38,7 @@ import jnum.text.DecimalFormating;
  * An abstract vector class representing a mathematical vector for some generic type element. It has two principal 
  * subclasses, {@link RealVector}, which is a real-valued vector with essentially primitive <code>double</code> 
  * elements, and {@link ObjectVector}, which handles vector for generic type objects as long as they provide the 
- * required algebra to support matrix operation. For example {@link ComplexVector} with {@link Complex} elements 
+ * required algebra to support matrix operation. For example {@link ComplexVector} with {@link jnum.math.Complex} elements 
  * is an example subtype, but one could construct vectors e.g. with {@link Matrix} or {@link ObjectMatrix} elements 
  * (for a vecor of matrices), or vectors with other more complex types...
  * 

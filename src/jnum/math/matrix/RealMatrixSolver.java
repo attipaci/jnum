@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 
@@ -29,8 +29,6 @@ package jnum.math.matrix;
  * for a real-valued matrix M.
  * 
  * @author Attila Kovacs
- *
- * @param <T>   Generic type of elements in the matrix and vectors. 
  */
 public interface RealMatrixSolver extends MatrixSolver<Double> {
 

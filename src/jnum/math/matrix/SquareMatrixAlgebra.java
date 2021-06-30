@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
@@ -18,7 +18,7 @@
  *     along with jnum.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
- *     Attila Kovacs <attila[AT]sigmyne.com> - initial API and implementation
+ *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
 package jnum.math.matrix;
@@ -48,8 +48,8 @@ public interface SquareMatrixAlgebra<M, T> extends MatrixAlgebra<M, T>, Inversio
     /**
      * Sets the diagonal element at the given index to the specified value.
      * 
-     * @param i     The diagonal element index.
-     * @return      The new matrix element to set at the requested diagonal position.
+     * @param i         The diagonal element index.
+     * @param value     The new matrix element to set at the requested diagonal position.
      */
     public void setDiagonal(int i, T value);
     
@@ -75,8 +75,8 @@ public interface SquareMatrixAlgebra<M, T> extends MatrixAlgebra<M, T>, Inversio
     /**
      * Scales a diagonal element in the matrix with the given factor.
      * 
-     * @param i     The diagonal element index.
-     * @param value scaling factor
+     * @param i         The diagonal element index.
+     * @param factor    scaling factor
      */
     public void scaleDiagonal(int i, double factor);
 
