@@ -24,7 +24,7 @@ package jnum.math;
 
 
 /**
- * An interface for objects that can be normalized.
+ * Objects that can be normalized.
  */
 public interface Normalizable {
 

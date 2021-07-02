@@ -24,7 +24,7 @@ package jnum.math;
 
 
 /**
- * An interface for all objects that implement an identity value. Identity values are essential for all types of
+ * Identity value interface. Identity values are essential for all types of
  * abstract algebra, and occasionally for other applications too.
  */
 public interface IdentityValue {

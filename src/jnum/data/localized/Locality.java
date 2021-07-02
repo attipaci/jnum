@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,17 +20,29 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
+package jnum.data.localized;
 
-package jnum.math;
+import jnum.math.Metric;
 
-public interface Transforming<CoordinateType> {
 
-    /**
-     * Transforms the supported generic type of coordinates in place. The is
-     * the result replaces the original value in the input vector itself.
-     * 
-     * @param coords   The vector to be transformed in situ.
-     */
-    public void transform(CoordinateType coords);
+/**
+ * An interface for classes the implement some sort of topological location, and define
+ * a reference location (origin).
+ * 
+ * @author Attila Kovacs
+ */
+public interface Locality extends Metric<Locality> {
     
+    /**
+     * Localities should report a 1D sorting value, such as a coordinate along one dimension
+     * of the space in which the locality resides. This allows sorting data along
+     * one direction of the location space, which can significanly speed up the calculation
+     * of local averages etc.
+     * 
+     * @return  The 1D value for this object that represents the ordinate along some direction
+     *          (or path) in the sorting space
+     */
+    public double getSortingValue();
 }
+
+

@@ -30,7 +30,7 @@ import jnum.Copiable;
 import jnum.CopyCat;
 import jnum.ExtraMath;
 import jnum.Util;
-import jnum.data.BlankingValue;
+import jnum.data.InvalidValue;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
@@ -43,12 +43,12 @@ import java.lang.reflect.*;
 
 /**
  * An object representing a single real number value (i.e. a scalar). It is similar to the built-in Java {@link java.lang.Double}
- * but with mutable ocntent, and implementation of the various jnum interfaces that apply to scalar type values. 
+ * but with mutable content, and implementation of the various jnum interfaces that apply to scalar type values. 
  * 
  * @author Attila Kovacs
  *
  */
-public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar>, AbstractAlgebra<Scalar>, AbsoluteValue, Copiable<Scalar>, CopyCat<Scalar>, Cloneable, BlankingValue, 
+public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar>, AbstractAlgebra<Scalar>, AbsoluteValue, Copiable<Scalar>, CopyCat<Scalar>, Cloneable, InvalidValue, 
 	PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions,
 	NumberFormating, DecimalFormating, Parser, Metric<Scalar>, Comparable<Scalar> {
 	

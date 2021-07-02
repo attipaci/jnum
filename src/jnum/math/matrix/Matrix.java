@@ -29,9 +29,9 @@ import java.util.*;
 import jnum.Copiable;
 import jnum.ViewableAsDoubles;
 import jnum.data.ArrayUtil;
-import jnum.data.IndexedValues;
 import jnum.data.fitting.ConvergenceException;
 import jnum.data.image.Index2D;
+import jnum.data.index.IndexedValues;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.Complex;
@@ -58,7 +58,7 @@ import java.text.*;
  *  another 4x3 matrix with the <code>double[][]</code> backing array that holds it's initial data:
  *  
  *  <pre>
- *   Matrix B = new Matrix(new double[] { { 1, 0, 1, 2}, {2, -3, 1, 4}, {0, 1, 0, 4} });
+ *   Matrix B = new Matrix(new double[][] { { 1, 0, 1, 2}, {2, -3, 1, 4}, {0, 1, 0, 4} });
  *  </pre>
  *  
  *  Matrices stay fixed size throughout their life cycle. That is <b>B</b> will remain a 3x4
@@ -78,8 +78,8 @@ import java.text.*;
  *  vector types, such as:
  *  
  *  <pre>
- *   double[] d1 = B.dot(new double[] { 1.5, 2.5, -1.0 });
- *   float[] f1 = B.dot(new float[] { 1.5, 2.5, -1.0 });
+ *   double[] d1 = B.dot(1.5, 2.5, -1.0);
+ *   float[] f1 = B.dot(new float[] { 1.5F, 2.5F, -1.0F });
  *   
  *   RealVector v0 = ...
  *   RealVector v1 = M.dot(v0);
@@ -87,7 +87,7 @@ import java.text.*;
  *   B.dot(new Vector3D(0.0, 1.0, 0.0), v1);
  *  </pre>
  *  
- *  Just to give a few examples. We can also calculate the dot product <b>M</b> <i>dot</i> <b>B</b>:
+ *  Just to give a few examples. We can also calculate the dot product <b>M</b> &middot; <b>B</b>:
  *  
  *  <pre>
  *   Matrix P = M.dot(B)
@@ -481,12 +481,12 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     
     
     @Override
-    public RealVector dot(double[] v) {
+    public RealVector dot(double... v) {
         return (RealVector) super.dot(v);
     }
     
     @Override
-    public RealVector dot(float[] v) {
+    public RealVector dot(float... v) {
         return (RealVector) super.dot(v);
     }
 
@@ -677,7 +677,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * @param i     Matrix row index
      * @param row   The nwew data array for the row.
      */
-    public final void setRow(int i, double[] row) {
+    public final void setRow(int i, double... row) {
         if(row.length != cols()) throw new ShapeException("Cannot set mismatched matrix row.");
     }
     
@@ -708,7 +708,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * @param i         Matrix row index
      * @param v         Array with the new contents for the matrix row.
      */
-    public void setRowData(int i, double[] v) throws ShapeException {
+    public void setRowData(int i, double... v) throws ShapeException {
         if(v.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
         for(int j=cols(); --j >= 0; ) data[i][j] = v[j];
     }
@@ -719,7 +719,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * @param i         Matrix row index
      * @param v         Array with the new contents for the matrix row.
      */
-    public void setRowData(int i, float[] v) throws ShapeException {
+    public void setRowData(int i, float... v) throws ShapeException {
         if(v.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
         for(int j=cols(); --j >= 0; ) data[i][j] = v[j];
     }
@@ -755,7 +755,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * @param value         Array containing that data that is to be copied into the matric column.
      * @throws ShapeException   If the supplied array does not match the matrix column in size.
      */
-    public void setColumnData(int j, double[] value) throws ShapeException {
+    public void setColumnData(int j, double... value) throws ShapeException {
         if(value.length != rows()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
         for(int i=rows(); --i >= 0; ) data[i][j] = value[i];		
     }
@@ -769,7 +769,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * @param value         Array containing that data that is to be copied into the matric column.
      * @throws ShapeException   If the supplied array does not match the matrix column in size.
      */
-    public void setColumnData(int j, float[] value) throws ShapeException {
+    public void setColumnData(int j, float... value) throws ShapeException {
         if(value.length != rows()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " column.");
         for(int i=rows(); --i >= 0; ) data[i][j] = value[i];		
     }
@@ -934,7 +934,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     }
    
 
-    public final static Matrix identity(int size) {
+    public static final Matrix identity(int size) {
         Matrix I = new Matrix(size);
         I.addIdentity(1.0);
         return I;

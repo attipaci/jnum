@@ -23,7 +23,7 @@
 package jnum.math;
 
 /**
- * An interface for classes that have an aboslute value or magnitude.
+ * An interface for classes that provide an absolute value (or norm).
  * 
  * @author Attila Kovacs
  *

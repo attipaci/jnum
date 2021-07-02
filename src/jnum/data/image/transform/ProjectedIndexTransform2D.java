@@ -25,11 +25,11 @@ package jnum.data.image.transform;
 
 import jnum.data.image.Grid2D;
 import jnum.math.Coordinate2D;
-import jnum.math.Transforming;
+import jnum.math.CoordinateTransform;
 import jnum.math.Vector2D;
 import jnum.projection.Projector2D;
 
-public class ProjectedIndexTransform2D<CoordinateType extends Coordinate2D> implements Transforming<Vector2D> {
+public class ProjectedIndexTransform2D<CoordinateType extends Coordinate2D> implements CoordinateTransform<Vector2D> {
     private Grid2D<CoordinateType> fromGrid;
     private Grid2D<CoordinateType> toGrid;
     
@@ -65,6 +65,13 @@ public class ProjectedIndexTransform2D<CoordinateType extends Coordinate2D> impl
         fromGrid.toOffset(index);
         transformOffset(index);
         toGrid.toIndex(index);
+    }
+    
+    @Override
+    public Vector2D getTransformed(Vector2D index) {
+        Vector2D v = index.copy();
+        transform(index);
+        return v;
     }
     
     public void transformOffset(Vector2D offset) {

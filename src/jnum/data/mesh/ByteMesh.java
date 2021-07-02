@@ -30,7 +30,7 @@ public class ByteMesh extends NumberMesh.IntegerType<Byte> {
     private static final long serialVersionUID = 6417694497366820158L;
 
 
-    public ByteMesh(int[] dimensions) {
+    public ByteMesh(int... dimensions) {
         super(byte.class, dimensions);
     }
 

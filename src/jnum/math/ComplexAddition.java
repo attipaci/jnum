@@ -24,7 +24,7 @@
 package jnum.math;
 
 /**
- * Interface for all objects to which a Complex number can be added or subtracted.
+ * Support for adding and subtracting a Complex numbers.
  */
 public interface ComplexAddition {
 

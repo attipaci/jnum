@@ -23,8 +23,8 @@
 package jnum.data;
 
 /**
- * The interface for providing bit-wise flagging support in a 32-bit integer flag domain. For something more elaborate,
- * with support for other domains, and labeling see {@link jnum.util.FlagSpace}.
+ * Bit-wise flagging support in a 64-bit integer domain. For something more elaborate,
+ * with support for other domains, and labeling, see {@link jnum.util.FlagSpace}.
  * 
  * 
  * @author Attila Kovacs

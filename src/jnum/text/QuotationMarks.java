@@ -26,26 +26,26 @@ package jnum.text;
 
 public final class QuotationMarks {
 
-    public final static char lowerQuote = '\u0084';
+    public static final char lowerQuote = '\u0084';
 
-    public final static char singleQuote = '\u2019';
+    public static final char singleQuote = '\u2019';
 
-    public final static char doubleQuote = '\u201d';
+    public static final char doubleQuote = '\u201d';
 
-    public final static char invertedSingleQuote = '\u0091';
+    public static final char invertedSingleQuote = '\u0091';
 
-    public final static char invertedDoubleQuote = '\u0093';   
+    public static final char invertedDoubleQuote = '\u0093';   
 
-    public final static char doubleAngleQuoteBegin = '\u00ab';
+    public static final char doubleAngleQuoteBegin = '\u00ab';
 
-    public final static char doubleAngleQuoteEnd = '\u00bb';
+    public static final char doubleAngleQuoteEnd = '\u00bb';
 
-    public final static char singleAngleQuoteBegin = '\u2039';
+    public static final char singleAngleQuoteBegin = '\u2039';
 
-    public final static char singleAngleQuoteEnd = '\u203a';
+    public static final char singleAngleQuoteEnd = '\u203a';
 
-    public final static char lowerSingleQuote = '\u201a';
+    public static final char lowerSingleQuote = '\u201a';
 
-    public final static char lowerDoubleQuote = '\u201e';
+    public static final char lowerDoubleQuote = '\u201e';
     
 }

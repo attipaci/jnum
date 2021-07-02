@@ -23,13 +23,27 @@
 
 package jnum.data;
 
-
+/**
+ * An interface for numerical objects that have tunable precision. Adjustable precision
+ * may offer superior calculation speeds when reduced precision can be tolerated.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public interface PrecisionControl {
 
-
+    /**
+     * Sets the numerical precision to use.
+     * 
+     * @param x     A relative precision, such as 1e-12 to provide results with 12 significant figures.
+     */
     public void setPrecision(double x);
     
-
+    /**
+     * Gets the relative (fractional) precision that this object currently uses.
+     * 
+     * @return      the fractional precision. For example 1e-12 would produce results with 12 significant figures.
+     */
     public double getPrecision();
     
 }

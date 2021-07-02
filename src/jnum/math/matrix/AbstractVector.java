@@ -28,7 +28,7 @@ import java.text.NumberFormat;
 
 import jnum.CopiableContent;
 import jnum.Util;
-import jnum.data.IndexedValues;
+import jnum.data.index.IndexedValues;
 import jnum.data.samples.Index1D;
 import jnum.math.MathVector;
 import jnum.text.DecimalFormating;

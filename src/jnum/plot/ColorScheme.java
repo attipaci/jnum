@@ -63,11 +63,11 @@ public abstract class ColorScheme {
 	public static Hashtable<String, Class<? extends ColorScheme>> schemes = new Hashtable<>();
 	
 
-	public final static int getRGB(final int r, final int g, final int b) {
+	public static final int getRGB(final int r, final int g, final int b) {
 		return 0xFF000000 | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
 	}
 
-	public final static int getRGB(final float r, final float g, final float b) {
+	public static final int getRGB(final float r, final float g, final float b) {
 		final int R = (Math.min(255, (int)Math.floor(256.0F * r)));
 		final int G = (Math.min(255, (int)Math.floor(256.0F * g)));
 		final int B = (Math.min(255, (int)Math.floor(256.0F * b)));

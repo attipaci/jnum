@@ -23,7 +23,7 @@
 
 package jnum.data.samples;
 
-import jnum.data.IndexedValues;
+import jnum.data.index.IndexedValues;
 import jnum.math.Coordinates;
 import jnum.math.MathVector;
 import jnum.math.matrix.AbstractMatrix;
@@ -141,16 +141,22 @@ public class Offset1D implements MathVector<Double> {
     }
     
     @Override
-    public Double dot(Coordinates<? extends Double> v) { return x * v.x(); }
+    public Double dot(MathVector<? extends Double> v) { return x * v.x(); }
     
     @Override
     public Double dot(Double[] v) { return x * v[0]; }
+    
+    @Override
+    public Double dot(double... v) { return x * v[0]; }
+    
+    @Override
+    public Double dot(float... v) { return x * v[0]; }
 
     @Override
     public void orthogonalizeTo(MathVector<? extends Double> v) { x = 0.0; }
 
     @Override
-    public void projectOn(MathVector<? extends Double> v) {}
+    public void projectOn(MathVector<? extends Double> v) { if(v.getComponent(0) == 0.0) x = 0.0; }
 
     @Override
     public void reflectOn(MathVector<? extends Double> v) {}
@@ -235,6 +241,6 @@ public class Offset1D implements MathVector<Double> {
     }
 
    
-    private final static Index1D size = new Index1D(1);
+    private static final Index1D size = new Index1D(1);
 
 }

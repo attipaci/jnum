@@ -26,6 +26,7 @@ package jnum.data;
 import java.io.Serializable;
 
 import jnum.CopiableContent;
+import jnum.data.index.Index;
 
 public interface Image<IndexType extends Index<IndexType>> extends Resizable<IndexType>, Serializable, CopiableContent<Image<? extends IndexType>> {
 

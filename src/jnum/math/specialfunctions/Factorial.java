@@ -29,11 +29,11 @@ import java.util.Vector;
 
 public final class Factorial {
 
-	public final static Vector<Double> store = new Vector<>(100);
+	public static final Vector<Double> store = new Vector<>(100);
 	static { store.add(1.0); }
 	
 	// Calculates factorials as needed, storing the values for quick lookup later.
-	public final static double at(int n) {
+	public static final double at(int n) {
 		if (n < 0) throw new IllegalArgumentException("Negative Factorial.");
 		if (n < store.size()) return store.get(n);
 
@@ -47,7 +47,7 @@ public final class Factorial {
 	// Calculates values as needed, and stores them (up to some limit) for quick lookup later...
 	// Thus repeated calls become very fast for n<MAX_LOGBUFFERED.
 	// For larger n, calls to GammaFunction are made...
-	public final static double logAt(int n) {
+	public static final double logAt(int n) {
 		if (n < 0) throw new IllegalArgumentException("Negative Factorial.");
 		if (n < logStore.size()) return logStore.get(n);
 
@@ -62,7 +62,7 @@ public final class Factorial {
 	static int MAX_LOGBUFFERED = 400;
 	
 
-	public final static Vector<Double> logStore = new Vector<>(100);
+	public static final Vector<Double> logStore = new Vector<>(100);
 	static { logStore.add(0.0); }	
 	
 

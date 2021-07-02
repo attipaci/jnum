@@ -30,8 +30,12 @@ import jnum.math.Coordinate2D;
 import jnum.math.SphericalCoordinates;
 
 
-// This is an abstract class for coordinate systems that are fixed (except perhaps a precession)
-// w.r.t the distant stars (quasars)...
+/**
+ * Base class for celestial coordinates of all sorts.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public abstract class CelestialCoordinates extends SphericalCoordinates {
 
     private static final long serialVersionUID = 1991797523903701648L;
@@ -59,16 +63,25 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
     @Override
     public CelestialCoordinates copy() { return (CelestialCoordinates) super.copy(); }
 
-
+    /**
+     * Gets the ICRS (~J2000) equatorial coordinates of this coordinate system's celestial pole.
+     * 
+     * @return  the ICRS (~J2000) equatorial coordinates for this system's celestial pole.
+     */
     public abstract EquatorialCoordinates getEquatorialPole();
 
 
     public abstract double getZeroLongitude();
 
-
+    /**
+     * Gets the position angle of the local axes of these coordinates in the ICRS (~J2000) equatorial
+     * system.
+     * 
+     * @return      (rad) the position angle of the local axes for these coordinates in the ICRS (~J2000) equatorial frame.
+     */
     public double getEquatorialPositionAngle() {
-        EquatorialCoordinates equatorialPole = getEquatorialPole();
-        return Math.atan2(-equatorialPole.cosLat() * Math.sin(x()), equatorialPole.sinLat() * cosLat() - equatorialPole.cosLat() * sinLat() * Math.cos(x()));
+        EquatorialCoordinates pole = getEquatorialPole();
+        return Math.atan2(pole.cosLat() * Math.sin(x()), pole.sinLat() * cosLat() - pole.cosLat() * sinLat() * Math.cos(x()));
     }
 
 

@@ -34,6 +34,14 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
+
+/**
+ * A class reresenting a Cartesian grid of coordinates of some generic type.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <CoordinateType>  The generic type of coordinates in this Cartesian grid.
+ */
 public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType, CoordinateType> {
     /**
      * 
@@ -43,34 +51,97 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
     private int firstAxis = 1;
     
     
-   
+    /**
+     * Constructs a new Cartesian grid with the with the specified dimensions (number of axes).
+     * This constructor is available only for initializing subclass implementations. 
+     * 
+     * @param dimensions    The number of axes in the underlying Cartesian coordinate syste, 
+     */
     protected CartesianGrid(int dimensions) {
         setCoordinateSystem(new CartesianSystem(dimensions));
     }
            
+    /**
+     * Gets the index of the first Cartesian axis, counted from 1, in a potentially heterogeneous
+     * compound coordinate system and grid. For purely Cartesian systems/grids, this will
+     * usually return 1. The index is mainly used when reporting or parsing grids from
+     * files, such as FITS (hence the counting from 1 here...)
+     * 
+     * @return  the index of the first Cartesian axis in a possible compound grid, counting from 1.
+     */
     public int getFirstAxisIndex() { return firstAxis; }
 
+    /**
+     * Sets the index of the first Cartesian axis, counted from 1, in a potentially heterogeneous
+     * compound coordinate system and grid. For purely Cartesian systems/grids, this will
+     * usually return 1. The index is mainly used when reporting or parsing grids from
+     * files, such as FITS (hence the counting from 1 here...)
+     * 
+     * @param countedFromOne  the index of the first Cartesian axis in a possible compound grid, counting from 1.
+     */
     public void setFirstAxisIndex(int countedFromOne) { this.firstAxis = countedFromOne; }
    
-    
+    /**
+     * Gets the grid resolution in the direction of the specified axis.
+     * 
+     * @param axis  the axis index in this grid alone, without regard for any embedding, counted from zero.
+     * @return      the grid resolution along that axis.
+     */
     public abstract double getResolution(int axis);
   
+    /**
+     * Sets a new grid resolution in the direction of the specified axis.
+     * 
+     * @param axis          the axis index in this grid alone, without regard for any embedding, counted from zero.
+     * @param resolution    the new grid resolution along that axis.
+     */
     public abstract void setResolution(int axis, double resolution);
     
-    
+    /**
+     * Gets the fractional grid index of the reference point on the specified axis of this grid.
+     * 
+     * @param axis  the axis index in this grid alone, without regard for any embedding, counted from zero.
+     * @return      the grid index of the reference point on the specified axis.
+     */
     public abstract double getReferenceIndex(int axis);
     
+    /**
+     * Set a new fractional grid index for the reference point for the specified axis of this grid.
+     * 
+     * @param axis      the axis index in this grid alone, without regard for any embedding, counted from zero.
+     * @param value     the new grid index of the reference point on the specified axis.
+     */
     public abstract void setReferenceIndex(int axis, double value);
     
-    
+    /**
+     * Gets the coordinate of the reference point on the specified axis of this grid.
+     * 
+     * @param axis  the axis index in this grid alone, without regard for any embedding, counted from zero.
+     * @return      the coordinate of the reference point on the specified axis.
+     */
     public abstract double getReferenceValue(int axis);
     
+    
+    /**
+     * Sets a new coordinate value for the reference point on the specified axis of this grid.
+     * 
+     * @param axis      the axis index in this grid alone, without regard for any embedding, counted from zero.
+     * @param value     the coordinate value for the reference point on the specified axis.
+     */
     public abstract void setReferenceValue(int axis, double value);
    
-    
-
+    /**
+     * Converts a fractional index location on this grid to physical coordinates.
+     * 
+     * @param index     the index location on the grid (input), which is transformed into physical coordinates (output).
+     */
     public void indexToValue(CoordinateType index) { coordsAt(index, index); }
  
+    /**
+     * Converts a physical coordinate location to a fractional index on this grid.
+     * 
+     * @param value     the physical coordinates (input), which are tranformed into a fractional grid index (output).
+     */
     public void valueToIndex(CoordinateType value) { indexOf(value, value); }
 
     
@@ -121,6 +192,12 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
     }
    
     
+    /**
+     * A Cartesian grid with double-precision coordinate and index variables.
+     * 
+     * @author Attila Kovacs
+     *
+     */
     public static class Doubles extends CartesianGrid<double[]> {
 
         /**
@@ -130,6 +207,11 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
         
         private double[] refIndex, refValue, resolution;
         
+        /**
+         * Constructs a new Cartesian grid, with double precision coordinates and indices.
+         * 
+         * @param dimension
+         */
         public Doubles(int dimension) {
             super(dimension);
             
@@ -224,7 +306,12 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
     
     
     
-    
+    /**
+     * A Cartesian grid with single-precision coordinate and index variables.
+     * 
+     * @author Attila Kovacs
+     *
+     */
     public static class Floats extends CartesianGrid<float[]> {
 
         /**
@@ -234,6 +321,11 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
         
         private float[] refIndex, refValue, resolution;
         
+        /**
+         * Constructs a new Cartesian grid, with single precision coordinates and indices.
+         * 
+         * @param dimension
+         */
         public Floats(int dimension) {
             super(dimension);
             

@@ -70,7 +70,7 @@ public class ComplexVector extends ObjectVector<Complex> implements ComplexScali
 	 * 
 	 * @param data     Real-valued data that defines the real parts of the new complex vector.
 	 */
-	public ComplexVector(double[] data) {
+	public ComplexVector(double... data) {
 		super(ArrayUtil.asComplex(data));
 	}
 	
@@ -80,7 +80,7 @@ public class ComplexVector extends ObjectVector<Complex> implements ComplexScali
      * 
      * @param data     Real-valued data that defines the real parts of the new complex vector.
      */
-	public ComplexVector(float[] data) {
+	public ComplexVector(float... data) {
 		super(ArrayUtil.asComplex(data));
 	}
 

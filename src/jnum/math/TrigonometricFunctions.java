@@ -25,7 +25,7 @@ package jnum.math;
 
 
 /**
- * Interface for objects that implement trigonometric functions on themselves. 
+ * Trigonometric functions, which act on the object itself. 
  * The methods are acted on the object itself. For example, 
  * for object <code>x</code>, the call <code>x.asin()</code> will replace the contents of x with that of asin(x).
  */

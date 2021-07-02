@@ -24,8 +24,7 @@ package jnum.math;
 
 
 /**
- * An interface for classes that can be set to contain the value of a division operation
- * on some generic type elements.
+ * A ratio of two, possibly different, generic type arguments.
  * 
  * @author Attila Kovacs
  *

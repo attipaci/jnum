@@ -371,7 +371,7 @@ public class ComplexFFT extends FFT1D<Complex[]> {
         return data.length;
     }
 
-    //private final static int yieldMask = 0xFFF;
+    //private static final int yieldMask = 0xFFF;
 
 }
 

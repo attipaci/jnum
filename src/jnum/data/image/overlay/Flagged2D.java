@@ -223,11 +223,11 @@ public class Flagged2D extends Overlay2D {
         return super.toString(i,j) + " flag=0x" + Long.toHexString(getFlags().get(i,j));
     }
     
-    public final static FlagSpace.Long flagSpace = new FlagSpace.Long(Flagged2D.class.getSimpleName());
-    public final static FlagBlock<Long> flags = flagSpace.getDefaultFlagBlock(); 
+    public static final FlagSpace.Long flagSpace = new FlagSpace.Long(Flagged2D.class.getSimpleName());
+    public static final FlagBlock<Long> flags = flagSpace.getDefaultFlagBlock(); 
 
-    public final static long FLAG_DISCARD = flags.next('X', "discarded").value();
+    public static final long FLAG_DISCARD = flags.next('X', "discarded").value();
 
-    public final static long FLAG_DEFAULT = FLAG_DISCARD;
+    public static final long FLAG_DEFAULT = FLAG_DISCARD;
 
 }

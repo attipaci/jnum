@@ -34,7 +34,7 @@ import jnum.IncompatibleTypesException;
 import jnum.Unit;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
-import jnum.data.IndexedValues;
+import jnum.data.index.IndexedValues;
 import jnum.data.samples.Index1D;
 import jnum.fits.FitsToolkit;
 import jnum.text.NumberFormating;
@@ -187,9 +187,9 @@ ViewableAsDoubles, Parser, NumberFormating {
 	
 	public void set(final double X, final double Y) { setX(X); setY(Y); }
 
-	public void invertX() { x *= -1.0; }
+	public void flipX() { x *= -1.0; }
 	
-	public void invertY() { y *= -1.0; }
+	public void flipY() { y *= -1.0; }
 	
 	public void zero() { x = y = 0.0; }
 
@@ -475,7 +475,7 @@ ViewableAsDoubles, Parser, NumberFormating {
         return copy;
     }
 	
-    private final static Index1D size = new Index1D(2);
+    private static final Index1D size = new Index1D(2);
    
 	public static final int X = 0;
 	public static final int Y = 1;

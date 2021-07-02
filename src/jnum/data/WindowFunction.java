@@ -27,7 +27,7 @@ import jnum.Constant;
 
 public class WindowFunction {
 
-	public final static String[] names =  { "Rectangular", "Hamming", "Hann", "Blackman", "Nutall", 
+	public static final String[] names =  { "Rectangular", "Hamming", "Hann", "Blackman", "Nutall", 
 		"Blackman-Harris", "Blackman-Nutall", "Flat Top"};
 	
 
@@ -66,54 +66,54 @@ public class WindowFunction {
 	// W = 1.00
 	// -15dB
 	public static double[] getRectangular(int n) {
-		return get(n, new double[] { 1.0 });
+		return get(n, 1.0);
 	}
 
 	// W = 1.37
 	// -40dB
 	public static double[] getHamming(int n) {
-		return get(n, new double[] { 0.53836, -0.46164 });
+		return get(n, 0.53836, -0.46164);
 	}
 
 	// W = 1.50
 	// -30dB
 	public static double[] getHann(int n) {
-		return get(n, new double[] { 0.5, -0.5 });
+		return get(n, 0.5, -0.5);
 	}
 
 	// W = 1.73
 	// -60dB
 	public static double[] getBlackman(int n) {
-		return get(n, new double[] { 0.5, -0.5 });
+		return get(n, 0.5, -0.5);
 	}
 
 	// W = 2.02
 	// -100dB
 	public static double[] getNutall(int n) {
-		return get(n, new double[] { 0.355768, -0.487396, 0.144232, -0.012604 });
+		return get(n, 0.355768, -0.487396, 0.144232, -0.012604);
 	}
 
 	// W = 2.01
 	// -100dB
 	public static double[] getBlackmanHarris(int n) {
-		return get(n, new double[] { 0.35875, -0.48829, 0.14128, -0.01168 });
+		return get(n, 0.35875, -0.48829, 0.14128, -0.01168);
 	}
 
 	// W = 1.98
 	// -100dB
 	public static double[] getBlackmanNutall(int n) {
-		return get(n, new double[] { 0.3635819, -0.4891775, 0.1365995, -0.0106411 });
+		return get(n, 0.3635819, -0.4891775, 0.1365995, -0.0106411);
 	}
 
 	// W = 3.77
 	// -70dB
 	public static double[] getFlatTop(int n) {
-		return get(n, new double[] { 1.0, -1.93, 1.29, -0.388, 0.032 });
+		return get(n, 1.0, -1.93, 1.29, -0.388, 0.032);
 	}
 
 	// normalize to sum w^2
 	// Needed for provididng true PSD estimates...
-	public static double[] get(int n, double[] coeff) {
+	public static double[] get(int n, double... coeff) {
 		final double[] w = new double[n];
 		double norm = 0.0;
 		final double K = Constant.twoPi / (n - 1);

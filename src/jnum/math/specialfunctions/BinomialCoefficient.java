@@ -26,7 +26,7 @@ package jnum.math.specialfunctions;
 public class BinomialCoefficient {
 
 
-	public final static double at(int n, int k) {
+	public static final double at(int n, int k) {
 		return Math.round(Math.exp(Factorial.logAt(n) - Factorial.logAt(k) - Factorial.logAt(n-k)));
 	}
 	

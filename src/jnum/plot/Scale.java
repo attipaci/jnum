@@ -197,13 +197,13 @@ public class Scale extends ArrayList<Scale.Division> implements Cloneable {
 	
 	}
 
-	private final static int CUSTOM = -1;
+	private static final int CUSTOM = -1;
 
-	private final static int LINEAR = 0;
+	private static final int LINEAR = 0;
 
-	private final static int LOGARITHMIC = 1;
+	private static final int LOGARITHMIC = 1;
 
-	private final static int SQRT = 2;
+	private static final int SQRT = 2;
 
-	private final static int POWER = 3;
+	private static final int POWER = 3;
 }

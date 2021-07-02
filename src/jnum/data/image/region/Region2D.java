@@ -128,10 +128,10 @@ public abstract class Region2D implements Serializable, Cloneable {
 
 	
 	/** The Constant FORMAT_CRUSH. */
-	public final static int FORMAT_CRUSH = 0;
+	public static final int FORMAT_CRUSH = 0;
 	
 	/** The Constant FORMAT_DS9. */
-	public final static int FORMAT_DS9 = 2;
+	public static final int FORMAT_DS9 = 2;
 	
 
 

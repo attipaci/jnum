@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,16 +20,22 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
+
 package jnum.data;
 
-import jnum.math.Metric;
+/**
+ * Reporting invalid, missing, or discarded data.
+ * 
+ * @author Attila Kovacs
+ *
+ */
+public interface InvalidValue {
 
-
-
-public abstract class Locality implements Metric<Locality>, Comparable<Locality> {
-	
-		public abstract double sortingDistanceTo(Locality other);
+    /**
+     * Checks if this object is invalid, and should be skipped over during operations.
+     * 
+     * @return  <code>tru</code> if this object is marked as blanked, invalid, or is missing data.
+     */
+	public boolean isNaN(); 
 	
 }
-
-

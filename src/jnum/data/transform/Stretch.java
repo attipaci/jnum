@@ -24,9 +24,10 @@
 package jnum.data.transform;
 
 import jnum.math.MathVector;
-import jnum.math.Transforming;
+import jnum.Copiable;
+import jnum.math.CoordinateTransform;
 
-public class Stretch<V extends MathVector<Double>> implements Transforming<V> {
+public class Stretch<V extends MathVector<Double>> implements CoordinateTransform<V> {
     private V scale;
    
     public Stretch(V scale) {
@@ -49,6 +50,14 @@ public class Stretch<V extends MathVector<Double>> implements Transforming<V> {
     @Override
     public final void transform(V v) {
         for(int i=scale.size(); --i >= 0; ) v.setComponent(i, v.getComponent(i) * scale.getComponent(i));
+    }
+    
+    @Override
+    public V getTransformed(V index) { 
+        @SuppressWarnings("unchecked")
+        V v = (V) ((Copiable<? super V>) index).copy();
+        transform(index);
+        return v;
     }
 
 }

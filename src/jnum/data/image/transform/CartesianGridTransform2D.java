@@ -24,10 +24,10 @@
 package jnum.data.image.transform;
 
 import jnum.data.image.Grid2D;
-import jnum.math.Transforming;
+import jnum.math.CoordinateTransform;
 import jnum.math.Vector2D;
 
-public class CartesianGridTransform2D implements Transforming<Vector2D> {
+public class CartesianGridTransform2D implements CoordinateTransform<Vector2D> {
     private Grid2D<?> fromGrid;
     private Grid2D<?> toGrid;
     
@@ -59,6 +59,12 @@ public class CartesianGridTransform2D implements Transforming<Vector2D> {
         toGrid.toIndex(index);
     }
 
-   
+    @Override
+    public Vector2D getTransformed(Vector2D index) {
+        Vector2D v = index.copy();
+        transform(index);
+        return v;
+    }
+    
 
 }

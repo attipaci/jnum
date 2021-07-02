@@ -24,6 +24,7 @@
 
 package jnum.astro;
 
+import jnum.Constant;
 import jnum.SafeMath;
 import jnum.Unit;
 import jnum.math.CoordinateAxis;
@@ -87,7 +88,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
     public final double elevation() { return nativeLatitude(); }
 
 
-    public final double ZA() { return 90.0 * Unit.deg - nativeLatitude(); }
+    public final double ZA() { return Constant.rightAngle - nativeLatitude(); }
 
 
     public final double zenithAngle() { return ZA(); }
@@ -99,7 +100,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
     public final void setEL(double EL) { setNativeLatitude(EL); }
 
 
-    public final void setZA(double ZA) { setNativeLatitude(90.0 * Unit.deg - ZA); }
+    public final void setZA(double ZA) { setNativeLatitude(Constant.rightAngle - ZA); }
 
 
     public EquatorialCoordinates toEquatorial(GeodeticCoordinates site, double LST) {

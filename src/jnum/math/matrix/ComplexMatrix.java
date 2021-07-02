@@ -144,7 +144,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     @Override
     public ComplexMatrix getMatrixInstance(int rows, int cols, boolean initialize) {
         if(initialize) return new ComplexMatrix(rows, cols);
-        return new ComplexMatrix((Complex[][]) Array.newInstance(Complex.class, new int[] { rows, cols }));
+        return new ComplexMatrix((Complex[][]) Array.newInstance(Complex.class, rows, cols));
     }
 
     @Override
@@ -425,12 +425,12 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
     }
 
     @Override
-    public ComplexVector dot(double[] v) {
+    public ComplexVector dot(double... v) {
         return (ComplexVector) super.dot(v);
     }
     
     @Override
-    public ComplexVector dot(float[] v) {
+    public ComplexVector dot(float... v) {
         return (ComplexVector) super.dot(v);
     }
 

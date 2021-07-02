@@ -23,8 +23,24 @@
 
 package jnum.data;
 
+import jnum.data.index.Index;
+
+/**
+ * An interface for data objects that can change their size dynamically.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <IndexType>   The type of index that can be used to specify the size of this object
+ */
 public interface Resizable<IndexType extends Index<IndexType>> {
 
+    /**
+     * Sets the size of the data contained in this object to this new size. Normally the
+     * resizing is expected to discard any prior data, and create a freshly initialized
+     * data object with default (zero) values. 
+     * 
+     * @param size  the new size for this object.
+     */
     public void setSize(IndexType size);
     
 }

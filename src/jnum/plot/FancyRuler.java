@@ -469,11 +469,11 @@ public abstract class FancyRuler extends BasicRuler implements Arrangeable {
 	}
 	
 
-	public final static Font defaultDivisionFont = new Font("Monospaced", Font.PLAIN, 10);
+	public static final Font defaultDivisionFont = new Font("Monospaced", Font.PLAIN, 10);
 
-	public final static Font defaultAxisLabelFont = new Font("Serif", Font.BOLD, 14);
+	public static final Font defaultAxisLabelFont = new Font("Serif", Font.BOLD, 14);
 
-	public final static NumberFormat defaultNumberFormat = Util.f2;
+	public static final NumberFormat defaultNumberFormat = Util.f2;
 	
 	
 }

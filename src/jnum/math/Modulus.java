@@ -25,7 +25,7 @@ package jnum.math;
 
 
 /**
- * Interface for objects that implement a mathematical modulus operation.
+ * Mathematical modulus operation.
  *
  * @param <Type> the generic type
  */

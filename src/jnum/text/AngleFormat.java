@@ -309,7 +309,7 @@ public class AngleFormat extends NumberFormat {
 	public static final int LEVEL_SECOND = 2;
 
 	
-	public final static int MAX_DECIMALS = -1;
+	public static final int MAX_DECIMALS = -1;
 
 	public static final int FORMAT_COLONS = 0;
 
@@ -319,7 +319,7 @@ public class AngleFormat extends NumberFormat {
 	
 	public static final int FORMAT_FANCY = 3;
 	
-	private final static int MAX_FORMAT = 4;
+	private static final int MAX_FORMAT = 4;
 	
 	
 

@@ -126,10 +126,10 @@ public abstract class ImageLayer extends ContentLayer {
 	
 	
 
-	public final static int SCALE_LINEAR = 0;
+	public static final int SCALE_LINEAR = 0;
 
-	public final static int SCALE_LOG = 1;
+	public static final int SCALE_LOG = 1;
 
-	public final static int SCALE_SQRT = 2;
+	public static final int SCALE_SQRT = 2;
 	
 }

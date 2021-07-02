@@ -25,8 +25,8 @@ package jnum.math;
 
 
 /**
- * An interface for all object that implement a linear algebra. I.e. objects X that support the operation a*X+Y, 
- * where a is a scalar and X,Y is of the supported generic type (DataType), and have a null value such that 
+ * Linear algebra interface fort objects. The implementing class must support the operation a*X+Y, 
+ * where a is a scalar and X,Y is of the supported generic type, and have a zero value such that 
  * X + a * 0 = X for all a and X.
  *
  * @param <DataType> the generic type for which this algebra applies.

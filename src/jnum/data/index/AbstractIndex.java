@@ -21,7 +21,7 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.data.index;
 
 import jnum.util.HashCode;
 

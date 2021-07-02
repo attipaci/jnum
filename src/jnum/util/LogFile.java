@@ -257,9 +257,9 @@ public class LogFile {
 	}
 
 
-	public final static int CONFLICT_OVERWRITE = 0;
+	public static final int CONFLICT_OVERWRITE = 0;
 
-	public final static int CONFLICT_VERSION = 1;
+	public static final int CONFLICT_VERSION = 1;
 
-	public final static int CONFLICT_DEFAULT = CONFLICT_VERSION;
+	public static final int CONFLICT_DEFAULT = CONFLICT_VERSION;
 }

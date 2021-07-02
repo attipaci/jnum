@@ -28,33 +28,33 @@ import jnum.math.Complex;
 public final class Hankel {
 
 
-	public final static class H1 {
+	public static final class H1 {
 		
 
-		public final static Complex at(final int n, final double x) {
+		public static final Complex at(final int n, final double x) {
 			final Complex result = new Complex();
 			evaluateAt(n, x, result);
 			return result;
 		}
 
 
-		public final static void evaluateAt(final int n, final double x, final Complex result) {
+		public static final void evaluateAt(final int n, final double x, final Complex result) {
 			result.set(Bessel.J(n, x), Bessel.Y(n,  x));
 		}
 	}
 		
 
-	public final static class H2 {
+	public static final class H2 {
 	
 
-		public final static Complex at(final int n, final double x) {
+		public static final Complex at(final int n, final double x) {
 			final Complex result = new Complex();
 			evaluateAt(n, x, result);
 			return result;
 		}
 
 		
-		public final static void evaluateAt(final int n, final double x, final Complex result) {
+		public static final void evaluateAt(final int n, final double x, final Complex result) {
 			result.set(Bessel.J(n, x), -Bessel.Y(n,  x));
 		}
 	}

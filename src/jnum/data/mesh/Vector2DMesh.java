@@ -34,7 +34,7 @@ public class Vector2DMesh<T extends Vector2D> extends LinearMesh<T> implements C
      */
     private static final long serialVersionUID = 5934790128553730437L;
 
-    public Vector2DMesh(Class<T> type, int[] dimensions) {
+    public Vector2DMesh(Class<T> type, int... dimensions) {
         super(type, dimensions);
     }
 

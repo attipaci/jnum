@@ -23,7 +23,7 @@
 
 package jnum.data.image;
 
-import jnum.data.IndexedValues;
+import jnum.data.index.IndexedValues;
 
 public interface Values2D extends IndexedValues<Index2D, Number>, Validating2D {
     

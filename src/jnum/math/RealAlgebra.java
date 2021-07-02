@@ -24,8 +24,7 @@
 package jnum.math;
 
 /**
- * An interface for objects that implement a basic alegbra (addition, subtraction, multiplication) with
- * real number arguments.
+ * A basic alegbra interface (addition, subtraction, multiplication) with real number arguments.
  * 
  * @author Attila Kovacs
  *

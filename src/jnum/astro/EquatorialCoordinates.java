@@ -139,18 +139,16 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 
     
     /**
-     * Returns the change in position angle due to precession, relative to the J2000 epoch.
+     * Returns the approximated position angle due to precession in the J2000 epoch, not too far from J2000 itself...
+     * Based on  page 5 of E. E. Barnard's Micrometric Meaures of Star Clusters in Vol. VI 
+     * of the Publications of the Yerkes Observatory, 1931
      * 
-     * @return
+     * @return  the approximate position angle of the RA/DEC axes in this system in the FK5(J2000) system.
+     * 
+     * @see #getEquatorialPositionAngle()
      */
-    public double getEpochPosAngle() {
+    public double getLocalEpochPosistionAngle() {
        return precessionPARate * (getSystem().getJulianYear() - 2000.0) * Math.sin(RA()) / cosLat();
-    }
-    
-
-    @Override
-    public final double getEquatorialPositionAngle() {
-        return 0.0;
     }
 
 
@@ -208,7 +206,11 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 
       
     @Override
-    public EquatorialCoordinates getEquatorialPole() { return equatorialPole; }
+    public EquatorialCoordinates getEquatorialPole() { 
+        EquatorialCoordinates p = new EquatorialCoordinates(0.0, Constant.rightAngle, getSystem());
+        p.toICRS();
+        return p;
+    }
 
     @Override
     public double getZeroLongitude() { return 0.0; }
@@ -245,26 +247,26 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         defaultLocalCoordinateSystem.add(declinationOffsetAxis);        
     }	
 
-    private static EquatorialCoordinates equatorialPole = new EquatorialCoordinates(0.0, Constant.rightAngle);
-
+    
     /**
      * Constant for position angle rate of change due to precession near J2000
      */
     private static final double precessionPARate = 20.05 * Unit.arcsec;
-
-    /**
-     * Precession (Lieske+1977)
-     * 
-     */
-    final static double eps0 = 23.4392911111111 * Unit.deg;  ///< Earth obliquity: 23d 26m 21.448s
     
 
-    public final static int NORTH = 1;
+    /**
+     * Earth equator obliquity (23&deg; 26&prime; 21.448&Prime;) from Lieske+1977
+     * 
+     */
+    static final double eps0 = 23.4392911111111 * Unit.deg;
+    
 
-    public final static int SOUTH = -1;
+    public static final int NORTH = 1;
 
-    public final static int EAST = 1;
+    public static final int SOUTH = -1;
 
-    public final static int WEST = -1;
+    public static final int EAST = 1;
+
+    public static final int WEST = -1;
 
 }

@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,16 +21,8 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.data.index;
 
-public interface IndexedValues<IndexType, NumberType extends Number> extends Values, IndexedEntries<IndexType, NumberType> {
+public interface IndexedObservations<IndexType> extends IndexedUncertainties<IndexType>, IndexedExposures<IndexType> {
 
-    public abstract void clear(IndexType index);
-    
-    public abstract void scale(IndexType index, double factor);
-    
-    public void set(IndexType index, Number value);
-    
-    public void add(IndexType index, Number value);
-      
 }

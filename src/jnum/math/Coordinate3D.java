@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
 import jnum.Copiable;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
-import jnum.data.IndexedValues;
+import jnum.data.index.IndexedValues;
 import jnum.data.samples.Index1D;
 import jnum.fits.FitsToolkit;
 import jnum.text.NumberFormating;
@@ -384,7 +384,7 @@ ViewableAsDoubles, Parser, NumberFormating {
         return copy;
     }
     
-    private final static Index1D size = new Index1D(2);
+    private static final Index1D size = new Index1D(2);
     
     public static final int X = 0;    
     public static final int Y = 1;

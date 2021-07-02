@@ -303,28 +303,28 @@ public class Plot<ContentType extends ContentLayer> extends JPanel {
 
 	public static Font defaultFont = new Font("SansSerif", Font.BOLD, 15);
 
-	public final static int SIDE_UNDEFINED = -1;
+	public static final int SIDE_UNDEFINED = -1;
 
-	public final static int TOP_SIDE = 0;
+	public static final int TOP_SIDE = 0;
 
-	public final static int BOTTOM_SIDE = 1;
+	public static final int BOTTOM_SIDE = 1;
 
-	public final static int LEFT_SIDE = 2;
+	public static final int LEFT_SIDE = 2;
 
-	public final static int RIGHT_SIDE = 3;
+	public static final int RIGHT_SIDE = 3;
 	
 
-	public final static int VALIGN_TOP = 1;
+	public static final int VALIGN_TOP = 1;
 
-	public final static int VALIGN_CENTER = 0;
+	public static final int VALIGN_CENTER = 0;
 
-	public final static int VALIGN_BOTTOM = -1;
+	public static final int VALIGN_BOTTOM = -1;
 
 	
-	public final static int HALIGN_LEFT = 1;
+	public static final int HALIGN_LEFT = 1;
 
-	public final static int HALIGN_CENTER = 0;
+	public static final int HALIGN_CENTER = 0;
 
-	public final static int HALIGN_RIGHT = -1;
+	public static final int HALIGN_RIGHT = -1;
 	
 }

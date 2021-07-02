@@ -143,10 +143,10 @@ public class EclipticCoordinates extends PrecessingCoordinates {
 
 
     /** The Constant inclination. */
-    public final static double inclination = 23.0 * Unit.deg + 26.0 * Unit.arcmin + 30.0 * Unit.arcsec; // to equatorial    
+    public static final double inclination = 23.0 * Unit.deg + 26.0 * Unit.arcmin + 30.0 * Unit.arcsec; // to equatorial    
 
     /** The Constant equatorialPole. */
-    public final static EquatorialCoordinates equatorialPole = CelestialCoordinates.getPole(inclination, 0.0);
+    public static final EquatorialCoordinates equatorialPole = CelestialCoordinates.getPole(inclination, 0.0);
 
 
 }

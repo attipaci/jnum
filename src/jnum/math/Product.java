@@ -24,7 +24,7 @@ package jnum.math;
 
 
 /**
- * Interface for classes that can represent the product of sorts.
+ * A product (under multiplication in the abstract sense) between two, possibly different, generic type elements.
  * 
  * @author Attila Kovacs
  *

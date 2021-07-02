@@ -27,7 +27,7 @@ package jnum.data.image;
 
 import jnum.ExtraMath;
 import jnum.NonConformingException;
-import jnum.data.AbstractIndex;
+import jnum.data.index.AbstractIndex;
 import jnum.math.MathVector;
 import jnum.math.Vector2D;
 

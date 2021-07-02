@@ -23,7 +23,7 @@
 
 package jnum.data.samples;
 
-import jnum.data.IndexedValues;
+import jnum.data.index.IndexedValues;
 
 
 public interface Values1D extends IndexedValues<Index1D, Number>, Validating1D {

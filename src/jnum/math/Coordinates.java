@@ -24,7 +24,7 @@
 package jnum.math;
 
 import jnum.CopyCat;
-import jnum.data.IndexedEntries;
+import jnum.data.index.IndexedEntries;
 import jnum.data.samples.Index1D;
 
 /**

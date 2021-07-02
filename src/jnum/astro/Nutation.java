@@ -193,7 +193,7 @@ public abstract class Nutation {
     private static class IAU2000A extends Nutation {
         ArrayList<Term> psi, eps;
         
-        private final static String subdir = "nutation" + File.separator + "IAU2000A";
+        private static final String subdir = "nutation" + File.separator + "IAU2000A";
         
         @Override
         Vector2D calcCorrection(double t, DelaunayArguments m) throws IOException {

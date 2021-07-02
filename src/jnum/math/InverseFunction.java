@@ -23,7 +23,22 @@
 package jnum.math;
 
 
+/**
+ * An interface for functions implementing an inverse 
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <ArgType>     The generic type of argument for the inverse
+ * @param <ReturnType>  The generic return type of the inverse
+ */
 public interface InverseFunction<ArgType, ReturnType> {	
-    // throw IllegalArgumentException if the dimension of the arguments is incorrect...
+
+    /**
+     * Gets the inverse value at the specified abcissa. For example, for y = f(x)
+     * the inverse would take y as its argument and return x.
+     * 
+     * @param parms     The abcissa parameters
+     * @return          the inverse value for the specified abcissa.
+     */
     public ReturnType inverseValueAt(ArgType parms);
 }

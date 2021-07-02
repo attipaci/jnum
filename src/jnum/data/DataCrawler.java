@@ -26,7 +26,7 @@ package jnum.data;
 import java.util.Iterator;
 
 /**
- * An interface that enables crawling data objects. Unlike {@link Iterator}, it allows updating the underlying data
+ * Sequentially process data elements of an object. Unlike {@link Iterator}, it allows updating the underlying data
  * elements, not only querying them. Also, crawlers can be re-used: a call to {@link #reset()} will start the
  * next crawl from the beginning all over again...
  *

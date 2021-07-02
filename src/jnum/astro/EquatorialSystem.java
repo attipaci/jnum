@@ -42,7 +42,7 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 /**
- * A representation of an Equatorial coordinate system. Due to the precession and nutation of Earth's axis, as well as
+ * A representation of an equatorial coordinate system. Due to the precession and nutation of Earth's axis, as well as
  * the motion of Earth's crust and tidal variations, and our changing (improving) understanding of these with more
  * precise measurements (esp. VLBI), equatorial coordinates may be expressed relative to different orientations of
  * Earth's pole (equator), depending on time or convention. This class is the base class for the various commonly used
@@ -53,6 +53,7 @@ import nom.tam.util.Cursor;
  *
  */
 public abstract class EquatorialSystem  implements FitsHeaderEditing {
+    
     
     protected abstract boolean equals(EquatorialSystem other);
 
@@ -126,6 +127,8 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         if(!Util.equals(sys.getReferenceMJD(), getReferenceMJD(), 1e-6)) return false;
         return true;
     }
+    
+    
     
     @Override
     public void editHeader(Header header) throws HeaderCardException {
@@ -268,19 +271,22 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
      *                                  string argument.
      */
     public static EquatorialSystem forString(String id) throws IllegalArgumentException {
+        id = id.toUpperCase();
         StringTokenizer tokens = new StringTokenizer(id, "()");
         
         if(!tokens.hasMoreTokens()) return null;
         
+        
         String s = tokens.nextToken();
         
+        
         // ICRS and what is effectively the same... 
-        if(s.equalsIgnoreCase("ICRS")) return ICRS;
-        if(s.equalsIgnoreCase("ICR")) return ICRS;
-        if(s.equalsIgnoreCase("HCRS")) return ICRS;
-        if(s.equalsIgnoreCase("HCR")) return ICRS;
-        if(s.equalsIgnoreCase("BCRS")) return ICRS; // Provided proper motions have been applied 
-        if(s.equalsIgnoreCase("BCR")) return ICRS;
+        if(s.equals("ICRS")) return ICRS;
+        if(s.equals("ICR")) return ICRS;
+        if(s.equals("HCRS")) return ICRS;
+        if(s.equals("HCR")) return ICRS;
+        if(s.equals("BCRS")) return ICRS; // Provided proper motions have been applied 
+        if(s.equals("BCR")) return ICRS;
         
         String Y = null;
         double year = Double.NaN;
@@ -302,7 +308,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         }
         
         
-        if(s.equalsIgnoreCase("FK4")) {
+        if(s.equals("FK4")) {
             BesselianEpoch epoch = CoordinateEpoch.B1950;
             if(year == 1900) epoch = CoordinateEpoch.B1900;
             else if(!Double.isNaN(year)) epoch = new BesselianEpoch(year);
@@ -313,22 +319,22 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         JulianEpoch epoch = Double.isNaN(year) || year == 2000.0 ? CoordinateEpoch.J2000 : new JulianEpoch(year);
         
         // FITS RADESYSa standard names.
-        if(s.equalsIgnoreCase("FK5")) return new FK5(epoch);
-        if(s.equalsIgnoreCase("FK4")) return new FK4(new BesselianEpoch(epoch.getYear()));
-        if(s.equalsIgnoreCase("GAPPT")) return new Dynamical(epoch);        /// Treat geocentric apparent as if CIRS for same date.
+        if(s.equals("FK5")) return new FK5(epoch);
+        if(s.equals("FK4")) return new FK4(new BesselianEpoch(epoch.getYear()));
+        if(s.equals("GAPPT")) return new Dynamical(epoch);        /// Treat geocentric apparent as if CIRS for same date.
         
         // Standard system designation (but not in FITS...)
-        if(s.equalsIgnoreCase("GCRS")) return new GCRS(epoch);
-        if(s.equalsIgnoreCase("CIRS")) return new Dynamical(epoch);
-        if(s.equalsIgnoreCase("ERS")) return new Dynamical(epoch);
+        if(s.equals("GCRS")) return new GCRS(epoch);
+        if(s.equals("CIRS")) return new Dynamical(epoch);
+        if(s.equals("ERS")) return new Dynamical(epoch);
         
         // Various other names that might be used...
-        if(s.equalsIgnoreCase("APP")) return new Dynamical(epoch);
-        if(s.equalsIgnoreCase("APPT")) return new Dynamical(epoch);
-        if(s.equalsIgnoreCase("APPARENT")) return new Dynamical(epoch);
+        if(s.equals("APP")) return new Dynamical(epoch);
+        if(s.equals("APPT")) return new Dynamical(epoch);
+        if(s.equals("APPARENT")) return new Dynamical(epoch);
         
         // If no system is specified, assume FK5 if epoch is known, or ICRS if no epoch.
-        if(s.equalsIgnoreCase("")) return Double.isNaN(year) ? ICRS : new FK5(epoch);    
+        if(s.equals("")) return Double.isNaN(year) ? ICRS : new FK5(epoch);    
         
         throw new IllegalArgumentException("Cannot create equatorial system for: " + id);
     }
@@ -372,7 +378,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         public String toString() { return epoch.toString(); }
       
         
-        public final static Dynamical J2000 = new Dynamical(CoordinateEpoch.J2000);
+        public static final Dynamical J2000 = new Dynamical(CoordinateEpoch.J2000);
     }
 
 
@@ -411,8 +417,8 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         @Override
         public String toString() { return "FK4(" + epoch.toString() + ")"; }
         
-        public final static FK4 B1900 = new FK4(CoordinateEpoch.B1900);
-        public final static FK4 B1950 = new FK4(CoordinateEpoch.B1950);
+        public static final FK4 B1900 = new FK4(CoordinateEpoch.B1900);
+        public static final FK4 B1950 = new FK4(CoordinateEpoch.B1950);
     }
 
 
@@ -452,7 +458,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         @Override
         public String toString() { return "FK5(" + epoch.toString() + ")"; }
         
-        public final static FK5 J2000 = new FK5(CoordinateEpoch.J2000);
+        public static final FK5 J2000 = new FK5(CoordinateEpoch.J2000);
     }
 
 
@@ -492,7 +498,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         public String toString() { return "GCRS(" + Util.f3.format(epoch.getJulianYear()) + ")"; }
         
         
-        public final static GCRS J2000 = new GCRS(CoordinateEpoch.J2000);
+        public static final GCRS J2000 = new GCRS(CoordinateEpoch.J2000);
     }
     
     
@@ -637,7 +643,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
      * The ICRS system.
      * 
      */
-    public final static EquatorialSystem ICRS = new EquatorialSystem() {
+    public static final EquatorialSystem ICRS = new EquatorialSystem() {
 
         @Override
         protected boolean equals(EquatorialSystem other) {

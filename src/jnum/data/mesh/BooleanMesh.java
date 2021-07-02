@@ -33,7 +33,7 @@ public class BooleanMesh extends Mesh<Boolean> implements CopyCat<Mesh<Boolean>>
      */
     private static final long serialVersionUID = -326775064571956665L;
 
-    public BooleanMesh(int[] dimensions) {
+    public BooleanMesh(int... dimensions) {
         super(boolean.class, dimensions);
     }
 

@@ -25,7 +25,7 @@ package jnum.data.samples;
 
 import jnum.ExtraMath;
 import jnum.NonConformingException;
-import jnum.data.AbstractIndex;
+import jnum.data.index.AbstractIndex;
 import jnum.math.MathVector;
 
 public class Index1D extends AbstractIndex<Index1D> {

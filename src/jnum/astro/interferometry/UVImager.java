@@ -103,7 +103,7 @@ public class UVImager {
      * The product of standard deviation in one domain and FWHM in the other (Fourier) domain for Gaussian beams. It comes
      * handy for converting between these quantities when moving for one domain to the other.
      */
-    public final static double beamC = Constant.sigmasInFWHM / Constant.twoPi;
+    public static final double beamC = Constant.sigmasInFWHM / Constant.twoPi;
 
     /**
      * Constructor with a given image size. For high-fidelity imaging the u.v sizes should be at least a factor of

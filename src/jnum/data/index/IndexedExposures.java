@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,11 +21,10 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.data.index;
 
+public interface IndexedExposures<IndexType> {
 
-public interface BlankingValue {
-
-	public boolean isNaN(); 
-	
+    public double exposureAt(IndexType index);
+    
 }

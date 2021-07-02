@@ -27,6 +27,7 @@ package jnum.data;
 import java.text.NumberFormat;
 import java.util.stream.IntStream;
 
+import jnum.CopyCat;
 import jnum.ExtraMath;
 import jnum.math.Division;
 import jnum.math.HyperbolicFunctions;
@@ -39,8 +40,20 @@ import jnum.math.TrigonometricFunctions;
 import jnum.math.TrigonometricInverseFunctions;
 import jnum.util.HashCode;
 
-
-public class WeightedPoint extends RealValue implements Multiplicative<WeightedPoint>, Division<WeightedPoint>, 
+/**
+ * A class representing a weighted value. The class allows accumulation and mathematical operations 
+ * (including most common math functions) with proper error propagation. I.e. the weight of the datum 
+ * will be propagated as appropriate as the datum is being operated on.
+ * 
+ * The weight in this class can be in arbitrary units, such as number of occurences or measurements
+ * or a signal strength in a different unit than the measurement itself. If you want to use proper noise
+ * weights (w = 1/rms<sup>2</sup>) you should consider using {@link DataPoint} instead, but you don't
+ * have to...
+ * 
+ * @author Attila Kovacs
+ *
+ */
+public class WeightedPoint extends RealValue implements CopyCat<WeightedPoint>, Multiplicative<WeightedPoint>, Division<WeightedPoint>, 
     Ratio<WeightedPoint, WeightedPoint>, LinearAlgebra<WeightedPoint>, Accumulating<WeightedPoint>, 
     PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions {
 
@@ -48,15 +61,27 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
 
     private double weight;
 
-
+    /**
+     * Construct a new empty weighted value, with zero initial value and zero weight.
+     * 
+     */
     public WeightedPoint() {}
 
-
+    /**
+     * Construct a new weighted value that mimics another weigted value.
+     * 
+     * @param template      the weighted value that will be mimicked.
+     */
     public WeightedPoint(final WeightedPoint template) {
         copy(template);
     }
 
-
+    /**
+     * Constructs a new weighted value with the specified measurement and associated weight.
+     * 
+     * @param value     the measurement value
+     * @param weight    the associated weight (e.g. number of occurrences).
+     */
     public WeightedPoint(final double value, final double weight) { 
         super(value);
         this.weight = weight;
@@ -89,19 +114,41 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         return super.hashCode() ^ HashCode.from(weight);
     }
 
-
+    /**
+     * Gets the weight associated with this value
+     * 
+     * @return  the associated weight (arbitrary units).
+     */
     public final double weight() { return weight; }	
 
-
+    /**
+     * Sets a new weight to be associated with this value.
+     * 
+     * @param w the new weight (arbitrary units) to associate with the value.
+     */
     public final void setWeight(final double w) { this.weight = w; }
 
-
+    
+    /**
+     * Increments the weight of this value, e.g. to account for aggregating 
+     * new measurements into this value.
+     * 
+     * @param dw    the weight increment.
+     */
     public final void addWeight(double dw) { weight += dw; }
 
-
+    /**
+     * Scales the value by the specified factor while leaving the weight as is.
+     * 
+     * @param factor    the scaling factor for the value only.
+     */
     public final void scaleValue(double factor) { super.scale(factor); }
 
-
+    /**
+     * Scales the weight by the specified factor while leaving the value as is.
+     * 
+     * @param factor    the scaling factor for the weight only.
+     */
     public final void scaleWeight(double factor) { weight *= factor; }
 
 
@@ -111,21 +158,28 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         weight = 0.0;
     }
 
+    /**
+     * Checks if the represented value is NaN or if it has zero associated weight.
+     * 
+     * @return  <code>true</code> if the value is NaN. Otherwise <code>false</code>.
+     */
+    public final boolean isNaN() { return Double.isNaN(value()) || weight == 0.0; }
 
-    public final boolean isNaN() { return isNaN(this); }
-
-
-    public final static boolean isNaN(WeightedPoint point) { 
-        return Double.isNaN(point.value()) || point.weight == 0.0;
-    }
-
-
+    /**
+     * Makes this an exact value, that is a value with infinite weight.
+     * 
+     */
     public final void exact() { weight = Double.POSITIVE_INFINITY; }
 
-
+    /**
+     * Checks if the value is an exact value, i.e. one that has infinite weight.
+     * 
+     * @return  <code>true</code> if the value is exact. Otherwise <code>false</code>.
+     */
     public final boolean isExact() { return Double.isInfinite(weight); }
 
 
+    @Override
     public void copy(final WeightedPoint x) {
         setValue(x.value());
         weight = x.weight;
@@ -165,12 +219,21 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         else weight = weight * x.weight / (x.weight + factor * factor * weight);
     }
 
-
+    /**
+     * Averages this weighted value with another weighted value that has the same type (units) of weight.
+     * 
+     * @param x     the weighted other value to average this one with.
+     */
     public void average(final WeightedPoint x) {
         average(x.value(), x.weight);
     }
 
-
+    /**
+     * Averages this weighted value with another weighted value that has the same type (units) of weight.
+     * 
+     * @param v     the other value
+     * @param w     the associated weight of the other value.
+     */
     public void average(final double v, final double w) {
         setValue(weight * value() + w * v);
         weight += w;
@@ -240,7 +303,14 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         setValue(a.value() / b.value());
     }
 
-
+    /**
+     * Performs a simple binary operation on this weighted value and the specified other value, and
+     * stores the result in this object.
+     * 
+     * @param op        the operator, e.g. '+', '-', '*', or '/'.
+     * @param x         the other operand.
+     * @throws IllegalArgumentException     if the op argument is not one listed above.
+     */
     public void math(final char op, final WeightedPoint x) throws IllegalArgumentException {
         switch(op) {
         case '+' : add(x); break;
@@ -251,7 +321,15 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         }
     }
 
-
+    /**
+     * Gets a new weighted value with the result of a simple binary operation on 
+     * two weighted values.
+     * 
+     * @param b         the first operand.
+     * @param op        the operator, e.g. '+', '-', '*', or '/'.
+     * @param b         the other operand.
+     * @throws IllegalArgumentException     if the op argument is not one listed above.
+     */
     public static WeightedPoint math(final WeightedPoint a, final char op, final WeightedPoint b) {
         WeightedPoint result = new WeightedPoint(a);
         result.math(op, b);
@@ -259,6 +337,14 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
     }
 
 
+    /**
+     * Performs a simple binary operation on this weighted value and the specified number value, and
+     * stores the result in this object.
+     * 
+     * @param op        the operator, e.g. '+', '-', '*', or '/'.
+     * @param x         the number value.
+     * @throws IllegalArgumentException     if the op argument is not one listed above.
+     */
     public void math(final char op, final double x) throws IllegalArgumentException {
         switch(op) {
         case '+' : add(x); break;
@@ -269,7 +355,15 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         }
     }
 
-
+    /**
+     * Gets a new weighted value with the result of a simple binary operation on 
+     * a weighted value and a number value.
+     * 
+     * @param b         the weighted value.
+     * @param op        the operator, e.g. '+', '-', '*', or '/'.
+     * @param b         the number value.
+     * @throws IllegalArgumentException     if the op argument is not one listed above.
+     */
     public static WeightedPoint math(final WeightedPoint a, final char op, final double b) {
         WeightedPoint result = new WeightedPoint(a);
         result.math(op, b);
@@ -462,7 +556,13 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         return nf.format(value()) + before + nf.format(Math.sqrt(1.0 / weight)) + after; 
     }
 
-
+    /**
+     * Creates an initialized array of weighted values of the specified size. All elements of the
+     * array are set to empty data (weight 0) initially.
+     * 
+     * @param size      Number of elements in the new array of weighted values.
+     * @return          an initialized new array of weighted values- of the specified size.
+     */
     public static WeightedPoint[] createArray(int size) {
         final WeightedPoint[] p = new WeightedPoint[size];
         IntStream.range(0, size).parallel().forEach(i -> p[i] = new WeightedPoint());
@@ -470,20 +570,36 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
     }
 
 
+    /**
+     * Extracts the values from an array of weighted values, and returns them as floats.
+     * 
+     * @param data      An array of weighted values
+     * @return          the extracted values only.
+     */
     public static float[] floatValues(final WeightedPoint[] data) {
         final float[] fdata = new float[data.length];
         IntStream.range(0, data.length).parallel().forEach(i -> fdata[i] = (float) data[i].value());
         return fdata;
     }
 
-
+    /**
+     * Extracts the values from an array of weighted values, and returns them as doubles.
+     * 
+     * @param data      An array of weighted values
+     * @return          the extracted values only.
+     */
     public static double[] values(final WeightedPoint[] data) {
         final double[] ddata = new double[data.length];
         IntStream.range(0, data.length).parallel().forEach(i -> ddata[i] = data[i].value());
         return ddata;
     }
 
-
+    /**
+     * Extracts the weightes from an array of weighted values, and returns them as floats.
+     * 
+     * @param data      An array of weighted values
+     * @return          the extracted weights only.
+     */
     public static float[] floatWeights(final WeightedPoint[] data) {
         final float[] fdata = new float[data.length];
         IntStream.range(0, data.length).parallel().forEach(i -> fdata[i] = (float) data[i].weight());
@@ -491,13 +607,21 @@ public class WeightedPoint extends RealValue implements Multiplicative<WeightedP
         return fdata;
     }
 
-
+    /**
+     * Extracts the weightes from an array of weighted values, and returns them as doubles.
+     * 
+     * @param data      An array of weighted values
+     * @return          the extracted weights only.
+     */
     public static double[] weights(final WeightedPoint[] data) {
         final double[] ddata = new double[data.length];
         IntStream.range(0, data.length).parallel().forEach(i -> ddata[i] = data[i].weight());
         return ddata;
     }
 
-
-    public final static WeightedPoint NaN = new WeightedPoint(0.0, 0.0);   
+    /**
+     * 
+     * 
+     */
+    public static final WeightedPoint NaN = new WeightedPoint(0.0, 0.0);   
 }

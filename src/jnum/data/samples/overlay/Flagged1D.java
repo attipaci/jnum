@@ -168,9 +168,9 @@ public class Flagged1D extends Overlay1D {
         getFlags().destroy();        
     }
     
-    public final static long FLAG_DISCARD = 1L<<0;
-    public final static long FLAG_OPERATION = 1L<<1;
+    public static final long FLAG_DISCARD = 1L<<0;
+    public static final long FLAG_OPERATION = 1L<<1;
 
-    public final static long FLAG_DEFAULT = FLAG_DISCARD;
+    public static final long FLAG_DEFAULT = FLAG_DISCARD;
     
 }

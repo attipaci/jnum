@@ -45,7 +45,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     private static final long serialVersionUID = -1573657596441176858L;
 
     /** The Constant standardUnits. */
-    protected final static Hashtable<String, Unit> standardUnits = new Hashtable<>();
+    protected static final Hashtable<String, Unit> standardUnits = new Hashtable<>();
 
     // Usage Example:
     //    - To convert degrees to hourAngle : hourAngle = (degrees * Unit.deg) / Unit.hourAngle
@@ -190,1093 +190,1063 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
 
 
     // Unit Prefixes
-    /** The Constant deci. */
-    public final static double deci = 0.1;
+    /** 0.1, d (deci), as in dL. (Non-standard, but used at some places) */
+    public static final double deci = 0.1;
 
-    /** The Constant centi. */
-    public final static double centi = 1.0e-2;
+    /** 0.01, c (centi), as in cm. */
+    public static final double centi = 1.0e-2;
 
-    /** The Constant milli. */
-    public final static double milli = 1.0e-3;
+    /** 10<sup>-3</sup>, m (milli), as in mm.*/
+    public static final double milli = 1.0e-3;
 
-    /** The Constant micro. */
-    public final static double micro = 1.0e-6;
+    /** 10<sup>-6</sup>, &mu; (micro), as in &mu;m. */
+    public static final double micro = 1.0e-6;
 
-    /** The Constant nano. */
-    public final static double nano = 1.0e-9;
+    /** 10<sup>-9</sup>, n (nano), as in nW. */
+    public static final double nano = 1.0e-9;
 
-    /** The Constant pico. */
-    public final static double pico = 1.0e-12;
+    /** 10<sup>-12</sup>, prefix p (pico) as in pW. */
+    public static final double pico = 1.0e-12;
 
-    /** The Constant femto. */
-    public final static double femto = 1.0e-15;
+    /** 10<sup>-15</sup>, f (femto) as in fm. */
+    public static final double femto = 1.0e-15;
 
-    /** The Constant atto. */
-    public final static double atto = 1.0e-18;
+    /** 10<sup>-18</sup>, a (atto). */
+    public static final double atto = 1.0e-18;
 
-    /** The Constant zepto. */
-    public final static double zepto = 1.0e-21;
+    /** 10<sup>-21</sup>, z (zepto). */
+    public static final double zepto = 1.0e-21;
 
-    /** The Constant yocto. */
-    public final static double yocto = 1.0e-24;
+    /** 10<sup>-24</sup>, y (yocto). */
+    public static final double yocto = 1.0e-24;
 
-    /** The Constant deka. */
-    public final static double deka = 10.0;
+    /** 10, dk (deka), as in dkg. (Non-standard, but used in places like Hungary) */
+    public static final double deka = 10.0;
 
-    /** The Constant hecto. */
-    public final static double hecto = 100.0;
+    /** 100, h (hecto) as in hL. */
+    public static final double hecto = 100.0;
 
-    /** The Constant kilo. */
-    public final static double kilo = 1.0e3;
+    /** 10<sup>3</sup>, k (kilo) as in kg. */
+    public static final double kilo = 1.0e3;
 
-    /** The Constant mega. */
-    public final static double mega = 1.0e6;
+    /** 10<sup>6</sup> M (mega), as in Mpc. */
+    public static final double mega = 1.0e6;
 
-    /** The Constant giga. */
-    public final static double giga = 1.0e9;
+    /** 10<sup>9</sup> G (giga), as in Gyr. */
+    public static final double giga = 1.0e9;
 
-    /** The Constant tera. */
-    public final static double tera = 1.0e12;
+    /** 10<sup>12</sup>, T (tera), as in TB. */
+    public static final double tera = 1.0e12;
 
-    /** The Constant peta. */
-    public final static double peta = 1.0e15;
+    /** 10<sup>15</sup>, P (peta), as in PFLOPS. */
+    public static final double peta = 1.0e15;
 
-    /** The Constant exa. */
-    public final static double exa = 1.0e18;
+    /** 10<sup>18</sup>, E (exa). */
+    public static final double exa = 1.0e18;
 
-    /** The Constant zetta. */
-    public final static double zetta = 1.0e21;  // Z
+    /** 10<sup>21</sup>, Z (zetta). */
+    public static final double zetta = 1.0e21;  // Z
 
-    /** The Constant yotta. */
-    public final static double yotta = 1.0e24;  // Y
+    /** 10<sup>24</sup>, Y (yotta) */
+    public static final double yotta = 1.0e24;  // Y
 
 
 
     // Generic Dimensionless units
-    /** The Constant percent. */
-    public final static double percent = 0.01;
+    /** % (pre-cent) */
+    public static final double percent = 0.01;
 
-    /** The Constant ppm. */
-    public final static double ppm = 1e-6;
+    /** ppm (part-per-million) */
+    public static final double ppm = 1e-6;
 
-    /** The Constant ppb. */
-    public final static double ppb = 1e-9;
+    /** ppb (part-per-billion) */
+    public static final double ppb = 1e-9;
 
-    /** The Constant ppt. */
-    public final static double ppt = 1e-12;
+    /** ppt (part-per-trillion) */
+    public static final double ppt = 1e-12;
 
-    /** The Constant ppq. */
-    public final static double ppq = 1e-15;
+    /** ppw (part-per-quadrillion) */
+    public static final double ppq = 1e-15;
 
     // SI Dimensionless unit Uno
-    /** The Constant uno. */
-    public final static double uno = 1.0;
+    /** uno, the SI unit for dimensionless quantities. */
+    public static final double uno = 1.0;
 
 
 
     // Basics (SI) and common scales
 
-    /** The Constant meter. */
-    public final static double meter = 1.0;
+    /** m (meter). */
+    public static final double meter = 1.0;
 
-    /** The Constant m. */
-    public final static double m = meter;
+    /** m (meter). */
+    public static final double m = meter;
 
-    /** The Constant km. */
-    public final static double km = kilo * meter;
+    /** km (kilometer). */
+    public static final double km = kilo * meter;
 
-    /** The Constant dm. */
-    public final static double dm = deci * meter;
+    /** dm (decimeter). */
+    public static final double dm = deci * meter;
 
-    /** The Constant cm. */
-    public final static double cm = centi * meter;
+    /** cm (centimeter). */
+    public static final double cm = centi * meter;
 
-    /** The Constant mm. */
-    public final static double mm = milli * meter;
+    /** mm (millimeter). */
+    public static final double mm = milli * meter;
 
-    /** The Constant um. */
-    public final static double um = micro * meter;
+    /** &mu;m (micrometer or micron). */
+    public static final double um = micro * meter;
 
-    /** The Constant nm. */
-    public final static double nm = nano * meter;
+    /** nm (nanometer). */
+    public static final double nm = nano * meter;
 
-    /** The Constant m2. */
-    public final static double m2 = m * m;
+    /** m<sup>2</sup> (meter squared). */
+    public static final double m2 = m * m;
 
-    /** The Constant m3. */
-    public final static double m3 = m2 * m;
+    /** m<sup>3</sup> (meter cubed). */
+    public static final double m3 = m2 * m;
 
-    /** The Constant m4. */
-    public final static double m4 = m3 * m;
+    /** m<sup>4</sup> (meter to the 4th power). */
+    public static final double m4 = m3 * m;
 
-    /** The Constant m5. */
-    public final static double m5 = m4 * m;
+    /** m<sup>5</sup> (meter to the 5th power). */
+    public static final double m5 = m4 * m;
 
-    /** The Constant m6. */
-    public final static double m6 = m5 * m;
+    /** m<sup>6</sup> (meter to the 6th power). */
+    public static final double m6 = m5 * m;
 
-    /** The Constant cm2. */
-    public final static double cm2 = cm * cm;
+    /** cm<sup>2</sup> (centimeter squared). */
+    public static final double cm2 = cm * cm;
 
-    /** The Constant cm3. */
-    public final static double cm3 = cm2 * cm;
+    /** cm<sup>3</sup> (centimeter cubed). */
+    public static final double cm3 = cm2 * cm;
 
-    /** The Constant cm4. */
-    public final static double cm4 = cm3 * cm;
+    /** cm<sup>4</sup> (centimeter to hte 4th power). */
+    public static final double cm4 = cm3 * cm;
 
-    /** The Constant cm5. */
-    public final static double cm5 = cm4 * cm;
+    /** cm<sup>5</sup> (centimeter to the 5th power). */
+    public static final double cm5 = cm4 * cm;
 
-    /** The Constant cm6. */
-    public final static double cm6 = cm5 * cm;
+    /** cm<sup>6</sup> (centimeter to the 6th power) */
+    public static final double cm6 = cm5 * cm;
 
 
-    /** The Constant kilogramm. */
-    public final static double kilogramm = 1.0;
+    /** kg (kilogram). */
+    public static final double kilogram = 1.0;
 
-    /** The Constant kg. */
-    public final static double kg = kilogramm;
+    /** kg (kilogram). */
+    public static final double kg = kilogram;
 
-    /** The Constant kg2. */
-    public final static double kg2 = kg * kg;
+    /** kg<sup>2</sup> (kilogram squared). */
+    public static final double kg2 = kg * kg;
 
-    /** The Constant kg3. */
-    public final static double kg3 = kg2 * kg;
+    /** kg<sup>3</sup> (kilogram cubed). */
+    public static final double kg3 = kg2 * kg;
 
-    /** The Constant kg4. */
-    public final static double kg4 = kg3 * kg;
+    /** kg<sup>4</sup> (kilogram to the 4th power). */
+    public static final double kg4 = kg3 * kg;
 
-    /** The Constant kg5. */
-    public final static double kg5 = kg4 * kg;
+    /** kg<sup>5</sup> (kilogram to the 5th power). */
+    public static final double kg5 = kg4 * kg;
 
-    /** The Constant kg6. */
-    public final static double kg6 = kg5 * kg;
+    /** kg<sup>6</sup> (kilogram to the 6th power). */
+    public static final double kg6 = kg5 * kg;
 
-    /** The Constant gramm. */
-    public final static double gramm = 0.001 * kg;
+    /** g (gram). */
+    public static final double gram = 0.001 * kg;
 
-    /** The Constant g. */
-    public final static double g = gramm;
+    /** g (gram). */
+    public static final double g = gram;
 
-    /** The Constant g2. */
-    public final static double g2 = g * g;
+    /** g<sup>2</sup> (gram squared). */
+    public static final double g2 = g * g;
 
-    /** The Constant g3. */
-    public final static double g3 = g2 * g;
+    /** g<sup>3</sup> (gram cubed). */
+    public static final double g3 = g2 * g;
 
-    /** The Constant g4. */
-    public final static double g4 = g3 * g;
+    /** g<sup>4</sup> (gram to the 4th power). */
+    public static final double g4 = g3 * g;
 
-    /** The Constant g5. */
-    public final static double g5 = g4 * g;
+    /** g<sup>5</sup> (gram to the 5th power). */
+    public static final double g5 = g4 * g;
 
-    /** The Constant g6. */
-    public final static double g6 = g5 * g;
+    /** g<sup>6</sup> (gram to the 6th power). */
+    public static final double g6 = g5 * g;
 
-    /** The Constant dkg. */
-    public final static double dkg = deka * gramm;
+    /** dkg (dekagram). */
+    public static final double dkg = deka * gram;
 
-    /** The Constant mg. */
-    public final static double mg = milli * gramm;
+    /** mg (milligram). */
+    public static final double mg = milli * gram;
+    
+    /** &mu;g (microgram). */
+    public static final double mug = micro * gram;
 
-    /** The Constant second. */
-    public final static double second = 1.0;
+    /** s (second). */
+    public static final double second = 1.0;
 
-    /** The Constant s. */
-    public final static double s = second;
+    /** s (second).. */
+    public static final double s = second;
 
-    /** The Constant sec. */
-    public final static double sec = second;
+    /** s (second). */
+    public static final double sec = second;
 
-    /** The Constant msec. */
-    public final static double msec = milli * second;
+    /** ms (millisecond). */
+    public static final double msec = milli * second;
 
-    /** The Constant ms. */
-    public final static double ms = msec;
+    /** ms (millisecond). */
+    public static final double ms = msec;
 
-    /** The Constant usec. */
-    public final static double usec = micro * second;
+    /** &mu;s (microsecond). */
+    public static final double usec = micro * second;
 
-    /** The Constant us. */
-    public final static double us = usec;
+    /** &mu;s (microsecond) */
+    public static final double us = usec;
 
-    /** The Constant nsec. */
-    public final static double nsec = nano * second;
+    /** ns (nanosecond). */
+    public static final double nsec = nano * second;
 
-    /** The Constant ns. */
-    public final static double ns = nsec;
+    /** ns (nanosecond). */
+    public static final double ns = nsec;
 
-    /** The Constant psec. */
-    public final static double psec = pico * second;
+    /** ps (picosecond). */
+    public static final double psec = pico * second;
 
-    /** The Constant ps. */
-    public final static double ps = psec;
+    /** ps (picosecond). */
+    public static final double ps = psec;
 
-    /** The Constant fsec. */
-    public final static double fsec = femto * second;
+    /** fs (femtosecond). */
+    public static final double fsec = femto * second;
 
-    /** The Constant fs. */
-    public final static double fs = fsec;
+    /** fs (femtosecond). */
+    public static final double fs = fsec;
 
-    /** The Constant sec2. */
-    public final static double sec2 = sec * sec;
+    /** s<sup>2</sup> (second squared). */
+    public static final double s2 = s * s;
 
-    /** The Constant sec3. */
-    public final static double sec3 = sec2 * sec;
+    /** s<sup>2</sup> (second cubed). */
+    public static final double s3 = s * s2;
 
-    /** The Constant sec4. */
-    public final static double sec4 = sec3 * sec;
+    /** s<sup>4</sup> (second to the 4th power). */
+    public static final double s4 = s * s3;
 
-    /** The Constant sec5. */
-    public final static double sec5 = sec4 * sec;
+    /** s<sup>5</sup> (second to the 5th power). */
+    public static final double s5 = s * s4;
 
-    /** The Constant sec6. */
-    public final static double sec6 = sec5 * sec;
+    /** s<sup>6</sup> (second to the 6th power). */
+    public static final double s6 = s * s5;
 
-    /** The Constant s2. */
-    public final static double s2 = sec2;
+    /** A (ampere or amp). */
+    public static final double ampere = 1.0;
 
-    /** The Constant s3. */
-    public final static double s3 = sec3;
+    /** A (ampere or amp). */
+    public static final double amp = ampere;
 
-    /** The Constant s4. */
-    public final static double s4 = sec4;
+    /** A (ampere or amp). */
+    public static final double A = ampere;
 
-    /** The Constant s5. */
-    public final static double s5 = sec5;
+    /** kA (kiloampere or kiloamp). */
+    public static final double kA = kilo * ampere;
 
-    /** The Constant s6. */
-    public final static double s6 = sec6;
+    /** mA (milliampere or milliamp). */
+    public static final double mA = milli * ampere;
 
-    /** The Constant ampere. */
-    public final static double ampere = 1.0;
+    /** &mu;A (microampere or microamp). */
+    public static final double uA = micro * ampere;
 
-    /** The Constant amp. */
-    public final static double amp = ampere;
+    /** nA (nanoampere or nanoamp). */
+    public static final double nA = nano * ampere;
 
-    /** The Constant A. */
-    public final static double A = ampere;
+    /** pA (picoampere or picoamp). */
+    public static final double pA = pico * ampere;
 
-    /** The Constant kA. */
-    public final static double kA = kilo * ampere;
+    /** A<sup>2</sup> (ampere squared). */
+    public static final double A2 = A * A;
 
-    /** The Constant mA. */
-    public final static double mA = milli * ampere;
+    /** A<sup>3</sup> (ampere cubed). */
+    public static final double A3 = A2 * A;
 
-    /** The Constant uA. */
-    public final static double uA = micro * ampere;
+    /** K (kelvin). */
+    public static final double kelvin = 1.0;
 
-    /** The Constant nA. */
-    public final static double nA = nano * ampere;
+    /** K (kelvin). */
+    public static final double K = kelvin;
 
-    /** The Constant pA. */
-    public final static double pA = pico * ampere;
+    /** mK (millikelvin). */
+    public static final double mK = milli * kelvin;
 
-    /** The Constant A2. */
-    public final static double A2 = A * A;
+    /** &mu;K (microkelvin). */
+    public static final double uK = micro * kelvin;
 
-    /** The Constant A3. */
-    public final static double A3 = A2 * A;
+    /** nK (nanokelvin). */
+    public static final double nK = nano * kelvin;
 
-    /** The Constant kelvin. */
-    public final static double kelvin = 1.0;
+    /** K<sup>2</sup> (kelvin squared). */
+    public static final double K2 = K * K;
 
-    /** The Constant K. */
-    public final static double K = kelvin;
+    /** K<sup>3</sup> (kelvin cubed). */
+    public static final double K3 = K2 * K;
 
-    /** The Constant mK. */
-    public final static double mK = milli * kelvin;
+    /** K<sup>4</sup> (kelvin to the 4th power). */
+    public static final double K4 = K3 * K;
 
-    /** The Constant uK. */
-    public final static double uK = micro * kelvin;
+    /** K<sup>5</sup> (kelvin to the 5th power). */
+    public static final double K5 = K4 * K;
 
-    /** The Constant nK. */
-    public final static double nK = nano * kelvin;
+    /** K<sup>6</sup> (kelvin to the 6th power). */
+    public static final double K6 = K5 * K;
 
-    /** The Constant K2. */
-    public final static double K2 = K * K;
+    /** mol. */
+    public static final double mol = 1.0;
 
-    /** The Constant K3. */
-    public final static double K3 = K2 * K;
+    /** mmol (millimol). */
+    public static final double mmol = milli * mol;
 
-    /** The Constant K4. */
-    public final static double K4 = K3 * K;
+    /** &mu;mol (micromol). */
+    public static final double umol = micro * 1.0;
 
-    /** The Constant K5. */
-    public final static double K5 = K4 * K;
+    /** cd (candela). */
+    public static final double candela = 1.0;
 
-    /** The Constant K6. */
-    public final static double K6 = K5 * K;
-
-    /** The Constant mol. */
-    public final static double mol = 1.0;
-
-    /** The Constant mmol. */
-    public final static double mmol = milli * mol;
-
-    /** The Constant umol. */
-    public final static double umol = micro * 1.0;
-
-    /** The Constant candela. */
-    public final static double candela = 1.0;
-
-    /** The Constant cd. */
-    public final static double cd = candela;
+    /** cd (candela). */
+    public static final double cd = candela;
 
     // Angles
-    /** The Constant radian. */
-    public final static double radian = 1.0;
+    /** rad (radian). */
+    public static final double radian = 1.0;
 
-    /** The Constant rad. */
-    public final static double rad = radian;
+    /** rad (radian). */
+    public static final double rad = radian;
 
-    /** The Constant mrad. */
-    public final static double mrad = milli * rad;
+    /** mrad (milliradian). */
+    public static final double mrad = milli * rad;
 
-    /** The Constant urad. */
-    public final static double urad = micro * rad;
+    /** &mu;rad (microradian). */
+    public static final double urad = micro * rad;
 
-    /** The Constant steradian. */
-    public final static double steradian = 1.0;
+    /** sr (steradian). */
+    public static final double steradian = 1.0;
 
-    /** The Constant sr. */
-    public final static double sr = steradian;
+    /** sr (steradian). */
+    public static final double sr = steradian;
 
-    /** The Constant rad2. */
-    public final static double rad2 = steradian;
+    /** rad<sup>2</sup> (radian squared). */
+    public static final double rad2 = steradian;
 
 
     // other SI Units 
-    /** The Constant hertz. */
-    public final static double hertz = 1.0 / sec;
+    /** Hz (hertz). */
+    public static final double hertz = 1.0 / sec;
 
-    /** The Constant Hz. */
-    public final static double Hz = hertz;
+    /** Hz (herz). */
+    public static final double Hz = hertz;
+    
+    /** mHz (millihertz). */
+    public static final double mHz = milli * hertz;
 
-    /** The Constant uHz. */
-    public final static double uHz = micro * hertz;
+    /** &mu;Hz (microhertz). */
+    public static final double uHz = micro * hertz;
 
-    /** The Constant mHz. */
-    public final static double mHz = milli * hertz;
+    /** kHz (kilohertz). */
+    public static final double kHz = kilo * hertz;
 
-    /** The Constant kHz. */
-    public final static double kHz = kilo * hertz;
+    /** MHz (megahertz). */
+    public static final double MHz = mega * hertz;
 
-    /** The Constant MHz. */
-    public final static double MHz = mega * hertz;
+    /** GHz (gigahertz) */
+    public static final double GHz = giga * hertz;
 
-    /** The Constant GHz. */
-    public final static double GHz = giga * hertz;
+    /** THz (terahertz) */
+    public static final double THz = tera * hertz;
 
-    /** The Constant THz. */
-    public final static double THz = tera * hertz;
+    /** Hz<sup>2</sup> (hertz squared). */
+    public static final double Hz2 = Hz * Hz;
 
-    /** The Constant Hz2. */
-    public final static double Hz2 = Hz * Hz;
+    /** Hz<sup>3</sup> (hertz cubed). */
+    public static final double Hz3 = Hz2 * Hz;
 
-    /** The Constant Hz3. */
-    public final static double Hz3 = Hz2 * Hz;
+    /** Hz<sup>4</sup> (hertz to the 4th power). */
+    public static final double Hz4 = Hz3 * Hz;
 
-    /** The Constant Hz4. */
-    public final static double Hz4 = Hz3 * Hz;
+    /** Hz<sup>5</sup> (hertz to the 5th power). */
+    public static final double Hz5 = Hz4 * Hz;
 
-    /** The Constant Hz5. */
-    public final static double Hz5 = Hz4 * Hz;
-
-    /** The Constant Hz6. */
-    public final static double Hz6 = Hz5 * Hz;
+    /** Hz<sup>6</sup> (hertz to the 6th power). */
+    public static final double Hz6 = Hz5 * Hz;
 
 
     // Samples per second
-    /** The Constant kSPS. */
-    public final static double kSPS = kilo / sec;
+    /** kSPS (kilosamples-per-second). */
+    public static final double kSPS = kilo / sec;
 
-    /** The Constant MSPS. */
-    public final static double MSPS = mega / sec;
+    /** MSPS (megasamples-per-second). */
+    public static final double MSPS = mega / sec;
 
-    /** The Constant GSPS. */
-    public final static double GSPS = giga / sec;
+    /** GSPS (gigasamples-per-second). */
+    public static final double GSPS = giga / sec;
 
-    /** The Constant newton. */
-    public final static double newton = kg * m / s2;
+    /** N (newton) = kg m / s<sup>2</sup>. */
+    public static final double newton = kg * m / s2;
 
-    /** The Constant N. */
-    public final static double N = newton;
+    /** N (newton) = kg m / s<sup>2</sup>. */
+    public static final double N = newton;
 
-    /** The Constant kN. */
-    public final static double kN = kilo * newton;
+    /** kN (kilonewton). */
+    public static final double kN = kilo * newton;
 
-    /** The Constant MN. */
-    public final static double MN = mega * newton;
+    /** MN (meganewton). */
+    public static final double MN = mega * newton;
 
-    /** The Constant mN. */
-    public final static double mN = milli * newton;
+    /** mN (millinewton). */
+    public static final double mN = milli * newton;
 
-    /** The Constant uN. */
-    public final static double uN = micro * newton;
+    /** &mu;N (micronewton). */
+    public static final double uN = micro * newton;
 
-    /** The Constant nN. */
-    public final static double nN = nano * newton;
+    /** nN (nanonewton). */
+    public static final double nN = nano * newton;
 
-    /** The Constant pN. */
-    public final static double pN = pico * newton;
+    /** pN (piconewton). */
+    public static final double pN = pico * newton;
 
-    /** The Constant N2. */
-    public final static double N2 = N * N;
+    /** N<sup>2</sup> (newton squared). */
+    public static final double N2 = N * N;
 
-    /** The Constant N3. */
-    public final static double N3 = N2 * N;
+    /** N<sup>2</sup> (newton cubed). */
+    public static final double N3 = N2 * N;
 
-    /** The Constant N4. */
-    public final static double N4 = N3 * N;
+    /** N<sup>2</sup> (newton to the 4th power). */
+    public static final double N4 = N3 * N;
 
-    /** The Constant N5. */
-    public final static double N5 = N4 * N;
+    /** N<sup>2</sup> (newton to the 5th power). */
+    public static final double N5 = N4 * N;
 
-    /** The Constant N6. */
-    public final static double N6 = N5 * N;
+    /** N<sup>2</sup> (newton to the 6th power). */
+    public static final double N6 = N5 * N;
 
 
-    /** The Constant pascal. */
-    public final static double pascal = N / m2;
+    /** Pa (pascal) = N / m<sup>2</sup>. */
+    public static final double pascal = N / m2;
 
-    /** The Constant Pa. */
-    public final static double Pa = pascal;
+    /** Pa (pascal). */
+    public static final double Pa = pascal;
 
-    /** The Constant hPa. */
-    public final static double hPa = hecto * pascal;
+    /** hPa (hectopascal). */
+    public static final double hPa = hecto * pascal;
 
-    /** The Constant kPa. */
-    public final static double kPa = kilo * pascal;
+    /** kPa (kilopascal). */
+    public static final double kPa = kilo * pascal;
 
-    /** The Constant MPa. */
-    public final static double MPa = mega * pascal;
+    /** MPa (megapascal). */
+    public static final double MPa = mega * pascal;
 
-    /** The Constant joule. */
-    public final static double joule = N * m;
+    /** J (joule) = N m. */
+    public static final double joule = N * m;
 
-    /** The Constant J. */
-    public final static double J = joule;
+    /** J (joule) = N m. */
+    public static final double J = joule;
 
-    /** The Constant kJ. */
-    public final static double kJ = kilo * joule;
+    /** kJ (kilojoule). */
+    public static final double kJ = kilo * joule;
 
-    /** The Constant MJ. */
-    public final static double MJ = mega * joule;
+    /** MJ (megajoule). */
+    public static final double MJ = mega * joule;
 
-    /** The Constant GJ. */
-    public final static double GJ = giga * joule;
+    /** GJ (joule). */
+    public static final double GJ = giga * joule;
 
-    /** The Constant TJ. */
-    public final static double TJ = tera * joule;
+    /** TJ (terajoule). */
+    public static final double TJ = tera * joule;
 
-    /** The Constant PJ. */
-    public final static double PJ = peta * joule;
+    /** PJ (petajoule). */
+    public static final double PJ = peta * joule;
 
-    /** The Constant mJ. */
-    public final static double mJ = milli * joule;    
+    /** mJ (millijoule). */
+    public static final double mJ = milli * joule;    
 
-    /** The Constant uJ. */
-    public final static double uJ = micro * joule;
+    /** &mu;J (microjoule). */
+    public static final double uJ = micro * joule;
 
-    /** The Constant nJ. */
-    public final static double nJ = nano * joule;
+    /** nJ (nanojoule). */
+    public static final double nJ = nano * joule;
 
-    /** The Constant pJ. */
-    public final static double pJ = pico * joule;
+    /** pJ (picojoule). */
+    public static final double pJ = pico * joule;
 
-    /** The Constant fJ. */
-    public final static double fJ = femto * joule;
+    /** fJ (femtojoule). */
+    public static final double fJ = femto * joule;
 
 
-    /** The Constant watt. */
-    public final static double watt = J / s;
+    /** W (watt) = J / s. */
+    public static final double watt = J / s;
 
-    /** The Constant W. */
-    public final static double W = watt;
+    /** W (watt) = J / s. */
+    public static final double W = watt;
 
-    /** The Constant kW. */
-    public final static double kW = kilo * watt;
+    /** kW (kilowatt). */
+    public static final double kW = kilo * watt;
 
-    /** The Constant MW. */
-    public final static double MW = mega * watt;
+    /** MW (megawatt). */
+    public static final double MW = mega * watt;
 
-    /** The Constant GW. */
-    public final static double GW = giga * watt;
+    /** GW (gigawatt). */
+    public static final double GW = giga * watt;
 
-    /** The Constant TW. */
-    public final static double TW = tera * watt;
+    /** TW (terawatt). */
+    public static final double TW = tera * watt;
 
-    /** The Constant mW. */
-    public final static double mW = milli * watt;
+    /** mW (milliwatt). */
+    public static final double mW = milli * watt;
 
-    /** The Constant uW. */
-    public final static double uW = micro * watt;
+    /** uW (microwatt). */
+    public static final double uW = micro * watt;
 
-    /** The Constant nW. */
-    public final static double nW = nano * watt;
+    /** nW (nanowatt). */
+    public static final double nW = nano * watt;
 
-    /** The Constant pW. */
-    public final static double pW = pico * watt;
+    /** pW (picowatt). */
+    public static final double pW = pico * watt;
 
-    /** The Constant fW. */
-    public final static double fW = femto * watt;
+    /** fW (femtowatt). */
+    public static final double fW = femto * watt;
 
-    /** The Constant coulomb. */
-    public final static double coulomb = A * s;
+    /** C (coulomb) = A s. */
+    public static final double coulomb = A * s;
 
-    /** The Constant C. */
-    public final static double C = coulomb;
+    /** C (coulomb) = A s. */
+    public static final double C = coulomb;
 
-    /** The Constant volt. */
-    public final static double volt = W / A;
+    /** V (volt) = W / A. */
+    public static final double volt = W / A;
 
-    /** The Constant V. */
-    public final static double V = volt;
+    /** V (volt) = W / A. */
+    public static final double V = volt;
 
-    /** The Constant mV. */
-    public final static double mV = milli * volt;
+    /** mV (millivolt). */
+    public static final double mV = milli * volt;
 
-    /** The Constant uV. */
-    public final static double uV = micro * volt;
+    /** &mu;V (microvolt). */
+    public static final double uV = micro * volt;
 
-    /** The Constant nV. */
-    public final static double nV = nano * volt;
+    /** nV (nanovolt). */
+    public static final double nV = nano * volt;
 
-    /** The Constant pV. */
-    public final static double pV = pico * volt;
+    /** pV (picovolt). */
+    public static final double pV = pico * volt;
 
-    /** The Constant kV. */
-    public final static double kV = kilo * volt;
+    /** kV (kilovolt). */
+    public static final double kV = kilo * volt;
 
-    /** The Constant farad. */
-    public final static double farad = C / V;
+    /** F (farad) = C / V. */
+    public static final double farad = C / V;
 
-    /** The Constant F. */
-    public final static double F = farad;
+    /** F (farad) = C / V. */
+    public static final double F = farad;
 
-    /** The Constant mF. */
-    public final static double mF = milli * farad;
+    /** mF (millifarad). */
+    public static final double mF = milli * farad;
 
-    /** The Constant uF. */
-    public final static double uF = micro * farad;
+    /** &mu;F (microfarad). */
+    public static final double uF = micro * farad;
 
-    /** The Constant nF. */
-    public final static double nF = nano * farad;
+    /** nF (nanofarad). */
+    public static final double nF = nano * farad;
 
-    /** The Constant pF. */
-    public final static double pF = pico * farad;
+    /** pF (picofarad). */
+    public static final double pF = pico * farad;
 
-    /** The Constant fF. */
-    public final static double fF = femto * farad;
+    /** fF (femtofarad). */
+    public static final double fF = femto * farad;
 
-    /** The Constant ohm. */
-    public final static double ohm = V / A;
+    /** &Omega; (ohm) = V / A. */
+    public static final double ohm = V / A;
 
-    /** The Constant kohm. */
-    public final static double kohm = kilo * ohm;
+    /** k&Omega; (kiloohm). */
+    public static final double kohm = kilo * ohm;
 
-    /** The Constant Mohm. */
-    public final static double Mohm = mega * ohm;
+    /** M&Omega; (megaohm). */
+    public static final double Mohm = mega * ohm;
 
-    /** The Constant mohm. */
-    public final static double mohm = milli * ohm;
+    /** m&Omega; (milliohm). */
+    public static final double mohm = milli * ohm;
 
-    /** The Constant uohm. */
-    public final static double uohm = micro * ohm;
+    /** &mu;&Omega; (microohm). */
+    public static final double uohm = micro * ohm;
 
-    /** The Constant siemens. */
-    public final static double siemens = 1.0 / ohm;
+    /** S (siemens) = 1 / &Omega;. */
+    public static final double siemens = 1.0 / ohm;
 
-    /** The Constant S. */
-    public final static double S = siemens;    
+    /** S (siemens) = 1 / &Omega;. */
+    public static final double S = siemens;    
 
-    /** The Constant weber. */
-    public final static double weber = V * s;
+    /** Wb (weber) = V s. */
+    public static final double weber = V * s;
 
-    /** The Constant Wb. */
-    public final static double Wb = weber;
+    /** Wb (weber) = V s. */
+    public static final double Wb = weber;
 
-    /** The Constant tesla. */
-    public final static double tesla = Wb / m2;
+    /** T (tesla) = Wb / m<sup>2</sup>. */
+    public static final double tesla = Wb / m2;
 
-    /** The Constant T. */
-    public final static double T = tesla;
+    /** T (tesla) = Wb / m<sup>2</sup>. */
+    public static final double T = tesla;
 
-    /** The Constant mT. */
-    public final static double mT = milli * tesla;
+    /** mT (millitesla). */
+    public static final double mT = milli * tesla;
 
-    /** The Constant uT. */
-    public final static double uT = milli * tesla;
+    /** &mu;T (mictotesla). */
+    public static final double uT = milli * tesla;
 
 
-    /** The Constant henry. */
-    public final static double henry = Wb / A;
+    /** H (henry) = Wb / A. */
+    public static final double henry = Wb / A;
 
-    /** The Constant H. */
-    public final static double H = henry;
+    /** H (henry) = Wb / A. */
+    public static final double H = henry;
 
-    /** The Constant mH. */
-    public final static double mH = milli * henry;
+    /** mH (millihenry). */
+    public static final double mH = milli * henry;
 
-    /** The Constant uH. */
-    public final static double uH = micro * henry;
+    /** &mu;H (microhenry). */
+    public static final double uH = micro * henry;
 
-    /** The Constant nH. */
-    public final static double nH = nano * henry;
+    /** nH (nanohenry). */
+    public static final double nH = nano * henry;
 
-    /** The Constant pH. */
-    public final static double pH = pico * henry;
+    /** pH (picohenry). */
+    public static final double pH = pico * henry;
 
-    /** The Constant lumen. */
-    public final static double lumen = cd * sr;
+    /** lm (lumen) = cd sr. */
+    public static final double lumen = cd * sr;
 
-    /** The Constant lm. */
-    public final static double lm = lumen;
+    /** lm (lumen) = cd sr. */
+    public static final double lm = lumen;
 
-    /** The Constant lux. */
-    public final static double lux = lm / m2;
+    /** lx (lux) = lm / m<sup>2</sup>. */
+    public static final double lux = lm / m2;
 
-    /** The Constant lx. */
-    public final static double lx = lux;
+    /** lx (lux) = lm / m<sup>2</sup>. */
+    public static final double lx = lux;
 
-    /** The Constant becquerel. */
-    public final static double becquerel = 1.0 / sec;
+    /** Bq (becquerel) = 1 / s. */
+    public static final double becquerel = 1.0 / sec;
 
-    /** The Constant Bq. */
-    public final static double Bq = becquerel;
+    /** Bq (becquerel) = 1 / s. */
+    public static final double Bq = becquerel;
 
-    /** The Constant gray. */
-    public final static double gray = J / kg;
+    /** Gy (gray) = J / kg. */
+    public static final double gray = J / kg;
 
-    /** The Constant Gy. */
-    public final static double Gy = gray;
+    /** Gy (gray) = J / kg. */
+    public static final double Gy = gray;
 
-    /** The Constant mGy. */
-    public final static double mGy = milli * gray;
+    /** mGy (milligray). */
+    public static final double mGy = milli * gray;
 
-    /** The Constant sievert. */
-    public final static double sievert = J / kg;
+    /** Sv (sievert) = J / kg. */
+    public static final double sievert = J / kg;
 
-    /** The Constant Sv. */
-    public final static double Sv = sievert;
+    /** Sv (sievert) = J / kg. */
+    public static final double Sv = sievert;
 
 
     // Angles (radians)
-    /** The Constant degree. */
-    public final static double degree = Math.PI/180.0;
+    /** &deg; (degree) = &pi; / 180. */
+    public static final double degree = Math.PI/180.0;
 
-    /** The Constant deg. */
-    public final static double deg = degree;
+    /** &deg; (degree) = &pi; / 180. */
+    public static final double deg = degree;
 
-    /** The Constant arcMinute. */
-    public final static double arcMinute = degree/60.0;
+    /** arcmin (minute of arc) = deg / 60. */
+    public static final double arcMinute = degree/60.0;
 
-    /** The Constant arcmin. */
-    public final static double arcmin = arcMinute;
+    /** arcmin (minute of arc) = deg / 60. */
+    public static final double arcmin = arcMinute;
 
-    /** The Constant arcSecond. */
-    public final static double arcSecond = arcMinute/60.0;
+    /** arcsec (second of arc) = arcmin / 60. */
+    public static final double arcSecond = arcMinute/60.0;
 
-    /** The Constant arcsec. */
-    public final static double arcsec = arcSecond;
+    /** arcsec (second of arc) = arcmin / 60. */
+    public static final double arcsec = arcSecond;
 
-    /** The Constant milliarcsecond. */
-    public final static double mas = milli * arcSecond;
+    /** mas (milliarcsec). */
+    public static final double mas = milli * arcSecond;
    
-    public final static double uas = micro * arcSecond;
+    /** &mu;as (microarcsec). */
+    public static final double uas = micro * arcSecond;
 
-    /** The Constant hourAngle. */
-    public final static double hourAngle = Constant.twoPi / 24.0;
+    /** hourangle. */
+    public static final double hourAngle = Constant.twoPi / 24.0;
 
-    /** The Constant minuteAngle. */
-    public final static double minuteAngle = hourAngle/60.0;
+    /** minute-angle. */
+    public static final double minuteAngle = hourAngle/60.0;
 
-    /** The Constant secondAngle. */
-    public final static double secondAngle = minuteAngle/60.0;
+    /** second-angle. */
+    public static final double secondAngle = minuteAngle/60.0;
 
-    /** The Constant squareDegree. */
-    public final static double squareDegree = degree * degree;
+    /** deg<sup>2</sup> (square degree). */
+    public static final double squareDegree = degree * degree;
 
-    /** The Constant degree2. */
-    public final static double degree2 = squareDegree;
+    /** deg<sup>2</sup> (square degree). */
+    public static final double degree2 = squareDegree;
 
-    /** The Constant sqdeg. */
-    public final static double sqdeg = squareDegree;
+    /** deg<sup>2</sup> (square degree). */
+    public static final double sqdeg = squareDegree;
 
-    /** The Constant deg2. */
-    public final static double deg2 = degree2;
+    /** deg<sup>2</sup> (square degree). */
+    public static final double deg2 = degree2;
 
-    /** The Constant arcmin2. */
-    public final static double arcmin2 = arcmin * arcmin;
+    /** arcmin<sup>2</sup> (square arc-minute). */
+    public static final double arcmin2 = arcmin * arcmin;
 
-    /** The Constant arcsec2. */
-    public final static double arcsec2 = arcsec * arcsec;
+    /** arcsec<sup>2</sup> (square arc-second).. */
+    public static final double arcsec2 = arcsec * arcsec;
 
     // non-SI derivatives
     // time:
-    /** The Constant minute. */
-    public final static double minute = 60.0 * sec;
+    /** minute = 60 s. */
+    public static final double minute = 60.0 * sec;
 
-    /** The Constant min. */
-    public final static double min = minute;
+    /** minute = 60 s. */
+    public static final double min = minute;
 
-    /** The Constant hour. */
-    public final static double hour = 60.0 * minute;
+    /** hour = 60 minute. */
+    public static final double hour = 60.0 * minute;
 
-    /** The Constant day. */
-    public final static double day = 24.0 * hour;
+    /** day = 24 hour. */
+    public static final double day = 24.0 * hour;
     
-    public final static double siderealDay = 23.9344696 * hour;
+    /** sidereal day = 23.9344696 hour */
+    public static final double siderealDay = 23.9344696 * hour;
 
-    /** The Constant year. */
-    public final static double year = 365.24219879 * day;
+    /** calendar year = 365.24219879 day. */
+    public static final double year = 365.24219879 * day;
 
-    /** The Constant yr. */
-    public final static double yr = year;
+    /** calendar year = 365.24219879 day. */
+    public static final double yr = year;
 
-    /** The Constant julianYear. */
-    public final static double julianYear = 365.25 * day;
+    /** Julian year = 365.25 day. */
+    public static final double julianYear = 365.25 * day;
     
-    /** The Constant century. */
-    public final static double century = 100.0 * year;
+    /** calendar century = 100 calendar year. */
+    public static final double century = 100.0 * year;
 
-    /** The Constant julianCentury. */
-    public final static double julianCentury = 100.0 * julianYear;
+    /** Julian entury = 100 Julian year. */
+    public static final double julianCentury = 100.0 * julianYear;
 
-    /** The Constant timeAngle. */
-    public final static double timeAngle = hourAngle / hour;
+    /** angle of time. */
+    public static final double timeAngle = hourAngle / hour;
 
     // distances:
-    /** The Constant angstrom. */
-    public final static double angstrom = 1.0e-10 * m;
+    /** &Aring; (angstrom) = 10<sup>-10</sup> m. */
+    public static final double angstrom = 1.0e-10 * m;
 
-    /** The Constant Rsun. */
-    public final static double Rsun = 696.0 * 1e6 * m;
+    /** Solar radius = 6.96e8 m. */
+    public static final double Rsun = 696.0 * 1e6 * m;
 
-    /** The Constant solarRadius. */
-    public final static double solarRadius = Rsun;
+    /** Solar radius = 6.96e8 m. */
+    public static final double solarRadius = Rsun;
 
-    /** The Constant Rearth. */
-    public final static double Rearth = 6378140.0 * m;
+    /** Earth radius = 6378.14 km. */
+    public static final double Rearth = 6378140.0 * m;
 
-    /** The Constant earthRadius. */
-    public final static double earthRadius = Rearth;
+    /** Earth radius = 6378.14 km. */
+    public static final double earthRadius = Rearth;
 
-    /** The Constant AU. */
-    public final static double AU = 149597870700.0 * Unit.m;
+    /** AU (astronomucal unit) = 149597870 km. */
+    public static final double AU = 149597870700.0 * Unit.m;
 
-    /** The Constant lightYear. */
-    public final static double lightYear = 299792459.0 * year;
-
-    /** The Constant lyr. */
-    public final static double lyr = lightYear;
+    /** ly (light-year) . */
+    public static final double lightYear = Constant.c * year;
 
     /** The Constant ly. */
-    public final static double ly = lightYear;
+    public static final double ly = lightYear;
 
-    /** The Constant parsec. */
-    public final static double parsec = AU / arcsec;
+    /** pc (parsec). */
+    public static final double parsec = AU / arcsec;
 
-    /** The Constant pc. */
-    public final static double pc = parsec; 
+    /** pc (parsec). */
+    public static final double pc = parsec; 
 
-    /** The Constant kpc. */
-    public final static double kpc = kilo * parsec;
+    /** kpc (kiloparsec). */
+    public static final double kpc = kilo * parsec;
 
-    /** The Constant Mpc. */
-    public final static double Mpc = mega * parsec;
+    /** Mpc (megaparsec). */
+    public static final double Mpc = mega * parsec;
 
-    /** The Constant Gpc. */
-    public final static double Gpc = giga * parsec;
+    /** Gpc (gigaparsec). */
+    public static final double Gpc = giga * parsec;
 
-    /** The Constant inch. */
-    public final static double inch = 2.54  * cm;
+    /** in (inch) = 2.54 cm. */
+    public static final double inch = 2.54  * cm;
 
-    /** The Constant in. */
-    public final static double in = inch;
+    /** in (inch) = 2.54 cm. */
+    public static final double in = inch;
 
-    /** The Constant mil. */
-    public final static double mil = 1.0e-3 * inch;
+    /** mil = in / 1000. */
+    public static final double mil = 1.0e-3 * inch;
 
-    /** The Constant foot. */
-    public final static double foot = 0.3048 * m;
+    /** ft (foot/feet). */
+    public static final double foot = 0.3048 * m;
 
-    /** The Constant ft. */
-    public final static double ft = foot;
+    /** ft (foot/feet). */
+    public static final double ft = foot;
     
-    /** The Constant kft. */
-    public final static double kft = kilo * ft;
+    /** kft (kilofeet). */
+    public static final double kft = kilo * ft;
 
-    /** The Constant yard. */
-    public final static double yard = 0.9144 * m;
+    /** yd (yard). */
+    public static final double yard = 0.9144 * m;
 
-    /** The Constant yd. */
-    public final static double yd = yard;
+    /** yd (yard). */
+    public static final double yd = yard;
 
-    /** The Constant mile. */
-    public final static double mile = 1.60935 * km;
+    /** mi (mile). */
+    public static final double mile = 1.60935 * km;
 
-    /** The Constant mi. */
-    public final static double mi = mile;
+    /** mi (mile). */
+    public static final double mi = mile;
 
-    /** The Constant nmi. */
-    public final static double nmi = 1852.0 * m;
+    /** nmi (nautical mile). */
+    public static final double nmi = 1852.0 * m;
 
-    /** The Constant pt. */
-    public final static double pt = 1/72.0 * in;
+    /** pt (point) size. */
+    public static final double pt = 1/72.0 * in;
 
     // Areas
-    /** The Constant barn. */
-    public final static double barn = 1.0e-28 * m2;
+    /** barn = 10<sup>-28</sup> m<sup>2</sup> */
+    public static final double barn = 1.0e-28 * m2;
 
 
     // Volumes
-    /** The Constant litre. */
-    public final static double litre = 1.0e-3 * m3;
+    /** L (litre/liter) = 10<sup>-3</sup> m<sup>3</sup>. */
+    public static final double liter = 1.0e-3 * m3;
 
-    /** The Constant liter. */
-    public final static double liter = litre;
+    /** L (litre/liter) = 10<sup>-3</sup> m<sup>3</sup>. */
+    public static final double L = liter;
 
-    /** The Constant l. */
-    public final static double l = litre;
+    /** dL (deciliter). */
+    public static final double dL = deci * liter;
 
-    /** The Constant L. */
-    public final static double L = litre;
+    /** cL (centiliter). */
+    public static final double cL = centi * liter;
 
-    /** The Constant dl. */
-    public final static double dl = deci * litre;
+    /** mL (milliliter). */
+    public static final double mL = milli * liter;
 
-    /** The Constant dL. */
-    public final static double dL = dl;
+    /** gal (gallon). */
+    public static final double gallon = 3.78543 * L;
 
-    /** The Constant cl. */
-    public final static double cl = centi * litre;
+    /** gal (gallon). */
+    public static final double gal = gallon;
 
-    /** The Constant cL. */
-    public final static double cL = cl;
+    /** qt (quart) volume. */
+    public static final double quart = gal / 4.0;
 
-    /** The Constant ml. */
-    public final static double ml = milli * litre;
+    /** American pint (16 fl.oz). */
+    public static final double pint = quart / 2.0;
 
-    /** The Constant mL. */
-    public final static double mL = ml;
+    /** cup. */
+    public static final double cup = pint / 2.0;
 
-    /** The Constant gallon. */
-    public final static double gallon = 3.78543 * l;
+    /** fl.oz (fluid ounce). */
+    public static final double fluidOunce = cup / 8.0;
 
-    /** The Constant gal. */
-    public final static double gal = gallon;
+    /**  fl.oz (fluid ounce). */
+    public static final double fl_oz = fluidOunce;
+    //public static final double tableSpoon = ?;
+    //public static final double Tsp = tableSpoon;
+    //public static final double teasSpoon = ?;
+    //public static final double tsp = teaSpoon;
 
-    /** The Constant quart. */
-    public final static double quart = gal / 4.0;
-
-    /** The Constant pint. */
-    public final static double pint = quart / 2.0;
-
-    /** The Constant cup. */
-    public final static double cup = pint / 2.0;
-
-    /** The Constant fluidOunce. */
-    public final static double fluidOunce = cup / 8.0;
-
-    /** The Constant fl_oz. */
-    public final static double fl_oz = fluidOunce;
-    //public final static double tableSpoon = ?;
-    //public final static double Tsp = tableSpoon;
-    //public final static double teasSpoon = ?;
-    //public final static double tsp = teaSpoon;
-
-    /** The Constant englishPint. */
-    public final static double englishPint = 20.0 * fluidOunce;
+    /** English pint (20 fl.oz). */
+    public static final double englishPint = 20.0 * fluidOunce;
 
 
     // weigths
-    /** The Constant Msun. */
-    public final static double Msun = 1.99e30 * kg;
+    /** Solar mass. */
+    public static final double Msun = 1.99e30 * kg;
 
-    /** The Constant solarMass. */
-    public final static double solarMass = Msun;
+    /** Solar mass. */
+    public static final double solarMass = Msun;
 
-    /** The Constant Mearth. */
-    public final static double Mearth = 5.9742e24 * kg;
+    /** Earth mass. */
+    public static final double Mearth = 5.9742e24 * kg;
 
-    /** The Constant earthMass. */
-    public final static double earthMass = Mearth;
+    /** Earth mass. */
+    public static final double earthMass = Mearth;
 
-    /** The Constant atomicUnit. */
-    public final static double atomicUnit = 1.66057e-27 * kg;
+    /** u (atomic unit) = 1.66057e-27 kg. */
+    public static final double atomicUnit = 1.66057e-27 * kg;
 
-    /** The Constant u. */
-    public final static double u = atomicUnit;
+    /** u (atomic unit) = 1.66057e-27 kg. */
+    public static final double u = atomicUnit;
 
-    /** The Constant pound. */
-    public final static double pound = 0.4535924 * kg;
+    /** lb (pound). */
+    public static final double pound = 0.4535924 * kg;
 
-    /** The Constant lb. */
-    public final static double lb = pound;
+    /** lb (pound). */
+    public static final double lb = pound;
 
-    /** The Constant ounce. */
-    public final static double ounce = pound / 16.0;
+    /** oz (ounce) weight. */
+    public static final double ounce = pound / 16.0;
 
-    /** The Constant oz. */
-    public final static double oz = ounce;    
+    /** oz (ounce) weight. */
+    public static final double oz = ounce;    
 
 
     // Electric
-    /** The Constant debye. */
-    public final static double debye = 3.334e-10 * C * m;
+    /** debye = 3.334e-10 * C * m. */
+    public static final double debye = 3.334e-10 * C * m;
 
-    /** The Constant biot. */
-    public final static double biot = 10.0*A;
+    /** Bi (biot) = 10 A. */
+    public static final double biot = 10.0*A;
 
-    /** The Constant Bi. */
-    public final static double Bi = biot;
+    /** Bi (biot) = 10 A. */
+    public static final double Bi = biot;
 
-    /** The Constant gauss. */
-    public final static double gauss = 1.0e-4*T;
+    /** Gs (gauss) = 10<sup>-4</sup> T. */
+    public static final double gauss = 1.0e-4*T;
 
-    /** The Constant Gs. */
-    public final static double Gs = gauss;
+    /** Gs (gauss) = 10<sup>-4</sup> T. */
+    public static final double Gs = gauss;
 
 
     // Frequency
-    /** The Constant rpm. */
-    public final static double rpm = Constant.twoPi / min;
+    /** rpm (rotations-per-minute). */
+    public static final double rpm = Constant.twoPi / min;
 
-    /** The Constant radiansPerSecond. */
-    public final static double radiansPerSecond = 1.0 / sec;
+    /** rad/s (radians-per-second). */
+    public static final double radiansPerSecond = 1.0 / sec;
 
-    /** The Constant radpersec. */
-    public final static double radpersec = radiansPerSecond;
+    /** rad/s (radians-per-second). */
+    public static final double radpersec = radiansPerSecond;
 
-    /** The Constant waveNumber. */
-    public final static double waveNumber = Constant.h * Constant.c / meter;
+    /** wave number. */
+    public static final double waveNumber = Constant.h * Constant.c / meter;
 
 
     // Forces & Pressures
-    /** The Constant dyn. */
-    public final static double dyn = 1.0e-5;
+    /** dyn = 10<sup>-5</sup> Pa. */
+    public static final double dyn = 1.0e-5 * N;
 
-    /** The Constant psi. */
-    public final static double psi = 6.89476e3 * Pa;
+    /** psi (pounds-per-square-inch) pressure. */
+    public static final double psi = 6.89476e3 * Pa;
 
-    /** The Constant atm. */
-    public final static double atm = 1.01325e5 * Pa;
+    /** atm (atmosphere) pressure. */
+    public static final double atm = 1.01325e5 * Pa;
 
-    /** The Constant bar. */
-    public final static double bar = 1.0e5 * Pa;
+    /** bar = 10<sup>5</sup> Pa. */
+    public static final double bar = 1.0e5 * Pa;
 
-    /** The Constant mbar. */
-    public final static double mbar = milli * bar;
+    /** mbar (millibar). */
+    public static final double mbar = milli * bar;
 
-    /** The Constant ubar. */
-    public final static double ubar = micro * bar;
+    /** &mu;bar (microbar). */
+    public static final double ubar = micro * bar;
 
-    /** The Constant torr. */
-    public final static double torr = 1.33322e2 * Pa;
+    /** mmHg (torr). */
+    public static final double torr = 1.33322e2 * Pa;
 
-    /** The Constant mmHg. */
-    public final static double mmHg = torr;
+    /** mmHg (torr). */
+    public static final double mmHg = torr;
 
-    /** The Constant mTorr. */
-    public final static double mTorr = milli * torr;
+    /** mtorr (millitorr). */
+    public static final double mTorr = milli * torr;
 
 
     // Energies (in Joules), Temperature, Power    
-    /** The Constant erg. */
-    public final static double erg = g * cm2 /s2;
+    /** erg = g cm<sup>2</sup> / s<sup>2</sup>. */
+    public static final double erg = g * cm2 /s2;
 
-    /** The Constant calorie. */
-    public final static double calorie = 4.1868 * J;
+    /** cal (calorie) = 4.1868 J. */
+    public static final double calorie = 4.1868 * J;
 
-    /** The Constant cal. */
-    public final static double cal = calorie;
+    /** cal (calorie) = 4.1868 J. */
+    public static final double cal = calorie;
 
-    /** The Constant kcal. */
-    public final static double kcal = kilo * cal;
+    /** kcal (kilocalorie). */
+    public static final double kcal = kilo * cal;
 
-    /** The Constant therm. */
-    public final static double therm = 1.05506e8 * J;
+    /** therm = 1.05506e8 J. */
+    public static final double therm = 1.05506e8 * J;
 
-    /** The Constant BTU. */
-    public final static double BTU = therm;
+    /** BTU (British thermal unit) = term. */
+    public static final double BTU = therm;
 
-    /** The Constant Celsius. */
-    public final static double Celsius = K;
+    /** C (celsius). */
+    public static final double Celsius = K;
 
-    /** The Constant Carenheit. */
-    public final static double Carenheit = 5.0/9.0 * K;
+    /** F (farenheit). */
+    public static final double Carenheit = 5.0/9.0 * K;
 
-    /** The Constant eV. */
-    public final static double eV =  1.6022e-19 * V;
+    /** eV (electronvolt) = 1.6022e-19 * V. */
+    public static final double eV =  Constant.q_e * V;
 
-    /** The Constant neV. */
-    public final static double neV =  nano * eV;
+    /** neV (nanoelectronvolt). */
+    public static final double neV =  nano * eV;
 
-    /** The Constant ueV. */
-    public final static double ueV =  micro * eV;
+    /** &mu;eV (microelectronvolt). */
+    public static final double ueV =  micro * eV;
 
-    /** The Constant meV. */
-    public final static double meV =  milli * eV;
+    /** meV (millielectronvolt). */
+    public static final double meV =  milli * eV;
 
-    /** The Constant keV. */
-    public final static double keV = kilo * eV;
+    /** keV (kiloelectornvolt). */
+    public static final double keV = kilo * eV;
 
-    /** The Constant MeV. */
-    public final static double MeV = mega * eV;
+    /** MeV (megalelectronvolt). */
+    public static final double MeV = mega * eV;
 
-    /** The Constant GeV. */
-    public final static double GeV = giga * eV;
+    /** GeV (gigaelevtronvolt). */
+    public static final double GeV = giga * eV;
 
-    /** The Constant TeV. */
-    public final static double TeV = tera * eV;
+    /** TeV (teralelectronvolt). */
+    public static final double TeV = tera * eV;
 
-    /** The Constant Lsun. */
-    public final static double Lsun = 3.8e26 * W;
+    /** Solar luminosity = 3.8e26 W. */
+    public static final double Lsun = 3.8e26 * W;
 
-    /** The Constant solarLuminosity. */
-    public final static double solarLuminosity = Lsun;
+    /** solar luminosity */
+    public static final double solarLuminosity = Lsun;
 
-    /** The Constant horsePower. */
-    public final static double horsePower = 7.457e2 * W;
+    /** hp (horsepower). */
+    public static final double horsePower = 7.457e2 * W;
 
-    /** The Constant hp. */
-    public final static double hp = horsePower;
-
-    /** The Constant HP. */
-    public final static double HP = horsePower;
+    /** hp (horsepower). */
+    public static final double hp = horsePower;
 
     // Spectral Density
-    /** The Constant jansky. */
-    public final static double jansky = 1.0e-26 * W / (m2 * Hz);
+    /** Jy (jansky) = 10<sup>-26</sup> W / m<sup>2</sup> Hz. */
+    public static final double jansky = 1.0e-26 * W / (m2 * Hz);
 
-    /** The Constant Jy. */
-    public final static double Jy = jansky;
+    /** Jy (jansky) = 10<sup>-26</sup> W / m<sup>2</sup> Hz. */
+    public static final double Jy = jansky;
 
-    /** The Constant mJy. */
-    public final static double mJy = milli * jansky;
+    /** mJy (millijansky). */
+    public static final double mJy = milli * jansky;
 
-    /** The Constant uJy. */
-    public final static double uJy = micro * jansky;
+    /** &mu;Jy (microjansky). */
+    public static final double uJy = micro * jansky;
 
-    /** The Constant kJy. */
-    public final static double kJy = kilo * jansky;
+    /** kJy (kilojansky). */
+    public static final double kJy = kilo * jansky;
 
-    /** The Constant mph. */
     // Speed
-    public final static double mph = mile / hour;
+    
+    /** mph (miles-per-hour). */
+    public static final double mph = mile / hour;
 
-    /** The Constant kmh. */
-    public final static double kmh = kilo * meter / hour;
+    /** km/h (kilometers-per-hour). */
+    public static final double kmh = kilo * meter / hour;
 
-    /** The Constant kn. */
-    public final static double kn = nmi / hour;
+    /** kn (knot) = nmi / h. */
+    public static final double kn = nmi / hour;
 
 
     // Various
-    /** The Constant mpg. */
-    public final static double mpg = mile / gal;
+    /** mpg (miles-per-gallon) */
+    public static final double mpg = mile / gal;
 
 
     
@@ -1293,13 +1263,13 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
 
    
     /** The Constant unity. */
-    public final static Unit arbitrary = new Unit("a.u.", 1.0);
+    public static final Unit arbitrary = new Unit("a.u.", 1.0);
 
     /** The Constant unity. */
-    public final static Unit unity = new Unit("U", 1.0);
+    public static final Unit unity = new Unit("U", 1.0);
 
     /** The Constant counts. */
-    public final static Unit counts = new Unit("counts", 1.0);
+    public static final Unit counts = new Unit("counts", 1.0);
 
 
     static {
@@ -1371,7 +1341,7 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         register(mi, "mi, mile");
         register(nmi, "nmi, NM, M");
         register(pt, "pt");
-        register(l, "l, L, litre, liter");
+        register(L, "L, l, litre, liter");
         register(gal, "gal, gallon");
         register(quart, "quart");
         register(pint, "pint");

@@ -31,7 +31,7 @@ public class ShortMesh extends NumberMesh.IntegerType<Short> {
     private static final long serialVersionUID = -8830391634606131234L;
 
 
-    public ShortMesh(int[] dimensions) {
+    public ShortMesh(int... dimensions) {
         super(short.class, dimensions);
     }
 

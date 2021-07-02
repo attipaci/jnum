@@ -37,9 +37,7 @@ public class NonConformingException extends IllegalArgumentException {
 
     private static final long serialVersionUID = 6650987858665661469L;
     
-    /**
-     * Instantiates a new non conforming exception with no specific message detailing the failure.
-     */
+
     public NonConformingException() {
         super();
     }

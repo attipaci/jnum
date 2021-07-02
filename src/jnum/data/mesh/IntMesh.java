@@ -31,7 +31,7 @@ public class IntMesh extends NumberMesh.IntegerType<Integer> {
     private static final long serialVersionUID = 3405647344446844891L;
     
 
-    public IntMesh(int[] dimensions) {
+    public IntMesh(int... dimensions) {
         super(int.class, dimensions);
     }
 

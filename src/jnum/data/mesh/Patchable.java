@@ -27,6 +27,6 @@ import jnum.Function;
 
 public interface Patchable<T> {
     
-    public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize);
+    public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double... patchSize);
 
 }

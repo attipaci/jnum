@@ -27,6 +27,8 @@ import java.io.Serializable;
 
 import jnum.CopiableContent;
 import jnum.Util;
+import jnum.data.index.Index;
+import jnum.data.index.IndexedValues;
 import jnum.parallel.ParallelObject;
 
 public abstract class FlagCompanion<IndexType extends Index<IndexType>> extends ParallelObject implements Cloneable, Serializable,
@@ -110,9 +112,9 @@ CopiableContent<FlagCompanion<? extends IndexType>> {
     public final boolean isClear(IndexType index) { return getData().get(index).longValue() == 0L; }
     
     
-    public final static int TYPE_BYTE = 0;
-    public final static int TYPE_SHORT = 1;
-    public final static int TYPE_INT = 2;
-    public final static int TYPE_LONG = 3;
+    public static final int TYPE_BYTE = 0;
+    public static final int TYPE_SHORT = 1;
+    public static final int TYPE_INT = 2;
+    public static final int TYPE_LONG = 3;
     
 }

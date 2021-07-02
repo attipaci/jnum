@@ -24,7 +24,7 @@
 package jnum.math;
 
 /**
- * And interface for objects that allow adding and subtracting real values.
+ * An interface for objects that allow adding and subtracting real values to themselves.
  * 
  * @author Attila Kovacs
  *

@@ -36,7 +36,7 @@ import jnum.math.matrix.Matrix;
  *
  * @param <T>       The generic type spherical coordinates on thich this transform may operate.
  */
-public class Transform3D<T extends SphericalCoordinates> implements Transforming<T>, Cloneable, Serializable, InverseValue<Transform3D<T>> {
+public class Transform3D<T extends SphericalCoordinates> implements CoordinateTransform<T>, Cloneable, Serializable, InverseValue<Transform3D<T>> {
     /**
      * 
      */
@@ -143,13 +143,9 @@ public class Transform3D<T extends SphericalCoordinates> implements Transforming
 	    return result;
 	}
 	
-	/**
-	 * Gets transformed spherical coordinates of the same generic type as the input.
-	 * 
-	 * @param coords   The input spherical coordinates of the supported type.
-	 * @return         transfomed new spherical coordinates of the same type as the input 
-	 */
-	public final T getTransformed(final T coords) {
+
+	@Override
+    public final T getTransformed(final T coords) {
 	    @SuppressWarnings("unchecked")
         T result = (T) coords.copy();
 	    transform(result);

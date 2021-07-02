@@ -26,9 +26,11 @@ package jnum.data;
 
 import jnum.PointOp;
 import jnum.Util;
+import jnum.data.index.Index;
+import jnum.data.index.IndexedValues;
 import jnum.data.transform.Stretch;
 import jnum.math.MathVector;
-import jnum.math.Transforming;
+import jnum.math.CoordinateTransform;
 import jnum.parallel.ParallelPointOp;
 
 public abstract class RegularData<IndexType extends Index<IndexType>, VectorType extends MathVector<Double>> extends Data<IndexType> {
@@ -287,7 +289,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     }
 
 
-    public synchronized void resampleFrom(final RegularData<IndexType, VectorType> image, final Transforming<VectorType> toSourceIndex, 
+    public synchronized void resampleFrom(final RegularData<IndexType, VectorType> image, final CoordinateTransform<VectorType> toSourceIndex, 
             final Referenced<IndexType, VectorType> beam, final IndexedValues<IndexType, ?> weight) {
         
         if(beam != null) resampleFrom(image, toSourceIndex, beam.getData(), beam.getReferenceIndex(), weight);
@@ -295,7 +297,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     }
 
 
-    public synchronized void resampleFrom(final RegularData<IndexType, VectorType> image, final Transforming<VectorType> toSourceIndex, 
+    public synchronized void resampleFrom(final RegularData<IndexType, VectorType> image, final CoordinateTransform<VectorType> toSourceIndex, 
             final RegularData<IndexType, VectorType> beam, final VectorType refIndex, final IndexedValues<IndexType, ?> weight) {
            
         Interpolation interpolation = new Interpolation() {
@@ -707,8 +709,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
 
 
-    public final static int NEAREST = 0;
-    public final static int LINEAR = 1;
-    public final static int QUADRATIC = 2;
-    public final static int SPLINE = 3;
+    public static final int NEAREST = 0;
+    public static final int LINEAR = 1;
+    public static final int QUADRATIC = 2;
+    public static final int SPLINE = 3;
 }

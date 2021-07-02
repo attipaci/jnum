@@ -23,7 +23,7 @@
 package jnum.math;
 
 /**
- * An interface for classes that implement a scaling by a real value.
+ * Scaling by a real value.
  * 
  * @author Attila Kovacs
  *

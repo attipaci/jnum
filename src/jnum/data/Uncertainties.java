@@ -23,12 +23,35 @@
 
 package jnum.data;
 
+/**
+ * An interface for classes that have and/or track uncertainties.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <DataType>    The generic type of data for which uncertainties are available (of the same generic type).
+ */
 public interface Uncertainties<DataType> {
     
+    /**
+     * Returns the generic type object holding the noise value(s).
+     * 
+     * @return      The object containing the noise value(s).
+     */
     public DataType getNoise();
     
+    /**
+     * Returns the generic type object holding the noise weight(s).
+     * 
+     * @return      The object containing the noise weight(s).
+     */
     public DataType getWeights();
     
+    
+    /**
+     * Returns the generic type object holding the measurement significance(s).
+     * 
+     * @return      The object containing the measurement significance(s).
+     */
     public DataType getSignificance();
     
 }

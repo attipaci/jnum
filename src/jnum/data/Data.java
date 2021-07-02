@@ -36,6 +36,8 @@ import jnum.PointOp;
 import jnum.Unit;
 import jnum.Util;
 import jnum.Verbosity;
+import jnum.data.index.Index;
+import jnum.data.index.IndexedValues;
 import jnum.fits.FitsToolkit;
 import jnum.math.Range;
 import jnum.parallel.ParallelObject;
@@ -894,11 +896,7 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });          
     }  
     
-    public final List<Peak> findPeaks(double threshold, double r) {
-        return findPeaks(threshold, new double[] { r });
-    }
-
-    public List<Peak> findPeaks(double threshold, double[] r) {
+    public List<Peak> findPeaks(double threshold, double... r) {
 
         ArrayList<Peak> peaks = new ArrayList<>();
 

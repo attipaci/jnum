@@ -83,7 +83,7 @@ public abstract class MeshCrawler<T> implements DataCrawler<T> {
 
     protected abstract void setPosition(int[] index, int depth);
 
-    public void getPosition(int[] index) { 
+    public void getPosition(int... index) { 
         getPosition(index, 0);   
     }
       

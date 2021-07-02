@@ -56,7 +56,7 @@ public final class LeapSeconds {
 
 	private static ArrayList<Datum> list;
 
-	public final static long millis1900 = -2208988800000L; // "1900-01-01T00:00:00.000" UTC
+	public static final long millis1900 = -2208988800000L; // "1900-01-01T00:00:00.000" UTC
 
 	public static String dataFile = null;
 
@@ -72,7 +72,7 @@ public final class LeapSeconds {
 
 	private static long currentSinceMillis = millis1900 + 1000L * 3550089600L; 
 
-	private final static long firstLeapMillis = millis1900 + 1000L * 2272060800L;	// 1 January 1972
+	private static final long firstLeapMillis = millis1900 + 1000L * 2272060800L;	// 1 January 1972
 
 	private static boolean isVerbose = true;
 	

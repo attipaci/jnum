@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,11 +23,41 @@
 
 package jnum.data;
 
-
+/**
+ * Efficient conversion between coordinates and data indices on a grid. The interface allows operating on
+ * (modifying) ALL objects passed as its method arguments, such that the original content of 
+ * input values may be altered in the conversion process. This model allows for fast conversion between 
+ * coordinates and indices in general, without needing to create new objects that could slow the operation 
+ * when processing large data volumes.
+ * 
+ * If the caller needs to retain the input objects, it should call the
+ * methods of this interface with a disposable copy, such that the methods of this interface may mangle
+ * it freely.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <CoordinateType>      The type of coordinates
+ * @param <OffsetType>          The type of index offsets
+ */
 public interface FastGridAccess<CoordinateType, OffsetType> {
 
-    public void coordsAt(OffsetType index, CoordinateType toValue);
+    /**
+     * Calculates coordinates from the provided indices. The orginal input offsets may be lost (modified)
+     * and the output coordinates are returned in the provided second argument. 
+     * 
+     * @param index         In input index offsets, whose contents are typically modified during the conversion.
+     * @param toCoords      The object which is modified to contain the calculated output coordinates.       
+     */
+    public void coordsAt(OffsetType index, CoordinateType toCoords);
     
+    
+    /**
+     * Calculates indices from the provided coordinates. The orginal input coordinates may be lost (modified)
+     * and the output indices are returned in the provided second argument. 
+     * 
+     * @param value         In input coordinates, whose contents may also be modified during the conversion.
+     * @param toIndex       The object which is modified to contain the calculated output coordinates.       
+     */
     public void indexOf(CoordinateType value, OffsetType toIndex);
     
 }

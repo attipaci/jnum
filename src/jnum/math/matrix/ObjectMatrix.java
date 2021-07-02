@@ -144,7 +144,7 @@ extends AbstractMatrix<T> {
     public ObjectMatrix<T> getMatrixInstance(int rows, int cols, boolean initialize) {
         if(initialize) return new ObjectMatrix<>(getElementType(), rows, cols);
         ObjectMatrix<T> M = new ObjectMatrix<>();
-        M.data =(T[][]) Array.newInstance(getElementType(), new int[] { rows, cols} );
+        M.data =(T[][]) Array.newInstance(getElementType(), rows, cols);
         return M;
     }
 
@@ -156,7 +156,7 @@ extends AbstractMatrix<T> {
     @Override
     public ObjectMatrix<T> copy(boolean withContent) {
         ObjectMatrix<T> copy = clone();
-        copy.data = (T[][]) Array.newInstance(getElementType(), new int[] { rows(), cols() });
+        copy.data = (T[][]) Array.newInstance(getElementType(), rows(), cols());
         if(withContent) for(int i=rows(); --i >=0; ) for(int j = cols(); --j >= 0; ) copy.data[i][j] = (T) data[i][j].copy();
         return null;
     }
@@ -309,12 +309,12 @@ extends AbstractMatrix<T> {
     }
     
     @Override
-    public ObjectVector<T> dot(double[] v) {
+    public ObjectVector<T> dot(double... v) {
         return (ObjectVector<T>) super.dot(v);
     }
     
     @Override
-    public ObjectVector<T> dot(float[] v) {
+    public ObjectVector<T> dot(float... v) {
         return (ObjectVector<T>) super.dot(v);
     }
     

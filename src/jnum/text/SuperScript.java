@@ -26,22 +26,22 @@ package jnum.text;
 
 public final class SuperScript {
 
-    public final static char[] number = { '\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', 
+    public static final char[] number = { '\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', 
                                            '\u2076', '\u2077', '\u2078', '\u2079' };
 
-    public final static char n = '\u207f';
+    public static final char n = '\u207f';
 
-    public final static char i = '\u2071';
+    public static final char i = '\u2071';
 
-    public final static char plus = '\u207a';
+    public static final char plus = '\u207a';
 
-    public final static char minus = '\u207b';
+    public static final char minus = '\u207b';
 
-    public final static char equals = '\u207c';
+    public static final char equals = '\u207c';
 
-    public final static char curvedLeft = '\u207d';
+    public static final char curvedLeft = '\u207d';
 
-    public final static char curvedRight = '\u207e';
+    public static final char curvedRight = '\u207e';
     
     
 }

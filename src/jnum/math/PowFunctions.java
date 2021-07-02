@@ -23,7 +23,7 @@
 package jnum.math;
 
 /**
-* Interface for objects that implement power/exponential functions on themselves. 
+* Power and exponential functions, which act on the object itself. 
 * The methods are acted on the object itself. For example, 
 * for object <code>x</code>, the call <code>x.exp()</code> will replace the contents of x with exp(x).
 */

@@ -28,8 +28,8 @@ import java.lang.reflect.Array;
 import jnum.Copiable;
 import jnum.CopiableContent;
 import jnum.Util;
-import jnum.data.IndexedValues;
 import jnum.data.image.Index2D;
+import jnum.data.index.IndexedValues;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.LinearAlgebra;
@@ -219,7 +219,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     
    
     @Override
-    public AbstractVector<T> dot(double[] v) {
+    public AbstractVector<T> dot(double... v) {
         assertSize(v.length);
         AbstractVector<T> result = getVectorInstance(size());
         dot(v, result);
@@ -227,7 +227,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     }
 
     @Override
-    public AbstractVector<T> dot(float[] v) {
+    public AbstractVector<T> dot(float... v) {
         assertSize(v.length);
         AbstractVector<T> result = getVectorInstance(size());
         dot(v, result);
@@ -423,12 +423,12 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         }
         
         @Override
-        public RealVector dot(double[] v) {
+        public RealVector dot(double... v) {
             return (RealVector) super.dot(v);
         }
         
         @Override
-        public RealVector dot(float[] v) {
+        public RealVector dot(float... v) {
             return (RealVector) super.dot(v);
         }
 
@@ -944,12 +944,12 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         }
         
         @Override
-        public ObjectVector<T> dot(double[] v) {
+        public ObjectVector<T> dot(double... v) {
             return (ObjectVector<T>) super.dot(v);
         }
         
         @Override
-        public ObjectVector<T> dot(float[] v) {
+        public ObjectVector<T> dot(float... v) {
             return (ObjectVector<T>) super.dot(v);
         }
         
@@ -1033,7 +1033,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         public ObjectMatrix<T> getMatrixInstance(int rows, int cols, boolean initialize) {
             if(initialize) return new ObjectMatrix<>(type, rows, cols);
   
-            try { return new ObjectMatrix<>((T[][]) Array.newInstance(type, new int[] { rows, cols })); }
+            try { return new ObjectMatrix<>((T[][]) Array.newInstance(type, rows, cols)); }
             catch(Exception e) { Util.error(this, e); }
             return null;
         }

@@ -36,7 +36,7 @@ import jnum.parallel.Parallelizable;
 /**
  * The root class for various Fast Fourier Transforms (FFTs) working on generic type data (usually arrays of sorts).
  * 
- * @param <Type> the data type for the FFT.
+ * @param <Type> the data type for the FFT (usually an array of sorts).
  */
 public abstract class FFT<Type> extends ParallelObject implements Serializable {
 

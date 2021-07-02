@@ -25,7 +25,7 @@ package jnum.math;
 
 
 /**
- * Interface for objects that can be scaled by a complex value.
+ * Scaling by a complex value.
  */
 public interface ComplexScaling {
 

@@ -34,7 +34,7 @@ public final class GammaFunction {
 	 * @param x the x
 	 * @return Gamma(x).
 	 */
-	public final static double at(double x) { return Math.exp(logAt(x)); }
+	public static final double at(double x) { return Math.exp(logAt(x)); }
 
 	/**
 	 * Calculate the log of the gamma function at a real value. Adapted from Numerical Recipes in C.
@@ -42,7 +42,7 @@ public final class GammaFunction {
 	 * @param x the x
 	 * @return log(Gamma(x))
 	 */
-	public final static double logAt(final double x) {
+	public static final double logAt(final double x) {
 		double y = x + 5.5;
 		y -= (x+0.5) * Math.log(y);
 		final double z = 1.000000000190015 + 76.18009172947146 / (x+1.0) - 86.50532032941677 / (x+2.0) + 24.01409824083091 / (x+3.0)
@@ -56,7 +56,7 @@ public final class GammaFunction {
 	 * @param z the z
 	 * @return Gamma(z)
 	 */
-	public final static Complex at(final Complex z) {
+	public static final Complex at(final Complex z) {
 		final Complex result = new Complex();
 		evaluateAt(z, result);
 		return result;
@@ -68,7 +68,7 @@ public final class GammaFunction {
 	 * @param z the z
 	 * @return Gamma(z)
 	 */
-	public final static Complex logAt(final Complex z) {
+	public static final Complex logAt(final Complex z) {
 		final Complex result = new Complex();
 		evaluateLogAt(z, result);
 		return result;		
@@ -84,7 +84,7 @@ public final class GammaFunction {
 	 * @param z the z
 	 * @param result the complex number that will become to Gamma(z)
 	 */
-	public final static void evaluateAt(final Complex z, final Complex result) {
+	public static final void evaluateAt(final Complex z, final Complex result) {
 		evaluateLogAt(z, result);
 		// For real numbers use faster real exponential
 		if(z.im() == 0.0) z.setRealPart(Math.exp(z.re()));
@@ -102,7 +102,7 @@ public final class GammaFunction {
 	 * @param z the z
 	 * @param result the complex number that will become log(Gamma(z))
 	 */
-	public final static void evaluateLogAt(final Complex z, final Complex result) {	
+	public static final void evaluateLogAt(final Complex z, final Complex result) {	
 		if(z == result) throw new IllegalArgumentException("Identical arguments.");
 
 		final double zr = z.re();

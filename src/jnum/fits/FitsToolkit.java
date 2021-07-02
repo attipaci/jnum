@@ -26,6 +26,7 @@ package jnum.fits;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -278,20 +279,21 @@ public final class FitsToolkit {
     }
 
     public static void write(Fits fits, String fileName, boolean gzip) throws FitsException, IOException {
-        BufferedDataOutputStream stream = null;
+        OutputStream os = null;
         
         if(gzip) {
             if(!fileName.endsWith("gz")) fileName = fileName + ".gz";
-            stream = new BufferedDataOutputStream(new GZIPOutputStream(new FileOutputStream(fileName)));
+            os = new GZIPOutputStream(new FileOutputStream(fileName));
         }
-        else stream = new BufferedDataOutputStream(new FileOutputStream(fileName));
+        else {
+            os = new FileOutputStream(fileName);
+        }
             
-        try { 
+        try(BufferedDataOutputStream stream = new BufferedDataOutputStream(os)) { 
             fits.write(stream); 
             Util.notify(fits, "Written " + fileName);
         }
-        catch(FitsException e) { throw e; }
-        finally { stream.close(); }   
+        catch(FitsException e) { throw e; } 
     }
 
     

@@ -23,7 +23,7 @@
 package jnum.math;
 
 /**
- * An interface for all objects that implements an abstract algebra, i.e. a group under a multiplication operation.
+ * Abstract algebra interface, for a group under a multiplication operation.
  * Also required are an identity value and for each element to have an inverse under the multiplication, such as
  * the product of an element and its inverse are the identity.
  * 

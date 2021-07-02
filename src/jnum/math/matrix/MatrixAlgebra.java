@@ -23,8 +23,8 @@
 
 package jnum.math.matrix;
 
-import jnum.data.IndexedEntries;
 import jnum.data.image.Index2D;
+import jnum.data.index.IndexedEntries;
 import jnum.math.DotProduct;
 import jnum.math.IdentityValue;
 import jnum.math.LinearAlgebra;
@@ -256,7 +256,7 @@ public interface MatrixAlgebra<MatrixType, ElementType> extends IndexedEntries<I
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public AbstractVector<ElementType> dot(double[] v) throws ShapeException;
+    public AbstractVector<ElementType> dot(double... v) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) on the right-hand
@@ -270,7 +270,7 @@ public interface MatrixAlgebra<MatrixType, ElementType> extends IndexedEntries<I
      *                          matrix, or if the result vector's size does not match the number of 
      *                          columns in this matrix.
      */
-    public AbstractVector<ElementType> dot(float[] v) throws ShapeException;
+    public AbstractVector<ElementType> dot(float... v) throws ShapeException;
     
     /**
      * Gets the dot product of this matrix (<b>M</b>) applied to the vector (<b>v</b>) on the right-hand

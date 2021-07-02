@@ -20,27 +20,39 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-package jnum.data;
+package jnum.data.localized;
 
+/**
+ * A topological location in 1 dimension, that is a scalar location along the real number line. 
+ * The arbitrarry reference (origin) is chosen as the 0 value.
+ * 
+ * @author Attila Kovacs
+ *
+ */
+public class ScalarLocality implements Locality, Comparable<ScalarLocality> {
 
-public class ScalarLocality extends Locality {
-
-    public double value;
+    private double value;
     
-
+    /**
+     * Construct as new scalar locality initially placed at the origin.
+     * 
+     */
     public ScalarLocality() {}
     
-
+    /**
+     * Constructs a new scalar locality for the given number value.
+     * 
+     * @param value     the location on the real number line.
+     */
     public ScalarLocality(double value) { 
         this();
         set(value);
     }
     
 
-    public double get() { return value; }
+    public Double get() { return value; }
     
-
-    public void set(double value) { this.value = value; }
+    public void set(Double value) { this.value = value; }
     
 
     @Override
@@ -49,19 +61,15 @@ public class ScalarLocality extends Locality {
         return Math.abs(((ScalarLocality) point).value - value);
     }
 
-
     @Override
-    public int compareTo(Locality other) {
-        if(!(other instanceof ScalarLocality)) throw new IllegalArgumentException("Incompatible localities.");
-        return Double.compare(value, ((ScalarLocality) other).value);
+    public final double getSortingValue() {
+        return Math.abs(value);
     }
 
-
     @Override
-    public double sortingDistanceTo(Locality other) {
-        return distanceTo(other);
+    public int compareTo(ScalarLocality other) {
+        return Double.compare(value, other.value);
     }
-    
 
     @Override
     public String toString() { return Double.toString(value); }

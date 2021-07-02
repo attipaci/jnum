@@ -156,25 +156,25 @@ public class ConsoleReporter extends Reporter {
     public int getIndentValues() { return 3; }
      
 
-    public final static int LEVEL_NONE = -1;
+    public static final int LEVEL_NONE = -1;
 
-    public final static int LEVEL_ERROR = 0;
+    public static final int LEVEL_ERROR = 0;
 
-    public final static int LEVEL_WARNING = 1;
+    public static final int LEVEL_WARNING = 1;
 
-    public final static int LEVEL_NOTIFY = 2;
+    public static final int LEVEL_NOTIFY = 2;
 
-    public final static int LEVEL_STATUS = 3;
+    public static final int LEVEL_STATUS = 3;
 
-    public final static int LEVEL_SUGGEST = 4;
+    public static final int LEVEL_SUGGEST = 4;
 
-    public final static int LEVEL_RESULT = 5;
+    public static final int LEVEL_RESULT = 5;
 
-    public final static int LEVEL_VALUES = 6;
+    public static final int LEVEL_VALUES = 6;
 
-    public final static int LEVEL_INFO = 7;
+    public static final int LEVEL_INFO = 7;
 
-    public final static int LEVEL_DETAIL = 8;
+    public static final int LEVEL_DETAIL = 8;
 
-    public final static int LEVEL_DEBUG = 9;
+    public static final int LEVEL_DEBUG = 9;
 }

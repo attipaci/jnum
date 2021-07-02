@@ -21,10 +21,33 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.math;
 
-public interface ScaledProductAddition<T> {
+/**
+ * Coordinate transformations.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <CoordinateType>  The generic type of coordinates operated on by this transform.
+ */
+public interface CoordinateTransform<CoordinateType> {
 
-    public void addScaledProduct(T a, T b, double scaling);
+    /**
+     * Transforms the supported generic type of coordinates in place. The is
+     * the result replaces the original value in the input vector itself.
+     * 
+     * @param coords   The vector to be transformed in situ.
+     */
+    public void transform(CoordinateType coords);
+    
+    /**
+     * Gets a new set of coordinates of the generic type as the input containing
+     * the trasnformed input coordinates. Unlike {@link #transform(Object)}, this
+     * call leaves the input coordinates unchanged.
+     * 
+     * @param coords    The input vector
+     * @return          The transformed output vector as a new vector of the same generic type as the input.
+     */
+    public CoordinateType getTransformed(CoordinateType coords);
     
 }

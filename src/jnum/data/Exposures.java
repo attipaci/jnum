@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,8 +23,20 @@
 
 package jnum.data;
 
+/**
+ * Exposure time (or observation count) information.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <DataType>        The generic type of object that contains the exposure information
+ */
 public interface Exposures<DataType> {
 
+    /**
+     * Gets the exposure times (or observation counts) data component of this object
+     * 
+     * @return      The genetic type data object containing exposure time (or observation count) information
+     */
     public DataType getExposures();
     
 }

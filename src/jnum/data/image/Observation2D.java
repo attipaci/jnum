@@ -30,15 +30,15 @@ import java.util.concurrent.ExecutorService;
 import jnum.NonConformingException;
 import jnum.Unit;
 import jnum.Util;
-import jnum.data.IndexedObservations;
 import jnum.data.Observations;
 import jnum.data.RegularData;
 import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
 import jnum.data.image.overlay.Overlay2D;
 import jnum.data.image.overlay.Referenced2D;
+import jnum.data.index.IndexedObservations;
 import jnum.fits.FitsToolkit;
-import jnum.math.Transforming;
+import jnum.math.CoordinateTransform;
 import jnum.math.Vector2D;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
@@ -494,7 +494,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public void resampleFrom(Observation2D map) {
         Referenced2D beam = getAntialiasingBeamImageFor(map);
         
-        Transforming<Vector2D> toSourceIndex = getIndexTransformTo(map);
+        CoordinateTransform<Vector2D> toSourceIndex = getIndexTransformTo(map);
         
         resampleFrom(map, toSourceIndex, beam, weight);        
         getExposureImage().resampleFrom(map.getExposures(), toSourceIndex, beam, weight);
@@ -714,13 +714,13 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     }
 
    
-    public final static int TYPE_UNKNOWN = 0;
-    public final static int TYPE_SIGNAL = 1<<1;
-    public final static int TYPE_WEIGHT = 1<<2;
-    public final static int TYPE_EXPOSURE = 1<<3;
-    public final static int TYPE_NOISE = 1<<4;
-    public final static int TYPE_VARIANCE = 1<<5;
-    public final static int TYPE_S2N = 1<<6;
+    public static final int TYPE_UNKNOWN = 0;
+    public static final int TYPE_SIGNAL = 1<<1;
+    public static final int TYPE_WEIGHT = 1<<2;
+    public static final int TYPE_EXPOSURE = 1<<3;
+    public static final int TYPE_NOISE = 1<<4;
+    public static final int TYPE_VARIANCE = 1<<5;
+    public static final int TYPE_S2N = 1<<6;
     
     public static String[] typeNames = { "Unknown", "Signal", "Weight", "Exposure", "Noise", "Variance", "S/N" };
 

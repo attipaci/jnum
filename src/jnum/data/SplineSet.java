@@ -37,7 +37,7 @@ public class SplineSet<VectorType extends Coordinates<? extends Number>> {
         for(int i=splines.length; --i >= 0; ) splines[i].centerOn(offset.getComponent(i).doubleValue());
     }
     
-    public void centerOn(double ... offsets) {
+    public void centerOn(double... offsets) {
         for(int i=splines.length; --i >= 0; ) splines[i].centerOn(offsets[i]);
     }
     

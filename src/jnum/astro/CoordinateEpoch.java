@@ -41,7 +41,6 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 
 	private double year;
 
-
 	public CoordinateEpoch(double epoch) { year = epoch; }
 
 
@@ -80,9 +79,6 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 	
 
 	public abstract double getMJD();
-	
-
-
 	
 
 	public double getJulianDate() { return getMJD() + 2400000.5; }
@@ -141,25 +137,25 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 	}
 	
 
-	protected final static double besselianYear = 365.242198781;
+	protected static final double besselianYear = 365.242198781;
 
-	protected final static double julianYear = 365.25;
+	protected static final double julianYear = 365.25;
 
-	protected final static double mjdB1900 = 15019.81352; // JD 2415020.31352
+	protected static final double mjdB1900 = 15019.81352; // JD 2415020.31352
 
-	protected final static double mjdB1950 = 33281.92345905; // JD 2433282.42345905
+	protected static final double mjdB1950 = 33281.92345905; // JD 2433282.42345905
 	
-	protected final static double mjdJ1900 = 15020.5; // JD 2415021.0 
+	protected static final double mjdJ1900 = 15020.5; // JD 2415021.0 
 
-	protected final static double mjdJ2000 = 51544.5; // JD 2551545.0
+	protected static final double mjdJ2000 = 51544.5; // JD 2551545.0
 	
 	//  2451545.0 JD = 1 January 2000, 11:58:55.816 UT, or 11:59:27.816 TAI
-	public final static BesselianEpoch B1900 = new BesselianEpoch(1900.0);
+	public static final BesselianEpoch B1900 = new BesselianEpoch(1900.0);
 
-	public final static BesselianEpoch B1950 = new BesselianEpoch(1950.0);
+	public static final BesselianEpoch B1950 = new BesselianEpoch(1950.0);
 
-	public final static JulianEpoch J2000 = new JulianEpoch(2000.0);
+	public static final JulianEpoch J2000 = new JulianEpoch(2000.0);
 	
 	// The precision to which to epochs must match to be considered equal...
-	public final static double precision = 1e-3; // in years...
+	public static final double precision = 1e-3; // in years...
 }

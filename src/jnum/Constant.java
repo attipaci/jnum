@@ -24,313 +24,315 @@
 
 package jnum;
 
+/**
+ * Phyisical and mathematical constants. All constants bear values in standard SI units. 
+ * 
+ * @author Attila Kovacs
+ *
+ */
+public final class Constant {
 
-public class Constant {
-
+    private Constant() {}
+    
     // Mathematical Constants
-    /** The Constant Pi. Same as {@link Math#PI}. */
-    public final static double Pi = Math.PI;
+    /** The Constant &pi;. Same as {@link Math#PI}. */
+    public static final double Pi = Math.PI;
     
-    /** 2.0 * Pi */
-    public final static double twoPi = 2.0 * Pi;
+    /** 2 &pi; */
+    public static final double twoPi = 2.0 * Pi;
     
-    /** 4.0 * Pi */
-    public final static double fourPi = 4.0 * Pi;
-    
-    
-    /** 1.0 / Pi */
-    public final static double iPi = 1.0 / Pi;
-    
-    /** 1.0 / (2.0 * Pi) */
-    public final static double iTwoPi = 1.0 / twoPi;
-    
-    /** 1.0 / (4.0 * Pi) */
-    public final static double iFourPi = 1.0 / fourPi;
+    /** 4 &pi; */
+    public static final double fourPi = 4.0 * Pi;
     
     
-    /** Pi/2 */
-    public final static double halfPi = 0.5 * Pi;
+    /** 1 / &pi; */
+    public static final double iPi = 1.0 / Pi;
     
-    /** Pi/3 */
-    public final static double thirdPi = Pi / 3.0;
+    /** 1/ (2 &pi;) */
+    public static final double iTwoPi = 1.0 / twoPi;
     
-    /** Pi/4 */
-    public final static double quarterPi = 0.25 * Pi;
-    
-    /** A right angle, i.e. 90 {@link Unit#deg}, same as Pi/2 */
-    public final static double rightAngle = halfPi;
+    /** 1 / (4 &pi;) */
+    public static final double iFourPi = 1.0 / fourPi;
     
     
-    /** sqrt(Pi) */
-    public final static double sqrtPi = Math.sqrt(Pi);
+    /** &pi;/2 */
+    public static final double halfPi = 0.5 * Pi;
     
-    /** sqrt(2.0 * Pi) */
-    public final static double sqrtTwoPi = Math.sqrt(twoPi);
+    /** &pi;/3 */
+    public static final double thirdPi = Pi / 3.0;
     
-    /** 1.0 / sqrt(Pi) */
-    public final static double isqrtPi = 1.0 / sqrtPi;
+    /** &pi;/4 */
+    public static final double quarterPi = 0.25 * Pi;
     
-    /** 1.0 / sqrt(2.0 * Pi) */
-    public final static double isqrtTwoPi = 1.0 / sqrtTwoPi;
+    /** A right angle, that is 90&deg;, or &pi;/2 */
+    public static final double rightAngle = halfPi;
+    
+    
+    /** &radic;&pi; */
+    public static final double sqrtPi = Math.sqrt(Pi);
+    
+    /** &radic;2&pi; */
+    public static final double sqrtTwoPi = Math.sqrt(twoPi);
+    
+    /** 1 / &radic;&pi; */
+    public static final double isqrtPi = 1.0 / sqrtPi;
+    
+    /** 1 / &radic;2&pi; */
+    public static final double isqrtTwoPi = 1.0 / sqrtTwoPi;
     
     
 
     
-    /** sqrt(2.0) */
-    public final static double sqrt2 = Math.sqrt(2.0);
+    /** &radic;2 */
+    public static final double sqrt2 = Math.sqrt(2.0);
     
-    /** sqrt(3.0) */
-    public final static double sqrt3 = Math.sqrt(3.0);
+    /** &radic;3 */
+    public static final double sqrt3 = Math.sqrt(3.0);
     
-    /** sqrt(5.0) */
-    public final static double sqrt5 = Math.sqrt(5.0);
+    /** &radic;5 */
+    public static final double sqrt5 = Math.sqrt(5.0);
     
-    /** 1.0 / sqrt(2.0) */
-    public final static double isqrt2 = 1.0 / sqrt2;
+    /** 1 / &radic;2 */
+    public static final double isqrt2 = 1.0 / sqrt2;
     
-    /** 1.0 / sqrt(3.0) */
-    public final static double isqrt3 = 1.0 / sqrt3;
+    /** 1 / &radic;3 */
+    public static final double isqrt3 = 1.0 / sqrt3;
     
-    /** 1.0 / sqrt(5.0) */
-    public final static double isqrt5 = 1.0 / sqrt5;
+    /** 1 / &radic;5 */
+    public static final double isqrt5 = 1.0 / sqrt5;
     
-    /** The Golden Ratio, i.e. (1.0 + sqrt(5.0)) / 2.0. */
-    public final static double goldenRatio = 0.5 * (1.0 + sqrt5);
+    /** The Golden Ratio, i.e. (1 + &radic;5) / 2. */
+    public static final double goldenRatio = 0.5 * (1.0 + sqrt5);
     
     /** Euler's constant (0.577215664901533). */
-    public final static double euler = 0.577215664901533;
+    public static final double euler = 0.577215664901533;
 	
-    /** The natural log of 2, i.e. log(2.0). */
-    public final static double log2 = Math.log(2.0);
+    /** The natural log of 2, i.e. log(2). */
+    public static final double log2 = Math.log(2.0);
 	
-	/** The natural log of 10, i.e. log(10.0). */
-	public final static double log10 = Math.log(10.0);
+	/** The natural log of 10, i.e. log(10). */
+	public static final double log10 = Math.log(10.0);
 	
-    /** The natural log of Pi, i.e. log(Pi) */
-    public final static double logPi = Math.log(Math.PI);
+    /** The natural log of Pi, i.e. log(&pi;) */
+    public static final double logPi = Math.log(Math.PI);
     
-    /** log(2.0 * Pi). */
-    public final static double logTwoPi = log2 + logPi;
+    /** log(2&pi;). */
+    public static final double logTwoPi = log2 + logPi;
 	
-	/** 1.0 / log(2.0) */
-	public final static double ilog2 = 1.0 / log2;
+	/** 1 / log(2) */
+	public static final double ilog2 = 1.0 / log2;
 	
-	/** 1.0 / log(10.0) */
-	public final static double ilog10 = 1.0 / log10;
+	/** 1 / log(10) */
+	public static final double ilog10 = 1.0 / log10;
 	
 	
 	/** A Gaussian full-width half maximum (FWHM) expressed in  standard deviations (sigmas).  */
-	public final static double sigmasInFWHM = 2.0 * Math.sqrt(2.0 * log2);
+	public static final double sigmasInFWHM = 2.0 * Math.sqrt(2.0 * log2);
 
     
     // Physical Constants
 	
     /** The Planck constant (6.626076e-34 Js). */
-    public final static double Planck = 6.626076e-34 * Unit.J * Unit.s;
+    public static final double Planck = 6.626076e-34 * Unit.J * Unit.s;
     
     /** The Planck constant by its usual notation: h. */
-    public final static double h = Planck;
+    public static final double h = Planck;
     
     /** Planck's constant squared */
-    public final static double h2 = h * h;
+    public static final double h2 = h * h;
     
     /** Planck's constant cubed */
-    public final static double h3 = h2 * h;
+    public static final double h3 = h2 * h;
     
     /** Planck's constant to the 4th power */
-    public final static double h4 = h3 * h;
+    public static final double h4 = h3 * h;
     
     /** Planck's constant to the 5th power */
-    public final static double h5 = h4 * h;
+    public static final double h5 = h4 * h;
     
     /** Planck's constant to the 6th power */
-    public final static double h6 = h5 * h;
+    public static final double h6 = h5 * h;
 
-    /** Dirac's constant: h / (2.0 * Pi) */
-    public final static double Dirac = h / twoPi;
+    /** Dirac's constant: h / 2&pi; */
+    public static final double Dirac = h / twoPi;
     
-    /** Dirac's constant by its usual notation: hbar */
-    public final static double hbar = Dirac;
+    /** Dirac's constant: h / 2&pi; */
+    public static final double hbar = Dirac;
     
     /** Dirac's constant squared */
-    public final static double hbar2 = hbar * hbar;
+    public static final double hbar2 = hbar * hbar;
     
     /** Dirac's constant cubed */
-    public final static double hbar3 = hbar2 * hbar;
+    public static final double hbar3 = hbar2 * hbar;
     
     /** Dirac's constant to the 4th power */
-    public final static double hbar4 = hbar3 * hbar;
+    public static final double hbar4 = hbar3 * hbar;
     
     /** Dirac's constant to the 5th power */
-    public final static double hbar5 = hbar4 * hbar;
+    public static final double hbar5 = hbar4 * hbar;
     
     /** Dirac's constant to the 6th power */
-    public final static double hbar6 = hbar5 * hbar;
+    public static final double hbar6 = hbar5 * hbar;
     
     /** The speed of light (299,792,458 m/s) */
-    public final static double speedOfLight = 299792458.0 * Unit.m/Unit.s;
+    public static final double speedOfLight = 299792458.0 * Unit.m/Unit.s;
     
     /** The speed of light by it's usual notation: c */
-    public final static double c = speedOfLight;
+    public static final double c = speedOfLight;
     
     /** The speed of light squared */
-    public final static double c2 = c * c;
+    public static final double c2 = c * c;
     
     /** The speed of light cubed */
-    public final static double c3 = c2 * c;
+    public static final double c3 = c2 * c;
     
     /** The speed of light to the 4th power */
-    public final static double c4 = c3 * c;
+    public static final double c4 = c3 * c;
     
     /** The speed of light to the 5th power */
-    public final static double c5 = c4 * c;
+    public static final double c5 = c4 * c;
     
     /** The speed of light to the 6th power */
-    public final static double c6 = c5 * c;
+    public static final double c6 = c5 * c;
 
     /** The electron's charge (1.6022e-19 C) */
-    public final static double electronCharge = 1.6022e-19 * Unit.C;
+    public static final double electronCharge = 1.6022e-19 * Unit.C;
     
     /** The electron's charge (1.6022e-19 C) */
-    public final static double e = electronCharge;
+    public static final double e = electronCharge;
     
     /** The electron's charge by another notation */
-    public final static double q_e = e;
+    public static final double q_e = e;
     
     /** The electron's charge squared */
-    public final static double e2 = e * e;
+    public static final double e2 = e * e;
     
     /** The electron's charge cubed */
-    public final static double e3 = e2 * e;
+    public static final double e3 = e2 * e;
     
     /** The electron's charge to the 4th power */
-    public final static double e4 = e3 * e;
+    public static final double e4 = e3 * e;
     
     /** The electron's charge to the 5th power */
-    public final static double e5 = e4 * e;
+    public static final double e5 = e4 * e;
     
     /** The electron's charge to the 6th power */
-    public final static double e6 = e5 * e;
+    public static final double e6 = e5 * e;
 
     /** Boltzmann's constant (1.380658e-23 J/K). */
-    public final static double Boltzmann = 1.380658e-23 * Unit.J/Unit.K;
+    public static final double Boltzmann = 1.380658e-23 * Unit.J/Unit.K;
     
-    /** Boltzmann's constant (k = 1.380658e-23 J/K). */
-    public final static double k = Boltzmann;
+    /** Boltzmann's constant (k<sub>B</sub> = 1.380658e-23 J/K). */
+    public static final double k = Boltzmann;
     
     /** Bolzmann's constant by another name */
-    public final static double kB = k;
+    public static final double kB = k;
   
-    /** The magnetic constant, a.k.a. vacumm permeability (4.0e-7 Pi H/m) */
-    public final static double magnetic = 4.0e-7 * Pi * Unit.H / Unit.m;
+    /** The magnetic constant, a.k.a. vacumm permeability (4.0e-7 &pi; H/m) */
+    public static final double magnetic = 4.0e-7 * Pi * Unit.H / Unit.m;
     
-    /** The magnetic constant / vacuum permeability by its usual notation: mu0 */
-    public final static double mu0 = magnetic;
+    /** The magnetic constant / vacuum permeability by its usual notation: &mu;<sub>0</sub> */
+    public static final double mu0 = magnetic;
    
 
-    /** The electric constant, a.k.a. vacuum permittivity: 1/(mu0 c^2). */
-    public final static double electric = 1.0 / (mu0 * c2);
+    /** The electric constant, a.k.a. vacuum permittivity: 1/(&mu;<sub>0</sub> c<sup>2</sup>). */
+    public static final double electric = 1.0 / (mu0 * c2);
     
-    /** The electric constant by its usual notation: epsilon0. */
-    public final static double epsilon0 = electric;
+    /** The electric constant by its usual notation: &epsilon;<sub>0</sub>. */
+    public static final double epsilon0 = electric;
    
-    /** The electric constant by the shorthand of its usual notation: eps0. */
-    public final static double eps0 = epsilon0;
+    /** The electric constant by the shorthand of its usual notation: &epsilon;<sub>0</sub>. */
+    public static final double eps0 = epsilon0;
     
     /** The electron's mass (9.1093897e-31 kg) */
-    public final static double electronMass = 9.1093897e-31 * Unit.kg;
+    public static final double electronMass = 9.1093897e-31 * Unit.kg;
     
-    /** The electron's mass by its usual notation: m_e. */
-    public final static double m_e = electronMass;
+    /** The electron's mass by its usual notation: m<sub>e</sub>. */
+    public static final double m_e = electronMass;
 
     /** The protons' mass (1.6726231e-27 kg) */
-    public final static double protonMass = 1.6726231e-27 * Unit.kg;
+    public static final double protonMass = 1.6726231e-27 * Unit.kg;
     
-    /** The proton's mass by its usual notation: m_p */
-    public final static double m_p = protonMass;
+    /** The proton's mass by its usual notation: m<sub>p</sub> */
+    public static final double m_p = protonMass;
     
     /** Avogadro's number (6.0221367e23 / mol). */
-    public final static double Avogadro = 6.0221367e23 / Unit.mol;
+    public static final double Avogadro = 6.0221367e23 / Unit.mol;
     
-    /** Avogadro's number by its usual notation: N_A. */
-    public final static double N_A = Avogadro;
+    /** Avogadro's number by its usual notation: N<sub>A</sub>. */
+    public static final double N_A = Avogadro;
     
     /** Avogadro's number by another notation. */
-    public final static double L = Avogadro;
+    public static final double L = Avogadro;
 
-    /** Loschmidt constant (2.686763e25 / m^3). */
-    public final static double Loschmidt = 2.686763e25 / Unit.m3;
+    /** Loschmidt constant (2.686763e25 / m<sup>3</sup>). */
+    public static final double Loschmidt = 2.686763e25 / Unit.m3;
     
-    /** Loschmidt constant by its usual notation: N_L. */
-    public final static double N_L = Loschmidt;
+    /** Loschmidt constant by its usual notation: N<sub>L</sub>. */
+    public static final double N_L = Loschmidt;
     
     /** Loschmidt constant by another notation */
-    public final static double n0 = Loschmidt;
+    public static final double n0 = Loschmidt;
 
     /** The gas constant R */
-    public final static double Rgas = N_A * k;
+    public static final double Rgas = N_A * k;
 
-    /** Faraday's constant (N_A * e). */
-    public final static double Faraday = N_A * e;
+    /** Faraday's constant (N<sub>A</sub> e). */
+    public static final double Faraday = N_A * e;
     
     /** Faraday's constant by its usual notation: F. */
-    public final static double F = Faraday;
+    public static final double F = Faraday;
 
-    /** Stefan-Boltzmann constant (6.67051e-8 W / m^2 / K^4). */
-    public final static double StefanBoltzmann = 6.67051e-8 * Unit.W / Unit.m2 / Unit.K4;
+    /** Stefan-Boltzmann constant (6.67051e-8 W / m<sup>2</sup> / K<sup>4</sup>). */
+    public static final double StefanBoltzmann = 6.67051e-8 * Unit.W / Unit.m2 / Unit.K4;
     
-    /** The Stefan-Bolzmann constant by its usual notation: sigma. */
-    public final static double sigma = StefanBoltzmann;
+    /** The Stefan-Bolzmann constant by its usual notation: &sigma;. */
+    public static final double sigma = StefanBoltzmann;
 
-    /** The fine structure constant: e^2 / (4 eps0 h c). */
-    public final static double fineStructure = e2 / (4.0 * eps0 * h * c);
+    /** The fine structure constant: e<sup>2</sup> / (4 &epsilon;<sub>0</sub> h c). */
+    public static final double fineStructure = e2 / (4.0 * eps0 * h * c);
     
-    /** The fine structure constant by its usual notation: alpha */
-    public final static double alpha = fineStructure;
+    /** The fine structure constant by its usual notation: &alpha; */
+    public static final double alpha = fineStructure;
 
-    /** Rydberg constant: m_e * e^4 / (8 eps0^2 h^3 c). */
-    public final static double Rydberg = m_e * e4 / (8.0 * eps0 * eps0 * h3 * c);
+    /** Rydberg constant: m<sub>e</sub> e<sup>4</sup> / (8 eps<sub>0</sub><sup>2</sup> h<sup>3</sup> c). */
+    public static final double Rydberg = m_e * e4 / (8.0 * eps0 * eps0 * h3 * c);
     
     /** Rydberg constant by its usual notation: R */
-    public final static double R = Rydberg;
+    public static final double R = Rydberg;
     
-    /** The Constant RH. */
-    public final static double RH = m_p / (m_e + m_p) * Rydberg;
+    /** The Constant R<sub>H</sub>. */
+    public static final double RH = m_p / (m_e + m_p) * Rydberg;
 
-    /** The gravitational constant G (6.67259e-11 N m^2 / kg^2) */
-    public final static double G = 6.67259e-11 * Unit.N * Unit.m2 / Unit.kg2;
+    /** The gravitational constant G (6.67259e-11 N m<sup>2</sup> / kg<sup>2</sup>) */
+    public static final double G = 6.67259e-11 * Unit.N * Unit.m2 / Unit.kg2;
     
-    /** The typical gravitational acceleration on Earth's surface (g = 9.80665 m/s^2) */
-    public final static double g = 9.80665 * Unit.m / Unit.s2;
+    /** The typical gravitational acceleration on Earth's surface (g = 9.80665 m/s<sup>2</sup>) */
+    public static final double g = 9.80665 * Unit.m / Unit.s2;
 
 
     /** 0C in kelvins (273.15 K) */
-    public final static double zeroCelsius = 273.15 * Unit.K;
+    public static final double zeroCelsius = 273.15 * Unit.K;
     
     // some constants of questionable accuracy
 
-    /** The h0. */
+    /** The h<sub>0</sub>. */
     public static double h0 = 0.71;
-    
-    /** The h_0. */
-    public static double h_0 = h0;
     
     /** Hubble's constant. */
     public static double Hubble = 100.0 * h0 * Unit.km / Unit.s / Unit.Mpc;
     
-    /** Hubble's constant by its usual notation: H0. */
+    /** Hubble's constant by its usual notation: H<sub>0</sub>. */
     public static double H0 = Hubble;
+   
     
-    /** The H_0. */
-    public static double H_0 = Hubble;
-    
-    /** The cosmological density relative to the critical density */
+    /** The cosmological density relative to the critical density: &Omega; */
     public static double Omega = 1.0;
     
-    /** The cosmological density of matter relative to critical density. */
+    /** The cosmological density of matter relative to critical density: &Omega;<sub>M</sub> */
     public static double Omega_M = 0.27;
     
-    /** The cosmological density of dark matter relative to critical density */
+    /** The cosmological density of dark matter relative to critical density: &Omega;<sub>&Lambda;</sub> */
     public static double Omega_Lambda = 0.73;
 
     

@@ -25,7 +25,7 @@ package jnum.math;
 import jnum.Function;
 
 /**
- * A base class for numerical functions with tunable precision.
+ * Numerical functions with tunable precision.
  *
  * @param <ArgType> the generic type of the function's parameters
  * @param <ReturnType> the generic type of the function's return value
@@ -35,7 +35,7 @@ public interface NumericalFunction<ArgType, ReturnType> extends Function<ArgType
 	/**
 	 * Sets the precision to which results are to be obtained..
 	 *
-	 * @param digits the new precision
+	 * @param digits the new precision, as a desired number of significant figures.
 	 */
 	public void setPrecision(int digits);
 	

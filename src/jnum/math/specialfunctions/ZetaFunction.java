@@ -51,7 +51,7 @@ public final class ZetaFunction {
 	}
 	
 
-	public final static Complex at(final Complex z) {
+	public static final Complex at(final Complex z) {
 		final Complex result = new Complex();
 		evaluateAt(z, result);
 		return result;

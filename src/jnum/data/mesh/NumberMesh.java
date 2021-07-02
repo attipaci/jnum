@@ -35,7 +35,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Co
 	private static final long serialVersionUID = 8401121783922804093L;
 
 
-	public NumberMesh(Class<T> type, int[] dimensions) {
+	public NumberMesh(Class<T> type, int... dimensions) {
 		super(type, dimensions);
 	}
 
@@ -163,7 +163,7 @@ public abstract class NumberMesh<T extends Number> extends Mesh<T> implements Co
 	}
 
     @Override
-    public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize) {
+    public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double... patchSize) {
          
         final int[] from = new int[exactOffset.length];
         final int[] to = new int[exactOffset.length];

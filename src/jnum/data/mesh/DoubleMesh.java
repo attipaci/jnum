@@ -31,7 +31,7 @@ public class DoubleMesh extends NumberMesh.FloatingType<Double> {
     private static final long serialVersionUID = -6960364610546704958L;
 
 
-    public DoubleMesh(int[] dimensions) {
+    public DoubleMesh(int... dimensions) {
         super(double.class, dimensions);
     }
 

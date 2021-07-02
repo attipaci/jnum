@@ -32,7 +32,7 @@ public class LongMesh extends NumberMesh.IntegerType<Long> {
     private static final long serialVersionUID = 7707405135422248118L;
 
 
-    public LongMesh(int[] dimensions) {
+    public LongMesh(int... dimensions) {
         super(Long.class, dimensions);
     }
 

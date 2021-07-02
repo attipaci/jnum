@@ -532,43 +532,43 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
      * The ICRS reference system.
      * 
      */
-    public final static EquatorialSystem ICRS = EquatorialSystem.ICRS;
+    public static final EquatorialSystem ICRS = EquatorialSystem.ICRS;
     
     /**
      * Readily available transform for FK4(B1950) to FK5(J2000) coordinate transformations
      * 
      */
-    public final static EquatorialTransform B1950toJ2000 = new EquatorialTransform(EquatorialSystem.FK4.B1950, EquatorialSystem.FK5.J2000);
+    public static final EquatorialTransform B1950toJ2000 = new EquatorialTransform(EquatorialSystem.FK4.B1950, EquatorialSystem.FK5.J2000);
 
     /**
      * Readily available transform for FK5(J2000) to FK4(B9150) coordinate transformations
      * 
      */
-    public final static EquatorialTransform J2000toB1950 = new EquatorialTransform(EquatorialSystem.FK5.J2000, EquatorialSystem.FK4.B1950);
+    public static final EquatorialTransform J2000toB1950 = new EquatorialTransform(EquatorialSystem.FK5.J2000, EquatorialSystem.FK4.B1950);
     
     /**
      * Readily available transform for FK4(B1950) to ICRS coordinate transformations
      * 
      */
-    public final static EquatorialTransform B1950toICRS = new EquatorialTransform(EquatorialSystem.FK4.B1950, EquatorialSystem.ICRS);
+    public static final EquatorialTransform B1950toICRS = new EquatorialTransform(EquatorialSystem.FK4.B1950, EquatorialSystem.ICRS);
     
     /**
      * Readily available transform for FK5(J2000) to ICRS coordinate transformations
      * 
      */
-    public final static EquatorialTransform J2000toICRS = new EquatorialTransform(EquatorialSystem.FK5.J2000, EquatorialSystem.ICRS);
+    public static final EquatorialTransform J2000toICRS = new EquatorialTransform(EquatorialSystem.FK5.J2000, EquatorialSystem.ICRS);
     
     /**
      * Readily available transform for ICRS to FK4(B1950) coordinate transformations
      * 
      */
-    public final static EquatorialTransform ICRStoB1950 = new EquatorialTransform(EquatorialSystem.ICRS, EquatorialSystem.FK4.B1950);
+    public static final EquatorialTransform ICRStoB1950 = new EquatorialTransform(EquatorialSystem.ICRS, EquatorialSystem.FK4.B1950);
     
     /**
      * Readily available transform for ICRS to FK5(J2000) coordinate transformations
      * 
      */
-    public final static EquatorialTransform ICRStoJ2000 = new EquatorialTransform(EquatorialSystem.ICRS, EquatorialSystem.FK5.J2000);
+    public static final EquatorialTransform ICRStoJ2000 = new EquatorialTransform(EquatorialSystem.ICRS, EquatorialSystem.FK5.J2000);
       
     
     final private static double eta0 = -6.8192 * Unit.mas;     ///< Tilt of J2000 vs ICRS around x
@@ -611,11 +611,11 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
     
     // Heliocentric gravitational constant in meters^3 / second^2, from DE-405.
     // Borrowed from NOVAS 3.1
-    private final static double GS = 1.32712440017987e+20;
+    private static final double GS = 1.32712440017987e+20;
 
     // Geocentric gravitational constant in meters^3 / second^2, from DE-405.
     // Borrowed from NOVAS 3.1
-    //private final static double GE = 3.98600433e+14;
+    //private static final double GE = 3.98600433e+14;
     
     // Reciprocal masses of solar system bodies, from DE-405 (Sun mass / body mass).
     // MASS[0] = Earth/Moon barycenter, MASS[1] = Mercury, ..., MASS[9] = Pluto, 

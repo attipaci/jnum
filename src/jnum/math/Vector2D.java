@@ -259,18 +259,51 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
 
 
     @Override
-    public final Double dot(Coordinates<? extends Double> v) throws NonConformingException {
-        if(v.size() != 2) throw new NonConformingException("dot product with vector of different size.");
-        return x() * v.x() + y() * v.y();
+    public final Double dot(MathVector<? extends Double> v) throws NonConformingException {
+        double sum = 0.0;
+        
+        switch(Math.min(v.size(), 2)) {
+        case 2: sum += y() * v.getComponent(Y);
+        case 1: sum += x() * v.getComponent(X);
+        }
+        return sum;
     }
     
     
     @Override
-    public final Double dot(Double[] v) throws NonConformingException {
-        if(v.length != 2) throw new NonConformingException("dot product with vector of different size.");
-        return x() * v[X] + y() * v[Y];
+    public final Double dot(Double[] v) {
+        double sum = 0.0;
+        
+        switch(Math.min(v.length, 2)) {
+        case 2: sum += y() * v[Y];
+        case 1: sum += x() * v[X];
+        }
+        return sum;
     }
 
+    
+    @Override
+    public final Double dot(double... v) {
+        double sum = 0.0;
+        
+        switch(Math.min(v.length, 2)) {
+        case 2: sum += y() * v[Y];
+        case 1: sum += x() * v[X];
+        }
+        return sum;
+    }
+    
+    @Override
+    public final Double dot(float... v) {
+        double sum = 0.0;
+        
+        switch(Math.min(v.length, 2)) {
+        case 2: sum += y() * v[Y];
+        case 1: sum += x() * v[X];
+        }
+        return sum;
+    }
+    
 
     @Override
     public void orthogonalizeTo(MathVector<? extends Double> v) {
@@ -299,12 +332,12 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
 
 
 
-    public final static Vector2D sumOf(final MathVector<Double> a, final MathVector<Double> b) {
+    public static final Vector2D sumOf(final MathVector<Double> a, final MathVector<Double> b) {
         return new Vector2D(a.x() + b.x(), a.y() + b.y());
     }
 
 
-    public final static Vector2D differenceOf(final MathVector<Double> a, final MathVector<Double> b) {
+    public static final Vector2D differenceOf(final MathVector<Double> a, final MathVector<Double> b) {
         return new Vector2D(a.x() - b.x(), a.y() - b.y());
     }
 

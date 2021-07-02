@@ -29,7 +29,7 @@ import java.util.Arrays;
 
 import jnum.Util;
 import jnum.ViewableAsDoubles;
-import jnum.data.IndexedValues;
+import jnum.data.index.IndexedValues;
 import jnum.data.samples.Index1D;
 import jnum.math.Coordinates;
 import jnum.math.LinearAlgebra;
@@ -53,7 +53,7 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     }
 
 
-    public RealVector(double[] data) { setData(data); }
+    public RealVector(double... data) { setData(data); }
 
     
     @Override
@@ -107,7 +107,7 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     }
 
     
-    public void setData(double[] data) { component = data; }
+    public void setData(double... data) { component = data; }
 
     @Override
     public final int size() { return component.length; }
@@ -142,19 +142,17 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     }
     
     @Override
-    public Double dot(Coordinates<? extends Double> v) {
+    public Double dot(MathVector<? extends Double> v) {
         double sum = 0.0;
-        for(int i=size(); --i >= 0; ) sum += component[i] * v.getComponent(i);
+        for(int i=Math.min(v.size(), size()); --i >= 0; ) sum += component[i] * v.getComponent(i);
         return sum;
     }
 
     public <T extends LinearAlgebra<? super T>> T dot(AbstractVector<T> v) {
-        assertSize(v.size());
-        
         try {  
             @SuppressWarnings("unchecked")
             T sum =(T) getElementType().getConstructor().newInstance(); 
-            for(int i=size(); --i >= 0; ) sum.addScaled(v.getComponent(i), getComponent(i));
+            for(int i=Math.min(v.size(), size()); --i >= 0; ) sum.addScaled(v.getComponent(i), getComponent(i));
             return sum;            
         }
         catch(Exception e) { 
@@ -165,26 +163,22 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
 
     @Override
     public Double dot(Double[] v) {
-        assertSize(v.length);
-        
         double sum = 0.0;
-        for(int i=size(); --i >= 0; ) sum += v[i] * getComponent(i);
+        for(int i=Math.min(v.length, size()); --i >= 0; ) sum += v[i] * getComponent(i);
         return sum;
     }
     
-    public double dot(double[] v) {
-        assertSize(v.length);
-        
+    @Override
+    public Double dot(double... v) {
         double sum = 0.0;
-        for(int i=size(); --i >= 0; ) sum += v[i] * getComponent(i);
+        for(int i=Math.min(v.length, size()); --i >= 0; ) sum += v[i] * getComponent(i);
         return sum;
     }
     
-    public double dot(float[] v) {
-        assertSize(v.length);
-        
+    @Override
+    public Double dot(float... v) {
         double sum = 0.0;
-        for(int i=size(); --i >= 0; ) sum += v[i] * getComponent(i);
+        for(int i=Math.min(v.length, size()); --i >= 0; ) sum += v[i] * getComponent(i);
         return sum;
     }
     

@@ -34,7 +34,7 @@ public class AdditiveMesh<T extends Additive<? super T>> extends ObjectMesh<T> i
      */
     private static final long serialVersionUID = -7062588300650505194L;
 
-    public AdditiveMesh(Class<T> type, int[] dimensions) {
+    public AdditiveMesh(Class<T> type, int... dimensions) {
         super(type, dimensions);
     }
 
@@ -115,7 +115,7 @@ public class AdditiveMesh<T extends Additive<? super T>> extends ObjectMesh<T> i
     
     
     @Override
-    public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double[] patchSize) {
+    public void addPatchAt(double[] exactOffset, Function<double[], T> shape, double... patchSize) {
          
         final int[] from = new int[exactOffset.length];
         final int[] to = new int[exactOffset.length];

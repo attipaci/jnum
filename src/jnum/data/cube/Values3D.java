@@ -23,7 +23,7 @@
 
 package jnum.data.cube;
 
-import jnum.data.IndexedValues;
+import jnum.data.index.IndexedValues;
 
 public interface Values3D extends IndexedValues<Index3D, Number>, Validating3D {
    

@@ -361,29 +361,29 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
         return getDateFormat(DefaultFormat).format(getDate());
     }
 
-    public final static DateFormat getDateFormat(String formatSpec) {
+    public static final DateFormat getDateFormat(String formatSpec) {
         DateFormat f = new SimpleDateFormat(formatSpec);
         f.setTimeZone(UTCZone);
         return f;
     }
 
 
-    public final static long getTAIMillis(double MJD) {
+    public static final long getTAIMillis(double MJD) {
         return MillisJ2000 + leap2000Millis + (long)((MJD - MJDJ2000) * DayMillis);
     }
 
 
-    public final static long getTTMillis(double MJD) {
+    public static final long getTTMillis(double MJD) {
         return getTAIMillis(MJD) + MillisTAI2TT;
     }
 
 
-    public final static long getGPSMillis(double MJD) {
+    public static final long getGPSMillis(double MJD) {
         return getTAIMillis(MJD) + MillisTAI2GPS;
     }
 
 
-    public final static long getUTCMillis(double MJD) { 
+    public static final long getUTCMillis(double MJD) { 
         final long TAI = getTAIMillis(MJD); 
         // Since leap seconds are relative to UTC, first get calculate UTC assuming
         // leap of UT. This UTC0 may be off by 1 second around a few seconds of a leap...
@@ -441,73 +441,73 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
     // J2000 = JD 2451545.0 = 12 TT, 1 January 2000 = 11:58:55.816 UTC or 11:59:27.816 TAI on 1 January 2000
 
     /** Leap seconds on 1 January 2000 */
-    public final static int Leap2000 = 32;
+    public static final int Leap2000 = 32;
 
     /** Leap seconds on 1 January 2000 as milliseconds */
-    protected final static long leap2000Millis = 1000L * Leap2000;
+    protected static final long leap2000Millis = 1000L * Leap2000;
 
     /** TT - TAI difference in milliseconds */
-    protected final static long MillisTAI2TT = 32184L;
+    protected static final long MillisTAI2TT = 32184L;
 
     /** GPS - TAI difference in milliseconds. */
-    protected final static long MillisTAI2GPS = -19000L;
+    protected static final long MillisTAI2GPS = -19000L;
 
     /** Milliseconds in a day. */
-    protected final static long DayMillis = 86400000L;
+    protected static final long DayMillis = 86400000L;
 
     /** UNIX time milliseconds at midnight UTC 1 January 2000 */
-    public final static long Millis0UTC1Jan2000 = 946684800000L;
+    public static final long Millis0UTC1Jan2000 = 946684800000L;
 
     // 
     /** UNIX time (msec) for J2000 (12h TT, 1 Jan 2000). I.e. 12 UTC 1 Jan 2000 - leap2000 - TAI2TT */
-    public final static long MillisJ2000 = Millis0UTC1Jan2000 + (DayMillis >>> 1) - leap2000Millis - MillisTAI2TT;
+    public static final long MillisJ2000 = Millis0UTC1Jan2000 + (DayMillis >>> 1) - leap2000Millis - MillisTAI2TT;
 
     /** MJD at J2000, i.e. 0 TT, 1 January 2000 */
-    public final static double MJDJ2000 = 51544.5;	// 12 TT 1 January 2000
+    public static final double MJDJ2000 = 51544.5;	// 12 TT 1 January 2000
 
-    public final static double JD_MJD0 = 24100000.5;   // JD date for MJD=0
+    public static final double JD_MJD0 = 24100000.5;   // JD date for MJD=0
     
     /** Milliseconds per Julian century, i.e. 36525.0 days */
-    protected final static double JulianCenturyMillis = Unit.julianCentury / Unit.ms;
+    protected static final double JulianCenturyMillis = Unit.julianCentury / Unit.ms;
 
-    public final static double JulianYearDays = 365.25;
+    public static final double JulianYearDays = 365.25;
     
     /** Days in a Julian cenruty */
-    public final static double JulianCenturyDays = 100.0 * JulianYearDays;
+    public static final double JulianCenturyDays = 100.0 * JulianYearDays;
 
     /** The TAI to TT offset in seconds. */
-    public final static double TAI2TT = MillisTAI2TT * Unit.ms;
+    public static final double TAI2TT = MillisTAI2TT * Unit.ms;
 
     /** The GPS to TAI offset in seconds. */
-    public final static double GPS2TAI = MillisTAI2GPS * Unit.ms;
+    public static final double GPS2TAI = MillisTAI2GPS * Unit.ms;
 
     /** Gravitation time dilation constant, the difference between the advance rate of TT vs TCG */
-    public final static double LG = 6.969290134e-10;
+    public static final double LG = 6.969290134e-10;
 
     /** MJD epoch at which TT and TCG are equal, i.e. TAI 1977-01-01T00:00:00.000 */
-    public final static double EMJD = 43144.0003725;
+    public static final double EMJD = 43144.0003725;
 
     /** The UTC timezone. */
-    public final static TimeZone UTC = TimeZone.getTimeZone("UTC");
+    public static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
     /** The ISO date formatter. */
-    public final static String ISOFormat = new String("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    public static final String ISOFormat = new String("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     /** The ISO date formatter. */
-    public final static String FITSFormat = new String("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    public static final String FITSFormat = new String("yyyy-MM-dd'T'HH:mm:ss.SSS");
     /** The FITS date (excluding time) formatter. */
-    public final static String FITSDateFormat = new String("yyyy-MM-dd");
+    public static final String FITSDateFormat = new String("yyyy-MM-dd");
 
     /** The default date formatter. */
-    public final static String DefaultFormat = new String("yyyy.MM.dd");
+    public static final String DefaultFormat = new String("yyyy.MM.dd");
 
     /** The FITS time format. */
-    public final static TimeFormat FITSTimeFormat = new TimeFormat(3); 
+    public static final TimeFormat FITSTimeFormat = new TimeFormat(3); 
 
     /** The UTC timezone */
-    public final static TimeZone UTCZone = TimeZone.getTimeZone("UTC");
+    public static final TimeZone UTCZone = TimeZone.getTimeZone("UTC");
 
-    public final static double dSTdUT = 1.0 + Unit.day / Unit.year;
+    public static final double dSTdUT = 1.0 + Unit.day / Unit.year;
 
     static {
         FITSTimeFormat.colons();

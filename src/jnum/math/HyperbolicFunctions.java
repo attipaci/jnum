@@ -24,7 +24,7 @@ package jnum.math;
 
 
 /**
- * Hyperbolic Functions, which are acted on the object itself. For example, for object x, the call x.sinh() 
+ * Hyperbolic functions, which act on the object itself. For example, for object x, the call x.sinh() 
  * will replace the content of x with that of sinh(x).
  */
 public interface HyperbolicFunctions {

@@ -43,7 +43,7 @@ public class ObjectMesh<T> extends Mesh<T> {
 	}
 
 
-	public ObjectMesh(Class<T> type, int[] dimensions) {
+	public ObjectMesh(Class<T> type, int... dimensions) {
 		super(type, dimensions);
 	}
 

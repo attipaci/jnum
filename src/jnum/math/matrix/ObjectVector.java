@@ -184,15 +184,13 @@ extends AbstractVector<T> {
 	
 
 	@Override
-	public T dot(Coordinates<? extends T> v) {
-	    assertSize(v.size());
-	    
+	public T dot(MathVector<? extends T> v) {
 		T p = newComponent();
 		T sum = newComponent();
 		
 		sum.zero();
 		
-		for(int i=size(); --i >= 0; ) if(!component[i].isNull()) {
+		for(int i=Math.min(v.size(), size()); --i >= 0; ) if(!component[i].isNull()) {
 		    T vi = v.getComponent(i);
 		    if(vi.isNull()) continue;
 			p.setProduct(component[i], vi);
@@ -203,12 +201,10 @@ extends AbstractVector<T> {
 	
 	@Override
     public T dot(T[] v) {
-	    assertSize(v.length);
-	    
 	    T p = newComponent();
 	    T sum = newComponent();
 	    
-	    for(int i=size(); --i >= 0; ) if(!component[i].isNull()) {
+	    for(int i=Math.min(v.length, size()); --i >= 0; ) if(!component[i].isNull()) {
 	        T vi = v[i];
             if(vi.isNull()) continue;
             p.setProduct(component[i], vi);
@@ -218,32 +214,21 @@ extends AbstractVector<T> {
 	    return sum;
 	}
 
-	public T dot(RealVector v) {
-	    assertSize(v.size());
-	    
-	    T sum = newComponent();
-	    
-	    for(int i=size(); --i >= 0; ) if(!component[i].isNull()) {
-	        double vi = v.getComponent(i);
-	        if(vi != 0.0) sum.addScaled(component[i], vi);
-	    }
-	    
-	    return sum;
+	public final T dot(RealVector v) {
+	    return dot(v.getData());
 	}
 
-	public T dot(double[] v) {
-	    assertSize(v.length);
-        
+	@Override
+    public T dot(double... v) {
         T sum = newComponent();        
-        for(int i=size(); --i >= 0; ) if(!component[i].isNull()) if(v[i] != 0.0) sum.addScaled(component[i], v[i]);
+        for(int i=Math.min(v.length, size()); --i >= 0; ) if(!component[i].isNull()) if(v[i] != 0.0) sum.addScaled(component[i], v[i]);
         return sum;
     }
     
-	public T dot(float[] v) {
-	    assertSize(v.length);
-        
+	@Override
+    public T dot(float... v) {  
         T sum = newComponent();        
-        for(int i=size(); --i >= 0; ) if(!component[i].isNull()) if(v[i] != 0.0) sum.addScaled(component[i], v[i]);
+        for(int i=Math.min(v.length, size()); --i >= 0; ) if(!component[i].isNull()) if(v[i] != 0.0) sum.addScaled(component[i], v[i]);
         return sum;
     }
 	
@@ -371,7 +356,7 @@ extends AbstractVector<T> {
 
     @Override
     public void fill(T value) {
-        Arrays.fill(component, value);
+        Arrays.fill(component, value.copy());
     }
 
     @Override

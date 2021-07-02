@@ -2,7 +2,7 @@ package jnum.math;
 
 
 /**
- * An interface for objects that implement a dot product, such as matricesa and vectors.
+ * An interface for objects that implement a dot product, such as matrices and vectors.
  * 
  * @author Attila Kovacs
  *

@@ -93,7 +93,7 @@ Product<GaussianPSF<? extends V>, GaussianPSF<? extends V>>, Ratio<GaussianPSF<?
     public abstract void deconvolveWith(GaussianPSF<? extends V> psf);
     
     /** The equivalent area lateral square size to a Gaussian beam with FWHM. */
-    public final static double fwhm2size = Math.sqrt(Constant.twoPi) / Constant.sigmasInFWHM;   
+    public static final double fwhm2size = Math.sqrt(Constant.twoPi) / Constant.sigmasInFWHM;   
     
     
 }

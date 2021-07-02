@@ -205,19 +205,19 @@ public abstract class SimpleLabel {
 	}
 	
 
-	public final static int ALIGN_CENTER = 0;
+	public static final int ALIGN_CENTER = 0;
 
-	public final static int ALIGN_LEFT = 1;
+	public static final int ALIGN_LEFT = 1;
 
-	public final static int ALIGN_RIGHT = 2;
+	public static final int ALIGN_RIGHT = 2;
 
-	public final static int ALIGN_BOTTOM = 3;
+	public static final int ALIGN_BOTTOM = 3;
 
-	public final static int ALIGN_TOP = 4;
+	public static final int ALIGN_TOP = 4;
 
-	public final static int ALIGN_BASELINE = 5;
+	public static final int ALIGN_BASELINE = 5;
 
-	public final static int ALIGN_MIDRISE = 6;
+	public static final int ALIGN_MIDRISE = 6;
 
 
 	public static Font defaultFont = new Font("SansSerif", Font.BOLD, 15);

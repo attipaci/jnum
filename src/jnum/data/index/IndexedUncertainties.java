@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,14 +21,20 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.data.index;
 
-public interface IndexReferenced<IndexType> {
+public interface IndexedUncertainties<IndexType> {
 
-    public void setReferenceIndex(IndexType index);
+    public double noiseAt(IndexType index);
     
-    public IndexType getReferenceIndex();
+    public double weightAt(IndexType index);
     
+    public double significanceAt(IndexType index);
+    
+    
+    public void setNoiseAt(IndexType index, double value);
+    
+    public void setWeightAt(IndexType index, double value);
     
     
 }

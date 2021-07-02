@@ -52,13 +52,13 @@ import jnum.text.TimeFormat;
 public final class Util {
 
 
-    public final static String version = "0.40-a1";
+    public static final String version = "0.40-a1";
     
-    public final static String revision = "devel.9";
+    public static final String revision = "devel.10";
     
-    public final static String copyright = "(c)2021 Attila Kovacs"; 
+    public static final String copyright = "(c)2021 Attila Kovacs"; 
     
-    public final static String copyrightEmail = "<attila[AT]sigmyne.com>"; 
+    public static final String copyrightEmail = "<attila[AT]sigmyne.com>"; 
 
  
     public static boolean debug = false;
@@ -93,19 +93,19 @@ public final class Util {
     }
 
 
-    public final static double timeOfDay(double time) {
+    public static final double timeOfDay(double time) {
         time = Math.IEEEremainder(time, Unit.day);
         if(time < 0.0) time += Unit.day;
         return time;
     }
 
 
-    public final static double timeOfAngle(final double angle) {
+    public static final double timeOfAngle(final double angle) {
         return timeOfDay(angle * Unit.second/Unit.secondAngle);
     }
 
 
-    public final static double angleOfTime(final double time) {
+    public static final double angleOfTime(final double time) {
         return ExtraMath.standardAngle(time * Unit.secondAngle/Unit.second);
     }
 
@@ -337,68 +337,68 @@ public final class Util {
 
     }
 
-    public final static short unsigned(final byte b) {
+    public static final short unsigned(final byte b) {
         return ((short)(b & 0xff));
     }	
 
 
-    public final static int unsigned(final short s) {
+    public static final int unsigned(final short s) {
         return (s & 0xffff);
     }
 
 
-    public final static long unsigned(final int i) {
+    public static final long unsigned(final int i) {
         return (i & 0xffffffffL);
     }
 
 
-    public final static byte unsignedByte(final short value) {
+    public static final byte unsignedByte(final short value) {
         return (byte)(value & 0xff);
     }
 
 
-    public final static short unsignedShort(final int value) {
+    public static final short unsignedShort(final int value) {
         return (short)(value & 0xffff);
     }
 
 
-    public final static int unsignedInt(final long value) {
+    public static final int unsignedInt(final long value) {
         return (int)(value & 0xffffffffL);
     }
 
 
-    public final static long pseudoUnsigned(final long l) {
+    public static final long pseudoUnsigned(final long l) {
         return l < 0L ? Long.MAX_VALUE : l;
     }
 
 
-    public final static short[] unsigned(final byte[] b) {
+    public static final short[] unsigned(final byte[] b) {
         final short[] s = new short[b.length];
         for(int i=0; i<b.length; i++) s[i] = unsigned(b[i]);	
         return s;
     }
 
 
-    public final static int[] unsigned(final short[] s) {
+    public static final int[] unsigned(final short[] s) {
         final int[] i = new int[s.length];
         for(int j=0; j<s.length; j++) i[j] = unsigned(s[j]);	
         return i;
     }
 
 
-    public final static long[] unsigned(final int[] i) {
+    public static final long[] unsigned(final int[] i) {
         final long[] l = new long[i.length];
         for(int j=0; j<i.length; j++) l[j] = unsigned(i[j]);	
         return l;
     }
 
 
-    public final static void pseudoUnsigned(final long[] l) {
+    public static final void pseudoUnsigned(final long[] l) {
         for(int j=0; j<l.length; j++) l[j] = pseudoUnsigned(l[j]);	
     }
 
 
-    public final static String getProperty(String name) {
+    public static final String getProperty(String name) {
         String value = System.getProperty(name);
         return value == null ? "n/a" : value;
     }
@@ -553,14 +553,14 @@ public final class Util {
     }
     
     
-    public final static boolean equals(final double a, final double b, final double precision) {
+    public static final boolean equals(final double a, final double b, final double precision) {
         if(a == b) return true;
         if(Math.getExponent(a) == 0) return (Math.abs(a - b) <= precision);     
         return (Math.abs(a - b) / Math.max(Math.abs(a), Math.abs(b)) <= precision);
     }
     
    
-    public final static boolean fixedPrecisionEquals(final double a, final double b, final double precision) {
+    public static final boolean fixedPrecisionEquals(final double a, final double b, final double precision) {
         if(a == b) return true;
         return (Math.abs(a - b) <= precision);     
     }
@@ -633,334 +633,334 @@ public final class Util {
     public static Reporter reporter = defaultReporter;
 
     
-    public final static DecimalFormat f0 = new DecimalFormat("0");
+    public static final DecimalFormat f0 = new DecimalFormat("0");
 
-    public final static DecimalFormat f1 = new DecimalFormat("0.0");
+    public static final DecimalFormat f1 = new DecimalFormat("0.0");
 
-    public final static DecimalFormat f2 = new DecimalFormat("0.00");
+    public static final DecimalFormat f2 = new DecimalFormat("0.00");
 
-    public final static DecimalFormat f3 = new DecimalFormat("0.000");
+    public static final DecimalFormat f3 = new DecimalFormat("0.000");
 
-    public final static DecimalFormat f4 = new DecimalFormat("0.0000");
+    public static final DecimalFormat f4 = new DecimalFormat("0.0000");
 
-    public final static DecimalFormat f5 = new DecimalFormat("0.00000");
+    public static final DecimalFormat f5 = new DecimalFormat("0.00000");
 
-    public final static DecimalFormat f6 = new DecimalFormat("0.000000");
+    public static final DecimalFormat f6 = new DecimalFormat("0.000000");
 
-    public final static DecimalFormat f7 = new DecimalFormat("0.0000000");
+    public static final DecimalFormat f7 = new DecimalFormat("0.0000000");
 
-    public final static DecimalFormat f8 = new DecimalFormat("0.00000000");
+    public static final DecimalFormat f8 = new DecimalFormat("0.00000000");
 
-    public final static DecimalFormat f9 = new DecimalFormat("0.000000000");
+    public static final DecimalFormat f9 = new DecimalFormat("0.000000000");
 
-    public final static DecimalFormat f10 = new DecimalFormat("0.0000000000");
+    public static final DecimalFormat f10 = new DecimalFormat("0.0000000000");
 
-    public final static DecimalFormat f11 = new DecimalFormat("0.00000000000");
+    public static final DecimalFormat f11 = new DecimalFormat("0.00000000000");
 
-    public final static DecimalFormat f12 = new DecimalFormat("0.000000000000");
+    public static final DecimalFormat f12 = new DecimalFormat("0.000000000000");
 
-    public final static DecimalFormat F0 = new DecimalFormat("0");
+    public static final DecimalFormat F0 = new DecimalFormat("0");
 
-    public final static DecimalFormat F1 = new DecimalFormat("0.#");
+    public static final DecimalFormat F1 = new DecimalFormat("0.#");
 
-    public final static DecimalFormat F2 = new DecimalFormat("0.##");
+    public static final DecimalFormat F2 = new DecimalFormat("0.##");
 
-    public final static DecimalFormat F3 = new DecimalFormat("0.###");
+    public static final DecimalFormat F3 = new DecimalFormat("0.###");
 
-    public final static DecimalFormat F4 = new DecimalFormat("0.####");
+    public static final DecimalFormat F4 = new DecimalFormat("0.####");
 
-    public final static DecimalFormat F5 = new DecimalFormat("0.#####");
+    public static final DecimalFormat F5 = new DecimalFormat("0.#####");
 
-    public final static DecimalFormat F6 = new DecimalFormat("0.######");
+    public static final DecimalFormat F6 = new DecimalFormat("0.######");
 
-    public final static DecimalFormat F7 = new DecimalFormat("0.#######");
+    public static final DecimalFormat F7 = new DecimalFormat("0.#######");
 
-    public final static DecimalFormat F8 = new DecimalFormat("0.########");
+    public static final DecimalFormat F8 = new DecimalFormat("0.########");
 
-    public final static DecimalFormat F9 = new DecimalFormat("0.#########");
+    public static final DecimalFormat F9 = new DecimalFormat("0.#########");
     
-    public final static DecimalFormat F10 = new DecimalFormat("0.##########");
+    public static final DecimalFormat F10 = new DecimalFormat("0.##########");
 
-    public final static DecimalFormat F11 = new DecimalFormat("0.###########");
+    public static final DecimalFormat F11 = new DecimalFormat("0.###########");
 
-    public final static DecimalFormat F12 = new DecimalFormat("0.############");
+    public static final DecimalFormat F12 = new DecimalFormat("0.############");
 
 
 
-    public final static DecimalFormat e0 = new DecimalFormat("0E0");
+    public static final DecimalFormat e0 = new DecimalFormat("0E0");
 
-    public final static DecimalFormat e1 = new DecimalFormat("0.0E0");
+    public static final DecimalFormat e1 = new DecimalFormat("0.0E0");
 
-    public final static DecimalFormat e2 = new DecimalFormat("0.00E0");
+    public static final DecimalFormat e2 = new DecimalFormat("0.00E0");
 
-    public final static DecimalFormat e3 = new DecimalFormat("0.000E0");
+    public static final DecimalFormat e3 = new DecimalFormat("0.000E0");
 
-    public final static DecimalFormat e4 = new DecimalFormat("0.0000E0");
+    public static final DecimalFormat e4 = new DecimalFormat("0.0000E0");
 
-    public final static DecimalFormat e5 = new DecimalFormat("0.00000E0");
+    public static final DecimalFormat e5 = new DecimalFormat("0.00000E0");
 
-    public final static DecimalFormat e6 = new DecimalFormat("0.000000E0");
+    public static final DecimalFormat e6 = new DecimalFormat("0.000000E0");
 
-    public final static DecimalFormat e7 = new DecimalFormat("0.0000000E0");
+    public static final DecimalFormat e7 = new DecimalFormat("0.0000000E0");
 
-    public final static DecimalFormat e8 = new DecimalFormat("0.00000000E0");
+    public static final DecimalFormat e8 = new DecimalFormat("0.00000000E0");
 
-    public final static DecimalFormat e9 = new DecimalFormat("0.000000000E0");
+    public static final DecimalFormat e9 = new DecimalFormat("0.000000000E0");
 
-    public final static DecimalFormat e10 = new DecimalFormat("0.0000000000E0");
+    public static final DecimalFormat e10 = new DecimalFormat("0.0000000000E0");
 
-    public final static DecimalFormat e11 = new DecimalFormat("0.00000000000E0");
+    public static final DecimalFormat e11 = new DecimalFormat("0.00000000000E0");
 
-    public final static DecimalFormat e12 = new DecimalFormat("0.000000000000E0");
+    public static final DecimalFormat e12 = new DecimalFormat("0.000000000000E0");
 
 
 
-    public final static DecimalFormat E0 = new DecimalFormat("0E0");
+    public static final DecimalFormat E0 = new DecimalFormat("0E0");
 
-    public final static DecimalFormat E1 = new DecimalFormat("0.#E0");
+    public static final DecimalFormat E1 = new DecimalFormat("0.#E0");
 
-    public final static DecimalFormat E2 = new DecimalFormat("0.##E0");
+    public static final DecimalFormat E2 = new DecimalFormat("0.##E0");
 
-    public final static DecimalFormat E3 = new DecimalFormat("0.###E0");
+    public static final DecimalFormat E3 = new DecimalFormat("0.###E0");
 
-    public final static DecimalFormat E4 = new DecimalFormat("0.####E0");
+    public static final DecimalFormat E4 = new DecimalFormat("0.####E0");
 
-    public final static DecimalFormat E5 = new DecimalFormat("0.#####E0");
+    public static final DecimalFormat E5 = new DecimalFormat("0.#####E0");
 
-    public final static DecimalFormat E6 = new DecimalFormat("0.######E0");
+    public static final DecimalFormat E6 = new DecimalFormat("0.######E0");
 
-    public final static DecimalFormat E7 = new DecimalFormat("0.#######E0");
+    public static final DecimalFormat E7 = new DecimalFormat("0.#######E0");
 
-    public final static DecimalFormat E8 = new DecimalFormat("0.########E0");
+    public static final DecimalFormat E8 = new DecimalFormat("0.########E0");
 
-    public final static DecimalFormat E9 = new DecimalFormat("0.#########E0");
+    public static final DecimalFormat E9 = new DecimalFormat("0.#########E0");
 
-    public final static DecimalFormat E10 = new DecimalFormat("0.##########E0");
+    public static final DecimalFormat E10 = new DecimalFormat("0.##########E0");
 
-    public final static DecimalFormat E11 = new DecimalFormat("0.###########E0");
+    public static final DecimalFormat E11 = new DecimalFormat("0.###########E0");
 
-    public final static DecimalFormat E12 = new DecimalFormat("0.############E0");
+    public static final DecimalFormat E12 = new DecimalFormat("0.############E0");
 
 
 
-    public final static DecimalFormat d1 = new DecimalFormat("0");
+    public static final DecimalFormat d1 = new DecimalFormat("0");
 
-    public final static DecimalFormat d2 = new DecimalFormat("00");
+    public static final DecimalFormat d2 = new DecimalFormat("00");
 
-    public final static DecimalFormat d3 = new DecimalFormat("000");
+    public static final DecimalFormat d3 = new DecimalFormat("000");
 
-    public final static DecimalFormat d4 = new DecimalFormat("0000");
+    public static final DecimalFormat d4 = new DecimalFormat("0000");
 
-    public final static DecimalFormat d5 = new DecimalFormat("00000");
+    public static final DecimalFormat d5 = new DecimalFormat("00000");
 
-    public final static DecimalFormat d6 = new DecimalFormat("000000");
+    public static final DecimalFormat d6 = new DecimalFormat("000000");
 
-    public final static DecimalFormat d7 = new DecimalFormat("0000000");
+    public static final DecimalFormat d7 = new DecimalFormat("0000000");
 
-    public final static DecimalFormat d8 = new DecimalFormat("00000000");
+    public static final DecimalFormat d8 = new DecimalFormat("00000000");
 
-    public final static DecimalFormat d9 = new DecimalFormat("000000000");
+    public static final DecimalFormat d9 = new DecimalFormat("000000000");
 
-    public final static DecimalFormat d10 = new DecimalFormat("0000000000");
+    public static final DecimalFormat d10 = new DecimalFormat("0000000000");
 
-    public final static DecimalFormat d11 = new DecimalFormat("00000000000");
+    public static final DecimalFormat d11 = new DecimalFormat("00000000000");
 
-    public final static DecimalFormat d12 = new DecimalFormat("000000000000");
+    public static final DecimalFormat d12 = new DecimalFormat("000000000000");
 
 
 
 
-    public final static SignificantFiguresFormat s1 = new SignificantFiguresFormat(1);
+    public static final SignificantFiguresFormat s1 = new SignificantFiguresFormat(1);
 
-    public final static SignificantFiguresFormat s2 = new SignificantFiguresFormat(2);
+    public static final SignificantFiguresFormat s2 = new SignificantFiguresFormat(2);
 
-    public final static SignificantFiguresFormat s3 = new SignificantFiguresFormat(3);
+    public static final SignificantFiguresFormat s3 = new SignificantFiguresFormat(3);
 
-    public final static SignificantFiguresFormat s4 = new SignificantFiguresFormat(4);
+    public static final SignificantFiguresFormat s4 = new SignificantFiguresFormat(4);
 
-    public final static SignificantFiguresFormat s5 = new SignificantFiguresFormat(5);
+    public static final SignificantFiguresFormat s5 = new SignificantFiguresFormat(5);
 
-    public final static SignificantFiguresFormat s6 = new SignificantFiguresFormat(6);
+    public static final SignificantFiguresFormat s6 = new SignificantFiguresFormat(6);
 
-    public final static SignificantFiguresFormat s7 = new SignificantFiguresFormat(7);
+    public static final SignificantFiguresFormat s7 = new SignificantFiguresFormat(7);
 
-    public final static SignificantFiguresFormat s8 = new SignificantFiguresFormat(8);
+    public static final SignificantFiguresFormat s8 = new SignificantFiguresFormat(8);
 
-    public final static SignificantFiguresFormat s9 = new SignificantFiguresFormat(9);
+    public static final SignificantFiguresFormat s9 = new SignificantFiguresFormat(9);
 
-    public final static SignificantFiguresFormat s10 = new SignificantFiguresFormat(10);
+    public static final SignificantFiguresFormat s10 = new SignificantFiguresFormat(10);
 
-    public final static SignificantFiguresFormat s11 = new SignificantFiguresFormat(11);
+    public static final SignificantFiguresFormat s11 = new SignificantFiguresFormat(11);
 
-    public final static SignificantFiguresFormat s12 = new SignificantFiguresFormat(12);
+    public static final SignificantFiguresFormat s12 = new SignificantFiguresFormat(12);
 
-
-    
-    public final static SignificantFiguresFormat S1 = new SignificantFiguresFormat(1, false);
-
-    public final static SignificantFiguresFormat S2 = new SignificantFiguresFormat(2, false);
-
-    public final static SignificantFiguresFormat S3 = new SignificantFiguresFormat(3, false);
-
-    public final static SignificantFiguresFormat S4 = new SignificantFiguresFormat(4, false);
-
-    public final static SignificantFiguresFormat S5 = new SignificantFiguresFormat(5, false);
-
-    public final static SignificantFiguresFormat S6 = new SignificantFiguresFormat(6, false);
-
-    public final static SignificantFiguresFormat S7 = new SignificantFiguresFormat(7, false);
-
-    public final static SignificantFiguresFormat S8 = new SignificantFiguresFormat(8, false);
-
-    public final static SignificantFiguresFormat S9 = new SignificantFiguresFormat(9, false);
-
-    public final static SignificantFiguresFormat S10 = new SignificantFiguresFormat(10, false);
-
-    public final static SignificantFiguresFormat S11 = new SignificantFiguresFormat(11, false);
-
-    public final static SignificantFiguresFormat S12 = new SignificantFiguresFormat(12, false);
-
-
-
-    public final static HourAngleFormat hf0 = new HourAngleFormat(0);
-
-    public final static HourAngleFormat hf1 = new HourAngleFormat(1);
-
-    public final static HourAngleFormat hf2 = new HourAngleFormat(2);
-
-    public final static HourAngleFormat hf3 = new HourAngleFormat(3);
-
-    public final static HourAngleFormat hf4 = new HourAngleFormat(4);
-
-    public final static HourAngleFormat hf5 = new HourAngleFormat(5);
-
-    public final static HourAngleFormat hf6 = new HourAngleFormat(6);
-
-    public final static HourAngleFormat hf7 = new HourAngleFormat(7);
-
-    public final static HourAngleFormat hf8 = new HourAngleFormat(8);
-
-    public final static HourAngleFormat hf9 = new HourAngleFormat(9);
-
-    public final static HourAngleFormat hf10 = new HourAngleFormat(10);
-
-    public final static HourAngleFormat hf11 = new HourAngleFormat(11);
-
-    public final static HourAngleFormat hf12 = new HourAngleFormat(12);
-
-
-
-
-
-    public final static AngleFormat af0 = new AngleFormat(0);
-
-    public final static AngleFormat af1 = new AngleFormat(1);
-
-    public final static AngleFormat af2 = new AngleFormat(2);
-
-    public final static AngleFormat af3 = new AngleFormat(3);
-
-    public final static AngleFormat af4 = new AngleFormat(4);
-
-    public final static AngleFormat af5 = new AngleFormat(5);
-
-    public final static AngleFormat af6 = new AngleFormat(6);
-
-    public final static AngleFormat af7 = new AngleFormat(7);
-
-    public final static AngleFormat af8 = new AngleFormat(8);
-
-    public final static AngleFormat af9 = new AngleFormat(9);
-
-    public final static AngleFormat af10 = new AngleFormat(10);
-
-    public final static AngleFormat af11 = new AngleFormat(11);
-
-    public final static AngleFormat af12 = new AngleFormat(12);
 
     
-    public final static AngleFormat Af0 = new AngleFormat(0, true);
+    public static final SignificantFiguresFormat S1 = new SignificantFiguresFormat(1, false);
 
-    public final static AngleFormat Af1 = new AngleFormat(1, true);
+    public static final SignificantFiguresFormat S2 = new SignificantFiguresFormat(2, false);
 
-    public final static AngleFormat Af2 = new AngleFormat(2, true);
+    public static final SignificantFiguresFormat S3 = new SignificantFiguresFormat(3, false);
 
-    public final static AngleFormat Af3 = new AngleFormat(3, true);
+    public static final SignificantFiguresFormat S4 = new SignificantFiguresFormat(4, false);
 
-    public final static AngleFormat Af4 = new AngleFormat(4, true);
+    public static final SignificantFiguresFormat S5 = new SignificantFiguresFormat(5, false);
+
+    public static final SignificantFiguresFormat S6 = new SignificantFiguresFormat(6, false);
+
+    public static final SignificantFiguresFormat S7 = new SignificantFiguresFormat(7, false);
+
+    public static final SignificantFiguresFormat S8 = new SignificantFiguresFormat(8, false);
+
+    public static final SignificantFiguresFormat S9 = new SignificantFiguresFormat(9, false);
+
+    public static final SignificantFiguresFormat S10 = new SignificantFiguresFormat(10, false);
+
+    public static final SignificantFiguresFormat S11 = new SignificantFiguresFormat(11, false);
+
+    public static final SignificantFiguresFormat S12 = new SignificantFiguresFormat(12, false);
+
+
+
+    public static final HourAngleFormat hf0 = new HourAngleFormat(0);
+
+    public static final HourAngleFormat hf1 = new HourAngleFormat(1);
+
+    public static final HourAngleFormat hf2 = new HourAngleFormat(2);
+
+    public static final HourAngleFormat hf3 = new HourAngleFormat(3);
+
+    public static final HourAngleFormat hf4 = new HourAngleFormat(4);
+
+    public static final HourAngleFormat hf5 = new HourAngleFormat(5);
+
+    public static final HourAngleFormat hf6 = new HourAngleFormat(6);
+
+    public static final HourAngleFormat hf7 = new HourAngleFormat(7);
+
+    public static final HourAngleFormat hf8 = new HourAngleFormat(8);
+
+    public static final HourAngleFormat hf9 = new HourAngleFormat(9);
+
+    public static final HourAngleFormat hf10 = new HourAngleFormat(10);
+
+    public static final HourAngleFormat hf11 = new HourAngleFormat(11);
+
+    public static final HourAngleFormat hf12 = new HourAngleFormat(12);
+
+
+
+
+
+    public static final AngleFormat af0 = new AngleFormat(0);
+
+    public static final AngleFormat af1 = new AngleFormat(1);
+
+    public static final AngleFormat af2 = new AngleFormat(2);
+
+    public static final AngleFormat af3 = new AngleFormat(3);
+
+    public static final AngleFormat af4 = new AngleFormat(4);
+
+    public static final AngleFormat af5 = new AngleFormat(5);
+
+    public static final AngleFormat af6 = new AngleFormat(6);
+
+    public static final AngleFormat af7 = new AngleFormat(7);
+
+    public static final AngleFormat af8 = new AngleFormat(8);
+
+    public static final AngleFormat af9 = new AngleFormat(9);
+
+    public static final AngleFormat af10 = new AngleFormat(10);
+
+    public static final AngleFormat af11 = new AngleFormat(11);
+
+    public static final AngleFormat af12 = new AngleFormat(12);
+
     
-    public final static AngleFormat Af5 = new AngleFormat(5, true);
+    public static final AngleFormat Af0 = new AngleFormat(0, true);
 
-    public final static AngleFormat Af6 = new AngleFormat(6, true);
+    public static final AngleFormat Af1 = new AngleFormat(1, true);
 
-    public final static AngleFormat Af7 = new AngleFormat(7, true);
+    public static final AngleFormat Af2 = new AngleFormat(2, true);
 
-    public final static AngleFormat Af8 = new AngleFormat(8, true);
+    public static final AngleFormat Af3 = new AngleFormat(3, true);
 
-    public final static AngleFormat Af9 = new AngleFormat(9, true);
+    public static final AngleFormat Af4 = new AngleFormat(4, true);
+    
+    public static final AngleFormat Af5 = new AngleFormat(5, true);
 
-    public final static AngleFormat Af10 = new AngleFormat(10, true);
+    public static final AngleFormat Af6 = new AngleFormat(6, true);
 
-    public final static AngleFormat Af11 = new AngleFormat(11, true);
+    public static final AngleFormat Af7 = new AngleFormat(7, true);
 
-    public final static AngleFormat Af12 = new AngleFormat(12, true);
+    public static final AngleFormat Af8 = new AngleFormat(8, true);
+
+    public static final AngleFormat Af9 = new AngleFormat(9, true);
+
+    public static final AngleFormat Af10 = new AngleFormat(10, true);
+
+    public static final AngleFormat Af11 = new AngleFormat(11, true);
+
+    public static final AngleFormat Af12 = new AngleFormat(12, true);
 
 
-    public final static TimeFormat tf0 = new TimeFormat(0);
+    public static final TimeFormat tf0 = new TimeFormat(0);
 
-    public final static TimeFormat tf1 = new TimeFormat(1);
+    public static final TimeFormat tf1 = new TimeFormat(1);
 
-    public final static TimeFormat tf2 = new TimeFormat(2);
+    public static final TimeFormat tf2 = new TimeFormat(2);
 
-    public final static TimeFormat tf3 = new TimeFormat(3);
+    public static final TimeFormat tf3 = new TimeFormat(3);
 
-    public final static TimeFormat tf4 = new TimeFormat(4);
+    public static final TimeFormat tf4 = new TimeFormat(4);
 
-    public final static TimeFormat tf5 = new TimeFormat(5);
+    public static final TimeFormat tf5 = new TimeFormat(5);
 
-    public final static TimeFormat tf6 = new TimeFormat(6);
+    public static final TimeFormat tf6 = new TimeFormat(6);
 
-    public final static TimeFormat tf7 = new TimeFormat(7);
+    public static final TimeFormat tf7 = new TimeFormat(7);
 
-    public final static TimeFormat tf8 = new TimeFormat(8);
+    public static final TimeFormat tf8 = new TimeFormat(8);
 
-    public final static TimeFormat tf9 = new TimeFormat(9);
+    public static final TimeFormat tf9 = new TimeFormat(9);
 
-    public final static TimeFormat tf10 = new TimeFormat(10);
+    public static final TimeFormat tf10 = new TimeFormat(10);
 
-    public final static TimeFormat tf11 = new TimeFormat(11);
+    public static final TimeFormat tf11 = new TimeFormat(11);
 
-    public final static TimeFormat tf12 = new TimeFormat(12);
+    public static final TimeFormat tf12 = new TimeFormat(12);
     
 
-    public final static HourAngleFormat haf0 = new HourAngleFormat(0);
+    public static final HourAngleFormat haf0 = new HourAngleFormat(0);
 
-    public final static HourAngleFormat haf1 = new HourAngleFormat(1);
+    public static final HourAngleFormat haf1 = new HourAngleFormat(1);
 
-    public final static HourAngleFormat haf2 = new HourAngleFormat(2);
+    public static final HourAngleFormat haf2 = new HourAngleFormat(2);
 
-    public final static HourAngleFormat haf3 = new HourAngleFormat(3);
+    public static final HourAngleFormat haf3 = new HourAngleFormat(3);
 
-    public final static HourAngleFormat haf4 = new HourAngleFormat(4);
+    public static final HourAngleFormat haf4 = new HourAngleFormat(4);
 
-    public final static HourAngleFormat haf5 = new HourAngleFormat(5);
+    public static final HourAngleFormat haf5 = new HourAngleFormat(5);
 
-    public final static HourAngleFormat haf6 = new HourAngleFormat(6);
+    public static final HourAngleFormat haf6 = new HourAngleFormat(6);
 
-    public final static HourAngleFormat haf7 = new HourAngleFormat(7);
+    public static final HourAngleFormat haf7 = new HourAngleFormat(7);
 
-    public final static HourAngleFormat haf8 = new HourAngleFormat(8);
+    public static final HourAngleFormat haf8 = new HourAngleFormat(8);
 
-    public final static HourAngleFormat haf9 = new HourAngleFormat(9);
+    public static final HourAngleFormat haf9 = new HourAngleFormat(9);
 
-    public final static HourAngleFormat haf10 = new HourAngleFormat(10);
+    public static final HourAngleFormat haf10 = new HourAngleFormat(10);
 
-    public final static HourAngleFormat haf11 = new HourAngleFormat(11);
+    public static final HourAngleFormat haf11 = new HourAngleFormat(11);
 
-    public final static HourAngleFormat haf12 = new HourAngleFormat(12);
+    public static final HourAngleFormat haf12 = new HourAngleFormat(12);
 
 
-    public final static DecimalFormat[] 
+    public static final DecimalFormat[] 
             e = { e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12 },
             E = { E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12 },
             f = { f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12 },
@@ -968,19 +968,19 @@ public final class Util {
             d = { null, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12 };
 
 
-    public final static SignificantFiguresFormat[] 
+    public static final SignificantFiguresFormat[] 
             s = { null, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12 },
             S = { null, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12 };
 
-    public final static HourAngleFormat[] hf = { hf0, hf1, hf2, hf3, hf4, hf5, hf6, hf7, hf8, hf9, hf10, hf11, hf12 };
+    public static final HourAngleFormat[] hf = { hf0, hf1, hf2, hf3, hf4, hf5, hf6, hf7, hf8, hf9, hf10, hf11, hf12 };
 
-    public final static AngleFormat[] af = { af0, af1, af2, af3, af4, af5, af6, af7, af8, af9, af10, af11, af12 };
+    public static final AngleFormat[] af = { af0, af1, af2, af3, af4, af5, af6, af7, af8, af9, af10, af11, af12 };
 
-    public final static AngleFormat[] Af = { Af0, Af1, Af2, Af3, Af4, Af5, Af6, Af7, Af8, Af9, Af10, Af11, Af12 };
+    public static final AngleFormat[] Af = { Af0, Af1, Af2, Af3, Af4, Af5, Af6, Af7, Af8, Af9, Af10, Af11, Af12 };
     
-    public final static TimeFormat[] tf = { tf0, tf1, tf2, tf3, tf4, tf5, tf6, tf7, tf8, tf9, tf10, tf11, tf12 };
+    public static final TimeFormat[] tf = { tf0, tf1, tf2, tf3, tf4, tf5, tf6, tf7, tf8, tf9, tf10, tf11, tf12 };
 
-    public final static HourAngleFormat[] haf = { haf0, haf1, haf2, haf3, haf4, haf5, haf6, haf7, haf8, haf9, haf10, haf11, haf12 };
+    public static final HourAngleFormat[] haf = { haf0, haf1, haf2, haf3, haf4, haf5, haf6, haf7, haf8, haf9, haf10, haf11, haf12 };
     
 }
 

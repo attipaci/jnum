@@ -135,10 +135,10 @@ public class QuoteTokenizer {
 		return value;
 	}
 
-	public final static int UNQUOTED = 0;
+	public static final int UNQUOTED = 0;
 
-	public final static int SINGLE_QUOTE = 1;
+	public static final int SINGLE_QUOTE = 1;
 
-	public final static int DOUBLE_QUOTE = 2;
+	public static final int DOUBLE_QUOTE = 2;
 	
 }

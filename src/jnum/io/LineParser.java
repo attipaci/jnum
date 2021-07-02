@@ -74,7 +74,7 @@ public abstract class LineParser {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void read(String descriptor) throws IOException {
-        read(Util.getReader(descriptor));
+        try(BufferedReader in = Util.getReader(descriptor)) { read(in); }
     }
     
     /**

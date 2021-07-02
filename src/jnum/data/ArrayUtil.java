@@ -24,17 +24,7 @@
 
 package jnum.data;
 
-// TODO check where wrappers & private methods are needed. 
-// TODO use ValueAt instead of DataCursor?
-// TODO arraycopy, fill(from-to), clear(from-to).
-// TODO more generalized methods instead of double[][] and float[][] etc.
-// TODO smooth(beam), smooth(beam, weight);
-// TODO regrid(data, stretch, boolean smooth)
-// TODO quick downSample... (smooth only at specific locations, then regrid w/o smooth)
-// TODO Check arithmetic to skip NaNs.
 
-
-// 27.06.07 Tested except regrid, smooth stretch 
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -63,12 +53,36 @@ import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
 
+//TODO check where wrappers & private methods are needed. 
+//TODO use ValueAt instead of DataCursor?
+//TODO arraycopy, fill(from-to), clear(from-to).
+//TODO more generalized methods instead of double[][] and float[][] etc.
+//TODO smooth(beam), smooth(beam, weight);
+//TODO regrid(data, stretch, boolean smooth)
+//TODO quick downSample... (smooth only at specific locations, then regrid w/o smooth)
+//TODO Check arithmetic to skip NaNs.
+
+
+//27.06.07 Tested except regrid, smooth stretch 
 
 // TODO Eliminate calls to getRank(), getClass(), and getDimension() inside recursive methods. 
 // Also Arrays.copyOf() and Arrays.copyOfRange() on indeces...
 // This should result in improved performance.
 
-// Generic Multi-dimensional arrays
+/**
+ * A utility class for handling Java arrays of any type and any dimension, efficiently via
+ * a set of static methods that form a programmer's toolkit. This is not the only, or the best way 
+ * JNUM can handle multi-dimensional data objects. Some alternatives are using one of the 
+ * implementations of {@link jnum.data.Data} for 2D and 3D data types with a various advanced
+ * capabilituies elegantly, or using an implementation of {@link jnum.data.mesh.Mesh} for general
+ * multi-dimensional data objects. But if you find yourself in need of dealing with just
+ * a regular Java array, this class will offer some good tricks out of the box.
+ * 
+ * 
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public final class ArrayUtil {
 
     // --------------------------------------------------------------------------------------------------------------------
@@ -172,12 +186,12 @@ public final class ArrayUtil {
     }
 
 
-    public static Object valueAt(Object array, int[] index) {
+    public static Object valueAt(Object array, int... index) {
         return valueAt(array, index, 0); 
     }
 
 
-    public static Object valueAt(Object array, int[] index, int depth) {
+    private static Object valueAt(Object array, int[] index, int depth) {
         if(array instanceof Object[][]) return valueAt(((Object[]) array)[index[depth]], index, depth++);
         else if(array instanceof Object[]) return ((Object[]) array)[index[depth]];
         else if(array.getClass().isArray()) {
@@ -194,12 +208,7 @@ public final class ArrayUtil {
     }
 
 
-    public static Object createArray(Class<?> type, int dimension) {
-        return Array.newInstance(type, dimension);
-    }
-
-
-    public static Object createArray(Class<?> type, int[] dimensions) {
+    public static Object createArray(Class<?> type, int... dimensions) {
         return Array.newInstance(type, dimensions);
     }
 
@@ -272,7 +281,7 @@ public final class ArrayUtil {
     }
 
 
-    public static void paste(Object patch, Object array, int[] offset) {
+    public static void paste(Object patch, Object array, int... offset) {
         int[] N = getShape(array);
         int[] beginning = new int[N.length];
         int[] patchN = getShape(patch);
@@ -282,7 +291,7 @@ public final class ArrayUtil {
     }
 
 
-    public static Object resize(Object data, int[] toSize) throws IllegalArgumentException {
+    public static Object resize(Object data, int... toSize) throws IllegalArgumentException {
         Object resized = createArray(getClass(data), toSize);
         paste(data, resized, new int[toSize.length]);
         pad(resized, getClass(data), toSize, getShape(data));
@@ -670,7 +679,7 @@ public final class ArrayUtil {
 
         Object view = null;
 
-        view = createArray(type, new int[] {N});
+        view = createArray(type, N);
 
         Iterator<?> iterator = MeshCrawler.createFor(array, getRank(array)-1);
         int offset = 0;
@@ -685,7 +694,7 @@ public final class ArrayUtil {
     }
 
 
-    public static <T> Object fold(Object linearView, int[] dimensions) throws IllegalArgumentException {
+    public static <T> Object fold(Object linearView, int... dimensions) throws IllegalArgumentException {
         int dstSize = 1;
         for(int i=0; i<dimensions.length; i++) dstSize *= dimensions[i];
         if(dstSize != getNextSize(linearView)) throw new IllegalArgumentException("Folding to a an array of different size.");
@@ -1246,8 +1255,8 @@ public final class ArrayUtil {
 
 
     public static Object getDefaultWeights(Object data) throws IllegalArgumentException {
-        if(data instanceof BlankingValue[]) {
-            BlankingValue[] array = (BlankingValue[]) data;
+        if(data instanceof InvalidValue[]) {
+            InvalidValue[] array = (InvalidValue[]) data;
             double[] weight = new double[array.length];
             IntStream.range(0, array.length).parallel().forEach(i -> weight[i] = array[i].isNaN() ? 0.0 : 1.0);
             return weight;

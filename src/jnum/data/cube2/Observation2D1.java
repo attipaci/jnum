@@ -27,7 +27,6 @@ package jnum.data.cube2;
 import java.util.ArrayList;
 
 import jnum.Unit;
-import jnum.data.IndexedObservations;
 import jnum.data.Observations;
 import jnum.data.Statistics;
 import jnum.data.WeightedPoint;
@@ -37,6 +36,7 @@ import jnum.data.cube.Values3D;
 import jnum.data.cube.overlay.Overlay3D;
 import jnum.data.image.Data2D;
 import jnum.data.image.Observation2D;
+import jnum.data.index.IndexedObservations;
 import jnum.fits.FitsToolkit;
 import jnum.math.Vector3D;
 import nom.tam.fits.BasicHDU;

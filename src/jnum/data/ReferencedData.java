@@ -23,7 +23,9 @@
 
 package jnum.data;
 
+import jnum.data.index.Index;
 import jnum.math.MathVector;
+
 
 public class ReferencedData<IndexType extends Index<IndexType>, VectorType extends MathVector<Double>>
 implements Referenced<IndexType, VectorType> {

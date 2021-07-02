@@ -42,77 +42,77 @@ public final class Symbol {
 
 	// Numbers
 	/** Part per thousand */
-	public final static char permil = '\u0089';
+	public static final char permil = '\u0089';
 	
 	/** 1/4. */
-	public final static char quarter = '\u00bc';
+	public static final char quarter = '\u00bc';
     
     /** 1/2. */
-    public final static char half = '\u00bd';
+    public static final char half = '\u00bd';
     
     /** 1/3. */
-    public final static char third  ='\u00be';
+    public static final char third  ='\u00be';
 	
     
 	// Business
 	/** trademark. */
-	public final static char trademark = '\u0099';
+	public static final char trademark = '\u0099';
 	
 	/** copyright. */
-	public final static char copyright = '\u00a9';
+	public static final char copyright = '\u00a9';
     
     /** circled R. */
-    public final static char circleR = '\u00ae'; 
+    public static final char circleR = '\u00ae'; 
 	
 	// Currencies
     /** currency: euro. */
-	public final static char euro = '\u0080';
+	public static final char euro = '\u0080';
     
     /** currency: cent. */
-    public final static char cent = '\u00a2';
+    public static final char cent = '\u00a2';
     
     /** currency: pound. */
-    public final static char pound = '\u00a3';
+    public static final char pound = '\u00a3';
     
     /** currency: yen. */
-    public final static char yen = '\u00a5';
+    public static final char yen = '\u00a5';
     
     
     // typographical
     /** paragraph marker. */
-    public final static char paragraph = '\u00a7';
+    public static final char paragraph = '\u00a7';
     
  
     
     /** ellipses (...). */
-    public final static char ellipses = '\u0085';
+    public static final char ellipses = '\u0085';
      
     /** script 'f'. */
-    public final static char scriptf = '\u0083';    
+    public static final char scriptf = '\u0083';    
     
     /** dagger. */
-    public final static char dagger = '\u0086';
+    public static final char dagger = '\u0086';
     
     /** double dagger. */
-    public final static char doubleDagger = '\u0087';
+    public static final char doubleDagger = '\u0087';
     
     /** The combined upper-case letter 'CE'. */
-    public final static char CE = '\u008c';
+    public static final char CE = '\u008c';
     
     /** The combined lower-case letter 'ce'. */
-    public final static char ce = '\u009c';
+    public static final char ce = '\u009c';
     
     /** The combined upper-case letter 'AE'. */
-    public final static char AE = '\u00c6';
+    public static final char AE = '\u00c6';
     
     /** The combined lower-case letter 'ae'. */
-    public final static char ae = '\u00e6';
+    public static final char ae = '\u00e6';
     
     /** inverted exclamation mark. */
-    public final static char invertedExclamation = '\u00a1';
+    public static final char invertedExclamation = '\u00a1';
     
     /** inverted question mark. */
-    public final static char invertedQuestionMark = '\u00bf';
+    public static final char invertedQuestionMark = '\u00bf';
     
     
      
@@ -120,161 +120,161 @@ public final class Symbol {
     // Math
     
     /** square root. */
-    public final static char squareRoot = '\u221a';
+    public static final char squareRoot = '\u221a';
     
     /** cubic root. */
-    public final static char cubicRoot = '\u221b';
+    public static final char cubicRoot = '\u221b';
     
     /** fourth root. */
-    public final static char fourthRoot = '\u221c';
+    public static final char fourthRoot = '\u221c';
   
     
     /** plus or minus (+/-) */
-    public final static char plusminus = '\u00b1';
+    public static final char plusminus = '\u00b1';
     
     /** minus or plus (-/+) */
-    public final static char minusplus = '\u2213';
+    public static final char minusplus = '\u2213';
     
     /** Upper minus */
-    public final static char upperminus = '\u00af';
+    public static final char upperminus = '\u00af';
     
     /** Square, i.e. superscript 2 */
-    public final static char square = '\u00b2';
+    public static final char square = '\u00b2';
     
     /** Cube, i.e. superscript 3. */
-    public final static char cube = '\u00b3';
+    public static final char cube = '\u00b3';
     
     /** dot product. */
-    public final static char dot = '\u00b7';
+    public static final char dot = '\u00b7';
     
     /** big dot. */
-    public final static char bigdot = '\u0095';
+    public static final char bigdot = '\u0095';
     
     /** double dot. */
-    public final static char doubledot = '\u00a8';
+    public static final char doubledot = '\u00a8';
     
     /** cross product. */
-    public final static char cross = '\u00d7';
+    public static final char cross = '\u00d7';
     
     /** times. Same as cross. */
-    public final static char times = '\u00d7';
+    public static final char times = '\u00d7';
     
     /** infinity. */
-    public final static char infinity = '\u221e';
+    public static final char infinity = '\u221e';
     
     /** circled plus. */
-    public final static char circlePlus = '\u2295';
+    public static final char circlePlus = '\u2295';
     
     /** circled minus. */
-    public final static char circleMinus = '\u2296';
+    public static final char circleMinus = '\u2296';
     
     /** circled cross product (e.g. external direct product). */
-    public final static char circleTimes = '\u2297';
+    public static final char circleTimes = '\u2297';
     
     /** circled division. */
-    public final static char circleDivide = '\u2298';
+    public static final char circleDivide = '\u2298';
     
     /** circled dot product. */
-    public final static char circleDot = '\u2299';
+    public static final char circleDot = '\u2299';
     
     /** star operator */
-    public final static char starOperator = '\u22c6';
+    public static final char starOperator = '\u22c6';
  
     /** partial derivative. */
-    public final static char partial = '\u2202';
+    public static final char partial = '\u2202';
     
     /** Nabla. */
-    public final static char nabla = '\u2207';
+    public static final char nabla = '\u2207';
     
     /** integral sign. */
-    public final static char integral = '\u222b';
+    public static final char integral = '\u222b';
     
     /** double integral signs. */
-    public final static char doubleIntegral = '\u222c';
+    public static final char doubleIntegral = '\u222c';
     
     /** triple integral signs. */
-    public final static char tripleIntegral = '\u222d';
+    public static final char tripleIntegral = '\u222d';
     
     /** cross product. */
-    public final static char crossProduct = '\u2a2f';
+    public static final char crossProduct = '\u2a2f';
     
     /** prime. */
-    public final static char prime = '\u2032';
+    public static final char prime = '\u2032';
     
     /** double prime. */
-    public final static char doublePrime = '\u2033';
+    public static final char doublePrime = '\u2033';
     
     /** triple prime. */
-    public final static char triplePrime = '\u2034';
+    public static final char triplePrime = '\u2034';
     
     /** summation. */
-    public final static char summation = '\u2211';
+    public static final char summation = '\u2211';
     
     /** product. */
-    public final static char product = '\u220f';
+    public static final char product = '\u220f';
     
     /** not equal. */
-    public final static char notEqual = '\u2260';
+    public static final char notEqual = '\u2260';
     
     /** proportional to. */
-    public final static char proportionalTo = '\u221d';
+    public static final char proportionalTo = '\u221d';
     
     /** approximately. */
-    public final static char approximately = '\u2248';
+    public static final char approximately = '\u2248';
     
     
     // Physics
     /** degree. */
-    public final static char degree = '\u00b0';
+    public static final char degree = '\u00b0';
     
     /** degree celsius. */
-    public final static char celsius = '\u2103';
+    public static final char celsius = '\u2103';
     
     /** degree farenheit. */
-    public final static char farenheit = '\u2109';
+    public static final char farenheit = '\u2109';
     
     /** hbar (Dirac's constant). */
-    public final static char hbar = '\u0127';
+    public static final char hbar = '\u0127';
     
     /** greek letter: mu. */
-    public final static char mu = '\u00b5';
+    public static final char mu = '\u00b5';
     
     /** Circled A, as in Angstrom. */
-    public final static char Acircle = '\u00c5';
+    public static final char Acircle = '\u00c5';
     
    
            
     // Astronomy
     
     /** astronomy: Sun. */
-    public final static char Sun = '\u2609';
+    public static final char Sun = '\u2609';
     
     /** planet Mercury. */
-    public final static char Mercury = '\u263f';
+    public static final char Mercury = '\u263f';
     
     /** planer Venus. */
-    public final static char Venus = '\u2640';
+    public static final char Venus = '\u2640';
     
     /** planet Earth. */
-    public final static char Earth = '\u2641';
+    public static final char Earth = '\u2641';
     
     /** planet Mars. */
-    public final static char Mars = '\u2642';
+    public static final char Mars = '\u2642';
     
     /** planet Jupiter. */
-    public final static char Jupiter = '\u2643';
+    public static final char Jupiter = '\u2643';
     
     /** planet Saturn. */
-    public final static char Saturn = '\u2644';
+    public static final char Saturn = '\u2644';
     
     /** planet Uranus. */
-    public final static char Uranus = '\u2645';
+    public static final char Uranus = '\u2645';
     
     /** planet Neptune. */
-    public final static char Neptune = '\u2646';
+    public static final char Neptune = '\u2646';
     
     /** planet Pluto. */
-    public final static char Pluto = '\u2647';
+    public static final char Pluto = '\u2647';
     
     
 }

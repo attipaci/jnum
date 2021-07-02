@@ -32,7 +32,7 @@ public class FloatMesh extends NumberMesh.FloatingType<Float> {
     private static final long serialVersionUID = -4081004880332314702L;
 
 
-    public FloatMesh(int[] dimensions) {
+    public FloatMesh(int... dimensions) {
         super(float.class, dimensions);
     }
 
@@ -71,7 +71,7 @@ public class FloatMesh extends NumberMesh.FloatingType<Float> {
     }
 
     @Override
-    public Mesh<Float> subarrayAt(int[] index) {
+    public Mesh<Float> subarrayAt(int... index) {
         return new FloatMesh(subarrayDataAt(index));
     }
 

@@ -46,7 +46,7 @@ public final class SafeMath {
 	 * 
 	 * @see Math#asin(double)
 	 */
-	public final static double asin(final double value) {
+	public static final double asin(final double value) {
 		if(value < -1.0) return value < minusOnePlus ? Double.NaN : -Constant.rightAngle;
 		else if(value > 1.0) return value > onePlus ? Double.NaN : Constant.rightAngle;
 		return Math.asin(value);
@@ -62,7 +62,7 @@ public final class SafeMath {
      * 
      * @see Math#acos(double)
 	 */
-	public final static double acos(final double value) {
+	public static final double acos(final double value) {
 		if(value < -1.0) return value < minusOnePlus ? Double.NaN : Math.PI;
 		else if(value > 1.0) return value > onePlus ? Double.NaN : 0.0;
 		return Math.acos(value);
@@ -77,18 +77,18 @@ public final class SafeMath {
 	 * 
 	 * @see Math#sqrt(double)
 	 */
-	public final static double sqrt(final double value) {
+	public static final double sqrt(final double value) {
 		if(value < 0.0) return value < minusOnePlus ? Double.NaN : 0.0;
 		return Math.sqrt(value);
 	}
 	
 	/** Floating point relative precision. */
-	private final static double floatPrecision = 1e-5;			// The maximum tolerated rounding error assuming float precision.
+	private static final double floatPrecision = 1e-5;			// The maximum tolerated rounding error assuming float precision.
 	
 	/** 1 plus the tolerated floating point rounding error. */
-	private final static double onePlus = 1.0 + floatPrecision;
+	private static final double onePlus = 1.0 + floatPrecision;
 	
 	/** the negative of 1 plus the tolerated floating point rounding error */
-	private final static double minusOnePlus = -onePlus;
+	private static final double minusOnePlus = -onePlus;
 
 }

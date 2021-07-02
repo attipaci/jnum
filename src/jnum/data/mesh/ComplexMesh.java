@@ -39,7 +39,7 @@ public class ComplexMesh extends Vector2DMesh<Complex> implements ComplexAdditio
      */
     private static final long serialVersionUID = 8988091835034713978L;
 
-    public ComplexMesh(int[] dimensions) {
+    public ComplexMesh(int... dimensions) {
         super(Complex.class, dimensions);
         MeshCrawler<Complex> i = iterator();
         while(i.hasNext()) i.setNext(new Complex());   

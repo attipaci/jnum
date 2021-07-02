@@ -43,17 +43,17 @@ public final class SimpleOrbits {
     Explanatory Supplement (1992), p. 316) with angles in radians.  These
     data are used for barycenter computations only.
      */
-    private final static double[] pm = {1047.349, 3497.898, 22903.0, 19412.2};
-    private final static double[] pa = {5.203363, 9.537070, 19.191264, 30.068963};
-    private final static double[] pe = {0.048393, 0.054151, 0.047168, 0.008586};
-    private final static double[] pj = {0.022782, 0.043362, 0.013437, 0.030878};
-    private final static double[] po = {1.755036, 1.984702, 1.295556, 2.298977};
-    private final static double[] pw = {0.257503, 1.613242, 2.983889, 0.784898};
-    private final static double[] pl = {0.600470, 0.871693, 5.466933, 5.321160};
-    private final static double[] pn = {1.450138e-3, 5.841727e-4, 2.047497e-4, 1.043891e-4};
+    private static final double[] pm = {1047.349, 3497.898, 22903.0, 19412.2};
+    private static final double[] pa = {5.203363, 9.537070, 19.191264, 30.068963};
+    private static final double[] pe = {0.048393, 0.054151, 0.047168, 0.008586};
+    private static final double[] pj = {0.022782, 0.043362, 0.013437, 0.030878};
+    private static final double[] po = {1.755036, 1.984702, 1.295556, 2.298977};
+    private static final double[] pw = {0.257503, 1.613242, 2.983889, 0.784898};
+    private static final double[] pl = {0.600470, 0.871693, 5.466933, 5.321160};
+    private static final double[] pn = {1.450138e-3, 5.841727e-4, 2.047497e-4, 1.043891e-4};
 
     
-    private final static int N_PLANETS = 4;     // Giants only...
+    private static final int N_PLANETS = 4;     // Giants only...
 
     private static double tmass;
     private static Vector3D[] a = Vector3D.createArray(N_PLANETS), b = Vector3D.createArray(N_PLANETS);
@@ -359,10 +359,10 @@ public final class SimpleOrbits {
             return (1.0001026 + sum_r) * Unit.AU;
         }
 
-        private final static int L = 0;
-        private final static int R = 1;
-        private final static int ALPHA = 2;
-        private final static int NU = 3;
+        private static final int L = 0;
+        private static final int R = 1;
+        private static final int ALPHA = 2;
+        private static final int NU = 3;
         
         
         // l, r, alpha, nu
@@ -450,8 +450,8 @@ public final class SimpleOrbits {
         }
     }
   
-    public final static Sun Sun = new Sun();
-    public final static Earth Earth = new Earth();
+    public static final Sun Sun = new Sun();
+    public static final Earth Earth = new Earth();
 
 
 }

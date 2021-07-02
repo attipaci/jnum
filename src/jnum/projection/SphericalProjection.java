@@ -153,7 +153,7 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 			if(celestialPole.y() > 0.0) toCoords.setX(celestialPole.x() + dPhi - Math.PI);
 			else {
 				toCoords.setX(celestialPole.x() - dPhi);
-				toCoords.invertY();
+				toCoords.flipY();
 			}	
 		}
 		else {
@@ -367,13 +367,13 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 	}
 	
 	// Safe asin and acos for when rounding errors make values fall outside of -1:1 range.
-	protected final static double asin(double value) {
+	protected static final double asin(double value) {
 		if(value < -1.0) value = -1.0;
 		else if(value > 1.0) value = 1.0;
 		return Math.asin(value);
 	}
 
-	protected final static double acos(double value) {
+	protected static final double acos(double value) {
 		if(value < -1.0) value = -1.0;
 		else if(value > 1.0) value = 1.0;
 		return Math.acos(value);
@@ -417,16 +417,16 @@ public abstract class SphericalProjection extends Projection2D<SphericalCoordina
 
 
 	/** the Constant 2*pi */
-	public final static double twoPI = Constant.twoPi;
+	public static final double twoPI = Constant.twoPi;
 	
 	/** The Constant for right angle (pi/2). */
-	public final static double rightAngle = Constant.rightAngle;
+	public static final double rightAngle = Constant.rightAngle;
 
 
-	public final static int SELECT_NEAREST_POLE = 0;
+	public static final int SELECT_NEAREST_POLE = 0;
 	
-	public final static int SELECT_NORTHERN_POLE = 1;
+	public static final int SELECT_NORTHERN_POLE = 1;
 
-	public final static int SELECT_SOUTHERN_POLE = -1;
+	public static final int SELECT_SOUTHERN_POLE = -1;
 	
 }

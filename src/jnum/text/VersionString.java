@@ -83,17 +83,17 @@ public class VersionString implements Serializable, Comparable<VersionString> {
 	}
 	
 
-	public final static int TYPE_RAWHIDE = 0;
+	public static final int TYPE_RAWHIDE = 0;
 	
-	public final static int TYPE_ALPHA = 1;
+	public static final int TYPE_ALPHA = 1;
 
-	public final static int TYPE_BETA = 2;
+	public static final int TYPE_BETA = 2;
 
-	public final static int TYPE_RELEASE_CANDIDATE = 3;
+	public static final int TYPE_RELEASE_CANDIDATE = 3;
 
-	public final static int TYPE_RELEASE = 4;
+	public static final int TYPE_RELEASE = 4;
 
-	public final static String[] typeShortString = { "pre", "a", "b", "rc", "" };
+	public static final String[] typeShortString = { "pre", "a", "b", "rc", "" };
 
-	public final static String[] typeLongString = { "pre-release", "alpha", "beta", "release candidate", "update" };
+	public static final String[] typeLongString = { "pre-release", "alpha", "beta", "release candidate", "update" };
 }

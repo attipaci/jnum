@@ -33,10 +33,10 @@ package test;
 public class AccessTest {
 	
 	/** The Constant rounds. */
-	public final static int rounds = 1000000000;
+	public static final int rounds = 1000000000;
 	
 	/** The Constant s3o2. */
-	public final static double s3o2 = 0.5 * Math.sqrt(3.0);
+	public static final double s3o2 = 0.5 * Math.sqrt(3.0);
 	
 	/**
 	 * The main method.
@@ -149,7 +149,7 @@ class V1 {
 
 class V2 {
 	private double x = 1.0, y = 0.0;
-	public final static double s3o2 = 0.5 * Math.sqrt(3.0);
+	public static final double s3o2 = 0.5 * Math.sqrt(3.0);
 	
 	public final double getX() { return x; }
 	

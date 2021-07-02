@@ -23,10 +23,28 @@
 
 package jnum.data;
 
+/**
+ * An interface for classes that implement some sort of data validation on themselves.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <IndexType>   The type of index by which data is referenced in the implementing class.
+ */
 public interface Validating<IndexType> {
 
+    /**
+     * Checks if the data located at the specified index is valid.
+     * 
+     * @param index     the location of a datum in the implementing class.
+     * @return          <code>true</code> if the data at the specified location is valid. Otherwise <code>false</code>.
+     */
     public boolean isValid(IndexType index);
     
+    /**
+     * Discards the datum (marks is as invalid) at the specified index. 
+     * 
+     * @param index     the location of a datum in the implementing class.
+     */
     public void discard(IndexType index);
     
 }

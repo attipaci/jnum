@@ -93,13 +93,13 @@ public class GeocentricCoordinates extends SphericalCoordinates {
     
     public double radius() { return radius; }
 
-    public final static int NORTH = 1;
+    public static final int NORTH = 1;
 
-    public final static int SOUTH = -1;
+    public static final int SOUTH = -1;
 
-    public final static int EAST = 1;
+    public static final int EAST = 1;
 
-    public final static int WEST = -1;
+    public static final int WEST = -1;
 
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;

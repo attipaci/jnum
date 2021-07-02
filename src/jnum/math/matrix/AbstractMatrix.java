@@ -33,8 +33,8 @@ import java.io.Serializable;
 import jnum.CopiableContent;
 import jnum.CopyCat;
 import jnum.data.ArrayUtil;
-import jnum.data.IndexedValues;
 import jnum.data.image.Index2D;
+import jnum.data.index.IndexedValues;
 import jnum.math.MathVector;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
@@ -72,7 +72,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	 * @param cols     Matric columns
 	 */
 	public AbstractMatrix(Class<? extends T> type, int rows, int cols) {
-		setData(ArrayUtil.createArray(type, new int[] {rows, cols}));
+		setData(ArrayUtil.createArray(type, rows, cols));
 	}
 
 	
@@ -583,7 +583,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	
 	
     @Override
-    public AbstractVector<T> dot(double[] v) {
+    public AbstractVector<T> dot(double... v) {
         AbstractVector<T> result = getVectorInstance(rows());
         dot(v, result);
         return result;
@@ -591,7 +591,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	
     
     @Override
-    public AbstractVector<T> dot(float[] v) {
+    public AbstractVector<T> dot(float... v) {
         AbstractVector<T> result = getVectorInstance(rows());
         dot(v, result);
         return result;
@@ -747,7 +747,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	    for(int i=rows(); --i >= 0; ) v.setComponent(i, copyOf(i, j));
 	}
 	
-	   /**
+	/**
      * Copies the contents of a matrix column into the supplied buffer.
      * 
      * @param j         Matrix column index whose data is to be retrieved

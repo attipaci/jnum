@@ -349,12 +349,12 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 
     @Override
     public void flip() {
-        invertX(); invertY();
+        flipX(); flipY();
     }
 
     @Override
-    public void invertY() {
-        super.invertY();
+    public void flipY() {
+        super.flipY();
         sinLat *= -1.0;
     }
 
@@ -498,11 +498,11 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
         return value >= 0 ? value : value + Constant.twoPi;
     }
 
-    public final static Unit degree = Unit.get("deg");
+    public static final Unit degree = Unit.get("deg");
 
-    public final static Unit arcmin = Unit.get("arcmin");
+    public static final Unit arcmin = Unit.get("arcmin");
 
-    public final static Unit arcsec = Unit.get("arcsec");
+    public static final Unit arcsec = Unit.get("arcsec");
     
     
  
@@ -530,6 +530,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
     }
     
 
-    public final static double angularAccuracy = 1e-12;
+    public static final double angularAccuracy = 1e-12;
 
 }

@@ -238,15 +238,51 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
     }
   
     @Override
-    public final Double dot(Coordinates<? extends Double> v) throws NonConformingException {
-        if(v.size() != 3) throw new NonConformingException("dot product with vector of different size.");
-        return x() * v.getComponent(0) + y() * v.getComponent(1) + z() * v.getComponent(2);
+    public final Double dot(MathVector<? extends Double> v) {
+        double sum = 0.0;
+        
+        switch(Math.min(v.size(), 3)) {
+        case 3: sum += z() * v.getComponent(Z);
+        case 2: sum += y() * v.getComponent(Y);
+        case 1: sum += x() * v.getComponent(X);
+        }
+        return sum;
     }
     
     @Override
-    public final Double dot(Double[] v) throws NonConformingException {
-        if(v.length != 3) throw new NonConformingException("dot product with vector of different size.");
-        return x() * v[X] + y() * v[Y] + z() * v[Z];
+    public final Double dot(Double[] v) {
+        double sum = 0.0;
+        
+        switch(Math.min(v.length, 3)) {
+        case 3: sum += z() * v[Z];
+        case 2: sum += y() * v[Y];
+        case 1: sum += x() * v[X];
+        }
+        return sum;
+    } 
+    
+    @Override
+    public final Double dot(double... v) {
+        double sum = 0.0;
+        
+        switch(Math.min(v.length, 3)) {
+        case 3: sum += z() * v[Z];
+        case 2: sum += y() * v[Y];
+        case 1: sum += x() * v[X];
+        }
+        return sum;
+    } 
+    
+    @Override
+    public final Double dot(float... v) {
+        double sum = 0.0;
+        
+        switch(Math.min(v.length, 3)) {
+        case 3: sum += z() * v[Z];
+        case 2: sum += y() * v[Y];
+        case 1: sum += x() * v[X];
+        }
+        return sum;
     } 
     
     @Override

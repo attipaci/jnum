@@ -23,11 +23,28 @@
 
 package jnum.data;
 
+/**
+ * An interface for objects that represent one or more number values.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public interface Values {
     
+    /**
+     * Gets the class of elements that hold number values for this object.
+     * 
+     * @return
+     */
     public Class<? extends Number> getElementType();
 
-    
+    /**
+     * Compares two number values represented by the implementing class.
+     * 
+     * @param a     The first number
+     * @param b     The second number
+     * @return      0 if a == b, -1 if a is smaller, and +1 if a is bigger than b.
+     */
     public int compare(Number a, Number b);
     
 }

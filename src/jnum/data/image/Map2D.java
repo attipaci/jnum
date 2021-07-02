@@ -47,7 +47,7 @@ import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.IntRange;
 import jnum.math.Range;
-import jnum.math.Transforming;
+import jnum.math.CoordinateTransform;
 import jnum.math.Vector2D;
 import jnum.projection.DefaultProjection2D;
 import jnum.projection.Projection2D;
@@ -877,7 +877,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
 
 
 
-    public Transforming<Vector2D> getIndexTransformTo(Map2D map) {
+    public CoordinateTransform<Vector2D> getIndexTransformTo(Map2D map) {
         // See if we can use a faster/simpler Cartesian transform for re-mapping...
         if(map.getProjection().equals(getProjection())) {
             // If both a Cartesian projections, then yes...
@@ -1084,10 +1084,10 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
 
     
     
-    private final static String underlyingBeamFitsID = "I";
-    private final static String smoothingBeamFitsID = "S";
-    private final static String correctedBeamFitsID = "C";
-    private final static String filterBeamFitsID = "X";
+    private static final String underlyingBeamFitsID = "I";
+    private static final String smoothingBeamFitsID = "S";
+    private static final String correctedBeamFitsID = "C";
+    private static final String filterBeamFitsID = "X";
 
 
 }

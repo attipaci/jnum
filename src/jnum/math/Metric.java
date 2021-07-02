@@ -24,7 +24,7 @@ package jnum.math;
 
 
 /**
- * An interface for all objects that implement a metric, i.e. a distance function between elements of the same generic type.
+ * Metric interface, providing a distance function between elements of the same generic type.
  *
  * @param <T> the generic type on which the metric operates.
  */

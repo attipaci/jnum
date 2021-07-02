@@ -531,7 +531,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
 
 
     /** The Constant areaFactor to convert from FWHM^2 to beam integral. */
-    public final static double areaFactor = Constant.twoPi / (Constant.sigmasInFWHM * Constant.sigmasInFWHM);
+    public static final double areaFactor = Constant.twoPi / (Constant.sigmasInFWHM * Constant.sigmasInFWHM);
    
     /** The equivalent area lateral square size to a Gaussian beam with FWHM. */
     public static double fwhm2size = Math.sqrt(areaFactor);   

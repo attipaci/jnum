@@ -117,11 +117,11 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
     }
 
 
-    public final static GalacticCoordinates galacticPole = new GalacticCoordinates(47.37*Unit.deg, 6.32*Unit.deg);
+    public static final GalacticCoordinates galacticPole = new GalacticCoordinates(47.37*Unit.deg, 6.32*Unit.deg);
 
-    public final static GalacticCoordinates galacticZero = new GalacticCoordinates(137.37*Unit.deg, 0.0);
+    public static final GalacticCoordinates galacticZero = new GalacticCoordinates(137.37*Unit.deg, 0.0);
 
-    public final static EquatorialCoordinates equatorialPole = galacticPole.toEquatorial(); 
+    public static final EquatorialCoordinates equatorialPole = galacticPole.toEquatorial(); 
 
     public static double phi0 = CelestialCoordinates.getZeroLongitude(galacticZero, new SuperGalacticCoordinates());
 

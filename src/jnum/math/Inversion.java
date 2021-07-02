@@ -24,7 +24,7 @@ package jnum.math;
 
 
 /**
- * Interface for all objects that implement a spatial inversion operation. Not to be confused with {@link jnum.math.InverseValue}.
+ * Spatial inversion interface. Not to be confused with {@link jnum.math.InverseValue}.
  * This operation is a spatial inversion around the origin (not an inverse under some multiplication).
  */
 public interface Inversion {

@@ -23,7 +23,6 @@
 package jnum.data.image;
 
 import java.awt.geom.AffineTransform;
-import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
 

@@ -28,33 +28,33 @@ import jnum.math.Complex;
 public final class BetaFunction {
 
 
-	public final static double at(double x, double y) {
+	public static final double at(double x, double y) {
 		if(x <= 0 || y <= 0) throw new IllegalArgumentException("Beta function is undefined for negative arguments.");
 		
 		return Math.exp(logAt(x, y));		
 	}
 	
 
-	public final static double logAt(double x, double y) {
+	public static final double logAt(double x, double y) {
 		return GammaFunction.logAt(x) + GammaFunction.logAt(y) - GammaFunction.logAt(x+y);
 	}
 	
 
-	public final static Complex at(final Complex x, final Complex y) {
+	public static final Complex at(final Complex x, final Complex y) {
 		Complex result = new Complex();
 		evaluateAt(x, y, result);
 		return result;
 	}
 	
 
-	public final static Complex logAt(final Complex x, final Complex y) {
+	public static final Complex logAt(final Complex x, final Complex y) {
 		Complex result = new Complex();
 		evaluateLogAt(x, y, result);
 		return result;
 	}
 	
 
-	public final static void evaluateAt(final Complex x, final Complex y, final Complex result) {
+	public static final void evaluateAt(final Complex x, final Complex y, final Complex result) {
 		evaluateLogAt(x, y, result);
 		// If real, use faster real exponential.
 		if(result.im() == 0.0) result.setRealPart(Math.exp(result.re()));
@@ -62,7 +62,7 @@ public final class BetaFunction {
 	}
 		
 
-	public final static void evaluateLogAt(final Complex x, final Complex y, final Complex result) {
+	public static final void evaluateLogAt(final Complex x, final Complex y, final Complex result) {
 		if(x == result) throw new IllegalArgumentException("Identical arguments: x & result.");
 		if(y == result) throw new IllegalArgumentException("Identical arguments: y & result.");
 		

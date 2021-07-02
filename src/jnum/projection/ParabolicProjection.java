@@ -52,6 +52,6 @@ public class ParabolicProjection extends CylindricalProjection {
 		return "Parabolic Projection";
 	}
 
-	private final static double twoThirds = 2.0 / 3.0;
-	private final static double third = 1.0 / 3.0;
+	private static final double twoThirds = 2.0 / 3.0;
+	private static final double third = 1.0 / 3.0;
 }

@@ -59,7 +59,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	public abstract Mesh<T> newInstance();
 	
 	// Returns an uninitialized array. Call initialize(), if want to fill with default elements.
-	public Mesh(Class<T> elementClass, int[] dimensions) {
+	public Mesh(Class<T> elementClass, int... dimensions) {
 		this(elementClass);
 		try { setSize(dimensions); }
 		catch(Exception e) {
@@ -91,7 +91,7 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	}
 	
 
-	public void setSize(int[] dimensions) throws InstantiationException, IllegalAccessException { 
+	public void setSize(int... dimensions) throws InstantiationException, IllegalAccessException { 
 	    this.size = dimensions;
         data = ArrayUtil.createArray(elementClass, dimensions);
 	}
@@ -127,17 +127,17 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
     public MeshCrawler<T> iterator(int[] from, int[] to) { return MeshCrawler.createFor(data, from, to); }
 
 
-	public final void setElementAt(int[] index, T value) {
+	public final void setElementAt(T value, int... index) {
 		setLinearElementAt(subarrayDataAt(index), index[index.length-1], value);
 	}
 
 
-	public T elementAt(int[] index) {
+	public T elementAt(int... index) {
 		return linearElementAt(subarrayDataAt(index), index[index.length-1]);
 	}
 	
 
-	public Object subarrayDataAt(int[] index) {
+	public Object subarrayDataAt(int... index) {
 		Object subarray = data;
 		int depth = index.length;
 		if(depth > size.length) throw new IllegalArgumentException("Index dimension exceeds that of the array.");
@@ -153,14 +153,14 @@ public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<
 	protected abstract void setLinearElementAt(Object linearArray, int index, T value);
 	
 
-	public Mesh<T> subarrayAt(int[] index) {
+	public Mesh<T> subarrayAt(int... index) {
 	    Mesh<T> sub = newInstance();
 	    sub.setData(subarrayDataAt(index));
 	    return sub;
 	}
 	
 	
-	public void copyTo(Mesh<T> destination, int[] dstOffset) { 
+	public void copyTo(Mesh<T> destination, int... dstOffset) { 
 	    if(destination == this) throw new IllegalArgumentException("Cannot copy mesh onto itself");
 	    
 	    final int dim = getDimension();

@@ -126,19 +126,19 @@ public class GeodeticCoordinates extends SphericalCoordinates {
     }
     
 
-    public final static double a = 6378137.0 * Unit.m; // Earth major axis
+    public static final double a = 6378137.0 * Unit.m; // Earth major axis
 
-    public final static double b = 6356752.3142 * Unit.m; // Earth minor axis
+    public static final double b = 6356752.3142 * Unit.m; // Earth minor axis
 
-    public final static double f = 1.0 / 298.257223563; // Flattening WGS84
+    public static final double f = 1.0 / 298.257223563; // Flattening WGS84
 
-    public final static int NORTH = 1;
+    public static final int NORTH = 1;
 
-    public final static int SOUTH = -1;
+    public static final int SOUTH = -1;
 
-    public final static int EAST = 1;
+    public static final int EAST = 1;
 
-    public final static int WEST = -1;
+    public static final int WEST = -1;
     
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;

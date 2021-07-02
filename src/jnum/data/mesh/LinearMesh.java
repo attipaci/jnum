@@ -34,7 +34,7 @@ public class LinearMesh<T extends LinearAlgebra<? super T>> extends AdditiveMesh
      */
     private static final long serialVersionUID = -8649117834606776793L;
 
-    public LinearMesh(Class<T> type, int[] dimensions) {
+    public LinearMesh(Class<T> type, int... dimensions) {
         super(type, dimensions);
     }
 

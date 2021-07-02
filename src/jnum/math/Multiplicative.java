@@ -24,7 +24,7 @@ package jnum.math;
 
 
 /**
- * An interface for all object that implement a multiplication operation.
+ * Multiplication between two operands of the same generic type.
  *
  * @param <DataType> the generic type
  */

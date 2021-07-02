@@ -23,7 +23,7 @@
 package jnum.math;
 
 /**
- * An interface that provides a complex conjugate operation for classes that implement it.
+ * Complex conjugation.
  * 
  * @author Attila Kovacs
  *
