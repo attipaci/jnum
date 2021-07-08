@@ -24,6 +24,7 @@
 package jnum.data.cube;
 
 import jnum.data.Validating;
+import jnum.data.index.Index3D;
 
 public interface Validating3D extends Validating<Index3D> {
 

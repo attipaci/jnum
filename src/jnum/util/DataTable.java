@@ -26,6 +26,7 @@ import java.text.NumberFormat;
 import java.util.Hashtable;
 
 import jnum.Unit;
+import jnum.text.NumberFormating;
 import jnum.text.TableFormatter;
 
 
@@ -40,7 +41,7 @@ public class DataTable extends Hashtable<String, DataTable.Entry> implements Tab
 	}
 	
 
-	public class Entry {
+	public class Entry implements NumberFormating {
 
 		private double value;
 
@@ -94,8 +95,10 @@ public class DataTable extends Hashtable<String, DataTable.Entry> implements Tab
 			return name + " = " + value + " " + unitName + (comment.length() > 0 ? " (" + comment + ")" : "");
 		}	
 
-		public String toString(NumberFormat nf) {
+		@Override
+        public String toString(NumberFormat nf) {
 			return name + " = " + nf.format(value) + " " + unitName + (comment.length() > 0 ? " (" + comment + ")" : "");
 		}
 	}
+
 }

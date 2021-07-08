@@ -26,8 +26,20 @@ package jnum.text;
 
 import java.text.NumberFormat;
 
-
+/**
+ * Interface for getting string representation of objects using the specified number format.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public interface NumberFormating {
 
+    /**
+     * Gets a string representation of the implementing object, formatting relevant numerical values
+     * with the specified number format.
+     * 
+     * @param nf        The number formatting to use when converting object to its string representation
+     * @return          The string representation using the specified number format.
+     */
 	public String toString(NumberFormat nf);	
 }

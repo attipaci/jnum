@@ -28,7 +28,7 @@ import java.lang.reflect.Array;
 import jnum.Copiable;
 import jnum.CopiableContent;
 import jnum.Util;
-import jnum.data.image.Index2D;
+import jnum.data.index.Index2D;
 import jnum.data.index.IndexedValues;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;

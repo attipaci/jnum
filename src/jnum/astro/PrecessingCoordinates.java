@@ -24,6 +24,7 @@
 package jnum.astro;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 
 import jnum.Util;
 import jnum.math.Coordinate2D;
@@ -49,7 +50,7 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates {
     
     
 
-    public PrecessingCoordinates(String text) { super(text); }
+    public PrecessingCoordinates(String text) throws ParseException { super(text); }
     
 
     public PrecessingCoordinates(double lon, double lat) { 

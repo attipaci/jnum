@@ -29,8 +29,8 @@ import jnum.math.Vector3D;
 
 
 /**
- * Simple orbital parameters calculations for Sun/Earth and the SSB.
- * Based on NOVAS solarsystem(), and sun_eph() functions in solsys3.c.
+ * Simple orbital parameters calculations for Sun/Earth and the Solar-System Barycenter.
+ * Based on NOVAS C 3.1 solarsystem(), and sun_eph() functions in solsys3.c.
  * 
  * @author Attila Kovacs
  *
@@ -151,7 +151,7 @@ public final class SimpleOrbits {
     }
 
     /**
-     * An abstract class representing an orbital body in this simple orbital model.
+     * An orbital body in the simple orbital model.
      * 
      * @author Attila Kovacs
      *
@@ -277,7 +277,7 @@ public final class SimpleOrbits {
 
 
     /**
-     * Class representing the orbital motion of the Sun.
+     * The Sun in the simple orbital model. Adapted from NOVAS C 3.1.
      * 
      * @author Attila Kovacs
      *
@@ -423,7 +423,7 @@ public final class SimpleOrbits {
     }
 
     /**
-     * Class representing the perturbed orbital motion of Earth in the Solar system.
+     * Earth in the simple orbital model, including perturbation by the giants. Adapted from NOVAS C 3.1
      * 
      * @author Attila Kovacs
      *

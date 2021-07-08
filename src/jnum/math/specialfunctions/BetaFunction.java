@@ -24,36 +24,77 @@ package jnum.math.specialfunctions;
 
 import jnum.math.Complex;
 
-
+/**
+ * The beta function B(<i>x</i>, <i>y</i>), or Euler integral of the first kind.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public final class BetaFunction {
 
-
+    /** private constructor because we do not want to instantiate this class */
+    private BetaFunction() {}
+    
+    /**
+     * Evaluates the beta function and the specified real arguments.
+     * 
+     * @param x     the first real argument
+     * @param y     the second real argument
+     * @return      B(<i>x</i>, <i>y</i>)
+     */
 	public static final double at(double x, double y) {
 		if(x <= 0 || y <= 0) throw new IllegalArgumentException("Beta function is undefined for negative arguments.");
 		
 		return Math.exp(logAt(x, y));		
 	}
 	
-
+	/**
+     * Evaluates the logarithms of the beta function and the specified real arguments.
+     * 
+     * @param x     the first real argument
+     * @param y     the second real argument
+     * @return      log(B(<i>x</i>, <i>y</i>))
+     */
 	public static final double logAt(double x, double y) {
 		return GammaFunction.logAt(x) + GammaFunction.logAt(y) - GammaFunction.logAt(x+y);
 	}
 	
-
+	/**
+     * Evaluates the beta function and the specified complex arguments.
+     * 
+     * @param x     the first complex argument
+     * @param y     the second complex argument
+     * @return      B(<i>x</i>, <i>y</i>)
+     */
 	public static final Complex at(final Complex x, final Complex y) {
 		Complex result = new Complex();
 		evaluateAt(x, y, result);
 		return result;
 	}
 	
-
+	/**
+     * Evaluates the logarithm of the beta function and the specified complex arguments.
+     * 
+     * @param x     the first complex argument
+     * @param y     the second complex argument
+     * @return      log(B(<i>x</i>, <i>y</i>))
+     * 
+     */
 	public static final Complex logAt(final Complex x, final Complex y) {
 		Complex result = new Complex();
 		evaluateLogAt(x, y, result);
 		return result;
 	}
 	
-
+	/**
+     * Considerate evaluation of the beta function and the specified complex arguments. The result
+     * is returned into the supplied complex number, avoiding the need for creating new objects
+     * in this call.
+     * 
+     * @param x         the first complex argument
+     * @param y         the second complex argument
+     * @param result    the complex number that is set to contain the value of B(<i>x</i>, <i>y</i>).
+     */
 	public static final void evaluateAt(final Complex x, final Complex y, final Complex result) {
 		evaluateLogAt(x, y, result);
 		// If real, use faster real exponential.
@@ -62,6 +103,15 @@ public final class BetaFunction {
 	}
 		
 
+	/**
+     * Considerate evaluation of the logarithm of the beta function and the specified complex arguments. The result
+     * is returned into the supplied complex number, avoiding the need for creating new objects
+     * in this call.
+     * 
+     * @param x         the first complex argument
+     * @param y         the second complex argument
+     * @param result    the complex number that is set to contain the value of log(B(<i>x</i>, <i>y</i>)).
+     */
 	public static final void evaluateLogAt(final Complex x, final Complex y, final Complex result) {
 		if(x == result) throw new IllegalArgumentException("Identical arguments: x & result.");
 		if(y == result) throw new IllegalArgumentException("Identical arguments: y & result.");

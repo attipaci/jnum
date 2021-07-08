@@ -20,34 +20,30 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
-package jnum.plot.colorscheme;
+package jnum.colorscheme;
 
 import java.awt.Color;
 
-import jnum.plot.ColorScheme;
 
-
-
-public class GreyScale extends ColorScheme {
+public class CoolBlue extends ColorScheme {
 
 
 	@Override
 	public int getRGB(double scaled) {
 		if(Double.isNaN(scaled)) return noData;
-		
-		if(scaled < 0.0) scaled = 0.0;
-		else if(scaled > 1.0) scaled = 1.0;
-
-		final float value = (float) scaled;
-		
-		return Color.HSBtoRGB(0.0F, 0.0F, value);
+	
+		if(scaled < 0.0) scaled=0.0;
+		else if(scaled > 1.0) scaled=1.0;
+	
+		if(scaled < 0.5) return Color.HSBtoRGB(0.75F, 1.0F, 2.0F * (float) scaled);
+		return Color.HSBtoRGB(0.75F, 2.0F - 2.0F * (float) scaled, 1.0F);
 	}
 
 	@Override
 	public Color getHighlight() {
-		return Color.red;
+		return Color.ORANGE;
 	}
-
+	
+	
 }

@@ -20,15 +20,10 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
-package jnum.plot.colorscheme;
+package jnum.colorscheme;
 
 import java.awt.Color;
-
-import jnum.plot.ColorScheme;
-
-
 
 public class Colorful extends ColorScheme {
 

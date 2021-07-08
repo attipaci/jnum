@@ -29,8 +29,8 @@ import java.util.Arrays;
 
 import jnum.Util;
 import jnum.ViewableAsDoubles;
+import jnum.data.index.Index1D;
 import jnum.data.index.IndexedValues;
-import jnum.data.samples.Index1D;
 import jnum.math.Coordinates;
 import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;

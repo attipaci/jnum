@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,17 +20,11 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-package jnum.plot.colorscheme;
+package jnum.colorscheme;
 
 import java.awt.Color;
 
-import jnum.plot.ColorScheme;
-
-
-
-
-public class Doppler extends ColorScheme {
-
+public class Temperature extends ColorScheme {
 
 	@Override
 	public int getRGB(double scaledI) {
@@ -39,29 +33,53 @@ public class Doppler extends ColorScheme {
 		if(I > 1.0F) I = 1.0F;
 		if(I < 0.0F) I = 0.0F;
 		
-		float r = 0.0F, g = 0.0F, b = 0.0F;
-		
-		if(I < 0.25) {
-		    b = 1.0F;
-		    g = (float) ((0.25-I) / 0.25);
+		float r, g, b;
+
+		if(I < section) {
+			// red rise
+			r = I / section;
+			g = b = 0.0F;
 		}
-		else if(I < 0.5) {
-		    b = (float) Math.sqrt((0.5-I)/0.25);
+		else if(I < 2 * section) {
+			// green rise
+			r = 1.0F;
+			g = (I - section) / section;
+			b = 0.0F;			
 		}
-		else if(I < 0.75) {
-		    r = (float) Math.sqrt((I - 0.5)/0.25);
+		else if(I < 3 * section) {
+			// blue rise
+			r = 1.0F;
+			g = 1.0F;
+			b = (I - 2 * section) / section;
+		}
+		else if(I < 4 * section) {
+			// red fall
+			r = 1.0F - (I - 3 * section) / section;
+			g = 1.0F;
+			b = 1.0F;
+		}
+		else if(I < 5 * section) {
+			// green fall
+			r = 0.0F;
+			g = 1.0F - (I - 4 * section) / section;
+			b = 1.0F;
 		}
 		else {
-		    r = 1.0F;
-		    g = (float) ((I-0.75) / 0.25);
+		 // blue fall
+		 r = 0.0F;
+		 g = 0.0F;
+		 b = 1.0F - (I - 5 * section) / section;
 		}
-		
 
 		return ColorScheme.getRGB(r, g, b);	
 	}
-
+	
 	@Override
 	public Color getHighlight() {
-		return Color.BLACK;
+		return Color.GREEN;
 	}
+	
+	private static float section = 1.0F / 6.0F;
+
+	
 }

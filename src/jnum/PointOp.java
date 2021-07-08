@@ -43,6 +43,11 @@ import jnum.data.WeightedPoint;
  */
 public abstract class PointOp<PointType, ReturnType> implements Cloneable {
 
+    /**
+     * Any expection that occured during the operation. Operations can set this field, and usrs can access
+     * it to check if there was an exception while performing the operation.
+     * 
+     */
     public Exception exception;
 
     /** 

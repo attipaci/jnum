@@ -39,6 +39,7 @@ import jnum.data.DataCrawler;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
 import jnum.data.WeightedPoint;
+import jnum.data.index.Index1D;
 import jnum.data.samples.overlay.Overlay1D;
 import jnum.math.CoordinateAxis;
 import jnum.math.IntRange;

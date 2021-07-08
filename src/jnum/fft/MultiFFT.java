@@ -38,7 +38,7 @@ import jnum.math.Scalable;
 import jnum.parallel.Parallelizable;
 
 /**
- * FFT for multi-dimensional arrays, and objects of generic types.
+ * FFT for multi-dimensional arrays, and objects of generic types. (The mother all all FFTs.)
  * 
  * @author Attila Kovacs
  *
@@ -158,8 +158,8 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
     private synchronized FFT<?> getChildFor(final Object element) throws FFTTypeException {
         if(element.getClass().equals(reuseType)) return reuseChild;
 
-        if(element instanceof float[]) reuseChild = new FloatFFT.NyquistUnrolledReal(this);
-        else if(element instanceof double[]) reuseChild = new DoubleFFT.NyquistUnrolledReal(this);
+        if(element instanceof float[]) reuseChild = new FloatFFT.NyquistUnrolled(this);
+        else if(element instanceof double[]) reuseChild = new DoubleFFT.NyquistUnrolled(this);
         else if(element instanceof Complex[]) reuseChild = new ComplexFFT(this);
         else if(element instanceof Object[]) reuseChild = new MultiFFT(this);
         else throw new FFTTypeException(element.getClass());

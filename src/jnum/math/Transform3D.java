@@ -28,7 +28,7 @@ import java.io.Serializable;
 import jnum.math.matrix.Matrix;
 
 /**
- * A class representing transfotmations for 3D Cartesian vectors, and shperical coordinates. This base class implements 
+ * 3D Transformations for Cartesian vectors, and spherical coordinates. This base class implements 
  * linear algebraic (matrix) transformations, powered by a square {@link Matrix} of size 3 doing all the work.
  * 
  * 

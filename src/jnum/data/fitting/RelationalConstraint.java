@@ -24,7 +24,7 @@
 package jnum.data.fitting;
 
 /**
- * A class for formulating simple relational constraints between two quantities, one of which must be of {@link Parametric} type.
+ * Simple relational constraints between two quantities, one of which must be of {@link Parametric} type.
  */
 public class RelationalConstraint extends Constraint {
     

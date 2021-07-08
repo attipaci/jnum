@@ -5,22 +5,42 @@ import java.util.Map;
 import jnum.Symbol;
 import jnum.Unit;
 
+
+/**
+ * A physical unit composed of a base unit and a standard multiplier prefix. For example <b>km</b>, which is composed of 
+ * <b>k</b> (kilo) meaning a thousand, and <b>m</b> (meter) the unit for distance. Or <b>GeV</b>, composed of 
+ * the prefix <b>G</b> (giga) for 10<sup>9</sup> and <b>eV</b> (electronVolt) a unit of energy commonly used in particle
+ * physics. 
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class PrefixedUnit extends Unit {
     /**
      * 
      */
     private static final long serialVersionUID = 7570445362533632115L;
-
+    
+    /** the base unit component */
     private Unit baseUnit;
-
+    /** the multiplier prefix */
     private Multiplier multiplier;
     
-    
+    /** 
+     * Creates a new prefixed unit, using the specified base unit and the default unity multiplier.
+     * 
+     * @param baseUnit      the base unit for this prefixed unit.
+     */
     public PrefixedUnit(Unit baseUnit) {
         this(Multiplier.unity, baseUnit);
     }
    
-    
+    /**
+     * creates a new prefixed unit from combining the specified multiplier prefix and based unit.
+     * 
+     * @param m
+     * @param baseUnit
+     */
     public PrefixedUnit(Multiplier m, Unit baseUnit) {
         setMultiplier(m);
         this.baseUnit = baseUnit;
@@ -50,17 +70,15 @@ public class PrefixedUnit extends Unit {
     @Override
     public double value() { return multiplier.value() * baseUnit.value(); }
    
-
+    /**
+     * Sets a new standard multiplier prefix for int this unit.
+     * 
+     * @param m     the new multiplier to use with the base unit.
+     */
     public void setMultiplier(Multiplier m) { this.multiplier = m; }
 
-
-    public void multiplyBy(Multiplier m) {
-        setMultiplier(Multiplier.getMultiplier(getMultiplier().value * m.value));   
-    }
-
-
-    public void setMultiplierFor(double value) {
-        multiplyBy(Multiplier.getMultiplier(value));        
+    public void setMultiplier(double value) throws IllegalArgumentException {
+        this.multiplier = Multiplier.from(value);        
     }
 
 
@@ -114,49 +132,76 @@ public class PrefixedUnit extends Unit {
     }
     
 
+    /**
+     * Standard unit multiplier prefixes.
+     * 
+     * @author Attila Kovacs
+     *
+     */
     @SuppressWarnings("hiding")
     public static enum Multiplier {
-
+        
+        /** 1.0 */
         unity ("", 1.0, ""),
 
+        /** 10<sup>-1</sup> */
         deci ("d", 0.1, "deci"),
 
+        /** 10<sup>-2</sup> */
         centi ("c", 1.0e-2, "centi"),
 
+        /** 10<sup>-3</sup> */
         milli ("m", 1.0e-3, "milli"),
 
+        /** 10<sup>-6</sup> */
         micro ("u", 1.0e-6, "micro"), 
 
+        /** 10<sup>-9</sup> */
         nano ("n", 1.0e-9, "nano"),
 
+        /** 10<sup>-12</sup> */
         pico ("p", 1.0e-12, "pico"),
 
+        /** 10<sup>-15</sup> */
         femto ("f", 1.0e-15, "femto"), 
 
+        /** 10<sup>-18</sup> */
         atto ("a", 1.0e-18, "atto"), 
 
+        /** 10<sup>-21</sup> */
         zepto ("z", 1.0e-21, "zepto"), 
 
+        /** 10<sup>-24</sup> */
         yocto ("y", 1.0e-24, "yocto"), 
 
+        /** 10 */
         deka ("dk", 10.0, "deka"),
 
+        /** 100 */
         hecto ("h", 100.0, "hecto"),
 
+        /** 10<sup>3</sup> */
         kilo ("k", 1.0e3, "kilo"),
 
+        /** 10<sup>6</sup> */
         mega ("M", 1.0e6, "Mega"), 
 
+        /** 10<sup>9</sup> */
         giga ("G", 1.0e9, "Giga"),
 
+        /** 10<sup>12</sup> */
         tera ("T", 1.0e12, "Tera"), 
 
+        /** 10<sup>15</sup> */
         peta ("P", 1.0e15, "Peta"), 
 
+        /** 10<sup>18</sup> */
         exa ("E", 1.0e18, "Exa"),
 
+        /** 10<sup>21</sup> */
         zetta ("Z", 1.0e21, "Zetta"),
 
+        /** 10<sup>24</sup> */
         yotta ("Y", 1.0e24, "Yotta");
 
         final double value;
@@ -182,7 +227,7 @@ public class PrefixedUnit extends Unit {
         public String standardName() { return name; }
 
 
-        public static Multiplier getMultiplier(double value) {
+        public static Multiplier from(double value) {
             if(value < 1e-21) return yocto;
             if(value < 1e-18) return zepto;
             if(value < 1e-15) return atto;

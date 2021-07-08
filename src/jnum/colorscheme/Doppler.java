@@ -20,35 +20,44 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
-
-package jnum.plot.colorscheme;
+package jnum.colorscheme;
 
 import java.awt.Color;
 
-import jnum.plot.ColorScheme;
 
-
-
-
-public class CoolBlue extends ColorScheme {
+public class Doppler extends ColorScheme {
 
 
 	@Override
-	public int getRGB(double scaled) {
-		if(Double.isNaN(scaled)) return noData;
-	
-		if(scaled < 0.0) scaled=0.0;
-		else if(scaled > 1.0) scaled=1.0;
-	
-		if(scaled < 0.5) return Color.HSBtoRGB(0.75F, 1.0F, 2.0F * (float) scaled);
-		return Color.HSBtoRGB(0.75F, 2.0F - 2.0F * (float) scaled, 1.0F);
+	public int getRGB(double scaledI) {
+		if(Double.isNaN(scaledI)) return Color.DARK_GRAY.getRGB();
+		float I = (float) scaledI;
+		if(I > 1.0F) I = 1.0F;
+		if(I < 0.0F) I = 0.0F;
+		
+		float r = 0.0F, g = 0.0F, b = 0.0F;
+		
+		if(I < 0.25) {
+		    b = 1.0F;
+		    g = (float) ((0.25-I) / 0.25);
+		}
+		else if(I < 0.5) {
+		    b = (float) Math.sqrt((0.5-I)/0.25);
+		}
+		else if(I < 0.75) {
+		    r = (float) Math.sqrt((I - 0.5)/0.25);
+		}
+		else {
+		    r = 1.0F;
+		    g = (float) ((I-0.75) / 0.25);
+		}
+		
+
+		return ColorScheme.getRGB(r, g, b);	
 	}
 
 	@Override
 	public Color getHighlight() {
-		return Color.ORANGE;
+		return Color.BLACK;
 	}
-	
-	
 }

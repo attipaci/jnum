@@ -32,14 +32,14 @@ import jnum.data.image.Values2D;
 
 
 
-public class GridImageLayer extends BufferedImageLayer {
+public class Map2DLayer extends BufferedImageLayer {
 
 	private static final long serialVersionUID = 5730801953668713086L;
 
 	private Grid2D<?> grid;
 
 
-	public GridImageLayer(Values2D data, Grid2D<?> grid) {
+	public Map2DLayer(Values2D data, Grid2D<?> grid) {
 		super(data);
 			
 		setGrid(grid);
@@ -61,11 +61,7 @@ public class GridImageLayer extends BufferedImageLayer {
 		
 		if(grid instanceof SphericalGrid) area.isAutoAngleX = area.isAutoAngleY = true;
 		
-		area.coordinateSystem = grid.getCoordinateSystem();
-		
-				
+		area.coordinateSystem = grid.getCoordinateSystem();		
 	}
-	
-	
 	
 }

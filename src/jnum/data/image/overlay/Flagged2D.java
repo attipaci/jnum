@@ -27,8 +27,8 @@ import java.util.concurrent.ExecutorService;
 
 import jnum.Util;
 import jnum.data.image.Flag2D;
-import jnum.data.image.Index2D;
 import jnum.data.image.Values2D;
+import jnum.data.index.Index2D;
 import jnum.parallel.ParallelPointOp;
 import jnum.util.FlagBlock;
 import jnum.util.FlagSpace;

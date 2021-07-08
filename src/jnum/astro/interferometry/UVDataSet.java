@@ -46,8 +46,8 @@ import nom.tam.util.ArrayDataInput;
 
 
 /**
- * A reduced, calibrated interferometric data set, as a list of uv frames, each containing a set of visibility
- * measurements for a specific frequency bin. The data may be loaded in from a standard FITS calibrated UV table.
+ * A reduced, calibrated interferometric data set, as a list of <i>uv</i> frames, each containing a set of visibility
+ * measurements for a specific frequency bin. The data may be loaded in from a standard FITS calibrated UV Table.
  * 
  * 
  * @author Attila Kovacs
@@ -64,10 +64,10 @@ public class UVDataSet extends ArrayList<UVFrame> {
     private FitsProperties fitsProperties = new FitsProperties();
     
     /**
-     * Constructor with a square uv binning grid.
+     * Constructor with a square <i>uv</i> binning grid.
      * 
      * @param aperture  (m) Dish diameter, or equivalent
-     * @param uvres     (1/rad) Common bin size for u and v coordinates.
+     * @param uvres     (1/rad) Common bin size for <i>u</i> and <i>v</i> coordinates.
      */
     public UVDataSet(double aperture, double uvres) {
         this(aperture, new Vector2D(uvres, uvres));
@@ -75,10 +75,10 @@ public class UVDataSet extends ArrayList<UVFrame> {
 
 
     /**
-     * Constructor with a rectangular uv binning grid.
+     * Constructor with a rectangular <i>uv</i> binning grid.
      * 
      * @param aperture  (m) Dish diameter, or equivalent
-     * @param uvres     (1/rad) Independent u and v coordinate binning sizes.
+     * @param uvres     (1/rad) Independent <i>u</i> and <i>v</i> coordinate binning sizes.
      */
     public UVDataSet(double aperture, Vector2D uvres) {
         this.aperture = aperture;
@@ -86,7 +86,7 @@ public class UVDataSet extends ArrayList<UVFrame> {
     }
 
     /**
-     * Constructor, which creates the uv dataset from a standard FITS calibrated uv table file. It simply calls
+     * Constructor, which creates the <i>uv</i> dataset from a standard FITS calibrated uv table file. It simply calls
      * {@link #read(String)}.
      * 
      * @param fileName          Path of the FITS calibrated uv table file.
@@ -98,14 +98,14 @@ public class UVDataSet extends ArrayList<UVFrame> {
     }
     
     /**
-     * Gets the u,v resolutions of the uv binnind grid.
+     * Gets the <i>u,v</i> resolutions of the <i>uv</i> binnind grid.
      * 
-     * @return      (1/rad) u and v bin resolutions.
+     * @return      (1/rad) <i>u</i> and <i>v</i> bin resolutions.
      */
     public final Vector2D getResolution() { return delta; }
     
     /**
-     * Gets the standard FITS properties associated to this uv dataset, such as telescope and instrument
+     * Gets the standard FITS properties associated to this <i>uv</i> dataset, such as telescope and instrument
      * names, names of observers, etc. 
      * 
      * @return  Associated standard FITS header properties. 
@@ -227,7 +227,7 @@ public class UVDataSet extends ArrayList<UVFrame> {
     }
     
     /**
-     * Adds visibilities from another uv dataset. If the added frames match existing frames in frequency
+     * Adds visibilities from another <i>uv</i> dataset. If the added frames match existing frames in frequency
      * exactly, then they are accumulated into the existing uv frames, or otherwise as independent frames.
      * The set is sorted again after the addition.
      * 
@@ -284,10 +284,10 @@ public class UVDataSet extends ArrayList<UVFrame> {
     }
 
     /**
-     * Returns the first uv frame in the dataset (which may be null). If the dataset is non-empty, compacted, and sorted
+     * Returns the first <i>uv</i> frame in the dataset (which may be <code>null</code>). If the dataset is non-empty, compacted, and sorted
      * it will be the lowest frequency frame.
      * 
-     * @return      The first frame in the dataset (or null).
+     * @return      The first frame in the dataset (or <code>null</code>).
      * 
      * @see #compact()
      * @see #sort()
@@ -296,10 +296,10 @@ public class UVDataSet extends ArrayList<UVFrame> {
     public final UVFrame first() { return get(0); }
     
     /**
-     * Returns the last uv frame in the dataset (which may be null). If the dataset is non-empty, compacted, and sorted
+     * Returns the last <i>uv</i> frame in the dataset (which may be <code>null</code>). If the dataset is non-empty, compacted, and sorted
      * it will be the highest frequency frame.
      * 
-     * @return      The first frame in the dataset (or null).
+     * @return      The first frame in the dataset (or <code>null</code>).
      * 
      * @see #compact()
      * @see #sort()
@@ -308,10 +308,10 @@ public class UVDataSet extends ArrayList<UVFrame> {
     public final UVFrame last() { return get(size() - 1); }
     
     /**
-     * Gets the range of uv radii represented by this dataset.
+     * Gets the range of <i>uv</i> radii represented by this dataset.
      * 
      * 
-     * @return (1/rad) The range of uv radii in this dataset.
+     * @return (1/rad) The range of <i>uv</i> radii in this dataset.
      */
     public Range getUVRange() {
         final Range range = new Range();
@@ -320,10 +320,10 @@ public class UVDataSet extends ArrayList<UVFrame> {
     }
     
     /**
-     * Gets the u and v ranges spanned by this dataset.
+     * Gets the <i>u</i> and <i>v</i> ranges spanned by this dataset.
      * 
      * 
-     * @return (1/rad) The range of u and v coordinates spanned by this dataset this dataset.
+     * @return (1/rad) The range of <i>u</i> and <i>v</i> coordinates spanned by this dataset this dataset.
      */
     public Range2D getUVRange2D() {
         final Range2D range = new Range2D();
@@ -332,7 +332,7 @@ public class UVDataSet extends ArrayList<UVFrame> {
     }
     
     /**
-     * Gets the total interferometric flux in this data, i.e. sum{ w * |vis| } / sum{ w} 
+     * Gets the total interferometric flux in this data, i.e. &sum; w |vis| / &sum; w
      * 
      * @return      (Jy) The total flux in this dataset
      */

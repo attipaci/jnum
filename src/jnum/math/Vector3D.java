@@ -31,7 +31,7 @@ import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 
 /**
- * A class representing a Cartesian vector in 3D space, i.e. with <i>x</i>, <i>y</i>, and <i>z</i> components.
+ * A 3D Cartesian vector, with <i>x</i>, <i>y</i>, and <i>z</i> components.
  * 
  * @author Attila Kovacs
  *
@@ -210,11 +210,6 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
     @Override
     public void setDifference(final MathVector<? extends Double> a, final MathVector<? extends Double> b) {
         set(a.x() - b.x(), a.y() - b.y(), a.z() - b.z());
-    }
-    
-    @Override
-    public void flip() {
-        set(-x(), -y(), -z());
     }
     
     @Override

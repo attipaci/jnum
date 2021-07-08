@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,50 +20,91 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
+
 package jnum.math.specialfunctions;
 
 
-import java.util.Vector;
-
-
-
+/**
+ * Factorials, efficiently. It stores previously calculated values so they can be
+ * returned again without new calculation. Same goes for the logarithm of factorial values.
+ * This feature enables using factorials e.g. in polynomial expansions without significant
+ * computational cost.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public final class Factorial {
-
-	public static final Vector<Double> store = new Vector<>(100);
-	static { store.add(1.0); }
-	
-	// Calculates factorials as needed, storing the values for quick lookup later.
-	public static final double at(int n) {
-		if (n < 0) throw new IllegalArgumentException("Negative Factorial.");
-		if (n < store.size()) return store.get(n);
-
-		int m = store.size()-1;
-		while (m <= n) store.add(store.get(m)*(++m));
+   
+    /** Private constructor because we do not want ot instantiate this class. */
+    private Factorial() {}
+    
+    /**
+     * Gets the maximum value for which a factorial is stored. (There may be more stored
+     * values for the logarithms).
+     * 
+     * @return the maximum integer for which there can be a stored value.
+     */
+    public static int maxStored() {
+        return store.length;
+    }
+    
+	/**
+	 * Gets the factorial of the input argument. It also stores the calculated value for quick lookup later.
+	 * 
+	 * @param n    the argument
+	 * @return     <i>n</i>!
+	 * @throws IllegalArgumentException if called with a negative integer
+	 * @throws ArithmeticException if the result exceeds the range of numbers resperentable with double precision arithmetic.
+	 * 
+	 * @see #logAt(int)
+	 */
+	public static final double at(int n) throws IllegalArgumentException, ArithmeticException {
+	    if(n == 0) return 1.0;
+		if(n < 0) throw new IllegalArgumentException("Negative Factorial.");
+		if(n > store.length) new ArithmeticException("Result exceeds double precision range.");     
 		
-		return store.get(m-1);
+		if(store[n] == 0.0) store[n] = n * at(n-1);
+		return store[n];
+	}
+
+	
+	/**
+     * Gets the natural logarithm of the factorial of the input argument. 
+     * It also stores the calculated log value, up to a point, for quick lookup later.
+     * For input values exceeding the reserved store size (400), it will return the 
+     * value calculated via {@link GammaFunction}.
+     * 
+     * @param n    the argument
+     * @return     log(<i>n</i>!)
+     * @throws IllegalArgumentException if called with a negative integer
+     * 
+     * @see #logAt(int)
+     */
+	public static final double logAt(int n) throws IllegalArgumentException {
+	    if(n == 1) return 0.0;
+	    if(n == 0) return 0.0;
+        if(n < 0) throw new IllegalArgumentException("Negative Factorial.");
+        if(n > logStore.length) return GammaFunction.logAt(n+1.0);
+	    
+        if(logStore[n] == 0.0) logStore[n] = Math.log(n) + logAt(n-1);
+        return logStore[n];
 	}
 	
-	
-	// Calculates values as needed, and stores them (up to some limit) for quick lookup later...
-	// Thus repeated calls become very fast for n<MAX_LOGBUFFERED.
-	// For larger n, calls to GammaFunction are made...
-	public static final double logAt(int n) {
-		if (n < 0) throw new IllegalArgumentException("Negative Factorial.");
-		if (n < logStore.size()) return logStore.get(n);
+	/**
+     * The maximum number n for which log(n!) is stored. 
+     */
+    private static int MAX_LOGBUFFERED = 400;
 
-		int m = logStore.size()-1;
-		if(n < MAX_LOGBUFFERED) while (m <= n) logStore.add(logStore.get(m) + Math.log(++m));
-		else return GammaFunction.logAt(n+1.0);
-		
-		return logStore.get(m-1);
-	}
-	
-
-	static int MAX_LOGBUFFERED = 400;
-	
-
-	public static final Vector<Double> logStore = new Vector<>(100);
-	static { logStore.add(0.0); }	
-	
-
+  
+    /**
+     * The store for looking up previously calculated factorial values.
+     * 
+     */
+    private static final double[] store = new double[170];
+    
+    /**
+     * The store for looking up previously calculated factorial logarithms.
+     * 
+     */
+    private static final double[] logStore = new double[MAX_LOGBUFFERED];
 }

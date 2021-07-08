@@ -24,12 +24,12 @@
 
 package jnum.math.matrix;
 
-import jnum.data.ArrayUtil;
 import jnum.math.Complex;
 import jnum.math.ComplexConjugate;
 import jnum.math.ComplexMultiplication;
 import jnum.math.ComplexScaling;
 import jnum.math.Scalar;
+import jnum.util.ArrayUtil;
 
 
 

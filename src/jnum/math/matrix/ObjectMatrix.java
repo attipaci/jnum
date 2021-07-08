@@ -27,13 +27,13 @@ package jnum.math.matrix;
 
 import jnum.Copiable;
 import jnum.Util;
-import jnum.data.ArrayUtil;
-import jnum.data.image.Index2D;
+import jnum.data.index.Index2D;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;
 import jnum.math.Metric;
+import jnum.util.ArrayUtil;
 
 import java.lang.reflect.*;
 import java.text.ParseException;

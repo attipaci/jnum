@@ -23,10 +23,10 @@
 
 package jnum.data.cube.overlay;
 
-import jnum.data.cube.Index3D;
 import jnum.data.cube.IndexBounds3D;
 import jnum.data.cube.Resizable3D;
 import jnum.data.cube.Values3D;
+import jnum.data.index.Index3D;
 
 public class Viewport3D extends Overlay3D implements Resizable3D { 
     private int i0;

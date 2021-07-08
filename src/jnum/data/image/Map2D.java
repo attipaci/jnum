@@ -41,6 +41,7 @@ import jnum.data.image.overlay.RangeRestricted2D;
 import jnum.data.image.overlay.Referenced2D;
 import jnum.data.image.transform.CartesianGridTransform2D;
 import jnum.data.image.transform.ProjectedIndexTransform2D;
+import jnum.data.index.Index2D;
 import jnum.fft.MultiFFT;
 import jnum.fits.FitsProperties;
 import jnum.fits.FitsToolkit;
@@ -695,7 +696,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         if(y == null) return;
 
         if(isVerbose()) Util.info(this, "Auto-cropping: " + (x.span() + 1) + "x" + (y.span() + 1));
-        this.crop(new Index2D((int) x.min(), (int) y.min()), new Index2D((int) x.max(), (int) y.max()));
+        this.crop(new Index2D((int) x.lower(), (int) y.lower()), new Index2D((int) x.upper(), (int) y.upper()));
     }
 
 

@@ -30,7 +30,7 @@ import jnum.ExtraMath;
 
 
 /**
- * A class representing 2D vectors as polar coordinates, with a radius and an angle.
+ * A vector class for 2D polar coordinates, with a radius and an angle.
  * 
  * @author Attila Kovacs
  *

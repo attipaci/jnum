@@ -23,6 +23,8 @@
 
 package jnum.astro;
 
+import java.text.ParseException;
+
 import jnum.Constant;
 import jnum.IncompatibleTypesException;
 import jnum.Util;
@@ -42,19 +44,37 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 
     private static EquatorialCoordinates reuseEquatorial = new EquatorialCoordinates();
 
+    /**
+     * Constructs new celestial coordinates with default values (zero coordinates)
+     * 
+     */
+    protected CelestialCoordinates() { super(); }
 
-    public CelestialCoordinates() { super(); }
+    /**
+     * Constructs new celestial coordinates with the specified longitude and latitude angles. The convention
+     * is that lon/lat constitutes a right handed coordinate system when looking towards the origin.
+     * 
+     * @param lon   (rad) longitude coordinate
+     * @param lat   (lat) latitude coordinate
+     */
+    protected CelestialCoordinates(double lon, double lat) { super(lon, lat); }
 
-
-    public CelestialCoordinates(String text) { super(text); }
-
-
-    public CelestialCoordinates(double lon, double lat) { super(lon, lat); }
-
-
-    public CelestialCoordinates(CelestialCoordinates from) {
+    /**
+     * Constructs new celestial coordinates from another set of celestial coordinates of the same or different type.
+     * 
+     * @param from      the other coordinates, which are mimicked or converted.
+     */
+    protected CelestialCoordinates(CelestialCoordinates from) {
         convert(from, this);
     }
+    
+    /**
+     * Constructs new celestial coordinates from an ASCII representation.
+     * 
+     * @param text      A textual representation
+     * @throws ParseException if the text could not be interpreted to create these coordinate object.
+     */
+    protected CelestialCoordinates(String text) throws ParseException { super(text); }
 
 
     @Override
@@ -85,7 +105,12 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
     }
 
 
-
+    /**
+     * Gets the equatorial coordinate equivalent of these celestial coordinates. The returned equatorial
+     * coordinates are usually expressed in the ICRS frame, but they do not have to be...
+     * 
+     * @return      coordinates for the same position in a suitable equatorial system (typically ICRS).
+     */
     public EquatorialCoordinates toEquatorial() {
         EquatorialCoordinates equatorial = new EquatorialCoordinates();
         toEquatorial(equatorial);
@@ -132,47 +157,90 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
         else super.convertFrom(coords);
     }
 
-
+    /**
+     * Makes these coordinates refer to the same positions as the argument coordinates of the same or different
+     * type. That is the coordinates in this object will be converted as necessary from the argument.
+     * 
+     * @param other     the coordinates specifying the celestial position for this object.
+     */
     public void convertFrom(CelestialCoordinates other) {
         convert(other, this);
     }
 
-
+    /**
+     * Changes the supplied coordinates in the argument to refer to the same positions as these set of coordinates.
+     * That is the coordinates in this object will be converted as necessary from the argument.
+     * 
+     * @param other     the coordinates that will be set to the same position as defined by this object.
+     */
     public void convertTo(CelestialCoordinates other) {
         convert(this, other);
     }
 
-
+    /**
+     * Converts these coordinates to ecliptic coordinates, returning the result in the argument. 
+     * 
+     * @param ecliptic  The ecliptic coordinates (which speficy the reference system), into which 
+     *                  the equivalent position to this one is returned.
+     */
     public void toEcliptic(EclipticCoordinates ecliptic) { convertTo(ecliptic); }
 
 
+    /**
+     * Converts these coordinates to galactic coordinates, returning the result in the argument. 
+     *
+     * @param galactic  The galactic coordinates, into which the equivalent position to this one is returned.
+     */
     public void toGalactic(GalacticCoordinates galactic) { convertTo(galactic); }
 
-
+    /**
+     * Converts these coordinates to supergalactic coordinates, returning the result in the argument. 
+     * 
+     * @param supergal  The supergalactic coordinates, into which the equivalent position to this one is returned.
+     */
     public void toSuperGalactic(SuperGalacticCoordinates supergal) { convertTo(supergal); }
 
-
+    
+    /**
+     * Gets an equivalent representation of these coordinates in an appropriate equatorial system 
+     * (such as ICRS, but it does not have to be).
+     * 
+     * @return      Equatorial coordinates of the same celestial position as this one.
+     */
     public EclipticCoordinates toEcliptic() {
         EclipticCoordinates ecliptic = new EclipticCoordinates();
         convertTo(ecliptic);
         return ecliptic;
     }
 
-
+    /**
+     * Gets an equivalent representation of these coordinates in the Galactic coordinate system 
+     * 
+     * @return      Galactic coordinates of the same celestial position as this one.
+     */
     public GalacticCoordinates toGalactic() {
         GalacticCoordinates galactic = new GalacticCoordinates();
         convertTo(galactic);
         return galactic;
     }
 
-
+    /**
+     * Gets an equivalent representation of these coordinates in the Supergalactic coordinate system 
+     * 
+     * @return      Suppergalactic coordinates of the same celestial position as this one.
+     */
     public SuperGalacticCoordinates toSuperGalactic() {
         SuperGalacticCoordinates supergal = new SuperGalacticCoordinates();
         convertTo(supergal);
         return supergal;
     }
 
-
+    /**
+     * Converts a celestion positions from one coordinate system to another. 
+     * 
+     * @param from      The input coordinates and system
+     * @param to        The output coordinates and system
+     */
     public static void convert(CelestialCoordinates from, CelestialCoordinates to) {
 
         // If converting to same type, then just copy, precessing as necessary;
@@ -198,7 +266,6 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
         }
 
     }
-
 
     public static EquatorialCoordinates getPole(double inclination, double risingRA) {
         return new EquatorialCoordinates(risingRA - Constant.rightAngle, Constant.rightAngle - inclination);

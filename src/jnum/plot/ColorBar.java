@@ -33,6 +33,7 @@ import java.awt.geom.Point2D;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
+import jnum.colorscheme.ColorScheme;
 import jnum.math.Range;
 
 

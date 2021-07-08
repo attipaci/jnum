@@ -27,6 +27,7 @@ package jnum.data.image;
 import jnum.ExtraMath;
 import jnum.data.FlagCompanion;
 import jnum.data.Resizable;
+import jnum.data.index.Index2D;
 import jnum.math.Coordinate2D;
 
 

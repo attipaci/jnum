@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,49 +20,32 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-package jnum.plot.colorscheme;
 
-import java.awt.Color;
+package jnum.math;
 
-import jnum.plot.ColorScheme;
+/**
+ * The iterative numerical algorithm failed to converge to the required precision.
+ */
+public class ConvergenceException extends IllegalStateException {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -632245294706738192L;
+
+    /**
+     * Instantiates a new convergence exception.
+     */
+    public ConvergenceException() {
+        super();
+    }
+
+    /**
+     * Instantiates a new convergence exception with a specific message.
+     *
+     * @param s the message providing some explanation on why the exception occurred. 
+     */
+    public ConvergenceException(String s) {
+        super(s);
+    }
 
 
-
-public class NightTime extends ColorScheme {
-
-	@Override
-	public int getRGB(double scaledI) {
-		if(Double.isNaN(scaledI)) return Color.DARK_GRAY.getRGB();
-		float I = (float) scaledI;
-		if(I > 1.0F) I = 1.0F;
-		if(I < 0.0F) I = 0.0F;
-		
-		float r, g, b;
-
-		if(I < third) {
-			b = I / third;
-			g = r = 0.0F;
-		}
-		else if(I < twothirds) {
-			b = 1.0F;
-			g = (I - third) / third;
-			r = 0.0F;			
-		}
-		else {
-			b = g = 1.0F;
-			r = (I - twothirds) / third;
-		}
-		
-		return ColorScheme.getRGB(r, g, b);	
-	}
-
-	@Override
-	public Color getHighlight() {
-		return Color.ORANGE;
-	}
-	
-	private static float third = 1.0F / 3.0F;
-	
-	private static float twothirds = 2.0F / 3.0F;
-	
 }

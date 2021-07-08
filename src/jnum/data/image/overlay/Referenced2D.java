@@ -25,8 +25,8 @@ package jnum.data.image.overlay;
 
 import jnum.data.Referenced;
 import jnum.data.RegularData;
-import jnum.data.image.Index2D;
 import jnum.data.image.Values2D;
+import jnum.data.index.Index2D;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
 import nom.tam.fits.Header;

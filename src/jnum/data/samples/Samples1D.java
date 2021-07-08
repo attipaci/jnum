@@ -201,7 +201,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         IntRange r = getIndexRange();
         if(r == null) return; 
 
-        this.crop((int) r.min(), (int) r.max());
+        this.crop((int) r.lower(), (int) r.upper());
     }
 
     

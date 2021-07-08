@@ -25,12 +25,25 @@ package jnum.parallel;
 
 import java.awt.AWTEvent;
 
-
+/**
+ * A processing event that can be used to trigger processing in a queue (see {@link ProcessingQueue).
+ * 
+ * @author Attila Kovacs
+ *
+ * @see ProcessingQueue
+ *
+ */
 public class ProcessingEvent extends AWTEvent {
 
+    /** */
 	private static final long serialVersionUID = -6580482953480944763L;
 	
-
+	/**
+	 * Creates a new processing event.
+	 * 
+	 * @param source   The object that generated this event  
+	 * @param id       the unique ID for this event.
+	 */
 	public ProcessingEvent(Object source, int id) {
 		super(source, id);
 	}

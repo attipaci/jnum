@@ -68,7 +68,6 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 	}
 	
 	
-
 	public double getYear() { return year; }
 	
 

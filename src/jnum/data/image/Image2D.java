@@ -32,6 +32,7 @@ import jnum.Unit;
 import jnum.Util;
 import jnum.data.Image;
 import jnum.data.image.overlay.Transposed2D;
+import jnum.data.index.Index2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
 import nom.tam.fits.Fits;
@@ -296,7 +297,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         IntRange y = getYIndexRange();
         if(y == null) return;
 
-        this.crop(new Index2D((int)x.min(), (int)y.min()), new Index2D((int)x.max(), (int)y.max()));
+        this.crop(new Index2D((int)x.lower(), (int)y.lower()), new Index2D((int)x.upper(), (int)y.upper()));
     }
   
 

@@ -27,7 +27,8 @@ import java.awt.Graphics;
 import jnum.Util;
 import jnum.math.CartesianSystem;
 import jnum.math.Range;
-import jnum.plot.colorscheme.GreyScale;
+import jnum.colorscheme.ColorScheme;
+import jnum.colorscheme.GreyScale;
 
 
 

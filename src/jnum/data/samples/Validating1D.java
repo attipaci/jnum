@@ -24,6 +24,7 @@
 package jnum.data.samples;
 
 import jnum.data.Validating;
+import jnum.data.index.Index1D;
 
 public interface Validating1D extends Validating<Index1D> {
 

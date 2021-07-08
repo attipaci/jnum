@@ -23,14 +23,20 @@
 package jnum.util;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Map;
 
 import jnum.Unit;
 import jnum.math.Division;
 import jnum.math.Multiplicative;
 
-
+/**
+ * A compound physical unit composed of a list of unit factors, each with a corresponding exponent.
+ * For example nW m<sup>-2</sup> / &radic;GHz, composed of the base factors nW, m, and GHz with
+ * exponents 1, -2, and -0.5 respectively.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division<Unit> {
 
 	private static final long serialVersionUID = -8635925466445072139L;
@@ -38,17 +44,17 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 	public ArrayList<ExponentUnit> factors = new ArrayList<>();
 		
 	/**
-	 * Instantiates a new compound unit.
+	 * Instantiates a new compound unit, with no initial components
 	 */
 	public CompoundUnit() {}
 	
-
+	
 	public CompoundUnit(String spec) { 
 	    this();
 	    parse(spec); 
 	}
 	
-	public CompoundUnit(String spec, Hashtable<String, Unit> baseUnits) { 
+	public CompoundUnit(String spec, Map<String, Unit> baseUnits) { 
         this();
         parse(spec, baseUnits); 
     }
@@ -124,7 +130,7 @@ public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division
 			u = ((ExponentUnit) u).getBase();
 		}
 		
-		if(inverse) exp *= -1.0;
+		if(inverse) exp = -exp;
 		
 		for(ExponentUnit factor : factors) if(factor.getBase().equals(u)) {	
 			double priorExp = factor.getExponent();

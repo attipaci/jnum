@@ -20,16 +20,11 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-package jnum.plot.colorscheme;
+package jnum.colorscheme;
 
 import java.awt.Color;
 
-import jnum.plot.ColorScheme;
-
-
-
-public class Glacier extends ColorScheme {
-	
+public class Rainbow extends ColorScheme {
 
 	@Override
 	public int getRGB(double scaledI) {
@@ -40,20 +35,31 @@ public class Glacier extends ColorScheme {
 		
 		float r, g, b;
 
-		b = I;
-		g = I > third ? (I - third) / twothirds : 0.0F;
-		r = I > twothirds ? (I - twothirds) / third : 0.0F;
+		if(I < 0.25) {
+			b = I / 0.25F;
+			g = r = 0.0F;
+		}
+		else if(I < 0.5) {
+			b = 1.0F;
+			g = (I - 0.25F) / 0.25F;
+			r = 0.0F;			
+		}
+		else if(I < 0.75) {
+			b = 1.0F - (I - 0.5F) / 0.25F;
+			g = 1.0F;
+			r = (I - 0.5F) / 0.25F;
+		}
+		else {
+			b = 0.0F;
+			g = 1.0F - (I - 0.75F) / 0.25F;
+			r = 1.0F;
+		}
 		
 		return ColorScheme.getRGB(r, g, b);	
 	}
 
 	@Override
 	public Color getHighlight() {
-		return Color.RED;
+		return Color.WHITE;
 	}
-	
-	private static float third = 1.0F / 3.0F;
-	
-	private static float twothirds = 2.0F / 3.0F;
-	
 }

@@ -34,7 +34,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 import jnum.ExtraMath;
 import jnum.Util;
 
-
+/**
+ * A base class for parallel tasks using the jnum parallelization model. The jnum 
+ * implementation for parallel processing is similar to Java streams, instroduced in Java 8, 
+ * but with a different implementation and offering slightly different features.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <ReturnType>      the generic type of object returned by this parallel task.
+ */
 public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 
 	private int index;
@@ -52,6 +60,14 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 	private Exception exception = null;
 	
 	
+	/**
+	 * Sets the reduction element of this parallel task. The reduction element defines
+	 * how the partial results, obtained from distinct subsections of the data, are combined 
+	 * together into a single global result to be returned to the caller. Reduction objects
+	 * are the equivalent of collectors used with Java 8 streams. 
+	 * 
+	 * @param reduction        The reduction implementation that combines partial results into a global one.
+	 */
 	public void setReduction(ParallelReduction<ReturnType> reduction) {
 		this.reduction = reduction;
 		reduction.setParallel(this);

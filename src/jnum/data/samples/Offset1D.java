@@ -23,6 +23,7 @@
 
 package jnum.data.samples;
 
+import jnum.data.index.Index1D;
 import jnum.data.index.IndexedValues;
 import jnum.math.Coordinates;
 import jnum.math.MathVector;
@@ -102,7 +103,7 @@ public class Offset1D implements MathVector<Double> {
     }
 
     @Override
-    public void flip() { x *= -1.0; }
+    public void flip() { x = -x; }
 
     @Override
     public final double distanceTo(MathVector<? extends Double> point) {
@@ -194,6 +195,7 @@ public class Offset1D implements MathVector<Double> {
 
     @Override
     public Index1D getSize() {
+        size.set(1);
         return size;
     }
 
@@ -240,7 +242,9 @@ public class Offset1D implements MathVector<Double> {
         return false;
     }
 
-   
+    /**
+     * The default size object for 2D coordinates.
+     */
     private static final Index1D size = new Index1D(1);
 
 }

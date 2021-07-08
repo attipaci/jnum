@@ -26,7 +26,7 @@ package jnum.data.cube2;
 import java.io.Serializable;
 
 import jnum.data.image.Image2D;
-import jnum.data.image.Index2D;
+import jnum.data.index.Index2D;
 
 public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializable {
     /**

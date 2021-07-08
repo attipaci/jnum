@@ -27,6 +27,24 @@ package jnum.parallel;
 import jnum.PointOp;
 import jnum.data.WeightedPoint;
 
+/**
+ * Represents a operation on a self-contained (point) argument of a generic type, which can be performed in 
+ * parallel. The operation produces a result of another generic type object.
+ * 
+ * These operations are used for processing object data in generic parallel manner. By providing a common 
+ * implementation for typical parallel operations, it reduces the chance of bugs that may arise from 
+ * divergent individual implementations.
+ *
+ * In many ways this class is similar to parallel streams that were introduced in Java 8. However this 
+ * implementation predates Java streams. The main reason for its continued existence it extra tunability 
+ * that is not available in the built-in Java parallel streams, such as the ability to configure the number 
+ * of theads in which the operation is parallel processed.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <PointType>   The generic type of the point (self-contained object) upon which the operation acts.
+ * @param <ReturnType>  The generic return type of the operation/
+ */
 public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<PointType, ReturnType> {
    
     @Override
@@ -41,10 +59,24 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
         return clone;
     }
 
-    
+    /**
+     * Merges partial results obtained from parallel-procesed threads, each with a distinct sub-section
+     * of the data.
+     * 
+     * @param localResult   Accumulates the partial result from one thread into the global result
+     *                      to be returned for the operation as a whole.
+     */
     public abstract void mergeResult(ReturnType localResult);
 
     
+    /**
+     * A base parallel operation on a self-contained (point) object that does not result in
+     * a return value.
+     * 
+     * @author Attila Kovacs
+     *
+     * @param <PointType>   The generic type of the point (self-contained object) upon which the operation acts. 
+     */
     public abstract static class Simple<PointType> extends ParallelPointOp<PointType, Void> {
 
         @Override
@@ -58,9 +90,22 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
         
     }
     
+    /**
+     * A base parallel operation for cumulative counting on a self-contained (point) objects.
+     * 
+     * @author Attila Kovacs
+     *
+     * @param <PointType>   The generic type of the point (self-contained object) upon which the operation acts. 
+     */
     public abstract static class Count<PointType> extends ParallelPointOp<PointType, Long> {
         private long sum = 0L;
        
+        /**
+         * Returns the number of counts for a given point object.
+         * 
+         * @param point     the generic type object that contributes to the counting.
+         * @return          the number counts to include from this object in the total tally. 
+         */
         public abstract long getCount(PointType point);
            
         @Override
@@ -85,6 +130,13 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
 
     }
     
+    /**
+     * A base parallel operation for cumulative counting of the number of objects presents.
+     * 
+     * @author Attila Kovacs
+     *
+     * @param <PointType>   The generic type of the point (self-contained object) upon which the operation acts. 
+     */
     public static class ElementCount<PointType> extends Count<PointType> {
 
         @Override
@@ -94,6 +146,13 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
         
     }
     
+    /**
+     * A base parallel operation for summing over self-contained (point) objects.
+     * 
+     * @author Attila Kovacs
+     *
+     * @param <PointType>   The generic type of the point (self-contained object) upon which the operation acts. 
+     */
     public abstract static class Sum<PointType> extends ParallelPointOp<PointType, Double> {
         private double sum = Double.NaN;
        
@@ -102,6 +161,12 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
             sum = Double.NaN;
         }
         
+        /**
+         * Extracts the value to be summed from the argument.
+         * 
+         * @param point     the generic type object that contributes to the summation.
+         * @return          the value to include in the summation for the argument.
+         */
         protected abstract double getValue(PointType point);
         
         @Override
@@ -122,6 +187,13 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
 
     }
     
+    /**
+     * A base parallel operation for calculating averages over self-contained (point) objects.
+     * 
+     * @author Attila Kovacs
+     *
+     * @param <PointType>   The generic type of the point (self-contained object) upon which the operation acts. 
+     */
     public abstract static class Average<PointType> extends ParallelPointOp<PointType, WeightedPoint> {
         private double sum, sumw;
        
@@ -129,9 +201,21 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
         protected void init() {
             sum = sumw = 0.0;
         }
-        
+
+        /**
+         * Extracts the value to be averaged from the argument.
+         * 
+         * @param point     the generic type object that contributes to the average.
+         * @return          the value to include in the average for the argument.
+         */
         public abstract double getValue(PointType point);
         
+        /**
+         * Extracts the weight to be used when averaging the argument.
+         * 
+         * @param point     the generic type object that contributes to the average.
+         * @return          the weight (relative or noise weight) to use for averaging the argument.
+         */
         public abstract double getWeight(PointType point);
         
         @Override

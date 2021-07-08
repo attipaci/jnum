@@ -27,14 +27,19 @@ import jnum.math.Complex;
 
 
 /**
- * The Class ZetaFunction. Based on Gourdon and Sebah (2003).
+ * The Riemann &zeta; function. Implementation is based on Gourdon &amp; Sebah (2003), and uses
+ * precalculated binomial sums for maximal precision.
  * 
  * @author Attila Kovacs
  */
 public final class ZetaFunction {
 	
-	// Gourdon & Sebah (2003)
-	// precalculated binomial sums for maximal precision...
+    /**
+     * Evaluates the Riemann &zeta; function at the specified real argument.
+     * 
+     * @param x     real argument
+     * @return      &zeta;(<i>x</i>).
+     */
 	public static double at(final double x) {	
 		if(x < 0.0) return Math.pow(Constant.twoPi, x) * Constant.iPi * Math.sin(Constant.rightAngle*x) * GammaFunction.at(1.0 - x) * at(1.0 - x);
 		else if(x == 0.0) return -0.5;
@@ -50,14 +55,25 @@ public final class ZetaFunction {
 		return (sum1 + sum2/(1<<n)) / (1.0 - Math.pow(2.0, 1.0-x));
 	}
 	
-
+    /**
+     * Evaluates the Riemann &zeta; function at the specified complex argument.
+     * 
+     * @param z     complex argument
+     * @return      &zeta;(<i>z</i>).
+     */
 	public static final Complex at(final Complex z) {
 		final Complex result = new Complex();
 		evaluateAt(z, result);
 		return result;
 	}
 	
-	// Complex evaluation without creation of internal objects (complex numbers) for maximum speed.
+	/**
+	 * Evaluates the Riemann &zeta; function at the specified complex argument, without creating
+	 * any new objects in the process for maximum speed of execution.
+	 * 
+	 * @param z        complex argument
+	 * @param result   complex number which is set to the value of &zeta;(<i>z</i>).
+	 */
 	public static void evaluateAt(final Complex z, final Complex result) {
 		if(z == result) throw new IllegalArgumentException("Identical arguments.");
 		
@@ -153,7 +169,7 @@ public final class ZetaFunction {
 	}
 	
 	
-	/** The e. */
+	/** The precalculated binomial sums */
 	private static int[] e = { 0, 262143, -262125, 261972, -261156, 258096, -249528, 230964, -199140, 155382,
 		-106762, 63004, -31180, 12616, -4048, 988, -172, 19, -1 };
 

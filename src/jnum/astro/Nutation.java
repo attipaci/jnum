@@ -38,7 +38,7 @@ import jnum.Util;
 import jnum.math.Vector2D;
 
 /**
- * A class for calculating nutation corrections for a given time of observation.
+ * IAU2000A/R06 nutation model for a given time of observation.
  * 
  * @author Attila Kovacs
  *
@@ -61,13 +61,25 @@ public abstract class Nutation {
      * @return      (rad) The (dpsi, deps) nutation vector.
      */
     public static Vector2D getPrecise(double mjd) { return iau2000aR06.getCorrection(mjd); }
+
     
     /**
-     * Returns approximate nutation parameters for, based on the IAU2000A nutation model, but with terms with
-     * amplitude smaller than 100 microasrcsecond ommitted. The omission reduces the number of terms
+     * Returns approximate nutation parameters, based on the IAU2000A nutation model, but with terms with
+     * amplitude smaller than 10 &mu;as ommitted. The omission reduces the number of terms
      * used to ~100 (from ~1400), resulting in significant gain in speed of calculation at the price of
      * a modest loss in accuracy for 1950 to 2050.
      * 
+     * @param mjd   (day) Modified Julian Date of observation.
+     * @return      (rad) The (dpsi, deps) nutation vector.
+     */
+    public static Vector2D getTruncated10mas(double mjd) { return truncated10mas.getCorrection(mjd); }
+    
+    /**
+     * Returns approximate nutation parameters based on the IAU2000A nutation model, but with terms with
+     * amplitude smaller than 100 &mu;as ommitted. The omission reduces the number of terms
+     * used to ~40 (from ~1400), resulting in significant gain in speed of calculation at the price of
+     * a moderate loss in accuracy for 1950 to 2050.
+     *
      * @param mjd   (day) Modified Julian Date of observation.
      * @return      (rad) The (dpsi, deps) nutation vector.
      */
@@ -76,8 +88,8 @@ public abstract class Nutation {
     /**
      * Returns approximate nutation parameters, based on the IAU2000A nutation model, but with terms with
      * amplitude smaller than 1 milliarcsecond ommitted. The omission reduces the number of terms
-     * used to ~40 (from ~1400), resulting in significant gain in speed of calculation at the price of
-     * a moderate loss in accuracy for 1950 to 2050.
+     * used to around a dozen (from ~1400), resulting in significant gain in speed of calculation at the 
+     * price of losing in sub-arcsecond accuracy for 1950 to 2050.
      * 
      * @param mjd   (day) Modified Julian Date of observation.
      * @return      (rad) The (dpsi, deps) nutation vector.
@@ -85,16 +97,7 @@ public abstract class Nutation {
     public static Vector2D getTruncated1mas(double mjd) { return truncated1mas.getCorrection(mjd); }
     
     
-    /**
-     * Returns approximate nutation parameters, based on the IAU2000A nutation model, but with terms with
-     * amplitude smaller than 1 milliarcsecond ommitted. The omission reduces the number of terms
-     * used to around a dozen (from ~1400), resulting in significant gain in speed of calculation at the price of
-     * loss in sub-arcsecond accuracy for 1950 to 2050.
-     * 
-     * @param mjd   (day) Modified Julian Date of observation.
-     * @return      (rad) The (dpsi, deps) nutation vector.
-     */
-    public static Vector2D getTruncated10mas(double mjd) { return truncated10mas.getCorrection(mjd); }
+
       
     private static int getKey(double mjd) { return (int) (100.0 * mjd); }
     

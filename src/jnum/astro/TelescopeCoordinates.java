@@ -60,7 +60,7 @@ public class TelescopeCoordinates extends SphericalCoordinates {
 
     
     @Override
-    public String getTwoLetterCode() { return "TE"; }
+    public String getTwoLetterID() { return "TE"; }
     
     @Override
     public CoordinateSystem getCoordinateSystem() {

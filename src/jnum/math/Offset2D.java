@@ -28,7 +28,7 @@ import java.util.stream.IntStream;
 import jnum.Util;
 
 /**
- * A vector class representing a 2D offset from some reference coordinate.
+ * A vector class for 2D offsets from some reference coordinate.
  * 
  * @author Attila Kovacs
  *

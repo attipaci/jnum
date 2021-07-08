@@ -29,7 +29,7 @@ import jnum.math.matrix.SquareMatrixException;
 
 
 /**
- * Represents a correlation matrix for a set of parameters, calculated from an appropriate {@link CovarianceMatrix} object.
+ * Correlation matrix for a set of parameters, calculated from an appropriate {@link CovarianceMatrix} object.
  */
 public class CorrelationMatrix extends Matrix {
 

@@ -24,9 +24,9 @@ package test;
 
 import jnum.Symbol;
 import jnum.Unit;
-import jnum.Unit.Multiplier;
 import jnum.util.CompoundUnit;
 import jnum.util.ExponentUnit;
+import jnum.util.PrefixedUnit.Multiplier;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -68,7 +68,7 @@ public class UnitTest {
 		cu.divideBy(Unit.get("s"));
 		System.err.println("/ s: " + cu + " = " + cu.value());
 		
-		cu.multiplyBy(Multiplier.micro);
+		cu.toMultiple(Multiplier.micro);
 		System.err.println("micro: " + cu + " = " + cu.value());
 	}
 	

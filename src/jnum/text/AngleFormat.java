@@ -255,7 +255,7 @@ public class AngleFormat extends NumberFormat {
 		
 		
 		if(angle < 0.0) {
-			angle *= -1.0;
+			angle = -angle;
 			text.append('-');	
 		}
 	

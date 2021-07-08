@@ -25,8 +25,8 @@ package jnum.data.cube.overlay;
 
 import jnum.data.Referenced;
 import jnum.data.RegularData;
-import jnum.data.cube.Index3D;
 import jnum.data.cube.Values3D;
+import jnum.data.index.Index3D;
 import jnum.math.Coordinate3D;
 import jnum.math.Vector3D;
 import nom.tam.fits.Header;

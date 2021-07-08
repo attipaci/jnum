@@ -24,50 +24,87 @@ package jnum.math.specialfunctions;
 
 import jnum.Function;
 
-
+/**
+ * Legendre polynomials P<sub>l</sub><sup>m</sup>(<i>x</i>). These polynomials constitute a part of {@link SphericalHarmonics}.
+ * 
+ * @author Attila Kovacs
+ * 
+ * @see SphericalHarmonics
+ *
+ */
 public class LegendrePolynomial implements Function<Double, Double> {
 	
-
-	int l, m;
+    /** the index l for this instance. */
+	private int l;
+	/** the index m for this instance */
+	private int m;
 	
-
-	public LegendrePolynomial(int l, int m) {
-		if(m < 0 || m > l) throw new IllegalArgumentException("Illegal orders for " + getClass().getSimpleName() + ".");
+	/**
+	 * Instantiates a new Legendre polynomial P<sub>l</sub><sup>m</sup>.
+	 * 
+	 * @param l    the polynomial index <i>l</i> for this instance.
+	 * @param m    the polynomial index <i>m</i> for this instance.
+	 * 
+	 * @throws IllegalArgumentException if <i>l</i> or <i>m</i> are invalid.
+	 */
+	public LegendrePolynomial(int l, int m) throws IllegalArgumentException {
+		if(m < 0) throw new IllegalArgumentException("m cannot be negative");
+		if(m > l) throw new IllegalArgumentException("m cannot be greater than l");
 		this.l = l;
 		this.m = m;		
 	}
+	
+	/**
+     * Gets the index l for this P<sub>l</sub><sup>m</sup> instance.
+     * 
+     * @return     the index l for this P<sub>l</sub><sup>m</sup> instance.
+     */
+    public final int getL() { return l; }
+    
+    /**
+     * Gets the index m for this P<sub>l</sub><sup>m</sup> instance.
+     * 
+     * @return     the index m for this P<sub>l</sub><sup>m</sup> instance.
+     */
+    public final int getM() { return m; }
 
 	@Override
-	public Double valueAt(final Double x) {
+	public final Double valueAt(final Double x) {
 		return at(l, m, x);		
 	}
 	
-
-	public static double at(final int l, final int m, final double x) {
-		if(m < 0 || m > l || Math.abs(x) > 1.0)
-			throw new IllegalArgumentException("Illegal arguments to LegendrePolynomial.");
+	/**
+	 * Calculates P<sub>l</sub><sup>m</sup>(<i>x</i>).
+	 * 
+	 * @param l    the <i>l</i> index of of P<sub>l</sub><sup>m</sup>.
+	 * @param m    the <i>m</i> index of of P<sub>l</sub><sup>m</sup>.
+	 * @param x    the argument
+	 * @return     P<sub>l</sub><sup>m</sup>(<i>xi</i>)
+	 */
+	public final static double at(final int l, final int m, final double x) {
+		if(Math.abs(x) > 1.0) throw new IllegalArgumentException("|x| cannot exceed 1");
 
 		double pmm=1.0;
 		if(m > 0) {
-			double somx2 = Math.sqrt((1.0-x)*(1.0+x));
-			double fact = 1.0;
+			final double somx2 = Math.sqrt((1.0-x) * (1.0+x));
+			double fact = -1.0;
 			for(int i=1; i <= m; i++) {
-				pmm *= -fact*somx2;
-				fact += 2.0;
+				pmm *= fact * somx2;
+				fact -= 2.0;
 			}
 		}
 		if(l == m) return pmm;
 
-		double pmmp1 = x * (2*m+1) * pmm;
-		if(l == (m+1)) return pmmp1;
+		double pmmp1 = x * (2 * m + 1) * pmm;
+		if(l == m + 1) return pmmp1;
 
-		double pll = Double.NaN;
-		for(int ll = m+2; ll <= l; ll++) {
-		    pll = (x * (2*ll-1) * pmmp1 - (ll+m-1) * pmm) / (ll-m);
-		    pmm=pmmp1;
-		    pmmp1=pll;
+		double pL = Double.NaN;
+		for(int L = m+2; L <= l; L++) {
+		    pL = (x * (2*L - 1) * pmmp1 - (L+m-1) * pmm) / (L-m);
+		    pmm = pmmp1;
+		    pmmp1 = pL;
 		}
-		return pll;
+		return pL;
 	}
 	
 }

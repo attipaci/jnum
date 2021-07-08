@@ -58,7 +58,7 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
 
 
     @Override
-    public String getTwoLetterCode() { return "FP"; }
+    public String getTwoLetterID() { return "FP"; }
 
    
     @Override

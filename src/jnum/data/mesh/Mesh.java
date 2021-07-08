@@ -31,8 +31,8 @@ import java.util.*;
 import jnum.Copiable;
 import jnum.NonConformingException;
 import jnum.Util;
-import jnum.data.ArrayUtil;
 import jnum.text.ParseType;
+import jnum.util.ArrayUtil;
 
 
 public abstract class Mesh<T> implements Serializable, Cloneable, Copiable<Mesh<T>>, Iterable<T> {

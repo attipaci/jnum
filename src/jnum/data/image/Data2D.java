@@ -34,6 +34,7 @@ import jnum.data.SplineSet;
 import jnum.data.DataCrawler;
 import jnum.data.CubicSpline;
 import jnum.data.WeightedPoint;
+import jnum.data.index.Index2D;
 import jnum.math.IntRange;
 import jnum.math.Range;
 import jnum.math.Vector2D;

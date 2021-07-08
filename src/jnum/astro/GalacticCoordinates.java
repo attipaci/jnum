@@ -24,6 +24,7 @@
 package jnum.astro;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 
 import jnum.Unit;
 import jnum.Util;
@@ -40,7 +41,7 @@ public class GalacticCoordinates extends CelestialCoordinates {
     public GalacticCoordinates() {}
 
 
-    public GalacticCoordinates(String text) { super(text); }
+    public GalacticCoordinates(String text) throws ParseException { super(text); }
 
     public GalacticCoordinates(double lon, double lat) { super(lon, lat); }
     
@@ -64,7 +65,7 @@ public class GalacticCoordinates extends CelestialCoordinates {
     
 	
 	@Override
-    public String getTwoLetterCode() { return "GA"; }
+    public String getTwoLetterID() { return "GA"; }
 	
 	@Override
 	public CoordinateSystem getCoordinateSystem() {

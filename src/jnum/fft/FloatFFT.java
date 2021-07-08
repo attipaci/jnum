@@ -38,19 +38,30 @@ import jnum.parallel.Parallelizable;
  * @author Attila Kovacs
  *
  */
-
 public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
-
+    /** */
     private static final long serialVersionUID = -3189956387053186573L;
 
-
+    /**
+     * Intantiates an FFT for <code>float[]</code> arrays.
+     */
     public FloatFFT() { super(); }
     
+    /**
+     * Intantiates an FFT for <code>float[]</code> arrays, using the specified executor for parallel processing.
+     * 
+     * @param executor  the executor service to use for parallel processing.
+     */
     public FloatFFT(ExecutorService executor) {
         super(executor);
     }
 
+    /**
+     * Intantiates an FFT for <code>float[]</code> arrays, using the specified jnum parallel processing environment.
+     * 
+     * @param processing    the jnum parallel processing environment.
+     */
     public FloatFFT(Parallelizable processing) {
         super(processing);
     }
@@ -290,7 +301,17 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
     }
 
-
+    /**
+     * Loads the real data of N elements for a subsequent complex tranform of N/2 complex numbers.
+     * 
+     * 
+     * @param data              the data to transform
+     * @param addressBits       log<sub>2</sub> of the number of complex data elements (half of the number of real 
+     *                          values to transform.
+     * @param from              starting index of elements to process
+     * @param to                ending (exclusive) index of elements to process.
+     * @param isForward         if this is for a forward transform.
+     */
     private void loadReal(final float[] data, final int addressBits, int from, int to, final boolean isForward) {	
         final int length = 2<<addressBits;
         // Make from and to even indices 0...N/2
@@ -343,12 +364,27 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
         realTransform(data, getAddressBits(data), isForward);
     }
 
-
+    /**
+     * Real transform (multi-threaded).
+     *
+     * @param data          the data to transform
+     * @param addressBits   the number address bits in use for data elements (log<sub>2</sub> of the number
+     *                      of complex elements)
+     * @param isForward     <code>true</code> if it is a forward transform, otherwise <code>false</code>
+     */
     void realTransform(final float[] data, final int addressBits, final boolean isForward) {
         if(getParallel() < 2) sequentialRealTransform(data, addressBits, isForward);
         else parallelRealTransform(data, addressBits, isForward);
     }
     
+    /**
+     * Forward real transform (multi-threaded)
+     * 
+     * @param data          the data to transform
+     * @param addressBits   the number address bits in use for data elements (log<sub>2</sub> of the number
+     *                      of complex elements)
+     * @param isForward     <code>true</code> if it is a forward transform, otherwise <code>false</code>
+     */
     void parallelRealTransform(final float[] data, final int addressBits, final boolean isForward) {
         if(isForward) parallelComplexTransform(data, addressBits, FORWARD);
 
@@ -376,7 +412,13 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
 
     }
 
-
+    /**
+     * Sequential real transform in a single thread. 
+     *
+     * @param data          the data to transform
+     * @param addressBits   the number address bits in use for data elements
+     * @param isForward     <code>true</code> if it is a forward transform, otherwise <code>false</code>
+     */
     void sequentialRealTransform(final float[] data, final int addressBits, final boolean isForward) {
         if(isForward) sequentialComplexTransform(data, addressBits, FORWARD);
 
@@ -397,7 +439,13 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
     }
 
 
-
+    /**
+     * Scales a number of element in an array by a specified factor.
+     *
+     * @param data      the data to scale 
+     * @param length    the number of elements to scale in data.
+     * @param value     the scaling factor
+     */
     protected void scale(final float[] data, final int length, final float value) {
         if(getParallel() < 2) {
             for(int i=length; --i >= 0; ) data[i] *= value;
@@ -520,20 +568,68 @@ public class FloatFFT extends FFT1D<float[]> implements RealFFT<float[]> {
     }
 
 
+    /**
+     * <p>
+     * An FFT that operates on <code>float[]</code> arrays with 2<sup>n</sup>+2 elements. The extra pair of real values
+     * at the end is used to store the amplitude at the Nyquist frequency <i>f</i><sub>N</sub> itself. This may be useful to alleviate
+     * some confusion with the Numerical Recipes style packed real FFTs that operate on 2<sup>n</sup>
+     * elements (or 2<sup>n-1</sup> complex amplitudes), since those routines pack the real valued <i>f</i><sub>0</sub> and
+     * <i>f</i><sub>N</sub> amplitudes into the real and imaginary parts of the 'complex' amplitude at index 0. 
+     * Thus routines that aren't careful to treat the first complex amplitude as different from the rest, or which
+     * do not account for the fact the that Nyquist amplitude is stored as the imaginary part of the packed <i>f</i><sub>0</sub>
+     * component, will end up with a garbage amplitude for <i>f</i><sub>0</sub>, and no amplitude for <i>f</i><sub>N</sub>. 
+     * By unrolling the real amplitude of <i>f</i><sub>N</sub> into its own separate 'complex' bin at the end of the 
+     * transformed array, the amplitude data have a more regular structure, that lends itself to proper processing more
+     * easily.
+     * </p>
+     * 
+     * <p>
+     * <b>Tip:</b> The unrolled amplitudes can be most easily accessed and processed by wrapping the data into
+     * a {@link jnum.data.FauxComplexArray.Float}, which exposes the real-valued amplitude pairs of the original data array
+     * as {@link jnum.math.Complex} values.
+     * </p>
+     * 
+     * @see jnum.data.FauxComplexArray.Float
+     * 
+     * @author Attila Kovacs
+     *
+     */
+    public static class NyquistUnrolled extends FloatFFT {
 
-    public static class NyquistUnrolledReal extends FloatFFT {
-
+        /** */
         private static final long serialVersionUID = 3073121404450602358L;
 
-        public NyquistUnrolledReal() {
+        /**
+         * Instantiates a new FFT for 2<sup>n</sup>+2 real data arrays (containing N = 2<sup>2</sup> real values)
+         * in which the Nyquist amplitudes are unrolled into the extra pair elements at the end, thus
+         * yielding a regular array with complex amplitudes from f<sub>0</sub> to and inclusing f<sub>N/2</sub>.
+         * 
+         */
+        public NyquistUnrolled() {
             super();
         }
-        
-        public NyquistUnrolledReal(ExecutorService executor) {
+
+        /**
+         * Instantiates a new FFT, using the specified executor service, for 2<sup>n</sup>+2 real data arrays (containing N = 2<sup>2</sup> real values)
+         * in which the Nyquist amplitudes are unrolled into the extra pair elements at the end, thus
+         * yielding a regular array with complex amplitudes from f<sub>0</sub> to and inclusing f<sub>N/2</sub>.
+         * 
+         * 
+         * @param executor      the executor service to use for parallel processing
+         */
+        public NyquistUnrolled(ExecutorService executor) {
             super(executor);
         }
 
-        public NyquistUnrolledReal(Parallelizable processing) {
+        /**
+         * Instantiates a new FFT, using the specified jnum parallel enviroment, for 2<sup>n</sup>+2 real data arrays (containing N = 2<sup>2</sup> real values)
+         * in which the Nyquist amplitudes are unrolled into the extra pair elements at the end, thus
+         * yielding a regular array with complex amplitudes from f<sub>0</sub> to and inclusing f<sub>N/2</sub>.
+         * 
+         * 
+         * @param processing        the jnum parallel processor.
+         */
+        public NyquistUnrolled(Parallelizable processing) {
             super(processing);
         }
         

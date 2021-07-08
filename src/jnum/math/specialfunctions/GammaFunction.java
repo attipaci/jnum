@@ -24,23 +24,29 @@ package jnum.math.specialfunctions;
 
 import jnum.Constant;
 import jnum.math.Complex;
+import jnum.math.ConvergenceException;
 
-
+/**
+ * The &Gamma; function, its logarithm, and regularized incomplete P and Q functions.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public final class GammaFunction {
 
 	/**
-	 * Calculate the value of the Gamma function at the specified real argument.
+	 * Calculate the value of the &Gamma; function at the specified real argument.
 	 *
-	 * @param x the x
-	 * @return Gamma(x).
+	 * @param x the real-valued argument.
+	 * @return &Gamma;(x).
 	 */
 	public static final double at(double x) { return Math.exp(logAt(x)); }
 
 	/**
-	 * Calculate the log of the gamma function at a real value. Adapted from Numerical Recipes in C.
+	 * Calculate the logarithm of the &Gamma; function at a real value. Adapted from Numerical Recipes in C.
 	 *
-	 * @param x the x
-	 * @return log(Gamma(x))
+	 * @param      x the real-valued argument.
+	 * @return     log(&Gamma;(<i>x</i>))
 	 */
 	public static final double logAt(final double x) {
 		double y = x + 5.5;
@@ -51,10 +57,10 @@ public final class GammaFunction {
 	}
 
 	/**
-	 * Calculate the complex value of the Gamma finction at the specified complex argument.
+	 * Calculate the complex value of the &Gamma; function at the specified complex argument.
 	 *
-	 * @param z the z
-	 * @return Gamma(z)
+	 * @param      z the complex argument
+	 * @return     &Gamma;(<i>z</i>)
 	 */
 	public static final Complex at(final Complex z) {
 		final Complex result = new Complex();
@@ -63,10 +69,11 @@ public final class GammaFunction {
 	}
 
 	/**
-	 * Calculate the complex log of the gamma function at the specified complex argument. Adapted from Numerical Recipes in C.
+	 * Calculate the complex logarithm of the &Gamma; function at the specified complex argument. 
+	 * Adapted from Numerical Recipes in C.
 	 *
-	 * @param z the z
-	 * @return Gamma(z)
+	 * @param      z the complex argument
+	 * @return     &Gamma;(<i>z</i>)
 	 */
 	public static final Complex logAt(final Complex z) {
 		final Complex result = new Complex();
@@ -75,14 +82,14 @@ public final class GammaFunction {
 	}
 
 	/**
-	 * Evaluate the complex Gamma function at the specified complex argument.
+	 * Evaluate the complex &Gamma; function at the specified complex argument.
 	 * 
 	 * The result will be placed in the supplied second argument, thus avoiding the explicit creation of a new
 	 * complex number for the return value. This makes it the preferred (faster) approach for evaluating the function over
 	 * and over again, with just one (or few) user-created complex objects.
 	 *
-	 * @param z the z
-	 * @param result the complex number that will become to Gamma(z)
+	 * @param z        the complex argument
+	 * @param result   the complex number that is set to the value of &Gamma;(<i>z</i>)
 	 */
 	public static final void evaluateAt(final Complex z, final Complex result) {
 		evaluateLogAt(z, result);
@@ -91,16 +98,16 @@ public final class GammaFunction {
 		else result.exp();		
 	}
 
-	// Lanczos approximation with g=7
 	/**
-	 * Evaluate the logarithm of the complex Gamma function at the specified complex argument.
+	 * Evaluate the logarithm of the complex &Gamma; function at the specified complex argument. It uses the Lanczos
+	 * approximation with <i>g</i>=7.
 	 * 
 	 * The result will be placed in the supplied second argument, thus avoiding the explicit creation of a new
 	 * complex number for the return value. This makes it the preferred (faster) approach for evaluating the function over
 	 * and over again, with just one (or few) user-created complex objects.
 	 *
-	 * @param z the z
-	 * @param result the complex number that will become log(Gamma(z))
+	 * @param z        the complex argument
+	 * @param result   the complex number that is set to the value of log(&Gamma;(<i>z</i>))
 	 */
 	public static final void evaluateLogAt(final Complex z, final Complex result) {	
 		if(z == result) throw new IllegalArgumentException("Identical arguments.");
@@ -163,47 +170,75 @@ public final class GammaFunction {
 
 
 
-
-	public static double P(double a, double x) {
-		if (x < 0.0 || a <= 0.0) throw new IllegalArgumentException("Invalid arguments for GammaP(a,x).");
-		return x < (a+1.0) ? P(a,x,logAt(a)) : 1.0 - Q(a,x,logAt(a));
+	/**
+	 * Calculate the regularized Gamma P(<i>s</i>, <i>x</i>) function for a real-valued argument.
+	 *  
+	 * @param s    the real-valued argument
+	 * @param x    the upper limit of the incomplete integral.
+	 * @return     P(<i>s</i>, <i>x</i>)
+	 */
+	public static double P(double s, double x) {
+		if (x < 0.0 || s <= 0.0) throw new IllegalArgumentException("Invalid arguments for GammaP(a,x).");
+		return x < (s+1.0) ? P(s,x,logAt(s)) : 1.0 - Q(s,x,logAt(s));
 	}
 
-
-	public static double P(final double a, final double x, final double logGamma) {
+    /**
+     * Calculate the regularized Gamma P(<i>s</i>, <i>x</i>) function for a real-valued argument, given an
+     * already calculated value for the log(&Gamma;(<i>a</i>))
+     *  
+     * @param s         the real-valued argument
+     * @param x         the upper limit of the incomplete lower integral.
+     * @param lnGs      the readily available value for log(&Gamma;(<i>s</i>)).
+     * @return          P(<i>s</i>, <i>x</i>)
+     */
+	public static double P(final double s, final double x, final double lnGs) {
 		if(x == 0.0) return 0.0;
 		if(x < 0.0) throw new IllegalStateException("Gamma P evaluated at x < 0.");
 
-		double ap=a;
-		double del=1.0/a;
+		double ap=s;
+		double del=1.0/s;
 		double sum = del;
 
 		for (int i=MAX_ITERATIONS; --i >= 0; ) {
 			++ap;
 			del *= x/ap;
 			sum += del;
-			if (Math.abs(del) < Math.abs(sum)*EPS) return sum*Math.exp(-x+a*Math.log(x)-logGamma);
+			if (Math.abs(del) < Math.abs(sum)*EPS) return sum*Math.exp(-x+s*Math.log(x)-lnGs);
 		}
-		throw new IllegalStateException("Gamma P convergence not achieved: 'a' is too large, or need to iterate longer.");
+		throw new ConvergenceException("Gamma P convergence not achieved: 'a' is too large, or need to iterate longer.");
 
 	}
 
 
-
-	public static double Q(final double a, final double x) {
-		if (x < 0.0 || a <= 0.0) throw new IllegalStateException("Invalid arguments for GammaQ(a,x).");
-		return x < (a+1.0) ? 1.0 - P(a, x, logAt(a)) : Q(a, x, logAt(a));
+	/**
+     * Calculate the regularized Gamma Q(<i>s</i>, <i>x</i>) function for a real-valued argument.
+     *  
+     * @param s    the real-valued argument
+     * @param x    the lower limit of the incomplete upper integral.
+     * @return     Q(<i>s</i>, <i>x</i>)
+     */
+	public static double Q(final double s, final double x) {
+		if (x < 0.0 || s <= 0.0) throw new IllegalStateException("Invalid arguments for GammaQ(a,x).");
+		return x < (s+1.0) ? 1.0 - P(s, x, logAt(s)) : Q(s, x, logAt(s));
 	}
 
-
-	public static double Q(final double a, final double x, final double lnGa) {
-		double b = x + 1.0 - a;
+	/**
+     * Calculate the regularized Gamma Q(<i>s</i>, <i>x</i>) function for a real-valued argument, given an
+     * already calculated value for the log(&Gamma;(<i>a</i>))
+     *  
+     * @param s     the real-valued argument
+     * @param x     the lower limit of the incomplete upper integral.
+     * @param lnGs  the readily available value for log(&Gamma;(<i>s</i>)).
+     * @return      Q(<i>s</i>, <i>x</i>)
+     */
+	public static double Q(final double s, final double x, final double lnGs) {
+		double b = x + 1.0 - s;
 		double c = 1.0 / FPMIN;
 		double d = 1.0/b;
 		double h = d;
 
 		for(int i=1; i <= MAX_ITERATIONS; i++) {
-			double an = -i * (i - a);
+			double an = -i * (i - s);
 			b += 2.0;
 			c = b + an / c;
 			d = an * d + b;
@@ -212,12 +247,15 @@ public final class GammaFunction {
 			d = 1.0 / d;
 			double del = d * c;
 			h *= del;
-			if(Math.abs(del-1.0) < EPS) return Math.exp(- x + a * Math.log(x) - lnGa) * h;
+			if(Math.abs(del-1.0) < EPS) return Math.exp(- x + s * Math.log(x) - lnGs) * h;
 		}
-		throw new IllegalStateException("Gamma Q convergence not achieved: 'a' is too large, or need to iterate longer.");
+		throw new ConvergenceException("Gamma Q convergence not achieved: 'a' is too large, or need to iterate longer.");
 	}
 
-
+	/**
+	 * The maximum number of iterations to reach convergence.
+	 * 
+	 */
 	public static int MAX_ITERATIONS = 300;
 
 	public static double EPS = 3.0e-7;

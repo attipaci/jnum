@@ -24,7 +24,13 @@ package jnum;
 
 import jnum.math.specialfunctions.ErrorFunction;
 
-
+/**
+ * Some commonly used math functions that should be in {@link java.lang.Math} but are not.
+ * 
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public final class ExtraMath {
 
     /**

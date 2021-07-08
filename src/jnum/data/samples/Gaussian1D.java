@@ -32,17 +32,20 @@ import jnum.CopyCat;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.Data;
+import jnum.data.index.Index1D;
 import jnum.data.samples.overlay.Referenced1D;
 import jnum.math.Division;
 import jnum.math.Multiplication;
 import jnum.math.Product;
 import jnum.math.Ratio;
 import jnum.math.Scalable;
+import jnum.text.NumberFormating;
 import jnum.util.HashCode;
 
 
 public class Gaussian1D implements Serializable, Cloneable, Copiable<Gaussian1D>, CopyCat<Gaussian1D>, Scalable, 
-Multiplication<Gaussian1D>, Division<Gaussian1D>, Product<Gaussian1D, Gaussian1D>, Ratio<Gaussian1D, Gaussian1D> {
+Multiplication<Gaussian1D>, Division<Gaussian1D>, Product<Gaussian1D, Gaussian1D>, Ratio<Gaussian1D, Gaussian1D>,
+NumberFormating {
     /**
      * 
      */
@@ -196,6 +199,7 @@ Multiplication<Gaussian1D>, Division<Gaussian1D>, Product<Gaussian1D, Gaussian1D
     }
 
 
+    @Override
     public String toString(NumberFormat nf) {
         return nf.format(FWHM);
     }

@@ -298,7 +298,7 @@ public class UVImager {
     private void add(UVFrame.Visibility vis, double scaling) {
         if(vis.w <= 0.0) return;
 
-        if(jackknife) if(random.nextDouble() < 0.5) scaling *= -1.0;
+        if(jackknife) if(random.nextDouble() < 0.5) scaling = -scaling;
 
         add(vis, scaling, false);
         add(vis, scaling, true);           // symmetrize (it should be symmetric already...)

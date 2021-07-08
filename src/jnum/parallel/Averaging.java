@@ -23,20 +23,27 @@
 
 package jnum.parallel;
 
-import jnum.data.WeightedPoint;
+import jnum.data.Accumulating;
 
-
-public class Averaging<ReturnType extends WeightedPoint> extends ParallelReduction<ReturnType> {
+/**
+ * A reduction class for calculating averages in a parallel task.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <Type>      the generic type of object to be averaged by this reduction.
+ */
+public class Averaging<Type extends Accumulating<Type>> extends ParallelReduction<Type> {
 
 
 	@Override
-	public ReturnType getResult() {
-		ReturnType result = null;
-		for(ParallelTask<ReturnType> task : getParallel().getWorkers()) {
-			ReturnType local = task.getLocalResult();
+	public Type getResult() {
+		Type result = null;
+		for(ParallelTask<Type> task : getParallel().getWorkers()) {
+			Type local = task.getLocalResult();
 			if(result == null) result = local;
-			else result.average(local);
+			else result.accumulate(local);
 		}
+		if(result != null) result.endAccumulation();
 		return result;
 	}
 	

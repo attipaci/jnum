@@ -27,27 +27,83 @@ import jnum.Constant;
 
 // Tested 1/12/09.
 
+/**
+ * <p>
+ * The cumulative normal distibution function P(<i>x</i>) = 1/&radic;&pi; &int; exp(-<i>x</i><sup>2</sup>) d<i>x</i>.
+ * It is the integral of the Gaussian distribution, and is related to the error function erf(), as 
+ * 2P(<i>x</i>) = 1 + erf(<i>x</i><sup>2</sup> / &radic;2). P(<i>x</i>) represents the probability that some normally 
+ * distributed random variate takes a value &lt;=<i>x</i>. The complement function Q(<i>x</i>) = 1 - P(<i>x</i>) is conversely 
+ * the likelihood that the random variate takes a value &gt;<i>x</i> It is
+ * commonly used in statistics and probability for calculating probabilities of outliers.
+ * </p>
+ * <p>
+ * This class provides statics methods for calculating both P(<i>x</i>) and Q(<i>x</i>) efficiently.
+ * </p>
+ * 
+ * @see ErrorFunction
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public final class CumulativeNormalDistribution {
 
+    /** private constructor because we do not want to instantiate this class */
+    private CumulativeNormalDistribution() {}
 	
+    /**
+     * Gets the value of P(<i>x</i>) for some <i>x</i>, representing the probability that a Gaussian variate
+     * is &lt;=<i>x</i>.
+     * 
+     * @param x     the argument
+     * @return      P(<i>x</i>)
+     * 
+     * @see #complementAt(double)
+     */
 	public static double at(double x) {
 		if(x < -TAIL) return 0.5 * ErrorFunction.complementAt(-x * Constant.isqrt2);
 		return 0.5 * (1.0 + ErrorFunction.at(x * Constant.isqrt2));
 	}
 
+	 /**
+     * Gets the value of Q(<i>x</i>) for some <i>x</i>, representing the probability that a Gaussian variate
+     * is &gt;<i>x</i>.
+     * 
+     * @param x     the argument
+     * @return      Q(<i>x</i>)
+     * 
+     * @see #at(double)
+     * @see #fastComplementAt(double)
+     */
 	public static double complementAt(double x) {
 		
 		return 0.5 * (highPrecision ? ErrorFunction.complementAt(x * Constant.isqrt2) : ErrorFunction.fastComplementAt(x * Constant.isqrt2));		
 	}
 	
 
+	 /**
+     * Gets the value of Q(<i>x</i>) for some <i>x</i>, representing the probability that a Gaussian variate
+     * is &gt;<i>x</i>, using a faster algorithms. The returned value is quatanteed to be accurate to &lt;1e-7
+     * for all input values of <i>x</i>.
+     * 
+     * @param x     the argument
+     * @return      Q(<i>x</i>)
+     * 
+     * @see #at(double)
+     * @see #complementAt(double)
+     */
 	public static double fastComplementAt(double x) {
 		return 0.5 * ErrorFunction.fastComplementAt(x * Constant.isqrt2);		
 	}
 	
 	
-	// Based on Peter J Acklam's algorithm...
-	// see http://home.online.no/~pjacklam/notes/invnorm/
+	
+	/**
+	 * Inverse cumulative normal distribution. The implementation is based on 
+	 * <a href="http://home.online.no/~pjacklam/notes/invnorm/">Peter J. Acklam's algorithm</a>.
+	 * 
+	 * @param P        the argument
+	 * @return         <i>x</i> for which P(<i>x</i>) yields the argument.
+	 */
 	public static double inverseAt(final double P) {
 		if(P <= 0.0 || P >= 1.0) {
 			if(P == 0.0) return Double.NEGATIVE_INFINITY;
@@ -70,7 +126,14 @@ public final class CumulativeNormalDistribution {
     //x <- (((((c(1)*q+c(2))*q+c(3))*q+c(4))*q+c(5))*q+c(6)) /
     //      ((((d(1)*q+d(2))*q+d(3))*q+d(4))*q+1)
 	//endif
-
+	
+	/**
+	 * Inverse complement cumulative normal distribution. The implementation is based on 
+     * <a href="http://home.online.no/~pjacklam/notes/invnorm/">Peter J. Acklam's algorithm</a>.
+	 * 
+	 * @param Q    the value of Q
+	 * @return     <i>x</i> for which Q(<i>x</i>) yields the argument.
+	 */
 	public static double inverseComplementAt(final double Q) {
 		if(Q <= 0.0 || Q >= 1.0) {
 			if(Q == 1.0) return Double.NEGATIVE_INFINITY;
@@ -87,7 +150,13 @@ public final class CumulativeNormalDistribution {
 		return inverseAt(1.0 - Q);
 	}
 	
-
+	/**
+	 * Refines the inverse value. 
+	 * 
+	 * @param value        Approximate <i>x</i>.
+	 * @param P            the value of P
+	 * @return             the refined <i>x</i> for which P(<i>x</i>) yields P.
+	 */
 	private static double refine(final double value, final double P) {
 		if( P > 0.0 && P < 1.0) {
 			final double erfc = highPrecision ? ErrorFunction.complementAt(-value * Constant.isqrt2) : ErrorFunction.fastComplementAt(-value/Constant.isqrt2);
@@ -98,18 +167,31 @@ public final class CumulativeNormalDistribution {
 		return value;
 	}
 
-
+	/**
+	 * Acklam's inverse coefficients.
+	 * 
+	 */
 	public static final double[] a = { -3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 
 						1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00 };
 	
-
+	/**
+     * Acklam's inverse coefficients.
+     * 
+     */
 	public static final double[] b = { -5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 
 						6.680131188771972e+01, -1.328068155288572e+01 };
 
+	/**
+     * Acklam's inverse coefficients.
+     * 
+     */
 	public static final double[] c = { 7.784894002430293e-03, 3.223964580411365e-01, 2.400758277161838e+00,
 						2.549732539343734e+00, -4.374664141464968e+00, -2.938163982698783e+00 };
 
-
+	/**
+     * Acklam's inverse coefficients.
+     * 
+     */
 	public static final double[] d = { 7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 
 						3.754408661907416e+00 };
 

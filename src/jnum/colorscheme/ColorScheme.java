@@ -20,27 +20,12 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
-package jnum.plot;
+package jnum.colorscheme;
 
 import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
-
-import jnum.plot.colorscheme.BBLike;
-import jnum.plot.colorscheme.Colorful;
-import jnum.plot.colorscheme.CoolBlue;
-import jnum.plot.colorscheme.DayTime;
-import jnum.plot.colorscheme.Doppler;
-import jnum.plot.colorscheme.Glacier;
-import jnum.plot.colorscheme.GreyScale;
-import jnum.plot.colorscheme.NightTime;
-import jnum.plot.colorscheme.Orangy;
-import jnum.plot.colorscheme.Rainbow;
-import jnum.plot.colorscheme.Temperature;
-
-
 
 public abstract class ColorScheme {
 

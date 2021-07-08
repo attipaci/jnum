@@ -33,7 +33,7 @@ import jnum.math.Vector3D;
 
 
 /**
- * Transformation of equatorial coordinates between different systems.
+ * Transformation of equatorial coordinates between different reference systems.
  * 
  * @author Attila Kovacs
  *

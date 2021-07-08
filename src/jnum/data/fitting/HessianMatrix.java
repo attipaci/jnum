@@ -26,7 +26,7 @@ package jnum.data.fitting;
 import jnum.math.matrix.Matrix;
 
 /**
- * Represents the Hessian Matrix for a {@link Parametric} function of {@link java.lang.Double} type, using either numerical 
+ * Hessian Matrix for a {@link Parametric} function of {@link java.lang.Double} type, using either numerical 
  * differentiation, or an appropriate {@link CovarianceMatrix} object.
  */
 public class HessianMatrix extends Matrix {

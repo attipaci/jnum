@@ -20,11 +20,9 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-package jnum.plot.colorscheme;
+package jnum.colorscheme;
 
 import java.awt.Color;
-
-import jnum.plot.ColorScheme;
 
 
 

@@ -28,15 +28,16 @@ import java.text.NumberFormat;
 
 import jnum.Copiable;
 import jnum.Util;
+import jnum.text.NumberFormating;
 
 /**
- * A class representing a range of points in 3D space, with inclusive minimum and
- * and exclusive maximum corners.
+ * A range of points in 3D space, with inclusive minimum and
+ * and exclusive maximum corners of a bounding box.
  * 
  * @author Attila Kovacs
  *
  */
-public class Range3D implements Cloneable, Copiable<Range3D>, Serializable {
+public class Range3D implements Cloneable, Copiable<Range3D>, Serializable, NumberFormating {
     /**
      * 
      */
@@ -220,6 +221,7 @@ public class Range3D implements Cloneable, Copiable<Range3D>, Serializable {
     public String toString() { return xRange + ", " + yRange + ", " + zRange; }
     
 
+    @Override
     public String toString(NumberFormat nf) {
         return xRange.toString(nf) + ", " + yRange.toString(nf) + ", " + zRange.toString(nf);
     }

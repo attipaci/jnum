@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
 
 
 /**
- * A class for handling complex numbers, with real and imaginary parts, i.e. as z = (a + i * b). 
+ * A complex number, with real and imaginary parts, that is as <i>z</i> = (<i>a</i> + i<i>b</i>). 
  * 
  * Complex numbers are a natural extension of 2D vectors ({@link jnum.math.Vector2D})
  * with complex arithmetic operations added on top. 

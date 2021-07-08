@@ -38,7 +38,7 @@ import jnum.math.ZeroValue;
 
 
 /**
- * Class representing a set of binned interferometric measurements at a single binned frequency.
+ * A set of binned visibilities at a single binned frequency.
  * 
  * 
  * @author Attila Kovacs
@@ -57,7 +57,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
      * Constructor.
      * 
      * @param frequency     (Hz) Frequency for this uv frame.
-     * @param delta         (1/rad) u,v bin sizes.
+     * @param delta         (1/rad) <i>u</i>,<i>v</i> bin sizes.
      * @param primaryFWHM   (rad) FWHM of the primary telescope beam at the frequency of this frame. 
      */
     public UVFrame(double frequency, Vector2D delta, double primaryFWHM) {
@@ -67,21 +67,21 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     }
    
     /**
-     * Gets the u,v resolution (bin size) in 1/rad units.
+     * Gets the <i>u,v</i> (1/rad) resolution (bin size).
      * 
-     * @return  u,v resolution (bin size) in 1/rad.
+     * @return  <i>u,v</i> (1/rad) resolution (bin size).
      */
     public final Vector2D getResolution() { return delta; }
     
     /**
-     * Gets the representative observed frequency for this uv frame.
+     * Gets the representative observed frequency for this <i>uv</i> frame.
      * 
      * @return  (Hz) observed frequency.
      */
     public final double getFrequency() { return frequency; }
 
     /**
-     * Gets the representative primary telescope beam size for this uv frame.
+     * Gets the representative primary telescope beam size for this <i>uv</i> frame.
      * 
      * @return  (rad) Primary beam size (FWHM).
      */
@@ -102,7 +102,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     /**
      * Returns the sum of the weights over all visibilities in this frame
      * 
-     * @return  (1/Jy^2) Sum of visibility weights in this frame.
+     * @return  (1/Jy<sup>2</sup>) Sum of visibility weights in this frame.
      */
     public double getWeightSum() {
         return values().parallelStream().mapToDouble(e -> e.w).sum();
@@ -111,11 +111,13 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     /**
      * Adds a visibility measurement to this frame.
      * 
-     * @param u     (1/rad) u coordinate.
-     * @param v     (1/rad) v coordinate.
-     * @param wre   (1/Jy) Real part of weighted visibility, i.e. w * Re(vis), where vis has units of Jy and w has units of 1/jy^2.
-     * @param wim   (1/Jy) Imaginary part of weighted visibility, i.e. w * Re(vis), where vis has units of Jy and w has units of 1/jy^2
-     * @param w     (1/Jy**2) Natural noise weight for this visibility.
+     * @param u     (1/rad) <i>u</i> coordinate.
+     * @param v     (1/rad) <i>v</i> coordinate.
+     * @param wre   (1/Jy) Real part of weighted visibility, i.e. <i>w</i> Re(<i>vis</i>), 
+     *              where <i>vis</i> has units of Jy and <i>w</i> has units of 1/Jy<sup>2</sup>.
+     * @param wim   (1/Jy) Imaginary part of weighted visibility, i.e. <i>w</i> Re(<i>vis</i>), 
+     *              where <i>vis</i> has units of Jy and <i>w</i> has units of 1/Jy<sup>2</sup>
+     * @param w     (1/Jy<sup>2</sup>) Natural noise weight for this visibility.
      */
     public void add(double u, double v, double wre, double wim, double w) {
         if(w <= 0.0) return;
@@ -136,21 +138,21 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     }
 
     /**
-     * Gets an aggregated linearized integer index for a pair of u,v indices. This is useful for fast has-table
+     * Gets an aggregated linearized integer index for a pair of <i>u,v</i> indices. This is useful for fast has-table
      * storage and lookup. 
      * 
-     * @param u     u coordinate index
-     * @param v     v coordinate index
-     * @return      A unique virtual index (for hashing) for the u,v index pair 
+     * @param u     <i>u</i> coordinate index
+     * @param v     <i>v</i> coordinate index
+     * @return      A unique virtual index (for hashing) for the <i>u,v</i> index pair 
      */
     private int getVirtualIndex(int u, int v) {
         return (u & 0xff) << 16 | (v & 0xff);
     }
     
     /**
-     * Gets the range of radii in the uv plane spanned by this frame.
+     * Gets the range of radii in the <i>uv</i> plane spanned by this frame.
      * 
-     * @return      (1/rad) Range of uv radii measured in this frame.
+     * @return      (1/rad) Range of <i>uv</i> radii measured in this frame.
      */
     public Range getUVRange() {
         final Range range = new Range();
@@ -159,10 +161,10 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     }
 
     /**
-     * Gets the range of u and v values contained in this frame.
+     * Gets the range of <i>u</i> and <i>v</i> values contained in this frame.
      * 
      * 
-     * @return  (1/rad) u and v ranges packed into a Range2D object.
+     * @return  (1/rad) <i>u</i> and <i>v</i> ranges packed into a {@link Range2D} object.
      */
     public Range2D getUVRange2D() {
         final Range2D range = new Range2D();
@@ -171,10 +173,10 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     }
     
     /**
-     * Returns the visibilities contained in this frame, resampled into a new uv grid of a new frame. 
+     * Returns the visibilities contained in this frame, resampled into a new <i>uv</i> grid of a new frame. 
      * 
-     * @param uvres     (1/rad) New square uv grid size. 
-     * @return          New frame with the resampled uv visibilities. 
+     * @param uvres     (1/rad) New square <i>uv</i> grid size. 
+     * @return          New frame with the resampled <i>uv</i> visibilities. 
      * 
      * @see #getResampled(Vector2D)
      */
@@ -183,10 +185,10 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     }
 
     /**
-     * Returns the visibilities contained in this frame, resampled into a new uv grid of a new frame. 
+     * Returns the visibilities contained in this frame, resampled into a new <i>uv</i> grid of a new frame. 
      * 
      * @param uvres     (1/rad) New square uv grid size. 
-     * @return          New frame with the resampled uv visibilities. 
+     * @return          New frame with the resampled <i>uv</i> visibilities. 
      * 
      * @see #getResampled(double)
      */
@@ -205,7 +207,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
 
     
     /**
-     * Binned, weighted visibility entries in this uv frame.
+     * Binned, weighted visibility entries in this <i>uv</i> frame.
      * 
      * 
      * @author Attila Kovacs
@@ -223,9 +225,9 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
         }
         
         /**
-         * Returns the radius (distance from origin) of this visibility bin in the uv plane.
+         * Returns the radius (distance from origin) of this visibility bin in the <i>uv</i> plane.
          * 
-         * @return
+         * @return  the magintude of the <i>u,v</i> vector.
          */
         public double uvDistance() {
             return ExtraMath.hypot(iu * delta.x(), iv * delta.y());
@@ -233,13 +235,13 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
          
         @Override
         public void flip() {
-            wre *= -1.0;
-            wim *= -1.0;
+            wre = -wre;
+            wim = -wim;
         }
 
         @Override
         public void conjugate() {
-            wim *= -1.0;
+            wim = -wim;
         }
 
         /**
@@ -252,9 +254,9 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
         }
 
         /**
-         * Returns the u coordinate for this visibility bin.
+         * Returns the <i>u</i> coordinate for this visibility bin.
          * 
-         * @return  (1/rad) u coordinate value.
+         * @return  (1/rad) <i>u</i> coordinate value.
          */
         public double u() {
             return iu * delta.x();
@@ -262,9 +264,9 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
 
         
         /**
-         * Returns the v coordinate for this visibility bin.
+         * Returns the <i>v</i> coordinate for this visibility bin.
          * 
-         * @return  (1/rad) v coordinate value.
+         * @return  (1/rad) <i>v</i> coordinate value.
          */
         public double v() {
             return iv * delta.y();

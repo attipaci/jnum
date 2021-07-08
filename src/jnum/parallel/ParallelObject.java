@@ -27,8 +27,20 @@ import java.util.concurrent.ExecutorService;
 
 import jnum.Util;
 
+/**
+ * A base class for objects that implement parallel processing of their content, using the jnum
+ * approach to generalized parallel processing. This is somewhat analogous to Java streams
+ * (introduced in Java 8), but with a different approach an implementation, which offers
+ * unique tunability and flexibility beyond what is offered by Java streams.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public abstract class ParallelObject implements Cloneable, Parallelizable {
+    /** the executor service (if any) to use for parallel processing */
     private ExecutorService executor;
+    
+    /** The targeted number of parallel threads to use */
     private int parallelism;
     
     
@@ -77,12 +89,24 @@ public abstract class ParallelObject implements Cloneable, Parallelizable {
         setParallel(1);
     }
     
+    /**
+     * Copy the parallelization properties from another jnum parallel processing environment.
+     * 
+     * @param processor
+     * 
+     * @see #setExecutor(ExecutorService)
+     * @see #setParallel(int)
+     */
     public void copyParallel(Parallelizable processor) {
         setExecutor(processor.getExecutor());
         setParallel(processor.getParallel());
     }
     
-    
+    /**
+     * Shuts down the executor service (if any) used for parallel processing this object.
+     * 
+     * @see ExecutorService#shutdown()
+     */
     public void shutdown() { 
         if(executor == null) return;
         executor.shutdown(); 
@@ -90,9 +114,16 @@ public abstract class ParallelObject implements Cloneable, Parallelizable {
     }
 
     
+    /** A task that can be performed in parallel on the parent object. */
     public abstract class Task<ReturnType> extends ParallelTask<ReturnType> {           
 
-        public void process() {
+        /**
+         * Parallel processes the parent object with the number
+         * of threads returned by {@link ParallelObject#getParallel()} using the executor
+         * service (if any) returned by {@link ParallelObject#getExecutor()} of the parent object.
+         * 
+         */
+        public final void process() {
             process(getParallel(), getExecutor());
         }
         

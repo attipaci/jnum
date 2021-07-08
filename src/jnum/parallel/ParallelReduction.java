@@ -23,19 +23,40 @@
 
 package jnum.parallel;
 
-
+/**
+ * A base class for parallel reductions, which combine partial results from independent parallel threads into a global
+ * result. Reductions are the jnum analogue to collectors in the world of Java 8 streams. They define how the partial
+ * results obtained from the independent paralle processing of sub-sections of data are combined into a global
+ * result for the entire dataset.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <ReturnType>   the generic type of object returned by this reduction.
+ */
 public abstract class ParallelReduction<ReturnType> {
 
 	private ParallelTask<ReturnType> task;
 		
-
+	/**
+	 * Sets the task for which this reduction will provide a result.
+	 * 
+	 * @param task     the parallel task that will use this reduction for obtaining its result.
+	 */
 	public void setParallel(ParallelTask<ReturnType> task) {
 		this.task = task;
 	}
 	
-
+	/**
+	 * Gets the parallel task object that is assigned to use this reduction to obtain its result.
+	 * 
+	 * @return     the parallel using this reduction for obtaining its result.
+	 */
 	public ParallelTask<ReturnType> getParallel() { return task; }
 	
-
+	/**
+	 * Gets the final (aggregated) result from this parallel reduction.
+	 * 
+	 * @return     the final result obtained from this reduction.
+	 */
 	public abstract ReturnType getResult();
 }

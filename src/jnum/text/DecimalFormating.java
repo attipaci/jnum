@@ -24,9 +24,21 @@
 
 package jnum.text;
 
-
+/**
+ * Interface for getting string representation of objects using with the specified number of decimal places.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public interface DecimalFormating extends NumberFormating {
 
+    /**
+     * Gets a string representation of the implementing object, formatting relevant numerical values
+     * with the specified number of decimal places.
+     * 
+     * @param decimals  The number of decimal places to use when formating numbers.
+     * @return          The string representation using the specified number of decimals.
+     */
 	public String toString(int decimals);
 	
 }

@@ -42,7 +42,7 @@ import java.lang.reflect.*;
 
 
 /**
- * An object representing a single real number value (i.e. a scalar). It is similar to the built-in Java {@link java.lang.Double}
+ * An object representing a single real number value (scalar). It is similar to the built-in Java {@link java.lang.Double}
  * but with mutable content, and implementation of the various jnum interfaces that apply to scalar type values. 
  * 
  * @author Attila Kovacs
@@ -52,10 +52,12 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions,
 	NumberFormating, DecimalFormating, Parser, Metric<Scalar>, Comparable<Scalar> {
 	
-
+    /**
+     * 
+     */
 	private static final long serialVersionUID = -4757211558088511549L;
 	
-
+	/** the value field. */
 	private double value;
 	
 	/**
@@ -64,7 +66,7 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	public Scalar() {}
 	
 	/**
-	 * Instantiates a new scala (real) value.
+	 * Instantiates a new scalar (real) value.
 	 *
 	 * @param value the value
 	 */
@@ -93,10 +95,18 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
-
+	/**
+	 * Gets the value of this scalar.
+	 * 
+	 * @return the value
+	 */
 	public final double getValue() { return value; }
 	
-
+	/**
+	 * Sets a new real value for this scalar.
+	 * 
+	 * @param value    the new value.
+	 */
 	public final void setValue(double value) {
 		this.value = value;
 	}
@@ -121,12 +131,20 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		value += o.value;
 	}
 	
-
+	/**
+	 * Subtracts a real value from this scaler
+	 * 
+	 * @param x    the decrement value.
+	 */
 	public final void subtract(double x) {
 		value -= x;
 	}
 
-
+	/**
+	 * Adds a real value to this scalar.
+	 * 
+	 * @param x    the increment value.
+	 */
 	public final void add(double x) {
 		value += x;
 	}
@@ -303,23 +321,51 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	public double absSquared() {
 		return value * value;
 	}
+	
+	/**
+	 * Creates a new array of scalars of the specified size.
+	 * 
+	 * @param n    number of elements
+	 * @return     new scalar array with the specified number of elements, initialized with zeroes.
+	 */
+	public static Scalar[] createArray(int n) {
+	    Scalar[] array = new Scalar[n];
+	    while(--n >= 0) array[n] = new Scalar();
+	    return array;
+	}
 
-
+	/**
+	 * Creates an array of scalars from a Java array of <code>double</code>s.
+	 * 
+	 * @param value    the Java <code>double[]</code> array
+	 * @return         the equivalent array of scalars.
+	 */
 	public static Scalar[] arrayFrom(double[] value) {
 		Scalar[] array = new Scalar[value.length];
 		for(int i=0; i<value.length; i++) array[i].value = value[i];
 		return array;
 	}
 	
-
+	/**
+     * Creates an array of scalars from a Java array of <code>float</code>s.
+     * 
+     * @param value    the Java <code>float[]</code> array
+     * @return         the equivalent array of scalars.
+     */
 	public static Scalar[] arrayFrom(float[] value) {
 		Scalar[] array = new Scalar[value.length];
 		for(int i=0; i<value.length; i++) array[i].value = value[i];
 		return array;
 	}
 	
-
-	public static Object arrayFrom(Object value) {
+	/**
+     * Creates a multi-dimensional array of scalars from a multi-dimensional arrat of <code>float</code>s or <code>double</code>s.
+     * 
+     * @param value    a multi-dimensional floating point primitive Java array.
+     * @return         the equivalent multi-dimensional array of scalars.
+     * @throws IllegalArgumentException if the argument is not a primitive floating-point array.
+     */
+	public static Object arrayFrom(Object value) throws IllegalArgumentException {
 		if(value instanceof double[]) return arrayFrom((double[]) value);
 		else if(value instanceof float[]) return arrayFrom((float[]) value);
 		else if(value instanceof Object[]) {
@@ -338,17 +384,27 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 			}
 			return realArray;
 		}
-		return null;
+		throw new IllegalArgumentException("argument is not a primitive floating-point array");
 	}
 	
-
+	/**
+	 * Converts an array of scalars to a primitive <code>double[]</code> array.
+	 * 
+	 * @param array    array of scalars.
+	 * @return         <code>double[]</code> array with the same values.
+	 */
 	public double[] toDoubleArray(Scalar[] array) {
 		double[] doubles = new double[array.length];
 		for(int i=0; i<array.length; i++) doubles[i] = array[i].value;
 		return doubles;
 	}
 	
-
+	/**
+     * Converts an array of scalars to a primitive <code>float[]</code> array.
+     * 
+     * @param array    array of scalars.
+     * @return         <code>float[]</code> array with the same values.
+     */
 	public float[] toFloatArray(Scalar[] array) {
 		float[] floats = new float[array.length];
 		for(int i=0; i<array.length; i++) floats[i] = (float) array[i].value;

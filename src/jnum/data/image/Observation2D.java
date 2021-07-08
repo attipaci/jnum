@@ -36,6 +36,7 @@ import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
 import jnum.data.image.overlay.Overlay2D;
 import jnum.data.image.overlay.Referenced2D;
+import jnum.data.index.Index2D;
 import jnum.data.index.IndexedObservations;
 import jnum.fits.FitsToolkit;
 import jnum.math.CoordinateTransform;

@@ -29,7 +29,7 @@ import jnum.math.Metric;
 
 
 /**
- * An class for data that is tagged by some irregularly distributed topological location marker.
+ * An object that is tagged by some irregularly distributed topological location marker.
  * If the data is taken from regular intervals you should consider using the more efficient and
  * feature-filled  {@link RegularData} object instead to represent your regularly sampled values. This
  * data class is really for data that does not lend itself to a representation on a regular grid.

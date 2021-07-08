@@ -35,7 +35,7 @@ import nom.tam.util.Cursor;
 
 
 /**
- * A class representation of a coordinate axis in a coordinate system.
+ * A coordinate axis in a coordinate system.
  * 
  * @author Attila Kovacs
  *

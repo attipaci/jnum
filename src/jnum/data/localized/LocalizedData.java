@@ -29,7 +29,7 @@ import jnum.math.Metric;
 
 
 /**
- * An class for irregular topological data which can be weighted-averaged.
+ * Data taken at irregular topological locations, and which can be weighted-averaged.
  * If the data is taken from regular intervals you should consider using the more efficient and
  * feature-filled  {@link RegularData} object instead to represent your regularly sampled values. This
  * data class is really for data that does not lend itself to a representation on a regular grid.

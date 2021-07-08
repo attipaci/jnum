@@ -24,9 +24,9 @@
 package jnum.data.image.overlay;
 
 import jnum.data.Resizable;
-import jnum.data.image.Index2D;
 import jnum.data.image.IndexBounds2D;
 import jnum.data.image.Values2D;
+import jnum.data.index.Index2D;
 
 public class Viewport2D extends Overlay2D implements Resizable<Index2D> { 
     private int i0;

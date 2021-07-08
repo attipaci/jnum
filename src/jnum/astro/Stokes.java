@@ -110,7 +110,7 @@ public class Stokes implements LinearAlgebra<Stokes>, Cloneable, Copiable<Stokes
     
     @Override
     public void flip() {
-        V *= -1.0;
+        V = -V;
     }
 
 

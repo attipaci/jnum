@@ -20,16 +20,11 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-package jnum.plot.colorscheme;
+package jnum.colorscheme;
 
 import java.awt.Color;
 
-import jnum.plot.ColorScheme;
-
-
-
-
-public class DayTime extends ColorScheme {
+public class NightTime extends ColorScheme {
 
 	@Override
 	public int getRGB(double scaledI) {
@@ -41,17 +36,17 @@ public class DayTime extends ColorScheme {
 		float r, g, b;
 
 		if(I < third) {
-			r = I / third;
-			g = b = 0.0F;
+			b = I / third;
+			g = r = 0.0F;
 		}
 		else if(I < twothirds) {
-			r = 1.0F;
+			b = 1.0F;
 			g = (I - third) / third;
-			b = 0.0F;			
+			r = 0.0F;			
 		}
 		else {
-			r = g = 1.0F;
-			b = (I - twothirds) / third;
+			b = g = 1.0F;
+			r = (I - twothirds) / third;
 		}
 		
 		return ColorScheme.getRGB(r, g, b);	
@@ -59,11 +54,11 @@ public class DayTime extends ColorScheme {
 
 	@Override
 	public Color getHighlight() {
-		return Color.BLUE; 
+		return Color.ORANGE;
 	}
 	
 	private static float third = 1.0F / 3.0F;
-
+	
 	private static float twothirds = 2.0F / 3.0F;
 	
 }

@@ -42,10 +42,10 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 /**
- * A representation of an equatorial coordinate system. Due to the precession and nutation of Earth's axis, as well as
+ * Equatorial coordinate reference system. Due to the precession and nutation of Earth's axis, as well as
  * the motion of Earth's crust and tidal variations, and our changing (improving) understanding of these with more
  * precise measurements (esp. VLBI), equatorial coordinates may be expressed relative to different orientations of
- * Earth's pole (equator), depending on time or convention. This class is the base class for the various commonly used
+ * Earth's pole (equator), depending on time and/or convention. This class is the base class for the various commonly used
  * equatorial coordinate systems.
  * 
  * 

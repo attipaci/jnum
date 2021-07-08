@@ -38,7 +38,6 @@ import jnum.parallel.Parallelizable;
  * @author Attila Kovacs
  *
  */
-
 public class ComplexFFT extends FFT1D<Complex[]> {
 
     /** The Constant serialVersionUID. */

@@ -24,7 +24,7 @@
 package jnum.math;
 
 /**
- * A class representing a standard Cartesian coordinate system.
+ * A Cartesian coordinate system.
  * 
  * @author Attila Kovacs
  *

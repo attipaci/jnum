@@ -30,6 +30,7 @@ import java.util.Collection;
 import jnum.Util;
 import jnum.Verbosity;
 import jnum.data.PrecisionControl;
+import jnum.math.ConvergenceException;
 
 
 

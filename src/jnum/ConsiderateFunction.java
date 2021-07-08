@@ -35,7 +35,7 @@ package jnum;
  * by the considerate function's design, without the possibility of mis-using the same return value outside of it.
  * 
  * 
- * considerate functions can be easily converted into the safer form of regular function by the 
+ * Considerate functions can be easily converted into the safer form of regular function by the 
  * {@link jnum.math.ConsiderateFunctionAdapter} class, without having to create a separate regular implementation.
  * Therefore, the preferred primary implementation of functions with non-primite return type should be their
  * considerate form.

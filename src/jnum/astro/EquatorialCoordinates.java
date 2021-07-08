@@ -25,6 +25,7 @@ package jnum.astro;
 
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 
 import jnum.Constant;
 import jnum.SafeMath;
@@ -37,9 +38,32 @@ import jnum.text.GreekLetter;
 import jnum.text.HourAngleFormat;
 
 
-// x, y kept in longitude,latitude form
-// use RA(), DEC(), setRA() and setDEC(functions) to for RA, DEC coordinates...
-
+/**
+ * Equatorial coordinates, such as RA/Dec (&alpha;, &delta;) in a specific coordinate system such as ICRS
+ * or FK5(J2000), or J2021.4543. Equatorial coordinates are the most widely used celestial coordinates, 
+ * since the equatorial system align with the the Earth equator (at some specific time/epoch, and within 
+ * some limits of measurement uncertainty). However, a slight nuissance with equatorial coordinates
+ * is that (a) Earth's equator and pole are not static but precess with a ~26,000 year period, 
+ * (b) the true dynamical equator is further knocked around by the Moon and planets, (c) Earth's crust 
+ * moves relative to it's rotation axis, and (d) the limiting precision that determined former reference
+ * systems is inadequate by today's standards.
+ * 
+ * 
+ * Therefore, we have not one, but several different families of equatorial coordinates. To distinguish
+ * between them the equatorial coordinates are tagged with a specific coordinate system they use. See 
+ * {@link EquatorialSystem} for details. Depending on how how your coordinates were defined, or how they
+ * will be used, you may need to traverse between different systems. The {@link EquatorialTransform}
+ * class can help you do exactly that with ease and efficiency.
+ * 
+ * 
+ * You can also convert equatorial coordinates to any other type of {@link CelestialCoordinates}, or vice-versa
+ * using the {@link #convertFrom(CelestialCoordinates)} and {@link #convertTo(CelestialCoordinates)}
+ * methods of this class, or that of the other coordinate class.
+ * 
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class EquatorialCoordinates extends PrecessingCoordinates {
 
     private static final long serialVersionUID = 3445122576647034180L;
@@ -52,7 +76,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     }
 
 
-    public EquatorialCoordinates(String text) { super(text); }
+    public EquatorialCoordinates(String text) throws ParseException { super(text); }
 
 
     public EquatorialCoordinates(double ra, double dec) { 
@@ -90,7 +114,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
 
 
     @Override
-    public String getTwoLetterCode() { return "EQ"; }
+    public String getTwoLetterID() { return "EQ"; }
 
 
 

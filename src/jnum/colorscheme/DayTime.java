@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -20,15 +20,12 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-package jnum.plot.colorscheme;
+package jnum.colorscheme;
 
 import java.awt.Color;
 
-import jnum.plot.ColorScheme;
 
-
-
-public class Temperature extends ColorScheme {
+public class DayTime extends ColorScheme {
 
 	@Override
 	public int getRGB(double scaledI) {
@@ -39,51 +36,30 @@ public class Temperature extends ColorScheme {
 		
 		float r, g, b;
 
-		if(I < section) {
-			// red rise
-			r = I / section;
+		if(I < third) {
+			r = I / third;
 			g = b = 0.0F;
 		}
-		else if(I < 2 * section) {
-			// green rise
+		else if(I < twothirds) {
 			r = 1.0F;
-			g = (I - section) / section;
+			g = (I - third) / third;
 			b = 0.0F;			
 		}
-		else if(I < 3 * section) {
-			// blue rise
-			r = 1.0F;
-			g = 1.0F;
-			b = (I - 2 * section) / section;
-		}
-		else if(I < 4 * section) {
-			// red fall
-			r = 1.0F - (I - 3 * section) / section;
-			g = 1.0F;
-			b = 1.0F;
-		}
-		else if(I < 5 * section) {
-			// green fall
-			r = 0.0F;
-			g = 1.0F - (I - 4 * section) / section;
-			b = 1.0F;
-		}
 		else {
-		 // blue fall
-		 r = 0.0F;
-		 g = 0.0F;
-		 b = 1.0F - (I - 5 * section) / section;
+			r = g = 1.0F;
+			b = (I - twothirds) / third;
 		}
-
+		
 		return ColorScheme.getRGB(r, g, b);	
 	}
-	
+
 	@Override
 	public Color getHighlight() {
-		return Color.GREEN;
+		return Color.BLUE; 
 	}
 	
-	private static float section = 1.0F / 6.0F;
+	private static float third = 1.0F / 3.0F;
 
+	private static float twothirds = 2.0F / 3.0F;
 	
 }

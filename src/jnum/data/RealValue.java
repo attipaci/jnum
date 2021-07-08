@@ -31,6 +31,7 @@ import jnum.math.RealAlgebra;
 import jnum.math.ZeroValue;
 import jnum.util.HashCode;
 
+
 public class RealValue implements Cloneable, Serializable, Copiable<RealValue>, Comparable<RealValue>, 
 ZeroValue, RealAlgebra {
     /**

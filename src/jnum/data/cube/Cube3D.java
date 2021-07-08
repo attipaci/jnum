@@ -30,6 +30,7 @@ import jnum.Unit;
 import jnum.Util;
 import jnum.data.Image;
 import jnum.data.cube.overlay.Transposed3D;
+import jnum.data.index.Index3D;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
 import nom.tam.fits.Fits;
@@ -278,7 +279,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         IntRange z = getZIndexRange();
         if(z == null) return;
 
-        this.crop(new Index3D((int)x.min(), (int)y.min(), (int)z.min()), new Index3D((int)x.max(), (int)y.max(), (int)z.max()));
+        this.crop(new Index3D((int)x.lower(), (int)y.lower(), (int)z.lower()), new Index3D((int)x.upper(), (int)y.upper(), (int)z.upper()));
     }
 
        

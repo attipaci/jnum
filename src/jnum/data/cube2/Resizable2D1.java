@@ -24,9 +24,9 @@
 package jnum.data.cube2;
 
 import jnum.data.Resizable;
-import jnum.data.cube.Index3D;
 import jnum.data.image.Data2D;
-import jnum.data.image.Index2D;
+import jnum.data.index.Index2D;
+import jnum.data.index.Index3D;
 
 public abstract class Resizable2D1<ImageType extends Data2D & Resizable<Index2D>> extends Data2D1<ImageType> {
 

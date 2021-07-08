@@ -20,49 +20,26 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-package jnum.plot.colorscheme;
+
+package jnum.colorscheme;
 
 import java.awt.Color;
 
-import jnum.plot.ColorScheme;
-
-
-public class Rainbow extends ColorScheme {
+public class Orangy extends ColorScheme {
 
 	@Override
-	public int getRGB(double scaledI) {
-		if(Double.isNaN(scaledI)) return Color.DARK_GRAY.getRGB();
-		float I = (float) scaledI;
-		if(I > 1.0F) I = 1.0F;
-		if(I < 0.0F) I = 0.0F;
-		
-		float r, g, b;
+	public int getRGB(double scaled) {
+		if(Double.isNaN(scaled)) return noData;
+	
+		if(scaled < 0.0) scaled = 0.0;
+		if(scaled > 1.0) scaled = 1.0;
 
-		if(I < 0.25) {
-			b = I / 0.25F;
-			g = r = 0.0F;
-		}
-		else if(I < 0.5) {
-			b = 1.0F;
-			g = (I - 0.25F) / 0.25F;
-			r = 0.0F;			
-		}
-		else if(I < 0.75) {
-			b = 1.0F - (I - 0.5F) / 0.25F;
-			g = 1.0F;
-			r = (I - 0.5F) / 0.25F;
-		}
-		else {
-			b = 0.0F;
-			g = 1.0F - (I - 0.75F) / 0.25F;
-			r = 1.0F;
-		}
-		
-		return ColorScheme.getRGB(r, g, b);	
+		if(scaled < 0.5) return Color.HSBtoRGB(1.0F/15.0F, 1.0F, 2.0F * (float) scaled);
+		return Color.HSBtoRGB(1.0F/15.0F, 2.0F - 2.0F * (float) scaled, 1.0F);
 	}
 
 	@Override
 	public Color getHighlight() {
-		return Color.WHITE;
+		return Color.CYAN;
 	}
 }

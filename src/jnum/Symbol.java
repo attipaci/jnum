@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -41,59 +41,58 @@ package jnum;
 public final class Symbol {
 
 	// Numbers
-	/** Part per thousand */
+	/** &permil; (per-mil) part per thousand */
 	public static final char permil = '\u0089';
 	
-	/** 1/4. */
+	/** &frac14; (1/4). */
 	public static final char quarter = '\u00bc';
     
-    /** 1/2. */
+    /** &frac12; (1/2). */
     public static final char half = '\u00bd';
-    
-    /** 1/3. */
-    public static final char third  ='\u00be';
 	
+    /** &frac34; (3/4). */
+    public static final char twoThirds  ='\u00be';
     
 	// Business
-	/** trademark. */
+	/** &trade; (trademark). */
 	public static final char trademark = '\u0099';
 	
-	/** copyright. */
+	/** &copy; (copyright). */
 	public static final char copyright = '\u00a9';
     
-    /** circled R. */
+    /** &reg; (registered). */
     public static final char circleR = '\u00ae'; 
 	
 	// Currencies
-    /** currency: euro. */
+    /** &euro; (currency: euro). */
 	public static final char euro = '\u0080';
     
-    /** currency: cent. */
+    /** &cent; (currency: cent). */
     public static final char cent = '\u00a2';
     
-    /** currency: pound. */
+    /** &pound; (currency: pound). */
     public static final char pound = '\u00a3';
     
-    /** currency: yen. */
+    /** &yen; (currency: yen). */
     public static final char yen = '\u00a5';
     
     
     // typographical
-    /** paragraph marker. */
+    /** &para; (paragraph marker). */
     public static final char paragraph = '\u00a7';
     
  
     
-    /** ellipses (...). */
-    public static final char ellipses = '\u0085';
+    /** ellipsis (...). */
+    public static final char ellipsis = '\u0085';
      
-    /** script 'f'. */
+    /** &fnof; (script 'f'). */
     public static final char scriptf = '\u0083';    
     
-    /** dagger. */
+    /** &dagger; (dagger). */
     public static final char dagger = '\u0086';
     
-    /** double dagger. */
+    /** &Dagger; (double dagger). */
     public static final char doubleDagger = '\u0087';
     
     /** The combined upper-case letter 'CE'. */
@@ -102,10 +101,10 @@ public final class Symbol {
     /** The combined lower-case letter 'ce'. */
     public static final char ce = '\u009c';
     
-    /** The combined upper-case letter 'AE'. */
+    /** &AElig; (combined upper-case letter 'AE'). */
     public static final char AE = '\u00c6';
     
-    /** The combined lower-case letter 'ae'. */
+    /** &aelig; (combined lower-case letter 'ae'). */
     public static final char ae = '\u00e6';
     
     /** inverted exclamation mark. */
@@ -119,7 +118,7 @@ public final class Symbol {
     
     // Math
     
-    /** square root. */
+    /** &radic; (square root). */
     public static final char squareRoot = '\u221a';
     
     /** cubic root. */
@@ -129,46 +128,46 @@ public final class Symbol {
     public static final char fourthRoot = '\u221c';
   
     
-    /** plus or minus (+/-) */
+    /** &plusmn; (plus or minus, +/-) */
     public static final char plusminus = '\u00b1';
     
-    /** minus or plus (-/+) */
+    /** mnplus; (minus or plus, -/+) */
     public static final char minusplus = '\u2213';
     
     /** Upper minus */
     public static final char upperminus = '\u00af';
     
-    /** Square, i.e. superscript 2 */
+    /** &sup2; (square or superscript 2) */
     public static final char square = '\u00b2';
     
-    /** Cube, i.e. superscript 3. */
+    /** &sup3; (cube or superscript 3). */
     public static final char cube = '\u00b3';
     
-    /** dot product. */
+    /** &middot; (dot product). */
     public static final char dot = '\u00b7';
     
     /** big dot. */
     public static final char bigdot = '\u0095';
     
-    /** double dot. */
+    /** &uml; (double dot). */
     public static final char doubledot = '\u00a8';
     
-    /** cross product. */
+    /** &times; (cross product). */
     public static final char cross = '\u00d7';
     
-    /** times. Same as cross. */
+    /** &times; (times, or cross product). */
     public static final char times = '\u00d7';
     
-    /** infinity. */
+    /** &infin; (infinity). */
     public static final char infinity = '\u221e';
     
-    /** circled plus. */
+    /** &oplus; (circled plus). */
     public static final char circlePlus = '\u2295';
     
     /** circled minus. */
     public static final char circleMinus = '\u2296';
     
-    /** circled cross product (e.g. external direct product). */
+    /** &otimes; (circled cross product, or external direct product). */
     public static final char circleTimes = '\u2297';
     
     /** circled division. */
@@ -180,13 +179,13 @@ public final class Symbol {
     /** star operator */
     public static final char starOperator = '\u22c6';
  
-    /** partial derivative. */
+    /** &part; (partial derivative). */
     public static final char partial = '\u2202';
     
-    /** Nabla. */
+    /** &nabla; (nabla). */
     public static final char nabla = '\u2207';
     
-    /** integral sign. */
+    /** &int; (integral sign). */
     public static final char integral = '\u222b';
     
     /** double integral signs. */
@@ -198,33 +197,33 @@ public final class Symbol {
     /** cross product. */
     public static final char crossProduct = '\u2a2f';
     
-    /** prime. */
+    /** &prime; (prime). */
     public static final char prime = '\u2032';
     
-    /** double prime. */
+    /** &Prime; (double prime). */
     public static final char doublePrime = '\u2033';
     
     /** triple prime. */
     public static final char triplePrime = '\u2034';
     
-    /** summation. */
+    /** &sum; (summation). */
     public static final char summation = '\u2211';
     
-    /** product. */
+    /** &prod; (product). */
     public static final char product = '\u220f';
     
-    /** not equal. */
+    /** &ne; (not equal). */
     public static final char notEqual = '\u2260';
     
-    /** proportional to. */
+    /** &prop; (proportional to). */
     public static final char proportionalTo = '\u221d';
     
-    /** approximately. */
+    /** &asymp; (approximately). */
     public static final char approximately = '\u2248';
     
     
     // Physics
-    /** degree. */
+    /** &deg; (degree). */
     public static final char degree = '\u00b0';
     
     /** degree celsius. */
@@ -236,10 +235,10 @@ public final class Symbol {
     /** hbar (Dirac's constant). */
     public static final char hbar = '\u0127';
     
-    /** greek letter: mu. */
+    /** &mu; (greek letter: mu). */
     public static final char mu = '\u00b5';
     
-    /** Circled A, as in Angstrom. */
+    /** &Aring; (circled A, as in Angstrom). */
     public static final char Acircle = '\u00c5';
     
    
@@ -252,7 +251,7 @@ public final class Symbol {
     /** planet Mercury. */
     public static final char Mercury = '\u263f';
     
-    /** planer Venus. */
+    /** planet Venus. */
     public static final char Venus = '\u2640';
     
     /** planet Earth. */
@@ -273,7 +272,7 @@ public final class Symbol {
     /** planet Neptune. */
     public static final char Neptune = '\u2646';
     
-    /** planet Pluto. */
+    /** ex-planet Pluto. */
     public static final char Pluto = '\u2647';
     
     

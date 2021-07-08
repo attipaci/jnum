@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Random;
 
 import jnum.Util;
+import jnum.math.ConvergenceException;
 import jnum.math.Scalable;
 
 

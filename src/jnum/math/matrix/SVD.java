@@ -23,7 +23,7 @@
 package jnum.math.matrix;
 
 import jnum.ExtraMath;
-import jnum.data.fitting.ConvergenceException;
+import jnum.math.ConvergenceException;
 import jnum.math.MathVector;
 
 

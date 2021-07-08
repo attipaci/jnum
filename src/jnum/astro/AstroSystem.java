@@ -26,8 +26,14 @@ package jnum.astro;
 import java.io.Serializable;
 
 import jnum.math.SphericalCoordinates;
+import nom.tam.fits.Header;
 
-
+/**
+ * Astronomical coordinate system type
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class AstroSystem implements Serializable {
 	
 
@@ -36,7 +42,7 @@ public class AstroSystem implements Serializable {
 	private Class<? extends SphericalCoordinates> system;
 	
 
-	public AstroSystem(Class<? extends SphericalCoordinates> coordType) {
+	protected AstroSystem(Class<? extends SphericalCoordinates> coordType) {
 		this.system = coordType;
 	}
 	
@@ -58,7 +64,22 @@ public class AstroSystem implements Serializable {
 		return hash;
 	}
 	
+	
+	Class<? extends SphericalCoordinates> getType() {
+	    return system;
+	}
+	
+	public boolean isType(Class<? extends SphericalCoordinates> type) {
+	    return system.isAssignableFrom(type);
+	}
+	
 
+	public boolean isCompatibleWith(SphericalCoordinates coords) {
+	    return isType(coords.getClass());
+	}
+	
+	public String getName() { return system.getSimpleName(); }
+	
 	public boolean isHorizontal() { return HorizontalCoordinates.class.isAssignableFrom(system); }
 
 	
@@ -80,21 +101,16 @@ public class AstroSystem implements Serializable {
 	public boolean isSuperGalactic()  { return SuperGalacticCoordinates.class.isAssignableFrom(system); }
 
 
-	
-
-	public String getID() { return getID(system); }
+	public String getID() {
+	    String id = SphericalCoordinates.getTwoLetterIDFor(system);
+        return id == null ? "--" : id;    
+	}
 	
 
 	public SphericalCoordinates getCoordinateInstance() {
 		if(system == null) return null;
 		try { return system.getConstructor().newInstance(); } 
 		catch(Exception e) { return null; }
-	}
-	
-
-	public static String getID(Class<? extends SphericalCoordinates> coordType) {
-		String id = SphericalCoordinates.getTwoLetterCodeFor(coordType);
-		return id == null ? "--" : id;
 	}
 	
 
@@ -109,6 +125,86 @@ public class AstroSystem implements Serializable {
 		try { return coordType.getConstructor().newInstance(); } 
 		catch(Exception e) { return null; }
 	}
+
+	public static AstroSystem fromFitsHeader(Header header) {
+	    return fromFitsHeader(header, "");
+	}
 	
+	public static AstroSystem fromFitsHeader(Header header, String alt) {
+	    Class<? extends SphericalCoordinates> cl = SphericalCoordinates.getFITSClass("CTYPE1" + alt);     
+	    if(EquatorialCoordinates.class.isAssignableFrom(cl)) return new Equatorial(EquatorialSystem.fromHeader(header, alt));
+	    if(EclipticCoordinates.class.isAssignableFrom(cl)) return new Equatorial(EquatorialSystem.fromHeader(header, alt));
+	    return new AstroSystem(cl);
+	}
+	
+	public static class Equatorial extends AstroSystem {
+	    /**
+         * 
+         */
+        private static final long serialVersionUID = 1566612346429869282L;
+        private EquatorialSystem system;
+	    
+	    
+	    public Equatorial(EquatorialSystem s) {
+	        super(EquatorialCoordinates.class);
+	        this.system = s;
+	    }
+	    
+	    public EquatorialSystem getEquatorialSystem() {
+	         return system;
+	    }
+	    
+	    public void setEquatorialSystem(EquatorialSystem system) {
+	        this.system = system;
+	    }
+	    
+	    @Override
+        public EquatorialCoordinates getCoordinateInstance() {
+	        return new EquatorialCoordinates(system);
+	    }
+	}
+	
+	public static class Ecliptic extends AstroSystem {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1566612346429869282L;
+        private EquatorialSystem system;
+        
+        
+        public Ecliptic(EquatorialSystem s) {
+            super(EclipticCoordinates.class);
+            this.system = s;
+        }
+        
+        public EquatorialSystem getEquatorialSystem() {
+             return system;
+        }
+        
+        public void setEquatorialSystem(EquatorialSystem system) {
+            this.system = system;
+        }
+        
+        @Override
+        public EclipticCoordinates getCoordinateInstance() {
+            return new EclipticCoordinates(system);
+        }
+    }
+	
+	
+	public static final AstroSystem horizontal = new AstroSystem(HorizontalCoordinates.class);
+	
+	public static final AstroSystem.Equatorial equatorialICRS = new AstroSystem.Equatorial(EquatorialSystem.ICRS);
+	public static final AstroSystem.Equatorial equatorialFK5J2000 = new AstroSystem.Equatorial(EquatorialSystem.FK5.J2000);
+	public static final AstroSystem.Equatorial equatorialFK4B1950 = new AstroSystem.Equatorial(EquatorialSystem.FK4.B1950);
+	
+	public static final AstroSystem.Ecliptic eclipticICRS = new AstroSystem.Ecliptic(EquatorialSystem.ICRS);
+    public static final AstroSystem.Ecliptic eclipticFK5J2000 = new AstroSystem.Ecliptic(EquatorialSystem.FK5.J2000);
+    public static final AstroSystem.Ecliptic eclipticFK4B1950 = new AstroSystem.Ecliptic(EquatorialSystem.FK4.B1950);
+	
+	public static final AstroSystem galactic = new AstroSystem(GalacticCoordinates.class);
+	public static final AstroSystem superHalactic = new AstroSystem(SuperGalacticCoordinates.class);
+	public static final AstroSystem telescope = new AstroSystem(TelescopeCoordinates.class);
+	public static final AstroSystem focalPlane = new AstroSystem(FocalPlaneCoordinates.class);
 	
 }

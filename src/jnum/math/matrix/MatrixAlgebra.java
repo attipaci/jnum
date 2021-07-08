@@ -23,7 +23,7 @@
 
 package jnum.math.matrix;
 
-import jnum.data.image.Index2D;
+import jnum.data.index.Index2D;
 import jnum.data.index.IndexedEntries;
 import jnum.math.DotProduct;
 import jnum.math.IdentityValue;

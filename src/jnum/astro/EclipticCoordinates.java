@@ -27,6 +27,7 @@ package jnum.astro;
 
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 
 import jnum.Constant;
 import jnum.Unit;
@@ -66,7 +67,7 @@ public class EclipticCoordinates extends PrecessingCoordinates {
         super(lon, lat);
     }
 
-    public EclipticCoordinates(String text) {
+    public EclipticCoordinates(String text) throws ParseException {
         super(text);
     }
     
@@ -85,7 +86,7 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     public String getFITSLatitudeStem() { return "ELAT"; }
 
     @Override
-    public String getTwoLetterCode() { return "EC"; }
+    public String getTwoLetterID() { return "EC"; }
     
 
     @Override

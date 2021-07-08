@@ -25,7 +25,7 @@ package jnum.data.fitting;
 
 
 /**
- * A generic interface for providing a penalty function. The penalty should be 0.0 (no penalty) or a positive value
+ * An interface for providing a penalty function. The penalty should be 0.0 (no penalty) or a positive value
  * when a penalty is warranted.
  */
 public interface Penalty {

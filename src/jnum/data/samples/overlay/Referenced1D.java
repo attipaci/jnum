@@ -25,7 +25,7 @@ package jnum.data.samples.overlay;
 
 import jnum.data.Referenced;
 import jnum.data.RegularData;
-import jnum.data.samples.Index1D;
+import jnum.data.index.Index1D;
 import jnum.data.samples.Offset1D;
 import jnum.data.samples.Values1D;
 import jnum.fits.FitsToolkit;

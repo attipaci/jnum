@@ -22,40 +22,153 @@
  ******************************************************************************/
 package jnum.math.specialfunctions;
 
+import jnum.Function;
+import jnum.ConsiderateFunction;
 import jnum.math.Complex;
 
-
+/**
+ * Hankel functions, H<sub>&nu;</sub><sup>(1)</sup> and H<sub>&nu;</sub><sup>(2)</sup>. Hankel Functions are related 
+ * to the {@link Bessel} functions.
+ * 
+ * @author Attila Kovacs
+ *
+ * @see Bessel
+ */
 public final class Hankel {
 
-
-	public static final class H1 {
+    /** private constructor, because we do not want to instantiate this class. */
+    private Hankel() {}
+    
+    /**
+     * Evaluates a Hankel function of the first kind at the specified argument.
+     * 
+     * @param n     the index &nu; for the function H<sub>&nu;</sub><sup>(1)</sup>.
+     * @param x     the argument
+     * @return      H<sub>&nu;</sub><sup>(1)</sup>(<i>x</i>).
+     */
+    public static Complex H1(int n, double x) {
+        final Complex result = new Complex();
+        H1(n, x, result);
+        return result;
+    }
+    
+    /**
+     * Evaluates a Hankel function of the second kind at the specified argument.
+     * 
+     * @param n     the index &nu; for the function H<sub>&nu;</sub><sup>(2)</sup>.
+     * @param x     the argument
+     * @return      H<sub>&nu;</sub><sup>(2)</sup>(<i>x</i>).
+     */
+    public static Complex H2(int n, double x) {
+        final Complex result = new Complex();
+        H2(n, x, result);
+        return result;
+    }
+    
+    /**
+     * Evaluates a Hankel function of the first kind at the specified argument.
+     * 
+     * @param n         the index &nu; for the function H<sub>&nu;</sub><sup>(1)</sup>.
+     * @param x         the argument
+     * @param result    the complex value in which to return H<sub>&nu;</sub><sup>(1)</sup>(<i>x</i>).
+     */
+    public static void H1(int n, double x, Complex result) {
+        result.set(Bessel.J(n, x), Bessel.Y(n,  x));
+    }
+    
+    /**
+     * Evaluates a Hankel function of the first kind at the specified argument.
+     * 
+     * @param n         the index &nu; for the function H<sub>&nu;</sub><sup>(1)</sup>.
+     * @param x         the argument
+     * @param result    the complex value in which to return H<sub>&nu;</sub><sup>(1)</sup>(<i>x</i>).
+     */
+    public static void H2(int n, double x, Complex result) {
+        result.set(Bessel.J(n, x), -Bessel.Y(n,  x));
+    }
+    
+    /**
+     * A Hankel function of the first kind, H<sub>&nu;</sub><sup>(1)</sup>.
+     * 
+     * @author Attila Kovacs
+     *
+     */
+	public static final class H1 implements Function<Double, Complex>, ConsiderateFunction<Double, Complex> {
+	    /** the index of this Hankel function instance */
+	    private int n;
+	    
+	    /**
+	     * Instantiates a Hankel function of the first kind: H<sub>&nu;</sub><sup>(1)</sup>, forn integer
+	     * index &nu;
+	     * 
+	     * @param n    The integer index &nu; for this H<sub>&nu;</sub><sup>(1)</sup> instance.
+	     */
+	    public H1(int n) {
+	        this.n = n;
+	    }
+	    
+	    /**
+	     * Gets the index of this Hankel function instance.
+	     * 
+	     * @return     &nu; for this H<sub>&nu;</sub><sup>(1)</sup> instance.
+	     */
+	    public int getIndex() {
+	        return n;
+	    }
 		
 
-		public static final Complex at(final int n, final double x) {
-			final Complex result = new Complex();
-			evaluateAt(n, x, result);
-			return result;
+		@Override
+        public final Complex valueAt(final Double x) {
+			return H1(n, x);
 		}
 
-
-		public static final void evaluateAt(final int n, final double x, final Complex result) {
-			result.set(Bessel.J(n, x), Bessel.Y(n,  x));
+		@Override
+        public final void evaluate(final Double x, final Complex result) {
+			H1(n, x, result);
 		}
+
+     
 	}
 		
 
-	public static final class H2 {
-	
+	/**
+     * A Hankel functions of the second kind, H<sub>&nu;</sub><sup>(2)</sup>.
+     * 
+     * @author Attila Kovacs
+     *
+     */
+	public static final class H2 implements Function<Double, Complex>, ConsiderateFunction<Double, Complex> {
+	    /** the index of this Hankel function instance */
+        private int n;
 
-		public static final Complex at(final int n, final double x) {
-			final Complex result = new Complex();
-			evaluateAt(n, x, result);
-			return result;
+	    /**
+         * Instantiates a Hankel function of the second kind: H<sub>&nu;</sub><sup>21)</sup>, forn integer
+         * index &nu;
+         * 
+         * @param n    The integer index &nu; for this H<sub>&nu;</sub><sup>(2)</sup> instance.
+         */
+        public H2(int n) {
+            this.n = n;
+        }
+
+        /**
+         * Gets the index of this Hankel function instance.
+         * 
+         * @return     &nu; for this H<sub>&nu;</sub><sup>(1)</sup> instance.
+         */
+        public int getIndex() {
+            return n;
+        }
+        
+		@Override
+        public final Complex valueAt(final Double x) {
+		    return H2(n, x);
 		}
 
 		
-		public static final void evaluateAt(final int n, final double x, final Complex result) {
-			result.set(Bessel.J(n, x), -Bessel.Y(n,  x));
+		@Override
+        public final void evaluate(final Double x, final Complex result) {
+			H2(n, x, result);
 		}
 	}
 		

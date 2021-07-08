@@ -51,9 +51,16 @@ public interface IndexedEntries<IndexType, DataType> {
     
     /**
      * Gets the size of this data, returning the number of elements contained
-     * along each dimension. 
+     * along each dimension. The retuned value should be treated as read-only, such that
+     * implementation may return a static object. If you do need to operate on the
+     * returned index, you should make a copy using either {@link #copyOfIndex(Object)},
+     * or the {@link jnum.Copiable#copy()} implementation of the index itself provided
+     * it has support for it.
      * 
      * @return  the number of data elements along each dimension.
+     * 
+     * @see #copyOfIndex(Object)
+     * @see jnum.Copiable#copy()
      */
     public IndexType getSize();
     

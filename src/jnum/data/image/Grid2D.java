@@ -36,11 +36,13 @@ import jnum.astro.HorizontalCoordinates;
 import jnum.astro.SuperGalacticCoordinates;
 import jnum.data.FastGridAccess;
 import jnum.data.Grid;
+import jnum.data.index.Index2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.CoordinateAxis;
 import jnum.math.Vector2D;
 import jnum.projection.Projection2D;
+import jnum.text.NumberFormating;
 import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
@@ -49,7 +51,7 @@ import nom.tam.util.Cursor;
 
 
 public abstract class Grid2D<CoordinateType extends Coordinate2D> extends Grid<CoordinateType, Vector2D> 
-implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>> {
+implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateType>>, NumberFormating {
 
     private static final long serialVersionUID = 8109608722575396734L;
 
@@ -288,8 +290,8 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 
         // Change from native to apparent for reverted axes.
         double a11 = m11, a12 = m12, a21 = m21, a22 = m22;
-        if(isReverseX()) { a11 *= -1.0; a21 *= -1.0; }
-        if(isReverseY()) { a22 *= -1.0; a12 *= -1.0; }
+        if(isReverseX()) { a11 = -a11; a21 = -a21; }
+        if(isReverseY()) { a22 = -a22; a12 = -a12; }
 
         if(m12 == 0.0 && m21 == 0.0) {	
             c.add(new HeaderCard("CDELT1" + alt, a11 / fitsXUnit().value(), "Grid spacing (" + fitsXUnit().name() + ")"));	
@@ -385,6 +387,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
     }
 
 
+    @Override
     public String toString(NumberFormat nf) {
         return toString(nf, xAxis().getUnit(), yAxis().getUnit());
     }

@@ -32,21 +32,56 @@ import jnum.Constant;
 //  erf(inf) = 1
 //  erf(-inf) = -1;
 
+/**
+ * The Gaussian error function, commonly denoted as erf(). The error function is the integral of the special sigmoid
+ * function, that is erf(x) = 2/&radic;&pi; &int; exp(-t<sup>2</sup>) dt. It is commonly used in statistics for
+ * obtaining probabilities of events. You may find the related {@link CumulativeNormalDistribution} even 
+ * simpler to use in some cases.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public final class ErrorFunction  {
 	
-
+    /**
+     * Private constructor because we do not want to instantiate this class.
+     * 
+     */
+    private ErrorFunction() {}
+    
+    /**
+     * Evaluates the error function and the argument x.
+     * 
+     * @param x     the argument.
+     * @return      erf(<i>x</i>).
+     */
 	public static double at(double x) {
 		if(Double.isInfinite(x)) return x > 0 ? 1.0 : -1.0;
 		return (x < 0.0 ? -1.0 : 1.0) * GammaFunction.P(0.5, x*x);
 	}
 	
-
+	/**
+	 * Gets the complement value to the error function, that is 1 - erf(<i>x</i>).
+	 * 
+	 * @param x    the argument.
+	 * @return     1 - erf(<i>x</i>).
+	 * 
+	 * @see #fastComplementAt(double)
+	 */
 	public static double complementAt(double x) {
 		if(Double.isInfinite(x)) return x > 0 ? -1.0 : 1.0;
 		return x < 0.0 ? 1.0 + GammaFunction.P(0.5,x*x) : GammaFunction.Q(0.5,x*x);
 	}
 
-	// Accuracy of at least 1.2E-7 everywhere....
+	/**
+	 * Gets the complement value using a much faster calculation than {@link #complementAt(double)}.
+	 * The returned value is guaranteed to be accurate to at least 1.2e-7 for any input argument.
+	 * 
+	 * @param x    the argument.
+	 * @return     1 - erf(<i>x</i>), with a precision no less than 1.2e-7.
+	 * 
+	 * @see #complementAt(double)
+	 */
 	public static double fastComplementAt(double x) {
 		if(Double.isInfinite(x)) return x > 0 ? -1.0 : 1.0;
 		
@@ -56,9 +91,14 @@ public final class ErrorFunction  {
 		return x >= 0.0 ? value : 2.0-value;		
 	}
 	
-
-	public static double inverseAt(double x) {
-		return CumulativeNormalDistribution.inverseAt(0.5 * (1.0 + x)) * Constant.isqrt2;
+	/**
+	 * Gets the inverse of the error function.
+	 * 
+	 * @param y    the error function's value
+	 * @return     <i>x</i> for which the error function evaluates to <i>y</i>. I.e. <i>x</i> for which <i>y</i> = erf(<i>x</i>).
+	 */
+	public static double inverseAt(double y) {
+		return CumulativeNormalDistribution.inverseAt(0.5 * (1.0 + y)) * Constant.isqrt2;
 	}
 	
 }

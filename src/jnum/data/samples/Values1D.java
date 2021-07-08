@@ -23,6 +23,7 @@
 
 package jnum.data.samples;
 
+import jnum.data.index.Index1D;
 import jnum.data.index.IndexedValues;
 
 

@@ -28,19 +28,19 @@ import java.util.*;
 
 import jnum.Copiable;
 import jnum.ViewableAsDoubles;
-import jnum.data.ArrayUtil;
-import jnum.data.fitting.ConvergenceException;
-import jnum.data.image.Index2D;
+import jnum.data.index.Index2D;
 import jnum.data.index.IndexedValues;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.Complex;
+import jnum.math.ConvergenceException;
 import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;
 import jnum.math.Metric;
 import jnum.math.SymmetryException;
 import jnum.math.Vector2D;
 import jnum.math.Vector3D;
+import jnum.util.ArrayUtil;
 import jnum.util.HashCode;
 
 import java.text.*;

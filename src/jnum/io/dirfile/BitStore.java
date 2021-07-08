@@ -20,7 +20,7 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2010 Attila Kovacs 
+
 
 package jnum.io.dirfile;
 

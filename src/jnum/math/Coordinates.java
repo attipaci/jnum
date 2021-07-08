@@ -24,8 +24,8 @@
 package jnum.math;
 
 import jnum.CopyCat;
+import jnum.data.index.Index1D;
 import jnum.data.index.IndexedEntries;
-import jnum.data.samples.Index1D;
 
 /**
  * An interface representing coordinates of generic type.

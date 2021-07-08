@@ -28,16 +28,16 @@ import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
 import jnum.Copiable;
+import jnum.text.NumberFormating;
 import jnum.util.HashCode;
 
 /**
- * A class representing a range of real values, with an inclusive minimum and
- * and exclusive maximum value.
+ * A range of real values, with an inclusive minimum and and exclusive maximum value.
  * 
  * @author Attila Kovacs
  *
  */
-public class Range implements Serializable, Scalable, Cloneable, Copiable<Range> {
+public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>, NumberFormating {
 
 	private static final long serialVersionUID = 7215369530550677188L;
 
@@ -322,7 +322,8 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param nf the number format
 	 * @return the string representation of this range, formatted to specification.
 	 */
-	public String toString(NumberFormat nf) {
+	@Override
+    public String toString(NumberFormat nf) {
 		return nf.format(min) + ":" + nf.format(max);
 	}
 	

@@ -21,11 +21,10 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.samples;
+package jnum.data.index;
 
 import jnum.ExtraMath;
 import jnum.NonConformingException;
-import jnum.data.index.AbstractIndex;
 import jnum.math.MathVector;
 
 public class Index1D extends AbstractIndex<Index1D> {

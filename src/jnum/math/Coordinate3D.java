@@ -31,8 +31,8 @@ import java.util.stream.IntStream;
 import jnum.Copiable;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
+import jnum.data.index.Index1D;
 import jnum.data.index.IndexedValues;
-import jnum.data.samples.Index1D;
 import jnum.fits.FitsToolkit;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
@@ -49,11 +49,13 @@ import nom.tam.util.Cursor;
  *
  */
 public class Coordinate3D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate3D>, 
-ViewableAsDoubles, Parser, NumberFormating {
+ViewableAsDoubles, Parser, NumberFormating, Inversion {
 
 	private static final long serialVersionUID = 4670218761839380720L;
 
-	private double x, y, z;
+	private double x;
+	private double y;
+	private double z;
 
 	public Coordinate3D() {}
 	
@@ -88,8 +90,35 @@ ViewableAsDoubles, Parser, NumberFormating {
 	    set(other.x(), other.y(), other.z());
 	}
 	
+	/**
+     * Flips the sign of the <i>x</i>-type coordinate.
+     * 
+     */
+    public void flipX() { x = -x; }
+    
+    /**
+     * Flips the sign of the <i>y</i>-type coordinate.
+     * 
+     */
+    public void flipY() { y = -y; }
+    
+    /**
+     * Flips the sign of the <i>z</i>-type coordinate.
+     * 
+     */
+    public void flipZ() { z = -z; }
+    
+
+    @Override
+    public void flip() {
+        x = -x;
+        y = -y;
+        z = -z;
+    }
+    
+	
 	public void zero() {
-	    set(0.0, 0.0, 0.0);
+	    x = y = z = 0.0;
 	}
 	
 	public boolean isNull() {
@@ -114,31 +143,88 @@ ViewableAsDoubles, Parser, NumberFormating {
 	    this.z = z;
 	}
 
+	/**
+     * Sets the <i>x</i>-type coordinate to the specified value.
+     * 
+     * @param value    the new <i>x</i>-type coordinate value.
+     */
 	public final void setX(final double value) { this.x = value; }
 
+	/**
+     * Sets the <i>y</i>-type coordinate to the specified value.
+     * 
+     * @param value    the new <i>y</i>-type coordinate value.
+     */
 	public final void setY(final double value) { this.y = value; }
 
+	/**
+     * Sets the <i>z</i>-type coordinate to the specified value.
+     * 
+     * @param value    the new <i>z</i>-type coordinate value.
+     */
 	public final void setZ(final double value) { this.z = value; }
 	
-	
+	/**
+     * Increments the <i>x</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>x</i>-type coordinate increment.
+     */
 	public final void addX(final double value) { this.x += value; }
 
+	/**
+     * Increments the <i>y</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>y</i>-type coordinate increment.
+     */
     public final void addY(final double value) { this.y += value; }
 
+    /**
+     * Increments the <i>z</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>z</i>-type coordinate increment.
+     */
     public final void addZ(final double value) { this.z += value; }
     
-	  
+    /**
+     * Decrements the <i>x</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>x</i>-type coordinate decrement.
+     */
     public final void subtractX(final double value) { this.x -= value; }
 
+    /**
+     * Decrements the <i>y</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>y</i>-type coordinate decrement.
+     */
     public final void subtractY(final double value) { this.y -= value; }
 
+    /**
+     * Decrements the <i>z</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>z</i>-type coordinate decrement.
+     */
     public final void subtractZ(final double value) { this.z -= value; }
     
-    
+    /**
+     * Scales the <i>x</i>-type coordinate by the specified value.
+     * 
+     * @param factor    the scalar factor to apply to the <i>x</i>-type coordinate.
+     */
     public final void scaleX(double factor) { x *= factor; }
     
+    /**
+     * Scales the <i>y</i>-type coordinate by the specified value.
+     * 
+     * @param factor    the scalar factor to apply to the <i>y</i>-type coordinate.
+     */
     public final void scaleY(double factor) { y *= factor; }
     
+    /**
+     * Scales the <i>z</i>-type coordinate by the specified value.
+     * 
+     * @param factor    the scalar factor to apply to the <i>z</i>-type coordinate.
+     */
     public final void scaleZ(double factor) { z *= factor; }
 	
     @Override
@@ -166,17 +252,13 @@ ViewableAsDoubles, Parser, NumberFormating {
      * Parses text x,y,z 3D coordinate representations that are in the format(s) of:
      * 
      * <pre>
-     * {@code
      *     x,y,z / x y z
-     * }
      * </pre>
      * 
      * or
      * 
      * <pre>
-     * {@code
      *     (x,y,z) / (x y z)
-     * }
      * </pre>
      * 
      * More specifically, the x, y, and z values may be separated either by comma(s) or white space(s) (including 
@@ -185,9 +267,7 @@ ViewableAsDoubles, Parser, NumberFormating {
      * precede the text element. Thus, the following will parse as a proper x,y,z (1.0,-2.0,3.0) pair:
      * 
      * <pre>
-     * {@code
-     *     (  \t\n 1.0 ,,, \r , \t -2.0 \t 3.0   \n  )
-     * }
+     *     (  \t\n 1.0 ,,, \r , \t -2.0 3.0   \n  )
      * </pre>
      * 
      * @param parser  The string parsing helper object.
@@ -302,6 +382,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 
     @Override
     public final Index1D getSize() {
+        size.set(3);
         return size;
     }
 
@@ -386,8 +467,13 @@ ViewableAsDoubles, Parser, NumberFormating {
     
     private static final Index1D size = new Index1D(2);
     
+    /** the index of the <i>x</i>-type (first) coordinate */
     public static final int X = 0;    
+    
+    /** the index of the <i>y</i>-type (second) coordinate */
     public static final int Y = 1;
+    
+    /** the index of the <i>z</i>-type (third) coordinate */
     public static final int Z = 2;    
 
 }

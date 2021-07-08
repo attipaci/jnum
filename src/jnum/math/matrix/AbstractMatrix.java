@@ -27,17 +27,16 @@ package jnum.math.matrix;
 
 import java.text.*;
 import java.util.Arrays;
-
 import java.io.Serializable;
 
 import jnum.CopiableContent;
 import jnum.CopyCat;
-import jnum.data.ArrayUtil;
-import jnum.data.image.Index2D;
+import jnum.data.index.Index2D;
 import jnum.data.index.IndexedValues;
 import jnum.math.MathVector;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
+import jnum.util.ArrayUtil;
 
 
 /**

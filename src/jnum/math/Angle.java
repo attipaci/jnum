@@ -33,7 +33,7 @@ import jnum.util.HashCode;
 
 
 /**
- * A class representing an angle, with its sine and cosine readily calculate for frequent use.
+ * An angle, with its sine and cosine readily calculate for frequent use.
  * 
  * @author Attila Kovacs
  *
@@ -208,8 +208,8 @@ Comparable<Angle> {
 
     @Override
     public void flip() { 
-        value *= -1.0;
-        s *= -1.0;
+        value = -value;
+        s = -s;
     }
 
 

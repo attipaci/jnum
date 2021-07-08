@@ -30,13 +30,13 @@ import java.util.Arrays;
 
 import jnum.Copiable;
 import jnum.Util;
-import jnum.data.ArrayUtil;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.Coordinates;
 import jnum.math.LinearAlgebra;
 import jnum.math.Metric;
 import jnum.text.DecimalFormating;
+import jnum.util.ArrayUtil;
 import jnum.math.MathVector;
 
 

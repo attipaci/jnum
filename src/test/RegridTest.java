@@ -25,6 +25,7 @@ package test;
 import jnum.Unit;
 import jnum.data.image.Data2D;
 import jnum.data.image.GridMap2D;
+import jnum.data.image.Map2D;
 import jnum.math.Coordinate2D;
 
 
@@ -41,7 +42,7 @@ public class RegridTest {
 	 */
 	public static void main(String[] args) {
 		try {
-			GridMap2D<?> map = new GridMap2D<Coordinate2D>();
+			Map2D map = new Map2D();
 			map.read("/home/pumukli/data/sharc2/images/VESTA.8293.fits");
 			
 			map.setVerbose(true);

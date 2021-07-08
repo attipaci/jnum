@@ -21,142 +21,141 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.cube;
+
+package jnum.data.index;
+
 
 import jnum.ExtraMath;
 import jnum.NonConformingException;
-import jnum.data.index.AbstractIndex;
 import jnum.math.MathVector;
+import jnum.math.Vector2D;
 
-public class Index3D extends AbstractIndex<Index3D> {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -2705961475758088763L;
-    
-    private int i, j, k;
-    
-    public Index3D() { this(0, 0, 0); }
-    
-    public Index3D(int i, int j, int k) {
-        set(i, j, k);
+
+public class Index2D extends AbstractIndex<Index2D> {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -364862939591997831L;
+
+    private int i,j;
+
+
+    public Index2D() { this(0, 0); }
+
+
+    public Index2D(int i, int j) {
+        set(i, j);
     }
-    
-    public final int i() { return i; }
-    
-    public final int j() { return j; }
-    
-    public final int k() { return k; }
-    
-    public final void set(final int i, final int j, final int k) {
-        this.i = i;
-        this.j = j;
-        this.k = k;
+
+
+    public Index2D(Vector2D index) {
+        this((int)Math.round(index.x()), (int)Math.round(index.y()));
     }
-    
-    public final void setI(final int value) {
-        i = value;
-    }
-    
-    public final void setJ(final int value) {
-        j = value;
-    }
-    
-    public final void setK(final int value) {
-        k = value;
-    }
+
 
     @Override
-    public void multiplyBy(Index3D factor) {
+    public int hashCode() {
+        return super.hashCode() ^ i ^ j;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(!(o instanceof Index2D)) return false;
+
+        Index2D index = (Index2D) o;
+        if(index.i != i) return false;
+        if(index.j != j) return false;
+        return true;		
+    }
+
+    public void set(int i, int j) { this.i = i; this.j = j; }
+
+    public final int i() { return i; }
+
+    public final int j() { return j; }
+
+
+    @Override
+    public void multiplyBy(Index2D factor) {
         i *= factor.i();
         j *= factor.j();
-        k *= factor.k();
     }
 
     @Override
-    public void setProduct(Index3D a, Index3D b) {
+    public void setProduct(Index2D a, Index2D b) {
         i = a.i() * b.i();
         j = a.j() * b.j();
-        k = a.k() * b.k();
     }
 
     @Override
-    public void setRatio(Index3D numerator, Index3D denominator) {
+    public void setRatio(Index2D numerator, Index2D denominator) {
         i = ExtraMath.roundupRatio(numerator.i(), denominator.i());
         j = ExtraMath.roundupRatio(numerator.j(), denominator.j());
-        k = ExtraMath.roundupRatio(numerator.k(), denominator.k());
     }
 
     @Override
-    public void modulo(Index3D argument) {
+    public void modulo(Index2D argument) {
         i %= argument.i();
         j %= argument.j();
-        k %= argument.k();
     }
 
     @Override
     public int getVolume() {
-        return i * j * k;
+        return i * j;
     }
-    
+
     @Override
     public int dimension() {
-        return 3;
+        return 2;
     }
 
     @Override
     public int getValue(int dim) throws IndexOutOfBoundsException {
-        switch(dim) {
-        case 0 : return i;
-        case 1 : return j;
-        case 2 : return k;
-        }
-        throw new IndexOutOfBoundsException(Integer.toString(dim));
+        if(dim == 0) return i;
+        else if(dim == 1) return j;
+        else throw new IndexOutOfBoundsException(Integer.toString(dim));
+        
     }
 
     @Override
     public void setValue(int dim, int value) throws IndexOutOfBoundsException {
-        switch(dim) {
-        case 0 : i = value; break;
-        case 1 : j = value; break;
-        case 2 : k = value; break;        
-        default: throw new IndexOutOfBoundsException(Integer.toString(dim));
-        }
+        if(dim == 0) i = value;
+        else if(dim == 1) j = value;
+        else throw new IndexOutOfBoundsException(Integer.toString(dim));
+        
     }
 
     @Override
-    public void add(Index3D o) {
+    public void add(Index2D o) {
         i += o.i;
         j += o.j;
-        k += o.k;
     }
 
     @Override
-    public void subtract(Index3D o) {
+    public void subtract(Index2D o) {
         i -= o.i;
         j -= o.j;
-        k -= o.k;
     }
 
     @Override
-    public void setSum(Index3D a, Index3D b) {
+    public void setSum(Index2D a, Index2D b) {
         i = a.i + b.i;
         j = a.j + b.j;
-        k = a.k + b.k;
     }
 
     @Override
-    public void setDifference(Index3D a, Index3D b) {
+    public void setDifference(Index2D a, Index2D b) {
         i = a.i - b.i;
         j = a.j - b.j;
-        k = a.k - b.k;
     }
-
+    
     @Override
     public void toVector(MathVector<Double> v) throws NonConformingException {  
         if(v.size() != dimension()) throw new NonConformingException("Size mismatch " + v.size() + " vs. " + dimension());  
         v.setComponent(0, (double) i);
         v.setComponent(1, (double) j);
-        v.setComponent(3, (double) k);
     }
+
+
 }

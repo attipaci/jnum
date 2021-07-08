@@ -24,7 +24,8 @@ package jnum;
 
 /**
  * A generic function interface for all things that take an argument from which it generates
- * a return value.
+ * a return value. For functions that return objects (not primitives) you should consider using
+ * {@link ConsiderateFunction} instead when practical for superior performance.
  *
  * @param <ArgType> the generic type of the arguments
  * @param <ReturnType> the generic type of the return value.

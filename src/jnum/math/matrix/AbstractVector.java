@@ -28,8 +28,8 @@ import java.text.NumberFormat;
 
 import jnum.CopiableContent;
 import jnum.Util;
+import jnum.data.index.Index1D;
 import jnum.data.index.IndexedValues;
-import jnum.data.samples.Index1D;
 import jnum.math.MathVector;
 import jnum.text.DecimalFormating;
 

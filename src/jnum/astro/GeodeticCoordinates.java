@@ -103,7 +103,7 @@ public class GeodeticCoordinates extends SphericalCoordinates {
 
 
     @Override
-    public String getTwoLetterCode() { return "GD"; }
+    public String getTwoLetterID() { return "GD"; }
 
     @Override
     public CoordinateSystem getCoordinateSystem() {

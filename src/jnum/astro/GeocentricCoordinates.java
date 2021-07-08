@@ -68,7 +68,7 @@ public class GeocentricCoordinates extends SphericalCoordinates {
     }
     
     @Override
-    public String getTwoLetterCode() { return "GC"; }
+    public String getTwoLetterID() { return "GC"; }
     
     @Override
     public CoordinateSystem getCoordinateSystem() {

@@ -45,7 +45,7 @@ public class MultiFFTTest {
 	    printSpectrum(dd);
 	    
 	    
-		DoubleFFT dfft = new DoubleFFT.NyquistUnrolledReal(ParallelTask.newDefaultParallelExecutor());
+		DoubleFFT dfft = new DoubleFFT.NyquistUnrolled(ParallelTask.newDefaultParallelExecutor());
 		double[] ddata = new double[10];
 		ddata[0] = 4.0;
 		

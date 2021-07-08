@@ -24,6 +24,7 @@
 package jnum.data.image;
 
 import jnum.data.Validating;
+import jnum.data.index.Index2D;
 
 public interface Validating2D extends Validating<Index2D> {
 

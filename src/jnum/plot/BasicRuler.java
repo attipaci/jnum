@@ -153,7 +153,7 @@ public abstract class BasicRuler extends JComponent implements PlotSide {
 		this.min = min;
 		this.max = max;
 		
-		if(isAutoMultiplier) unit.setMultiplierFor(Math.max(Math.abs(max / unit.value()), Math.abs(min / unit.value())));	 
+		if(isAutoMultiplier) unit.setMultiplier(Math.max(Math.abs(max / unit.value()), Math.abs(min / unit.value())));	 
 			
 		min /= unit.value();
 		max /= unit.value();

@@ -34,6 +34,7 @@ import jnum.data.DataCrawler;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
 import jnum.data.WeightedPoint;
+import jnum.data.index.Index3D;
 import jnum.math.IntRange;
 import jnum.math.Vector3D;
 import jnum.parallel.ParallelPointOp;

@@ -24,6 +24,7 @@
 package jnum.data.samples;
 
 import jnum.data.FlagCompanion;
+import jnum.data.index.Index1D;
 
 public class Flag1D extends FlagCompanion<Index1D> implements Resizable1D {   
     /**

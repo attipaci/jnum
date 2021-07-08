@@ -24,9 +24,20 @@ package jnum.math.specialfunctions;
 
 import jnum.Function;
 
-
+/**
+ * Bessel functions. Both static implementations and static sub-classes that implement the {@link jnum.Function}
+ * interface are provided.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public final class Bessel {
 
+    /**
+     * Private constructor because we do not want to instantiate this class.
+     * 
+     */
+    private Bessel() {}
 
 	/**
 	 * Bessel J<sub>0</sub> function. Adapted from Numerical Recipes in C.
@@ -79,14 +90,28 @@ public final class Bessel {
 
 
 	/**
-	 * The Bessel J<sub>n</sub> function class.
+	 * The Bessel J<sub>n</sub> family of functions.
 	 */
 	public static class J implements Function<Double, Double> {
 
+	    /**
+         * The order of this Bessel function, that is <i>n</i> in J<sub>n</sub>
+         * 
+         */
 		private int order;
 
+		/**
+         * Instantiates a new Bessel J function of the specified order.
+         * 
+         * @param order       <i>n</i> for Bessel J<sub>n</sub> function instance. 
+         */
 		public J(int order) { this.order = order; }
 
+		/**
+         * Gets the order of this Bessel J function.
+         * 
+         * @return        <i>n</i> for this Bessel J<sub>n</sub> instance.
+         */
 		public int getOrder() { return order; }
 
 		@Override
@@ -225,14 +250,29 @@ public final class Bessel {
 		return by;
 	}
 
-
+	/**
+     * The Bessel Y<sub>n</sub> family of functions.
+     */
 	public static class Y implements Function<Double, Double> {
 
-
+	    /**
+         * The order of this Bessel function, that is <i>n</i> in Y<sub>n</sub>
+         * 
+         */
 		private int order;
 
+		/**
+         * Instantiates a new Bessel Y function of the specified order.
+         * 
+         * @param order       <i>n</i> for Bessel Y<sub>n</sub> function instance. 
+         */
 		public Y(int order) { this.order = order; }
 
+		/**
+         * Gets the order of this Bessel Y function.
+         * 
+         * @return        <i>n</i> for this Bessel Y<sub>n</sub> instance.
+         */
 		public int getOrder() { return order; }
 
 		@Override
@@ -323,12 +363,29 @@ public final class Bessel {
 		return x < 0.0 && ((n & 1) > 0) ? -value : value;
 	}
 
+    /**
+     * The Bessel I<sub>n</sub> family of functions.
+     */
 	public static class I implements Function<Double, Double> {
 
+	    /**
+         * The order of this Bessel function, that is <i>n</i> in I<sub>n</sub>
+         * 
+         */
 		private int order;
 
+		/**
+         * Instantiates a new Bessel I function of the specified order.
+         * 
+         * @param order       <i>n</i> for Bessel I<sub>n</sub> function instance. 
+         */
 		public I(int order) { this.order = order; }
 
+		/**
+         * Gets the order of this Bessel I function.
+         * 
+         * @return        <i>n</i> for this Bessel I<sub>n</sub> instance.
+         */
 		public int getOrder() { return order; }
 
 		@Override
@@ -403,15 +460,29 @@ public final class Bessel {
 		return bk;
 	}
 
-
+	/**
+     * The Bessel K<sub>n</sub> family of functions.
+     */
 	public static class K implements Function<Double, Double> {
-
+	    
+	    /**
+	     * The order of this Bessel function, that is <i>n</i> in K<sub>n</sub>
+	     * 
+	     */
 		private int order;
 
-
+		/**
+		 * Instantiates a new Bessel K function of the specified order.
+		 * 
+		 * @param order       <i>n</i> for Bessel K<sub>n</sub> function instance. 
+		 */
 		public K(int order) { this.order = order; }
 
-
+		/**
+		 * Gets the order of this Bessel K function.
+		 * 
+		 * @return        <i>n</i> for this Bessel K<sub>n</sub> instance.
+		 */
 		public int getOrder() { return order; }
 
 		@Override

@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 
 /**
- * The Class representing a bitwise flag in a flag-space of an integer-type container. The flag has a unique letter
+ * A flag element in a bitwise flag space of some integer type. The flag has a unique letter
  * code identifying it in the flag-space it belongs to, and has a human-readable descriptive name. These allow
  * for human tracking, if desired, of which flags have been set.
  * 
@@ -41,9 +41,15 @@ import java.io.Serializable;
  * @see jnum.data.Flagging
  */
 public abstract class Flag<Type extends Number> implements Serializable {
-    
+    /**
+     * 
+     */
     private static final long serialVersionUID = 6666953592077360485L;
     
+    /**
+     * The flagging space for this type of flag. 
+     * 
+     */
     private FlagSpace<Type> space;
     
     /** The letter code that uniquely identifies this flag in a given {@link FlagSpace}. */

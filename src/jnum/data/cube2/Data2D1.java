@@ -30,7 +30,6 @@ import java.util.Map;
 import jnum.NonConformingException;
 import jnum.PointOp;
 import jnum.Unit;
-import jnum.data.cube.Index3D;
 import jnum.data.CubicSpline;
 import jnum.data.Referenced;
 import jnum.data.SplineSet;
@@ -40,7 +39,8 @@ import jnum.data.WeightedPoint;
 import jnum.data.cube.Data3D;
 import jnum.data.image.Data2D;
 import jnum.data.image.Image2D;
-import jnum.data.samples.Index1D;
+import jnum.data.index.Index1D;
+import jnum.data.index.Index3D;
 import jnum.data.samples.Offset1D;
 import jnum.data.samples.Samples1D;
 import jnum.math.IntRange;
@@ -277,7 +277,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
     public void autoCropZ() {
         IntRange z = getZIndexRange();
         if(z == null) return; 
-        cropZ((int)z.min(), (int) z.max());
+        cropZ((int)z.lower(), (int) z.upper());
     }
 
     public final synchronized void smoothZ(Referenced<Index1D, Offset1D> beam) {

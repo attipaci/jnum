@@ -28,7 +28,7 @@ import jnum.math.matrix.SquareMatrixException;
 
 
 /**
- * Represents a covariance matrix for a set of parameters, calculated either as the inverse of a {@link HessianMatrix}, or from 
+ * Covariance matrix for a set of parameters, calculated either as the inverse of a {@link HessianMatrix}, or from 
  * a {@link CorrelationMatrix}.
  */
 public class CovarianceMatrix extends Matrix {

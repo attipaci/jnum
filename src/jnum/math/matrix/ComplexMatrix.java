@@ -30,12 +30,12 @@ import java.text.ParsePosition;
 import java.util.Arrays;
 
 import jnum.ViewableAsDoubles;
-import jnum.data.fitting.ConvergenceException;
-import jnum.data.image.Index2D;
+import jnum.data.index.Index2D;
 import jnum.math.Complex;
 import jnum.math.ComplexAddition;
 import jnum.math.ComplexConjugate;
 import jnum.math.ComplexScaling;
+import jnum.math.ConvergenceException;
 import jnum.math.MathVector;
 import jnum.math.Multiplication;
 import jnum.math.SymmetryException;

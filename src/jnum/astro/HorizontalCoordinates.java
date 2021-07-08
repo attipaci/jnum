@@ -63,7 +63,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 
 
     @Override
-    public String getTwoLetterCode() { return "HO"; }
+    public String getTwoLetterID() { return "HO"; }
 
 
     @Override
@@ -114,7 +114,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
 
 
     public double getParallacticAngle(GeodeticCoordinates site) {
-        return Math.atan2(-site.cosLat() * Math.sin(AZ()), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(AZ()));
+        return Math.atan2(site.cosLat() * Math.sin(AZ()), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(AZ()));
     }
 
 

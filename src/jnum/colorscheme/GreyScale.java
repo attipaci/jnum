@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2016 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2013 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,32 +21,28 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.fitting;
+package jnum.colorscheme;
+
+import java.awt.Color;
+
+public class GreyScale extends ColorScheme {
 
 
-/**
- * An easily identifiable exception specifically for {@link Minimizer} implementations.
- */
-public class ConvergenceException extends IllegalStateException {
+	@Override
+	public int getRGB(double scaled) {
+		if(Double.isNaN(scaled)) return noData;
+		
+		if(scaled < 0.0) scaled = 0.0;
+		else if(scaled > 1.0) scaled = 1.0;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -632245294706738192L;
+		final float value = (float) scaled;
+		
+		return Color.HSBtoRGB(0.0F, 0.0F, value);
+	}
 
-    /**
-     * Instantiates a new convergence exception.
-     */
-    public ConvergenceException() {
-        super();
-    }
-
-    /**
-     * Instantiates a new convergence exception with a specific message.
-     *
-     * @param s the message providing some explanation on why the exception occurred. 
-     */
-    public ConvergenceException(String s) {
-        super(s);
-    }
-
+	@Override
+	public Color getHighlight() {
+		return Color.red;
+	}
 
 }

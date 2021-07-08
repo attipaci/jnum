@@ -27,21 +27,58 @@ package jnum.util;
 import java.io.Serializable;
 
 
+/**
+ * A block of bits in a flag-space constituting some distinct flagging subspace. For example you can imagine
+ * having a 32-bit integer flag space, in which te first 4 bits mark an error, the next 12 bits indicate
+ * different boolean properties etc. Each of block of bits in the flag space that serves a different 
+ * generic purpose can be distinguished as blocks for easier processing
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <Type>    The generic type of integer element that defines the flag space. E.g. {@link java.lang.Integer}
+ *                  for a 3-bit wide flag space.
+ */
 public class FlagBlock<Type extends Number> implements Serializable {
 
+    /**
+     * 
+     */
     private static final long serialVersionUID = 3475889288391954525L;
 
+    /**
+     * The flagging space in which this block is defined.
+     * 
+     */
     private FlagSpace<Type> space;
 
+    /**
+     * The starting bit of this flagging block (inclusive).
+     * 
+     */
     private int fromBit;
 
+    /**
+     * The ending bit in this flagging blokc (exclusive), that is the bit that comes after this block.
+     * 
+     */
     private int toBit;
 
+    /**
+     * The next unpopulated bit in this block.
+     */
     private int nextBit;
 
     private long mask = 0;
     
-
+    /**
+     * Creates a new block of flags inside a flagging space.
+     * 
+     * @param space         the parent flagging space in which this block of flags are defined.
+     * @param fromBit       the first bit in the flagging space that belongs to this block
+     * @param toBit         the ending bit of this block of flags, that is the next bit after this block.
+     * @throws IndexOutOfBoundsException    If the starting bit argument is outside the range of
+     *                                      bits supported by the parent flagging space.
+     */
     public FlagBlock(FlagSpace<Type> space, int fromBit, int toBit) throws IndexOutOfBoundsException {
         this.space = space;
         setBits(fromBit, toBit);
@@ -66,7 +103,16 @@ public class FlagBlock<Type extends Number> implements Serializable {
 
     public final FlagSpace<?> getFlagSpace() { return space; } 
     
-
+    /**
+     * Set the span of bits to be used by this block of flags in the parent flag space.
+     * 
+     * @param startBit      The first bit in this flag space.
+     * @param endBit        The end of the flag space (exclusive), that is the flag that follows this space.
+     * @return              <code>true</code> if the ending index was adjusted to fit within the flagging space. 
+     *                      Otherwise <code>false</code>
+     * @throws IndexOutOfBoundsException    If the starting index is outside the range of bits suppoirted by the 
+     *                                      parent flagging space.
+     */
     private boolean setBits(int startBit, int endBit) throws IndexOutOfBoundsException {
         if(startBit < 0) throw new IndexOutOfBoundsException("negative flag space start: " + startBit);
         if(endBit <= startBit) throw new IndexOutOfBoundsException("empty flag space.");
@@ -102,7 +148,12 @@ public class FlagBlock<Type extends Number> implements Serializable {
         return space.createFlag(value, letterCode, name);
     }
     
-
+    /**
+     * Gets the mask for this block of bits.
+     * 
+     * @return      The long value, in which bits belonging to this block of flags are set to 1, and bits
+     *              outside of this block set to zero.
+     */
     public final long getMask() { return mask; }
 
     @Override

@@ -1,6 +1,6 @@
 package jnum.math.matrix;
 
-import jnum.data.image.Index2D;
+import jnum.data.index.Index2D;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
 import jnum.math.LinearAlgebra;

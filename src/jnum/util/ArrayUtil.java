@@ -22,7 +22,7 @@
  ******************************************************************************/
 
 
-package jnum.data;
+package jnum.util;
 
 
 
@@ -39,6 +39,8 @@ import jnum.Constant;
 import jnum.Copiable;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
+import jnum.data.Data;
+import jnum.data.InvalidValue;
 import jnum.data.mesh.MeshCrawler;
 import jnum.math.AbsoluteValue;
 import jnum.math.Additive;

@@ -35,6 +35,7 @@ import jnum.Unit;
 import jnum.Util;
 import jnum.data.Data;
 import jnum.data.image.overlay.Referenced2D;
+import jnum.data.index.Index2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Division;
@@ -43,6 +44,7 @@ import jnum.math.Product;
 import jnum.math.Ratio;
 import jnum.math.Scalable;
 import jnum.math.Vector2D;
+import jnum.text.NumberFormating;
 import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
@@ -56,7 +58,8 @@ import nom.tam.util.Cursor;
  *
  */
 public class Gaussian2D implements Serializable, Cloneable, Copiable<Gaussian2D>, CopyCat<Gaussian2D>, Scalable, 
-Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D>, Ratio<Gaussian2D, Gaussian2D> {
+Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D>, Ratio<Gaussian2D, Gaussian2D>,
+NumberFormating {
 
 
     private static final long serialVersionUID = -1182818146658831916L;
@@ -454,6 +457,7 @@ Multiplication<Gaussian2D>, Division<Gaussian2D>, Product<Gaussian2D, Gaussian2D
         return toString(Util.s4);
     }
 
+    @Override
     public String toString(NumberFormat nf) {
         if(isCircular()) return nf.format(majorFWHM);
         return nf.format(majorFWHM) + "x" + nf.format(minorFWHM) + " @ " + Util.f1.format(positionAngle / Unit.deg) + " deg.";

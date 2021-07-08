@@ -26,8 +26,8 @@ package jnum.data.mesh;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import jnum.data.ArrayUtil;
 import jnum.data.DataCrawler;
+import jnum.util.ArrayUtil;
 
 
 

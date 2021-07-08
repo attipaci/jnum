@@ -34,7 +34,7 @@ import jnum.math.matrix.Matrix;
 
 
 /**
- * A class representing a Cartesian vector in a 2D plane, i.e. with <i>x</i>, and <i>y</i> components.
+ * A 2D Cartesian vector, with <i>x</i>, and <i>y</i> components.
  * 
  * @author Attila Kovacs
  *
@@ -178,10 +178,6 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
         scale(1.0 / l);
         return l;
     }
-
-    @Override
-    public final void flip() { scale(-1.0); }	
-
 
     @Override
     public void reflectOn(final MathVector<? extends Double> v) {

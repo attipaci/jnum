@@ -31,15 +31,16 @@ import java.util.StringTokenizer;
 
 import jnum.Copiable;
 import jnum.Util;
+import jnum.text.NumberFormating;
 
 /**
- * A class representing a range of points on a 2D plane, with inclusive minimum and
- * and exclusive maximum corners.
+ * A range of points on a 2D plane, with inclusive minimum and
+ * and exclusive maximum corners of a bounding rectangle.
  * 
  * @author Attila Kovacs
  *
  */
-public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scalable {
+public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scalable, NumberFormating {
 
     private static final long serialVersionUID = 7648489968457196160L;
 
@@ -249,6 +250,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
     public String toString() { return xRange + ", " + yRange; }
     
 
+    @Override
     public String toString(NumberFormat nf) {
         return xRange.toString(nf) + ", " + yRange.toString(nf);
     }

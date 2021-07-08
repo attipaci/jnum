@@ -34,8 +34,8 @@ import jnum.IncompatibleTypesException;
 import jnum.Unit;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
+import jnum.data.index.Index1D;
 import jnum.data.index.IndexedValues;
-import jnum.data.samples.Index1D;
 import jnum.fits.FitsToolkit;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
@@ -54,7 +54,7 @@ import nom.tam.util.Cursor;
  *
  */
 public class Coordinate2D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate2D>, 
-ViewableAsDoubles, Parser, NumberFormating {
+ViewableAsDoubles, Parser, NumberFormating, Inversion {
 	
 	private static final long serialVersionUID = -3978373428597134906L;
 
@@ -141,21 +141,60 @@ ViewableAsDoubles, Parser, NumberFormating {
 	@Override
     public final Double z() { return 0.0; }
 	
-	
+	/**
+	 * Sets the <i>x</i>-type coordinate to the specified value.
+	 * 
+	 * @param value    the new <i>x</i>-type coordinate value.
+	 */
 	public void setX(final double value) { x = value; }
 	
+	/**
+     * Sets the <i>y</i>-type coordinate to the specified value.
+     * 
+     * @param value    the new <i>y</i>-type coordinate value.
+     */
 	public void setY(final double value) { y = value; }
 	
+	/**
+     * Increments the <i>x</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>x</i>-type coordinate increment.
+     */
 	public void addX(final double value) { x += value; }
 	
+	/**
+     * Increments the <i>y</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>y</i>-type coordinate increment.
+     */
 	public void addY(final double value) { y += value; }
 	
+	/**
+     * Decrements the <i>x</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>x</i>-type coordinate decrement.
+     */
 	public void subtractX(final double value) { x -= value; }
 	
+	/**
+     * Decrements the <i>y</i>-type coordinate by the specified value.
+     * 
+     * @param value    the <i>y</i>-type coordinate decrement.
+     */
 	public void subtractY(final double value) { y -= value; }
 	
+	/**
+     * Scales the <i>x</i>-type coordinate by the specified value.
+     * 
+     * @param value    the scalar factor to apply to the <i>x</i>-type coordinate.
+     */
 	public final void scaleX(final double value) { x *= value; }
 	
+	/**
+     * Scales the <i>y</i>-type coordinate by the specified value.
+     * 
+     * @param value    the scalar factor to apply to the <i>y</i>-type coordinate.
+     */
 	public final void scaleY(final double value) { y *= value; }
 	
 	@Override
@@ -185,32 +224,72 @@ ViewableAsDoubles, Parser, NumberFormating {
 		set(point.getX(), point.getY());
 	}
 	
+	/**
+	 * Sets the components of these coordinates.
+	 * 
+	 * @param X    the new <i>x</i>-type coordinate.
+	 * @param Y    the new <i>y</i>-type coordinate.
+	 */
 	public void set(final double X, final double Y) { setX(X); setY(Y); }
-
-	public void flipX() { x *= -1.0; }
 	
-	public void flipY() { y *= -1.0; }
+	/**
+     * Flips the sign of the <i>x</i>-type coordinate.
+     * 
+     */
+	public void flipX() { x = -x; }
 	
+	/**
+     * Flips the sign of the <i>y</i>-type coordinate.
+     * 
+     */
+	public void flipY() { y = -y; }
+	
+	
+	@Override
+    public void flip() {
+	    x = -x;
+	    y = -y;
+	}
+	
+	/**
+	 * Resets both coordinate components to 0 values.
+	 * 
+	 */
 	public void zero() { x = y = 0.0; }
 
-	
+	/**
+	 * Checks if both coordinates are zero.
+	 * 
+	 * @return <code>true</code> if both coordinates are zero. Otherwise <code>false</code>.
+	 */
 	public boolean isNull() { 
 		if(x != 0.0) return false;
 		if(y != 0.0) return false; 
 		return true;
 	}	
 
-
+	/**
+	 * Sets both coordinates to NaN.
+	 * 
+	 */
 	public void NaN() { x = Double.NaN; y = Double.NaN; }
 
-
+	/**
+     * Checks if either coordinate is NaN (invalid).
+     * 
+     * @return <code>true</code> if either coordinate is NaN (invalid). Otherwise <code>false</code>.
+     */
 	public final boolean isNaN() { 
 		if(Double.isNaN(x)) return true;
 		if(Double.isNaN(y)) return true;
 		return false;
 	}
 	
-
+	/**
+     * Checks if either coordinate is infinite.
+     * 
+     * @return <code>true</code> if either coordinate is infinite. Otherwise <code>false</code>.
+     */
 	public final boolean isInfinite() { 
 		if(Double.isInfinite(x)) return true;
 		if(Double.isInfinite(y)) return true;
@@ -397,6 +476,7 @@ ViewableAsDoubles, Parser, NumberFormating {
 
     @Override
     public final Index1D getSize() {
+        size.set(2);
         return size;
     }
 
@@ -475,8 +555,14 @@ ViewableAsDoubles, Parser, NumberFormating {
         return copy;
     }
 	
+    /**
+     * The default size object for 2D coordinates.
+     */
     private static final Index1D size = new Index1D(2);
    
+    /** the index of the <i>x</i>-type (first) coordinate */
 	public static final int X = 0;
+	
+	/** the index of the <i>y</i>-type (first) coordinate */
 	public static final int Y = 1;
 }

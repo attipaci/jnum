@@ -28,8 +28,8 @@ import jnum.PointOp;
 import jnum.Util;
 import jnum.data.index.Index;
 import jnum.data.index.IndexedValues;
-import jnum.data.transform.Stretch;
 import jnum.math.MathVector;
+import jnum.math.Stretch;
 import jnum.math.CoordinateTransform;
 import jnum.parallel.ParallelPointOp;
 

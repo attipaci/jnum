@@ -20,31 +20,36 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
-
-package jnum.plot.colorscheme;
+package jnum.colorscheme;
 
 import java.awt.Color;
 
-import jnum.plot.ColorScheme;
-
-
-
-public class Orangy extends ColorScheme {
+public class Glacier extends ColorScheme {
+	
 
 	@Override
-	public int getRGB(double scaled) {
-		if(Double.isNaN(scaled)) return noData;
-	
-		if(scaled < 0.0) scaled = 0.0;
-		if(scaled > 1.0) scaled = 1.0;
+	public int getRGB(double scaledI) {
+		if(Double.isNaN(scaledI)) return Color.DARK_GRAY.getRGB();
+		float I = (float) scaledI;
+		if(I > 1.0F) I = 1.0F;
+		if(I < 0.0F) I = 0.0F;
+		
+		float r, g, b;
 
-		if(scaled < 0.5) return Color.HSBtoRGB(1.0F/15.0F, 1.0F, 2.0F * (float) scaled);
-		return Color.HSBtoRGB(1.0F/15.0F, 2.0F - 2.0F * (float) scaled, 1.0F);
+		b = I;
+		g = I > third ? (I - third) / twothirds : 0.0F;
+		r = I > twothirds ? (I - twothirds) / third : 0.0F;
+		
+		return ColorScheme.getRGB(r, g, b);	
 	}
 
 	@Override
 	public Color getHighlight() {
-		return Color.CYAN;
+		return Color.RED;
 	}
+	
+	private static float third = 1.0F / 3.0F;
+	
+	private static float twothirds = 2.0F / 3.0F;
+	
 }

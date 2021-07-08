@@ -20,14 +20,13 @@
  * Contributors:
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
-// Copyright (c) 2007 Attila Kovacs 
 
 package jnum.math;
 
 import java.util.Vector;
 
 /**
- * A class representation of a coordinate system a collection of Coordinate axes.
+ * A coordinate system as a collection of coordinate axes.
  * 
  * @author Attila Kovacs
  *
