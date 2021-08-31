@@ -110,7 +110,7 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
            
         }
         
-        system.toUpperCase();
+        system = system.toUpperCase();
         
         if(system.startsWith("FK4")) {
             if(year == 1900) return CoordinateEpoch.B1900;

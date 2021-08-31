@@ -23,8 +23,21 @@
 
 package jnum.data.index;
 
+/**
+ * Provides index-based exposure type information (integration time, observation counts, etc.).
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <IndexType>   the generic type of the index used by the implementing class.
+ */
 public interface IndexedExposures<IndexType> {
 
+    /**
+     * Returns the exposure information (ntegration time, observation counts, etc) at the specified index location.
+     * 
+     * @param index     the index location
+     * @return          the exposure data at the specified location.
+     */
     public double exposureAt(IndexType index);
     
 }

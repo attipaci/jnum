@@ -25,8 +25,8 @@
 package jnum.astro.interferometry;
 
 import java.util.Hashtable;
-import java.util.Random;
 
+import jnum.Constant;
 import jnum.ExtraMath;
 import jnum.data.Accumulating;
 import jnum.math.ComplexConjugate;
@@ -35,6 +35,7 @@ import jnum.math.Range;
 import jnum.math.Range2D;
 import jnum.math.Vector2D;
 import jnum.math.ZeroValue;
+import jnum.util.BufferedRandom;
 
 
 /**
@@ -49,7 +50,8 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
      * 
      */
     private static final long serialVersionUID = -1486904569610339354L;
-    private double frequency;       // TODO add bandwidth...
+    private double frequency;
+    private double bandwidth;
     double primaryFWHM;
     private Vector2D delta;         // (1/rad)
 
@@ -57,15 +59,22 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
      * Constructor.
      * 
      * @param frequency     (Hz) Frequency for this uv frame.
+     * @param bandwidth     (Hz) Total bandwidth in this frame (not necessarily contiguous)
      * @param delta         (1/rad) <i>u</i>,<i>v</i> bin sizes.
      * @param primaryFWHM   (rad) FWHM of the primary telescope beam at the frequency of this frame. 
      */
-    public UVFrame(double frequency, Vector2D delta, double primaryFWHM) {
+    public UVFrame(double frequency, double bandwidth, Vector2D delta, double primaryFWHM) {
         this.frequency = frequency;
+        this.bandwidth = bandwidth;
         this.delta = delta;
         this.primaryFWHM = primaryFWHM;
     }
    
+    @Override
+    public UVFrame clone() {
+        return (UVFrame) super.clone();
+    }
+    
     /**
      * Gets the <i>u,v</i> (1/rad) resolution (bin size).
      * 
@@ -81,6 +90,13 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     public final double getFrequency() { return frequency; }
 
     /**
+     * Gets the representative observed bandwidth for this <i>uv</i> frame.
+     * 
+     * @return  (Hz) observed bandwidth.
+     */
+    public final double getBandwidth() { return bandwidth; }    
+    
+    /**
      * Gets the representative primary telescope beam size for this <i>uv</i> frame.
      * 
      * @return  (rad) Primary beam size (FWHM).
@@ -94,9 +110,10 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
      * 
      */
     public void jackknife() {
-        final Random random = new Random();
+        final BufferedRandom random = new BufferedRandom();
         random.setSeed(202009110301L);
-        values().parallelStream().filter(e -> random.nextGaussian() < 0.5).forEach(Visibility::flip);
+        //values().parallelStream().filter(e -> random.nextGaussian() < 0.5).forEach(Visibility::flip);
+        values().stream().forEach(e -> e.rotate(Constant.twoPi * (random.nextDouble() - 0.5)));
     }
 
     /**
@@ -132,11 +149,63 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
             put(i, e);
         }
 
-        e.wre = (float) wre;
-        e.wim = (float) wim;
-        e.w += (float) w;
+        e.wre += wre;
+        e.wim += wim;
+        e.w += w;
     }
 
+    /**
+     * Adds a visibility to this uv-frame.
+     * 
+     * @param A     the visibility to add to this frame.
+     * 
+     * @see #add(Visibility, double)
+     */
+    public void add(Visibility A) {
+        add(A, 1.0);
+    }
+    
+    /**
+     * Adds a gain adjusted visibility to this uv-frame.
+     * 
+     * 
+     * @param A     the visibility to add to this frame.
+     * @param G     The relative response, with which to divide the visibility amplitude before adding.
+     * 
+     * @see #add(Visibility)
+     * @see #add(double, double, double, double, double)
+     */
+    public void add(Visibility A, double G) {
+        if(G == 0.0) return;
+        add(A.u(), A.v(), G * A.wre, G * A.wim, G * G * A.w);
+    }
+
+    /**
+     * Returns the visitibility the specified <i>uv</i> grid index.
+     * 
+     * @param iu    Integer grid index in the <u>u</i> direction.
+     * @param iv    Integer grid index in the <u>v</i> direction.
+     * @return      The visibility at the specified index, or <code>null</code> if there is no visibility currently
+     *              at the specified <i>uv</i> grid location.
+     *              
+     * @see #getVisibility(double, double)
+     */
+    public Visibility getVisibilityAtIndex(short iu, short iv) {
+        return get(getVirtualIndex(iu, iv));
+    }
+    
+    /**
+     * Returns the visitibility the specified <i>uv</i> coordinates.
+     * 
+     * @param u     (1/rad) <u>u</i> coordinate
+     * @param v     (1/rad) <u>v</i> coordinate
+     * @return      The visibility at the specified coordinate on the grid, or <code>null</code> if there is no visibility currently
+     *              at the specified <i>uv</i> grid location.
+     */
+    public Visibility getVisibility(double u, double v) {
+        return getVisibilityAtIndex((short) Math.round(u / delta.x()), (short) Math.round(v / delta.y()));
+    }
+    
     /**
      * Gets an aggregated linearized integer index for a pair of <i>u,v</i> indices. This is useful for fast has-table
      * storage and lookup. 
@@ -193,7 +262,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
      * @see #getResampled(double)
      */
     public UVFrame getResampled(Vector2D uvres) {
-        UVFrame resampled = (UVFrame) clone();
+        UVFrame resampled = clone();
         resampled.clear();
         values().stream().forEach(v -> add(v.u(), v.v(), v.wre, v.wim, v.w));
         return resampled;
@@ -217,8 +286,18 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
         short iu, iv;
         float wre, wim, w;
 
+        /**
+         * Constructs a new visibility
+         * 
+         */
         private Visibility() {}
 
+        /**
+         * Constructs a new visibility at the specified <i>uv</i> grid location
+         * 
+         * @param u     Integer grid index in the <i>u</i> direction
+         * @param v     Integer grid index in the <i>v</i> direction
+         */
         private Visibility(short u, short v) {
             this();
             this.iu = u; this.iv = v;
@@ -233,6 +312,20 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
             return ExtraMath.hypot(iu * delta.x(), iv * delta.y());
         }
          
+        /**
+         * Rotates the complex visibility amplitude by the specified amount.
+         * 
+         * @param angle     (rad) Counter clockwise rotation angle on the complex plane.
+         */
+        public void rotate(double angle) {
+            float s = (float) Math.sin(angle);
+            float c = (float) Math.cos(angle);
+            
+            float x = wre;
+            wre = x * c - wim * s;
+            wim = x * s + wim * c;
+        }
+        
         @Override
         public void flip() {
             wre = -wre;
@@ -271,7 +364,25 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
         public double v() {
             return iv * delta.y();
         }
+        
+        /**
+         * Returns the weighted real part of the visibility amplitude.
+         * 
+         * @return      (~1/Jy) The weighted real part of the visibility amplitude  
+         */
+        public float wre() {
+            return wre;
+        }
 
+        /**
+         * Returns the weighted imaginary part of the visibility amplitude.
+         * 
+         * @return      (~1/Jy) The weighted imaginary part of the visibility amplitude  
+         */
+        public float wim() {
+            return wim;
+        }
+        
         /**
          * Returns the real part of the visibility amplitude.
          * 
@@ -288,6 +399,15 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
          */
         public float im() {
             return w > 0.0F ? wim / w : 0.0F; 
+        }
+        
+        /**
+         * Returns the weight (e.g. 1/&sigma;<sup>2</sup> noise weight) of this visibility.
+         * 
+         * @return  (~1/Jy<sup>2</sup>) The (noise) weight of this visibility.
+         */
+        public float weight() {
+            return w;
         }
         
         @Override

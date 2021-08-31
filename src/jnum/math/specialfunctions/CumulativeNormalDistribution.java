@@ -29,7 +29,7 @@ import jnum.Constant;
 
 /**
  * <p>
- * The cumulative normal distibution function P(<i>x</i>) = 1/&radic;&pi; &int; exp(-<i>x</i><sup>2</sup>) d<i>x</i>.
+ * The cumulative normal distibution function P(<i>x</i>) = 1/&radic;&pi; &int; exp(-<i>x</i><sup>2</sup>/2) d<i>x</i>.
  * It is the integral of the Gaussian distribution, and is related to the error function erf(), as 
  * 2P(<i>x</i>) = 1 + erf(<i>x</i><sup>2</sup> / &radic;2). P(<i>x</i>) represents the probability that some normally 
  * distributed random variate takes a value &lt;=<i>x</i>. The complement function Q(<i>x</i>) = 1 - P(<i>x</i>) is conversely 

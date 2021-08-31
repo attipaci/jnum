@@ -154,7 +154,7 @@ public class ProcessingQueue extends Thread {
      * wait until specific tasks are completed before doing something that depends on the result of 
      * those tasks. 
      * 
-     * @retrun      the event that can be waited on until all previously submitted tasks have been
+     * @return      the event that can be waited on until all previously submitted tasks have been
      *              completed.
      * @throws IllegalStateException   if the queue has reached its capacity and is unable to take new
      *                                 submittions.

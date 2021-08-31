@@ -36,14 +36,16 @@ import jnum.data.cube.overlay.Overlay3D;
 import jnum.data.image.Data2D;
 import jnum.data.image.Observation2D;
 import jnum.data.index.Index3D;
-import jnum.data.index.IndexedObservations;
+import jnum.data.index.IndexedExposures;
+import jnum.data.index.IndexedUncertainties;
 import jnum.fits.FitsToolkit;
 import jnum.math.Vector3D;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
 
 
-public class Observation2D1 extends AbstractMap2D1<Observation2D> implements Observations<Data3D>, IndexedObservations<Index3D> {
+public class Observation2D1 extends AbstractMap2D1<Observation2D> 
+implements Observations<Data3D>, IndexedExposures<Index3D>, IndexedUncertainties<Index3D> {
     private Class<? extends Number> weightType;
 
 

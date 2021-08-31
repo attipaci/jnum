@@ -27,21 +27,52 @@ import jnum.ExtraMath;
 import jnum.NonConformingException;
 import jnum.math.MathVector;
 
+/**
+ * An index in 1D space. Essentially a wrapped integer.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class Index1D extends AbstractIndex<Index1D> {
     /**
      * 
      */
     private static final long serialVersionUID = 6394209570805373325L;
     
+    /**
+     * The index value
+     * 
+     */
     private int i;
     
-   
+    /**
+     * Instantiates a new 1D index with the default zero value.
+     */
     public Index1D() { this(0); }
     
+    /**
+     * Instantiates a new 1D index with the specified initial value.
+     * 
+     * @param i     the initial value for the new index instance.
+     */
     public Index1D(int i) { set(i); }
     
+    /**
+     * Sets a new index location.
+     * 
+     * @param i     the new index location.
+     * 
+     * @see #i()
+     */
     public void set(int i) { this.i = i; }
     
+    /**
+     * Returns the index location, for the first (and only) component in this index.
+     * 
+     * @return  the index value
+     * 
+     * @see #set(int)
+     */
     public int i() { return i; }
     
 

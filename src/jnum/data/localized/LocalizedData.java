@@ -156,7 +156,7 @@ extends LocalizedObject<L, D>  {
         value.scale(this.weight / w);
         value.addScaled(other, weight / w);
 
-        weight = w;
+        this.weight = w;
     }
 
   

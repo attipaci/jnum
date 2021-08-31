@@ -37,7 +37,8 @@ import jnum.data.image.overlay.Flagged2D;
 import jnum.data.image.overlay.Overlay2D;
 import jnum.data.image.overlay.Referenced2D;
 import jnum.data.index.Index2D;
-import jnum.data.index.IndexedObservations;
+import jnum.data.index.IndexedExposures;
+import jnum.data.index.IndexedUncertainties;
 import jnum.fits.FitsToolkit;
 import jnum.math.CoordinateTransform;
 import jnum.math.Vector2D;
@@ -45,7 +46,7 @@ import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
 
-public class Observation2D extends Map2D implements Observations<Data2D>, IndexedObservations<Index2D> {
+public class Observation2D extends Map2D implements Observations<Data2D>, IndexedExposures<Index2D>, IndexedUncertainties<Index2D> {
     /**
      * 
      */

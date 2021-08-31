@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -57,6 +56,7 @@ import jnum.math.Range2D;
 import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.projection.Gnomonic;
+import jnum.util.BufferedRandom;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
@@ -73,17 +73,19 @@ import nom.tam.util.Cursor;
  * @author Attila Kovacs
  *
  */
-public class UVImager {    
+public class UVImager {
+    /**
+     * Set the field size by the relative primary beam response at the field edges (assuming a Gaussian promary beam)
+     */
     public double minPrimaryResponse = 0.3;
 
-    public String sourceName = "unknown";
     public EquatorialCoordinates equatorial = new EquatorialCoordinates();
 
     public boolean jackknife = false;
 
     private WeightedComplex[][] vis;
     private Vector2D delta;
-    private Random random = new Random();
+    private BufferedRandom random = new BufferedRandom();
 
     private FitsProperties fitsProperties;
     private WeightedPoint primaryFWHM = new WeightedPoint();
@@ -219,7 +221,7 @@ public class UVImager {
      * @see #getFitsProperties()
      */
     public void setSourceName(String value) {
-        sourceName = value;
+        fitsProperties.setObjectName(value);
     }
 
     /**
@@ -251,6 +253,49 @@ public class UVImager {
     }
 
     /**
+     * Returns the solid angle of the mean primary beam for this <i>uv</i> image.
+     * 
+     * @return  (sr) The solid angle of the primary beam, i.e. 2 &pi; &sigma;<sup>2</sup> &approx; 1.14 FWHM<sup>2</sup>
+     */
+    public double getPrimaryBeamArea() {
+        double r = getPrimaryFWHM();
+        return Gaussian2D.areaFactor * r * r;
+    }
+    
+    /**
+     * Returns the size of the imaged area, given the relative primary beam response cutoff currently in use.
+     * 
+     * @return  (sr) The solid angle of the imaged area, given the current edge response cutoff.
+     */
+    public double getImageArea() {
+        double r = getPrimaryFWHM() * Math.sqrt(-2.0 * Math.log(minPrimaryResponse));
+        return Math.PI * r * r;
+    }
+    
+    /**
+     * Returns the total area of the image that is used for the Fourier transform.
+     * 
+     * @return  (sr) The total solid angle that is Fourier transformed when imaging the <i>uv</i> plane.
+     */
+    public double getTotalArea() {
+        return 1.0 / (delta.x() * delta.y());
+    }
+    
+    /**
+     * Returns the total degrees of freedom (DOF) in this <i>uv</i> plane, properly
+     * accounting for the fact that not all visibilities carry the same weight. This is a very useful 
+     * qunatity for determining the size of the search space that in turn determines confidence levels.
+     * 
+     * @return      The degrees of freedom in the image.
+     */
+    public double countDOF() {
+        double maxw = parallelStreamValid().mapToDouble(WeightedComplex::weight).max().orElse(0.0);
+        if(maxw == 0.0) return 0.0;
+        
+        return parallelStreamValid().mapToDouble(WeightedComplex::weight).sum() / maxw;
+    }
+    
+    /**
      * Gets the weighted mean frequency for the set of visibilities included in this image set.
      * 
      * @return  (Hz) Weighted mean frequency to be imaged.
@@ -276,42 +321,43 @@ public class UVImager {
      * Adds a scaled (or gain corrected) uv frame to this image set
      * 
      * @param uv        Frame to include in image set.
-     * @param scaling   Multiplicative scaling factor to apply when adding.
+     * @param gain      Gain factor, i.e. divide amplitudes by this gain when adding.
      * 
      * @see #add(UVFrame)
      * @see #add(UVFrame.Visibility, double)
      */
-    public void add(UVFrame uv, double scaling) {
+    public void add(UVFrame uv, double gain) {
         double w = uv.getWeightSum();
+
         primaryFWHM.average(uv.getPrimaryFWHM(), w);
         frequency.average(uv.getFrequency(), w);
         frequencyRange.include(uv.getFrequency());
-        uv.values().stream().filter(x -> x != null).forEach(x -> add(x, scaling));
+        uv.values().stream().forEach(x -> add(x, gain));
     }
 
     /**
-     * Adds a single scaled visibility measurement to the imaging set.
+     * Adds a single gain-corrected visibility measurement to the imaging set.
      * 
      * @param vis       Visibility measurement datum       
-     * @param scaling   Multiplicative scaling factor to apply when adding.
+     * @param gain      Gain factor, i.e. divide amplitudes by this gain when adding.
      */
-    private void add(UVFrame.Visibility vis, double scaling) {
+    private void add(UVFrame.Visibility vis, double gain) {
         if(vis.w <= 0.0) return;
 
-        if(jackknife) if(random.nextDouble() < 0.5) scaling = -scaling;
+        if(jackknife) if(random.nextDouble() < 0.5) gain = -gain;
 
-        add(vis, scaling, false);
-        add(vis, scaling, true);           // symmetrize (it should be symmetric already...)
+        add(vis, gain, false);
+        add(vis, gain, true);           // symmetrize (it should be symmetric already...)
     }
 
     /**
-     * Adds a single scaled visibility measurement to the imaging set.
+     * Adds a single gain-corrected visibility measurement to the imaging set.
      * 
      * @param vis       Visibility measurement datum       
-     * @param scaling   Multiplicative scaling factor to apply when adding.
+     * @param gain      Gain factor, i.e. divide amplitudes by this gain when adding.
      * @param isMirror  true if to add as a symmetric conjugate pair of the specified visibility. Otherwise false.
      */
-    private void add(UVFrame.Visibility vis, double scaling, boolean isMirror) {
+    private void add(UVFrame.Visibility vis, double gain, boolean isMirror) {
         if(weighting != 0.0) throw new IllegalStateException("Cannot add new visibilities after re-weighting.");
 
         int i = getI(isMirror ? -vis.u() : vis.u());
@@ -319,10 +365,9 @@ public class UVImager {
 
         WeightedComplex z = this.vis[i][j];
 
-        z.add(scaling * vis.wre, scaling * (isMirror ? -vis.wim : vis.wim));
-        z.addWeight(scaling * scaling * vis.w);
+        z.add(gain * vis.wre, gain * (isMirror ? -vis.wim : vis.wim));
+        z.addWeight(gain * gain * vis.w);
     }
-
 
     /**
      * UV image size in the u coordinate direction.
@@ -505,6 +550,7 @@ public class UVImager {
      */
     public void clear() {
         parallelStream().forEach(WeightedComplex::noData);
+        frequencyRange.empty();
         frequency.noData();
         primaryFWHM.noData();
     }
@@ -530,17 +576,16 @@ public class UVImager {
         uv.setSize(sizeU(), sizeV());
         uv.setUnderlyingBeam(1.0);
         uv.setUnit(new Unit("abu", 1.0));
-        uv.getFitsProperties().setObjectName("uv");
 
         Grid2D<SphericalCoordinates> grid = new SkyGrid();
         grid.setProjection(new Gnomonic());
-        grid.setReferenceIndex(new Vector2D(sizeU() / 2, sizeV() / 2));
+        grid.setReferenceIndex(new Vector2D(sizeU() >>> 1, sizeV() >>> 1));
         grid.setResolution(delta);
         grid.setReference(new SphericalCoordinates());
         uv.setGrid(grid);
 
-        double x0 = sizeU()/2;
-        double y0 = sizeV()/2;
+        double x0 = sizeU() >>> 1;
+        double y0 = sizeV() >>> 1;
 
         uv.getExposures().setUnit("deg");
         
@@ -564,12 +609,12 @@ public class UVImager {
     }
 
     /**
-     * Randomly invert the visibilities in this imge set.
+     * Randomly invert the visibilities in this image set.
      * 
      */
     public void jackknife() {
-        final Random random = new Random();
-        streamValid().filter(z -> random.nextDouble() < 0.5).forEach(WeightedComplex::flip);
+        fitsProperties.setObjectName(fitsProperties.getObjectName() + "-JK");
+        streamValid().forEach(z -> z.rotate(Constant.twoPi * (random.nextDouble() - 0.5)));
     }
 
     /**
@@ -577,7 +622,6 @@ public class UVImager {
      * 
      */
     public void random() {
-        final Random random = new Random();
         streamValid().forEach(z -> z.set(random.nextGaussian() / Constant.sqrt2, random.nextGaussian() / Constant.sqrt2));
     }
     
@@ -585,7 +629,6 @@ public class UVImager {
     /**
      * Apply a uv taper, which is equivalent to smoothing the reconstructed image with a
      * Gaussian beam of the specified fwhm
-     * 
      * 
      * @param fwhm  (rad) FWHM of the equivalent Gaussian smoothing beam in configuration space. 
      */
@@ -606,9 +649,9 @@ public class UVImager {
     }
 
     /**
-     * Gets the range of uv radii populated in this image set.
+     * Gets the range of <i>uv</i> radii populated in this image set.
      * 
-     * @return  Range of uv radii containing valid (populated) visibilities.
+     * @return  Range of <i>uv</i> radii containing valid (populated) visibilities.
      */
     public Range getUVRange() {
         Range r = new Range();
@@ -619,6 +662,11 @@ public class UVImager {
         return r;
     }
     
+    /**
+     * Returns the 2D range of <i>u</i> anbd <i>v</i> coordinates contained in the <i>uv</i> plane of this image.
+     * 
+     * @return      (1/rad<sup>2<sup>) The 2D range of populated <i>u</i> anbd <i>v</i> coordinates
+     */
     public Range2D getUVRange2D() {
         Range2D r = new Range2D();
         uIndices().forEach(i -> {
@@ -628,7 +676,11 @@ public class UVImager {
         return r;
     }
     
-    
+    /**
+     * Returns the <i>uv</i> radial profile with the default resolution of a diagonal <i>uv</i> pixel element.
+     * 
+     * @return      The measured <i>uv</i> radial profile, including weights/uncertainties.
+     */
     public DataPoint[] getUVProfile() {
         return getUVProfile(Math.min(delta.x(), delta.y()));
     }
@@ -642,12 +694,13 @@ public class UVImager {
      */
     public DataPoint[] getUVProfile(final double res) { 
         
-        int N = (int) Math.ceil(getUVRange().max() / res);
+        int N = 1 + (int) Math.ceil(getUVRange().max() / res);
         DataPoint[] profile = DataPoint.createArray(N); 
         
-        uIndices().parallel().forEach(i -> {
-            // iterate over half uv plane only.
-            IntStream.range(0, i == 0 ? sizeV() : sizeV()>>1).filter(j -> isValid(i, j)).forEach(j -> {
+        uIndices().forEach(i -> {
+           int toj = (i == 0) ? sizeV()>>>1 : sizeV();
+           
+           for(int j=toj; --j >= 0; ) if(isValid(i, j)) {
                 WeightedComplex wA = vis[i][j];
                 int bin = (int) Math.round(ExtraMath.hypot(getX(i) * delta.x(), getY(j) * delta.y()) / res);
                 
@@ -656,7 +709,7 @@ public class UVImager {
                 // var(r^2) = <|r^2|> - mu_r^2 = (2 - pi/2) sigma_x^2 -> w_r = w_x / (2 - pi/2)
                 profile[bin].add(wA.abs() - Math.sqrt(Constant.halfPi * 0.5 * wA.weight()));    // TODO Why the extra 1/2 factor here?
                 profile[bin].addWeight(wA.weight()); 
-            });
+            }
         });
 
         Arrays.stream(profile).parallel().forEach(x -> {
@@ -673,14 +726,11 @@ public class UVImager {
      * Produces a multiplane image from the UV dataset, with the specified name.
      * 
      * @param data      uv data with power-of-2 dimensions in u and v.    
-     * @param name      
      * 
      * @return      A multiplane 2D image set, consisting of the synthesized image (main image), 
      *              synthesized beam image, and primary beam weight coverage planes.
      */
-    private SynthesizedImage2D image(Complex[][] data, String name) { 
-        if(jackknife) name += "-JK";
-
+    private SynthesizedImage2D image(Complex[][] data) { 
         MultiFFT fft = new MultiFFT();
         fft.setParallel(2 * Runtime.getRuntime().availableProcessors());
         fft.setTwiddleErrorBits(8);
@@ -688,7 +738,6 @@ public class UVImager {
 
         SynthesizedImage2D im = new SynthesizedImage2D(Double.class, Flag2D.TYPE_BYTE);
         im.setSize(sizeU(), sizeV());
-        im.getFitsProperties().setObjectName(name); 
 
         Grid2D<SphericalCoordinates> grid = new SkyGrid();
         grid.setProjection(new Gnomonic());
@@ -730,6 +779,12 @@ public class UVImager {
     }
 
 
+    /**
+     * Estimates the size of a (circular) synthesized beam in this image, based on the radial distribution of
+     * the <i>uv</i> data alone.
+     * 
+     * @return  (rad) The estimated FWHM size of a synthesized beam under the assumption that it is curcular (not elongated). 
+     */
     public double estimateSynthesticFWHM() {
         double sumwd2 = 0.0, sumw = 0.0;
 
@@ -753,18 +808,26 @@ public class UVImager {
         return beamC / Math.sqrt(sumwd2 / sumw);
     }
 
-
+    /**
+     * Returns the synthesized beam image for the <i>uv</i> plane to be imaged.
+     * 
+     * @return  the synthesized beam image.
+     */
     public Observation2D getSynthesizedBeam() {
         Complex[][] W = new Complex[sizeU()][sizeV()];  
         uIndices().parallel().forEach(i -> vIndices().forEach(j -> W[i][j] = new Complex(vis[i][j].weight(), 0.0)));
 
-        Observation2D im = image(W, "beam");
+        Observation2D im = image(W);
         im.setUnit(new Unit("response", 1.0));
 
         return im;
     }
 
-
+    /**
+     * Returns the dirty beam image from the <i>uv</i> image data. 
+     * 
+     * @return  the dirty beam image, with the specified edge cutoff based on a threshold to the primary beam response.
+     */
     public Observation2D image() {
         final WeightedComplex[][] uv = new WeightedComplex[sizeU()][sizeV()];
         uIndices().parallel().forEach(i -> {
@@ -779,7 +842,7 @@ public class UVImager {
         g.adaptTo(beam);
         Util.info(this, "Actual resolution = " + g.getGaussian2D().toString(Unit.get("arcsec"), Util.f2));
 
-        Observation2D im = image(uv, sourceName);
+        Observation2D im = image(uv);
         im.setUnderlyingBeam(g.getGaussian2D());
         im.setExposureImage(beam.getImage());
         im.setUnit(new Unit("Jy/beam", 1.0));        
@@ -787,7 +850,12 @@ public class UVImager {
         return im;
     }
 
-
+    /**
+     * Returns the typical weight of the <i>uv</i> image, such a the geometric mean weight across all
+     * populated <i>uv</i> grid pixels.
+     * 
+     * @return  (~1/Jy<sup>2</sup>) The typical (representative) weight of <i>uv</i> data in this image.
+     */
     private double getTypicalWeight() {
         return Math.exp(parallelStreamValid().mapToDouble(z -> Math.log(z.weight())).average().orElse(0.0));
     }
@@ -876,7 +944,6 @@ public class UVImager {
         parallelStreamValid().forEach(z -> z.scale(factor));
     }
 
-
     public void write(Observation2D im, String name) {
         try(Fits fits = im.createFits(Float.class)) {
             fits.write(new File(name + ".fits"));
@@ -887,7 +954,7 @@ public class UVImager {
 
 
     public void writeProducts(String path) {
-        writeProducts(path, sourceName);
+        writeProducts(path, fitsProperties.getObjectName());
     }
 
     public void writeProducts(String path, String name) {
@@ -902,14 +969,14 @@ public class UVImager {
         try { writeProfile(name); }
         catch(Exception e) { e.printStackTrace(); }
 
-        write(image(), sourceName);
+        write(image(), name);
     }  
 
 
     private void writeProfile(String stem) throws IOException {
         DataPoint[] profile = getUVProfile(Math.min(delta.x(), delta.y()));
         try (PrintWriter out = new PrintWriter(new FileOutputStream(new File(stem + "-profile.dat")))) {
-            out.println("bin\tdUV\tA\trms");
+            out.println("# bin\tdUV\tA\trms");
 
             for(int i=0; i<profile.length; i++) {
                 out.print(i + "\t" + Util.s4.format(i * delta.x()) + "\t");
@@ -973,7 +1040,7 @@ public class UVImager {
         @Override
         public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException { 
             ArrayList<BasicHDU<?>> hdu = super.getHDUs(dataType);
-            hdu.get(1).addValue("EXTNAME", "Synthesized Beam", "Synthesized beam image");
+            hdu.get(1).addValue("EXTNAME", "Phase", "Visibility phases");
             return hdu;
         }
     }
@@ -981,7 +1048,7 @@ public class UVImager {
 
     /**
      * A class for containing a synthesized image of an interferometric dataset. It is a slightly
-     * modified version of the {@link Observation2D} class, with the synthesized beam imaage replacing the
+     * modified version of the {@link Observation2D} class, with the synthesized beam image replacing the
      * exposures plane of direct observations, and inserting extra header information specific to
      * interferometric imaging in FITS outputs.
      * 
@@ -1015,8 +1082,7 @@ public class UVImager {
         @Override
         public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException { 
             ArrayList<BasicHDU<?>> hdu = super.getHDUs(dataType);
-            hdu.get(1).addValue("EXTNAME", "Visibility Amplitude", "Synthesized beam image");
-            hdu.get(1).addValue("EXTNAME", "Visibility Angle", "Synthesized beam image");
+            hdu.get(1).addValue("EXTNAME", "Synthesized Beam", "Synthesized beam image");
             return hdu;
         }
 

@@ -657,13 +657,15 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
         return op.getResult().centroid;
     }
-
-
+    
 
 
     @Override
     public Object getFitsData(Class<? extends Number> dataType) {  
-        final Data<IndexType> transpose = newImage(getSize().getReversed(), dataType);
+        IndexType tSize = getIndexInstance();
+        tSize.setReverseOrderOf(getSize());
+
+        final Data<IndexType> transpose = newImage(tSize, dataType);
 
         ParallelPointOp.Simple<IndexType> op = new ParallelPointOp.Simple<IndexType>() {
             private IndexType reversed;
@@ -676,7 +678,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
             @Override
             public void process(IndexType index) {
-                index.reverseTo(reversed);
+                reversed.setReverseOrderOf(index);
                 transpose.set(reversed, isValid(index) ? get(index) : getBlankingValue());
             }     
         };
@@ -687,9 +689,6 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
         return transpose.getCore();
     }
-
-
-
 
 
 

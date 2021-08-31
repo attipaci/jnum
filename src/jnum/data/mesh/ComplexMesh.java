@@ -80,7 +80,7 @@ public class ComplexMesh extends Vector2DMesh<Complex> implements ComplexAdditio
 
     @Override
     public void subtract(final Complex x) {
-       subtract(x);
+       super.subtract(x);
     }
 
     @Override

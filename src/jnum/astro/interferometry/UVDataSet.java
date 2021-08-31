@@ -34,6 +34,8 @@ import jnum.Constant;
 import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
+import jnum.astro.EquatorialCoordinates;
+import jnum.astro.EquatorialSystem;
 import jnum.fits.FitsProperties;
 import jnum.math.Range;
 import jnum.math.Range2D;
@@ -42,6 +44,7 @@ import nom.tam.fits.BinaryTable;
 import nom.tam.fits.BinaryTableHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import nom.tam.fits.Header;
 import nom.tam.util.ArrayDataInput;
 
 
@@ -60,6 +63,7 @@ public class UVDataSet extends ArrayList<UVFrame> {
     private static final long serialVersionUID = 6184860828104201918L;
     private Vector2D delta;
     private double aperture;
+    private EquatorialCoordinates equatorial;
         
     private FitsProperties fitsProperties = new FitsProperties();
     
@@ -112,6 +116,14 @@ public class UVDataSet extends ArrayList<UVFrame> {
      */
     public final FitsProperties getFitsProperties() { return fitsProperties; }
     
+    /**
+     * Returns the equatorial coordinates for the center of the observed field.
+     * 
+     * @return  the equatorial coordinates of the observed field.
+     */
+    public final EquatorialCoordinates getEquatorial() {
+        return equatorial;
+    }
     
     /**
      * Loads visibility data from a standard FITS calibrated uv table file, discarding prior data if any.
@@ -128,21 +140,33 @@ public class UVDataSet extends ArrayList<UVFrame> {
      */
     public void read(String fileName) throws IOException, FitsException {
         clear();
-        
+           
         try (Fits fits = new Fits(new File(fileName))) {
-            BinaryTableHDU hdu = (BinaryTableHDU) fits.getHDU(1);
-            fitsProperties.parseHeader(hdu.getHeader());
+            BinaryTableHDU tab = (BinaryTableHDU) fits.getHDU(1);
+            BinaryTableHDU freqs = (BinaryTableHDU) fits.getHDU(2);
+            Header h = tab.getHeader();
+            fitsProperties.parseHeader(h);
             
-            BinaryTable table = hdu.getData();
+            equatorial = new EquatorialCoordinates(
+                    h.getDoubleValue("RA", 0.0) * Unit.hourAngle, 
+                    h.getDoubleValue("DEC", 0.0) * Unit.deg,
+                    EquatorialSystem.fromHeader(h)
+            );
+            
+            delta = new Vector2D(h.getDoubleValue("U_RES", Double.NaN), h.getDoubleValue("V_RES", Double.NaN)); 
 
-            short[] bin = new short[1];
-            double[] f = new double[1];
-            double[] u = new double[1];
-            double[] v = new double[1];
-            double[] wre = new double[1];
-            double[] wim = new double[1];
-            double[] w = new double[1];
-            Object[] rowData = new Object[] { bin, f, u, v, wre, wim, w };
+            double df = h.getDoubleValue("FREQRES", 0.0);
+            double[] f = (double[]) freqs.getColumn(0);
+                        
+            BinaryTable table = tab.getData();
+
+            int[] bin = new int[1];
+            short[] u = new short[1];
+            short[] v = new short[1];
+            float[] wre = new float[1];
+            float[] wim = new float[1];
+            float[] w = new float[1];
+            Object[] rowData = new Object[] { bin, u, v, wre, wim, w };
 
             @SuppressWarnings("resource")
             ArrayDataInput in = fits.getStream();
@@ -162,11 +186,26 @@ public class UVDataSet extends ArrayList<UVFrame> {
                     Util.warning(this, "Premature table end.");
                     break;
                 }
-
-                if(v[0] < 0.0) nMirror++;
-                else if(v[0] == 0.0 && u[0] < 0.0) nMirror++; 
-                else {
-                    addVisibility(bin[0]-1, f[0], u[0], v[0], wre[0], wim[0], w[0]);
+                
+                // 1-based indices to 0-based indices...
+                bin[0]--;
+                
+                // ------------------------------------------------------------------------------------------
+                // v3 workarounds...
+                
+                // Flagging should not be needed if SWARM channels N * 4096 are flagged by COMPASS...
+                //if(Math.abs(Math.IEEEremainder(f[bin[0]], 0.5 * Unit.GHz)) < df) continue;
+               
+                //v[0] -= 513;    // make it work with imperfect v3 UV data
+                
+                //if(u[0] == (short) 0) continue;            // Discard quashed mirror uv plane...
+                //else 
+                // -------------------------------------------------------------------------------------------
+                
+                if(v[0] < 0) nMirror++;    
+                else if(v[0] < 0 && u[0] == 0) nMirror++; 
+                else { 
+                    addVisibility(bin[0], f[bin[0]], df, u[0] * delta.x(), v[0] * delta.y(), wre[0], wim[0], w[0]);
                     nVis++;
                 }
             }    
@@ -239,7 +278,7 @@ public class UVDataSet extends ArrayList<UVFrame> {
         set.stream().filter(f -> f != null).forEach(f -> {
             UVFrame localFrame = fLookup.get(f.getFrequency());
             if(localFrame == null) {
-                localFrame = new UVFrame(f.getFrequency(), delta, f.primaryFWHM);
+                localFrame = new UVFrame(f.getFrequency(), f.getBandwidth(), delta, f.primaryFWHM);
                 add(localFrame);
             }
             else if(f.getPrimaryFWHM() < localFrame.getPrimaryFWHM()) localFrame.primaryFWHM = f.primaryFWHM;
@@ -256,15 +295,16 @@ public class UVDataSet extends ArrayList<UVFrame> {
      * 
      * @param fBin      Frequency bin index (>= 0).
      * @param f         (Hz) frequency
+     * @param df        (Hz) bandwidth
      * @param u         (1/rad) u coordinate
      * @param v         (1/rad) v coordinate
      * @param re        (Jy) Real part of visibility amplitude
      * @param im        (Jy) Imaginary part of visibility amplitude 
      * @param w         (1/Jy^2) Visibility noise weight (w = 1/sigma^2)
      */
-    private void addVisibility(int fBin, double f, double u, double v, double re, double im, double w) {
+    private void addVisibility(int fBin, double f, double df, double u, double v, double re, double im, double w) {
 
-        if(fBin < 0 || fBin >= 16384) {
+        if(fBin < 0 || fBin >= maxFreqBins) {
             Util.warning(this, "Invalid fBin = " + fBin);
             System.exit(1);
         }
@@ -276,7 +316,7 @@ public class UVDataSet extends ArrayList<UVFrame> {
         // Create slice as necessary...
         UVFrame slice = get(fBin);
         if(slice == null) {
-            slice = new UVFrame(f, delta, Constant.c / (f * aperture));
+            slice = new UVFrame(f, df, delta, Constant.c / (f * aperture));
             set(fBin, slice);
         }
 
@@ -415,6 +455,17 @@ public class UVDataSet extends ArrayList<UVFrame> {
         return r.span();
     }
 
+    
+    /**
+     * Gets the total bandwidth covered by this dataset
+     * 
+     * @return  (Hz) Total bandwidth in this dataset
+     */
+    public double getTotalBandwidth() {
+        return parallelStream().mapToDouble(UVFrame::getBandwidth).sum();
+    }
+
+    
     /**
      * Counts the number of visibility points in this dataset.
      * 
@@ -424,4 +475,31 @@ public class UVDataSet extends ArrayList<UVFrame> {
         return parallelStream().mapToInt(UVFrame::size).sum();
     }
 
+    /**
+     * Returns an estimate of the size of the synthesized beam based purely on
+     * the radial distribution of uv weights.
+     * 
+     * @return      (rad) The estimated circular FWHM of the syntheized beam of this interferometric dataset.
+     */
+    public double estimateSynthesticFWHM() {
+        double sumwd2 = 0.0, sumw = 0.0;
+        
+        for(UVFrame slice : this) for(UVFrame.Visibility v : slice.values()) {
+                double r = Math.sqrt(v.u() * v.u() + v.v() * v.v());
+
+                // Account for the fact that the number of point at r increases as r...
+                // To effectively reduce to a 1D profile...
+                if(r > 0.0) {
+                    sumwd2 += v.weight() * r;
+                    sumw += v.weight() / r;
+                }
+            }
+        
+
+        return UVImager.beamC / Math.sqrt(sumwd2 / sumw);
+    }
+
+    
+    
+    public static final int maxFreqBins = 0x100000;
 }

@@ -55,6 +55,13 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.fits.ImageHDU;
 import nom.tam.util.Cursor;
 
+/**
+ * A an indexed dataset of some kind, the base class for 1D, 2D, 3D, or higher dimensional dataset implementations.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <IndexType>       the generic type of index by which elements are located, and iterated over, in this dataset.
+ */
 public abstract class Data<IndexType extends Index<IndexType>>
 extends ParallelObject 
 implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableFormatter.Entries {
@@ -63,8 +70,8 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         Locale.setDefault(Locale.US);
     }
 
-
-    private Number blankingValue;
+    
+    private Number invalidValue;
 
     private boolean isVerbose;
 
@@ -200,7 +207,7 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
 
 
     public final Number getBlankingValue() {
-        return blankingValue;
+        return invalidValue;
     }
 
 
@@ -208,18 +215,18 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
 
 
         // Replace old blanking values in image with the new value, as needed...
-        if(blankingValue != null) if(!blankingValue.equals(value)) {
+        if(invalidValue != null) if(!invalidValue.equals(value)) {
             smartFork(new ParallelPointOp.Simple<IndexType>() {
 
                 @Override
                 public void process(IndexType index) {
-                    if(blankingValue.equals(get(index))) set(index, value);
+                    if(invalidValue.equals(get(index))) set(index, value);
                 }
 
             });
         }
 
-        blankingValue = (value == null) ? Double.NaN : value;    
+        invalidValue = (value == null) ? Double.NaN : value;    
 
     }
 
@@ -233,7 +240,7 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
 
 
     public boolean isValid(Number value) {
-        return !value.equals(blankingValue);
+        return !value.equals(invalidValue);
     }
 
 
@@ -897,7 +904,6 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
     }  
     
     public List<Peak> findPeaks(double threshold, double... r) {
-
         ArrayList<Peak> peaks = new ArrayList<>();
 
         if(isEmpty()) return peaks;
@@ -909,7 +915,6 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
 
             peaks.add(new Peak(idx, S));
             flagRadius(idx, r);
-
         }
 
         return peaks;
@@ -917,14 +922,15 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
 
 
     @SuppressWarnings("cast")
-    public void flagRadius(final IndexType centerIndex, double[] rPix) {
+    public void flagRadius(final IndexType centerIndex, double... rPix) {
         IndexType from = (IndexType) centerIndex.copy();
         IndexType to = (IndexType) centerIndex.copy();
+        IndexType size = getSize();
 
         for(int i=centerIndex.dimension(); --i >= 0; ) {
             int d =  (int) Math.ceil(rPix[rPix.length > i ? i : rPix.length - 1]);
-            from.setValue(i, from.getValue(i) - d);
-            to.setValue(i, to.getValue(i) + d + 1);
+            from.setValue(i, Math.max(0, from.getValue(i) - d));
+            to.setValue(i, Math.min(size.getValue(i), to.getValue(i) + d + 1));
         }
 
         PointOp<IndexType, Void> flagger = new PointOp.Simple<IndexType>() {
@@ -940,7 +946,7 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
                     if(d2 > 1.0) return;
                 }
 
-                set(idx, blankingValue);
+                set(idx, invalidValue);
             } 
         };
 

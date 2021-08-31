@@ -74,7 +74,7 @@ public class FlatGrid2D extends Grid2D<Coordinate2D> {
 	public void parseHeader(Header header) throws Exception {
 		super.parseHeader(header);
 		
-		String alt = getFitsID();
+		String alt = getFitsVariant();
 			
 		if(header.containsKey("CTYPE1" + alt)) xAxis().setShortLabel(header.getStringValue("CTYPE1" + alt));
 		if(header.containsKey("CTYPE2" + alt)) yAxis().setShortLabel(header.getStringValue("CTYPE2" + alt));
@@ -85,7 +85,7 @@ public class FlatGrid2D extends Grid2D<Coordinate2D> {
 	public void editHeader(Header header) throws HeaderCardException {		
 		super.editHeader(header);
 		
-		String alt = getFitsID();	
+		String alt = getFitsVariant();	
 		Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 		
 		// Override the axis names ignoring projection...

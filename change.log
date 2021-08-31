@@ -147,6 +147,8 @@
 	representing a vector in the mathematical sense (vs the Java Vector
 	class that represents a dynamically sized array).
 
+	[FIX] {Data} flagRadius to check loop() index range.
+
 	[FIX] {jnum.math} A fait bit of cleanup in the math package with
 	some simplifications, and a whole lot of new Javadoc.
 

@@ -80,7 +80,7 @@ public class SphericalGrid extends Grid2D<SphericalCoordinates> {
 
 	@Override
 	public void parseProjection(Header header) throws HeaderCardException {
-		String type = header.getStringValue("CTYPE1" + getFitsID());
+		String type = header.getStringValue("CTYPE1" + getFitsVariant());
 	
 		try { setProjection(SphericalProjection.forName(type.substring(5, 8))); }
 		catch(Exception e) { Util.error(this, "Unknown projection " + type.substring(5, 8)); }

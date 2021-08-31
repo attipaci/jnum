@@ -447,9 +447,9 @@ NumberFormating {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
           
         if(name != null) c.add(new HeaderCard(fitsID + "BNAM", name, "Beam name."));
-        c.add(new HeaderCard(fitsID + "BMAJ", majorFWHM / sizeUnit.value(), "Beam major axis (" + sizeUnit.name() + ")."));
-        c.add(new HeaderCard(fitsID + "BMIN", minorFWHM / sizeUnit.value(), "Beam minor axis (" + sizeUnit.name() + ")."));
-        c.add(new HeaderCard(fitsID + "BPA", positionAngle / Unit.deg, "Beam position angle (deg)."));
+        if(!Double.isNaN(majorFWHM)) c.add(new HeaderCard(fitsID + "BMAJ", majorFWHM / sizeUnit.value(), "Beam major axis (" + sizeUnit.name() + ")."));
+        if(!Double.isNaN(minorFWHM)) c.add(new HeaderCard(fitsID + "BMIN", minorFWHM / sizeUnit.value(), "Beam minor axis (" + sizeUnit.name() + ")."));
+        if(!Double.isNaN(positionAngle)) c.add(new HeaderCard(fitsID + "BPA", positionAngle / Unit.deg, "Beam position angle (deg)."));
     }
 
     @Override

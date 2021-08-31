@@ -21,8 +21,10 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data;
+package jnum.data.fitting;
 
+import jnum.data.DataPoint;
+import jnum.data.WeightedPoint;
 
 public class LinearRegression {
 
@@ -71,13 +73,19 @@ public class LinearRegression {
 
     public synchronized DataPoint getIntercept() {
         double delta = getDenominator();
-        return new DataPoint((sumwxx * sumwy - sumwx * sumwxy) / delta, delta / sumwxx);
+        DataPoint p = new DataPoint();
+        p.setValue((sumwxx * sumwy - sumwx * sumwxy) / delta);
+        p.setWeight(delta / sumwxx);
+        return p;
     }
 
 
     public synchronized DataPoint getSlope() {
         double delta = getDenominator();
-        return new DataPoint((sumw * sumwxy - sumwx * sumwy) / delta, delta / sumw);
+        DataPoint p = new DataPoint();
+        p.setValue((sumw * sumwxy - sumwx * sumwy) / delta);
+        p.setWeight(delta / sumw);
+        return p;
     }
 
     public synchronized Coefficients getCoefficients() {

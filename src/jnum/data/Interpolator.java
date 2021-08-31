@@ -31,11 +31,17 @@ import jnum.Constant;
 import jnum.Util;
 
 
-
+/**
+ * A base class for interpolating between data points.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 
+    /** */
 	private static final long serialVersionUID = -7962217110619389946L;
-
+	
 	public boolean verbose = false;
 
 	public String fileName = "";

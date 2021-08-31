@@ -56,6 +56,6 @@ public class CartesianSystem extends CoordinateSystem {
 	    for(int i=0; i< names.length; i++) add(new CoordinateAxis(names[i]));  
 	}
 
-	private final String[] defaultLabels = { "x", "y", "z", "u", "v", "w", "t" };
+	private final static String[] defaultLabels = { "x", "y", "z", "u", "v", "w", "t" };
 	
 }

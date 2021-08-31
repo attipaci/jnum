@@ -276,7 +276,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 
     @Override
     public void editHeader(Header header) throws HeaderCardException {	
-        String alt = getFitsID();
+        String alt = getFitsVariant();
 
         // TODO 
         projection.editHeader(header, alt);
@@ -325,7 +325,7 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
 
     @Override
     public void parseHeader(Header header) throws Exception {
-        String alt = getFitsID();
+        String alt = getFitsVariant();
 
         String type = header.getStringValue("CTYPE1" + alt);
 

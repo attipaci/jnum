@@ -48,6 +48,10 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
      */
     private static final long serialVersionUID = 1682113209739647771L;
     
+    /**
+     * The first Cartesian axis (counted from 1), in a possibly composite coordinate system that mixes Cartesian
+     * and non-Cartesian coordinates.
+     */
     private int firstAxis = 1;
     
     
@@ -171,7 +175,7 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
     @Override
     public void editHeader(Header header) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        String alt = getFitsID();
+        String alt = getFitsVariant();
         
         CoordinateSystem system = getCoordinateSystem();
         for(int i=0; i<system.size(); i++) {
@@ -205,7 +209,20 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
          */
         private static final long serialVersionUID = 2696835013611823922L;
         
-        private double[] refIndex, refValue, resolution;
+        /**
+         * The index values for the reference position.
+         */
+        private double[] refIndex;
+        
+        /**
+         * The coordinate values for the reference position.
+         */
+        private double[] refCoords;
+        
+        /**
+         * The grid spacings in the local coordinate system around the reference position.
+         */
+        private double[] resolution;
         
         /**
          * Constructs a new Cartesian grid, with double precision coordinates and indices.
@@ -216,7 +233,7 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
             super(dimension);
             
             refIndex = new double[dimension];
-            refValue = new double[dimension];
+            refCoords = new double[dimension];
             resolution = new double[dimension];    
         }
         
@@ -232,12 +249,12 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
 
         @Override
         public void setReference(double[] coords) {
-            refValue = coords;
+            refCoords = coords;
         }
 
         @Override
         public double[] getReference() {
-            return refValue;
+            return refCoords;
         }
 
         @Override
@@ -264,7 +281,7 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
         @Override
         public void coordsAt(double[] index, double[] toValue) {
             for(int i=toValue.length; --i >= 0; ) {
-                toValue[i] = (index[i] - refIndex[i]) * resolution[i] + refValue[i];
+                toValue[i] = (index[i] - refIndex[i]) * resolution[i] + refCoords[i];
             }
         }
         
@@ -272,7 +289,7 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
         @Override
         public final void indexOf(double[] value, double[] toIndex) {
             for(int i=toIndex.length; --i >= 0; ) {
-                toIndex[i] = (value[i] - refValue[i]) / resolution[i] + refIndex[i];
+                toIndex[i] = (value[i] - refCoords[i]) / resolution[i] + refIndex[i];
             }
         }
 
@@ -294,12 +311,12 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
 
         @Override
         public double getReferenceValue(int axis) {
-            return refValue[axis];
+            return refCoords[axis];
         }
 
         @Override
         public void setReferenceValue(int axis, double value) {
-            refValue[axis] = value;
+            refCoords[axis] = value;
         }
         
     }
@@ -319,7 +336,20 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
          */
         private static final long serialVersionUID = -1879946881203425985L;
         
-        private float[] refIndex, refValue, resolution;
+        /**
+         * The index values for the reference position.
+         */
+        private float[] refIndex;
+        
+        /**
+         * The coordinate values for the reference position.
+         */
+        private float[] refCoords;
+        
+        /**
+         * The grid spacings in the local coordinate system around the reference position.
+         */
+        private float[] resolution;
         
         /**
          * Constructs a new Cartesian grid, with single precision coordinates and indices.
@@ -330,7 +360,7 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
             super(dimension);
             
             refIndex = new float[dimension];
-            refValue = new float[dimension];
+            refCoords = new float[dimension];
             resolution = new float[dimension];    
         }
         
@@ -346,12 +376,12 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
 
         @Override
         public void setReference(float[] coords) {
-            refValue = coords;
+            refCoords = coords;
         }
 
         @Override
         public float[] getReference() {
-            return refValue;
+            return refCoords;
         }
 
         @Override
@@ -378,7 +408,7 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
         @Override
         public void coordsAt(float[] index, float[] toValue) {
             for(int i=toValue.length; --i >= 0; ) {
-                toValue[i] = (index[i] - refIndex[i]) * resolution[i] + refValue[i];
+                toValue[i] = (index[i] - refIndex[i]) * resolution[i] + refCoords[i];
             }
         }
 
@@ -386,7 +416,7 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
         @Override
         public final void indexOf(float[] value, float[] toIndex) {
             for(int i=toIndex.length; --i >= 0; ) {
-                toIndex[i] = (value[i] - refValue[i]) / resolution[i] + refIndex[i];
+                toIndex[i] = (value[i] - refCoords[i]) / resolution[i] + refIndex[i];
             }
         }
         
@@ -407,12 +437,12 @@ public abstract class CartesianGrid<CoordinateType> extends Grid<CoordinateType,
 
         @Override
         public double getReferenceValue(int axis) {
-            return refValue[axis];
+            return refCoords[axis];
         }
 
         @Override
         public void setReferenceValue(int axis, double value) {
-            refValue[axis] = (float) value;
+            refCoords[axis] = (float) value;
         }
         
     }

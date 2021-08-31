@@ -25,14 +25,45 @@ package jnum.data.index;
 
 import jnum.data.Values;
 
+/**
+ * Provides index-based access to numerical values.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <IndexType>
+ * @param <NumberType>
+ */
 public interface IndexedValues<IndexType, NumberType extends Number> extends Values, IndexedEntries<IndexType, NumberType> {
 
+    /**
+     * Clears (zeroes) the value at the specified index location
+     * 
+     * @param index     the location index.
+     */
     public abstract void clear(IndexType index);
     
+    /**
+     * Scales the value at the specified index location with the supplied scaling factor.
+     * 
+     * @param index     the location index.
+     * @param factor    the scaling factor.
+     */
     public abstract void scale(IndexType index, double factor);
     
+    /**
+     * Sets a new value at the specified index location
+     * 
+     * @param index     the location index.
+     * @param value     the new value.
+     */
     public void set(IndexType index, Number value);
     
+    /**
+     * Adds a number to the value at the specified index location.
+     * 
+     * @param index     the location index.
+     * @param value     the increment.
+     */
     public void add(IndexType index, Number value);
       
 }

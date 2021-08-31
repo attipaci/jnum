@@ -27,40 +27,123 @@ import jnum.ExtraMath;
 import jnum.NonConformingException;
 import jnum.math.MathVector;
 
+
+/**
+ * An index in 3D space, such as (<i>i</i>, <i>j</i>, <i>k</i>).
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class Index3D extends AbstractIndex<Index3D> {
     /**
      * 
      */
     private static final long serialVersionUID = -2705961475758088763L;
     
-    private int i, j, k;
+    /** the first index value */
+    private int i;
     
+    /** the second index value */
+    private int j;
+    
+    /** the third index value */
+    private int k;
+    
+    /**
+     * Instantiates a new 3D index with the default zero components.
+     */
     public Index3D() { this(0, 0, 0); }
     
+    /**
+     * Instantiates a new 3D index with the specified initial components.
+     * 
+     * @param i     the initial value for the index in the first dimension.
+     * @param j     the initial value for the index in the second dimension.
+     * @param j     the initial value for the index in the third dimension.
+     */
     public Index3D(int i, int j, int k) {
         set(i, j, k);
     }
     
+    /**
+     * Returns the index component in the first dimension.
+     * 
+     * @return      the index component in the first dimension.
+     * 
+     * @see #j()
+     * @see #k()
+     * @see #set(int, int, int)
+     * @see #setI(int)
+     */
     public final int i() { return i; }
     
+    /**
+     * Returns the index component in the second dimension.
+     * 
+     * @return      the index component in the third dimension.
+     * 
+     * @see #i()
+     * @see #k()
+     * @see #set(int, int, int)
+     * @see #setJ(int)
+     */
     public final int j() { return j; }
     
+    /**
+     * Returns the index component in the third dimension.
+     * 
+     * @return      the index component in the third dimension.
+     * 
+     * @see #i()
+     * @see #j()
+     * @see #set(int, int, int)
+     * @see #setK(int)
+     */
     public final int k() { return k; }
     
+    /**
+     * Sets a new index location.
+     * 
+     * @param i     the new index location in the first dimension.
+     * @param j     the new index location in the second dimension.
+     * @param k     the new index location in the third dimension.
+     * 
+     * @see #i()
+     * @see #j()
+     * @see #k()
+     * @see #setI(int)
+     * @see #setJ(int)
+     * @see #setK(int)
+     */
     public final void set(final int i, final int j, final int k) {
         this.i = i;
         this.j = j;
         this.k = k;
     }
     
+    /**
+     * Sets a new value for the first component only, leaving the other two components unchanged.
+     * 
+     * @param value     the new value for the first index component.
+     */
     public final void setI(final int value) {
         i = value;
     }
     
+    /**
+     * Sets a new value for the second component only, leaving the other two components unchanged.
+     * 
+     * @param value     the new value for the second index component.
+     */
     public final void setJ(final int value) {
         j = value;
     }
     
+    /**
+     * Sets a new value for the third component only, leaving the other two components unchanged.
+     * 
+     * @param value     the new value for the third index component.
+     */
     public final void setK(final int value) {
         k = value;
     }

@@ -26,12 +26,41 @@ package jnum.data;
 import jnum.data.index.Index;
 import jnum.math.MathVector;
 
+/**
+ * Interface for regularly gridded data objects that have a reference index value/position. The reference index itself 
+ * may need not match an index contained in the data, and can fall between points of the grid, i.e. can have
+ * a location of at floating-point index values. Hence, the reference location is represented by a mathematical
+ * vector type, of the same generic type as the offset vectors used by the regular data object to which 
+ * the reference position is referred to.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <IndexType>      the type of data indices on a regular grid
+ * @param <VectorType>     the type of offset vectors on a regular grid, of the same dimensionality as the index.
+ */
 public interface Referenced<IndexType extends Index<IndexType>, VectorType extends MathVector<Double>> {
     
+    /**
+     * Gets the regularly gridded data object that is referenced by this implementation.
+     * 
+     * @return  the data object for which this interface provides a reference index location.
+     */
     public RegularData<IndexType, VectorType> getData();
     
+    /**
+     * Gets the reference index value, which may fall between the regular grid cells represented by integers.
+     * Hence, the returned value is a floating-point vector type.
+     * 
+     * @return          the reference index location.
+     */
     public VectorType getReferenceIndex();
     
+    /**
+     * Sets the reference index value for the associated regularly gridded data.
+     * 
+     * @param index     the reference index location, which may fall between the regular grid cells represented by integers.
+     *                  Hence, the returned value is a floating-point vector type.
+     */
     public void setReferenceIndex(VectorType index);
     
 }

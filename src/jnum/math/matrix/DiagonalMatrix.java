@@ -301,7 +301,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     @Override
     public void setIdentity() {
         zero();
-        setIdentity();
+        super.setIdentity();
     }
 
 
@@ -760,6 +760,8 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         @SuppressWarnings("unchecked")
         public Generic(Class<T> type, int size) {
             this(type, (T[]) Array.newInstance(type, size));
+            identity = this.newEntry();
+            identity.setIdentity();
         }
         
         /**

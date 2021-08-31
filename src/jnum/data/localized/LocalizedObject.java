@@ -152,13 +152,13 @@ implements Serializable, Cloneable, Comparable<LocalizedObject<L, D>>, Metric<Lo
 
     /**
      * Gets the distance of this object to another object along the 1-dimensional
-     * sorting space (usually along a direction in the locartion space). 
+     * sorting space (usually along a direction in the location space). 
      * 
      * @param other the other localized object
      * @return      the distance to the other object along the sorting dimension / space.
      */
-    public double sortingDistanceTo(LocalizedObject<L, D> other) {
-        return sortingDistanceTo(other);
+    public  double sortingDistanceTo(LocalizedObject<L, D> other) {
+        return sortingDistanceTo(other.location);
     }
 
     /**

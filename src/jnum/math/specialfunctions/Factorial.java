@@ -61,7 +61,7 @@ public final class Factorial {
 	public static final double at(int n) throws IllegalArgumentException, ArithmeticException {
 	    if(n == 0) return 1.0;
 		if(n < 0) throw new IllegalArgumentException("Negative Factorial.");
-		if(n > store.length) new ArithmeticException("Result exceeds double precision range.");     
+		if(n > store.length) throw new ArithmeticException("Result exceeds double precision range.");     
 		
 		if(store[n] == 0.0) store[n] = n * at(n-1);
 		return store[n];

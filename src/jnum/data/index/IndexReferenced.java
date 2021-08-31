@@ -23,12 +23,27 @@
 
 package jnum.data.index;
 
+/**
+ * Defines a reference index location.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <IndexType>
+ */
 public interface IndexReferenced<IndexType> {
 
+    /**
+     * Sets a new index for the reference location.
+     * 
+     * @param index     the new index of the reference location.
+     */
     public void setReferenceIndex(IndexType index);
     
+    /**
+     * Gets the index of the reference location.
+     * 
+     * @return      the index of the reference location.
+     */
     public IndexType getReferenceIndex();
-    
-    
-    
+       
 }

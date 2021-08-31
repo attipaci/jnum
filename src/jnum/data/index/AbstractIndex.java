@@ -25,6 +25,16 @@ package jnum.data.index;
 
 import jnum.util.HashCode;
 
+/**
+ * A base class for multi-dimensional data indices. It provides default implementations
+ * for concrete index classes, which may in the future become default methods in the 
+ * {@link Index} interface itself, once jnum is bumped to Java 9, eliminating the need
+ * for this intermediary class.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <T>   the generic type of the implementing object.
+ */
 public abstract class AbstractIndex<T extends AbstractIndex<T>> implements Index<T> {
     /**
      * 
@@ -66,17 +76,11 @@ public abstract class AbstractIndex<T extends AbstractIndex<T>> implements Index
     }
 
     @Override
-    public void reverseTo(T other) {
+    public void setReverseOrderOf(T other) {
         int last = dimension()-1;
-        for(int i=last+1; --i >= 0; ) other.setValue(last-i, getValue(i));
+        for(int i=last; i >= 0; i--) setValue(i, other.getValue(last-i));
     }
     
-    @Override
-    public T getReversed() {
-        T reversed = clone();
-        reverseTo(reversed);
-        return reversed;
-    }
     
     @Override
     public double distanceTo(T index) {

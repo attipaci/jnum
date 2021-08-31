@@ -630,10 +630,9 @@ public class Complex extends Vector2D implements
 		multiplyBy(x);
 	}
 
-
 	@Override
 	public void add(Complex x) {
-		add(x);
+		super.add(x);
 	}
 
 	@Override
@@ -643,7 +642,7 @@ public class Complex extends Vector2D implements
 
 	@Override
 	public void subtract(Complex x) {
-		subtract(x);
+		super.subtract(x);
 	}
 
 

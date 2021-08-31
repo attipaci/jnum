@@ -34,6 +34,12 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
+/**
+ * A class representing some standard FITS properties, not all of which may be available or populated.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class FitsProperties implements Cloneable, Copiable<FitsProperties>, CopyCat<FitsProperties>, Serializable, TableFormatter.Entries, 
 FitsHeaderEditing, FitsHeaderParsing {
 

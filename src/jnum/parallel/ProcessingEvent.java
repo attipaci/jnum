@@ -26,7 +26,7 @@ package jnum.parallel;
 import java.awt.AWTEvent;
 
 /**
- * A processing event that can be used to trigger processing in a queue (see {@link ProcessingQueue).
+ * A processing event that can be used to trigger processing in a queue (see {@link ProcessingQueue}).
  * 
  * @author Attila Kovacs
  *

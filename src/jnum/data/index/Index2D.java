@@ -30,23 +30,43 @@ import jnum.NonConformingException;
 import jnum.math.MathVector;
 import jnum.math.Vector2D;
 
-
+/**
+ * An index in 2D space, such as (<i>i</i>, <i>j</i>).
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class Index2D extends AbstractIndex<Index2D> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -364862939591997831L;
 
-    private int i,j;
+    /** the first index value */
+    private int i;
+    
+    /** the second index value */
+    private int j;
 
-
+    /**
+     * Instantiates a new 2D index with the default zero components.
+     */
     public Index2D() { this(0, 0); }
 
-
+    /**
+     * Instantiates a new 2D index with the specified initial components.
+     * 
+     * @param i     the initial value for the index in the first dimension.
+     * @param j     the initial value for the index in the second dimension.
+     */
     public Index2D(int i, int j) {
         set(i, j);
     }
 
-
+    /**
+     * Instantiates a new 2D index that is nearest to the fractional index location represented by a 2D vector. 
+     * 
+     * @param index     the fractional 2D index that is rounded to create this integer 2D index instance.
+     */
     public Index2D(Vector2D index) {
         this((int)Math.round(index.x()), (int)Math.round(index.y()));
     }
@@ -69,12 +89,58 @@ public class Index2D extends AbstractIndex<Index2D> {
         return true;		
     }
 
+    /**
+     * Sets a new index location.
+     * 
+     * @param i     the new index location in the first dimension.
+     * @param j     the new index location in the second dimension.
+     * 
+     * @see #i()
+     * @see #j()
+     * @see #setI(int)
+     * @see #setJ(int)
+     */
     public void set(int i, int j) { this.i = i; this.j = j; }
 
+    /**
+     * Returns the index component in the first dimension.
+     * 
+     * @return      the index component in the first dimension.
+     * 
+     * @see #j()
+     * @see #set(int, int)
+     * @see #setI(int)
+     */
     public final int i() { return i; }
 
+    /**
+     * Returns the index component in the second dimension.
+     * 
+     * @return      the index component in the second dimension.
+     * 
+     * @see #i()
+     * @see #set(int, int)
+     * @see #setJ(int)
+     */
     public final int j() { return j; }
 
+    /**
+     * Sets a new value for the first component only, leaving the other two components unchanged.
+     * 
+     * @param value     the new value for the first index component.
+     */
+    public final void setI(final int value) {
+        i = value;
+    }
+    
+    /**
+     * Sets a new value for the second component only, leaving the other two components unchanged.
+     * 
+     * @param value     the new value for the second index component.
+     */
+    public final void setJ(final int value) {
+        j = value;
+    }
 
     @Override
     public void multiplyBy(Index2D factor) {

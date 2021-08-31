@@ -67,9 +67,6 @@ public abstract class ColorScheme {
 		schemes.put("colorful", Colorful.class);
 		schemes.put("color", Colorful.class);
 		
-		schemes.put("bblike", BBLike.class);
-		schemes.put("bb", BBLike.class);
-		
 		schemes.put("daytime", DayTime.class);
 		schemes.put("day", DayTime.class);
 		schemes.put("hot", DayTime.class);
