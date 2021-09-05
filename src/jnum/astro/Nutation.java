@@ -116,7 +116,7 @@ public abstract class Nutation {
         if(v != null) return v.copy();
         
         // Interval between fundamental epoch J2000.0 and given date.
-        double t = (mjd - AstroTime.MJDJ2000) / AstroTime.JulianCenturyDays;
+        double t = (mjd - AstroTime.MJDJ2000) / AstroTime.julianCenturyDays;
         if(t == 0) return new Vector2D();
       
         try { v = calcCorrection(t, new DelaunayArguments(mjd)); }

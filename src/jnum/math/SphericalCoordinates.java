@@ -90,7 +90,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 *                     sphere from the outside, from above the location.
 	 * @param latitude     (rad) the latitude coordinate [-Pi:Pi]
 	 * 
-	 * @see #set(double, double)
+	 * @see #set(double...)
 	 */
 	public SphericalCoordinates(final double longitude, final double latitude) { set(longitude, latitude); }
 	
@@ -277,7 +277,10 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	public void NaN() { super.NaN(); cosLat = Double.NaN; sinLat = Double.NaN; }
 
 	@Override
-	public void set(final double lon, final double lat) { setLongitude(lon); setLatitude(lat); }
+	public void set(double... v) { 
+	    setLongitude(v[0]); 
+	    if(v.length > 1) setLatitude(v[1]); 
+	}
 		
 	/**
 	 * Sets the native longitude and latitude coordinates contained in this instance. Native
@@ -288,7 +291,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 * @param lon  (rad) the native longitude (increases to the right when looking at the sphere from the outside, with pole up).
 	 * @param lat  (rad) the native latitude (0 at equator, and increasing towards the pole).
 	 */
-	public void setNative(final double lon, final double lat) { super.set(lon,  lat); }
+	public void setNative(final double lon, final double lat) { super.set(lon, lat); }
 	
 	/**
 	 * Gets the native longitude for these spherical coordinate instance. Native longitude is always

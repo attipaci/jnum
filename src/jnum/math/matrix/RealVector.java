@@ -34,11 +34,13 @@ import jnum.data.index.IndexedValues;
 import jnum.math.Coordinates;
 import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;
+import jnum.math.RealComponents;
 
 
 
 
-public class RealVector extends AbstractVector<Double> implements MathVector<Double>, IndexedValues<Index1D, Double>, ViewableAsDoubles {
+public class RealVector extends AbstractVector<Double> 
+implements MathVector<Double>, RealComponents, IndexedValues<Index1D, Double>, ViewableAsDoubles {
 
     private static final long serialVersionUID = 1042626482476049050L;
 
@@ -348,6 +350,54 @@ public class RealVector extends AbstractVector<Double> implements MathVector<Dou
     @Override
     public void add(Index1D index, Number value) {
         component[index.i()] += value.doubleValue();
+    }
+    
+    @Override
+    public void set(double... v) {
+        for(int i = Math.min(component.length, v.length); --i >= 0; ) component[i] = v[i];
+    }
+
+
+    @Override
+    public void set(float... v) {
+        for(int i = Math.min(component.length, v.length); --i >= 0; ) component[i] = v[i];
+    }
+
+
+    @Override
+    public void add(double... v) {
+        for(int i = Math.min(component.length, v.length); --i >= 0; ) component[i] += v[i];
+    }
+
+
+    @Override
+    public void add(float... v) {
+        for(int i = Math.min(component.length, v.length); --i >= 0; ) component[i] += v[i];
+    }
+
+
+    @Override
+    public void addScaled(double factor, double... v) {
+        for(int i = Math.min(component.length, v.length); --i >= 0; ) component[i] += factor * v[i];
+    }
+
+
+    @Override
+    public void addScaled(double factor, float... v) {
+        for(int i = Math.min(component.length, v.length); --i >= 0; ) component[i] += factor * v[i];
+    }
+
+
+    @Override
+    public void subtract(double... v) {
+        for(int i = Math.min(component.length, v.length); --i >= 0; ) component[i] += v[i];
+    }
+
+
+    @Override
+    public void subtract(float... v) {
+        for(int i = Math.min(component.length, v.length); --i >= 0; ) component[i] += v[i];
+        
     }   
 
 }

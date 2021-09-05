@@ -48,7 +48,7 @@ import nom.tam.util.Cursor;
  * @author Attila Kovacs
  *
  */
-public class Coordinate3D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate3D>, 
+public class Coordinate3D implements Coordinates<Double>, RealComponents, Serializable, Cloneable, Copiable<Coordinate3D>, 
 ViewableAsDoubles, Parser, NumberFormating, Inversion {
 
 	private static final long serialVersionUID = 4670218761839380720L;
@@ -136,12 +136,6 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
 
 	@Override
     public final Double z() { return z; }
-	
-	public final void set(final double x, final double y, final double z) {
-	    this.x = x;
-	    this.y = y;
-	    this.z = z;
-	}
 
 	/**
      * Sets the <i>x</i>-type coordinate to the specified value.
@@ -227,6 +221,64 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
      */
     public final void scaleZ(double factor) { z *= factor; }
 	
+    
+    @Override
+    public void set(double... v) {
+        setX(v[0]);
+        if(v.length > 1) setY(v[1]);
+        if(v.length > 2) setY(v[2]);
+    }
+
+    @Override
+    public void set(float... v) {
+        setX(v[0]);
+        if(v.length > 1) setY(v[1]);
+        if(v.length > 2) setZ(v[2]);
+    }
+    
+    @Override
+    public void add(double... v) {
+        addX(v[0]);
+        if(v.length > 1) addY(v[1]);
+        if(v.length > 2) addY(v[2]);
+    }
+
+    @Override
+    public void add(float... v) {
+        addX(v[0]);
+        if(v.length > 1) addY(v[1]);
+        if(v.length > 2) addZ(v[2]);
+    }
+
+    @Override
+    public void addScaled(double factor, double... v) {
+        addX(factor * v[0]);
+        if(v.length > 1) addY(factor * v[1]);
+        if(v.length > 2) addZ(factor * v[2]);
+    }
+
+    @Override
+    public void addScaled(double factor, float... v) {
+        addX(factor * v[0]);
+        if(v.length > 1) addY(factor * v[1]);
+        if(v.length > 2) addZ(factor * v[2]);
+    }
+
+    @Override
+    public void subtract(double... v) {
+        addX(-v[0]);
+        if(v.length > 1) addY(-v[1]);
+        if(v.length > 2) addZ(-v[2]);
+    }
+
+    @Override
+    public void subtract(float... v) {
+        addX(-v[0]);
+        if(v.length > 1) addY(-v[1]);
+        if(v.length > 2) addZ(-v[2]);
+    }
+    
+    
     @Override
     public String toString(NumberFormat nf) {
         return "(" + nf.format(x) + "," + nf.format(y) + "," + nf.format(z) + ")";

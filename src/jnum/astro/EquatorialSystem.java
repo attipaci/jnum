@@ -109,7 +109,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
      * @return  (yr) Julian year, e.g. 2021.3554
      */
     public final double getJulianYear() {
-        return 2000.0 + (getReferenceMJD() - AstroTime.MJDJ2000) / AstroTime.JulianYearDays;
+        return 2000.0 + (getReferenceMJD() - AstroTime.MJDJ2000) / AstroTime.julianYearDays;
     }
 
     @Override
@@ -230,7 +230,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
             else if(header.containsKey("DATE-OBS")) {
                 try {
                     AstroTime time = AstroTime.forFitsTimeStamp(header.getStringValue("DATE-OBS"));
-                    dynamical.epoch = JulianEpoch.forMJD(time.getMJD());
+                    dynamical.epoch = JulianEpoch.forMJD(time.MJD());
                 }
                 catch(ParseException e) { Util.warning(EquatorialSystem.class, "No MJD-OBS or DATE-OBS in FITS. Using J" + Util.f12.format(system.getJulianYear()) + "."); }
             }
@@ -607,7 +607,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         }
         
         public double getApproximateERA() {
-            return time.getERA(0.0);
+            return time.ERA(0.0);
         }
         
         @Override
@@ -622,7 +622,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
 
         @Override
         public double getReferenceMJD() {
-            return time.getMJD();
+            return time.MJD();
         }
         
         @Override

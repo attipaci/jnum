@@ -54,7 +54,7 @@ public class DelaunayArguments {
      *                      Capitaine &amp; Wallace, (2008).
      */
     public DelaunayArguments(double mjd, boolean isTruncated) {
-        final double t = (mjd - AstroTime.MJDJ2000) / AstroTime.JulianCenturyDays;
+        final double t = (mjd - AstroTime.MJDJ2000) / AstroTime.julianCenturyDays;
         
         f = new double[5];
     

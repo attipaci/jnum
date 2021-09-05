@@ -66,35 +66,90 @@ import jnum.text.HourAngleFormat;
  */
 public class EquatorialCoordinates extends PrecessingCoordinates {
 
+    /** */
     private static final long serialVersionUID = 3445122576647034180L;
 
-
+    /**
+     * Instantiates new empty equatorial coordinates in the ICRS frame
+     * 
+     * @see EquatorialSystem#ICRS
+     * 
+     */
     public EquatorialCoordinates() {}
 
+    /**
+     * Instantiates new default equatorial coordinates in the specified equatorial reference system.
+     * 
+     * @param system        the equatorial reference system for the new coordinates
+     * 
+     * @see #EquatorialCoordinates(double, double, EquatorialSystem)
+     */
     public EquatorialCoordinates(EquatorialSystem system) { 
         super(system);
     }
 
-
+    /**
+     * Instantiates new equatorial coordinates from a string representation of the coordinates, including
+     * a representation of the reference system (if available).
+     * 
+     * @param text              the string representation of the coordinates, including their reference system.
+     * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
+     */
     public EquatorialCoordinates(String text) throws ParseException { super(text); }
 
 
+    /**
+     * Instantiate new equatorial coordinates in the ICRS.
+     * 
+     * @param ra        (rad) Right ascension angle [0:2&pi;].
+     * @param dec       (rad) Declination angle [-&pi;/2;&pi;/2].
+     * 
+     * @see #EquatorialCoordinates(double, double, EquatorialSystem)
+     * @see EquatorialSystem#ICRS
+     * 
+     */
     public EquatorialCoordinates(double ra, double dec) { 
         super(ra, dec, EquatorialSystem.ICRS); 
     }
 
-
-    public EquatorialCoordinates(double ra, double dec, String sysSpec) { 
-        super(ra, dec, sysSpec); 
-
-    }
-
-
+    /**
+     * Instantiates new equatorial coordinates, in the specified equatorial reference system.
+     * 
+     * @param ra        (rad) Right ascension angle [0:2&pi;].
+     * @param dec       (rad) Declination angle [-&pi;/2;&pi;/2].
+     * @param system    the equatorial reference system for the new coordinates
+     * 
+     * @see #EquatorialCoordinates(double, double, String)
+     * 
+     */
     public EquatorialCoordinates(double ra, double dec, EquatorialSystem system) { 
         super(ra, dec, system); 
     }
 
+    /**
+     * Instantiates new equatorial coordinates, in the specified equatorial reference system.
+     * 
+     * @param ra        (rad) Right ascension angle [0:2&pi;].
+     * @param dec       (rad) Declination angle [-&pi;/2;&pi;/2].
+     * @param sysSpec   the string representation of the equatorial reference system, such as 'ICRS', 'J2000' or 'FK5'.
+     * 
+     * @see #EquatorialCoordinates(double, double, EquatorialSystem)
+     * 
+     */
+    public EquatorialCoordinates(double ra, double dec, String sysSpec) { 
+        super(ra, dec, sysSpec); 
+    }
 
+    /**
+     * Instantiates a new set of equatorial coordinates, referenced to the ICRS equator, that represent 
+     * the same location on sky as the specified other celestial coordinates
+     * 
+     * @param from      the coordinates of the sky location in some other celestial system.
+     * 
+     * @see CelestialCoordinates#fromEquatorial(EquatorialCoordinates)
+     * @see CelestialCoordinates#toEquatorial()
+     * @see EquatorialSystem#ICRS
+     */
     public EquatorialCoordinates(CelestialCoordinates from) { super(from); }
     
 
@@ -104,7 +159,16 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     @Override
     public EquatorialCoordinates copy() { return (EquatorialCoordinates) super.copy(); }
 
-
+    @Override
+    public EquatorialCoordinates getTransformed(EquatorialTransform T) {
+        return (EquatorialCoordinates) super.getTransformed(T);
+    }
+    
+    @Override
+    public EquatorialCoordinates getTransformedTo(EquatorialSystem system) {
+        return (EquatorialCoordinates) super.getTransformedTo(system);
+    }
+        
     @Override
     public String getFITSLongitudeStem() { return "RA--"; }
 
@@ -128,25 +192,76 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         return defaultLocalCoordinateSystem;
     }
 
-
+    /**
+     * Returns the right ascension angle component.
+     * 
+     * @return  (rad) the right ascension angle [0:2&pi;].
+     * 
+     * @see DEC()
+     * @see #setRA(double)
+     */
     public final double RA() { return zeroToTwoPi(longitude()); }
 
-
+    /**
+     * Returns the right ascension angle component. Same as {@link #RA()} but with a more expressive name.
+     * 
+     * @return  (rad) the right ascension angle [0:2&pi;].
+     * 
+     * @see #RA()
+     */
     public final double rightAscension() { return RA(); }
 
-
+    /**
+     * Returns the declination angle component.
+     * 
+     * @return  (rad) the declination angle [-&pi;:&pi;].
+     * 
+     * @see RA()
+     * @see #setDEC(double)
+     */
     public final double DEC() { return latitude(); }
 
-
+    /**
+     * Returns the declination angle component. Same as {@link #DEC()} buty with a more expressive name.
+     * 
+     * @return  (rad) the declination angle [-&pi;:&pi;].
+     * 
+     */
     public final double declination() { return DEC(); }
 
-
+    /**
+     * Sets a new right ascension coordinate component.
+     * 
+     * @param RA    (rad) the new right ascension angle [0:2&pi;].
+     * 
+     * @see #RA()
+     * @see #setDEC(double)
+     */
     public final void setRA(double RA) { setLongitude(RA); }
 
-
+    /**
+     * Sets a new declination coordinate component.
+     * 
+     * @param DEC    (rad) the new declination angle [-&pi;:&pi;].
+     * 
+     * @see #DEC()
+     * @see #setRA(double)
+     */
     public final void setDEC(double DEC) { setLatitude(DEC); }
 
-
+    /**
+     * Returns the parallactic angle at the specified Earth location and local sidereal time. The parallactic angle
+     * is the position angle of the local meridian vs. the declination axis in the equatorial system, measured 
+     * as a counter-clockwise rotation when looking inward towards the origin.
+     * 
+     * @param site  the geodetic location on Earth.
+     * @param LST   (s) the Local Sidereal Time
+     * @return      (rad) the parallatic angle for these coordinates at the given site and time.
+     * 
+     * @see HorizontalCoordinates#getParallacticAngle(GeodeticCoordinates)
+     * @see #toHorizontalOffset(Vector2D, GeodeticCoordinates, double)
+     * @see #fromHorizontalOffset(Vector2D, GeodeticCoordinates, double)
+     */
     public double getParallacticAngle(GeodeticCoordinates site, double LST) {
         final double H = LST * Unit.timeAngle - RA();
         return Math.atan2(site.cosLat() * Math.sin(H), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(H));
@@ -159,7 +274,6 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         fromEquatorial(equatorial);
         setSystem(equatorial.getSystem());
     }
-    
 
     
     /**
@@ -186,49 +300,90 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         copy(equatorial);
     }
 
-
+    /**
+     * Returns the Alt/Az horizontal position of these coordinates at a given Earth location and local sidereal time
+     * of observation. Note that in order to get precise Alt/Az locations, you should be calling this method on
+     * apparent equatorial coordinates for the time of observation, referenced to the true dynamical equator at
+     * the time of observation, with polar wobble corrections applied for the topocentric observing location.
+     * 
+     * @param site      the observer location on Earth. For the highest precision, the equatorial coordinates
+     *                  should also be referenced to the same topocentric location approximately.
+     * @param LST       (s) the local sidereal time at the time of observation. For the highest precision, the 
+     *                  equatorial coordinates should also be referenced to the same time approximately.
+     * @return          Alt/Az horizontal coordinates of these equatorial coordinates.
+     * 
+     * @see #toHorizontal(GeodeticCoordinates, double, HorizontalCoordinates)
+     * @see EquatorialSystem.Topocentric
+     */
     public HorizontalCoordinates toHorizontal(GeodeticCoordinates site, double LST) {
         HorizontalCoordinates horizontal = new HorizontalCoordinates();
-        toHorizontal(this, horizontal, site, LST);
+        toHorizontal(site, LST, horizontal);
         return horizontal;
     }
 
 
-    public void toHorizontal(HorizontalCoordinates toCoords, GeodeticCoordinates site, double LST) { toHorizontal(this, toCoords, site, LST); }
-
-
-    public void toHorizontalOffset(Vector2D offset, GeodeticCoordinates site, double LST) {
-        toHorizontalOffset(offset, getParallacticAngle(site, LST));
-    }
-
-
-    public static void toHorizontalOffset(Vector2D offset, double PA) {
-        offset.scaleX(-1.0);
-        offset.rotate(-PA);
-    }
-
-
-    /*
-	public static void toHorizontal(EquatorialCoordinates equatorial, HorizontalCoordinates horizontal, GeodeticCoordinates site, double LST) {
-		double H = LST * Unit.timeAngle - equatorial.RA();
-		double cosH = Math.cos(H);
-		horizontal.setNativeLatitude(asin(equatorial.sinLat() * site.sinLat() + equatorial.cosLat() * site.cosLat() * cosH));
-		double asinA = -Math.sin(H) * equatorial.cosLat();
-		double acosA = site.cosLat() * equatorial.sinLat() - site.sinLat() * equatorial.cosLat() * cosH;
-		horizontal.setLongitude(Math.atan2(asinA, acosA));
-	}
+    /**
+     * Calculates the Alt/Az horizontal position of these coordinates at a given Earth location and local sidereal time
+     * of observation. Note that in order to get precise Alt/Az locations, you should be calling this method on
+     * apparent equatorial coordinates for the time of observation, referenced to the true dynamical equator at
+     * the time of observation, with polar wobble corrections applied for the topocentric observing location.
+     * 
+     * @param site          the observer location on Earth. For the highest precision, the equatorial coordinates
+     *                      should also be referenced to the same topocentric location approximately.
+     * @param LST           (s) the local sidereal time at the time of observation. For the highest precision, the 
+     *                      equatorial coordinates should also be referenced to the same time approximately.
+     * @param horizontal    horizontal coordinates in which to return the calculated Alt/Az position of these equatorial coordinates.
+     * 
+     * @see #toHorizontal(GeodeticCoordinates, double, HorizontalCoordinates)
+     * @see EquatorialSystem.Topocentric
      */
-
-    public static void toHorizontal(EquatorialCoordinates equatorial, HorizontalCoordinates horizontal, GeodeticCoordinates site, double LST) {	
-        double H = LST * Unit.timeAngle - equatorial.RA();	
+    public void toHorizontal(GeodeticCoordinates site, double LST, HorizontalCoordinates horizontal) { 
+        double H = LST * Unit.timeAngle - RA();  
         double cosH = Math.cos(H);
-        horizontal.setLatitude(SafeMath.asin(equatorial.sinLat() * site.sinLat() + equatorial.cosLat() * site.cosLat() * cosH));
-        double asinA = -Math.sin(H) * equatorial.cosLat() * site.cosLat();
-        double acosA = equatorial.sinLat() - site.sinLat() * horizontal.sinLat();
+        horizontal.setLatitude(SafeMath.asin(sinLat() * site.sinLat() + cosLat() * site.cosLat() * cosH));
+        double asinA = -Math.sin(H) * cosLat() * site.cosLat();
+        double acosA = sinLat() - site.sinLat() * horizontal.sinLat();
         horizontal.setLongitude(Math.atan2(asinA, acosA));
     }
+ 
 
-      
+    /**
+     * Convert local equatorial offsets around these coordinates to horizontal offsets at some Earth
+     * location of the observer and local sidereal time of observation.
+     * 
+     * @param offset        (rad) Locally projected (SFL) offsets around these coordinates [in], converted
+     *                      to horizontal offsets [out] for a given observer location and observation time.
+     * @param site          Earth location of observer
+     * @param LST           (s) Local sidereal time of observation.
+     * 
+     * @see HorizontalCoordinates#fromEquatorialOffset(Vector2D, double)
+     * @see #getParallacticAngle(GeodeticCoordinates, double)
+     */
+    public final void toHorizontalOffset(Vector2D offset, GeodeticCoordinates site, double LST) {
+        HorizontalCoordinates.fromEquatorialOffset(offset, getParallacticAngle(site, LST));
+    }
+
+    /**
+     * Convert local offsets around these cooridnates, from being expressed in the horizontal frame at some Earth
+     * location of the observer and local sidereal time of observation, to equatorial offsets.
+     * 
+     * @param offset        (rad) Locally projected (SFL) offsets around these coordinates as seen in 
+     *                      the horizontal frame of a given observer location and observation time [in], converted
+     *                      to equatorial offsets [out] in the system of these coordinates.
+     * @param site          Earth location of observer
+     * @param LST           (s) Local sidereal time of observation.
+     * 
+     * @see HorizontalCoordinates#toEquatorialOffset(Vector2D, double)
+     * @see #fromHorizontalOffset(Vector2D, GeodeticCoordinates, double)
+     * @see #getParallacticAngle(GeodeticCoordinates, double)
+     * @see #toHorizontal(GeodeticCoordinates, double)
+     * 
+     */
+    public final void fromHorizontalOffset(Vector2D offset, GeodeticCoordinates site, double LST) {
+        HorizontalCoordinates.toEquatorialOffset(offset, getParallacticAngle(site, LST));
+    }
+   
+    
     @Override
     public EquatorialCoordinates getEquatorialPole() { 
         EquatorialCoordinates p = new EquatorialCoordinates(0.0, Constant.rightAngle, getSystem());
@@ -249,7 +404,10 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
 
-
+    /**
+     * The string formatter class to use to convert the right ascension coordinate to a string representation.
+     * 
+     */
     private static HourAngleFormat haf = new HourAngleFormat(2);
 
 
@@ -284,7 +442,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
      */
     static final double eps0 = 23.4392911111111 * Unit.deg;
     
-
+    
     public static final int NORTH = 1;
 
     public static final int SOUTH = -1;

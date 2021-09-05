@@ -54,7 +54,7 @@ public final class Util {
 
     public static final String version = "0.40-a1";
     
-    public static final String revision = "devel.12";
+    public static final String revision = "devel.13";
     
     public static final String copyright = "(c)2021 Attila Kovacs"; 
     
@@ -554,8 +554,7 @@ public final class Util {
     
     
     public static final boolean equals(final double a, final double b, final double precision) {
-        if(a == b) return true;
-        if(Math.getExponent(a) == 0) return (Math.abs(a - b) <= precision);     
+        if(a == b) return true;     
         return (Math.abs(a - b) / Math.max(Math.abs(a), Math.abs(b)) <= precision);
     }
     

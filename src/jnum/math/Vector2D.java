@@ -88,11 +88,8 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
 
 
     public final PolarVector2D polar() { return new PolarVector2D(length(), angle()); }
+    
 
-    public void add(double x, double y) {
-        addX(x);
-        addY(y);
-    }
 
     @Override
     public final void add(final MathVector<? extends Double> v) { addX(v.x()); addY(v.y()); }
@@ -359,6 +356,7 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
     public static final int ANGLE = 4;
 
     public static final Vector2D NaN = new Vector2D(Double.NaN, Double.NaN);
+
 
 
 

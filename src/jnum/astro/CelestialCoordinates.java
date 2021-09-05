@@ -84,13 +84,18 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
     public CelestialCoordinates copy() { return (CelestialCoordinates) super.copy(); }
 
     /**
-     * Gets the ICRS (~J2000) equatorial coordinates of this coordinate system's celestial pole.
+     * Returns the ICRS (~J2000) equatorial coordinates of this coordinate system's celestial pole.
      * 
      * @return  the ICRS (~J2000) equatorial coordinates for this system's celestial pole.
      */
     public abstract EquatorialCoordinates getEquatorialPole();
 
-
+    
+    /**
+     * Returns the longitude of the ICRS (~J2000) equatorial origin in this coordinate system.
+     * 
+     * @return      (rad) The longitude of the equatorial origin in this coordinate system.
+     */
     public abstract double getZeroLongitude();
 
     /**
@@ -267,11 +272,29 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
 
     }
 
+    /**
+     * Gets the equatorial location of the celestial pole, given the right ascention of the rising intercept of the equators.
+     * 
+     * @param inclination       (rad) The inclination angle of the celestial system w.r.t. the equatorial plane.
+     * @param risingRA          (rad) The right-ascention at which the celestial equator rises above the ICRS equator,
+     *                          in the direction of rising R.A.
+     *                           
+     * @return  the ICRS equatorial location of the celestial pole.
+     */
     public static EquatorialCoordinates getPole(double inclination, double risingRA) {
         return new EquatorialCoordinates(risingRA - Constant.rightAngle, Constant.rightAngle - inclination);
     }
 
-
+    /**
+     * Gets the celestial location in the specified coordinate system of another celestial pole, 
+     * given the longitude of the rising intercept of the equators.
+     * 
+     * @param inclination       (rad) The inclination angle of the celestial system w.r.t. the specified reference system.
+     * @param risingLON         (rad) The longitude (counter-clockwise seen from the pole) at which the celestial equator 
+     *                          rises above the reference equator in the direction of rising longitude.
+     *                           
+     * @return  the ICRS equatorial location of the celestial pole.
+     */
     public static EquatorialCoordinates getPole(CelestialCoordinates referenceSystem, double inclination, double risingLON) {
         referenceSystem.set(risingLON - Constant.rightAngle, Constant.rightAngle - inclination);
         return referenceSystem.toEquatorial();

@@ -323,7 +323,7 @@ public final class SimpleOrbits {
             
             // Define the time units 'u', measured in units of 10000 Julian years
             // from J2000.0, and 't', measured in Julian centuries from J2000.0.
-            double t = (mjd - AstroTime.MJDJ2000) / AstroTime.JulianCenturyDays;
+            double t = (mjd - AstroTime.MJDJ2000) / AstroTime.julianCenturyDays;
             double u = 0.01 * t;
 
             // Compute longitude and distance terms from the series.

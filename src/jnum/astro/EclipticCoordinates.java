@@ -37,36 +37,105 @@ import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
 
 
+/**
+ * Sky coordinates in the ecliptic coordinate system (&lambda; &beta;). Because the origin of the ecliptic coordinate
+ * system is fixed to the vernal equinox, the ecliptic coordinates a essentially tied to an equatorial system, 
+ * and as such it is subject to precession as well as other parameters that affect the definition of the equator
+ * at a given time (or site) of observation. Therefore, like {@link EquatorialCoordinates}, ecliptic coordinates
+ * are referenced to an equatorial reference system also.
+ * 
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class EclipticCoordinates extends PrecessingCoordinates {
-
+    
+    /** */
     private static final long serialVersionUID = 7687178545213533912L;
 
 
-
+    /**
+     * Instantiates new empty ecliptic coordinates tried to the ICRS frame.
+     * 
+     * @see EquatorialSystem#ICRS
+     * 
+     */
     public EclipticCoordinates() {
         super();
     }
 
+    /**
+     * Instantiates new default ecliptic coordinates from the specified celestial coordinates, tied to the ICRS.
+     * 
+     * @param from        the celeastial coordinates that define the direction if the ecliptic coordinates.
+     * 
+     * @see #EclipticCoordinates(double, double, EquatorialSystem)
+     */
     public EclipticCoordinates(CelestialCoordinates from) {
         super(from);
     }
 
+    /**
+     * Instantiates new default ecliptic coordinates, tied to the specified equatorial reference system.
+     *
+     * @param system    the equatorial reference system for the new coordinates
+     * 
+     * @see #EclipticCoordinates(double, double, String)
+     * 
+     */
     public EclipticCoordinates(EquatorialSystem system) {
         super(system);
     }
 
+    /**
+     * Instantiates new ecliptic coordinates, tied to the specified equatorial reference system.
+     * 
+     * @param lon       (rad) Ecliptic longitude angle [-&pi;:&pi;].
+     * @param lat       (rad) Ecliptic latitude angle [-&pi;/2;&pi;/2].
+     * @param system    the equatorial reference system for the new coordinates
+     * 
+     * @see #EclipticCoordinates(double, double, String)
+     * 
+     */
     public EclipticCoordinates(double lon, double lat, EquatorialSystem system) {
         super(lon, lat, system);
     }
-
+    
+    /**
+     * Instantiates new ecliptic coordinates, tied to the specified equatorial reference system.
+     * 
+     * @param lon       (rad) Ecliptic longitude angle [-&pi;:&pi;].
+     * @param lat       (rad) Ecliptic latitude angle [-&pi;/2;&pi;/2].
+     * @param sysSpec   the string representation of the equatorial reference system, such as 'ICRS', 'J2000' or 'FK5'.
+     * 
+     * @see #EclipticCoordinates(double, double, EquatorialSystem)
+     * 
+     */
     public EclipticCoordinates(double lon, double lat, String sysSpec) {
         super(lon, lat, sysSpec);
     }
 
+    /**
+     * Instantiates new ecliptic coordinates tied to the ICRS frame.
+     * 
+     * @param lon       (rad) Ecliptic longitude angle [-&pi;:&pi;].
+     * @param lat       (rad) Ecliptic latitude angle [-&pi;/2;&pi;/2].
+     * 
+     * @see #EclipticCoordinates(double, double, EquatorialSystem)
+     * @see EquatorialSystem#ICRS
+     * 
+     */
     public EclipticCoordinates(double lon, double lat) {
         super(lon, lat);
     }
 
+    /**
+     * Instantiates new ecliptic coordinates from a string representation of the coordinates, including
+     * a representation of the reference system (if available).
+     * 
+     * @param text              the string representation of the coordinates, including their reference system.
+     * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
+     */
     public EclipticCoordinates(String text) throws ParseException {
         super(text);
     }
@@ -77,7 +146,16 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     @Override
     public EclipticCoordinates copy() { return (EclipticCoordinates) super.copy(); }
     
-
+    @Override
+    public EclipticCoordinates getTransformed(EquatorialTransform T) {
+        return (EclipticCoordinates) super.getTransformed(T);
+    }
+    
+    @Override
+    public EclipticCoordinates getTransformedTo(EquatorialSystem system) {
+        return (EclipticCoordinates) super.getTransformedTo(system);
+    }
+    
     @Override
     public String getFITSLongitudeStem() { return "ELON"; }
 

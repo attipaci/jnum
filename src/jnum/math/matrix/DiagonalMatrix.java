@@ -24,6 +24,7 @@
 package jnum.math.matrix;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 import jnum.Copiable;
 import jnum.CopiableContent;
@@ -299,13 +300,6 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
 
 
     @Override
-    public void setIdentity() {
-        zero();
-        super.setIdentity();
-    }
-
-
-    @Override
     public DiagonalMatrix<? extends T> dot(DiagonalMatrix<? extends T> righthand) {
         assertSize(righthand.size());
         DiagonalMatrix<T> P = copy();
@@ -411,6 +405,10 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             return new RealVector(size);
         }
         
+        @Override
+        public void setIdentity() {
+            Arrays.fill(data, 1.0);
+        }
         
         @Override
         public RealVector dot(MathVector<? extends Double> v) throws ShapeException {
@@ -810,6 +808,10 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             return null;
         }
 
+        @Override
+        public void setIdentity() {
+            for(int i=size(); --i >= 0; ) data[i].setIdentity();
+        }
         
         @Override
         public final T getTrace() {

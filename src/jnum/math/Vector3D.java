@@ -169,11 +169,6 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
         rotateZ(phi);
     }
     
-    public void add(double x, double y, double z) {
-        addX(x);
-        addY(y);
-        addZ(z);
-    }
     
     @Override
     public void add(final MathVector<? extends Double> v) {

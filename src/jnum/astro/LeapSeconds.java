@@ -56,12 +56,14 @@ public final class LeapSeconds {
 
 	private static ArrayList<Datum> list;
 
-	public static final long millis1900 = -2208988800000L; // "1900-01-01T00:00:00.000" UTC
+	/** UNIX milliseconds for 0 UTC 1 Jan 1900 */
+	public static final long millis1900 = -2208988800000L; 
 
 	public static String dataFile = null;
 
 	public static boolean verbose = false;
 
+	/** The current leap seconds */
 	private static int currentLeap = 37;
 
 	private static long releaseEpoch = 3676924800L;        // 8 July 2016 -- seconds since 1900

@@ -38,8 +38,7 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
 
     private static final long serialVersionUID = 5322669438151443525L;
 
-
-
+    
     public SuperGalacticCoordinates() {}
 
 

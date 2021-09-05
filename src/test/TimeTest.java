@@ -52,18 +52,18 @@ public class TimeTest {
 		try { 
 			LeapSeconds.read("/home/pumukli/leap-seconds.list");
 			System.err.println("leap 1900: " + LeapSeconds.get(millis1900));
-			System.err.println("leap 2000: " + LeapSeconds.get(AstroTime.MillisJ2000));
+			System.err.println("leap 2000: " + LeapSeconds.get(AstroTime.millisJ2000));
 			System.err.println("leap now: " + LeapSeconds.get(System.currentTimeMillis()));
 		}
 		catch(Exception e) { e.printStackTrace(); }
 		
-		System.err.println(">>> " + AstroTime.MillisJ2000);
+		System.err.println(">>> " + AstroTime.millisJ2000);
 		
 		try {
 			System.err.println("millis: " + fitsFormatter.parse(date).getTime());
 		
 			AstroTime time = AstroTime.forFitsTimeStamp(date);
-			System.err.println("MJD: " + time.getMJD());
+			System.err.println("MJD: " + time.MJD());
 		}
 		catch(Exception e) { e.printStackTrace(); }
 		

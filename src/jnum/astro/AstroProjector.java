@@ -29,14 +29,27 @@ import jnum.projection.Projection2D;
 import jnum.projection.Projector2D;
 
 
-
+/**
+ * A class for facilitating computationally efficient projection of spherical coordinates onto a 2D plane, and vice versa.
+ * The class avoids the need to create on-the-fly objects for the conversion. However, for best performance each projector
+ * instance should be used with only one thread to avoid concurrent blocking. 
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class AstroProjector extends Projector2D<SphericalCoordinates> {
 
+    /** */
 	private static final long serialVersionUID = -6883179727775205645L;
 
+	/** A local set of equatorial coordinates serving as an intermediate for projections */
 	private EquatorialCoordinates equatorial;
 
-	
+	/**
+	 * Instantiates a new astronomical coordinate projector.
+	 * 
+	 * @param projection   the spherical projection to use for this projector. 
+	 */
 	public AstroProjector(Projection2D<SphericalCoordinates> projection) {
 		super(projection);
 
@@ -77,25 +90,44 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 		return true;
 	}
 	
-
+	/**
+	 * Returns the current equatorial coordinates, which either correspond to the coordinates or offsets that were set last.
+	 * 
+	 * @return     the current equatorial coordinates of the last position or offset.
+	 * 
+	 * @see #getCelestial()
+	 * @see #setCoordinates(Coordinate2D)
+	 * @see #setEquatorial(EquatorialCoordinates)
+	 * @see #setOffset(Vector2D)
+	 */
 	public EquatorialCoordinates getEquatorial() { return equatorial; }
 	
+	/**
+	 * Returns the current celestial coordinates, of the same type as the reference coordinates, corresponding
+	 *  to the coordinates or offsets that were set last.
+	 * 
+	 * @return     the current celestial coordinates of the last position or offset, of the same type as the reference coordinates.
+	 *
+	 * @see #setReferenceCoords()
+	 * @see #getEquatorial()
+	 * @see #setCoordinates(Coordinate2D)
+     * @see #setEquatorial(EquatorialCoordinates)
+     * @see #setOffset(Vector2D)
+	 */
 	public CelestialCoordinates getCelestial() { return isCelestial() ? (CelestialCoordinates) getCoordinates() : null; }
 	
-	public final boolean isHorizontal() {
-		return getCoordinates() instanceof HorizontalCoordinates;
-	}
-	
-
-	public final boolean isFocalPlane() {
-		return getCoordinates() instanceof FocalPlaneCoordinates;
-	}
-	
-	public final boolean isCelestial() { return getCoordinates() instanceof CelestialCoordinates; }
-	
-	public final boolean isEquatorial() { return getCoordinates() instanceof EquatorialCoordinates; }
-	
-
+	/**
+	 * Checks if the reference coordinates of the projection are fixed to a celestial frame, that is not e.g.  horizontal,
+	 * telescope-frame or focal-plane coordinates at some specific Earth location and time.
+	 * 
+	 * @return     <code>true</code> if the reference coordinates are celestial coordinates, or <code>false</code> otherwise.
+	 *             
+	 * @see isHorizontal()
+	 * @see isFocalPlane()
+	 */
+	private final boolean isCelestial() { return getCoordinates() instanceof CelestialCoordinates; }
+    
+    
 	@Override
 	public void setReferenceCoords() {
 		super.setReferenceCoords();
@@ -103,7 +135,13 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 		if(isCelestial()) getCelestial().toEquatorial(equatorial);		
 	}
 
-
+	/**
+	 * Sets a new position specified by its equatorial coordinates.
+	 * 
+	 * @param equatorial   the equatorial coordinates of the new position. The reference system of the supplied equatorial
+	 *                     coordinates is ignored. Instead, the coordinates assumed to be in ICRS or 
+	 *                     else the same reference system as the reference coordinates.
+	 */
 	public final void setEquatorial(EquatorialCoordinates equatorial) {
 	    this.equatorial.copy(equatorial);
 		if(isCelestial()) getCelestial().fromEquatorial(equatorial);

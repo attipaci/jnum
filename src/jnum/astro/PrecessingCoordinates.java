@@ -33,52 +33,150 @@ import jnum.text.StringParser;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCardException;
 
+/**
+ * A base subclass of celestial coordinates, which are tied to the equator, and hence precess
+ * over time. These type of coordinates may be referenced to any specific definition of the
+ * equator.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public abstract class PrecessingCoordinates extends CelestialCoordinates {
     /**
      * 
      */
     private static final long serialVersionUID = 4675743914273761865L;
     
+    /** The equatorial coordinate referecne system to which coordinates are referred to */
     private EquatorialSystem system;
 
+    /**
+     * Instantiates a new set of celestial coordinates, referenced to the ICRS equator.
+     * 
+     * @see #PrecessingCoordinates(EquatorialSystem)
+     * 
+     * @see EquatorialSystem#ICRS
+     */
+    protected PrecessingCoordinates() { this(EquatorialSystem.ICRS); }
 
-    public PrecessingCoordinates() { this(EquatorialSystem.ICRS); }
-
-    public PrecessingCoordinates(EquatorialSystem system) { 
+    /**
+     * Instantiates a new set of celestial coordinates, referenced to the equator of the 
+     * specified reference system.
+     * 
+     * @param system    the equatorial system to which the coordinates are referenced to.
+     * 
+     * @see #PrecessingCoordinates(double, double, EquatorialSystem)
+     */
+    protected PrecessingCoordinates(EquatorialSystem system) { 
         setSystem(system);
     }
     
     
-
-    public PrecessingCoordinates(String text) throws ParseException { super(text); }
+    /**
+     * Instantiates a new set of celestial coordinates, from a string representation of these.
+     * 
+     * @param text              the string representation of the coordinates, including the reference system.
+     * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
+     * 
+     * @see #parse(String)
+     */
+    protected PrecessingCoordinates(String text) throws ParseException { super(text); }
     
-
-    public PrecessingCoordinates(double lon, double lat) { 
+    /**
+     * Instantiates a new set of celestial coordinates, with the conventional longitude and latitude values
+     * of these coordinates, referenced to the ICRS equator.
+     * 
+     * @param lon       (rad) longitude angle in the convention of the implementing class.
+     * @param lat       (rad) latitude angle in the convention of the implementing class. 
+     * 
+     * @see #PrecessingCoordinates(double, double, EquatorialSystem)
+     * @see #PrecessingCoordinates(double, double, String)
+     * @see EquatorialSystem#ICRS
+     */
+    protected PrecessingCoordinates(double lon, double lat) { 
         this(lon, lat, EquatorialSystem.ICRS); 
         
     }
 
-    public PrecessingCoordinates(double lon, double lat, EquatorialSystem system) { 
+    /**
+     * Instantiates a new set of celestial coordinates, with the conventional longitude and latitude values
+     * of these coordinates, referenced to the equator of the specified reference system.
+     * 
+     * @param lon       (rad) longitude angle in the convention of the implementing class.
+     * @param lat       (rad) latitude angle in the convention of the implementing class. 
+     * @param system    the equatorial system to which the coordinates are referenced to.
+     * 
+     * @see #PrecessingCoordinates(double, double)
+     * @see #PrecessingCoordinates(double, double, String)
+     * @see #PrecessingCoordinates(CelestialCoordinates)
+     */
+    protected PrecessingCoordinates(double lon, double lat, EquatorialSystem system) { 
         super(lon, lat);
         setSystem(system);
     }
    
 
-    public PrecessingCoordinates(double lon, double lat, String sysSpec) { 
+    /**
+     * Instantiates a new set of celestial coordinates, with the conventional longitude and latitude values
+     * of these coordinates, referenced to the equator of the reference system specified by its string
+     * represenation.
+     * 
+     * @param lon       (rad) longitude angle in the convention of the implementing class.
+     * @param lat       (rad) latitude angle in the convention of the implementing class. 
+     * @param sysSpec   the string representation of the reference system, e.g. 'ICRS', 'J2000', 'B1950', 'FK5'...
+     * 
+     * @see #PrecessingCoordinates(double, double, EquatorialSystem)
+     * @see #PrecessingCoordinates(CelestialCoordinates)
+     */
+    protected PrecessingCoordinates(double lon, double lat, String sysSpec) { 
         this(lon, lat, EquatorialSystem.forString(sysSpec)); 
     }
      
 
-    public PrecessingCoordinates(CelestialCoordinates from) { 
+    /**
+     * Instantiates a new set of celestial coordinates, referenced to the ICRS equator, that represent 
+     * the same location on sky as the specified other coordinates
+     * 
+     * @param from      the coordinates of the sky location in some other celestial system.
+     * 
+     * @see CelestialCoordinates#fromEquatorial(EquatorialCoordinates)
+     * @see CelestialCoordinates#toEquatorial()
+     * @see EquatorialSystem#ICRS
+     */
+    protected PrecessingCoordinates(CelestialCoordinates from) { 
         super(from); 
         if(from instanceof PrecessingCoordinates) system = ((PrecessingCoordinates) from).getSystem();
         else system = EquatorialSystem.ICRS;
     }
+
+    @Override
+    public PrecessingCoordinates clone() {
+        return (PrecessingCoordinates) super.clone();
+    }
     
+    @Override
+    public PrecessingCoordinates copy() {
+        return (PrecessingCoordinates) super.copy();
+    }
+    
+    /**
+     * Returns the equatorial reference system in which these coordinates are expressed.
+     * 
+     * @return      the equatorial reference system of these coordinates.
+     * 
+     * @see #setSystem(EquatorialSystem)
+     */
     public EquatorialSystem getSystem() {
         return system;
     }
     
+    /**
+     * Sets the equatorial reference system in which these coordinates are to be expressed.
+     * 
+     * @param system    the new equatorial reference system of these coordinates.
+     * 
+     * @see #getSystem()
+     */
     public void setSystem(EquatorialSystem system) {
         this.system = system;
     }
@@ -102,6 +200,11 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates {
         return true;
     }
     
+    /**
+     * Returns the Julian reference epoch for these coordinates as a decimal year. 
+     * 
+     * @return  (yr) the julian reference epoch of these coordinates. For example 2000.0, 1950.0, or 2021.655.
+     */
     public double getEpochYear() { return system.getJulianYear(); }
    
 
@@ -129,19 +232,80 @@ public abstract class PrecessingCoordinates extends CelestialCoordinates {
         setSystem(equatorial.getSystem());
     }
     
-    
+    /**
+     * Changes the equatorial reference system of these coordinates by applying the specified equatorial
+     * transformation.
+     * 
+     * @param T     the equatorial transformation that converts from the current reference system to the new reference system.
+     * 
+     * @see #transformTo(EquatorialSystem)
+     * @see #getTransformTo(EquatorialSystem)
+     */
     public abstract void transform(EquatorialTransform T);
     
+    /**
+     * Returns the equatorial coordinate transform from the current reference system to the specified new
+     * reference system.
+     * 
+     * @param toSystem      the new equatorial reference system.
+     * @return              the equatorial transformation that converts from the current reference system to the new reference system.
+     * 
+     * @see #transformTo(EquatorialSystem)
+     */
     public EquatorialTransform getTransformTo(EquatorialSystem toSystem) {
         return new EquatorialTransform(getSystem(), toSystem);
     }
     
+    /**
+     * Changes the equatorial reference system to the specified new system.
+     * 
+     * @param toSystem      the new equatorial reference system.
+     * 
+     * @see #getTransformTo(EquatorialSystem)
+     * @see #transform(EquatorialTransform)
+     * @see #toICRS()
+     */
     public void transformTo(EquatorialSystem toSystem) {
         if(getSystem().equals(toSystem)) return;
         transform(getTransformTo(toSystem));
     }
   
+    /**
+     * Returns the same coordinates, transformed to another equatorial reference system by the specified transform.
+     * 
+     * @param T     the equatorial transformation for changing the reference system
+     * @return      new coordinates of the same type as this, but transformed to another equatorial reference system.
+     * 
+     * @see #transform(EquatorialTransform)
+     * @see #getTransformedTo(EquatorialSystem)
+     */
+    public PrecessingCoordinates getTransformed(EquatorialTransform T) {
+        PrecessingCoordinates c = copy();
+        c.transform(T);
+        return c;
+    }
+
+    /**
+     * Returns the same coordinates, transformed to the specified other reference system.
+     * 
+     * @param system    the reference system in which to return the same location.
+     * @return          new coordinates of the same type as this, but in transformed to the specified equatorial reference system.
+     * 
+     * @see #transformTo(EquatorialSystem)
+     * @see #getTransformed(EquatorialTransform)
+     */
+    public PrecessingCoordinates getTransformedTo(EquatorialSystem system) {
+        PrecessingCoordinates c = copy();
+        c.transformTo(system);
+        return c;
+    }
     
+    /**
+     * Changes the equatorial reference system to ICRS.
+     * 
+     * @see #transformTo(EquatorialSystem)
+     * @see EquatorialSystem#ICRS
+     */
     public void toICRS() {
         transformTo(EquatorialSystem.ICRS);
     }    

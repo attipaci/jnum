@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -55,6 +56,7 @@ import jnum.math.Range;
 import jnum.math.Range2D;
 import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
+import jnum.math.specialfunctions.CumulativeNormalDistribution;
 import jnum.projection.Gnomonic;
 import jnum.util.BufferedRandom;
 import nom.tam.fits.BasicHDU;
@@ -81,11 +83,8 @@ public class UVImager {
 
     public EquatorialCoordinates equatorial = new EquatorialCoordinates();
 
-    public boolean jackknife = false;
-
     private WeightedComplex[][] vis;
     private Vector2D delta;
-    private BufferedRandom random = new BufferedRandom();
 
     private FitsProperties fitsProperties;
     private WeightedPoint primaryFWHM = new WeightedPoint();
@@ -255,7 +254,7 @@ public class UVImager {
     /**
      * Returns the solid angle of the mean primary beam for this <i>uv</i> image.
      * 
-     * @return  (sr) The solid angle of the primary beam, i.e. 2 &pi; &sigma;<sup>2</sup> &approx; 1.14 FWHM<sup>2</sup>
+     * @return  (sr) The solid angle of the primary beam, i.e. 2 &pi; &sigma;<sup>2</sup> &cong; 1.14 FWHM<sup>2</sup>.
      */
     public double getPrimaryBeamArea() {
         double r = getPrimaryFWHM();
@@ -292,8 +291,19 @@ public class UVImager {
         double maxw = parallelStreamValid().mapToDouble(WeightedComplex::weight).max().orElse(0.0);
         if(maxw == 0.0) return 0.0;
         
-        return parallelStreamValid().mapToDouble(WeightedComplex::weight).sum() / maxw;
+        // x2 because of re/im parts are 2 degrees of freedom per uv point.
+        return 2.0 * parallelStreamValid().mapToDouble(WeightedComplex::weight).sum() / maxw;
     }
+    
+    /**
+     * Returns the number of populated (with weight &gt;0) cells in the <i>uv</i>-plane.
+     * 
+     * @return  the number of grid cells with valid data in the <i>uv</i>-plane.
+     */
+    public int countPoints() {
+        return parallelStreamValid().mapToInt(z -> 1).sum();
+    }
+    
     
     /**
      * Gets the weighted mean frequency for the set of visibilities included in this image set.
@@ -328,7 +338,7 @@ public class UVImager {
      */
     public void add(UVFrame uv, double gain) {
         double w = uv.getWeightSum();
-
+        
         primaryFWHM.average(uv.getPrimaryFWHM(), w);
         frequency.average(uv.getFrequency(), w);
         frequencyRange.include(uv.getFrequency());
@@ -343,8 +353,6 @@ public class UVImager {
      */
     private void add(UVFrame.Visibility vis, double gain) {
         if(vis.w <= 0.0) return;
-
-        if(jackknife) if(random.nextDouble() < 0.5) gain = -gain;
 
         add(vis, gain, false);
         add(vis, gain, true);           // symmetrize (it should be symmetric already...)
@@ -608,20 +616,81 @@ public class UVImager {
         return uv;
     }
 
+    
+    /**
+     * Despikes the uv image plane, flagging any significant outliers. Any visibility that is expected to occur 
+     * at a probability &lt;10% given the size of the <i>uv</i> image plane, under Gaussian noise, is flagged (weighted zero).
+     * 
+     * @return  the number of visibilities flagged.
+     * 
+     * @see #despike(double)
+     */
+    public int despike() {
+        return despike(CumulativeNormalDistribution.inverseComplementAt(0.05 / countPoints()));
+    }
+      
+    /**
+     * Despikes the visibility data, flagging any outliers above the specified significance level.
+     * 
+     * @param level     The signal-to-noise ratio above which to flag spikes.
+     * @return          the number of visibilities flagged.
+     * 
+     * @see #despike()
+     */
+    public int despike(double level) {
+        final double L2 = level * level;
+        return parallelStreamValid().filter(z -> z.weight() * z.absSquared() > L2).mapToInt(z -> {
+            z.setWeight(0.0);
+            return 1;
+        }).sum();
+       
+    }
+    
     /**
      * Randomly invert the visibilities in this image set.
      * 
+     * @see #jackknife(Random)
+     * @see #randomize()
+     * 
      */
-    public void jackknife() {
+    public final void jackknife() {
+        jackknife(new BufferedRandom());
+    }
+
+    /**
+     * Randomly invert the visibilities in this image set.
+     * 
+     * @param random    random generator to use.
+     * 
+     * @see #jackknife()
+     * @see #randomize(Random)
+     * 
+     */
+    public void jackknife(Random random) {
         fitsProperties.setObjectName(fitsProperties.getObjectName() + "-JK");
-        streamValid().forEach(z -> z.rotate(Constant.twoPi * (random.nextDouble() - 0.5)));
+        streamValid().forEach(z -> z.rotate(Constant.twoPi * random.nextDouble()));
     }
 
     /**
      * Replace actual data with random Gaussian variates for the same noise weights.
      * 
+     * @see #randomize(Random)
+     * @see #jackknife()
      */
-    public void random() {
+    public final void randomize() {
+        randomize(new BufferedRandom());
+    }
+    
+    /**
+     * Replace actual data with random Gaussian variates for the same noise weights.
+     * 
+     * @param random    random generator to use.
+     * 
+     * @see #randomize()
+     * @see #jackknife(Random)
+     * 
+     */
+    public void randomize(Random random) {
         streamValid().forEach(z -> z.set(random.nextGaussian() / Constant.sqrt2, random.nextGaussian() / Constant.sqrt2));
     }
     
@@ -665,7 +734,7 @@ public class UVImager {
     /**
      * Returns the 2D range of <i>u</i> anbd <i>v</i> coordinates contained in the <i>uv</i> plane of this image.
      * 
-     * @return      (1/rad<sup>2<sup>) The 2D range of populated <i>u</i> anbd <i>v</i> coordinates
+     * @return      (1/rad<sup>2</sup>) The 2D range of populated <i>u</i> anbd <i>v</i> coordinates
      */
     public Range2D getUVRange2D() {
         Range2D r = new Range2D();
@@ -958,8 +1027,6 @@ public class UVImager {
     }
 
     public void writeProducts(String path, String name) {
-        if(jackknife) name += "-JK";
-
         name = path + File.separator + name;
 
         Util.info(this, "\nProcessing " + name);
@@ -990,9 +1057,7 @@ public class UVImager {
     public void editImageHeader(Header header) throws HeaderCardException { 
         Cursor<String, HeaderCard> c = header.iterator();
         c.setKey("SMOOTH");
-
-        if(jackknife) c.add(new HeaderCard("JACKKNIF", true, "Data has been jackknifed before imaging."));
-
+        
         c.add(new HeaderCard("FREQ", frequency.value() / Unit.GHz, "(GHz) Reference frequency"));
         c.add(new HeaderCard("FMIN", frequencyRange.min() / Unit.GHz, "(GHz) Lowest contributing frequency"));
         c.add(new HeaderCard("FMAX", frequencyRange.max() / Unit.GHz, "(GHz) Highest contributing frequency"));

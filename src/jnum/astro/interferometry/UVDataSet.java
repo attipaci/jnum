@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import jnum.Constant;
@@ -40,6 +41,8 @@ import jnum.fits.FitsProperties;
 import jnum.math.Range;
 import jnum.math.Range2D;
 import jnum.math.Vector2D;
+import jnum.math.specialfunctions.CumulativeNormalDistribution;
+import jnum.util.BufferedRandom;
 import nom.tam.fits.BinaryTable;
 import nom.tam.fits.BinaryTableHDU;
 import nom.tam.fits.Fits;
@@ -188,13 +191,11 @@ public class UVDataSet extends ArrayList<UVFrame> {
                 }
                 
                 // 1-based indices to 0-based indices...
-                bin[0]--;
+                //bin[0]--;
                 
                 // ------------------------------------------------------------------------------------------
                 // v3 workarounds...
                 
-                // Flagging should not be needed if SWARM channels N * 4096 are flagged by COMPASS...
-                //if(Math.abs(Math.IEEEremainder(f[bin[0]], 0.5 * Unit.GHz)) < df) continue;
                
                 //v[0] -= 513;    // make it work with imperfect v3 UV data
                 
@@ -202,8 +203,12 @@ public class UVDataSet extends ArrayList<UVFrame> {
                 //else 
                 // -------------------------------------------------------------------------------------------
                 
+
+                // Flagging should not be needed if SWARM channels N * 4096 are flagged by COMPASS...
+                if(Math.abs(Math.IEEEremainder(f[bin[0]], Unit.GHz)) < df) continue;
+                
                 if(v[0] < 0) nMirror++;    
-                else if(v[0] < 0 && u[0] == 0) nMirror++; 
+                else if(u[0] < 0 && v[0] == 0) nMirror++; 
                 else { 
                     addVisibility(bin[0], f[bin[0]], df, u[0] * delta.x(), v[0] * delta.y(), wre[0], wim[0], w[0]);
                     nVis++;
@@ -251,6 +256,36 @@ public class UVDataSet extends ArrayList<UVFrame> {
             @Override
             public int compare(UVFrame a, UVFrame b) { return Double.compare(a.getFrequency(), b.getFrequency()); }
         });
+    }
+    
+    
+    /**
+     * Despikes the visibility data, flagging any significant outliers from the full dataset. Any
+     * visibility that is expected to occur at a probability &lt;10% given the size of the full dataset,
+     * and assuming Gaussian noise, is flagged (weighted zero).
+     * 
+     * @return  the number of visibilities flagged.
+     * 
+     * @see #despike(double)
+     * @see UVFrame#despike(double)
+     */
+    public int despike() {
+        // Each visibility has 2 degrees of freedom...
+        return despike(CumulativeNormalDistribution.inverseComplementAt(0.05 / countVisibilities()));
+    }
+    
+    
+    /**
+     * Despikes the visibility data, flagging any outliers above the specified significance level.
+     * 
+     * @param level     The signal-to-noise ratio above which to flag spikes.
+     * @return          the number of visibilities flagged.
+     * 
+     * @see #despike()
+     * @see UVFrame#despike(double)
+     */
+    public int despike(double level) {
+        return parallelStream().mapToInt(frame -> frame.despike(level)).sum();
     }
     
     
@@ -399,15 +434,30 @@ public class UVDataSet extends ArrayList<UVFrame> {
         }
         return sum / sumw;
     }
-    
+
     /**
      * Randomly invert the sign of visibility amplitudes in this dataset.
      * 
+     * @see #jackknife(Random)
      * @see UVFrame#jackknife()
      * 
      */
     public void jackknife() {
-        parallelStream().forEach(slice -> slice.jackknife());      
+        jackknife(new BufferedRandom());
+    }
+    
+    
+    /**
+     * Randomly invert the sign of visibility amplitudes in this dataset.
+     * 
+     * @param random        random generator to use.
+     * 
+     * @see #jackknife()
+     * @see UVFrame#jackknife(Random)
+     *  
+     */
+    public void jackknife(Random random) {
+        parallelStream().forEach(slice -> slice.jackknife(random));      
     }
 
     /**

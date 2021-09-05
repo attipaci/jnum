@@ -32,20 +32,50 @@ import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
 
-
+/**
+ * Standard galactic coordinates (<i>l</i>,<i>b</i>). The origin of the Galactic coordinate system is approximately (but not exactly)
+ * in the direction of the Galactic Center, and its equator is more or less aligned to the Galactic Plane.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class GalacticCoordinates extends CelestialCoordinates {
 
+    /** */
 	private static final long serialVersionUID = -942734735652370919L;
 
-
+	/**
+	 * Instantiates new default Galactic coordinates.
+	 */
     public GalacticCoordinates() {}
 
-
+    /**
+     * Instantiates new Galactic Coordinates, from a string representation of these. 
+     * 
+     * 
+     * @param text              the string representation of the coordinates.
+     * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
+     *
+     */
     public GalacticCoordinates(String text) throws ParseException { super(text); }
 
+    /**
+     * Instantiates new Galactic Coordinates with the specified conventional longitude and latitude angles.
+     * 
+     * @param lon       (rad) Galactic longitude angle
+     * @param lat       (rad) Galactic latitude angle
+     */
     public GalacticCoordinates(double lon, double lat) { super(lon, lat); }
     
-
+    /**
+     * Instantiates a new set of Galactic coordinates that represent 
+     * the same location on sky as the specified other celestial coordinates.
+     * 
+     * @param from      the coordinates of the sky location in some other celestial system.
+     * 
+     * @see CelestialCoordinates#fromEquatorial(EquatorialCoordinates)
+     * @see CelestialCoordinates#toEquatorial()
+     */
     public GalacticCoordinates(CelestialCoordinates from) { super(from); }
     
     
@@ -80,13 +110,13 @@ public class GalacticCoordinates extends CelestialCoordinates {
 
     @Override
 	public EquatorialCoordinates getEquatorialPole() {
-    	return equatorialPole;
+    	return equatorialPole_ICRS;
 	}
 
 
 	@Override
 	public double getZeroLongitude() {
-		return phi0;
+		return phi0_ICRS;
 	}
 	
 	@Override
@@ -113,20 +143,30 @@ public class GalacticCoordinates extends CelestialCoordinates {
         defaultLocalCoordinateSystem.add(latitudeOffsetAxis);   
     }
     
-
-    public static final EquatorialCoordinates equatorialPole = new EquatorialCoordinates(12.0 * Unit.hourAngle + 49.0 * Unit.minuteAngle, 27.4 * Unit.deg, "B1950.0");
+    /**
+     * The equatorial location of the Galactic Pole, defined in B1950.
+     */
+    public static final EquatorialCoordinates equatorialPole_B1950 = 
+            new EquatorialCoordinates(12.0 * Unit.hourAngle + 49.0 * Unit.minuteAngle, 27.4 * Unit.deg, EquatorialSystem.FK4.B1950);
     
-    /** The phi0. */
-    public static double phi0 = 123.0 * Unit.deg;
+    /**
+     * The equatorial location of the Galactic Pole, calculated for ICRS.
+     */
+    public static EquatorialCoordinates equatorialPole_ICRS = equatorialPole_B1950.getTransformedTo(EquatorialSystem.ICRS);
     
-    // Change the pole and phi0 to J2000, s.t. conversion to J2000 is faster...
+    /** The galactic longitude of the equatorial origin, defined in B1950 */
+    public static final double phi0_B1950 = 123.0 * Unit.deg;
+    
+    /** The galactic longitude of the equatorial origin, calculated for ICRS */
+    public static double phi0_ICRS;
+    
+    // Calculate the ICRS pole and phi0, s.t. conversion to/from ICRS is faster...
     static { 
-        GalacticCoordinates zero = new GalacticCoordinates(phi0, 0.0);
+        GalacticCoordinates zero = new GalacticCoordinates(phi0_B1950, 0.0);
         EquatorialCoordinates equatorialZero = zero.toEquatorial();
         equatorialZero.transform(EquatorialTransform.B1950toICRS);
         zero.fromEquatorial(equatorialZero);
-        phi0 = zero.longitude();
-        equatorialPole.transform(EquatorialTransform.B1950toICRS);
+        phi0_ICRS = zero.longitude();
     }
 
 }

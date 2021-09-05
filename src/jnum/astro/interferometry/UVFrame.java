@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -25,6 +25,8 @@
 package jnum.astro.interferometry;
 
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Random;
 
 import jnum.Constant;
 import jnum.ExtraMath;
@@ -104,17 +106,26 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     public final double getPrimaryFWHM() {
         return primaryFWHM;
     }
-
+    
+    
     /**
      * Jackknife the visibility data in this frame, by randomly inverting individual visibility bins.
      * 
      */
-    public void jackknife() {
-        final BufferedRandom random = new BufferedRandom();
-        random.setSeed(202009110301L);
-        //values().parallelStream().filter(e -> random.nextGaussian() < 0.5).forEach(Visibility::flip);
-        values().stream().forEach(e -> e.rotate(Constant.twoPi * (random.nextDouble() - 0.5)));
+    public final void jackknife() {
+        jackknife(new BufferedRandom());
     }
+
+    /**
+     * Jackknife the visibility data in this frame, by randomly inverting individual visibility bins.
+     * 
+     * @param   random generator to use
+     * 
+     */
+    public void jackknife(Random random) {
+        values().stream().forEach(e -> e.rotate(Constant.twoPi * random.nextDouble()));
+    }
+    
 
     /**
      * Returns the sum of the weights over all visibilities in this frame
@@ -180,11 +191,15 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
         add(A.u(), A.v(), G * A.wre, G * A.wim, G * G * A.w);
     }
 
+    public int despike(double level) {
+        return entrySet().stream().map(Map.Entry::getValue).mapToInt(v -> v.despike(level)).sum();
+    }
+    
     /**
      * Returns the visitibility the specified <i>uv</i> grid index.
      * 
-     * @param iu    Integer grid index in the <u>u</i> direction.
-     * @param iv    Integer grid index in the <u>v</i> direction.
+     * @param iu    Integer grid index in the <i>u</i> direction.
+     * @param iv    Integer grid index in the <i>v</i> direction.
      * @return      The visibility at the specified index, or <code>null</code> if there is no visibility currently
      *              at the specified <i>uv</i> grid location.
      *              
@@ -197,8 +212,8 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
     /**
      * Returns the visitibility the specified <i>uv</i> coordinates.
      * 
-     * @param u     (1/rad) <u>u</i> coordinate
-     * @param v     (1/rad) <u>v</i> coordinate
+     * @param u     (1/rad) <i>u</i> coordinate
+     * @param v     (1/rad) <i>v</i> coordinate
      * @return      The visibility at the specified coordinate on the grid, or <code>null</code> if there is no visibility currently
      *              at the specified <i>uv</i> grid location.
      */
@@ -324,6 +339,21 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
             float x = wre;
             wre = x * c - wim * s;
             wim = x * s + wim * c;
+        }
+        
+        /**
+         * Flags visibilities in which the signal-to-noise ratio exceeds the specified level, by setting
+         * their weight to zero.
+         * 
+         * @param level     Threshold signal-to-noise ration above which to flag the visibility.
+         * @return          the number of visibilities flagged.
+         */
+        public int despike(double level) {
+            if((wre * wre + wim * wim) / w > level * level) {
+                wre = wim = w = 0.0F;
+                return 1;
+            }
+            return 0;
         }
         
         @Override
@@ -458,9 +488,7 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
         }
 
         @Override
-        public void endAccumulation() {
-            
-        }
+        public void endAccumulation() {}
     }
 }
 

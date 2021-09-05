@@ -53,31 +53,31 @@ import nom.tam.util.Cursor;
  * @author Attila Kovacs
  *
  */
-public class Coordinate2D implements Coordinates<Double>, Serializable, Cloneable, Copiable<Coordinate2D>, 
+public class Coordinate2D implements Coordinates<Double>, RealComponents, Serializable, Cloneable, Copiable<Coordinate2D>, 
 ViewableAsDoubles, Parser, NumberFormating, Inversion {
-	
-	private static final long serialVersionUID = -3978373428597134906L;
 
-	private double x, y;
+    private static final long serialVersionUID = -3978373428597134906L;
 
-	
-	/**
-	 * Constructs a new pair of coordinates initialized to zeroes.
-	 * 
-	 */
-	public Coordinate2D() {}
-	
-	/**
-	 * Constructs a new pair of coordinates with the specified pair of values.
-	 * 
-	 * @param X    the first (x-type) coordinate value
-	 * @param Y    the second (y-type) coordinate value
-	 */
+    private double x, y;
+
+
+    /**
+     * Constructs a new pair of coordinates initialized to zeroes.
+     * 
+     */
+    public Coordinate2D() {}
+
+    /**
+     * Constructs a new pair of coordinates with the specified pair of values.
+     * 
+     * @param X    the first (x-type) coordinate value
+     * @param Y    the second (y-type) coordinate value
+     */
     public Coordinate2D(double X, double Y) { 
         this();
         set(X, Y);  
     }
-    
+
     /**
      * Constructs a new pair of coordinates based on some other coordinates. The argument
      * may represent coordinates of any type or dimension. Only up to the first two coordinate 
@@ -88,7 +88,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     public Coordinate2D(Coordinates<Double> v) {
         this(v.x(), v.y());
     }
-	
+
 
     /**
      * Constructs a new pair of coordinates from a Java {@link Point2D} object. The
@@ -98,9 +98,9 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
      * 
      * @param point     The {@link Point2D} representation of the same two coordinates.
      */
-	public Coordinate2D(Point2D point) { this(point.getX(), point.getY()); }
-	
-	/**
+    public Coordinate2D(Point2D point) { this(point.getX(), point.getY()); }
+
+    /**
      * Constructs a new pair of coordinates based on another pair of coordinates. The newly
      * created coordinates will be initialized with the same coordinate values, but may
      * otherwise represent anentirely distinct class of coordinates from those of the
@@ -109,353 +109,400 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
      * @param template  The pair of coordinates to mimic, but the argument may be of an entirely
      *                  different (and even incopatible type) of coordinates. 
      */
-	public Coordinate2D(Coordinate2D template) { this(template.x, template.y); }
-	
-	/**
-	 * Constructs a new pair of coordinates based on its textual representation, if
-	 * possible.
-	 * 
-	 * @param text     The text representation of the coordinates, normally two comma
-	 *                 separated values, possible in brackets.
-	 * @throws NumberFormatException  If the coordinates could not be parse from the text.
-	 */
+    public Coordinate2D(Coordinate2D template) { this(template.x, template.y); }
+
+    /**
+     * Constructs a new pair of coordinates based on its textual representation, if
+     * possible.
+     * 
+     * @param text     The text representation of the coordinates, normally two comma
+     *                 separated values, possible in brackets.
+     * @throws NumberFormatException  If the coordinates could not be parse from the text.
+     */
     public Coordinate2D(String text) throws NumberFormatException { parse(text); }
 
     @Override
     public final Class<Double> getComponentType() {
         return Double.class;
     }
-   
-	@Override
+
+    @Override
     public void copy(Coordinates<? extends Double> other) {
         setX(other.x());
         setY(other.y());
     }
 
-	@Override
+    @Override
     public final Double x() { return x; }
-	
-	@Override
+
+    @Override
     public final Double y() { return y; }
-	
-	@Override
+
+    @Override
     public final Double z() { return 0.0; }
-	
-	/**
-	 * Sets the <i>x</i>-type coordinate to the specified value.
-	 * 
-	 * @param value    the new <i>x</i>-type coordinate value.
-	 */
-	public void setX(final double value) { x = value; }
-	
-	/**
+
+    /**
+     * Sets the <i>x</i>-type coordinate to the specified value.
+     * 
+     * @param value    the new <i>x</i>-type coordinate value.
+     */
+    public void setX(final double value) { x = value; }
+
+    /**
      * Sets the <i>y</i>-type coordinate to the specified value.
      * 
      * @param value    the new <i>y</i>-type coordinate value.
      */
-	public void setY(final double value) { y = value; }
-	
-	/**
+    public void setY(final double value) { y = value; }
+
+    /**
      * Increments the <i>x</i>-type coordinate by the specified value.
      * 
      * @param value    the <i>x</i>-type coordinate increment.
      */
-	public void addX(final double value) { x += value; }
-	
-	/**
+    public void addX(final double value) { x += value; }
+
+    /**
      * Increments the <i>y</i>-type coordinate by the specified value.
      * 
      * @param value    the <i>y</i>-type coordinate increment.
      */
-	public void addY(final double value) { y += value; }
-	
-	/**
+    public void addY(final double value) { y += value; }
+
+    /**
      * Decrements the <i>x</i>-type coordinate by the specified value.
      * 
      * @param value    the <i>x</i>-type coordinate decrement.
      */
-	public void subtractX(final double value) { x -= value; }
-	
-	/**
+    public void subtractX(final double value) { x -= value; }
+
+    /**
      * Decrements the <i>y</i>-type coordinate by the specified value.
      * 
      * @param value    the <i>y</i>-type coordinate decrement.
      */
-	public void subtractY(final double value) { y -= value; }
-	
-	/**
+    public void subtractY(final double value) { y -= value; }
+
+    /**
      * Scales the <i>x</i>-type coordinate by the specified value.
      * 
      * @param value    the scalar factor to apply to the <i>x</i>-type coordinate.
      */
-	public final void scaleX(final double value) { x *= value; }
-	
-	/**
+    public final void scaleX(final double value) { x *= value; }
+
+    /**
      * Scales the <i>y</i>-type coordinate by the specified value.
      * 
      * @param value    the scalar factor to apply to the <i>y</i>-type coordinate.
      */
-	public final void scaleY(final double value) { y *= value; }
-	
-	@Override
-	public int hashCode() {
-		return HashCode.from(x) ^ ~HashCode.from(y);
-	}
+    public final void scaleY(final double value) { y *= value; }
 
-	@Override
-	public Coordinate2D clone() {
-		try { return (Coordinate2D) super.clone(); }
-		catch(CloneNotSupportedException e) { return null; }
-	}
-	
-	@Override
-	public Coordinate2D copy() { return clone(); }
-	
-	public Point2D getPoint2D() {
-		return new Point2D.Double(x, y);
-	}
-	
-	public void toPoint2D(Point2D point) {
-		point.setLocation(x, y);
-	}
-	
+    @Override
+    public void set(double... v) {
+        setX(v[0]);
+        if(v.length > 1) setY(v[1]);
+    }
 
-	public void fromPoint2D(Point2D point) {
-		set(point.getX(), point.getY());
-	}
-	
-	/**
-	 * Sets the components of these coordinates.
-	 * 
-	 * @param X    the new <i>x</i>-type coordinate.
-	 * @param Y    the new <i>y</i>-type coordinate.
-	 */
-	public void set(final double X, final double Y) { setX(X); setY(Y); }
-	
-	/**
+
+    @Override
+    public void set(float... v) {
+        setX(v[0]);
+        if(v.length > 1) setY(v[1]);
+    }    
+    
+    @Override
+    public void add(double... v) {
+        addX(v[0]);
+        if(v.length > 1) addY(v[1]);
+    }
+
+
+    @Override
+    public void add(float... v) {
+        addX(v[0]);
+        if(v.length > 1) addY(v[1]);
+    }
+
+
+    @Override
+    public void addScaled(double factor, double... v) {
+        addX(factor * v[0]);
+        if(v.length > 1) addY(factor * v[1]);
+    }
+
+
+    @Override
+    public void addScaled(double factor, float... v) {
+        addX(factor * v[0]);
+        if(v.length > 1) addY(factor * v[1]);
+    }
+
+
+    @Override
+    public void subtract(double... v) {
+        addX(-v[0]);
+        if(v.length > 1) addY(-v[1]);
+    }
+
+
+    @Override
+    public void subtract(float... v) {
+        addX(-v[0]);
+        if(v.length > 1) addY(-v[1]);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return HashCode.from(x) ^ ~HashCode.from(y);
+    }
+
+    @Override
+    public Coordinate2D clone() {
+        try { return (Coordinate2D) super.clone(); }
+        catch(CloneNotSupportedException e) { return null; }
+    }
+
+    @Override
+    public Coordinate2D copy() { return clone(); }
+
+    public Point2D getPoint2D() {
+        return new Point2D.Double(x, y);
+    }
+
+    public void toPoint2D(Point2D point) {
+        point.setLocation(x, y);
+    }
+
+
+    public void fromPoint2D(Point2D point) {
+        set(point.getX(), point.getY());
+    }
+
+    /**
      * Flips the sign of the <i>x</i>-type coordinate.
      * 
      */
-	public void flipX() { x = -x; }
-	
-	/**
+    public void flipX() { x = -x; }
+
+    /**
      * Flips the sign of the <i>y</i>-type coordinate.
      * 
      */
-	public void flipY() { y = -y; }
-	
-	
-	@Override
+    public void flipY() { y = -y; }
+
+
+    @Override
     public void flip() {
-	    x = -x;
-	    y = -y;
-	}
-	
-	/**
-	 * Resets both coordinate components to 0 values.
-	 * 
-	 */
-	public void zero() { x = y = 0.0; }
+        x = -x;
+        y = -y;
+    }
 
-	/**
-	 * Checks if both coordinates are zero.
-	 * 
-	 * @return <code>true</code> if both coordinates are zero. Otherwise <code>false</code>.
-	 */
-	public boolean isNull() { 
-		if(x != 0.0) return false;
-		if(y != 0.0) return false; 
-		return true;
-	}	
+    /**
+     * Resets both coordinate components to 0 values.
+     * 
+     */
+    public void zero() { x = y = 0.0; }
 
-	/**
-	 * Sets both coordinates to NaN.
-	 * 
-	 */
-	public void NaN() { x = Double.NaN; y = Double.NaN; }
+    /**
+     * Checks if both coordinates are zero.
+     * 
+     * @return <code>true</code> if both coordinates are zero. Otherwise <code>false</code>.
+     */
+    public boolean isNull() { 
+        if(x != 0.0) return false;
+        if(y != 0.0) return false; 
+        return true;
+    }	
 
-	/**
+    /**
+     * Sets both coordinates to NaN.
+     * 
+     */
+    public void NaN() { x = Double.NaN; y = Double.NaN; }
+
+    /**
      * Checks if either coordinate is NaN (invalid).
      * 
      * @return <code>true</code> if either coordinate is NaN (invalid). Otherwise <code>false</code>.
      */
-	public final boolean isNaN() { 
-		if(Double.isNaN(x)) return true;
-		if(Double.isNaN(y)) return true;
-		return false;
-	}
-	
-	/**
+    public final boolean isNaN() { 
+        if(Double.isNaN(x)) return true;
+        if(Double.isNaN(y)) return true;
+        return false;
+    }
+
+    /**
      * Checks if either coordinate is infinite.
      * 
      * @return <code>true</code> if either coordinate is infinite. Otherwise <code>false</code>.
      */
-	public final boolean isInfinite() { 
-		if(Double.isInfinite(x)) return true;
-		if(Double.isInfinite(y)) return true;
-		return false;
-	}
+    public final boolean isInfinite() { 
+        if(Double.isInfinite(x)) return true;
+        if(Double.isInfinite(y)) return true;
+        return false;
+    }
 
 
-	public final void weightedAverageWith(double w1, final Coordinate2D coord, double w2) {
-		final double isumw = 1.0 / (w1 + w2);
-		w1 *= isumw; w2 *= isumw;
-		x = w1 * x + w2 * coord.x;
-		y = w1 * y + w2 * coord.y;
-	}
-	
-	public final void parse(String spec) {
-	    parse(spec, new ParsePosition(0));
-	}
+    public final void weightedAverageWith(double w1, final Coordinate2D coord, double w2) {
+        final double isumw = 1.0 / (w1 + w2);
+        w1 *= isumw; w2 *= isumw;
+        x = w1 * x + w2 * coord.x;
+        y = w1 * y + w2 * coord.y;
+    }
+
+    public final void parse(String spec) {
+        parse(spec, new ParsePosition(0));
+    }
 
 
-	@Override
-	public final void parse(String text, ParsePosition pos) throws IllegalArgumentException {
-	    parse(new StringParser(text, pos));
-	}
-	
-	/**
-	 * Parses text x,y 2D coordinate representations that are in the format(s) of:
-	 * 
-	 * <pre>
-	 * {@code
-	 *     x,y / x y
-	 * }
-	 * </pre>
-	 * 
-	 * or
-	 * 
-	 * <pre>
-	 * {@code
-	 *     (x,y) / (x y)
-	 * }
-	 * </pre>
-	 * 
-	 * More specifically, the x and y values may be separated either by comma(s) or white space(s) (including 
-	 * tabs line breaks, carriage returns), or a combination of both. The pair of values may be bracketed (or 
-	 * not). Any number of white spaces may exists between the elements (brackets and pair of values), or 
-	 * precede the text element. Thus, the following will parse as a proper x,y (1.0,-2.0) pair:
-	 * 
-	 * <pre>
-	 * {@code
-	 *     (  \t\n 1.0 ,,, \r , \t -2.0    \n  )
-	 * }
-	 * </pre>
-	 * 
-	 * @param parser  The string parsing helper object.
-	 * @throws NumberFormatException
-	 */
-	public void parse(StringParser parser) throws NumberFormatException {
-	    boolean isBracketed = false;
-	    
-	    zero();
-	    
-	    parser.skipWhiteSpaces();
-	       
-	    if(parser.peek() == '(') {
-	        isBracketed = true;
-	        parser.skip(1);
-	        parser.skipWhiteSpaces();
-	    }
-	        
-	    parseX(parser.nextToken(Util.getWhiteSpaceChars() + ","));
-	    parseY(parser.nextToken(Util.getWhiteSpaceChars() + "," + (isBracketed ? "" : ")")));
-	}
+    @Override
+    public final void parse(String text, ParsePosition pos) throws IllegalArgumentException {
+        parse(new StringParser(text, pos));
+    }
 
-	protected void parseX(String token) throws NumberFormatException {
-	    setX(Double.parseDouble(token));
-	}
-	
-	protected void parseY(String token) throws NumberFormatException {
-	    setY(Double.parseDouble(token));
-	}
-	
-	@Override
-	public String toString(NumberFormat nf) {
-		return "(" + nf.format(x) + "," + nf.format(y) + ")";
-	}
+    /**
+     * Parses text x,y 2D coordinate representations that are in the format(s) of:
+     * 
+     * <pre>
+     * {@code
+     *     x,y / x y
+     * }
+     * </pre>
+     * 
+     * or
+     * 
+     * <pre>
+     * {@code
+     *     (x,y) / (x y)
+     * }
+     * </pre>
+     * 
+     * More specifically, the x and y values may be separated either by comma(s) or white space(s) (including 
+     * tabs line breaks, carriage returns), or a combination of both. The pair of values may be bracketed (or 
+     * not). Any number of white spaces may exists between the elements (brackets and pair of values), or 
+     * precede the text element. Thus, the following will parse as a proper x,y (1.0,-2.0) pair:
+     * 
+     * <pre>
+     * {@code
+     *     (  \t\n 1.0 ,,, \r , \t -2.0    \n  )
+     * }
+     * </pre>
+     * 
+     * @param parser  The string parsing helper object.
+     * @throws NumberFormatException
+     */
+    public void parse(StringParser parser) throws NumberFormatException {
+        boolean isBracketed = false;
 
-	@Override
-	public String toString() { 
-		return "(" + x + "," + y + ")";
-	}
-	
+        zero();
 
-	@Override
-	public final void createFromDoubles(Object array) throws IllegalArgumentException {
-		if(!(array instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
-		double[] components = (double[]) array;
-		if(components.length != 2) throw new IllegalArgumentException("argument double[] array is to small.");
-		x = components[0];
-		y = components[1];
-	}
+        parser.skipWhiteSpaces();
+
+        if(parser.peek() == '(') {
+            isBracketed = true;
+            parser.skip(1);
+            parser.skipWhiteSpaces();
+        }
+
+        parseX(parser.nextToken(Util.getWhiteSpaceChars() + ","));
+        parseY(parser.nextToken(Util.getWhiteSpaceChars() + "," + (isBracketed ? "" : ")")));
+    }
+
+    protected void parseX(String token) throws NumberFormatException {
+        setX(Double.parseDouble(token));
+    }
+
+    protected void parseY(String token) throws NumberFormatException {
+        setY(Double.parseDouble(token));
+    }
+
+    @Override
+    public String toString(NumberFormat nf) {
+        return "(" + nf.format(x) + "," + nf.format(y) + ")";
+    }
+
+    @Override
+    public String toString() { 
+        return "(" + x + "," + y + ")";
+    }
 
 
-	@Override
-	public final void viewAsDoubles(Object view) throws IllegalArgumentException {
-		if(!(view instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
-		double[] components = (double[]) view;
-		if(components.length != 2) throw new IllegalArgumentException("argument double[] array is to small.");
-		components[0] = x;
-		components[1] = y;
-	}
-	
-	@Override
-	public final double[] viewAsDoubles() {
-		return new double[] { x, y };		
-	}
-	
-	
-	public double getValue(int field) throws NoSuchFieldException {
-		switch(field) {
-		case X: return x;
-		case Y: return y;
-		default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
-		}
-	}
-	
+    @Override
+    public final void createFromDoubles(Object array) throws IllegalArgumentException {
+        if(!(array instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
+        double[] components = (double[]) array;
+        if(components.length != 2) throw new IllegalArgumentException("argument double[] array is to small.");
+        x = components[0];
+        y = components[1];
+    }
 
-	public void setValue(int field, double value) throws NoSuchFieldException {
-		switch(field) {
-		case X: x = value; break;
-		case Y: y = value; break; 
-		default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
-		}
-	}
-	
-	
-	public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
-	    Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-		c.add(new HeaderCard(keyStem + "1" + alt, x, "The reference x coordinate in SI units."));
-		c.add(new HeaderCard(keyStem + "2" + alt, y, "The reference y coordinate in SI units."));
-	}
-	
 
-	public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
-		x = header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x());
-		y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());
-	}
-	
+    @Override
+    public final void viewAsDoubles(Object view) throws IllegalArgumentException {
+        if(!(view instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
+        double[] components = (double[]) view;
+        if(components.length != 2) throw new IllegalArgumentException("argument double[] array is to small.");
+        components[0] = x;
+        components[1] = y;
+    }
 
-	public static String toString(Coordinate2D coords, Unit unit) {
-		return toString(coords, unit, 3);
-	}
-	
+    @Override
+    public final double[] viewAsDoubles() {
+        return new double[] { x, y };		
+    }
 
-	public static String toString(Coordinate2D coords, Unit unit, int decimals) {
-		return Util.f[decimals].format(coords.x / unit.value()) +  ", " 
-			+ Util.f[decimals].format(coords.y / unit.value()) + " " + unit.name();
-	}
 
-	public void convertFrom(Coordinate2D coords) throws IncompatibleTypesException {
-	    if(getClass().isAssignableFrom(coords.getClass())) copy(coords);
-	    else throw new IncompatibleTypesException(coords, this);
-	}
+    public double getValue(int field) throws NoSuchFieldException {
+        switch(field) {
+        case X: return x;
+        case Y: return y;
+        default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
+        }
+    }
 
-	public final void convertTo(Coordinate2D coords) {
-	    coords.convertFrom(this);
-	}
-	
+
+    public void setValue(int field, double value) throws NoSuchFieldException {
+        switch(field) {
+        case X: x = value; break;
+        case Y: y = value; break; 
+        default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
+        }
+    }
+
+
+    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        c.add(new HeaderCard(keyStem + "1" + alt, x, "The reference x coordinate in SI units."));
+        c.add(new HeaderCard(keyStem + "2" + alt, y, "The reference y coordinate in SI units."));
+    }
+
+
+    public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
+        x = header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x());
+        y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());
+    }
+
+
+    public static String toString(Coordinate2D coords, Unit unit) {
+        return toString(coords, unit, 3);
+    }
+
+
+    public static String toString(Coordinate2D coords, Unit unit, int decimals) {
+        return Util.f[decimals].format(coords.x / unit.value()) +  ", " 
+                + Util.f[decimals].format(coords.y / unit.value()) + " " + unit.name();
+    }
+
+    public void convertFrom(Coordinate2D coords) throws IncompatibleTypesException {
+        if(getClass().isAssignableFrom(coords.getClass())) copy(coords);
+        else throw new IncompatibleTypesException(coords, this);
+    }
+
+    public final void convertTo(Coordinate2D coords) {
+        coords.convertFrom(this);
+    }
+
 
     @Override
     public final int size() {
@@ -485,7 +532,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     public final Double get(Index1D index) {
         return getComponent(index.i());
     }
-    
+
     @Override
     public void set(Index1D index, Double value) {
         setComponent(index.i(), value);
@@ -519,7 +566,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     @Override
     public final String getSizeString() {
         return "[2]";
-     }
+    }
 
 
     @Override
@@ -530,7 +577,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         return false;
     }
 
-    
+
     @Override
     public final Double getComponent(final int index) {
         switch(index) {
@@ -548,21 +595,21 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         default: throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no component " + index);
         }
     }
-    
+
     public static Coordinate2D[] copyOf(Coordinate2D[] array) {
         Coordinate2D[] copy = new Coordinate2D[array.length];
         IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
-	
+
     /**
      * The default size object for 2D coordinates.
      */
     private static final Index1D size = new Index1D(2);
-   
+
     /** the index of the <i>x</i>-type (first) coordinate */
-	public static final int X = 0;
-	
-	/** the index of the <i>y</i>-type (first) coordinate */
-	public static final int Y = 1;
+    public static final int X = 0;
+
+    /** the index of the <i>y</i>-type (first) coordinate */
+    public static final int Y = 1;
 }

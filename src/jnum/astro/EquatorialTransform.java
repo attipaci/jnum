@@ -252,7 +252,7 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
     
     
     private void ICRStoGCRS(double julianYear) {
-        double mjd = AstroTime.MJDJ2000 + (julianYear - 2000.0) * AstroTime.JulianYearDays;
+        double mjd = AstroTime.MJDJ2000 + (julianYear - 2000.0) * AstroTime.julianYearDays;
          
         // For deflection
         pEarth = SimpleOrbits.Earth.getSSBPos(mjd); 
@@ -270,7 +270,7 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
     }
     
     private void GCRStoICRS(double julianYear) {
-        double mjd = AstroTime.MJDJ2000 + (julianYear - 2000.0) * AstroTime.JulianYearDays;
+        double mjd = AstroTime.MJDJ2000 + (julianYear - 2000.0) * AstroTime.julianYearDays;
        
         // For reverse deflection
         pEarth = SimpleOrbits.Earth.getSSBPos(mjd);
@@ -294,7 +294,7 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
         Vector2D w = local.getPolarWobble();
         w.rotate(local.getApproximateERA());
         
-        double s1 = -47.0 * Unit.uas * (time.getMJD() - AstroTime.MillisJ2000) / AstroTime.JulianCenturyDays;
+        double s1 = -47.0 * Unit.uas * (time.MJD() - AstroTime.millisJ2000) / AstroTime.julianCenturyDays;
         smallRotate(-w.y(), -w.x(), s1);
     }
     
@@ -306,7 +306,7 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
         Vector2D w = local.getPolarWobble();
         w.rotate(-local.getApproximateERA());
         
-        double s1 = -47.0 * Unit.uas * (time.getMJD() - AstroTime.MillisJ2000) / AstroTime.JulianCenturyDays;
+        double s1 = -47.0 * Unit.uas * (time.MJD() - AstroTime.millisJ2000) / AstroTime.julianCenturyDays;
         smallRotate(w.y(), w.x(), -s1);
     }
     
