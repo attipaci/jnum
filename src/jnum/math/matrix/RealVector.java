@@ -41,7 +41,7 @@ import jnum.math.RealComponents;
 
 public class RealVector extends AbstractVector<Double> 
 implements MathVector<Double>, RealComponents, IndexedValues<Index1D, Double>, ViewableAsDoubles {
-
+    /** */
     private static final long serialVersionUID = 1042626482476049050L;
 
     private double[] component;

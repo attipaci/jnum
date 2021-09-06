@@ -31,7 +31,7 @@ import jnum.math.InverseValue;
 
 public class ExponentUnit extends Unit implements InverseValue<ExponentUnit> {
 
-
+    /** */
     private static final long serialVersionUID = -5909400335570195212L;
 
     private Unit base;

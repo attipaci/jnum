@@ -41,11 +41,16 @@ import jnum.math.Metric;
  */
 public class LocalizedObject<L extends Locality, D> 
 implements Serializable, Cloneable, Comparable<LocalizedObject<L, D>>, Metric<LocalizedObject<L, D>> {
-    private L location;
-    private D value;
-    private Class<D> type;
 
+    /** */
     private static final long serialVersionUID = 2776764506885561864L;
+    
+    /** The location marker of the object */
+    private L location;
+    
+    /** The object at the marked location */
+    private D value;
+
 
     /**
      * Construct as new localized object at the given locality and with the given object datum. 
@@ -53,11 +58,9 @@ implements Serializable, Cloneable, Comparable<LocalizedObject<L, D>>, Metric<Lo
      * @param location      the locality where this datum was measured or referred to.
      * @param datum         the object that represents the value at that location.
      */
-    @SuppressWarnings("unchecked")
     public LocalizedObject(L location, D datum) {
         this.location = location;
         this.value = datum;
-        this.type = (Class<D>) datum.getClass();
     }
 
     @Override
@@ -72,7 +75,8 @@ implements Serializable, Cloneable, Comparable<LocalizedObject<L, D>>, Metric<Lo
      * 
      * @return  The class of the data element.
      */
-    public final Class<D> getType() { return type; }
+    @SuppressWarnings("unchecked")
+    public final Class<D> getType() { return (Class<D>) value.getClass(); }
     
     /**
      * Returns the reference to the underlying data element contained in this object.

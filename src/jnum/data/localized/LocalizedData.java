@@ -41,9 +41,13 @@ import jnum.math.Metric;
  */
 public class LocalizedData<L extends Locality, D extends LinearAlgebra<? super D> & Copiable<? super D> & Metric<? super D>> 
 extends LocalizedObject<L, D>  {
+    /** */
     private static final long serialVersionUID = 2776764506885561864L;
+        
+    /** Assumed to be a proper noise weight. */
+    private double weight;      
     
-    private double weight;      // Assumed to be a proper noise weight.
+    /** The number of measurements aggregated in this datum */
     private int measurements;
 
     
@@ -158,11 +162,4 @@ extends LocalizedObject<L, D>  {
 
         this.weight = w;
     }
-
-  
 }
-
-
-
-
-

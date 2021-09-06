@@ -34,6 +34,7 @@ import jnum.Unit;
  *
  */
 public class DelaunayArguments {
+    /** The set of arguments as an array */
     double f[];
 
     /**

@@ -35,8 +35,10 @@ import java.util.*;
  */
 public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
 
+    /** */
 	private static final long serialVersionUID = -4045327046654212525L;
 	
+	/** the number of components in this vector */
 	private int dim;
 	
 	/**

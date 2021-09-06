@@ -36,7 +36,7 @@ import jnum.Util;
 
 public class AngleFormat extends NumberFormat {
 	
-
+    /** */
 	private static final long serialVersionUID = 8006119682644201943L;
 
 	private int decimals;

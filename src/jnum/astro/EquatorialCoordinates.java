@@ -94,6 +94,8 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
      * 
      * @param text              the string representation of the coordinates, including their reference system.
      * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
+     * 
+     * @see #parse(String, java.text.ParsePosition)
      */
     public EquatorialCoordinates(String text) throws ParseException { super(text); }
 
@@ -101,8 +103,8 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     /**
      * Instantiate new equatorial coordinates in the ICRS.
      * 
-     * @param ra        (rad) Right ascension angle [0:2&pi;].
-     * @param dec       (rad) Declination angle [-&pi;/2;&pi;/2].
+     * @param ra        (rad) Right ascension angle &alpha; [0:2&pi;].
+     * @param dec       (rad) Declination angle &delta; [-&pi;/2;&pi;/2].
      * 
      * @see #EquatorialCoordinates(double, double, EquatorialSystem)
      * @see EquatorialSystem#ICRS
@@ -115,8 +117,8 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     /**
      * Instantiates new equatorial coordinates, in the specified equatorial reference system.
      * 
-     * @param ra        (rad) Right ascension angle [0:2&pi;].
-     * @param dec       (rad) Declination angle [-&pi;/2;&pi;/2].
+     * @param ra        (rad) Right ascension angle &alpha; [0:2&pi;].
+     * @param dec       (rad) Declination angle &delta; [-&pi;/2;&pi;/2].
      * @param system    the equatorial reference system for the new coordinates
      * 
      * @see #EquatorialCoordinates(double, double, String)
@@ -129,8 +131,8 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     /**
      * Instantiates new equatorial coordinates, in the specified equatorial reference system.
      * 
-     * @param ra        (rad) Right ascension angle [0:2&pi;].
-     * @param dec       (rad) Declination angle [-&pi;/2;&pi;/2].
+     * @param ra        (rad) Right ascension angle &alpha; [0:2&pi;].
+     * @param dec       (rad) Declination angle &delta; [-&pi;/2;&pi;/2].
      * @param sysSpec   the string representation of the equatorial reference system, such as 'ICRS', 'J2000' or 'FK5'.
      * 
      * @see #EquatorialCoordinates(double, double, EquatorialSystem)
@@ -195,7 +197,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     /**
      * Returns the right ascension angle component.
      * 
-     * @return  (rad) the right ascension angle [0:2&pi;].
+     * @return  (rad) the right ascension angle &alpha; [0:2&pi;].
      * 
      * @see DEC()
      * @see #setRA(double)
@@ -205,7 +207,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     /**
      * Returns the right ascension angle component. Same as {@link #RA()} but with a more expressive name.
      * 
-     * @return  (rad) the right ascension angle [0:2&pi;].
+     * @return  (rad) the right ascension angle &alpha; [0:2&pi;].
      * 
      * @see #RA()
      */
@@ -214,7 +216,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     /**
      * Returns the declination angle component.
      * 
-     * @return  (rad) the declination angle [-&pi;:&pi;].
+     * @return  (rad) the declination angle &delta; [-&pi;:&pi;].
      * 
      * @see RA()
      * @see #setDEC(double)
@@ -224,7 +226,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     /**
      * Returns the declination angle component. Same as {@link #DEC()} buty with a more expressive name.
      * 
-     * @return  (rad) the declination angle [-&pi;:&pi;].
+     * @return  (rad) the declination angle &delta; [-&pi;:&pi;].
      * 
      */
     public final double declination() { return DEC(); }
@@ -232,7 +234,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     /**
      * Sets a new right ascension coordinate component.
      * 
-     * @param RA    (rad) the new right ascension angle [0:2&pi;].
+     * @param RA    (rad) the new right ascension angle &alpha; [0:2&pi;].
      * 
      * @see #RA()
      * @see #setDEC(double)
@@ -242,7 +244,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
     /**
      * Sets a new declination coordinate component.
      * 
-     * @param DEC    (rad) the new declination angle [-&pi;:&pi;].
+     * @param DEC    (rad) the new declination angle &delta; [-&pi;:&pi;].
      * 
      * @see #DEC()
      * @see #setRA(double)

@@ -30,7 +30,7 @@ import java.text.ParsePosition;
 
 
 public class FixedLengthFormat extends NumberFormat {
-
+    /** */
 	private static final long serialVersionUID = -7874756229468621371L;
 
 	int length;

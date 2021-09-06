@@ -54,6 +54,7 @@ import jnum.util.ArrayUtil;
 public abstract class AbstractMatrix<T> implements SquareMatrixAlgebra<MatrixAlgebra<?, ? extends T>, T>, Serializable, 
 Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, NumberFormating, DecimalFormating {
 
+    /** */
 	private static final long serialVersionUID = 8165960625207147822L;
 
 	

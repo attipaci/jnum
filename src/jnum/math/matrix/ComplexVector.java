@@ -41,6 +41,7 @@ import jnum.util.ArrayUtil;
  */
 public class ComplexVector extends ObjectVector<Complex> implements ComplexScaling, ComplexConjugate, ComplexMultiplication<ComplexVector> {
 
+    /** */
 	private static final long serialVersionUID = 6672815439678434695L;
 
 	/**

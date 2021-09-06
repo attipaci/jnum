@@ -23,7 +23,13 @@
 package jnum.astro;
 
 
-
+/**
+ * A default {@link Weather} implementation which returns NaN values for all weather parameters. Sub-classes
+ * may override select methods to fill in the available weahter information, even if incomplete.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class WeatherAdapter implements Weather {
 
 

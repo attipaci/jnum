@@ -41,10 +41,11 @@ import jnum.math.Metric;
  */
 public abstract class LocalAverage <L extends Locality, D extends LinearAlgebra<? super D> & Copiable<? super D> & Metric<? super D>> 
 extends ArrayList<LocalizedData<L, D>> {
-
+    /** */
 	private static final long serialVersionUID = 786022102371734003L;
 
-	private double span = 3.0; // Maximum normalized distance (w.r.t. 1-sigma radius)
+	/** Maximum normalized distance (w.r.t. 1-sigma radius) */
+	private double span = 3.0; 
 
 	/**
 	 * Gets the data index that is just before the specified locality of interest along

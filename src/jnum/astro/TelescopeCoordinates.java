@@ -24,24 +24,52 @@
 package jnum.astro;
 
 
+import java.text.ParseException;
+
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
 import jnum.math.Vector2D;
 import jnum.text.GreekLetter;
 
+/**
+ * Spherical coordinates in the natural coordinate system of the telescope mount, which may or may not 
+ * align to a horizontal or equatorial coordinate system. For telescopes in general, the latitude axis 
+ * is usually referred to as 'elevation' (EL), while the longitude axis is known as 'cross-elevation' (XEL),
+ * which is the convention used for this implementation.
+ * 
+ * @author Attila Kovacs
+ * 
+ * @see FocalPlaneCoordinates
+ *
+ */
 public class TelescopeCoordinates extends SphericalCoordinates {
 
+    /** */
     private static final long serialVersionUID = 5165681897613041311L;
 
-
+    /**
+     * Instantiates new default native telesscope coordinates.
+     */
     public TelescopeCoordinates() {}
 
+    /**
+     * Instantiates new native telescope Coordinates, from a string representation of these. 
+     * 
+     * @param text              the string representation of the coordinates.
+     * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
+     *
+     * @see #parse(String, java.text.ParsePosition)
+     */
+    public TelescopeCoordinates(String text) throws ParseException { super(text); } 
 
-    public TelescopeCoordinates(String text) { super(text); } 
-
-
-    public TelescopeCoordinates(double az, double el) { super(az, el); }
+    /**
+     * Instantiates new Galactic Coordinates with the specified conventional longitude and latitude angles.
+     * 
+     * @param xel       (rad) Telescope cross-elevation (longitude) angle.
+     * @param el        (rad) Telescope elevation (latitude) angle.
+     */
+    public TelescopeCoordinates(double xel, double el) { super(xel, el); }
 
     
     @Override
@@ -72,36 +100,100 @@ public class TelescopeCoordinates extends SphericalCoordinates {
         return defaultLocalCoordinateSystem;
     }
 
-
+    /**
+     * Returns the telescope cross-elevation (longitude) coordinate component.
+     * 
+     * @return  (rad) the cross-elevation (longitude) angle.
+     * 
+     * @see #setXEL(double)
+     * @see #EL()
+     */
     public final double XEL() { return nativeLongitude(); }
 
 
+    /**
+     * Returns the telescope cross-elevation (longitude) coordinate component. It is the same as {@link #XEL()} but with 
+     * a more expressive name.
+     * 
+     * @return  (rad) the cross-elevation (longitude) angle.
+     * 
+     * @see #XEL()
+     * @see #setXEL(double)
+     */
     public final double crossElevation() { return nativeLongitude(); }
 
-
+    /**
+     * Returns the telescope elevation (latitude) coordinate component.
+     * 
+     * @return  (rad) the elevation (latitude) angle.
+     * 
+     * @see #setEL(double)
+     * @see #XEL()
+     */
     public final double EL() { return nativeLatitude(); }
 
-
+    /**
+     * Returns the telescope elevation (latitude) coordinate component. It is the same as {@link #EL()} but with 
+     * a more expressive name.
+     * 
+     * @return  (rad) the elevation (latitude) angle.
+     * 
+     * @see #EL()
+     * @see #setEL(double)
+     */
     public final double elevation() { return nativeLatitude(); }
 
-
+    /**
+     * Sets a new telescope cross-elevation (longitude) angle.
+     * 
+     * @param XEL   (rad) the new cross-elevation (longitude) angle.
+     * 
+     * @see #XEL()
+     * @see #setEL(double)
+     */
     public final void setXEL(double XEL) { setNativeLongitude(XEL); }
 
-
+    /**
+     * Sets a new telescope elevation (latitude) angle.
+     * 
+     * @param EL   (rad) the new elevation (latitude) angle.
+     * 
+     * @see #EL()
+     * @see #setXEL(double)
+     */
     public final void setEL(double EL) { setNativeLatitude(EL); }
 
-
-    public void toEquatorial(Vector2D offset, double telVPA) {
-        toEquatorialOffset(offset, telVPA);
-    }
-
-    
+    /**
+     * Converts locally projected offsets around a reference position from the telescope coordinate system to
+     * an equatorial coordinate system, given the position angle of the telescope's elevation
+     * axis relative to the the equatorial declination axis.
+     * 
+     * @param offset    (rad) The local offset vector in the telescope's frame [in] to be rotated 
+     *                  into the local equatorial coordinate frame [out].
+     * @param telVPA    (rad) the telescope's elevation direction (counter-clockwise) relative to the declination axis, as seen
+     *                  in the equatorial coordinate system.
+     */
     public static void toEquatorialOffset(Vector2D offset, double telVPA) {
         offset.rotate(telVPA);
-        offset.scaleX(-1.0);
+        offset.flipX();
     }
     
-
+    /**
+     * Converts locally projected offsets around a reference position from the local equatorial coordinate system to
+     * the telescope's native coordinate system, given the position angle of the telescope's elevation
+     * axis relative to the the equatorial declination axis.
+     * 
+     * @param offset    (rad) The local offset vector in the local equatorial coordinate system [in] to be rotated into
+     *                  the telescope's frame [out].
+     * @param telVPA    (rad) the telescope's elevation direction (counter-clockwise) relative to the declination axis, as seen
+     *                  in the equatorial coordinate system.
+     */
+    public static void fromEquatorialOffset(Vector2D offset, double telVPA) {
+        offset.flipX();
+        offset.rotate(-telVPA);
+    }
+    
+    
     @SuppressWarnings("hiding")
     public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
  

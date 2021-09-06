@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
 
 
 public class VersionString implements Serializable, Comparable<VersionString> {	
-
+    /** */
 	private static final long serialVersionUID = -3580136873936732038L;
 
 

@@ -30,7 +30,7 @@ package jnum.math;
  *
  */
 public class CartesianSystem extends CoordinateSystem {
-
+    /** */
 	private static final long serialVersionUID = 487281387200705838L;
 
 	/**

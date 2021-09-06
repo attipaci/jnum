@@ -90,8 +90,8 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     /**
      * Instantiates new ecliptic coordinates, tied to the specified equatorial reference system.
      * 
-     * @param lon       (rad) Ecliptic longitude angle [-&pi;:&pi;].
-     * @param lat       (rad) Ecliptic latitude angle [-&pi;/2;&pi;/2].
+     * @param lon       (rad) Ecliptic longitude angle &lambda; [-&pi;:&pi;].
+     * @param lat       (rad) Ecliptic latitude angle &beta; [-&pi;/2;&pi;/2].
      * @param system    the equatorial reference system for the new coordinates
      * 
      * @see #EclipticCoordinates(double, double, String)
@@ -104,8 +104,8 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     /**
      * Instantiates new ecliptic coordinates, tied to the specified equatorial reference system.
      * 
-     * @param lon       (rad) Ecliptic longitude angle [-&pi;:&pi;].
-     * @param lat       (rad) Ecliptic latitude angle [-&pi;/2;&pi;/2].
+     * @param lon       (rad) Ecliptic longitude angle &lambda; [-&pi;:&pi;].
+     * @param lat       (rad) Ecliptic latitude angle &beta; [-&pi;/2;&pi;/2].
      * @param sysSpec   the string representation of the equatorial reference system, such as 'ICRS', 'J2000' or 'FK5'.
      * 
      * @see #EclipticCoordinates(double, double, EquatorialSystem)
@@ -118,8 +118,8 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     /**
      * Instantiates new ecliptic coordinates tied to the ICRS frame.
      * 
-     * @param lon       (rad) Ecliptic longitude angle [-&pi;:&pi;].
-     * @param lat       (rad) Ecliptic latitude angle [-&pi;/2;&pi;/2].
+     * @param lon       (rad) Ecliptic longitude angle &lambda; [-&pi;:&pi;].
+     * @param lat       (rad) Ecliptic latitude angle &beta; [-&pi;/2;&pi;/2].
      * 
      * @see #EclipticCoordinates(double, double, EquatorialSystem)
      * @see EquatorialSystem#ICRS
@@ -135,6 +135,8 @@ public class EclipticCoordinates extends PrecessingCoordinates {
      * 
      * @param text              the string representation of the coordinates, including their reference system.
      * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
+     * 
+     * @see #parse(String, java.text.ParsePosition)
      */
     public EclipticCoordinates(String text) throws ParseException {
         super(text);

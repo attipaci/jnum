@@ -34,7 +34,7 @@ import jnum.Util;
 // Chose a decimal format that keeps the most significant figures for the given length
 
 public class FixedLengthDecimalFormat extends DecimalFormat {
-
+    /** */
 	private static final long serialVersionUID = 6113058377335474979L;
 
 	int length;

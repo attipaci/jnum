@@ -52,18 +52,18 @@ public class GalacticCoordinates extends CelestialCoordinates {
     /**
      * Instantiates new Galactic Coordinates, from a string representation of these. 
      * 
-     * 
      * @param text              the string representation of the coordinates.
      * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
-     *
+     * 
+     * @see #parse(String, java.text.ParsePosition)     *
      */
     public GalacticCoordinates(String text) throws ParseException { super(text); }
 
     /**
      * Instantiates new Galactic Coordinates with the specified conventional longitude and latitude angles.
      * 
-     * @param lon       (rad) Galactic longitude angle
-     * @param lat       (rad) Galactic latitude angle
+     * @param lon       (rad) Galactic longitude angle <i>l</i>
+     * @param lat       (rad) Galactic latitude angle <i>b</i>
      */
     public GalacticCoordinates(double lon, double lat) { super(lon, lat); }
     

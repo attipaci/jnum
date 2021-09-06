@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,10 +26,23 @@ import java.io.*;
 import jnum.Util;
 
 
+/**
+ * A {@link DataInputStream} implementation for little-endian data format. It can be used to read
+ * binary data, written in little-endian format (which is th native format of Intel CPUs!), using
+ * the familiar API of a Java data input stream.
+ * 
+ * @author Attila Kovacs
+ * 
+ * @see DataInputStream
+ * @see VAXDataInputStream
+ *
+ */
 public class LittleEndianDataInputStream extends InputStream implements DataInput {
 
+    /** The underlying input stream */
 	private InputStream stream;
-
+	
+	/** The underlying (big-endian) data input stream */
 	private DataInputStream in;
 
 	
@@ -134,14 +147,42 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 		return in.skipBytes(arg0);
 	}
 	
-
-	public final short read2Bytes() throws IOException { return in.readShort(); }
+	/** 
+	 * Reads 2 bytes from the input, returning the bits as a <code>short</code>.
+	 * 
+	 * @return     the 2 bytes represented as a <code>short</code>
+	 * 
+	 * @throws IOException     if there was an IO error.
+	 * 
+	 * @see #read4Bytes()
+	 * @see #read8Bytes()
+	 */
+	protected final short read2Bytes() throws IOException { return in.readShort(); }
+	
+	/** 
+     * Reads 4 bytes from the input, returning the bits as a <code>int</code>.
+     * 
+     * @return     the 4 bytes represented as a <code>int</code>
+     * 
+     * @throws IOException     if there was an IO error.
+     * 
+     * @see #read2Bytes()
+     * @see #read8Bytes()
+     */
+	protected final int read4Bytes() throws IOException { return in.readInt(); }
 	
 
-	public final int read4Bytes() throws IOException { return in.readInt(); }
-	
-
-	public final long read8Bytes() throws IOException { return in.readLong(); }
+	/** 
+     * Reads 8 bytes from the input, returning the bits as a <code>long</code>.
+     * 
+     * @return     the 8 bytes represented as a <code>long</code>
+     * 
+     * @throws IOException     if there was an IO error.
+     * 
+     * @see #read2Bytes()
+     * @see #read4Bytes()
+     */
+	protected final long read8Bytes() throws IOException { return in.readLong(); }
 	
 	
 }

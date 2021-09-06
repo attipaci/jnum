@@ -34,7 +34,7 @@ import jnum.Util;
  *
  */
 public class Offset2D extends Vector2D {
-
+    /** */
     private static final long serialVersionUID = -2072131491069589417L;
 
     private Coordinate2D reference;

@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -23,10 +23,24 @@
 package jnum.io;
 import java.io.*;
 
-
+/**
+ * Binary data input stream for data stored in VAX format. The VAX systems, popular in the 1990s have used
+ * a floating point format that was quite different from the IEEE 754 type floats used on most platforms
+ * today. More than just byte order differences, the VAX floating point formats have designated bits entirely
+ * differently. It is however possible to construct IEEE 754 floating point types from the equivalent
+ * 32-bit and 64-bit vax floats, by doing a set of bitwise operations And that exactly is the purpose of
+ * this class, which makes binary data, written in VAX format available to Java applications.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class VAXDataInputStream extends LittleEndianDataInputStream {
 	
-
+    /**
+     * Instantiates a new input stream for processing binary data written in native VAX format.
+     * 
+     * @param stream    The binary file containing native VAX types.
+     */
 	public VAXDataInputStream(InputStream stream) {
 		super(stream);
 	}

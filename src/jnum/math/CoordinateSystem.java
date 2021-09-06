@@ -32,7 +32,7 @@ import java.util.Vector;
  *
  */
 public class CoordinateSystem extends Vector<CoordinateAxis> {
-
+    /** */
 	private static final long serialVersionUID = 7965280172336615563L;
 
 	private String name = "Default Coordinate System";

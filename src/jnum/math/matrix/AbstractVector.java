@@ -48,6 +48,7 @@ import jnum.text.DecimalFormating;
  */
 public abstract class AbstractVector<T> implements MathVector<T>, Serializable, Cloneable, CopiableContent<AbstractVector<T>>, DecimalFormating {
 
+    /** */
 	private static final long serialVersionUID = 785522803183758105L;
 
 	/**

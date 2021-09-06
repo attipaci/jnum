@@ -23,23 +23,46 @@
 
 package jnum.astro;
 
+import java.text.ParseException;
+
 import jnum.math.CoordinateAxis;
 import jnum.math.CoordinateSystem;
 import jnum.math.SphericalCoordinates;
 import jnum.text.GreekLetter;
 
-
+/**
+ * Coordinates in which to represent an astronomical image projected onto the focal plane of
+ * an instrument.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class FocalPlaneCoordinates extends SphericalCoordinates {
 
+    /** */
     private static final long serialVersionUID = 6324566580599103464L;
 
-
+    /**
+     * Instantiates new default focal plane coordinates.
+     */
     public FocalPlaneCoordinates() {}
 
+    /**
+     * Instantiates new focal plane coordinates, from a string representation of these. 
+     * 
+     * @param text              the string representation of the coordinates.
+     * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
+     * 
+     * @see #parse(String, java.text.ParsePosition)
+     */
+    public FocalPlaneCoordinates(String text) throws ParseException { super(text); } 
 
-    public FocalPlaneCoordinates(String text) { super(text); } 
-
-
+    /**
+     * Instantiates new Galactic Coordinates with the specified conventional longitude and latitude angles.
+     * 
+     * @param x         (rad) Focal-plane offset/angle in the <i>x</i> direction.
+     * @param y         (rad) Focal-plane offset/angle in <i>y</i> direction.
+     */
     public FocalPlaneCoordinates(double x, double y) { super(x, y); }
 
     @Override

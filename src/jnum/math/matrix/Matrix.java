@@ -134,6 +134,7 @@ import java.text.*;
  */
 public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles, IndexedValues<Index2D, Double> {
 
+    /** */
     private static final long serialVersionUID = 1648081664701964671L;
 
     private double[][] data; 

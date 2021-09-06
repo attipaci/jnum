@@ -41,7 +41,7 @@ import jnum.math.matrix.Matrix;
  */
 public class Vector2D extends Coordinate2D implements MathVector<Double> {
 
-
+    /** */
     private static final long serialVersionUID = 7319941007342696348L;
 
 

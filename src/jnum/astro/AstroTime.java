@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 
 import jnum.Constant;
+import jnum.Copiable;
 import jnum.Unit;
 import jnum.math.Vector2D;
 import jnum.text.TimeFormat;
@@ -53,11 +54,12 @@ import jnum.util.HashCode;
  * </p>
  * 
  * @see CurrentTime
+ * @see LeapSeconds
  * 
  * @author Attila Kovacs
  *
  */
-public class AstroTime implements Serializable, Comparable<AstroTime> {
+public class AstroTime implements Serializable, Comparable<AstroTime>, Cloneable, Copiable<AstroTime> {
 
     /** */
     private static final long serialVersionUID = 890383504654665623L;
@@ -81,7 +83,18 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
      */
     public AstroTime(long millis) { setUNIXMillis(millis); }
 
+    
+    @Override
+    public AstroTime clone() {
+        try { return (AstroTime) super.clone(); }
+        catch(CloneNotSupportedException e) { return null; }
+    }
 
+    @Override
+    public AstroTime copy() {
+        return clone();
+    }
+    
     @Override
     public int hashCode() {
         return super.hashCode() ^ HashCode.from(MJD);
@@ -220,7 +233,9 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
     }
     
     /**
-     * Gets the Modified Julian Date (MJD) represented by this object.
+     * Gets the Modified Julian Date (MJD) represented by this object. The Modified Julian Date is an abbreviated form
+     * of the Julian Date (see {@link #JD()}, dropping the first 2 digits of JD, and changing the day start from
+     * noon to midnight (TT). As such MJD = JD - {@value #JD_MJD0}, by definition.
      * 
      * @return      (day) The standatd TT-based Modified Julian Date. 
      * 
@@ -228,6 +243,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
      * @see #UTC_MJD()
      * @see #TT()
      * @see #setTT2000(double)
+     * @see #JD_MJD0
      */
     public final double MJD() { return MJD; }
     
@@ -273,8 +289,10 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
 
     /**
      * Returns the Julian Date for the time represented by this object. Apart from having a muthical origin
-     * much further back in time than MJD, the Julian day also starts at TT 12h. Many astronomical libraries
-     * commonly use JD as their principal time measure.
+     * at 12pm TT, January 1, 4713. Note, that unlike other time measures here, the Julian day also starts at noon TT. 
+     * Many astronomical libraries commonly use JD as their principal time measure. It also has an 
+     * abbreviated form, the Modified Julian Date (MJD), which drops the first 2 decimal digits of JD, and 
+     * changes to midnight (TT) as its starting value.
      * 
      * @return  (day) The Julian Date corresponding to the time represented.
      * 
@@ -449,11 +467,11 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
      * 
      * @return      (s) GPS time seconds since midnight GPS, in the [0.0:86400.0) range.
      * 
-     * @see #GPS2000()
+     * @see #GPST2000()
      * @see #TAI()
      * @see #GPS2TAI
      */
-    public final double GPSTime() { return getTimeOfDay(GPS2000()); }
+    public final double GPST() { return getTimeOfDay(GPST2000()); }
 
     /**
      * Returns GPS time as seconds since midnight GPS. GPS time is related to Atomic Time (TAI), 
@@ -465,14 +483,14 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
      * @see #TAI2000()
      * @see #GPS2TAI
      */
-    public final double GPS2000() { return TAI2000() - GPS2TAI; }
+    public final double GPST2000() { return TAI2000() - GPS2TAI; }
     
     /**
      * Sets a new time as GPS time seconds since J2000 (12h TT, 1 Jan 2000).
      * 
      * @param GPST  (s) the new time as GPS time seconds since J2000.
      * 
-     * @see #GPS2000()
+     * @see #GPST2000()
      * @see #setTAI2000(double)
      * @see #GPS2TAI
      */
@@ -923,7 +941,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime> {
      * 
      * @see #TT2000()
      * @see #TAI2000()
-     * @see #GPS2000()
+     * @see #GPST2000()
      * @see #TCG2000()
      * @see #TDB2000()
      */

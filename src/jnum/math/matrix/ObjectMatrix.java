@@ -49,7 +49,7 @@ import java.text.ParsePosition;
 @SuppressWarnings("unchecked")
 public class ObjectMatrix<T extends Copiable<? super T> & AbstractAlgebra<? super T> & LinearAlgebra<? super T> & Metric<? super T> & AbsoluteValue> 
 extends AbstractMatrix<T> {
-
+    /** */
     private static final long serialVersionUID = -2705914561805806547L;
 
     private T[][] data; 

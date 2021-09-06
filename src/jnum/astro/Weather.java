@@ -22,7 +22,12 @@
  ******************************************************************************/
 package jnum.astro;
 
-
+/**
+ * Provides standard local ambient weather data around an observing site, which might affect the astrometry of a telescope.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public interface Weather {
 
 	/**

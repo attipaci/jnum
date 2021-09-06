@@ -74,14 +74,19 @@ import jnum.util.HashCode;
  */
 public class CubicSpline implements Serializable {
 
+    /** */
 	private static final long serialVersionUID = 5533149637827653369L;
 
+	/** The data index at which we want to evaluate the spline */
 	private double centerIndex = Double.NaN;
 
-	private double localCenter = Double.NaN; // should be between 1--2
+	/** The spline index corresponding to {@link #centerIndex}, between 1 and 2 */
+	private double localCenter = Double.NaN;
 
+	/** The index of the first datum contributing to the spline */
 	private int i0;
 	
+	/** Spline coefficients calculated for the specific spine location / alignment . */
 	private double[] coeffs = new double[NCOEFFS];
 
 
@@ -115,7 +120,6 @@ public class CubicSpline implements Serializable {
 		setLocalCenter(i - i0);
 	}
 	
-
 	/**
 	 * Gets the spline coefficient for data at the specified index.
 	 * 
@@ -151,7 +155,12 @@ public class CubicSpline implements Serializable {
      */
 	public final int maxIndex() { return i0 + NCOEFFS; }
 	
-
+	/**
+	 * Sets the point of interpolation along the spline. The interpolated location should fall between the two
+	 * middle points of the spline, that is between the second and third coefficient slots.
+	 * 
+	 * @param delta    [1:2] the spline index location of the interpolation point.
+	 */
 	private void setLocalCenter(final double delta) {
 	  
 		// Calculate the (bicubic) spline coefficients (as necessary)...
@@ -167,13 +176,18 @@ public class CubicSpline implements Serializable {
 		// ~45 ops...
 	}
 	
-
+	/**
+	 * Returns the spline coefficient for a given offset of the data index from the point of interpolation.
+	 * 
+	 * @param dx   The data index distance from the point of interpolation.
+	 * @return     The spline coefficient to use.
+	 */
 	public static final double valueFor(double dx) {
 	    dx = Math.abs(dx);
         return dx > 1.0 ? ((-0.5 * dx + 2.5) * dx - 4.0) * dx + 2.0 : (1.5 * dx - 2.5) * dx * dx + 1.0;
         // ~ 9 ops..
     }
 
-	
+	/** number of coefficients in the cubic spline */
 	private static final int NCOEFFS = 4;
 }

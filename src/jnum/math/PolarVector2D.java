@@ -36,7 +36,7 @@ import jnum.ExtraMath;
  *
  */
 public class PolarVector2D extends Coordinate2D implements Scalable, Inversion, Normalizable {
-
+    /** */
 	private static final long serialVersionUID = 6615579007848120214L;
 
 

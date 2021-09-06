@@ -55,7 +55,7 @@ import nom.tam.util.Cursor;
  */
 public class Coordinate2D implements Coordinates<Double>, RealComponents, Serializable, Cloneable, Copiable<Coordinate2D>, 
 ViewableAsDoubles, Parser, NumberFormating, Inversion {
-
+    /** */
     private static final long serialVersionUID = -3978373428597134906L;
 
     private double x, y;

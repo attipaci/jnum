@@ -33,21 +33,52 @@ import jnum.math.CoordinateSystem;
 import jnum.text.GreekLetter;
 
 
-
+/**
+ * Supergalactic coordinates (<i>L</i>,<i>B</i>). The supergalactic coordinate system was defined to align to
+ * the apparent plan of the local cluster. Its origin is the point at which it intersects with the Galactic Plane.
+ * 
+ * @author Attila Kovacs
+ *
+ * @see GalacticCoordinates
+ */
 public class SuperGalacticCoordinates extends CelestialCoordinates {
 
+    /** */
     private static final long serialVersionUID = 5322669438151443525L;
 
-    
+    /**
+     * Instantiates new default Supergalactic coordinates.
+     */
     public SuperGalacticCoordinates() {}
 
-
+    /**
+     * Instantiates new Supergalactic Coordinates, from a string representation of these. 
+     * 
+     * @param text              the string representation of the coordinates.
+     * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
+     * 
+     * @see #parse(String, java.text.ParsePosition)
+     */
     public SuperGalacticCoordinates(String text) throws ParseException { super(text); }
 
-
+    /**
+     * Instantiates new Supergalactic Coordinates with the specified conventional longitude and latitude angles.
+     * 
+     * @param lon       (rad) Supergalactic longitude angle <i>L</i>
+     * @param lat       (rad) Supergalactic latitude angle <i>B</i>
+     */
     public SuperGalacticCoordinates(double lat, double lon) { super(lat, lon); }
 
 
+    /**
+     * Instantiates a new set of Supergalactic coordinates that represent 
+     * the same location on sky as the specified other celestial coordinates.
+     * 
+     * @param from      the coordinates of the sky location in some other celestial system.
+     * 
+     * @see CelestialCoordinates#fromEquatorial(EquatorialCoordinates)
+     * @see CelestialCoordinates#toEquatorial()
+     */
     public SuperGalacticCoordinates(CelestialCoordinates from) { super(from); }
 
 
@@ -116,13 +147,16 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
         defaultLocalCoordinateSystem.add(latitudeOffsetAxis);   
     }
 
-
+    /** The location of the Supergalactic pole in the Galactic coordinate system */
     public static final GalacticCoordinates galacticPole = new GalacticCoordinates(47.37*Unit.deg, 6.32*Unit.deg);
 
+    /** The location of the Supergalactic origin in the Galactic coordinate system */
     public static final GalacticCoordinates galacticZero = new GalacticCoordinates(137.37*Unit.deg, 0.0);
 
+    /**  The location of the Supergalactic pole in the ICRS equatorial coordinate system */
     public static final EquatorialCoordinates equatorialPole = galacticPole.toEquatorial(); 
 
+    /**  The location of the Supergalactic origin in the ICRS equatorial coordinate system */
     public static double phi0 = CelestialCoordinates.getZeroLongitude(galacticZero, new SuperGalacticCoordinates());
 
 

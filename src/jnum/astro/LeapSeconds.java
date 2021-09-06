@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -36,7 +36,7 @@ import jnum.text.SmartTokenizer;
 
 
 /**
- * Manage and obtain historical leap-second data for time calculations. Before first use, one should load
+ * Manages and obtains historical leap-second data for time calculations. Before first use, one should load
  * the historical leap-second data ('leap-seconds.list') using {@link #read(String)} static method. 
  * The current leap second data is available from:
  * 
@@ -51,32 +51,35 @@ import jnum.text.SmartTokenizer;
  * {@link #getCurrentLeap()} method. The method {@link #isCurrent()} can be used for checking if the current 
  * leap second value is up-to-date or not.
  * 
+ * @see AstroTime
+ * @see CurrentTime
+ * 
  */
 public final class LeapSeconds {
 
+    /** The list of historical leap seconds adjustments */
 	private static ArrayList<Datum> list;
 
 	/** UNIX milliseconds for 0 UTC 1 Jan 1900 */
-	public static final long millis1900 = -2208988800000L; 
+	private static final long millis1900 = -2208988800000L; 
 
+	/** The path to the leap-seconds.list file from which data was last parsed */
 	public static String dataFile = null;
-
-	public static boolean verbose = false;
 
 	/** The current leap seconds */
 	private static int currentLeap = 37;
 
-	private static long releaseEpoch = 3676924800L;        // 8 July 2016 -- seconds since 1900
+	/** Seconds since 1900 when the leap seconds was changed last */
+	private static long currentEpoch = 3676924800L;        // 8 July 2016 -- seconds since 1900
 
-	private static long expirationEpoch = 3739132800L;     // 28 Jul 2017 -- seconds since 1900
-
-	private static long expirationMillis = millis1900 + 1000L * expirationEpoch;
-
-	private static long currentSinceMillis = millis1900 + 1000L * 3550089600L; 
-
-	private static final long firstLeapMillis = millis1900 + 1000L * 2272060800L;	// 1 January 1972
-
-	private static boolean isVerbose = true;
+	/** Seconds since 1900 until which the current leap seconds value is quaranteed to be valid */
+	private static long expirationEpoch = 3849638400L;     // 28 December 2021 -- seconds since 1900
+	
+	/** A boolean switch to prevent repeated messages about not having historical leap second data */
+	private static boolean warnedNoFile = false;
+	
+	/** A boolean switch to prevent repeated messages about expired leap second data */
+	private static boolean warnedExpired = false;
 	
 	/**
 	 * Gets the current leap seconds.
@@ -86,48 +89,81 @@ public final class LeapSeconds {
 	public static int getCurrentLeap() { return currentLeap; }
 	
 	/**
-	 * Sets the verbosity for warning messages if the leap-second data is incomplete or out-of-date.
-	 *
-	 * @param value the new verbosity for warnings.
+	 * Returns the Java/UNIX time until which leap second information is guaranteed to be accurate.
+	 * 
+	 * @return     (ms) Java/UNIX time at which the current leap second data expires. Leap seconds may be
+	 *             invalid beyond that date.
+	 *             
+	 * @see #isCurrent()
 	 */
-	public static void setVerbose(boolean value) { isVerbose = value; }
+	public static final long getExpirationMillis() {
+	    return millis1900 + 1000L * expirationEpoch;
+	}
+	
+	/**
+	 * Return the Java/UNIX time at which the last leap second change, known by this class, was introduced.
+	 * 
+	 * @return     (ms) Java/UNIX time of the last leap second change known to this class.
+	 * 
+	 * @see #isCurrent()
+	 * @see #read(String)
+	 */
+	public static final long getCurrentEpochMillis() {
+	    return millis1900 + 1000L * currentEpoch;
+	}
+	
+	/**
+	 * Return the Java/UNIX time at which the first (ever) leap second was introduced. 
+	 * 
+	 * @return     (ms) Java/UNIX time of the introduction of the very first leap second.
+	 */
+	private static final long getFirstLeapMillis() {
+	    return millis1900 + 1000L * 2272060800L;   // 1 January 1972
+	}
+	
 	
 	/**
 	 * Gets the leap seconds for a given {@link java.util.Date}
 	 *
 	 * @param timestamp    the standatd UNIX/Java timestamp (millisecs since 1970)
 	 * @return             the historical leap seconds at the time.
+	 * 
+	 * @see #isCurrent()
+	 * @see #read(String)
 	 */
 	public static int get(long timestamp) {
 	
-		if(timestamp >= currentSinceMillis) return currentLeap;
-		if(timestamp < firstLeapMillis) return 0;
+		if(timestamp >= getCurrentEpochMillis()) return currentLeap;
+		if(timestamp < getFirstLeapMillis()) return 0;
 		
 		if(list == null) {
 			if(dataFile == null) {
-				if(isVerbose) Util.warning(LeapSeconds.class, "No historical leap-seconds data. Will use: " + currentLeap + " s.");
+				if(!warnedNoFile) {
+				    Util.info(LeapSeconds.class, "No historical leap-seconds data. Will use: " + currentLeap + " s.");
+				    warnedNoFile = true;
+				}
 				return currentLeap;
 			}
 			
 			try { read(dataFile); }
 			catch(IOException e) {
-				if(isVerbose) {
-					Util.warning(LeapSeconds.class, "Could not real leap seconds data: " + dataFile + "\n"
+			    Util.warning(LeapSeconds.class, "Could not read leap seconds data: " + dataFile + "\n"
 					        + "Problem: " + e.getMessage() + "\n"
 					        + "Will use current default value: " + currentLeap + " s.");
-				}
+			    dataFile = null;
 				return currentLeap;
 			}
 			
-			if(timestamp >= expirationMillis) if(isVerbose) {
+			if(timestamp >= getExpirationMillis()) {
 				Util.warning(LeapSeconds.class, "Leap seconds data is no longer current. To fix it, update '" + dataFile + "'.");
+				dataFile = null;
 			}
 		}
 		
 		
-		if(timestamp > expirationMillis) if(isVerbose) {
-			Util.warning(LeapSeconds.class, "Leap data expired: " + dataFile 
-			        + ". Will use the current default value: " + currentLeap + " s");
+		if(timestamp > getExpirationMillis()) if(!warnedExpired) {
+			Util.warning(LeapSeconds.class, "Leap data expired: " + dataFile + ". Will use the current default value: " + currentLeap + " s");
+			warnedExpired = true;
 		}
 		
 		int lower = 0, upper = list.size()-1;
@@ -151,44 +187,51 @@ public final class LeapSeconds {
 	/**
 	 * Checks if the current leap second value is valid.
 	 *
-	 * @return true, if the current value is valid, false if it's out-dated.
+	 * @return     <code>true</code>, if the current value is valid, <code>false</code> if it's out-dated.
+	 * 
+	 * @see #getCurrentEpochMillis()
+	 * @see #getExpirationMillis()
+	 * @see #read(String)
 	 */
 	public static boolean isCurrent() {
-		return System.currentTimeMillis() < expirationMillis;
+		return System.currentTimeMillis() < getExpirationMillis();
 	}
 	
 	/**
+	 * <p>
 	 * Read the historical 'leap-seconds.list' data from the specified file.
 	 * 
 	 * The current leap second data is available from:
 	 * 
-	 *    ftp://time.nist.gov/pub/
+	 *    <a href="ftp://time.nist.gov/pub/">ftp://time.nist.gov/pub/</a>
 	 * or
-	 *    https://www.ietf.org/timezones/data/leap-seconds.list
-	 *
-	 * NOTE: Under no circumstances should one query a NIST server more frequently than once every 4 seconds!!!
+	 *    <a href="https://www.ietf.org/timezones/data/leap-seconds.list">https://www.ietf.org/timezones/data/leap-seconds.list</a>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>NOTE: Under no circumstances should one query a NIST server more frequently than once every 4 seconds!!!</b>
+	 * </p>
 	 *
 	 *
 	 * @param fileName the The path to the leap-seconds.list data file.
 	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @see #isCurrent()
 	 */
 	public static void read(String fileName) throws IOException {
 			
 		if(list == null) list = new ArrayList<>();
 		else list.clear();
 		
-		if(verbose) Util.info(LeapSeconds.class, "Reading leap seconds table from " + fileName);
+		Util.debug(LeapSeconds.class, "Reading leap seconds table from " + fileName);
 		
 		new LineParser() {
 		    @Override
             protected boolean parseComment(String line) throws Exception {
 		        SmartTokenizer tokens = new SmartTokenizer(line);
 		        tokens.nextToken();
-                if(line.charAt(0) == '$') releaseEpoch = tokens.nextLong();
-                else if(line.charAt(0) == '@') {
-                    expirationEpoch = tokens.nextLong();
-                    expirationMillis = 1000L * expirationEpoch + millis1900;
-                }
+                if(line.charAt(0) == '$') currentEpoch = tokens.nextLong();
+                else if(line.charAt(0) == '@') expirationEpoch = tokens.nextLong();
 		        return true;
 		    }
 		    
@@ -209,20 +252,28 @@ public final class LeapSeconds {
 		
 		Datum current = list.get(list.size() - 1);
 		currentLeap = current.leap;
-		currentSinceMillis = current.timestamp;
 		
-		if(verbose) {
-			DateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-			tf.setTimeZone(TimeZone.getTimeZone("UTC"));
-			Util.detail(LeapSeconds.class, "--> Found " + list.size() + " leap-second entries.\n"
-			        + "--> Released: " + tf.format(1000L * releaseEpoch + millis1900) + "\n"
-			        + "--> Expires: " + tf.format(expirationMillis));
-		}
+        warnedNoFile = false;
+        warnedExpired = false;
 		
+        DateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        tf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Util.debug(LeapSeconds.class, "--> Found " + list.size() + " leap-second entries.\n"
+			        + "--> Released: " + tf.format(getCurrentEpochMillis()) + "\n"
+			        + "--> Expires: " + tf.format(getExpirationMillis()));
 	}	
 	
+	/**
+	 * A class representing a single leap second introduction event.
+	 * 
+	 * @author Attila Kovacs
+	 *
+	 */
 	private static class Datum implements Comparable<Datum> {
+	    /** The UNIX timestamp at which the leap second change occurred. */
 	    long timestamp;
+	    
+	    /** The new leap second value after the change */
 	    int leap;
 	    
 	    @Override

@@ -48,7 +48,9 @@ import nom.tam.util.Cursor;
 
 public final class FitsToolkit {
 
-
+    /** private constructor since we do not want to instantiate this class */
+    private FitsToolkit() {}
+    
     public static void addLongHierarchKey(Cursor<String, HeaderCard> cursor, String key, String value) throws HeaderCardException {
         FitsToolkit.addLongHierarchKey(cursor, key, 0, value);
     }
@@ -63,11 +65,11 @@ public final class FitsToolkit {
     }
 
 
-    // Searches unit the following unit definitions in the comment, in order of priority
+    // Searches for a physical unit specification the following unit definitions in the comment, in order of priority
     //
-    //   1. blah-blah [unitname] blah...
-    //   2. blah-blah (unitname) blah...
-    //   3. unitname blah-blah...
+    //   1. Unit specified in swuare brackets
+    //   2. Unit specified in curved bracked
+    //   3. Unit name is specified at the start of the comment.
     public static double getCommentedUnitValue(Header header, String key, double defaultValue, double defaultUnitValue) {
         HeaderCard card = header.findCard(key);
 
@@ -204,71 +206,6 @@ public final class FitsToolkit {
         if(FitsFactory.isLongStringsEnabled()) cursor.add(new HeaderCard("LONGSTRN", "OGIP 1.0", "FITS standard long string convention."));
         else cursor.add(new HeaderCard("LONGSTRN", "CRUSH", "CRUSH's own long string convention."));
     }
-
-    /*
-    public static double fitsDouble(double value) {
-	if(value < 0.0 && value > -1.0) {
-	    DecimalFormat df = new DecimalFormat("0.0000000000000E0");
-	    return Double.parseDouble(df.format(value));
-	}
-	else if(value > 0.0 && value < 1.0) {
-	    DecimalFormat df = new DecimalFormat("0.00000000000000E0");
-	    return Double.parseDouble(df.format(value));
-	}
-	else return value;
-    }
-
-    public static void addLongFitsKey(Header header, String key, String value, String comment) 
-	throws FitsException, HeaderCardException {
-
-	Cursor cursor = header.iterator();
-	while(cursor.hasNext()) cursor.next();
-	addLongFitsKey(cursor, key, value, comment);
-    }
-
-    public static String getLongFitsKey(Header header, String key) {
-	String value = header.getStringValue(key);
-
-	if(value == null) {
-	    value = new String();
-	    char ext = 'A';
-	    String part;
-	    do {
-		part = header.getStringValue(key + ext);
-		if(part != null) value += part;
-		ext++;
-	    } 
-	    while(part != null);
-	}
-
-	return value;
-    }
-
-
-    public static void addLongFitsKey(Cursor cursor, String key, String value, String comment) 
-	throws FitsException, HeaderCardException {
-
-	final int size = 65 - comment.length();
-
-	if(value.length() <= size) {
-	    cursor.add(new HeaderCard(key, value, comment));
-	    return;
-	}
-
-	int start = 0;	
-	char ext = 'A';
-
-	while(start < value.length()) {
-	    int end = start + size;
-	    if(end > value.length()) end = value.length();
-
-	    cursor.add(new HeaderCard(key + ext, value.substring(start, end), comment));
-
-	    ext++;
-	    start = end;
-	}
-    }
-     */
 
     public static void write(Fits fits, String fileName) throws FitsException, IOException {
         write(fits, fileName, false);

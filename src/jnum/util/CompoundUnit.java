@@ -38,7 +38,7 @@ import jnum.math.Multiplicative;
  *
  */
 public class CompoundUnit extends Unit implements Multiplicative<Unit>, Division<Unit> {
-
+    /** */
 	private static final long serialVersionUID = -8635925466445072139L;
 
 	public ArrayList<ExponentUnit> factors = new ArrayList<>();

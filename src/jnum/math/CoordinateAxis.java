@@ -41,7 +41,7 @@ import nom.tam.util.Cursor;
  *
  */
 public class CoordinateAxis implements Serializable, Cloneable {
-
+    /** */
 	private static final long serialVersionUID = 7273239690459736139L;
 
     private String label;

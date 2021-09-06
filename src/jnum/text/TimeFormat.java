@@ -30,7 +30,7 @@ import jnum.Unit;
 
 
 public class TimeFormat extends AngleFormat {
-
+    /** */
 	private static final long serialVersionUID = -6135295347868421521L;
 
 

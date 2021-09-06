@@ -31,7 +31,7 @@ import jnum.Unit;
 
 
 public class HourAngleFormat extends TimeFormat {
-
+    /** */
 	private static final long serialVersionUID = -6260375852141250856L;
 
 	public HourAngleFormat() { super(); setPositiveOnly(true); }

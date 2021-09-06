@@ -1,4 +1,4 @@
-0.40-a1 (devel.10)
+0.40-a1 (devel.14)
 
 
 	Overview
@@ -107,6 +107,9 @@
 	[RENAME] {jnum.math.matrix} A lot of renaming, both classes and
 	funtions.
 
+	[CHANGE] {AstroTime} Remane method to be simpler. For example getTAI()
+	to simply TAI().
+
 	[CHANGE] {LocalizedData} A complete overhaul of LocalizedData and
 	related classes for simpler, and safer usage. Localized data now
 	have their own jnum.data.localized subpackage.
@@ -146,6 +149,8 @@
 	[RENAME] TrueVector renamed MathVector. It really is just a class
 	representing a vector in the mathematical sense (vs the Java Vector
 	class that represents a dynamically sized array).
+
+	[FIX] {AstroTime} A bunch of fixes for various small slips.
 
 	[FIX] {Data} flagRadius to check loop() index range.
 

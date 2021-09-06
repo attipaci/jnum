@@ -36,7 +36,7 @@ import nom.tam.util.Cursor;
 
 
 public abstract class FlagSpace<Type extends Number> implements Serializable, FitsHeaderEditing {
-
+    /** */
     private static final long serialVersionUID = -1742300725746047436L;
 
     private String name;
@@ -230,7 +230,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
   
 
     public static class Byte extends FlagSpace<java.lang.Byte> {
-
+        /** */
         private static final long serialVersionUID = -6767408270247285330L;
 
 
@@ -273,7 +273,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     
 
     public static class Short extends FlagSpace<java.lang.Short> {
-
+        /** */
         private static final long serialVersionUID = 1846041379339852234L;
 
         public Short(String name) throws IllegalArgumentException {
@@ -314,7 +314,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     
 
     public static class Integer extends FlagSpace<java.lang.Integer> {
-
+        /** */
         private static final long serialVersionUID = -6014042418773380578L;
 
 
@@ -356,7 +356,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     
     
     public static class Long extends FlagSpace<java.lang.Long> {
-
+        /** */
         private static final long serialVersionUID = -1479352044112682464L;
 
 

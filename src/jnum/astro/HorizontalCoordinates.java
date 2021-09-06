@@ -60,7 +60,8 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * 
      * @param text              the string representation of the coordinates.
      * @throws ParseException   if the coordinates could not be properly determined / parsed from the supplied string.
-     *
+     * 
+     * @see #parse(String, java.text.ParsePosition)    *
      */
     public HorizontalCoordinates(String text) throws ParseException { super(text); } 
 

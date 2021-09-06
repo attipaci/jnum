@@ -43,7 +43,7 @@ import jnum.math.MathVector;
 @SuppressWarnings("unchecked")
 public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> 
 extends AbstractVector<T> {
-	
+	/** */
 	private static final long serialVersionUID = 4341703980593410457L;
 
 	private T[] component;

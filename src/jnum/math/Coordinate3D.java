@@ -50,7 +50,7 @@ import nom.tam.util.Cursor;
  */
 public class Coordinate3D implements Coordinates<Double>, RealComponents, Serializable, Cloneable, Copiable<Coordinate3D>, 
 ViewableAsDoubles, Parser, NumberFormating, Inversion {
-
+    /** */
 	private static final long serialVersionUID = 4670218761839380720L;
 
 	private double x;

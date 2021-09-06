@@ -31,7 +31,7 @@ import jnum.text.TableFormatter;
 
 
 public class DataTable extends Hashtable<String, DataTable.Entry> implements TableFormatter.Entries {
-
+    /** */
 	private static final long serialVersionUID = 2131139489959923852L;
 
 	@Override

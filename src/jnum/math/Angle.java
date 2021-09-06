@@ -40,7 +40,7 @@ import jnum.util.HashCode;
  */
 public class Angle implements Cloneable, Serializable, Copiable<Angle>, CopyCat<Angle>, Additive<Angle>, Inversion, Metric<Angle>,
 Comparable<Angle> {
-
+    /** */
     private static final long serialVersionUID = -3107020652545972613L;
 
     private double value, c, s;
