@@ -36,7 +36,7 @@ import jnum.Util;
 
 /**
  * A helper for parsing ASCII files line-by-line. Concrete subclasses should provide an implementation
- * to {@link #parse(String)}, and may override a number of the default methods of this class to
+ * to <code>parse(String)</code>, and may override a number of the default methods of this class to
  * customize funtionality and error handling.
  * 
  * @author Attila Kovacs

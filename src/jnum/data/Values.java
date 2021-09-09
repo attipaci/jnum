@@ -34,7 +34,7 @@ public interface Values {
     /**
      * Gets the class of elements that hold number values for this object.
      * 
-     * @return
+     * @return  the Java class of the value elements.
      */
     public Class<? extends Number> getElementType();
 

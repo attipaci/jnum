@@ -110,6 +110,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * not, the function should throw a {@link ShapeException}.
      * 
      * @param data The new underlying data or this matrix.
+     * 
+     * @throws ShapeException       if the argument has a different shape from this matrix.
      */
     public abstract void setData(Object data) throws ShapeException;
 
@@ -125,7 +127,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * Creates a matrix element object that can be used to represent and manipulate values
      * contained in this matrix.
      * 
-     * @return  
+     * @return      a new empty matrix element for this matrix.
      */
     public abstract MatrixElement<T> getElementInstance();
 
@@ -158,7 +160,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      *                      but rather primitive values which are always initialized to zero by
      *                      default at creation.
      *                      
-     * @return
+     * @return  a new matrix of the specified size and the same type as this matrix, populated
+     *          or not with empty elemenents.
      */
     public abstract AbstractMatrix<T> getMatrixInstance(int rows, int cols, boolean initialize);
 
@@ -327,13 +330,15 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * 
      * @param row      row index of matrix element
      * @param col      column index of matrix element
+     * @param v        the matrix element value to add.
      */
     public abstract void add(int row, int col, T v);
     
     /**
      * Adds a value of the same generic type to an element of this matrix.
      * 
-     * @param idx      The (row,col) index of matrix element
+     * @param idx      the (row,col) index of matrix element
+     * @param value    the matrix element value to add.
      */
     public final void add(Index2D idx, T value) { add(idx.i(),idx.j(), value); }
     
@@ -345,6 +350,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * 
      * @param row      row index of matrix element
      * @param col      column index of matrix element
+     * @param v        the matrix element value to add.
      */
     public abstract void add(int row, int col, double v);
     
@@ -353,7 +359,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * means adding an identity element scaled by the specified scalar value. I.e.
      * <code>M[i][j]</code> is incremented by <code>v * I</code>, where I is the identity element.
      * 
-     * @param idx      The (row,col) index of matrix element
+     * @param idx      the (row,col) index of matrix element
+     * @param value    the matrix element value to add.
      */
     public final void add(Index2D idx, double value) { add(idx.i(),idx.j(), value); }
     
@@ -375,30 +382,34 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     /**
      * Scales an entry in this matrix by the specified scalar factor.
      * 
-     * @param i      row index of matrix element
-     * @param j      column index of matrix element
+     * @param i         row index of matrix element
+     * @param j         column index of matrix element
+     * @param factor    the scaling factor
      */
     public abstract void scale(int i, int j, double factor);
     
     /**
      * Scales an entry in this matrix by the specified scalar factor.
      * 
-     * @param idx      The (row,col) index of matrix element
+     * @param idx       the (row,col) index of matrix element
+     * @param factor    the scaling factor
      */
     public final void scale(Index2D idx, double factor) { scale(idx.i(),idx.j(), factor); }
 
     /**
      * Checks if an entry in this matrix is a 'null' (zeroed) 
      * 
-     * @param i      row index of matrix element
-     * @param j      column index of matrix element
+     * @param i     row index of matrix element
+     * @param j     column index of matrix element
+     * @return      <code>true</code> if the matrix element at the specified row/col index is zero, otherwise <code>false</code>.
      */
     public abstract boolean isNull(int i, int j);
        
     /**
      * Checks if an entry in this matrix is a 'null' (zeroed) 
      * 
-     * @param idx      The (row,col) index of matrix element
+     * @param idx   the (row,col) index of matrix element
+     * @return      <code>true</code> if the matrix element at the specified index is zero, otherwise <code>false</code>.
      */
     public final boolean isNull(Index2D idx) { return isNull(idx.i(), idx.j()); }
     
@@ -480,7 +491,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * element. I.e. <code>M[i][j]</code> is incremenred by <code>(factor * o[i][j]) * I</code>, 
      * where I is the identity element.
      * 
-     * @param o     The real valued matrix to add to this one with the scaling factor. 
+     * @param o         the real valued matrix to add to this one with the scaling factor. 
+     * @param factor    the scaling factor
      */
     public void addScaled(Matrix o, double factor) {
         if(factor == 0.0) return;
@@ -675,7 +687,9 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * matrix content.
      * 
      * @param i     row index
-     * @param v     A vector into which to return the elements of the matrix row.  
+     * @param v     A vector into which to return the elements of the matrix row. 
+     * 
+     * @throws ShapeException   if the specified vector is non-conformant with this matrix.
      */
     public final void copyRowTo(int i, MathVector<T> v) throws ShapeException {
         for(int j=cols(); --j >= 0; ) v.setComponent(j, copyOf(i, j));
@@ -713,6 +727,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * 
      * @param i     row index
      * @param v     A vector holding the new data for the matrix row.  
+     * 
+     * @throws ShapeException   if the specified vector is non-conformant with this matrix.
      */
     public final void setRowData(int i, MathVector<T> v) throws ShapeException {
         if(v.size() != cols()) throw new ShapeException("Cannot set mismatched row.");
@@ -742,6 +758,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * 
      * @param j     column index
      * @param v     A vector into which to return the elements of the matrix column.   
+     * 
+     * @throws ShapeException   if the specified vector is non-conformant with this matrix.
      */
 	public final void copyColumnTo(int j, MathVector<T> v) throws ShapeException {
 	    for(int i=rows(); --i >= 0; ) v.setComponent(i, copyOf(i, j));
@@ -763,7 +781,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	 * subsequent changes to the returned vector will not affect the matrix content.
 	 * 
 	 * @param j
-	 * @return
+	 * @return     a fully independent copy of the specified column as a new vector.
+	 *             
 	 */
 	public final AbstractVector<T> copyOfColumn(int j) {
 	    AbstractVector<T> v = getVectorInstance(rows());
@@ -777,6 +796,8 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
      * 
      * @param j     column index
      * @param v     A vector with the new data for the matrix column.
+     * 
+     * @throws ShapeException   if the specified vector is non-conformant with this matrix.
      */
 	public final void setColumnData(int j, MathVector<T> v) throws ShapeException {
         if(v.size() != cols()) throw new ShapeException("Cannot set mismatched column.");

@@ -127,9 +127,13 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
         return Util.Af[decimals];
     }
     
-
+    /** the default coordinate system */
     @SuppressWarnings("hiding")
-    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+    public static CoordinateSystem defaultCoordinateSystem;
+    
+    /** the default local coordinate system */
+    @SuppressWarnings("hiding")
+    public static CoordinateSystem defaultLocalCoordinateSystem;
 
     
     static {
@@ -157,8 +161,5 @@ public class SuperGalacticCoordinates extends CelestialCoordinates {
     public static final EquatorialCoordinates equatorialPole = galacticPole.toEquatorial(); 
 
     /**  The location of the Supergalactic origin in the ICRS equatorial coordinate system */
-    public static double phi0 = CelestialCoordinates.getZeroLongitude(galacticZero, new SuperGalacticCoordinates());
-
-
-
+    public static double phi0 = galacticZero.convertTo(SuperGalacticCoordinates.class).longitude();
 }

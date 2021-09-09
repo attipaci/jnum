@@ -135,7 +135,16 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         editHeader(header, "");
     }
     
-    
+    /**
+     * Adds a description of this coordinates system to a FITS header using the standard FITS
+     * keyworkds for specifying an equatorial reference system.
+     * 
+     * @param header        The FITS header
+     * @param alt           The coordinate system alternative designation (empty string for the
+     *                      default coordinate system and 'A' thru 'Z' for the alternative
+     *                      coordinate system definitions).
+     * @throws HeaderCardException
+     */
     public void editHeader(Header header, String alt) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         c.add(new HeaderCard("RADESYS" + alt, getFITSRadesys(), "Reference convention."));
@@ -197,7 +206,8 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
      * Returns the best match coordinate system to what's represented in a FITS header, with
      * the alternative designation. The function uses a combination of the RADESYSa, EQUINOXa,
      * MJD-OBS, and/or DATE-OBS keys to figure out the most appropriate coordinate system
-     * to what is described in the header. 
+     * to what is described in the header. If the header does not describe an equatorial
+     * coordinate system sufficiently, the {@link #ICRS} will be assumed and returned.
      * 
      * @param header    FITS header
      * @param alt       Alternative coordinate system identifier, typically a letter "a" through "z". Or
@@ -348,6 +358,13 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
     public static class Dynamical extends EquatorialSystem {
         private JulianEpoch epoch;
         
+        /** 
+         * Instantiates a new coordinate system, tied to the dynamical Earth equatorm at the specified Julian epoch. 
+         * The epoch determines the location of Earth on its orbit around the Sun, and therefore any
+         * parallax or annual aberration corrections needed for a GCRS system at that epoch.
+         * 
+         * @param epoch     the Julian epoch for which this GCRS system is defined.
+         */
         public Dynamical(JulianEpoch epoch) { this.epoch = epoch; }
 
         @Override
@@ -377,7 +394,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         @Override
         public String toString() { return epoch.toString(); }
       
-        
+        /** The coordinate system tied to the dynamical Earth equator at J2000 */
         public static final Dynamical J2000 = new Dynamical(CoordinateEpoch.J2000);
     }
 
@@ -390,6 +407,11 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
     public static  class FK4 extends EquatorialSystem {
         private BesselianEpoch epoch;
         
+        /**
+         * Instantiates a new FK4 coordinate reference system at the specified Besselian epoch.
+         * 
+         * @param epoch     the Besselian epoch for which this FK4 reference system is defined.
+         */
         public FK4(BesselianEpoch epoch) { this.epoch = epoch; }
         
         @Override
@@ -417,7 +439,10 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         @Override
         public String toString() { return "FK4(" + epoch.toString() + ")"; }
         
+        /** The coordinate system for the (historically) commonly used B1900 epoch. */
         public static final FK4 B1900 = new FK4(CoordinateEpoch.B1900);
+        
+        /** The coordinate system for the commonly used B1950 epoch */
         public static final FK4 B1950 = new FK4(CoordinateEpoch.B1950);
     }
 
@@ -431,6 +456,11 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
     public static class FK5 extends EquatorialSystem {
         private JulianEpoch epoch;   
         
+        /**
+         * Instantiates a new FK5 coordinate reference system at the specified Julian epoch.
+         * 
+         * @param epoch     the Julian epoch for which this FK5 reference system is defined.
+         */
         public FK5(JulianEpoch epoch) { this.epoch = epoch; }
 
         @Override
@@ -458,6 +488,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         @Override
         public String toString() { return "FK5(" + epoch.toString() + ")"; }
         
+        /** The FK5 coordinate system at J2000 */
         public static final FK5 J2000 = new FK5(CoordinateEpoch.J2000);
     }
 
@@ -470,6 +501,13 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
     public static class GCRS extends EquatorialSystem {
         private JulianEpoch epoch;
         
+        /** 
+         * Instantiates a new GCRS coordinate system at the specified Julian epoch. The epoch
+         * determines the location of Earth on its orbit around the Sun, and therefore any
+         * parallax or annual aberration corrections needed for a GCRS system at that epoch.
+         * 
+         * @param epoch     the Julian epoch for which this GCRS system is defined.
+         */
         public GCRS(JulianEpoch epoch) { this.epoch = epoch; }
 
         @Override
@@ -497,7 +535,7 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         @Override
         public String toString() { return "GCRS(" + Util.f3.format(epoch.getJulianYear()) + ")"; }
         
-        
+        /** The GCRS coordinate system at J2000 */
         public static final GCRS J2000 = new GCRS(CoordinateEpoch.J2000);
     }
     
@@ -588,24 +626,55 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         /**
          * Gets the observers motion relative to the geocenter in equatorial rectangular coordinates.
          * 
-         * @return
+         * @return  the equatorial rectangular speed vector of the observer relative to the geocenter.
          */
         public final Vector3D getEquatorialMotion() {
              return vEq;
         }
         
+        /**
+         * Returns the geodetic location of the observer, such as the observer's GPS/WGS84 coordinates.
+         * 
+         * @return  the geodetic coordinates of the observer.
+         */
         public final GeodeticCoordinates getLocation() {
             return location;
         }
         
+        /**
+         * Returns the polar wobble dx,dy parameters. These are incrementan corrections over the IAU2000
+         * nutation model to correct for un-anticipated polar motion of Earth's rotation axis. Current
+         * dx/dy polar wobble values are published in IERS Bulletin A.
+         * 
+         * @return      (rad) the dx,dy polar wobble (Earth orientation) parameters, such as published in
+         *              IERS Bulletin A.
+         */
         public final Vector2D getPolarWobble() {
             return wobble;
         }
         
+        /**
+         * Returns the astrometric time for this topocentric coordinate system. Because topocentric
+         * reference systems contain Earth polar wobble corrections and diurnal aberration corrections,
+         * both of which rotate with Earth, the
+         * topocentric systems precess with a daily period, and are not precise for observations
+         * that are not around the time the system was defined (at least on the level of around an hour
+         * or beyond.)
+         * 
+         * @return      the astrometric time for which this topocentric system was defined for.
+         */
         public final AstroTime getTime() {
             return time;
         }
         
+        /**
+         * Returns the approximnate Earth Rotation Angle (ERA) for the tiem for which this topocentric
+         * coordinate system was defined. The returned ERA does not contain a UT! correction (%plusmn; 0.5s),
+         * which is why it's not a precise rotation measure. However, it is suitable for calculations 
+         * where the precise orientation of Earth is irreleant.
+         * 
+         * @return      the approximate Earth Rotation Angle (ERA), without the UT1-UTC correction.
+         */
         public double getApproximateERA() {
             return time.ERA(0.0);
         }

@@ -61,8 +61,7 @@ import jnum.util.HashCode;
  * </p>
  * 
  * <p>
- * The <i>Q</i> represents the linearly polarized intensity, and so the total polarized intensity <i>P</i> is then calculated
- * from the polarized components as:
+ * The total polarized intensity <i>P</i> can be calculated from the polarized components as:
  * </p>
  * 
  * <p>

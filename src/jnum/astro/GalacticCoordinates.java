@@ -124,8 +124,13 @@ public class GalacticCoordinates extends CelestialCoordinates {
 	    return Util.Af[decimals];
 	}
 	
+	/** the default coordinate system */
     @SuppressWarnings("hiding")
-    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+    public static CoordinateSystem defaultCoordinateSystem;
+    
+    /** the default local coordinate system */
+    @SuppressWarnings("hiding")
+    public static CoordinateSystem defaultLocalCoordinateSystem;
 
     
     static {
@@ -164,7 +169,6 @@ public class GalacticCoordinates extends CelestialCoordinates {
     static { 
         GalacticCoordinates zero = new GalacticCoordinates(phi0_B1950, 0.0);
         EquatorialCoordinates equatorialZero = zero.toEquatorial();
-        equatorialZero.transform(EquatorialTransform.B1950toICRS);
         zero.fromEquatorial(equatorialZero);
         phi0_ICRS = zero.longitude();
     }

@@ -193,9 +193,13 @@ public class TelescopeCoordinates extends SphericalCoordinates {
         offset.rotate(-telVPA);
     }
     
-    
+    /** the default coordinate system */
     @SuppressWarnings("hiding")
-    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+    public static CoordinateSystem defaultCoordinateSystem;
+    
+    /** the default local coordinate system */
+    @SuppressWarnings("hiding")
+    public static CoordinateSystem defaultLocalCoordinateSystem;
  
      
     static {

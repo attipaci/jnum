@@ -90,17 +90,21 @@ FitsHeaderEditing, FitsHeaderParsing {
      * those keywords that describe coordinate systems., such as CTYPE1, which for variant=1 will
      * become CTYPE1B in FITS.
      * 
+     * @return  the variant index for this grid. The default grid has index 0.
+     * 
      * @see #setVariant(int)
      */
     public final int getVariant() { return variant; }
     
     /**
-     * Gets the grid variant index if the same data may be described by multiple grids. When multiple
+     * Sets a new grid variant index if the same data may be described by multiple grids. When multiple
      * grids describe the same data they should each have a distinct variant index, with 0 being that
      * of the default coordinate grid. This is used for example to disabiguate the different coordinate 
      * grids in the same FITS header. The variant index is converted to a FITS variant letter for the
      * those keywords that describe coordinate systems., such as CTYPE1, which for variant=1 will
      * become CTYPE1B in FITS.
+     * 
+     * @param index     the new variant index for this grid. The default grid has index 0.
      */
     public final void setVariant(int index) { this.variant = index; }
     

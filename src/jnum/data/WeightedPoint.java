@@ -325,9 +325,10 @@ public class WeightedPoint extends RealValue implements CopyCat<WeightedPoint>, 
      * Gets a new weighted value with the result of a simple binary operation on 
      * two weighted values.
      * 
-     * @param b         the first operand.
+     * @param a         the first operand.
      * @param op        the operator, e.g. '+', '-', '*', or '/'.
      * @param b         the other operand.
+     * @return          a new weighted data point with the result of the mathematical operation.
      * @throws IllegalArgumentException     if the op argument is not one listed above.
      */
     public static WeightedPoint math(final WeightedPoint a, final char op, final WeightedPoint b) {
@@ -359,10 +360,12 @@ public class WeightedPoint extends RealValue implements CopyCat<WeightedPoint>, 
      * Gets a new weighted value with the result of a simple binary operation on 
      * a weighted value and a number value.
      * 
-     * @param b         the weighted value.
+     * @param a         the weighted value.
      * @param op        the operator, e.g. '+', '-', '*', or '/'.
      * @param b         the number value.
+     * @return          a new weighted data point with the result of the mathematical operation.
      * @throws IllegalArgumentException     if the op argument is not one listed above.
+     * 
      */
     public static WeightedPoint math(final WeightedPoint a, final char op, final double b) {
         WeightedPoint result = new WeightedPoint(a);

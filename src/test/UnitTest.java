@@ -67,9 +67,6 @@ public class UnitTest {
 		
 		cu.divideBy(Unit.get("s"));
 		System.err.println("/ s: " + cu + " = " + cu.value());
-		
-		cu.toMultiple(Multiplier.micro);
-		System.err.println("micro: " + cu + " = " + cu.value());
 	}
 	
 }

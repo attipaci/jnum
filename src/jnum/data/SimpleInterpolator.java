@@ -55,6 +55,10 @@ public class SimpleInterpolator extends Interpolator {
      * interpolator without discarding data already loaded,
      * so you can build up an interpolator dataset from additional files if need be.
      * 
+     * @param fileName      the name of the file containign the ASCII data columns
+     * 
+     * @throws IOException  if there was an IO error.
+     * 
      */
 	public SimpleInterpolator(String fileName) throws IOException {
 		super(fileName);

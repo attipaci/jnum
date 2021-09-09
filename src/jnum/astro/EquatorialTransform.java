@@ -122,6 +122,8 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
      *                  objects more distant than 1 ly. A distance &lt;= 0 can be used for
      *                  extragalactic sources, or other distant objects for which parallax
      *                  can be neglected. 
+     *                  
+     * @return          the transformed rectangualr equatorial vector.
      */
     public Vector3D getTransformed(Vector3D v, double distance) {
         v = v.copy();

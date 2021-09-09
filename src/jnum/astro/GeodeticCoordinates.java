@@ -250,8 +250,13 @@ public class GeodeticCoordinates extends SphericalCoordinates {
     /** The direction of West along the longitude coordinate. */
     public static final int WEST = -1;
     
+    /** the default coordinate system */
     @SuppressWarnings("hiding")
-    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+    public static CoordinateSystem defaultCoordinateSystem;
+    
+    /** the default local coordinate system */
+    @SuppressWarnings("hiding")
+    public static CoordinateSystem defaultLocalCoordinateSystem;
 
     
     static {

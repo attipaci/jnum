@@ -17,7 +17,7 @@ public class Obs2DTest {
         
         System.err.println("N = " + map.countPoints());
         
-        try { map.writeFits("test.fits"); }
+        try { map.writeFits("test.fits", Float.class); }
         catch(Exception e) { e.printStackTrace(); }
         
     }

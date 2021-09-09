@@ -34,6 +34,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import jnum.reporting.ConsoleReporter;
@@ -51,39 +52,106 @@ import jnum.text.TimeFormat;
  */
 public final class Util {
 
-
+    /** The jnum package version */
     public static final String version = "0.40-a1";
     
-    public static final String revision = "devel.14";
+    /** The jnum package sub-version, if any */
+    public static final String revision = "devel.15";
     
+    /** Copyright string for the jnum package */
     public static final String copyright = "(c)2021 Attila Kovacs"; 
     
+    /** E-mail to include with copyright */
     public static final String copyrightEmail = "<attila[AT]sigmyne.com>"; 
 
- 
+    /** Set to <code>true</code> to get verbose output for debugging. Otherwise <code>false</code> */
     public static boolean debug = false;
 
+    /** private constructor because we don't want to instantiate this class. */
+    private Util() {}
     
+    /**
+     * Returns the full copyright information, including the email address.
+     * 
+     * @return  the copyright string.
+     */
     public static String getCopyrightString() {
         return "Copyright " + copyright + " " + copyrightEmail;
     }
     
-
+    /**
+     * Returns an appropriate decimal formating class for representing values with a given significance,
+     * but displaying at most 6 decimals places (or fewer, depending on the specified significance).  
+     * Trailing zeroes as displayed as approrpriate.
+     * 
+     * @param significance      the typical S/N ratio (significance) of the values to represent.
+     * @return  A number formating instance that will provide an approriate representation of values
+     *          with the specified significance.
+     *          
+     * @see #getDecimalFormat(double, boolean)
+     * @see #getDecimalFormat(double, int)
+     * @see #getDecimalFormat(double, int, boolean)
+     */
     public static NumberFormat getDecimalFormat(double significance) {
         return getDecimalFormat(significance, 6, true);
     }
 
-
+    /**
+     * Returns an appropriate decimal formating class for representing values with a given significance,
+     * but displaying at most 6 decimals places (or fewer, depending on the specified significance).
+     * This implementation allows to choose whether trailing zeroes are to be shown or not.
+     * 
+     * @param significance      the typical S/N ratio (significance) of the values to represent.
+     * @param trailingZeroes    <code>true</code> if trailing zeroes should be printed as appropriate or,
+     *                          <code>false</code> if all trailing zeroes can be omitted.
+     * @return  A number formating instance that will provide an approriate representation of values
+     *          with the specified significance.
+     *          
+     * @see #getDecimalFormat(double, int)
+     * @see #getDecimalFormat(double, int, boolean)
+     */
     public static NumberFormat getDecimalFormat(double significance, boolean trailingZeroes) {
         return getDecimalFormat(significance, 6, trailingZeroes);
     }
 
-
+    /**
+     * Returns an appropriate decimal formating class for representing values with a given significance,
+     * but displaying at most the specified number of decimals places (or fewer, depending on the 
+     * specified significance). 
+     * 
+     * @param significance      the typical S/N ratio (significance) of the values to represent.
+     * @param maxDecimals       the maximum number of decimal places to use when formating values, regardless
+     *                          of significance.
+     *                          
+     * @return  A number formating instance that will provide an approriate representation of values
+     *          with the specified significance.
+     *          
+     * @see #getDecimalFormat(double, boolean)
+     * @see #getDecimalFormat(double, int, boolean)
+     */
     public static NumberFormat getDecimalFormat(double significance, int maxDecimals) {
         return getDecimalFormat(significance, maxDecimals, true);
     }
 
-
+    /**
+     * Returns an appropriate decimal formating class for representing values with a given significance,
+     * but displaying at most the specificed number of decimals places (or fewer, depending on the 
+     * specified significance). This implementation also allows to choose whether trailing zeroes are 
+     * to be shown or not.
+     * 
+     * @param significance      the typical S/N ratio (significance) of the values to represent.
+     * @param maxDecimals       the maximum number of decimal places to use when formating values, regardless
+     *                          of significance.
+     * @param trailingZeroes    <code>true</code> if trailing zeroes should be printed as appropriate or,
+     *                          <code>false</code> if all trailing zeroes can be omitted.
+     *                          
+     * @return  A number formating instance that will provide an approriate representation of values
+     *          with the specified significance.
+     *          
+     * @see #getDecimalFormat(double)
+     * @see #getDecimalFormat(double, boolean)
+     * @see #getDecimalFormat(double, int, boolean)
+     */
     public static NumberFormat getDecimalFormat(double significance, int maxDecimals, boolean trailingZeroes) {
         if(Double.isNaN(significance)) return trailingZeroes ?  f1 : F1;
         if(significance == 0.0) return trailingZeroes ? f2 : F2;
@@ -92,118 +160,117 @@ public final class Util {
         return trailingZeroes ? s[figures] : S[figures];
     }
 
-
+    /**
+     * Returns the time of day for a timestamp.
+     * 
+     * @param time      (s) Running seconds measured from a reference time that itself is assumed to coincide to the start of
+     *                  a new day. E.g. UNIX time seconds (since 0 UT, 1 Jan 1970), or seconds since J2000 (12h TT, 1 Jan 2000).
+     * @return          (s) The remainder of the input time with a 24-hour day, in the range of [0.0:86400.0).
+     */
     public static final double timeOfDay(double time) {
-        time = Math.IEEEremainder(time, Unit.day);
-        if(time < 0.0) time += Unit.day;
-        return time;
+        return time - Unit.day * Math.floor(time / Unit.day);
     }
 
-
+    /**
+     * Returns the time representation of an angle, where 2&pi; = 24 hours.
+     * 
+     * @param angle     (rad) an angle
+     * @return          (s) The time-of-day equivalent for an angle, in the [0.0:86400.0) range.
+     * 
+     * @see #timeOfDay(double)
+     * @see #angleOfTime(double)
+     */
     public static final double timeOfAngle(final double angle) {
-        return timeOfDay(angle * Unit.second/Unit.secondAngle);
+        return timeOfDay(angle / Unit.timeAngle);
     }
 
-
+    /**
+     * Returns the angle representation of time, where 24 hours = 2&pi;.
+     * 
+     * @param time      (s) a time
+     * @return          (rad) an angle eqvilalent to time in the [-&pi;:&pi;] range
+     * 
+     * @see ExtraMath#standardAngle(double)
+     * @see #timeOfAngle(double)
+     */
     public static final double angleOfTime(final double time) {
-        return ExtraMath.standardAngle(time * Unit.secondAngle/Unit.second);
+        return ExtraMath.standardAngle(time * Unit.timeAngle);
     }
 
     /**
-     * Construct an angle from degree, arc-minute and arc-second values.
-     *
-     * @param D     degrees
-     * @param M     arcminutes
-     * @param S     arcseconds
-     * @return      The angle (radians) constructed from the supplied components.
+     * <p>
+     * Parses the time from a HMS string representation, such a -2:04:12.334. This methods kes a very liberal approach with formating
+     * requirements. It mainly only assumes time starts with an integer hour, which may be followed by an integer
+     * minutes and possibly finish with floating point seconds. The three parts may be separated by spaces, tabs, or any of the 
+     * characters commonly used to separated time components, such as colons. 
+     * </p>
      * 
-     * @see Util#DMS(double)
-     */    
-    public static double DMS(final int D, final int M, final double S) {
-        return D*Unit.degree + M*Unit.arcmin + S*Unit.arcsec;
-    }
-
-    /**
-     * Construct an time from hour, minute and second values.
-     *
-     * @param H     hours
-     * @param M     minutes
-     * @param S     seconds
-     * @return      The time (seconds) constructed fromn the supplied components
+     * <p>
+     * This approach can have pitfalls if the few base assumptions are not held. For example, the string "2m 43s" will
+     * end up being parse as if it were 02:43:00, that is 2 hours and 43 minutes (reminder that the first integer must
+     * be the hours!). But provided you follow the rules and give it a reasonable input, you should get the expected
+     * results. 
+     * </p>
      * 
-     * @see #HMS(double)
-     */ 
-    public static double HMS(final int H, final int M, final double S) {
-        return H*Unit.hour + M * Unit.minute + S * Unit.second;
-    } 
-
-    public static String HMS(final double time) { return HMS(time, f[3]); }
-
-
-    public static String HMS(final double time, final int precision) { return HMS(time, f[precision]); }
-
-    public static String HMS(double time, DecimalFormat df) {
-        if(time < 0.0) return("-" + HMS(-time, df));
-
-        time /= Unit.hour; int hour = (int)time; time -= hour;
-        time *= 60.0; int min = (int)time; time -= min;
-
-        return d2.format(hour) + ":" + d2.format(min) + ":" + df.format(60.0 * time);
-    }
-
-    public static String shortHMS(double time, DecimalFormat df) {
-        if(time < 0.0) return("-" + shortHMS(-time, df));
-
-        time /= Unit.hour; int hour = (int)time; time -= hour;
-        time *= 60.0; int min = (int)time; time -= min;
-
-        return (hour > 0 ? d2.format(hour) + ":" : "") + (min > 0 ? d2.format(min) + ":" : "") + df.format(60.0 * time);
-    }
-
-
-    public static String DMS(double angle) { return DMS(angle, f[3]); }
-
-    public static String DMS(double angle, int precision) { return DMS(angle, f[precision]); }
-
-    public static String DMS(double angle, DecimalFormat df) {
-        if(angle < 0.0) return("-" + DMS(-angle, df));
-
-        angle /= Unit.degree; int d = (int)angle; angle -= d;
-        angle *= 60.0; int m = (int)angle; angle -= m;
-
-        return d2.format(d) + ":" + d2.format(m) + ":" + df.format(60.0 * angle);
-    }
-
-    public static String shortDMS(double angle, DecimalFormat df) {
-        if(angle < 0.0) return("-" + shortDMS(-angle, df));
-
-        angle /= Unit.degree; int d = (int)angle; angle -= d;
-        angle *= 60.0; int m = (int)angle; angle -= m;
-
-        return (d > 0 ? d2.format(d) + ":" : "") + (m > 0 ? d2.format(m) + ":" : "") + df.format(60.0 * angle);
-    }
-
-
+     * @param HMS   a HMS representation of time, starting with the hours component.
+     * @return      (s) the time in seconds corresponding to the input string.
+     * 
+     * @see #parseAngle(String)
+     * @see jnum.text.TimeFormat
+     * @see jnum.text.HourAngleFormat
+     */
     public static double parseTime(String HMS) {
-        StringTokenizer tokens = new StringTokenizer(HMS, " \t\n\r:hmsHMS");
+        int sign = 1;
+        StringTokenizer tokens = new StringTokenizer(HMS, " \t:hmsHMS'\"" + Symbol.degree + Symbol.prime + Symbol.doublePrime);
 
-        double time = Integer.parseInt(tokens.nextToken()) * Unit.hour;
-        time += Integer.parseInt(tokens.nextToken()) * Unit.min;
-        time += Double.parseDouble(tokens.nextToken()) * Unit.second;
+        String leading = tokens.nextToken();
+        if(leading.charAt(0) == '-') sign = -1;
+  
+        double time = Integer.parseInt(leading) * Unit.hour;
+        if(sign < 0) time = -time;
+  
+        if(tokens.hasMoreTokens()) time += Integer.parseInt(tokens.nextToken()) * Unit.min;
+        if(tokens.hasMoreTokens()) time += Double.parseDouble(tokens.nextToken()) * Unit.second;
 
-        return time;
+        return sign * time;
     }
 
+    /**
+     * <p>
+     * Parses an angle from a DMS string representation, such a -2:04:12.334. This methods kes a very liberal approach with formating
+     * requirements. It mainly only assumes time starts with an integer degrrees, which may be followed by an integer
+     * arc-minutes and possibly finish with floating point arc-seconds. The three parts may be separated by spaces, tabs, or any of the 
+     * characters commonly used to separated angle components, such as colons. 
+     * </p>
+     * 
+     * <p>
+     * This approach can have pitfalls if the few base assumptions are not held. For example, the string "2m 43s" will
+     * end up being parse as if it were 02:43:00, that is 2 degrees and 43 arc-minutes (reminder that the first integer must
+     * be the degrees!). But provided you follow the rules and give it a reasonable input, you should get the expected
+     * results. 
+     * </p>
+     * 
+     * @param DMS   a DMS representation of an angle, starting with the degrees component.
+     * @return      (rad) the angle corresponding to the input string.
+     * 
+     * @see #parseTime(String)
+     * @see jnum.text.AngleFormat
+     * @see jnum.text.HourAngleFormat
+     */
     public static double parseAngle(String DMS) {
-        StringTokenizer tokens = new StringTokenizer(DMS, "- \t\n\r:dmsDMS");
+        int sign = 1;
+        StringTokenizer tokens = new StringTokenizer(DMS, " \t:dmsDMS'\"" + Symbol.prime + Symbol.doublePrime);
 
-        double angle = Integer.parseInt(tokens.nextToken()) * Unit.degree;
-        angle += Integer.parseInt(tokens.nextToken()) * Unit.arcmin;
-        angle += Double.parseDouble(tokens.nextToken()) * Unit.arcsec;
+        String leading = tokens.nextToken();
+        if(leading.charAt(0) == '-') sign = -1;
+        
+        double angle = Integer.parseInt(leading) * Unit.degree;
+        if(angle < 0) angle = -angle;
+        
+        if(tokens.hasMoreTokens()) angle += Integer.parseInt(tokens.nextToken()) * Unit.arcmin;
+        if(tokens.hasMoreTokens()) angle += Double.parseDouble(tokens.nextToken()) * Unit.arcsec;
 
-        if(DMS.indexOf('-') >= 0) angle *= -1;
-
-        return angle;
+        return sign * angle;
     }
     
     /**
@@ -212,7 +279,8 @@ public final class Util {
      * case (see {@link #parseBoolean(String)}, such as "true" or "False", "T" or "F", "yes" or "NO",
      * "Y", or "N", "ON", or "Off", "enabled" or "DISABLED", or "1" or "0".
      * 
-     * @return  The boolean value represented by the <code>value</code> argument.
+     * @param value     a string representation of a boolean value.
+     * @return          the Java <code>boolean</code> value represented by the string.
      * @throws NumberFormatException    If the value could not be parsed as a boolean value.
      * 
      */
@@ -295,7 +363,22 @@ public final class Util {
         System.out.println("-------------------------------------------------------------");
     }
 
-
+    /**
+     * Retuns a resolved path on this system in an OS-independent way, which may contain UNIX-style shorthands
+     * to home directories, as well as references to shell environment variables.
+     * 
+     *  <ul>
+     *  <li><b>File separators</b>: '/' can be used universally, regarless of OS convention.</li>
+     *  <li><b>Home directories</b>: "~johndoe" can be used to signify tyhe home directory of user "johndoe", or
+     *              and "~" (without username) signifies the the user's home directory (like in a UNIX shell).</li>
+     *  <li><b>Shell environment variables</b>: "${VAR}" or "{$VAR"} can be used to refer to the value of the environment 
+     *              variable VAR.</li>
+     *   </ul>
+     * 
+     * @param spec      The path specification, which may include shorthands for home directories and
+     *                  references to environment variables.
+     * @return          The resolved path after the requisite substitutions are made.
+     */
     public static String getSystemPath(String spec) {
         if(spec == null) return ".";
         if(spec.length() == 0) return ".";
@@ -309,14 +392,14 @@ public final class Util {
         if(!File.separator.equals("/")) spec = spec.replace('/', File.separator.charAt(0));
         homes = homes.substring(0, homes.lastIndexOf(File.separator) + 1);
 
-        String text = "";
+        StringBuffer text = new StringBuffer();
 
         // See if it's a home directory specification starting with '~'...
         if(spec.charAt(0) == '~') {
             int userChars = spec.indexOf(File.separator) - 1;
             if(userChars < 0) userChars = spec.length() - 1;
-            if(userChars == 0) text = System.getProperty("user.home");
-            else text += homes + spec.substring(1, 1 + userChars);
+            if(userChars == 0) text.append(System.getProperty("user.home"));
+            else text.append(homes + spec.substring(1, 1 + userChars));
             spec = spec.substring(userChars + 1);
         }
 
@@ -325,85 +408,214 @@ public final class Util {
             int to = spec.indexOf("}");
             if(to < 0) return text + spec;
 
-            text += spec.substring(0, from);
-            text += System.getenv(spec.substring(from+2, to));
+            text.append(spec.substring(0, from));
+            text.append(System.getenv(spec.substring(from+2, to)));
+
+            spec = spec.substring(to+1);
+        }
+        
+        while(spec.contains("${")) {
+            int from = spec.indexOf("${");
+            int to = spec.indexOf("}");
+            if(to < 0) return text + spec;
+
+            text.append(spec.substring(0, from));
+            text.append(System.getenv(spec.substring(from+2, to)));
 
             spec = spec.substring(to+1);
         }
 
-        text += spec;
+        text.append(spec);
 
-        return text;
+        return new String(text);
 
     }
 
+    /**
+     * Returns an unsigned <code>byte</code> values as a <code>short</code>. Java does not support unsigned 
+     * integer types, but other languages (like C) often do. As such, we sometimes need to read binary
+     * data streams from Java, which contain unsigned integer values. For example, the byte value 0xFF written
+     * into a file as an unsigned integer is meant to be the value 255, but because Java always treats it as 
+     * a signed value, it will read it as -1. The solution is to bump the integer type one up, s.t. the
+     * signedness in unambigious. So by making 0xFF (<code>byte</code>) become 0x00FF (<code>short</code>) the value is properly
+     * restored as the intended 255.
+     * 
+     * @param b     The byte value as a signed Java type.
+     * @return      The unsigned value of the input byte as a <code>short</code>.
+     * 
+     * @see #unsigned(byte[])
+     * @see #toUnsignedByte(short)
+     */
     public static final short unsigned(final byte b) {
         return ((short)(b & 0xff));
     }	
 
-
+    /**
+     * Returns an unsigned 16-bit integer value as an <code>int</code>. Java does not support unsigned 
+     * integer types, but other languages (like C) often do. As such, we sometimes need to read binary
+     * data streams from Java, which contain unsigned integer values. For example, the byte value 0xFFFF written
+     * into a file as an unsigned integer is meant to be the value 65535, but because Java always treats it as 
+     * a signed value, it will read it as -1. The solution is to bump the integer type one up, s.t. the
+     * signedness in unambigious. So by making 0xFFFF (<code>short</code>) become 0x0000FFFF (<code>int</code>) 
+     * the value is properly restored as the intended 65535.
+     * 
+     * @param s     The 16-bit value as a signed Java type.
+     * @return      The unsigned value of the input 16-bit integer as an <code>int</code>.
+     * 
+     * @see #unsigned(short[])
+     * @see #toUnsignedShort(int)
+     */
     public static final int unsigned(final short s) {
         return (s & 0xffff);
     }
 
-
+    /**
+     * Returns an unsigned 32-bit integer value as a <code>long</code>. Java does not support unsigned 
+     * integer types, but other languages (like C) often do. As such, we sometimes need to read binary
+     * data streams from Java, which contain unsigned integer values. For example, the byte value 0xFFFFFFFF written
+     * into a file as an unsigned integer is meant to be the value 4294967295, but because Java always treats it as 
+     * a signed value, it will read it as -1. The solution is to bump the integer type one up, s.t. the
+     * signedness in unambigious. So by making 0xFFFFFFFF (<code>int</code>) become 0x00000000FFFFFFFF (<code>long</code>) 
+     * the value is properly restored as the intended 4294967295.
+     * 
+     * @param i     The 32-bit value as a signed Java type.
+     * @return      The unsigned value of the input 32-bit integer as a <code>long</code>.
+     * 
+     * @see #unsigned(int[])
+     * @see #toUnsignedInt(long)
+     */
     public static final long unsigned(final int i) {
         return (i & 0xffffffffL);
     }
-
-
-    public static final byte unsignedByte(final short value) {
-        return (byte)(value & 0xff);
+    
+    /**
+     * Converts a unsigned 64-bit integer value to an essentially 63-bit Java <code>long</code>,
+     * e.g. for writing to a binary stream in the range of 0 to {@link Long#MAX_VALUE}. 
+     * 
+     * 
+     * @param l     The 64-bit value as a Java type.
+     * @return      The unsigned 63-bit value as a <code>long</code>.
+     * 
+     * @throws ArithmeticException  if the input value cannot fit into 63-bits for unsigned representation
+     *                              in Java.
+     *                              
+     */
+    public static final long unsigned(final long l) throws ArithmeticException {
+        if(l < 0) throw new ArithmeticException("value to large to be represneted in a signd Java type.");
+        return l;
     }
 
-
-    public static final short unsignedShort(final int value) {
-        return (short)(value & 0xffff);
-    }
-
-
-    public static final int unsignedInt(final long value) {
-        return (int)(value & 0xffffffffL);
-    }
-
-
-    public static final long pseudoUnsigned(final long l) {
-        return l < 0L ? Long.MAX_VALUE : l;
-    }
-
-
+    /** 
+     * Converts an array of unsigned bytes, represented by a signed Java <code>byte[]</code> array,
+     * into a signed Java <code>short[]</code> array. This may be useful for reading binary data that
+     * was written from lnaguage with support for unsigned types.
+     * 
+     * @param b     The input array containing unsigned bytes.
+     * @return      A new <code>short[]</code> array containing the unsigned values in the 0 to 255 range.
+     * 
+     * @see #unsigned(byte)
+     */
     public static final short[] unsigned(final byte[] b) {
         final short[] s = new short[b.length];
-        for(int i=0; i<b.length; i++) s[i] = unsigned(b[i]);	
+        for(int i=0; i<b.length; i++) s[i] = unsigned(b[i]);    
         return s;
     }
 
-
+    /** 
+     * Converts an array of unsigned 16-bit integer values, represented by a signed Java <code>short[]</code> array,
+     * into a signed Java <code>int[]</code> array. This may be useful for reading binary data that
+     * was written from lnaguage with support for unsigned types.
+     * 
+     * @param s     The input array containing unsigned 16-bit integers.
+     * @return      A new <code>int[]</code> array containing the unsigned values in the 0 to 65535 range.
+     * 
+     * @see #unsigned(short)
+     */
     public static final int[] unsigned(final short[] s) {
         final int[] i = new int[s.length];
-        for(int j=0; j<s.length; j++) i[j] = unsigned(s[j]);	
+        for(int j=0; j<s.length; j++) i[j] = unsigned(s[j]);    
         return i;
     }
 
 
+    /** 
+     * Converts an array of unsigned 32-bit integer values, represented by a signed Java <code>int[]</code> array,
+     * into a signed Java <code>long[]</code> array. This may be useful for reading binary data that
+     * was written from lnaguage with support for unsigned types.
+     * 
+     * @param i     The input array containing unsigned 16-bit integers.
+     * @return      A new <code>long[]</code> array containing the unsigned 32-bit integer values.
+     * 
+     * @see #unsigned(int)
+     */
     public static final long[] unsigned(final int[] i) {
         final long[] l = new long[i.length];
-        for(int j=0; j<i.length; j++) l[j] = unsigned(i[j]);	
+        for(int j=0; j<i.length; j++) l[j] = unsigned(i[j]);    
         return l;
     }
+    
+    
+    /**
+     * Converts an unsigned byte value, represented in a Java <code>short</code>, to a signed
+     * Java <code>byte</code>, e.g. for writing to a binary stream.
+     * 
+     * @param value     The value of the unsigned byte, represented as a Java <code>short</code>.
+     * @return          The Java <code>byte</code> from the least significant byte of the input.
+     * 
+     * @see #unsigned(byte)
+     */
+    public static final byte toUnsignedByte(final short value) {
+        return (byte)(value & 0xff);
+    }
 
+    /**
+     * Converts an unsigned 16-bit value, represented in a Java <code>int</code>, to a signed
+     * Java <code>short</code>, e.g. for writing to a binary stream.
+     * 
+     * @param value     The value of the unsigned 16-bit integer, represented as a Java <code>int</code>.
+     * @return          The Java <code>short</code> from the least significant byte of the input.
+     * 
+     * @see #unsigned(short)
+     */
+    public static final short toUnsignedShort(final int value) {
+        return (short)(value & 0xffff);
+    }
 
-    public static final void pseudoUnsigned(final long[] l) {
-        for(int j=0; j<l.length; j++) l[j] = pseudoUnsigned(l[j]);	
+    /**
+     * Converts an unsigned 32-bit value, represented in a Java <code>long</code>, to a signed
+     * Java <code>int</code>, e.g. for writing to a binary stream.
+     * 
+     * @param value     The value of the unsigned 32-bit integer, represented as a Java <code>long</code>.
+     * @return          The Java <code>int</code> from the least significant byte of the input.
+     * 
+     * @see #unsigned(int)
+     */
+    public static final int toUnsignedInt(final long value) {
+        return (int)(value & 0xffffffffL);
     }
 
 
+    /**
+     * A wrapper around {@link System#getProperty(String, String)}, with "n/a" as the default value.
+     * 
+     * @param name      Property name
+     * @return          The existing value of that property, or else "n/a" if the propertry does not exist.
+     * 
+     * @see System#getProperty(String, String)
+     */
     public static final String getProperty(String name) {
-        String value = System.getProperty(name);
-        return value == null ? "n/a" : value;
+        return System.getProperty(name, "n/a");
     }
 
-
+    /**
+     * Returns a Java string from an escaped character sequence.
+     * 
+     * @param value     the escaped character sequence
+     * @return          a new Java string containing the actual characters defined by the escaped sequences in the input.
+     * @throws IllegalStateException    if the string contains illegal escape sequences.
+     * 
+     * @see #toEscapedString(String)
+     */
     public static String fromEscapedString(String value) throws IllegalStateException {
         StringBuffer buffer = new StringBuffer(value.length());
         for(int i=0; i<value.length(); i++) {
@@ -423,10 +635,18 @@ public final class Util {
             }
             else buffer.append(c);
         }
-
+        
         return new String(buffer);
     }
 
+    /**
+     * Returns an escapped character sequence from an a Java string.
+     * 
+     * @param value     a Java string.
+     * @return          a new string with escaped character sequences.
+     * 
+     * @see #fromEscapedString(String)
+     */
     public static String toEscapedString(String value) {
         StringBuffer buffer = new StringBuffer(2*value.length());
         for(int i=0; i<value.length(); i++) {
@@ -446,71 +666,96 @@ public final class Util {
         return new String(buffer);
     }
 
-
-    public static boolean isWhiteSpace(char c) {
-        switch(c) {
-        case ' ':
-        case '\t':
-        case '\r':
-        case '\n': return true;
-        default: return false;		
-        }
-
-    }
-
+    /**
+     * Copies an array fully. Like {@link Arrays#copyOf(boolean[], int)} but always copying the entire array.
+     * 
+     * @param a     the array to copy
+     * @return      a new array with the full copy of the input.
+     * 
+     * @see Arrays#copyOf(boolean[], int)
+     */
     public static boolean[] copyOf(boolean[] a) {
         if(a == null) return null;
-        boolean[] b = new boolean[a.length];
-        System.arraycopy(a, 0, b, 0, a.length);
-        return b;
+        return Arrays.copyOf(a,  a.length);
     }
 
 
+    /**
+     * Copies an array fully. Like {@link Arrays#copyOf(char[], int)} but always copying the entire array.
+     * 
+     * @param a     the array to copy
+     * @return      a new array with the full copy of the input.
+     * 
+     * @see Arrays#copyOf(char[], int)
+     */
     public static char[] copyOf(char[] a) {
         if(a == null) return null;
-        char[] b = new char[a.length];
-        System.arraycopy(a, 0, b, 0, a.length);
-        return b;
+        return Arrays.copyOf(a,  a.length);
     }
 
-
+    /**
+     * Copies an array fully. Like {@link Arrays#copyOf(short[], int)} but always copying the entire array.
+     * 
+     * @param a     the array to copy
+     * @return      a new array with the full copy of the input.
+     * 
+     * @see Arrays#copyOf(short[], int)
+     */
     public static short[] copyOf(short[] a) {
         if(a == null) return null;
-        short[] b = new short[a.length];
-        System.arraycopy(a, 0, b, 0, a.length);
-        return b;
+        return Arrays.copyOf(a,  a.length);
     }
 
-
+    /**
+     * Copies an array fully. Like {@link Arrays#copyOf(int[], int)} but always copying the entire array.
+     * 
+     * @param a     the array to copy
+     * @return      a new array with the full copy of the input.
+     * 
+     * @see Arrays#copyOf(int[], int)
+     */
     public static int[] copyOf(int[] a) {
         if(a == null) return null;
-        int[] b = new int[a.length];
-        System.arraycopy(a, 0, b, 0, a.length);
-        return b;
+        return Arrays.copyOf(a,  a.length);
     }
 
-
+    /**
+     * Copies an array fully. Like {@link Arrays#copyOf(long[], int)} but always copying the entire array.
+     * 
+     * @param a     the array to copy
+     * @return      a new array with the full copy of the input.
+     * 
+     * @see Arrays#copyOf(long[], int)
+     */
     public static long[] copyOf(long[] a) {
         if(a == null) return null;
-        long[] b = new long[a.length];
-        System.arraycopy(a, 0, b, 0, a.length);
-        return b;
+        return Arrays.copyOf(a,  a.length);
     }
 
-
+    /**
+     * Copies an array fully. Like {@link Arrays#copyOf(float[], int)} but always copying the entire array.
+     * 
+     * @param a     the array to copy
+     * @return      a new array with the full copy of the input.
+     * 
+     * @see Arrays#copyOf(float[], int)
+     */
     public static float[] copyOf(float[] a) {
         if(a == null) return null;
-        float[] b = new float[a.length];
-        System.arraycopy(a, 0, b, 0, a.length);
-        return b;
+        return Arrays.copyOf(a,  a.length);
     }
 
-
+    /**
+     * Copies an array fully. Like {@link Arrays#copyOf(double[], int)} but always copying the entire array.
+     * 
+     * @param a     the array to copy
+     * @return      a new array with the full copy of the input.
+     * 
+     * @see Arrays#copyOf(double[], int)
+     */
     public static double[] copyOf(double[] a) {
         if(a == null) return null;
-        double[] b = new double[a.length];
-        System.arraycopy(a, 0, b, 0, a.length);
-        return b;
+        return Arrays.copyOf(a,  a.length);
     }
 
 
@@ -552,19 +797,71 @@ public final class Util {
 
     }
     
-    
+    /**
+     * <p>
+     * Checks if two floating point values are equal to each other within some relative precision.
+     * They are considered equal if they are the exact same value, or else if the magnitude of the 
+     * difference between the two values, divided by the larger magnitude of the inputs, is less than the 
+     * specified precision. That is, the two values are equal if:
+     * </p>
+     * 
+     * <pre>
+     *   |a-b| / max(|a|, |b|) &lt; precision
+     * </pre>
+     * 
+     *  
+     * 
+     * @param a             one of the floating-point values
+     * @param b             the other floating-point value
+     * @param precision     the relative precision for comparison. E.g. 1e-6 to compare to ~6 significant figures.
+     * @return              <code>true</code> if the two values are equal within the specified relative
+     *                      precision, otherwise <code>false</code>
+     *                      
+     * @see Util#fixedPrecisionEquals(double, double, double)
+     */
     public static final boolean equals(final double a, final double b, final double precision) {
         if(a == b) return true;     
         return (Math.abs(a - b) / Math.max(Math.abs(a), Math.abs(b)) <= precision);
     }
     
-   
+    /**
+     * <p>
+     * Checks if two floating point values are equal to each other within some absolute precision.
+     * They are considered equal if they are the exact same value, or else if the magnitude of the 
+     * difference between the two values is less than the specified precision. That is, the two values
+     * are equal if:
+     * </p>
+     * 
+     * <pre>
+     *   |a-b| &lt; precision
+     * </pre>
+     * 
+     *  
+     * 
+     * @param a             one of the floating-point values
+     * @param b             the other floating-point value
+     * @param precision     the absolute precision for comparison.
+     * @return              <code>true</code> if the two values are equal within the specified absolute
+     *                      precision, otherwise <code>false</code>
+     *                      
+     * @see Util#equals(double, double, double)
+     */
     public static final boolean fixedPrecisionEquals(final double a, final double b, final double precision) {
         if(a == b) return true;
         return (Math.abs(a - b) <= precision);     
     }
     
-    
+    /**
+     * Checks equality of two objects, including checking for <code>null</code>. 
+     * Either or both arguments may be <code>null</code>. If both arguments
+     * are <code>null</code>, then they are considered equal.
+     * 
+     * @param a     One of the objects (may be <code>null</code>).
+     * @param b     The other object (may be <code>null</code>).
+     * @return      <code>true</code> if both arguments are <code>null</code>, or if the two objects equals
+     *              under {@link Object#equals(Object)} (as in <code>a.equals(b)</code>). Otherwise
+     *              <code>false</code>
+     */ 
     public static boolean equals(Object a, Object b) {
         if(a == null) return b == null;
         if(b == null) return false;
@@ -587,10 +884,10 @@ public final class Util {
     
     public static String getWhiteSpaceChars() { return " \t\r\n"; }
     
-  
+   
+    
 
     public static void info(Object owner, String message) { reporter.info(owner, message); }
-
 
     public static void notify(Object owner, String message) { reporter.notify(owner, message); }
 

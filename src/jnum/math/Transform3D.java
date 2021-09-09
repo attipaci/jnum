@@ -44,6 +44,10 @@ public class Transform3D<T extends SphericalCoordinates> implements CoordinateTr
    
 	private Matrix M;
 	
+	/**
+	 * Instantiates a new 3D tranformation, initialized to the identity transform.
+	 * 
+	 */
 	public Transform3D() {
 	    M = Matrix.identity(3);
 	}
@@ -55,6 +59,15 @@ public class Transform3D<T extends SphericalCoordinates> implements CoordinateTr
 	    catch(CloneNotSupportedException e) { return null; }
 	}
 	
+	/**
+	 * Returns the reference to the underlying matrix of this transform. Changes to the returned matrix will
+	 * necessarily alter the transform and vice-versa. If that is not what you want, you should make a copy
+	 * of the matrix first, and make modifications to the independent copy.
+	 * 
+	 * @return     the reference to the underlying matric of the transform.
+	 * 
+	 * @see Matrix#copy()
+	 */
 	public Matrix getMatrix() { return M; }
 	
 	/**

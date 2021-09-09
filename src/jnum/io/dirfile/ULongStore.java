@@ -37,7 +37,7 @@ public class ULongStore extends RawStore<Long> {
 	}
 
 	@Override
-	public Long get(long n) throws IOException {
+	public Long get(long n) throws IOException, ArithmeticException {
 		return getUnsignedLong(n);
 	}
 

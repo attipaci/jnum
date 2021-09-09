@@ -107,6 +107,8 @@
 	[RENAME] {jnum.math.matrix} A lot of renaming, both classes and
 	funtions.
 
+	[CHANGE] {Configurator} Simlify API.
+
 	[CHANGE] {AstroTime} Remane method to be simpler. For example getTAI()
 	to simply TAI().
 

@@ -108,8 +108,8 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * 
      * @return  (rad) azimuth angle, clockwise from North.
      * 
-     * @see setAZ(double)
-     * @see EL() 
+     * @see #setAZ(double)
+     * @see #EL() 
      */
     public final double AZ() { return nativeLongitude(); }
 
@@ -119,9 +119,9 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * 
      * @return  (rad) azimuth angle, clockwise from North.
      * 
-     * @see AZ()
-     * @see setAZ(double)
-     * @see EL() 
+     * @see #AZ()
+     * @see #setAZ(double)
+     * @see #EL() 
      */
     public final double azimuth() { return nativeLongitude(); }
 
@@ -130,9 +130,9 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * 
      * @return  (rad) elevation angle, above horizon towards zenith [-&pi;:&pi;].
      * 
-     * @see setEL(double)
-     * @see setZA(double)
-     * @see AZ() 
+     * @see #setEL(double)
+     * @see #setZA(double)
+     * @see #AZ() 
      */
     public final double EL() { return nativeLatitude(); }
 
@@ -141,11 +141,11 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * 
      * @return  (rad) elevation angle, above horizon towards zenith [-&pi;:&pi;].
      * 
-     * @see zenithAngle()
-     * @see EL()
-     * @see setEL(double)
-     * @see setZA(double)
-     * @see AZ() 
+     * @see #zenithAngle()
+     * @see #EL()
+     * @see #setEL(double)
+     * @see #setZA(double)
+     * @see #AZ() 
      */
     public final double elevation() { return nativeLatitude(); }
 
@@ -154,9 +154,9 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      *  
      * @return  (rad) Zenith angle, measured from zenith to nadir [0:2&pi;]. Same as 90&deg; - {@link #EL()}.
      * 
-     * @see EL()
-     * @see setZA(double)
-     * @see setEL(double)
+     * @see #EL()
+     * @see #setZA(double)
+     * @see #setEL(double)
      */
     public final double ZA() { return Constant.rightAngle - nativeLatitude(); }
 
@@ -172,7 +172,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * 
      * @param AZ    (rad) new azimuth angle, clockwise from North.
      * 
-     * @see AZ()
+     * @see #AZ()
      */
     public final void setAZ(double AZ) { setNativeLongitude(AZ); }
 
@@ -181,8 +181,8 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * 
      * @param EL    (rad) new elevation angle, above horizon towards zenith [-&pi;:&pi;].
      * 
-     * @see EL()
-     * @see setZA(double)
+     * @see #EL()
+     * @see #setZA(double)
      */
     public final void setEL(double EL) { setNativeLatitude(EL); }
 
@@ -191,8 +191,8 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * 
      * @param ZA    (rad) new zenith angle, measured from zenith to nadir [0:2&pi;].
      * 
-     * @see ZA()
-     * @see setEL(double)
+     * @see #ZA()
+     * @see #setEL(double)
      */
     public final void setZA(double ZA) { setNativeLatitude(Constant.rightAngle - ZA); }
 
@@ -329,9 +329,13 @@ public class HorizontalCoordinates extends SphericalCoordinates {
         offset.flipX();
     }
 
-    
+    /** the default coordinate system */
     @SuppressWarnings("hiding")
-    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+    public static CoordinateSystem defaultCoordinateSystem;
+    
+    /** the default local coordinate system */
+    @SuppressWarnings("hiding")
+    public static CoordinateSystem defaultLocalCoordinateSystem;
 
 
     static {

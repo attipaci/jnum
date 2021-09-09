@@ -471,7 +471,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
         /**
          * Gets the number of points (leading data index only) which are to be transformed.
          * 
-         * @return
+         * @return  the number of points to transform (along primary dimension).
          */
         protected final int getPoints() { return points; }
        

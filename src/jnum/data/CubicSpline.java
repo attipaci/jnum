@@ -125,9 +125,12 @@ public class CubicSpline implements Serializable {
 	 * 
 	 * @param i        the index of data, which is expected to be {@link #minIndex()} &lt;= i &lt;
 	 *                 {@link #maxIndex()}.
-	 * @return
+	 * @return         the spline coefficient for the specified data index, given the current
+	 *                 centering of the spline.
 	 * @throws ArrayIndexOutOfBoundsException if the index i is not in the range set
 	 *                 by {@link #minIndex()} and {@link #maxIndex()}.
+	 *                 
+	 * @see #centerOn(double)
 	 */
 	public final double coefficientAt(int i) throws ArrayIndexOutOfBoundsException {
 		return coeffs[i - i0];		

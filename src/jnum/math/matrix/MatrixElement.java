@@ -30,7 +30,9 @@ public abstract class MatrixElement<T> implements LinearAlgebra<T>, AbstractAlge
          * Gets the underlying value stored in this matrix element object. This may be a reference or
          * a primitive value.
          * 
-         * @return
+         * @return  the underlying value of this matrix element. It may be a reference or a Java primitive.
+         * 
+         * @see #copyOfValue()
          */
         public abstract T value();
         
@@ -41,7 +43,9 @@ public abstract class MatrixElement<T> implements LinearAlgebra<T>, AbstractAlge
          * elements of {@link ObjectMatrix} type matrices, where normally references are passed by
          * default.
          * 
-         * @return
+         * @return  an independent copy of the underlying matrix element.
+         * 
+         * @see #value()
          */
         public abstract T copyOfValue();
         
@@ -115,11 +119,11 @@ public abstract class MatrixElement<T> implements LinearAlgebra<T>, AbstractAlge
         public abstract MatrixElement<T> from(int i, int j);
         
         /**
-         * Same as {@link from(int, int)} but with an {@link Index2D} object specifying the row, col
-         * indices to wrap in this elemment. Please refer to {@link from(int, int)} on how to use 
+         * Same as {@link #from(int, int)} but with an {@link Index2D} object specifying the row, col
+         * indices to wrap in this elemment. Please refer to {@link #from(int, int)} on how to use 
          * this call safely. 
          * 
-         * @param index (row, col) index of the matrix entry to wrap.
+         * @param index     (row, col) index of the matrix entry to wrap.
          * @return  itself
          */
         public final MatrixElement<T> from(Index2D index) {
@@ -139,7 +143,7 @@ public abstract class MatrixElement<T> implements LinearAlgebra<T>, AbstractAlge
         public abstract MatrixElement<T> copy(int i, int j);
  
         /**
-         * Like {@link copy(int, int)} except with an {@link Index2D} object specifying the
+         * Like {@link #copy(int, int)} except with an {@link Index2D} object specifying the
          * (row, col) index of the matrix element, whose copy to wrap.
          * 
          * @param index     (row, col) index of the matrix entry, whose copy to wrap.

@@ -31,6 +31,11 @@ package jnum.math;
  */
 public interface Division<Type> {
 
+    /**
+     * Divides this object by the specified value in the denominator.
+     * 
+     * @param value     the object by which to divide this one.
+     */
 	public void divideBy(Type value);
 	
 }

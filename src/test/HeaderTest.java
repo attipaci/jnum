@@ -1,6 +1,6 @@
 package test;
 
-import java.io.FileNotFoundException;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -10,17 +10,10 @@ import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.util.BufferedDataOutputStream;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class HeaderTest.
- */
+
 public class HeaderTest {
 
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
+
 	public static void main(String[] args) {
 		try {
 			HeaderTest test = new HeaderTest();
@@ -29,13 +22,8 @@ public class HeaderTest {
 		catch(Exception e) { e.printStackTrace(); }
 	}
 	
-	/**
-	 * Adds the keys.
-	 *
-	 * @throws FitsException the fits exception
-	 * @throws FileNotFoundException the file not found exception
-	 */
-	public void addKeys() throws IOException, FitsException {
+
+	public void addKeys() throws FitsException, IOException {
 		float[][] data = new float[10][10];
 		
 		BasicHDU<?> hdu = (BasicHDU<?>) Fits.makeHDU(data);

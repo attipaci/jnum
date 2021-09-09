@@ -248,6 +248,8 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
      *
      * @param text the input text specifying the range. The minimim and maximum values must be separated by one
      *     or more colons ':'. E.g. "0.0:1.0" or "0.0:::1.0". 
+     *     
+     * @throws NumberFormatException    if the range could not be parsed from the supplied string.
      */
     public final void parse(String text) throws NumberFormatException {
         from(text, false);
@@ -259,6 +261,8 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 	 * @param text the text input specifying the range
 	 * @param isPositive true if the range is for positive only values (allows hyphens as a separator between min and max values 
 	 *     -- otherwise only colon ':' is allowed. E.g. "0.0--1.0" vs the more standard "0.0:1.0").
+	 *     
+	 * @throws NumberFormatException    if the range could not be parsed from the supplied string.
 	 */
 	public void parse(String text, boolean isPositive) throws NumberFormatException {		
 		StringTokenizer tokens = new StringTokenizer(text, " \t:" + (isPositive ? "-" : ""));

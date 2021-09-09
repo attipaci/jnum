@@ -43,7 +43,15 @@ public class ConsiderateFunctionAdapter<ArgType, ReturnType> implements Function
 	private ConsiderateFunction<ArgType, ReturnType> function;
 	private Class<ReturnType> returnType;
 	
-
+	/**
+	 * Instantiates a new considerate function adapter, one which returns results to the caller in the
+	 * object supplied by the caller.
+	 * 
+	 * @param f            The considerate function to wrap with this adapter
+	 * @param template     The return-type class for the function, which is used to generate
+	 *                     ad-hoc return values. The class must have a default constructor
+	 *                     with no parameters.
+	 */
 	@SuppressWarnings("unchecked")
 	public ConsiderateFunctionAdapter(ConsiderateFunction<ArgType, ReturnType> f, ReturnType template) {
 		function = f;

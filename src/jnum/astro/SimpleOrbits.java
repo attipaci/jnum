@@ -270,7 +270,7 @@ public final class SimpleOrbits {
          * the result in the supplied 3D vector. (MJD parameter is not checked for range)
          * 
          * @param mjd   (day) Modified Julian date of observation
-         * @return      (m/s) Heliocentric equatorial velocity vector.
+         * @param pos   (m/s) The 3D equatorial rectangular vector in which to return the Heliocentric velocity.
          */
         abstract void getSolarVel(double mjd, Vector3D pos);
     }
@@ -450,7 +450,10 @@ public final class SimpleOrbits {
         }
     }
   
+    /** The orbital model for the Sun. */
     public static final Sun Sun = new Sun();
+    
+    /** The orbital model for Earth. */
     public static final Earth Earth = new Earth();
 
 

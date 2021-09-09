@@ -50,7 +50,7 @@ import java.lang.reflect.*;
  */
 public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar>, AbstractAlgebra<Scalar>, AbsoluteValue, Copiable<Scalar>, CopyCat<Scalar>, Cloneable, InvalidValue, 
 	PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions,
-	NumberFormating, DecimalFormating, Parser, Metric<Scalar>, Comparable<Scalar> {
+	NumberFormating, DecimalFormating, Parser, Metric<Scalar>, Comparable<Scalar>, DotProduct<Scalar, Scalar> {
 	
     /**
      * 
@@ -255,7 +255,11 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		return Double.isNaN(value);
 	}
 
-	
+	/**
+	 * Returns the floating-point value of this scalar quantity.
+	 * 
+	 * @return     the floating point value of this scalar.
+	 */
 	public final double value() {
 		return value;
 	}
@@ -312,8 +316,8 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 		return value == 0.0;
 	}
 
-
-	public Scalar dot(Scalar scalar) {
+	@Override
+    public Scalar dot(Scalar scalar) {
 		return new Scalar(value * scalar.value);
 	}
 

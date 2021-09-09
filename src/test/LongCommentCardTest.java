@@ -4,13 +4,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-
+import jnum.fits.FitsToolkit;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.FitsFactory;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.util.BufferedDataOutputStream;
+import nom.tam.util.Cursor;
 
 
 public class LongCommentCardTest {
@@ -31,8 +32,10 @@ public class LongCommentCardTest {
         header.setBitpix(32);
         header.setNaxes(0);
         
+        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
+        
         // Add a regular keyword of the desired length...
-        c.add(new HeaderCard("BLABERY", counts(length), ""));
+        c.add(new HeaderCard("BLABBERY", counts(length), ""));
    
         // Add a non-nullable HISTORY entry with the desired length...
         c.add(new HeaderCard("HISTORY", counts(length), false));

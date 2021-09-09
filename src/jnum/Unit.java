@@ -35,9 +35,66 @@ import jnum.util.PrefixedUnit;
 
 // TODO Convert to Enum?
 /**
- * The Class Unit.
+ * <p>
+ * Physical units for Java. This class defines physical units that make is easier and less bug-prone to deal
+ * with physical quantities in your code. At the most basic level, it is strongly encouraged that 
+ * variables that represent phtsical quantities, are internally stored in S.I. units. That alone will 
+ * reduce confusion and unit-related bugs. Then, the phyicial units of this class can be used in two ways:
+ * </p>
+ * <ol>
+ * <li><b>Setting (reading) quantities defined in some unit</b>: For example, you read a data file that has
+ * distance measured in feet, and you want to convert that to S.I. units for your program. 
+ * In this case, you <b>multiply</b> with the corresponding physical unit, such as:
  * 
- * FITS units definitions: https://astropy.readthedocs.org/en/v0.1/wcs/units.html
+ * <pre>
+ *   // We want 33 feet to be converted to S.I. units for variable d:
+ *   d = 33.0 * Unit.ft;       
+ * </pre>
+ * 
+ * </li>
+ * <li><b>Casting into a physical unit</b> (e.g. for printing)</li>: For example, you have your
+ * variable <code>d</code>, storing a distance in S.I. units (see above), and you want to print out the
+ * value of <code>d</code> in millimeters. In this case, you <b>divide</b> with the corresponding physical unit, 
+ * such as:
+ * 
+ * <pre>
+ *   // We want to print d in millimeters:
+ *   System.out.println("The distance is " + (d / Unit.mm) + " millimeters");
+ * </pre>
+ *
+ * </ol>
+ *
+ * <p>
+ * It follows from the above that you can also convert quantities from one physical unit to another
+ * (conceptually by using an intermediate conversion to S.I.). For example, you want to 
+ * convert a 33 feet to millimeters:
+ * </p>
+ * 
+ * <pre>
+ *   // Convert 33 feet to millimeters for a variable dMM:
+ *   dMM = 33.0 * Unit.ft / Unit.mm;
+ * </pre>
+ * 
+ * <p>
+ * In the above the term <code>Unit.ft / Unit.mm</code> is the conversion factor from
+ * feet to mm. It's as easy as pie (or easier still...).
+ * </p>
+ * 
+ * <p>
+ * This class provides a whole range of predefined units as static fields. You can also
+ * use {@link #get(String)} to obtain a pre-defined or user-defined unit objects, which
+ * allow further functionality (esp. for printing quantities in specific units.). You
+ * can define additional units (or overrride existing ones) for your own use by simply
+ * instantiating a new <code>Unit</code>. You can also keep track of your own units
+ * by registering them via {@link #register()}, so you can susequently retrieve it with 
+ * {@link #get(String)}. (Tip, you can also register to a spearate 'dictionary' using
+ * {@link #registerTo(Map)}, and {@link #get(String, Map)}). 
+ * </p>
+ * <p>
+ * When defining physical units for your own use, you should only define the base unit.
+ * Compound units (i.e, units composed as a product of different base units, each with
+ * some exponent), will be automatically handled through {@link jnum.util.CompoundUnit}.
+ * </p>
  */
 public class Unit extends Number implements Serializable, Cloneable, Copiable<Unit> {
 
@@ -57,10 +114,15 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     private double value;
 
     /**
-     * Instantiates a new unit.
+     * Instantiates a new uninitialized unit (with <code>null</code>name and a NaN value).
      */
     public Unit() { this(null, Double.NaN); }
 
+    /**
+     * Instantiates a new unit with the specified unit name (and NaN value).
+     * 
+     * @param name      the name of the new unit, e.g. "W/m**2"
+     */
     public Unit(String name) {
         this(name, Double.NaN);
     }
@@ -68,8 +130,8 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     /**
      * Instantiates a new unit.
      *
-     * @param name the name
-     * @param value the value
+     * @param name the name of the unit
+     * @param value the numerical value of this unit (typically in S.I.).
      */
     public Unit(String name, double value) { 
         this.value = value; 
@@ -108,10 +170,19 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         return super.hashCode() ^ name().hashCode() ^ HashCode.from(value);
     }
 
-
+    /**
+     * Returns the name of this unit.
+     * 
+     * @return  the name of this unit, e.g. "mm".
+     */
     public String name() { return name; }
 
-    
+    /**
+     * Returns the value of this unit, in the S.I. convention 
+     * 
+     * @return      the S.I. value of this unit. For example {@link #mm} (millimeter)
+     *              will return 0.001, since it is 1/1000 of the S.I. unit {@link #m} (meter).
+     */
     public double value() { return value; }
 
 
@@ -135,12 +206,29 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
        return Math.round(value);
     }
  
-  
+    /**
+     * Registers this unit among the standard (base) units, or overrrides an existing standard unit
+     * with the same name. Once a standard unit is registered it can be retreved with {@link #get(String)}.
+     * 
+     * @throws IllegalArgumentException
+     * 
+     * @see #registerTo(Map)
+     */
     public void register() throws IllegalArgumentException {
         registerTo(standardUnits);
     }
     
-    public void registerTo(Hashtable<String, Unit> lookup) throws IllegalArgumentException {
+    /**
+     * Register this unit in an auxillary dictionary of user-defined units. After registration
+     * the unit can be retrieved at will via {@link #get(String, Map)}.
+     * 
+     * @param lookup            The custom dictionary of units.
+     * @throws IllegalArgumentException     if this unit has no name.
+     * 
+     * @see #registerTo(Map, String)
+     * @see #register()
+     */
+    public void registerTo(Map<String, Unit> lookup) throws IllegalArgumentException {
         if(name() == null) throw new IllegalArgumentException("Unnamed unit.");
         
         // Register only base unit names, not compound names or exponential ones... 
@@ -148,8 +236,15 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         else throw new IllegalArgumentException("Not a base unit: " + name());
     }
     
-
-    public void registerTo(Hashtable<String, Unit> units, String names) {
+    /**
+     * Register this unit in an auxillary dictionary of user-defined units, with a set of
+     * alternative names. After registration the unit can be retrieved at will via 
+     * {@link #get(String, Map)} using its proper name or any of the listed name alternatives.
+     * 
+     * @param units     The custom dictionary of units.
+     * @param names     the comma or space-separated list of alternative names for this unit.
+     */
+    public void registerTo(Map<String, Unit> units, String names) {
         StringTokenizer values = new StringTokenizer(names, " \t,;");
         while(values.hasMoreTokens()) {
             String spec = values.nextToken();
@@ -168,12 +263,30 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
         return false;
     }
 
-
+    /**
+     * Returns the unit that matches the supplied name.
+     * 
+     * @param id        the unit name.
+     * @return          the registered standard unit by that name, ot <code>null</code> if no standard unit
+     *                  exists by that name.
+     *                  
+     * @see #get(String, Map)
+     */
     public static Unit get(String id) {
         return get(id, standardUnits);
     }
 
-
+    /**
+     * Returns the unit that matches the supplied name, using the supplied dictionary of units.
+     * 
+     * @param id        the unit name.
+     * @param baseUnits a dictionary that specifies the known base units from which the requested unit may be coposed of.
+     * @return          the registered standard unit by that name, ot <code>null</code> if no standard unit
+     *                  exists by that name.
+     * @throws IllegalArgumentException     if no unit could be found or composed for the specified name/id.
+     * 
+     * @see #get(String, Map)
+     */
     public static Unit get(String id, Map<String, Unit> baseUnits) throws IllegalArgumentException {		
         if(baseUnits == null) return PrefixedUnit.createFrom(id, standardUnits);
         
@@ -1249,9 +1362,13 @@ public class Unit extends Number implements Serializable, Cloneable, Copiable<Un
     public static final double mpg = mile / gal;
 
 
-    
-
-
+   
+    /**
+     * Registers a physical unit, expressed in S.I., with a list of names it may be referred to.
+     * 
+     * @param value     the S.I. value of this unit. For example millimeter is 0.001 since the S.I. unit is meter.
+     * @param names     the list of space or comma separated names the unit's value may be referred to.
+     */
     public static void register(double value, String names) {
         StringTokenizer tokens = new StringTokenizer(names, " \t,;");
         

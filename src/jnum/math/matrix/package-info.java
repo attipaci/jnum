@@ -1,3 +1,5 @@
+package jnum.math.matrix;
+
 /**
  * @author Attila Kovacs
  * 
@@ -50,5 +52,3 @@
  * 
  * 
  */
-package jnum.math.matrix;
-

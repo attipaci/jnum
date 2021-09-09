@@ -49,6 +49,7 @@ public abstract class Nutation {
     private static Nutation truncated1mas = new IAU2000ATruncated(Unit.mas);
     private static Nutation truncated10mas = new IAU2000ATruncated(10.0 * Unit.mas);
     
+    /** The number of cached distinct results from recent calls */ 
     public int cacheSize = 100;
     
     private Hashtable<Integer, Vector2D> cache = new Hashtable<>();

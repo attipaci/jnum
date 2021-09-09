@@ -152,10 +152,12 @@ public interface MathVector<T> extends Coordinates<T>, AbsoluteValue, Normalizab
      * The summing collector for classes that implement this interface, for use
      * with streams.
      * 
-     * @param <T>   the generic type of vector that can be accumulated
+     * @param <T>   the generic type of a vector component.
+     * @param <V>   the generic type of vector that can be accumulated
      * @param cl    the class of the generic type
      * @return      the collector that will give back the sum of vector elements from the stream
      *              on which it collects.
+     *              
      */
     public static <T, V extends MathVector<T>> Collector<V, V, V> sum(Class<V> cl) {
         return Collector.of(

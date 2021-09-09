@@ -53,7 +53,7 @@ public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
 	/**
 	 * Gets a new vector of the type and size supported by this basis.
      *
-	 * @return
+	 * @return     a new vector instance of the type supported by this basis.
 	 */
 	public abstract AbstractVector<T> getVectorInstance();
 	
@@ -105,7 +105,7 @@ public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
 	 * Returns the basis set as a matrix, in which the basis vectors constitute the 
 	 * matrix columns.
 	 * 
-	 * @return
+	 * @return     the basis vectors as row vectors in a matric form.
 	 */
 	public abstract AbstractMatrix<T> asRowVector();
 	

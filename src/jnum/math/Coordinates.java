@@ -46,7 +46,7 @@ public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, Index
     /**
      * Gets the class of components in these coordinates. 
      * 
-     * @return
+     * @return      the class of components contained in these set of coordinates.
      */
     public Class<T> getComponentType();
     

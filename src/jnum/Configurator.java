@@ -50,52 +50,122 @@ import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
 /**
- * 
+ * <p>
  * A configuration engine for programs that supports hierarchical configurations and conditional settings.
- * 
- * 
+ * </p>
+ * <p>
  * Specific configuration options are nodes/endpoints on an option tree. Each node/endpoint can have a string value,
  * and may have further branches of related sub-options stemming from it. It also can host its own list of conditional
  * settings.
- * 
- * 
+ * </p>
+ * <p>
  * See README.syntax in CRUSH (or on the CRUSH website) for details on the option syntax, and features. 
- *
+ * </p>
  * 
  * 
  * @author Attila Kovacs
  *
  */
 public class Configurator implements Serializable, Cloneable, Copiable<Configurator>, FitsHeaderEditing {
-
-
+    /** */
     private static final long serialVersionUID = 5040150005828567005L;
 
     private Configurator root;
 
     private String value;
-    public int serialNo;
+    private int serialNo;
 
-    public boolean isEnabled = false;
-    public boolean isLocked = false;
-    public boolean wasUsed = false;
+    private boolean isEnabled = false;
+    private boolean isLocked = false;
+    private boolean wasUsed = false;
 
-
-    public Hashtable<String, Configurator> branches = new Hashtable<>();
-    public Hashtable<String, Vector<String>> conditionals = new Hashtable<>();
+    private Hashtable<String, Configurator> branches = new Hashtable<>();
+    private Hashtable<String, Vector<String>> conditionals = new Hashtable<>();
 
     private static int counter = 0;	
 
-    public static boolean silent = false;
-    public static boolean verbose = false;
-    public static boolean details = false;
-
-
+    /**
+     * Instantiates a new program configurator.
+     * 
+     */
     public Configurator() { root = this; }
 
-
+    /**
+     * Isntantiates a new configurator, from a branch of another configrator. The new confurator will be
+     * referencing options relative to the specified branch, with no knowledge of the parent hierarchy
+     * from which it stems.
+     * 
+     * @param root      the branch that serves at the root of this new configurator.
+     */
     public Configurator(Configurator root) { this.root = root; }
 
+    /**
+     * Returns the serial number of the value field in this configurator. Eachtime the option is
+     * set or reset, the serial number gets incremented.
+     * 
+     * @return  the serial number of this option's value field.
+     */
+    public final int getSerial() {
+        return serialNo;
+    }
+    
+    /** 
+     * Checks id the option is currently enabled / active. Disabled options act as if they don't exists,
+     * but hold on to their last value, and if re-enabled will restore that last value.
+     * 
+     * @return      <code>true</code> if the option is currently active / enabled in the configuration,
+     *              otherwise <code>false</code>.
+     * 
+     * @see #disable(String)
+     * @see #restore(String)
+     */
+    public final boolean isEnabled() {
+        return isEnabled;
+    }
+    
+    /**
+     * Checks if this option is currently locked in the configuration. When an option is locked, it
+     * its value cannot be changed, willingly or not.
+     * 
+     * @return      <code>true</code> if this option is currently locked, and its value cannot be
+     *              changed, otherwise <code>false</code>.
+     *              
+     * @see #lockTo(String)
+     * @see #unlock()
+     */
+    public final boolean isLocked() {
+        return isLocked;
+    }
+    
+    /** 
+     * Checks if the value of this option was accessed / used.
+     * 
+     * @return      <code>true</code> if this option was accessed / used by the program, otherwise
+     *              <code>false</code>.
+     */
+    public final boolean wasAccessed() {
+        return wasUsed;
+    }
+    
+    /**
+     * Returns the branches of this configuration option, that is all sub-options for this option.
+     * 
+     * @return      the branches of this option, that is the hierarchy of sub-options that were 
+     *              defined under this option.
+     */
+    public final Hashtable<String, Configurator> getBranches() {
+        return branches;
+    }
+    
+    /**
+     * Returns the conditional settings that were defined for this option.
+     * 
+     * @return      the conditional settings that exists under this option in the options hierarchy.
+     */
+    public final Hashtable<String, Vector<String>> getConditionals() {
+        return conditionals;
+    }
+    
     @Override
     public Configurator clone() {
         try { return (Configurator) super.clone(); }
@@ -174,7 +244,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * 
      * @see #parse(String)
      */
-    public List<Exception> parseAll(List<String> lines) {
+    public ArrayList<Exception> parseAll(List<String> lines) {
         ArrayList<Exception> exceptions = new ArrayList<>();
 
         for(String line : lines) {
@@ -251,7 +321,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
             Configurator alias = exactOption("alias." + branchName);
             if(alias.isEnabled) {
                 unaliased = alias.value;
-                if(details) Util.detail(this, "<a> '" + branchName + "' -> '" + unaliased + "'");
+                Util.debug(this, "<a> '" + branchName + "' -> '" + unaliased + "'");
             }
         }
 
@@ -276,37 +346,37 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }
 
 
-    private String resolve(String argument, String marker, String endmarker) {
+    private String resolve(String name, String marker, String endmarker) {
         int last = 0;
 
         // If these is nothing to resolve, just return the argument as is...
-        if(!argument.contains(marker)) return argument;
+        if(!name.contains(marker)) return name;
 
         // Now for the hard part...
         StringBuffer resolved = new StringBuffer();
 
         for(;;) {
-            if(last >= argument.length()) break;
-            int i = argument.indexOf(marker, last);
+            if(last >= name.length()) break;
+            int i = name.indexOf(marker, last);
             if(i < 0) {
-                resolved.append(argument, last, argument.length());
+                resolved.append(name, last, name.length());
                 break;
             }				
-            resolved.append(argument, last, i);
+            resolved.append(name, last, i);
 
             int from = i + marker.length();
-            int to = argument.indexOf(endmarker, from);
+            int to = name.indexOf(endmarker, from);
 
             if(to < 0) {
-                resolved.append(argument, last, argument.length());
+                resolved.append(name, last, name.length());
                 break;
             }
             else if (to > from) {
-                String key = argument.substring(from, to);   
+                String key = name.substring(from, to);   
                 String property = getProperty(key, marker);
 
                 if(property != null) resolved.append(property);
-                else resolved.append(argument, i, to + endmarker.length());
+                else resolved.append(name, i, to + endmarker.length());
             }
             last = to + endmarker.length();			
         }
@@ -370,68 +440,70 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * Adds or replaces a key/value pair in this configuration branch.
      * 
      * @param key       The option key to set.
-     * @param argument  The value associated with the above key.
+     * @param value     The value associated with the above key.
      * 
      * @throws LockedException      If the specified key was locked preventing changes to it.               
      *                  
      * @see #processSilent(String, String)
      */
-    public void process(String key, String argument) throws LockedException {	
+    public void process(String key, String value) throws LockedException {	
         String substitute = unalias(key);
 
         if(!key.equals(substitute)) {
             key = new StringTokenizer(substitute.toLowerCase(), " \t=:").nextToken();
-            if(substitute.length() > key.length()) argument = substitute.substring(key.length()+1) + argument;
+            if(substitute.length() > key.length()) value = substitute.substring(key.length()+1) + value;
             // TODO uncomment to support compound aliasing...
             // process(key, argument);
             // return;
         }
 
-        argument = resolve(argument, "{&", "}"); // Resolve static references
-        argument = resolve(argument, "{@", "}"); // Resolve environment variables.
-        argument = resolve(argument, "{#", "}"); // Resolve Java properties.
+        value = resolve(value, "{&", "}"); // Resolve static references
+        value = resolve(value, "{@", "}"); // Resolve environment variables.
+        value = resolve(value, "{#", "}"); // Resolve Java properties.
 
-        if(key.equals("forget")) for(String name : getList(argument)) forget(name);
-        else if(key.equals("recall")) for(String name : getList(argument)) recall(name);
-        else if(key.equals("enable")) for(String name : getList(argument)) forget(name);
-        else if(key.equals("disable")) for(String name : getList(argument)) recall(name);
+        if(key.equals("forget")) for(String name : getList(value)) disable(name);
+        else if(key.equals("recall")) for(String name : getList(value)) enable(name);
+        else if(key.equals("enable")) for(String name : getList(value)) disable(name);
+        else if(key.equals("disable")) for(String name : getList(value)) enable(name);
         else if(key.equals("blacklist")) {
-            if(argument.length() == 0) pollBlacklist(null);
-            for(String name : getList(argument)) blacklist(name);
+            if(value.length() == 0) pollBlacklist(null);
+            for(String name : getList(value)) blacklist(name);
         }
-        else if(key.equals("whitelist")) for(String name : getList(argument)) whitelist(name);
-        else if(key.equals("remove")) for(String name : getList(argument)) remove(name);
-        else if(key.equals("restore")) for(String name : getList(argument)) restore(name);
-        else if(key.equals("replace")) for(String name : getList(argument)) restore(name);
+        else if(key.equals("whitelist")) for(String name : getList(value)) whitelist(name);
+        else if(key.equals("remove")) for(String name : getList(value)) remove(name);
+        else if(key.equals("restore")) for(String name : getList(value)) restore(name);
+        else if(key.equals("replace")) for(String name : getList(value)) restore(name);
         else if(key.equals("config")) {
-            try { readConfig(Util.getSystemPath(argument)); }
-            catch(IOException e) { Util.warning(this, "Configuration file '" + argument + "' not found."); }
+            try { readConfig(Util.getSystemPath(value)); }
+            catch(IOException e) { Util.warning(this, "Configuration file '" + value + "' not found."); }
         }
         else if(key.equals("poll")) {
-            poll(argument.length() > 0 ? unaliasedKey(argument) : null);
+            poll(value.length() > 0 ? unaliasedKey(value) : null);
         }
         else if(key.equals("conditions")) {
-            pollConditions(argument.length() > 0 ? argument : null);
+            pollConditions(value.length() > 0 ? value : null);
         }
         else if(key.equals("echo")) {
-            System.out.println(resolve(argument, "{?", "}"));
+            System.out.println(resolve(value, "{?", "}"));
         }
+        else if(key.startsWith("env.[")) processEnvironmentOption(key.substring(5, key.indexOf("]")), value); 
+        else if(key.startsWith("property.[")) processPropertyOption(key.substring(10, key.indexOf("]")), value); 
         else {
             String branchName = getBranchName(key);
-            if(details) Util.detail(this, "<.> " + branchName);
+            Util.debug(this, "<.> " + branchName);
 
             if(branchName.equals("*")) {
-                for(String name : new ArrayList<>(branches.keySet())) process(name + key.substring(1), argument);				
+                for(String name : branches.keySet()) process(name + key.substring(1), value);				
             }	
             else if(branchName.startsWith("[")) {
                 String condition = branchName.substring(1, branchName.indexOf(']'));
-                String setting = key.substring(condition.length() + 2).trim() + " " + argument;
+                String setting = key.substring(condition.length() + 2).trim() + " " + value;
                 addCondition(condition, setting);
             }
-            else if(branchName.equals("lock")) lock(argument);
-            else if(branchName.equals("relock")) relock(argument);
+            else if(branchName.equals("lock")) lockTo(value);
+            else if(branchName.equals("relock")) relockTo(value);
             else if(branchName.equals("unlock")) unlock();
-            else set(branchName, key, argument);
+            else set(branchName, key, value);
         }
     }
 
@@ -441,7 +513,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         Configurator branch = branches.containsKey(branchName) ? branches.get(branchName) : new Configurator(root);
         if(key.length() == branchName.length()) {
             if(branch.isLocked) throw new LockedException("Cannot change option '" + key + "'");
-            if(details) Util.detail(this, "<=> " + argument);
+            Util.debug(this, "<=> " + argument);
             branch.value = argument;
             branch.isEnabled = true;
             branch.serialNo = counter++; // Update the serial index for the given key...
@@ -535,102 +607,132 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @param expression    The literal conditional expression that has to be matched for an exiting conditional
      *                      option to get activated.
      */
-    public void activateCondition(String expression) {
+    private void activateCondition(String expression) {
         if(!conditionals.containsKey(expression)) return;
 
-        if(details) Util.detail(this, "[c] " + expression + " > " + conditionals.get(expression));
+        Util.debug(this, "[c] " + expression + " > " + conditionals.get(expression));
         parseAll(conditionals.get(expression));
     }
 
+    
     /**
-     * Like {@link #forget(String)} but without throwing a {@link LockedException}. Instead, it returns a
-     * <code>boolean</code> to indicate whether the operation was successful or not.
+     * Disables this configuration option, without affecting its branches and conditionals.
+     * The option can be re-nabled later to the same value as before, until a new value
+     * is set for it otherwise..
      * 
-     * @param key   The option <code>key</code> under this configuration branch to unset.
-     * 
-     * @return      <code>true</code> if the specified option was successfully unset, or <code>false</code> if
-     *              an existing lock prevented the operation.
-     *              
-     * @see #forget(String)
+     * @see #enable()
+     * @see #disable(String)
+     * @see #enable(String)
      */
-    public boolean forgetSilent(String key) {
-        try { forget(key); }
-        catch(LockedException e) { return false; }
-        return true;
+    private void disable() {
+        if(!isEnabled) return;
+        isEnabled = false;
     }
-
+    
     /**
-     * Forgets (unsets) the specified option under this configuration branch. The forgotten options can be
-     * recalled to its prior state as long as no new value is set for it.
+     * Enables this configuration option (if it was previously disabled).
      * 
-     * @param arg   The option <code>key</code> under this configuration branch to unset.
-     *              
-     * @see #forgetSilent(String)
-     * @see #recall(String)
+     * @see #enable()
+     * @see #disable(String)
+     * @see #enable(String)
+     * 
+     * @throws LockedException      if the option is currently locked, not allowing changes.
      */
-    public void forget(String arg) throws LockedException {
+    private void enable()  throws LockedException {
+        if(isEnabled) return;
+        if(isBlacklisted()) throw new LockedException("Cannot enable blacklisted option");
+        isEnabled = true;
+        serialNo++;
+    }
+    
+    
+    /**
+     * Disables (unsets) the specified option under this configuration branch. The disabled options can be
+     * re-enabled again to its prior state as long as no new value is set for it.
+     * 
+     * @param name                the option name, condition, alias, or "*" to disable.
+     * 
+     * @see #enable(String)
+     * 
+     */
+    public void disable(String name) {
 
-        if(arg.equals("blacklist")) {
+        if(name.equals("blacklist")) {
             List<String> blacklist = getBlacklist();
             for(String key : blacklist) whitelist(key);
             return;
         }
 
-        else if(arg.equals("conditions")) {
+        else if(name.equals("conditions")) {
             conditionals.clear();
-            for(String name : branches.keySet()) branches.get(name).forget(arg);
+            for(String key : branches.keySet()) branches.get(key).disable(name);
             return;
         }
 
-        String branchName = getBranchName(arg);
+        String branchName = getBranchName(name);
 
         if(branchName.equals("*")) {
-            for(String name : new ArrayList<>(branches.keySet())) forget(name + getRemainder(arg, 1));
+            for(String key : branches.keySet()) disable(key + getRemainder(name, 1));
         }	
         else {
             String key = unaliasedKey(branchName);
-            if(key.contains(".")) forget(key + getRemainder(arg, branchName.length()));
+            if(key.contains(".")) disable(key + getRemainder(name, branchName.length()));
             else if(branches.containsKey(key)) { 
                 Configurator branch = branches.get(key);
-                if(arg.length() != branchName.length()) branch.forget(getRemainder(arg, branchName.length() + 1));
-                else {
-                    if(branch.isLocked) throw new LockedException("Cannot forget option '" + branch + "'");
-                    branch.isEnabled = false;
-                }
+                if(name.length() != branchName.length()) branch.disable(getRemainder(name, branchName.length() + 1));
+                else branch.disable();
             }
         }
     }
 
-    
-    public void recall(String arg) throws LockedException {
-        String branchName = getBranchName(arg);
+    /**
+     * Re-enables a disabled configuration key.
+     *      
+     * @param name              the branch name, condition, alias, or "*".
+     * @throws LockedException  if the affected branch is in a locked state, preventing changes.
+     * 
+     * @see #disable(String)
+     * @see #lock()
+     * @see #lockTo(String)
+     * @see #unlock()
+     */
+    public void enable(String name) throws LockedException {
+        String branchName = getBranchName(name);
 
         if(branchName.equals("*")) {
-            for(String name : new ArrayList<>(branches.keySet())) recall(name + getRemainder(arg, 1));
+            for(String key : branches.keySet()) enable(key + getRemainder(name, 1));
         }	
         else {
             String key = unaliasedKey(branchName);
-            if(key.contains(".")) recall(key + getRemainder(arg, branchName.length()));
+            if(key.contains(".")) enable(key + getRemainder(name, branchName.length()));
             else if(branches.containsKey(key)) { 
                 Configurator branch = branches.get(key);
-                if(arg.length() != branchName.length()) branch.forget(getRemainder(arg, branchName.length() + 1));
+                if(name.length() != branchName.length()) branch.enable(getRemainder(name, branchName.length() + 1));
                 else {
                     Configurator option = branches.get(key);
-                    if(option.isLocked) throw new LockedException("Cannot recall option '" + key + "'");
-                    option.isEnabled = true;
-                    option.serialNo = counter++;
-                    activateCondition(arg, option.value);
+                    if(option.isBlacklisted()) throw new LockedException("Cannot enable blacklisted option '" + key + "'");
+                    option.enable();
+                    activateCondition(name, option.value);
                 }
             }
         }
     }
 
-
-    public void remove(String arg) throws LockedException {
-        String branchName = getBranchName(arg);
+    /**
+     * Removes an entire configuration branch from this location in the configuration tree. The removed
+     * branch can be reinstated with {@link #restore(String)} afterwards is need be.
+     * 
+     * @param name                  the branch name, condition, alias, or "*".
+     * @throws LockedException      if the affected branch is in a locked state, preventing changes.
+     *                              
+     * @see #restore(String)
+     * @see #purge(String)
+     */
+    public void remove(String name) throws LockedException {
+        String branchName = getBranchName(name);
 
         if(branchName.equals("*")) {
-            for(String name : new ArrayList<>(branches.keySet())) remove(name + getRemainder(arg, 1));
+            for(String key : new ArrayList<>(branches.keySet())) remove(key + getRemainder(name, 1));
         }
         else if(branchName.startsWith("[") && branchName.endsWith("]")) {
             branchName = branchName.substring(1, branchName.length()-1).trim();
@@ -638,27 +740,34 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
         else {
             String key = unaliasedKey(branchName);
-            if(key.contains(".")) remove(key + getRemainder(arg, branchName.length()));
+            if(key.contains(".")) remove(key + getRemainder(name, branchName.length()));
             else if(branches.containsKey(key)) { 
                 Configurator branch = branches.get(key);
-                if(arg.length() != branchName.length()) branch.remove(getRemainder(arg, branchName.length() + 1));
+                if(name.length() != branchName.length()) branch.remove(getRemainder(name, branchName.length() + 1));
                 // Do not remove the removed key itself...
                 else if(key.equals("removed")) return;
                 else {
                     if(branch.isLocked) throw new LockedException("Cannot remove branch '" + key + "'");
-                    if(details) Util.detail(this, "<rm> " + key); 
+                    Util.debug(this, "<rm> " + key); 
                     getRemoved().branches.put(key, branches.remove(key));
                 }
             }
         }
     }
 
-
-    public void purge(String arg) {
-        String branchName = getBranchName(arg);
+    /**
+     * Irrevokably purges an entire configuration branch from this location in the configuration tree, ignoring
+     * any locks present.
+     * 
+     * @param name                  the branch name, condition, alias, or "*".
+     *                              
+     * @see #remove(String)
+     */
+    public void purge(String name) {
+        String branchName = getBranchName(name);
 
         if(branchName.equals("*")) {
-            for(String name : new ArrayList<>(branches.keySet())) purge(name + getRemainder(arg, 1));
+            for(String key : new ArrayList<>(branches.keySet())) purge(key + getRemainder(name, 1));
         }
         else if(branchName.startsWith("[") && branchName.endsWith("]")) {
             branchName = branchName.substring(1, branchName.length()-1).trim();
@@ -666,12 +775,12 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
         else {
             String key = unaliasedKey(branchName);
-            if(key.contains(".")) purge(key + getRemainder(arg, branchName.length()));
+            if(key.contains(".")) purge(key + getRemainder(name, branchName.length()));
             else if(branches.containsKey(key)) { 
                 Configurator branch = branches.get(key);
-                if(arg.length() != branchName.length()) branch.purge(getRemainder(arg, branchName.length() + 1));
+                if(name.length() != branchName.length()) branch.purge(getRemainder(name, branchName.length() + 1));
                 else {
-                    if(details) Util.detail(this, "<pg> " + key); 
+                    Util.debug(this, "<pg> " + key); 
                     branches.remove(key);
                 }
             }
@@ -679,138 +788,215 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     }
 
-
-    public Configurator getRemoved() {
+    /**
+     * Returns the option branches that were previously removed from this point of the configuration tree.
+     * 
+     * @return      a configuration three containing any branches that may have preveiously been removed
+     *              from this point of the configuration tree.
+     */
+    private Configurator getRemoved() {
         if(!branches.containsKey("removed")) branches.put("removed", new Configurator(root));
         return branches.get("removed");
     }
 
 
-
-    public void restore(String arg) {
-        String branchName = getBranchName(arg);
+    /**
+     * Restores an entire configuration branch to its previous state prior to removal. 
+     * 
+     * @param name                  the branch name, condition, alias, or "*".
+     *                              
+     * @see #remove(String)
+     */
+    public void restore(String name) {
+        String branchName = getBranchName(name);
 
         if(branchName.equals("*")) {
-            if(arg.length() == 1) for(String name : getRemoved().branches.keySet()) restore(name);
-            else for(String name : new ArrayList<>(branches.keySet())) restore(name + getRemainder(arg, 1));
+            if(name.length() == 1) for(String key : getRemoved().branches.keySet()) restore(key);
+            else for(String key : new ArrayList<>(branches.keySet())) restore(key + getRemainder(name, 1));
         }
         else {
             String key = unaliasedKey(branchName);
-            if(key.contains(".")) restore(key + getRemainder(arg, branchName.length()));
+            if(key.contains(".")) restore(key + getRemainder(name, branchName.length()));
             else if(branches.containsKey(key)) { 
                 Configurator branch = branches.get(key);
-                if(arg.length() != branchName.length()) branch.restore(getRemainder(arg, branchName.length() + 1));
+                if(name.length() != branchName.length()) branch.restore(getRemainder(name, branchName.length() + 1));
                 else {
                     Hashtable<String, Configurator> removedBranches = getRemoved().branches;
 
                     if(!removedBranches.containsKey(key)) return;			
-                    if(details) Util.detail(this, "<r> " + key);
+                    Util.debug(this, "<r> " + key);
 
                     Configurator removedBranch = removedBranches.remove(key);			
                     branches.put(key, removedBranch);
 
                     if(removedBranches.isEmpty()) branches.remove("removed");
 
-                    if(branch.isBlacklisted()) {
-                        try { removedBranch.blacklist(); }
-                        catch(LockedException e) { 
-                            // TODO 
-                        } 
-                    }
+                    if(branch.isBlacklisted()) removedBranch.blacklist();
                 }
             }
         }
     }
 
 
-
-    public void blacklist(String arg) throws LockedException {		
-        String branchName = getBranchName(arg);
+    /**
+     * Blacklists a configuration option in this configuration tree. Blacklisted options are disabled immediately
+     * and cannot be reset or changed until they are whitelisted again. It is the same as calling {@link #disable(String)}
+     * followed by {@link #lock()} on the selected option.
+     * 
+     * @param name              the configuration option, or alias, to blacklist
+     * @throws LockedException  if the affected branch is in a locked state, preventing changes.
+     * 
+     * @see #disable(String)
+     * @see #whitelist(String)
+     */
+    public void blacklist(String name) throws LockedException {	
+        String branchName = getBranchName(name);
         String key = unaliasedKey(branchName);
 
-        if(key.contains(".")) blacklist(key + getRemainder(arg, branchName.length()));
+        if(key.contains(".")) blacklist(key + getRemainder(name, branchName.length()));
         else {
             if(!branches.containsKey(key)) branches.put(key, new Configurator(root));
             Configurator branch = branches.get(key);
-            if(arg.length() != branchName.length()) branch.blacklist(getRemainder(arg, branchName.length() + 1));
+            if(name.length() != branchName.length()) branch.blacklist(getRemainder(name, branchName.length() + 1));
             else {
-                if(details) Util.detail(this, "<b> " + key);
+                Util.debug(this, "<b> " + key);
                 branch.blacklist();
             }
         }
     }	
 
-
-    public void whitelist(String arg) throws LockedException {
-        String branchName = getBranchName(arg);
+    /** 
+     * Whitelists a configuration option in this configuration tree, allowing the option to be changed once again.
+     * For previously blacklisted options, this is the same as calling {@link #unlock()}, allowing the option
+     * to be set/reset again. However, whitelisting should no be used on options that were disabled but not blacklisted.
+     * Trying to do that will result in an exception. Note also, that if the option was blacklisted (i.e. disabled
+     * and locked) before, whitelisting only removes the lock, but does not restore the ealier state of the
+     * option.
+     *
+     * @param name      the configuration option, alias, or "*", to whitelist
+     * 
+     * @see #lock()
+     * @see #unlock()
+     * @see #enable(String)
+     */
+    public void whitelist(String name) {
+        String branchName = getBranchName(name);
 
         if(branchName.equals("*")) 
             for(String branch : branches.keySet()) {
-                try { whitelist(branch + getRemainder(arg, 1)); }
-                catch(LockedException e) {
-                    // TODO
-                }
+                whitelist(branch + getRemainder(name, 1));
             }
         else {
             String key = unaliasedKey(branchName);
-            if(key.contains(".")) whitelist(key + getRemainder(arg, branchName.length()));
+            if(key.contains(".")) whitelist(key + getRemainder(name, branchName.length()));
             else if(branches.containsKey(key)) { 
                 Configurator branch = branches.get(key);
-                if(arg.length() != branchName.length()) branch.whitelist(getRemainder(arg, branchName.length() + 1));
+                if(name.length() != branchName.length()) branch.whitelist(getRemainder(name, branchName.length() + 1));
                 else {
-                    if(details) Util.detail(this, "<w> " + key);
+                    Util.debug(this, "<w> " + key);
                     branch.whitelist();
                 }
             }
         }
     }
 
-
-    public boolean isBlacklisted() {
+    /**
+     * Checks if this option has been blacklisted (disabled and locked).
+     * 
+     * @return      <code>true</code> if this option has been blacklisted (disdabled and locked), otherwise <code>false</code>.
+     * 
+     * @see #isBlacklisted(String)
+     */
+    private boolean isBlacklisted() {
         return isLocked & !isEnabled;
     }
 
+    /**
+     * Blacklists this option. Same as {@link #disable()} followed by {@link #lock()}. The option cannot be set again until it is
+     * whitelisted.
+     * 
+     * @see #whitelist()
+     */
+    private void blacklist() {
+        disable();
+        lock();
+    }
 
-    public void blacklist() throws LockedException {
-        if(isLocked) if(!isBlacklisted()) throw new LockedException("Cannot blacklist locked option.");
-        isEnabled = false;
+    /**
+     * Whitelists this option, allowing it to be set again.
+     * 
+     */
+    private void whitelist()  {
+        if(isBlacklisted()) isLocked = false;
+    }
+
+    /**
+     * Changes a a possibly locked option to an new value before locking it (again). This is a way to force change
+     * an option even if it had been locked.
+     * 
+     * @param value          The new (locked) value.
+     * @throws LockedException  if the option has been blaklisted (disabled &amp; locked).
+     * 
+     * @see #lock()
+     */
+    public void relockTo(String value) throws LockedException {
+        if(isBlacklisted()) throw new LockedException("Cannot relock value of blacklisted option.");
+        this.value = value;
         isLocked = true;
     }
 
-
-    public void whitelist() throws LockedException {
-        if(isLocked) if(!isBlacklisted()) throw new LockedException("Cannot whitelist locked option.");
-        isLocked = false;
-    }
-
-
-    public void relock(String argument) {
-        if(!isBlacklisted()) {
-            value = argument;
-            isLocked = true;
-        }
-    }
-
-
-    public void lock(String argument) {
+    
+    /**
+     * Changes the value and locks this configuration option preventing firther changes until the option is
+     * unlocked again.
+     * 
+     * @param value         the new (locked) value.
+     * 
+     * @see #lock()
+     * @see #unlock()
+     */
+    public void lockTo(String value) {
         if(isBlacklisted()) return;
-        if(!argument.isEmpty()) if(!isLocked) value = argument;
+        if(!value.isEmpty()) if(!isLocked) this.value = value;
+        lock();
+    }
+
+    /**
+     * Locks this configuration option to the currently set value, preventing subsequent changes until
+     * the option is unlocked again. Locked options can still be disabled and blacklisted (neither of
+     * which changes the assigned value).
+     * 
+     * @see #unlock()
+     */
+    public void lock() {
         isLocked = true;
     }
 
-
+    /**
+     * Unlocks this configuration option, allowing it to be changed.
+     * 
+     */
     public void unlock() {
         if(!isBlacklisted()) isLocked = false;
     }
 
-
-    public boolean isBlacklisted(String arg) {
-        String branchName = getBranchName(arg);
+    /**
+     * Checks if an option in this configuration is blacklisted. Blacklisted options cannot be changed
+     * or enabled until they are whitelisted again.
+     * 
+     * @param name      The option name or alias to check.
+     * @return          <code>true</code> of the corresponding option is currently blacklisted, otherwise <code>false</code>.
+     * 
+     * @see #blacklist(String)
+     * @see #whitelist(String)
+     */
+    public boolean isBlacklisted(String name) {
+        String branchName = getBranchName(name);
         String key = unaliasedKey(branchName);
-        if(key.contains(".")) return isBlacklisted(key + getRemainder(arg, branchName.length()));
+        if(key.contains(".")) return isBlacklisted(key + getRemainder(name, branchName.length()));
         else if(branches.containsKey(key)) { 
             Configurator branch = branches.get(key);
-            if(arg.length() != branchName.length()) return branch.isBlacklisted(getRemainder(arg, branchName.length() + 1));
+            if(name.length() != branchName.length()) return branch.isBlacklisted(getRemainder(name, branchName.length() + 1));
             return branch.isBlacklisted();
         }
         else return false;
@@ -843,7 +1029,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @param key  The option name or alias...     
      * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
      * 
-     * @see #exactOption(String)
      * @see #hasOption(String)
      * @see #containsKey(String)
      */
@@ -862,9 +1047,8 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @return  The {@link jnum.Configurator} option branch for the specified name argument. 
      * 
      * @see #option(String)
-     * @see #containsExact(String)
      */
-    public Configurator exactOption(String key) {
+    private Configurator exactOption(String key) {
         String branchName = getBranchName(key);
         if(branchName.length() == key.length()) return branches.get(key);
         else if(branches.containsKey(branchName)) return branches.get(branchName).option(getRemainder(key, branchName.length() + 1));
@@ -882,7 +1066,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @param key   The option key or alias to look for in this configuration branch.
      * @return      <code>true</code> if the key exists (even if disabled!), or <code>false</code> otherwise.
      * 
-     * @see #containsExact(String)
      * @see #hasOption(String)
      * 
      */
@@ -898,7 +1081,6 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * Checks if the specified configuration option (not alias!) exists under this configuration branch. 
      * It does not check whether or not the option is enabled. It merely checks for existence, even if in a disabled state.
      * 
-     * 
      * If you also want to check to see if the option is <i>enabled</i> beyond just <i>existence</i>, you should
      * use {@link #hasOption(String)} instead.
      *
@@ -909,7 +1091,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @see #hasOption(String)
      * 
      */
-    public boolean containsExact(String key) {
+    private boolean containsExact(String key) {
         String branchName = getBranchName(key);
         if(!branches.containsKey(branchName)) return false;
         if(key.length() == branchName.length()) return true;
@@ -921,14 +1103,11 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * Checks if a specific option key was set and is active in this condifuration branch. 
      * Similar to {@link #containsKey(String)} but checks that the option is <i>enabled</i> as well as <i>existence</i>.
      * 
-     * 
      * @param key  The option <code>key</code> or alias to check under this configuration branch.
      * @return      <code>true</code> if the option <i>exists</i> and is <i>enabled</i>, or <code>false</code> otherwise.
      * 
      * @see #containsKey(String)
-     * @see #containsExact(String)
      * @see #option(String)
-     * @see #exactOption(String)
      * 
      */
     public boolean hasOption(String key) {
@@ -939,7 +1118,17 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return option.value != null;
     }	
 
-
+    
+    /**
+     * Maps the value of this option to a branch, such that any setting for this option will set the
+     * value of the designated branch. This can be used for options that otherwise have no function other
+     * than grouping a bunch of branches together semantically. By mapping the option to one
+     * of the branches, that branch effectively becomes the default branch for this option, to
+     * which settings are propagated.
+     * 
+     * @param branchName            the name of the branch that is mapped to this option.
+     * @throws LockedException      if the branch is locked.
+     */
     public void mapValueTo(String branchName) throws LockedException {
         if(value != null) if(value.length() > 0) {
             if(containsKey(branchName)) {
@@ -957,24 +1146,56 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         value = "";
     }
 
-
+    // TODO Intersect conditionals also...
+    /**
+     * <p>
+     * Intersects this configuration tree with another. Only the branches present in both trees are
+     * kept. In the intersection branches are enabled only if they are enabled in both trees and have 
+     * the same values. Mismatched branches will be disabled in the intersection. Thus, the intersection
+     * is useful for finding all the configuration settings that are identical between this
+     * configurator and the other.
+     * </p>
+     * <p>
+     * Conditionals are not affected at this time (that is they are not intersected). This may change
+     * in future implementations...
+     * </p>
+     * 
+     * @param options       the configuration tree to intersect with
+     * 
+     * @see #difference(Configurator)
+     */
     public void intersect(Configurator options) {
-        for(String key : getKeys(false)) {
+        for(String key : getKeys()) {
             if(!options.containsKey(key)) purge(key);
             else {
                 Configurator option = option(key);
                 Configurator other = options.option(key);
-                if(option.isEnabled && !other.isEnabled) option.isEnabled = false;
-                else if(!option.value.equals(other.value)) option.isEnabled = false;
+                option.isEnabled = option.isEnabled && other.isEnabled && option.value.equals(other.value);
             }
         }
     }
 
-    // TODO Difference conditionals and blacklists too...
+    // TODO Difference conditionals also...
+    /**
+     * <p>
+     * Returns the differences between this configuration tree and another. 
+     * The differential configuration will contain only the settings that differ between the two trees,
+     * with the values copied from this configuration tree.
+     * </p>
+     * <p>
+     * Conditionals are not affected at this time (that is they are not intersected). This may change
+     * in future implementations...
+     * </p>
+     * 
+     * @param options       the configuration tree to compare with
+     * @return              the settings from this tree that differ from the other tree.
+     * 
+     * @see #intersect(Configurator)
+     */
     public Configurator difference(Configurator options) {
         Configurator difference = new Configurator(root);
 
-        for(String key : getKeys(false)) {
+        for(String key : getKeys()) {
             if(!options.containsKey(key)) difference.setOption(key + " " + option(key).value);
             else {
                 Configurator option = option(key);
@@ -1265,12 +1486,14 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @param isNonNegative     whether the parsed range is expected to be a strictly non-negative range.
      * @param scaling           The factor by which the range shall be scaled (e.g. a {@link Unit} cast) before return.
      * @return                  The real-valued range represented by this configuration point, scaled by the argument.
+     * @throws NumberFormatException    if the option's string does not seem to be a range specification.
      * 
      * @see Range
      * @see #getValue()
      * @see #getRange()
      * @see #getRange(boolean)
      * @see #getRange(double)
+     * 
      */
     public Range getRange(boolean isNonNegative, double scaling) throws NumberFormatException {
         Range r = getRange(isNonNegative);
@@ -1349,7 +1572,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     
     /**
-     * Returns the value associated with this configuration point as a 2D dimension. It is similar to {@link getVector2D()} except 
+     * Returns the value associated with this configuration point as a 2D dimension. It is similar to {@link #getVector2D()} except 
      * with slightly different parsing rules, accepting 'x' or 'X' as separator (as well as commas or spaces), e.g. "142.1x87.3".
      * 
      * @return                          The 2D dimension represented by this configuration point.
@@ -1371,7 +1594,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     /**
      * Returns the value associated with this configuration point as a 2D dimension, scaled by the argument (e.g. for a unit 
-     * conversion). It is similar to {@link getVector2D(double)} except with slightly different parsing rules, accepting 
+     * conversion). It is similar to {@link #getVector2D(double)} except with slightly different parsing rules, accepting 
      * 'x' or 'X' as separator (as well as commas or spaces), e.g. "142.1x87.3".
      * 
      * @param scaling                   The factor by which the 2D dimension shall be scaled (e.g. a {@link Unit} cast) before return.
@@ -1394,7 +1617,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
     /**
      * Returns the value associated with this configuration point as a 2D dimension, scaled component-wise by the 2D
-     * argument. The underlying parsing is similar to that of {@link getVector2D(double)}, but also accepting 
+     * argument. The underlying parsing is similar to that of {@link #getVector2D(double)}, but also accepting 
      * 'x' or 'X' as separator (as well as commas or spaces), e.g. "142.1x87.3".
      * 
      * @param scaling                   The 2D component-wise scalars to apply before return.
@@ -1426,7 +1649,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @see #getIntegers()
      * 
      */
-    public List<String> getList() {
+    public ArrayList<String> getList() {
         ArrayList<String> list = new ArrayList<>();
         StringTokenizer tokens = new StringTokenizer(getValue(), " \t,");
         while(tokens.hasMoreTokens()) list.add(tokens.nextToken());
@@ -1447,7 +1670,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @see #getIntegers()
      * 
      */
-    public List<String> getLowerCaseList() {
+    public ArrayList<String> getLowerCaseList() {
         ArrayList<String> list = new ArrayList<>();
         StringTokenizer tokens = new StringTokenizer(getValue(), " \t,");
         while(tokens.hasMoreTokens()) list.add(tokens.nextToken().toLowerCase());
@@ -1468,8 +1691,8 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @see #getIntegers()
      * 
      */
-    public List<Double> getDoubles() throws NumberFormatException {
-        List<String> list = getList();
+    public ArrayList<Double> getDoubles() throws NumberFormatException {
+        ArrayList<String> list = getList();
         ArrayList<Double> doubles = new ArrayList<>(list.size());	
         for(String entry : list) {
             try { doubles.add(Double.parseDouble(entry)); }
@@ -1492,8 +1715,8 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @see #getIntegers()
      * 
      */
-    public List<Float> getFloats() {
-        List<String> list = getList();
+    public ArrayList<Float> getFloats() {
+        ArrayList<String> list = getList();
         ArrayList<Float> floats = new ArrayList<>(list.size());	
         for(String entry : list) {
             try { floats.add(Float.parseFloat(entry)); }
@@ -1515,8 +1738,8 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
      * @see #getFloats()
      * 
      */
-    public List<Integer> getIntegers() {
-        List<String> list = getList();
+    public ArrayList<Integer> getIntegers() {
+        ArrayList<String> list = getList();
         ArrayList<Integer> ints = new ArrayList<>(list.size());	
         for(String entry : list) {
             try { ints.add(Integer.decode(entry)); }
@@ -1530,50 +1753,62 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
         return ints;
     }
-
     
-    public List<String> getKeys(boolean includeBlacklisted) {
+    
+    /**
+     * Returns all the active configurations keys under this configuration tree recursively as
+     * a hierarchical list with periods separating hierachies. The
+     * keys are not sorted, and may appear in random-like order. For getting them in sorted
+     * order use {@link #getAlphabeticalKeys()} or {@link #getTimeOrderedKeys()} instead.
+     *
+     * @return      all configurations keys in this tree, hierarchically, in no particular order.
+     * 
+     * @see #getAlphabeticalKeys()
+     * @see #getTimeOrderedKeys()
+     */
+    public ArrayList<String> getKeys() {
         ArrayList<String> keys = new ArrayList<>();
         for(String branchName : branches.keySet()) {
             Configurator option = branches.get(branchName);	
             if(option.isEnabled) keys.add(branchName);
-            else if(includeBlacklisted) if(option.isBlacklisted()) keys.add(branchName);
-            for(String key : option.getKeys(includeBlacklisted)) keys.add(branchName + "." + key);			
+            for(String key : option.getKeys()) keys.add(branchName + "." + key);			
         }	
         return keys;
     }
 
-
-    public List<String> getForgottenKeys() {
+    
+    private ArrayList<String> getDisabledKeys() {
         ArrayList<String> keys = new ArrayList<>();
         for(String branchName : branches.keySet()) {
             Configurator option = branches.get(branchName);
             if(!option.isEnabled) if(option.value != null) if(option.value.length() > 0) keys.add(branchName);
-            for(String key : option.getForgottenKeys()) keys.add(branchName + "." + key);			
+            for(String key : option.getDisabledKeys()) keys.add(branchName + "." + key);			
         }		
+        Collections.sort(keys);
         return keys;
     }
 
 
-    public List<String> getBlacklist() {
+    private ArrayList<String> getBlacklist() {
         ArrayList<String> keys = new ArrayList<>();
         for(String branchName : branches.keySet()) {
             Configurator option = branches.get(branchName);	
             if(option.isBlacklisted()) keys.add(branchName);
             for(String key : option.getBlacklist()) keys.add(branchName + "." + key);
         }	
+        Collections.sort(keys);
         return keys;
     }
 
 
-    public List<String> getConditionalListFor(String keyPattern) {
+    private ArrayList<String> getConditionalListFor(String keyPattern) {
 
         if(keyPattern != null) {
             if(keyPattern.isEmpty()) keyPattern = null;
             else keyPattern = keyPattern.toLowerCase();
         }
 
-        Hashtable<String, Vector<String>> conditions = getConditions(true);
+        Hashtable<String, Vector<String>> conditions = getConditionsTree();
         ArrayList<String> forKey = new ArrayList<>();
 
         for(String condition : conditions.keySet()) {
@@ -1611,23 +1846,31 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
 
 
-    public Hashtable<String, Vector<String>> getConditions(boolean isBracketed) {
+    private Hashtable<String, Vector<String>> getConditionsTree() {
         Hashtable<String, Vector<String>> conditions = new Hashtable<>();
         for(String key : conditionals.keySet()) {
-            conditions.put(isBracketed ? "[" + key + "]" : key, conditionals.get(key));
+            conditions.put("[" + key + "]", conditionals.get(key));
         }
 
         for(String branchName : branches.keySet()) {
-            Hashtable<String, Vector<String>> branchConditions = branches.get(branchName).getConditions(isBracketed);	
+            Hashtable<String, Vector<String>> branchConditions = branches.get(branchName).getConditionsTree();	
             if(!branchConditions.isEmpty())
                 for(String key : branchConditions.keySet()) conditions.put(branchName + "." + key, branchConditions.get(key));			
         }	
         return conditions;
     }
 
-
-    public List<String> getTimeOrderedKeys() {		
-        List<String> keys = getKeys(false);	
+    /**
+     * Returns a time-ordered list of all the active configurations keys under this configuration tree recursively 
+     * with periods separating hierachies.
+     *
+     * @return      all configurations keys in this tree, hierarchically, in the order they were set.
+     * 
+     * @see #getKeys()
+     * @see #getAlphabeticalKeys()
+     */
+    public ArrayList<String> getTimeOrderedKeys() {		
+        ArrayList<String> keys = getKeys();	
         Collections.sort(keys,
                 new Comparator<String>() {
             @Override
@@ -1641,117 +1884,53 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         return keys;
     }
 
-
-    public List<String> getAlphabeticalKeys(boolean includeBlacklisted) {
-        List<String> keys = getKeys(includeBlacklisted);
+    /**
+     * Returns an alphabertically sorted list of all the active configurations keys under this configuration tree recursively 
+     * with periods separating hierachies.
+     *
+     * @return      all configurations keys in this tree, hierarchically, in alphabetical order.
+     * 
+     * @see #getKeys()
+     * @see #getTimeOrderedKeys()
+     */
+    public ArrayList<String> getAlphabeticalKeys() {
+        ArrayList<String> keys = getKeys();
         Collections.sort(keys);
         return keys;
     }
 
-
+    /**
+     * Prints this configuration tree to the specified print stream.
+     * 
+     * @param out       the stream to which to print the configuration.
+     * 
+     * @see #poll(String, PrintStream, String)
+     * @see #pollActive(String)
+     * @see #pollDisabled(String)
+     * @see #pollBlacklist(String)
+     * @see #pollConditions(String)
+     */
     public void print(PrintStream out) {
         poll(null, out, "#");
     }
 
-
+    /**
+     * Polls a configuration pattern, printing out all configuration information that matches the
+     * pattern: active and disabled keys, conditionals, blacklists.
+     * 
+     * @param pattern   a search pattern, usually a key stem, possibly ending with a wildcard "*".
+     *                  all settings that start with the stem will be reported.
+     *                  
+     * @see #print(PrintStream)
+     */
     public void poll(String pattern) {
         poll(pattern, System.out, "");
-        pollForgotten(pattern, System.out, "");
         System.out.println();
     }
 
-
-    public void poll(String pattern, PrintStream out, String prefix) {
-
-        if(pattern != null) {
-            pattern = pattern.toLowerCase();
-            while(pattern.endsWith("*")) pattern = pattern.substring(0, pattern.length()-1);
-        }
-
-        out.println();
-
-        if(pattern == null) out.println(prefix + " Current configuration is: ");
-        else out.println(prefix + " Currently set keys starting with '" + pattern + "': ");
-
-        out.println(prefix + " --------------------------------------------------------------------");
-
-        for(String key : getAlphabeticalKeys(true)) {
-            if(pattern != null) if(!key.startsWith(pattern)) continue;
-
-            Configurator option = option(key);
-            if(option.isBlacklisted()) {
-                out.println("  [" + key + "] --- (blacklisted)");
-            }
-            else {
-                out.print("   " + key);
-                String value = option.getValue();
-                if(value.length() > 0) out.print(" = " + value);
-                if(option.isLocked) out.print(" (locked)");
-                out.println();
-            }
-        }
-
-
-        if(pattern != null) {
-            List<String> conditions = getConditionalListFor(pattern);
-
-            if(!conditions.isEmpty()) {
-                out.println();
-                out.println(prefix + " Conditional settings for '" + pattern + "': ");
-                out.println(prefix + " --------------------------------------------------------------------");
-
-                for(String condition : conditions) out.println("   " + condition);
-            }
-        }
-
-
-        out.println(prefix + " --------------------------------------------------------------------");
-    }
-
-
-    public void pollForgotten(String pattern, PrintStream out, String prefix) {
-
-        if(pattern != null) {
-            pattern = pattern.toLowerCase();
-            while(pattern.endsWith("*")) pattern = pattern.substring(0, pattern.length()-1);
-        }
-
-        List<String> list = getForgottenKeys();
+    private void poll(List<String> list, String description, boolean showValue, String pattern, PrintStream out, String prefix) {
         if(list.isEmpty()) return;
-
-        out.println();
-
-        if(pattern == null) out.println(prefix + " Recallable configuration keys are: ");
-        else out.println(prefix + " Recallable keys starting with '" + pattern + "': ");
-
-        out.println(prefix + " --------------------------------------------------------------------");
-
-
-        Collections.sort(list);
-
-        for(String key : list) {
-            if(pattern != null) if(!key.startsWith(pattern)) continue;
-
-            out.print("   (" + key);
-            String value = option(key).value;
-            if(value.length() > 0) out.print(" = " + value);
-            out.print(")");
-            if(isBlacklisted(key)) out.print(" --blacklisted--");
-            out.println();
-        }
-
-        out.println(prefix + " --------------------------------------------------------------------");
-    }
-
-
-    public void pollBlacklist(String pattern) {
-        pollBlacklist(pattern, System.out, "");
-        System.out.println();
-    }
-
-
-    public void pollBlacklist(String pattern, PrintStream out, String prefix) {
-
+        
         if(pattern != null) {
             pattern = pattern.toLowerCase();
             while(pattern.endsWith("*")) pattern = pattern.substring(0, pattern.length()-1);
@@ -1759,67 +1938,144 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
 
         out.println();
 
-        if(pattern == null) out.println(prefix + " Blacklisted configuration keys are: ");
-        else out.println(prefix + " Blacklisted keys starting with '" + pattern + "': ");
+        if(pattern == null) out.println(prefix + " " + description + " configuration keys are: ");
+        else out.println(prefix + " " + description + " keys starting with '" + pattern + "': ");
 
         out.println(prefix + " --------------------------------------------------------------------");
 
-        List<String> list = getBlacklist();
         Collections.sort(list);
 
         for(String key : list) {
             if(pattern != null) if(!key.startsWith(pattern)) continue;
-            out.println("   " + key);
+            
+            if(showValue) {
+                String value = option(key).getValue();
+                if(!value.isEmpty()) out.println("   " + key + " = " + option(key));
+                else out.println("   " + key);
+            }
+            else out.println("   " + key);
         }
 
         out.println(prefix + " --------------------------------------------------------------------");
     }
+    
+    
+    /**
+     * Polls a configuration pattern, printing out, to the specified stream, all configuration information that matches the
+     * pattern: active and disabled keys, conditionals, blacklists.
+     * 
+     * @param pattern   a search pattern, usually a key stem, possibly ending with a wildcard "*".
+     *                  all settings that start with the stem will be reported.
+     * @param out       the stream to which to print the result
+     * @param prefix    a string to prefix all lines of output with (e.g. a comment character "#", or an
+     *                  indentation).
+     *                  
+     * @see #poll(String)
+     * @see #print(PrintStream)
+     */
+    public void poll(String pattern, PrintStream out, String prefix) {
+        poll(getKeys(), "Active", true, pattern, out, prefix);
+        poll(getDisabledKeys(), "Disabled", true, pattern, out, prefix);
+        poll(getBlacklist(), "Blacklisted", false, pattern, out, prefix);
+        pollConditions(pattern, out, prefix);
+    }
 
+    /**
+     * Polls a configuration pattern, printing out all active configuration keys that match the
+     * specified pattern.
+     * 
+     * @param pattern   a search pattern, usually a key stem, possibly ending with a wildcard "*".
+     *                  all settings that start with the stem will be reported.
+     *                  
+     * @see #poll(String)
+     */
+    public void pollActive(String pattern) {
+        poll(getKeys(), "Active", true, pattern, System.out, "");
+        System.out.println();
+    }
+    
+    /**
+     * Polls a configuration pattern, printing out all disabled configuration keys (if any) that match the
+     * specified pattern.
+     * 
+     * @param pattern   a search pattern, usually a key stem, possibly ending with a wildcard "*".
+     *                  all settings that start with the stem will be reported.
+     *                  
+     * @see #poll(String)
+     */
+    public void pollDisabled(String pattern) {
+        poll(getDisabledKeys(), "Disabled", true, pattern, System.out, "");
+        System.out.println();
+    }
 
+    /**
+     * Polls a configuration pattern, printing out all disabled configuration keys (if any) that match the
+     * specified pattern.
+     * 
+     * @param pattern   a search pattern, usually a key stem, possibly ending with a wildcard "*".
+     *                  all settings that start with the stem will be reported.
+     *                  
+     * @see #poll(String)
+     */
+    public void pollBlacklist(String pattern) {
+        poll(getBlacklist(), "Blacklisted", false, pattern, System.out, "");
+        System.out.println();
+    }
+
+    /**
+     * Polls a configuration pattern, printing out all conditional configuration (if any) that match the
+     * specified pattern.
+     * 
+     * @param pattern   a search pattern, usually a key stem, possibly ending with a wildcard "*".
+     *                  all settings that start with the stem will be reported.
+     *                  
+     * @see #pollConditions(String, PrintStream, String)
+     * @see #poll(String)
+     *
+     */
     public void pollConditions(String pattern) {
         pollConditions(pattern, System.out, "");
         System.out.println();
     }
 
-
+    /**
+     * Polls a configuration pattern, printing out all conditional configuration (if any) that match the
+     * specified pattern to the specified stream.
+     * 
+     * @param pattern   a search pattern, usually a key stem, possibly ending with a wildcard "*".
+     *                  all settings that start with the stem will be reported.
+     * @param out       the stream to which to print the result
+     * @param prefix    a string to prefix all lines of output with (e.g. a comment character "#", or an
+     *                  indentation).
+     *                  
+     * @see #poll(String)
+     */
     public void pollConditions(String pattern, PrintStream out, String prefix) {
-
-        if(pattern != null) {
-            pattern = pattern.toLowerCase();
-            while(pattern.endsWith("*")) pattern = pattern.substring(0, pattern.length()-1);
+        
+        List<String> conditions = getConditionalListFor(pattern);
+        
+        if(!conditions.isEmpty()) {
+            out.println();
+            out.println(prefix + " Conditional settings for '" + pattern + "': ");
+            out.println(prefix + " --------------------------------------------------------------------");
+            
+            for(String condition : conditions) out.println("   " + condition);
+            
+            out.println(prefix + " --------------------------------------------------------------------");
         }
-
-        out.println();
-
-        if(pattern == null) out.println(prefix + " Active conditions are: ");
-        else out.println(prefix + " Active conditions starting with '" + pattern + "': ");
-
-        // Add all the conditionals...
-        Hashtable<String, Vector<String>> conditions = getConditions(true);
-        ArrayList<String> conditionKeys = new ArrayList<>(conditions.keySet());	
-        Collections.sort(conditionKeys);
-
-        out.println(prefix + " --------------------------------------------------------------------");
-
-        for(String key : conditionKeys) {
-            if(pattern != null) if(!key.startsWith(pattern)) continue;
-
-            StringBuilder values = new StringBuilder();
-            for(String value : conditions.get(key)) {
-                if(values.length() > 0) values.append(';');
-                values.append(value);
-            }
-            out.println("   " + key + " " + new String(values));
-        }	
-
-        out.println(prefix + " --------------------------------------------------------------------");
     }
 
-
+    /**
+     * Read the configuration from a file. The configuration is applied on top of the existing configuration
+     * aither as new hierarchies or as overrides to existing values.
+     * 
+     * @param fileName      the file containing the configuration
+     * @throws IOException  if there was an IO error.
+     */
     public void readConfig(String fileName) throws IOException {
         File configFile = new File(fileName);
         if(configFile.exists()) {
-            if(!silent) Util.info(this, "Loading configuration from " + fileName);
+            Util.detail(this, "Loading configuration from " + fileName);
 
             new LineParser() {
                 @Override
@@ -1836,13 +2092,13 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
 
         // Add all active configuration keys...
-        for(String key : getAlphabeticalKeys(false)) {
+        for(String key : getAlphabeticalKeys()) {
             Configurator option = option(key);
             if(option.isEnabled) FitsToolkit.addLongHierarchKey(c, key, option.value);
         }
 
         // Add all the conditionals...
-        Hashtable<String, Vector<String>> conditions = getConditions(true);
+        Hashtable<String, Vector<String>> conditions = getConditionsTree();
         ArrayList<String> conditionKeys = new ArrayList<>(conditions.keySet());	
         Collections.sort(conditionKeys);
 
@@ -1857,43 +2113,57 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
     }	
 
 
-    static class Locator {
-        String fileName;
-        int locationIndex;
-        long lastModified;
-    }
+    private void processEnvironmentOption(String spec, String settings) {
+        if(spec.length() == 0) return;
 
+        StringTokenizer tokens = new StringTokenizer(spec, "?");
+        String varName = tokens.nextToken().toUpperCase();
 
-    static class Setting {
-        String value;
-        Locator locator;
-    }
-
-
-    static class Entry {
-
-        String key;
-
-        String value;		// TODO change to Setting...
-
-
-        public Entry() {}
-
-
-        public Entry(String key, String value) {
-            this();
-            this.key = key;
-            this.value = value;
+        if(varName.charAt(0) == '!') if(System.getenv(varName.substring(1)) == null) {
+            parseAll(getList(settings));
+            return;
         }
 
+        if(!tokens.hasMoreTokens()) if(System.getenv(varName) != null) {
+            parseAll(getList(settings));
+            return;
+        }
 
-        public Entry (String line) {
-            this();
+        String checkValue = spec.substring(varName.length()+1);
+        if(checkValue.charAt(0) == '!') {
+            if(!System.getenv(varName).equalsIgnoreCase(checkValue.substring(1))) parseAll(getList(settings));
+            return;
+        }
+
+        if(System.getenv(varName).equalsIgnoreCase(checkValue)) parseAll(getList(settings));
+    }
+
+    private void processPropertyOption(String spec, String settings) {
+        if(spec.length() == 0) return;
+
+        StringTokenizer tokens = new StringTokenizer(spec, "?");
+        String name = tokens.nextToken();
+        String checkValue = spec.substring(name.length()+1);
+
+        if(checkValue.charAt(0) == '!') {
+            if(!System.getProperty(name).equalsIgnoreCase(checkValue.substring(1))) parseAll(getList(settings));
+            return;
+        }
+
+        if(System.getProperty(name).equalsIgnoreCase(checkValue)) parseAll(getList(settings));
+
+    }
+    
+    
+    private static class Entry {
+        String key;
+        String value;
+
+        Entry (String line) {
             parse(line);
         }
 
-
-        public boolean isCommand() {
+        boolean isCommand() {
             key = key.toLowerCase();
             if(key.endsWith("forget")) return true;
             if(key.endsWith("recall")) return true;
@@ -1908,7 +2178,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
         }
 
 
-        public void parse(String line) {
+        void parse(String line) {
             final StringBuffer keyBuffer = new StringBuffer();
 
             int openCurved = 0;
@@ -1937,7 +2207,7 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
                             key = new String(keyBuffer).toLowerCase();
                             break;
                         }
-                    }	
+                    }   
                 }
                 if(foundSeparator) break;
                 keyBuffer.append(c);
@@ -1964,54 +2234,10 @@ public class Configurator implements Serializable, Cloneable, Copiable<Configura
                 if(value.charAt(0) == '"' && value.charAt(value.length()-1) == '"')
                     value = value.substring(1, value.length() - 1);
                 else if(value.charAt(0) == '\'' && value.charAt(value.length()-1) == '\'')
-                    value = value.substring(1, value.length() - 1);	
+                    value = value.substring(1, value.length() - 1); 
             }
         }
-
     }
-
-
-    public void processEnvironmentOption(String spec, String settings) {
-        if(spec.length() == 0) return;
-
-        StringTokenizer tokens = new StringTokenizer(spec, "?");
-        String varName = tokens.nextToken().toUpperCase();
-
-        if(varName.charAt(0) == '!') if(System.getenv(varName.substring(1)) == null) {
-            parseAll(getList(settings));
-            return;
-        }
-
-        if(!tokens.hasMoreTokens()) if(System.getenv(varName) != null) {
-            parseAll(getList(settings));
-            return;
-        }
-
-        String checkValue = spec.substring(varName.length()+1);
-        if(checkValue.charAt(0) == '!') {
-            if(!System.getenv(varName).equalsIgnoreCase(checkValue.substring(1))) parseAll(getList(settings));
-            return;
-        }
-
-        if(System.getenv(varName).equalsIgnoreCase(checkValue)) parseAll(getList(settings));
-    }
-
-    public void processPropertyOption(String spec, String settings) {
-        if(spec.length() == 0) return;
-
-        StringTokenizer tokens = new StringTokenizer(spec, "?");
-        String name = tokens.nextToken();
-        String checkValue = spec.substring(name.length()+1);
-
-        if(checkValue.charAt(0) == '!') {
-            if(!System.getProperty(name).equalsIgnoreCase(checkValue.substring(1))) parseAll(getList(settings));
-            return;
-        }
-
-        if(System.getProperty(name).equalsIgnoreCase(checkValue)) parseAll(getList(settings));
-
-    }
-
 }
 
 

@@ -48,14 +48,15 @@ public interface Index<T> extends Serializable, Cloneable, Copiable<T> ,
      * Returns the product of the indices, that is the signed volume of the (multi-dimensional)
      * cube that is defined by the index and the origin.
      * 
-     * @return
+     * @return      the volume under the index cube with one corner at the origin and the farthest
+     *              other corner at the specified index location.
      */
     public int getVolume();
     
     /**
      * Returns the number of dimensions, or integer components, in this index. 
      * 
-     * @return
+     * @return  the dimensionality of the index, that is the number of integer index components it contains.
      */
     public int dimension();
     

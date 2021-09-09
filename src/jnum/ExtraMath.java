@@ -210,7 +210,7 @@ public final class ExtraMath {
 	 * @param a    list (or array) of values
      * @return     sqrt(sum<sub>i</sub>(a<sub>i</sub><sup>2</sup>)
 	 * 
-	 * @see sumSquares(double...)
+	 * @see #sumSquares(double...)
 	 * @see Math#hypot(double, double)
 	 * @see #hypot(double...)
 	 */

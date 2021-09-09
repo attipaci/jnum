@@ -33,26 +33,38 @@ package jnum;
  *
  */
 public class NonConformingException extends IllegalArgumentException {
-
-
+    /** */
     private static final long serialVersionUID = 6650987858665661469L;
     
-
+    /** Instantiates a new exception of non-comformance with no specific message */
     public NonConformingException() {
         super();
     }
 
-
+    /** 
+     * Instantiates a new exception of non-comformance from a throwable object and a custom message.
+     * 
+     * @param arg0  the custom message string for this exception
+     * @param arg1  the thrown object that caused/created this exception.
+     */
     public NonConformingException(String arg0, Throwable arg1) {
         super(arg0, arg1);
     }
 
-
+    /** 
+     * Instantiates a new exception of non-comformance with a custom message.
+     *
+     * @param arg0  the custom message string for this exception
+     */
     public NonConformingException(String arg0) {
         super(arg0);
     }
 
-
+    /** 
+     * Instantiates a new exception of non-comformance from a throwable object (and no custom message).
+     * 
+     * @param arg0  the thrown object that caused/created this exception.
+     */
     public NonConformingException(Throwable arg0) {
         super(arg0);
     }

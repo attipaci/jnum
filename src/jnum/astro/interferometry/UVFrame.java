@@ -191,6 +191,15 @@ public class UVFrame extends Hashtable<Integer, UVFrame.Visibility> implements C
         add(A.u(), A.v(), G * A.wre, G * A.wim, G * G * A.w);
     }
 
+    /**
+     * Despikes the visibility data in this frame, flagging any significant outliers above the specified
+     * S/N level.
+     * 
+     * @param level     the S/N level above which visibilities are flagged (weighted zero). 
+     * @return  the number of visibilities flagged.
+     * 
+     * @see UVDataSet#despike(double)
+     */
     public int despike(double level) {
         return entrySet().stream().map(Map.Entry::getValue).mapToInt(v -> v.despike(level)).sum();
     }

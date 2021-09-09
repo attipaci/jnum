@@ -114,7 +114,11 @@ public abstract class ParallelObject implements Cloneable, Parallelizable {
     }
 
     
-    /** A task that can be performed in parallel on the parent object. */
+    /** 
+     * A task that can be performed in parallel on the parent object. 
+     * 
+     * @param <ReturnType>  the generic type of the value retruned by this task.    
+     */
     public abstract class Task<ReturnType> extends ParallelTask<ReturnType> {           
 
         /**

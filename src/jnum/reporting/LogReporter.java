@@ -77,7 +77,7 @@ public class LogReporter extends Reporter {
      * Enables/disables message labeling by sender object in the log.
      *
      * @param value the new object labeling policy.
-     * @see #isObjectLabeled
+     * @see #isObjectLabeled()
      */
     public void setObjectLabeled(boolean value) { isObjectLabeled = value; }
     

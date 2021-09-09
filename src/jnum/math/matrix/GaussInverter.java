@@ -100,7 +100,8 @@ public abstract class GaussInverter<T> implements MatrixInverter<T>, MatrixSolve
      * Any operations that do require modifying the returned inverse should call {@link #getInverseMatrix()}
      * instead. 
      * 
-     * @return
+     * @return  the master copy the inverse. It should be used very carefully and only by subclass
+     *          implementattions lest the inverse matrix should get corrupted!
      */
     protected AbstractMatrix<T> getMasterInverse() {
        return inverse; 

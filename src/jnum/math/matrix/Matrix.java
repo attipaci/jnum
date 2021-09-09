@@ -425,6 +425,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * Gets the dot product of this matrix (M) with the matrix of generic
      * type of the argument.
      * 
+     * @param <T>   the generic type of matrix element
      * @param B     The right-hand side generic type matrix of the dot product
      * @return      The (M dot B) product as a generic tpe matrix, where M is this matrix.
      */
@@ -461,11 +462,12 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     }
    
     /**
-     * Gets the dot product of this matrix with 
+     * Gets the dot product of this matrix (M) with another matrix (B). That is it returns <code>M.B</code>.
      * 
-     * @param <T>
-     * @param B
-     * @return
+     * @param <T>   the generic type of matrix element
+     * @param B     the matrix on the right-hand side of the dot product.
+     * @return      a new matrix containing the product of this matrixc (on the left) and the specified
+     *              other matrix (on the right), or <code>M.B</code>.
      */
     public <T extends Copiable<? super T> & AbstractAlgebra<? super T> & LinearAlgebra<? super T> & Metric<? super T> & AbsoluteValue>
     ObjectMatrix<T> dot(DiagonalMatrix.Generic<T> B) {
@@ -473,7 +475,14 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     }
     
     
-    
+    /**
+     * Gets the dot product of this matrix (M) with a diagonal matrix (B). That is it returns <code>M.B</code>.
+     * 
+     * @param <T>   the generic type of matrix element
+     * @param B     the diagonal matrix on the right-hand side of the dot product.
+     * @return      a new matrix containing the product of this matrixc (on the left) and the specified
+     *              diagonal matrix (on the right), or <code>M.B</code>.
+     */
     public <T extends Copiable<? super T> & AbstractAlgebra<? super T> & LinearAlgebra<? super T> & Metric<? super T> & AbsoluteValue>
     ComplexMatrix dot(DiagonalMatrix.Complex B) {
         return B.dot(this);
@@ -708,6 +717,8 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * 
      * @param i         Matrix row index
      * @param v         Array with the new contents for the matrix row.
+     * 
+     * @throws ShapeException   if the specified vector is non-conformant with this matrix.
      */
     public void setRowData(int i, double... v) throws ShapeException {
         if(v.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");
@@ -719,6 +730,8 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
      * 
      * @param i         Matrix row index
      * @param v         Array with the new contents for the matrix row.
+     * 
+     * @throws ShapeException   if the specified vector is non-conformant with this matrix.
      */
     public void setRowData(int i, float... v) throws ShapeException {
         if(v.length != cols()) throw new ShapeException("Cannot add mismatched " + getClass().getSimpleName() + " row.");

@@ -35,6 +35,7 @@ import java.util.TimeZone;
 import jnum.Constant;
 import jnum.Copiable;
 import jnum.Unit;
+import jnum.Util;
 import jnum.math.Vector2D;
 import jnum.text.TimeFormat;
 import jnum.util.HashCode;
@@ -798,8 +799,8 @@ public class AstroTime implements Serializable, Comparable<AstroTime>, Cloneable
      *                  a new day. E.g. UNIX time seconds (since 0 UT, 1 Jan 1970), or seconds since J2000 (12h TT, 1 Jan 2000).
      * @return          (s) The remainder of the input time with a 24-hour day, in the range of [0.0:86400.0).
      */
-    public static double getTimeOfDay(double time) {
-        return time - Unit.day * Math.floor(time / Unit.day);
+    public final static double getTimeOfDay(double time) {
+        return Util.timeOfDay(time);
     }
     
     /**
@@ -861,6 +862,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime>, Cloneable
      * 
      * @param text      the string representation of time in the ISO format of {@value #ISOFormat}.
      * @return          a new astronomical time instance for the specified date.
+     * @throws ParseException   if the time could not be parsed from the supplied string.
      * 
      * @see #parseISOTimeStamp(String)
      * @see #forMJD(double)
@@ -877,10 +879,12 @@ public class AstroTime implements Serializable, Comparable<AstroTime>, Cloneable
      * 
      * @param text      the string representation of UTC time in the FITS format of {@value #FITSFormat}.
      * @return          a new astronomical time instance for the specified date.
+     * @throws ParseException   if the time could not be parsed from the supplied string.
      * 
      * @see #parseFITSTimeStamp(String)
      * @see #forMJD(double)
      * @see #forISOTimeStamp(String)
+     * 
      */
     public static AstroTime forFitsTimeStamp(String text) throws ParseException {
         AstroTime time = new AstroTime();	
@@ -894,12 +898,15 @@ public class AstroTime implements Serializable, Comparable<AstroTime>, Cloneable
      * 
      * @param text      The string representation of the date in {@value #FITSDateFormat} format. Only the first 10 characters
      *                  constituting the date are parsed.
-     * @return
-     * @throws ParseException
+     * @return          a new astronomical time object for the given date
+     * @throws ParseException   if the time could not be parsed from the supplied string.
+     * 
+     * @see #parseFITSDate(String)
+     * @see #forFitsTimeStamp(String)
      */
-    public static AstroTime forStandardDate(String text) throws ParseException {
+    public static AstroTime forFitsDate(String text) throws ParseException {
         AstroTime time = new AstroTime();   
-        time.parseFITSTimeStamp(text.substring(0, 10));
+        time.parseFITSDate(text.substring(0, 10));
         return time;
     }
 
@@ -950,11 +957,13 @@ public class AstroTime implements Serializable, Comparable<AstroTime>, Cloneable
     /** MJD at J2000, i.e. 12h TT, 1 January 2000 */
     public static final double MJDJ2000 = 51544.5;	// 12h TT 1 January 2000
 
+    /** Julian date from which MJD is measured. */
     public static final double JD_MJD0 = 24100000.5;   // JD date for MJD=0
     
     /** Milliseconds per Julian century, i.e. 36525.0 days */
     protected static final double JulianCenturyMillis = Unit.julianCentury / Unit.ms;
 
+    /** Number of days in a Julian year */
     public static final double julianYearDays = 365.25;
     
     /** Days in a Julian cenruty */

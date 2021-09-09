@@ -129,7 +129,7 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
      */
     public void toEquatorial(EquatorialCoordinates equatorial) {
         if(equatorial.getSystem() == null) equatorial.setSystem(EquatorialSystem.ICRS);
-
+        
         final EquatorialCoordinates pole = getEquatorialPole();
 
         CelestialCoordinates.inverseTransform(this, pole, -getZeroLongitude(), equatorial);
@@ -177,11 +177,35 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
      * That is the coordinates in this object will be converted as necessary from the argument.
      * 
      * @param other     the coordinates that will be set to the same position as defined by this object.
+     * 
+     * @see #convertTo(Class)
      */
     public void convertTo(CelestialCoordinates other) {
         convert(this, other);
     }
 
+
+    /**
+     * Returns the location represented by these coordinates in another celestial coordinate system.
+     * 
+     * @param toClass   the class of celestial coordinates we want.
+     * @return          the location of these coordinates in the specified other celestial coordinate type.
+     * 
+     * @see #convertTo(CelestialCoordinates)
+     */
+    public CelestialCoordinates convertTo(Class<? extends CelestialCoordinates> toClass) {
+        EquatorialCoordinates equatorial = toEquatorial();
+        CelestialCoordinates to = null;
+        
+        try { 
+            to = toClass.getConstructor().newInstance(); 
+            to.fromEquatorial(equatorial);
+        } 
+        catch (Exception e) { e.printStackTrace(); }
+        
+        return to;      
+    }
+    
     /**
      * Converts these coordinates to ecliptic coordinates, returning the result in the argument. 
      * 
@@ -289,6 +313,7 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
      * Gets the celestial location in the specified coordinate system of another celestial pole, 
      * given the longitude of the rising intercept of the equators.
      * 
+     * @param referenceSystem   The celestial coordinate system in which the pole is defined.
      * @param inclination       (rad) The inclination angle of the celestial system w.r.t. the specified reference system.
      * @param risingLON         (rad) The longitude (counter-clockwise seen from the pole) at which the celestial equator 
      *                          rises above the reference equator in the direction of rising longitude.
@@ -301,10 +326,5 @@ public abstract class CelestialCoordinates extends SphericalCoordinates {
     }
 
 
-    public static double getZeroLongitude(CelestialCoordinates from, CelestialCoordinates to) {
-        EquatorialCoordinates equatorialZero = from.toEquatorial();
-        to.fromEquatorial(equatorialZero);
-        return to.nativeLongitude();		
-    }
 
 }

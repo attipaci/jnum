@@ -1,5 +1,7 @@
 package test;
 
+import java.text.ParseException;
+
 import jnum.astro.EquatorialCoordinates;
 import jnum.math.SphericalCoordinates;
 
@@ -54,7 +56,7 @@ public class Coord2DParseTest {
      
      
 
-     public static void parseEq(String input) {
+     public static void parseEq(String input) throws ParseException {
          EquatorialCoordinates coords = new EquatorialCoordinates(input);
          System.out.println(input + " --> " + coords.toString(1));
      }

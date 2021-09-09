@@ -206,7 +206,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
      * may return 'EQ', while {@link HorizontalCoordinates} may return 'HO'. It should be something
      * that is unique but easy for a humna to identify still. 
      * 
-     * @return
+     * @return      a string with the two letter ID code for this type of coordinates.
      */
     public String getTwoLetterID() { return "SP"; }
 	
@@ -910,8 +910,7 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	/**
      * Gets the specific spherical coordinate subclass which matches the specified 2-letter ID (case insensitive).
      * Every spherical coordinate subclass has a unique 2-letter ID, such as 'EQ' for {@link EquatorialCoordinates}
-     * or 'HO' for {@link HorizontalCoordinates}.  Only coordinate classes that were registered via 
-     * {@link #register(SphericalCoordinates)} can be retrieved by this call.
+     * or 'HO' for {@link HorizontalCoordinates}.  Only coordinate classes that were registered can be retrieved by this call.
      * 
      * @param id       the 2-letter ID of the spherical coordinate whose class we want.
      * @return         the spherical coordinate class that matches the ID (case insensitive).
@@ -919,7 +918,6 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
      * 
      * @see #getTwoLetterID()
      * @see #getTwoLetterIDFor(Class)
-     * @see #register(SphericalCoordinates)
      */
 	public static Class<? extends SphericalCoordinates> getTwoLetterClass(String id) throws IllegalArgumentException {
 	    if(ids == null) registerTypes();
@@ -931,15 +929,14 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 	 /**
      * Gets a two-letter representation of the specified spherical coordinate class. Every spherical coordinate 
      * subclass has a unique 2-letter ID, such as 'EQ' for {@link EquatorialCoordinates} or 'HO' for {@link HorizontalCoordinates}.
-     * Only coordinate classes that were registered via {@link #register(SphericalCoordinates)} will have
-     * a defined mapping.
+     * Only coordinate classes that were registered will have a defined mapping.
      * 
+     * @param coordinateClass   the class of coordinates for which to get the 2-letter ID.
      * @return  the 2-letter ID of the registered spherical coordinate class, or <code>null</code> if there
-     *          if the argument class is not registered via {@link #register(SphericalCoordinates)}
+     *          if the argument class is not registered.
      *          
      * @see #getTwoLetterID()
      * @see #getTwoLetterClass(String)
-     * @see #register(SphericalCoordinates)
      */
 	public static String getTwoLetterIDFor(Class<? extends Coordinate2D> coordinateClass) {
 	    if(idLookup == null) registerTypes();
@@ -1041,18 +1038,18 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
     }
 
     /**
-     * Changes the number of decimal places to use with the default angle format {@link #af}.
+     * Changes the number of decimal places to use with the default angle format.
      * 
      * @param decimals  the number of (sub-arcsecond) decimal places to use when converting angles to
-     *                  strings in DDD:MM:SS.sss format with {@link #af}.
+     *                  strings in DDD:MM:SS.sss format with the default angle format.
      */
     public static void setDefaultDecimals(int decimals) { af.setDecimals(decimals); }
     
     /**
-     * Gets the number of decimal places used with the default angle format {@link #af}.
+     * Gets the number of decimal places used with the default angle format.
      * 
      * @return          the number of (sub-arcsecond) decimal places to use when converting angles to
-     *                  strings in HH:MM:SS.sss format with {@link #af}.
+     *                  strings in HH:MM:SS.sss format with the default angle format.
      */
     public static int getDefaultDecimals() { return af.getDecimals(); }
     

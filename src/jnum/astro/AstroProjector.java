@@ -96,11 +96,11 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	 * @return     the current equatorial coordinates of the last position or offset.
 	 * 
 	 * @see #getCelestial()
-	 * @see #setCoordinates(Coordinate2D)
+	 * @see Projector2D#setCoordinates(jnum.math.Coordinate2D)
 	 * @see #setEquatorial(EquatorialCoordinates)
 	 * @see #setOffset(Vector2D)
 	 */
-	public EquatorialCoordinates getEquatorial() { return equatorial; }
+    public EquatorialCoordinates getEquatorial() { return equatorial; }
 	
 	/**
 	 * Returns the current celestial coordinates, of the same type as the reference coordinates, corresponding
@@ -110,11 +110,11 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	 *
 	 * @see #setReferenceCoords()
 	 * @see #getEquatorial()
-	 * @see #setCoordinates(Coordinate2D)
+	 * @see Projector2D#setCoordinates(jnum.math.Coordinate2D)
      * @see #setEquatorial(EquatorialCoordinates)
      * @see #setOffset(Vector2D)
 	 */
-	public CelestialCoordinates getCelestial() { return isCelestial() ? (CelestialCoordinates) getCoordinates() : null; }
+    public CelestialCoordinates getCelestial() { return isCelestial() ? (CelestialCoordinates) getCoordinates() : null; }
 	
 	/**
 	 * Checks if the reference coordinates of the projection are fixed to a celestial frame, that is not e.g.  horizontal,
@@ -122,8 +122,8 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	 * 
 	 * @return     <code>true</code> if the reference coordinates are celestial coordinates, or <code>false</code> otherwise.
 	 *             
-	 * @see isHorizontal()
-	 * @see isFocalPlane()
+	 * @see #isHorizontal()
+	 * @see #isFocalPlane()
 	 */
 	private final boolean isCelestial() { return getCoordinates() instanceof CelestialCoordinates; }
     

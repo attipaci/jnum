@@ -91,8 +91,8 @@ public final class CurrentTime {
      * @return  (day) The current Modified Julian Date.
      * 
      * @see AstroTime#MJD()
-     * @see JD()
-     * @see TT()
+     * @see #JD()
+     * @see #TT()
      */
     public static synchronized double MJD() {
         return time.now().MJD(); 

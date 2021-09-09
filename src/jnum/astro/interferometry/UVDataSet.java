@@ -475,6 +475,8 @@ public class UVDataSet extends ArrayList<UVFrame> {
     /**
      * Gets the coverage weighted mean frequency for a range of consecutive frames in this dataset
      * 
+     * @param from      the index of the starting frame (inclusive)
+     * @param to        the index of the ending frame (exclusive)
      * @return  (Hz) The noise weighted mean frequency over the selected frames.
      * 
      * @see #getMeanFrequency()
@@ -550,6 +552,6 @@ public class UVDataSet extends ArrayList<UVFrame> {
     }
 
     
-    
+    /** The maximum number of frames that a dataset may hold */
     public static final int maxFreqBins = 0x100000;
 }

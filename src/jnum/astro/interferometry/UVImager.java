@@ -60,7 +60,6 @@ import jnum.math.specialfunctions.CumulativeNormalDistribution;
 import jnum.projection.Gnomonic;
 import jnum.util.BufferedRandom;
 import nom.tam.fits.BasicHDU;
-import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
@@ -81,6 +80,7 @@ public class UVImager {
      */
     public double minPrimaryResponse = 0.3;
 
+    /** The equatorial coordinates of the phase center */
     public EquatorialCoordinates equatorial = new EquatorialCoordinates();
 
     private WeightedComplex[][] vis;
@@ -334,7 +334,6 @@ public class UVImager {
      * @param gain      Gain factor, i.e. divide amplitudes by this gain when adding.
      * 
      * @see #add(UVFrame)
-     * @see #add(UVFrame.Visibility, double)
      */
     public void add(UVFrame uv, double gain) {
         double w = uv.getWeightSum();
@@ -1013,36 +1012,93 @@ public class UVImager {
         parallelStreamValid().forEach(z -> z.scale(factor));
     }
 
-    public void write(Observation2D im, String name) {
-        try(Fits fits = im.createFits(Float.class)) {
-            fits.write(new File(name + ".fits"));
-            fits.close();
-        }
-        catch(Exception e) { e.printStackTrace(); }
+    /**
+     * Writes the image, obtained as a transform of the UV plane into a new FITS file.
+     * 
+     * @param name              the name or path of the image. ".fits" will be added as necessary
+     * @throws FitsException    if the FITS object could not be constructed
+     * @throws IOException      if there was an IO error
+     * 
+     * @see #writeUV(String)
+     */
+    public void writeImage(String name) throws FitsException, IOException {
+        write(image(), name);
+    }
+    
+    /**
+     * Writes the uv image plane into a new FITS file.
+     * 
+     * @param name              the name or path of the image. ".fits" will be added as necessary
+     * @throws FitsException    if the FITS object could not be constructed
+     * @throws IOException      if there was an IO error
+     * 
+     * @see #writeUVProfile(String)
+     * @see #writeImage(String)
+     */
+    public void writeUV(String name) throws FitsException, IOException {
+        write(getUVImage(), name);
+    }
+    
+    private void write(Observation2D im, String name) throws FitsException, IOException {
+        String lName = name.toLowerCase();
+        if(!lName.endsWith(".fits") && !lName.endsWith(".fit")) name = name + ".fits";
+        im.writeFits(name, Float.class);
     }
 
 
-    public void writeProducts(String path) {
+    /**
+     * Writes out the products of this imager: the uv-plane image, the uv profile, and the reconstructed
+     * dirty image.
+     * 
+     * @param path              the directory in which to write. The files will be named after the
+     *                          the object name of the observed source.
+     * @throws FitsException    if the FITS object could not be constructed
+     * @throws IOException      if there was an IO error
+     * 
+     * @see #writeProducts(String, String)
+     */
+    public void writeProducts(String path) throws FitsException, IOException {
         writeProducts(path, fitsProperties.getObjectName());
     }
 
-    public void writeProducts(String path, String name) {
-        name = path + File.separator + name;
+    /**
+     * Writes out the products of this imager: the uv-plane image, the uv profile, and the reconstructed
+     * dirty image.
+     * 
+     * @param path              the directory in which to write. The files will be named after the
+     *                          the object name of the observed source.
+     * @param stem              the name stem of the image, without file extension. The various data products
+     *                          will append a descriptiove postfix, and a file extension as appropriate to it.
+     * @throws FitsException    if the FITS object could not be constructed
+     * @throws IOException      if there was an IO error
+     * 
+     * @see #writeProducts(String)
+     * @see #writeUV(String)
+     * @see #writeUVProfile(String)
+     * @see #writeImage(String)
+     */
+    public void writeProducts(String path, String stem) throws FitsException, IOException {
+        stem = path + File.separator + stem;
 
-        Util.info(this, "\nProcessing " + name);
+        Util.info(this, "\nProcessing " + stem);
 
-        write(getUVImage(), name + "-uv");
-
-        try { writeProfile(name); }
-        catch(Exception e) { e.printStackTrace(); }
-
-        write(image(), name);
+        writeUV(stem + "-uv.fits");
+        writeUVProfile(stem + "uv-profile.dat");
+        writeImage(stem + ".fits");
     }  
 
-
-    private void writeProfile(String stem) throws IOException {
+    /**
+     * Writes a uv radial profile into an ASCII file, containing tab-separated columns.
+     * 
+     * @param fileName      the anme (path) of the file into which to write the uv radial profile. 
+     * @throws IOException  if there was an IO error
+     * 
+     * @see #writeUV(String)
+     * @see #writeProducts(String)
+     */
+    public void writeUVProfile(String fileName) throws IOException {
         DataPoint[] profile = getUVProfile(Math.min(delta.x(), delta.y()));
-        try (PrintWriter out = new PrintWriter(new FileOutputStream(new File(stem + "-profile.dat")))) {
+        try (PrintWriter out = new PrintWriter(new FileOutputStream(new File(fileName)))) {
             out.println("# bin\tdUV\tA\trms");
 
             for(int i=0; i<profile.length; i++) {
@@ -1053,8 +1109,8 @@ public class UVImager {
         }
     }
     
-    
-    public void editImageHeader(Header header) throws HeaderCardException { 
+
+    private void editImageHeader(Header header) throws HeaderCardException { 
         Cursor<String, HeaderCard> c = header.iterator();
         c.setKey("SMOOTH");
         
@@ -1091,8 +1147,22 @@ public class UVImager {
             setFitsProperties(fitsProperties);
         }
 
+        /**
+         * Returns the uv angles image view/plane for this uv data
+         * 
+         * @return  the uv angles view/plane.
+         * 
+         * @see #getAngleImage()
+         */
         public Flagged2D getAngles() { return super.getExposures(); }
         
+        /**
+         * Returns the uv angles image for this uv data
+         * 
+         * @return  the uv angles image data.
+         * 
+         * @see #getAngles()
+         */
         public Image2D getAngleImage() { return super.getExposureImage(); }
         
         @Override
@@ -1134,8 +1204,22 @@ public class UVImager {
             setFitsProperties(fitsProperties);
         }
 
+        /**
+         * Returns the synthesized beam image view/plane for this uv data
+         * 
+         * @return  the synthesized beam data.
+         * 
+         * @see #getSynthesizedBeamImage()
+         */
         public Flagged2D getSynthesizedBeam() { return super.getExposures(); }
         
+        /**
+         * Returns the synthesized beam image for this uv data
+         * 
+         * @return  the synthesized beam image data.
+         * 
+         * @see #getSynthesizedBeam()
+         */
         public Image2D getSynthesizedBeamImage() { return super.getExposureImage(); }
        
         @Override

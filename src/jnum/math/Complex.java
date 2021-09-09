@@ -177,12 +177,7 @@ public class Complex extends Vector2D implements
 		c.inverse();
 		return c;
 	}
-	
 
-	public static Complex getInverse(final Complex z) {
-		return z.getInverse();
-	}
-	
 	@Override
 	public final void multiplyBy(final Complex z) {
 		setProduct(this, z);
@@ -416,7 +411,7 @@ public class Complex extends Vector2D implements
 		final Complex e = (Complex) clone();
 		e.multiplyByI();
 		e.exp();
-		e.add(getInverse(e));
+		e.add(e.getInverse());
 		e.scale(0.5);
 	}
 
@@ -437,7 +432,7 @@ public class Complex extends Vector2D implements
 		final Complex e = (Complex) clone();
 		e.multiplyByI();
 		e.exp();
-		e.subtract(getInverse(e));
+		e.subtract(e.getInverse());
 		e.scale(0.5);
 		e.divideByI();
 	}
@@ -478,7 +473,7 @@ public class Complex extends Vector2D implements
 	@Override
 	public final void cosh() {
 		final Complex e = exp(this);
-		e.add(getInverse(e));
+		e.add(e.getInverse());
 		e.scale(0.5);
 	}
 
@@ -498,7 +493,7 @@ public class Complex extends Vector2D implements
 	@Override
 	public final void sinh() {
 		final Complex e = exp(this);
-		e.subtract(getInverse(e));
+		e.subtract(e.getInverse());
 		e.scale(0.5);
 		e.divideByI();
 	}

@@ -141,8 +141,8 @@ public abstract class RawStore<Type extends Number> extends DataStore<Type> {
 	}
 	
 
-	protected long getUnsignedLong(long n) throws IOException {
-		return Util.pseudoUnsigned(getLong(n));
+	protected long getUnsignedLong(long n) throws IOException, ArithmeticException {
+		return Util.unsigned(getLong(n));
 	}
 	
 

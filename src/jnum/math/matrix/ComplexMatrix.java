@@ -137,6 +137,7 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
      *                      will be updated to the last character parsed successfully.
      * @throws ParseException   If there was some problem with parsing the matrix from the 
      *                          supplied string.
+     * @throws Exception        
      */
     public ComplexMatrix(String text, ParsePosition pos) throws ParseException, Exception {
         super(Complex.class, text, pos);

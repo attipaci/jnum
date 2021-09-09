@@ -59,7 +59,7 @@ public class Index3D extends AbstractIndex<Index3D> {
      * 
      * @param i     the initial value for the index in the first dimension.
      * @param j     the initial value for the index in the second dimension.
-     * @param j     the initial value for the index in the third dimension.
+     * @param k     the initial value for the index in the third dimension.
      */
     public Index3D(int i, int j, int k) {
         set(i, j, k);

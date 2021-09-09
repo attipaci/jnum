@@ -24,6 +24,8 @@
 package jnum.data;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -969,6 +971,13 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         return fits;
     }
 
+    public void writeFits(String fileName, Class<? extends Number> dataType) throws FitsException, IOException {
+        try(Fits fits = createFits(Float.class)) {
+            fits.write(new File(fileName));
+            fits.close();
+        }
+    }
+    
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
         ArrayList<BasicHDU<?>> hdus = new ArrayList<>();
         hdus.add(createHDU(dataType));

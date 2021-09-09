@@ -89,7 +89,7 @@ public interface MatrixAlgebra<MatrixType, ElementType> extends IndexedEntries<I
      * and columns. (But the two matrices could have elements of very different types...)
      * 
      * @param M
-     * @return
+     * @return      <code>true</code> if the specified matrix is of the same size and shape as this one.
      */
     public boolean conformsTo(MatrixAlgebra<?, ?> M);
     

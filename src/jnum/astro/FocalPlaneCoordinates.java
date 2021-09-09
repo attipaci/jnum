@@ -94,9 +94,13 @@ public class FocalPlaneCoordinates extends SphericalCoordinates {
         return defaultLocalCoordinateSystem;
     }
    
-
+    /** The default coordinate system */
     @SuppressWarnings("hiding")
-    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+    public static CoordinateSystem defaultCoordinateSystem;
+    
+    /** The default local coordinate system */
+    @SuppressWarnings("hiding")
+    public static CoordinateSystem defaultLocalCoordinateSystem;
 
 
     static {  

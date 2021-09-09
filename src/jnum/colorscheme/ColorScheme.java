@@ -58,6 +58,7 @@ public abstract class ColorScheme {
 		final int B = (Math.min(255, (int)Math.floor(256.0F * b)));
 		return getRGB(R, G, B);
 	}
+	
 	static {
 		schemes.put("grayscale", GreyScale.class);
 		schemes.put("greyscale", GreyScale.class);

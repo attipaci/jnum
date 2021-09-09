@@ -199,7 +199,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
      * 
      * @return  (rad) the right ascension angle &alpha; [0:2&pi;].
      * 
-     * @see DEC()
+     * @see #DEC()
      * @see #setRA(double)
      */
     public final double RA() { return zeroToTwoPi(longitude()); }
@@ -218,7 +218,7 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
      * 
      * @return  (rad) the declination angle &delta; [-&pi;:&pi;].
      * 
-     * @see RA()
+     * @see #RA()
      * @see #setDEC(double)
      */
     public final double DEC() { return latitude(); }
@@ -402,9 +402,13 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
         return Util.haf[decimals > 0 ? decimals-1 : 0];
     }
 
-
+    /** the default coordinate system */
     @SuppressWarnings("hiding")
-    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+    public static CoordinateSystem defaultCoordinateSystem;
+    
+    /** the default coordinate system */
+    @SuppressWarnings("hiding")
+    public static CoordinateSystem defaultLocalCoordinateSystem;
 
     /**
      * The string formatter class to use to convert the right ascension coordinate to a string representation.
@@ -444,13 +448,16 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
      */
     static final double eps0 = 23.4392911111111 * Unit.deg;
     
-    
+    /** The direction of North along the latitude / declination coordinate */
     public static final int NORTH = 1;
 
+    /** The direction of South along the latitude / declination coordinate */
     public static final int SOUTH = -1;
 
+    /** The direction of East along the longitude / right-ascention coordinate */
     public static final int EAST = 1;
 
+    /** The direction of West along the longitude / right-ascention coordinate */
     public static final int WEST = -1;
 
 }

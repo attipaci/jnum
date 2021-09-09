@@ -199,9 +199,13 @@ public class EclipticCoordinates extends PrecessingCoordinates {
     }
 
 
+    /** The default coordinate system. */
+    @SuppressWarnings("hiding")
+    public static CoordinateSystem defaultCoordinateSystem;
+    
     /** The default local coordinate system. */
     @SuppressWarnings("hiding")
-    public static CoordinateSystem defaultCoordinateSystem, defaultLocalCoordinateSystem;
+    public static CoordinateSystem defaultLocalCoordinateSystem;
 
 
     

@@ -117,6 +117,7 @@ extends ArrayList<LocalizedData<L, D>> {
      * @param reference    a reference value that is used for consistency checking (see {@link LocalizedData#isConsistentWith(LinearAlgebra)}),
      *                     or <code>null</code> to skip consistency checking altogether.
      * @return      the distance-weighted mean value at the fixed location for which the mean is to be derived.
+     * @throws      ArrayIndexOutOfBoundsException if the specified location is outside of the range covered by data.
      * 
      * @see #getLocalAverage(Locality, double)
      * @see #getCheckedLocalAverage(Locality, double)
@@ -139,6 +140,7 @@ extends ArrayList<LocalizedData<L, D>> {
      * @param loc       a location for which we want to obtain a local average
      * @param radius    characteristic (1-sigma) radius for (Gaussian) downweighting with distance.
      * @return          the distance-weighted mean value at the fixed location for which the mean is to be derived.
+     * @throws      ArrayIndexOutOfBoundsException if the specified location is outside of the range covered by data.
      * 
      * @see #getLocalAverage(Locality, double, LinearAlgebra)
      * 
@@ -155,6 +157,7 @@ extends ArrayList<LocalizedData<L, D>> {
      * @param loc       a location for which we want to obtain a local average
      * @param radius    characteristic (1-sigma) radius for (Gaussian) downweighting with distance.
      * @return          the distance-weighted robust mean value at the fixed location for which the mean is to be derived.
+     * @throws      ArrayIndexOutOfBoundsException if the specified location is outside of the range covered by data.
      * 
      */
 	public LocalizedData<L, D> getCheckedLocalAverage(L loc, double radius) throws ArrayIndexOutOfBoundsException {

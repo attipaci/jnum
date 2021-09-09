@@ -375,7 +375,7 @@ public class IntRange implements Serializable, Scalable, Cloneable, Copiable<Int
     /**
      * Gets the span of this integer range, that is the number of integer values contained.
      * 
-     * @return
+     * @return      the number of integers contained in this range.
      */
     public long span() {
         if(to <= from) return 0;

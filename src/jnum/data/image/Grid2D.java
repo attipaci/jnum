@@ -536,9 +536,8 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
      * @param header the header
      * @param alt the alt
      * @return the Grid2D for
-     * @throws HeaderCardException the header card exception
-     * @throws InstantiationException the instantiation exception
-     * @throws IllegalAccessException the illegal access exception
+     * @throws Exception    if the grid could not be properly initialize based on the information
+     *                      contained in the header.
      */
     public static Grid2D<?> fromHeader(Header header, String alt) throws Exception {
         Grid2D<?> grid = getGrid2DInstanceFor(header.getStringValue("CTYPE1" + alt), header.getStringValue("CTYPE2" + alt));  

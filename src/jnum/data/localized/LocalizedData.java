@@ -66,6 +66,12 @@ extends LocalizedObject<L, D>  {
     }
    
     
+    /**
+     * Returns a new empty localized data instance of the same type as this one, tagged with the specified location marker.
+     * 
+     * @param loc       the locality at which the new data was measured or is referenced at.
+     * @return          a new localized data, at the specified locality, of the same type as this.
+     */
     @SuppressWarnings("unchecked")
     public LocalizedData<L, D> newInstanceAt(L loc) {
         
@@ -94,7 +100,7 @@ extends LocalizedObject<L, D>  {
      * less than 5 times the rms of this 
      * 
      * @param reference
-     * @return
+     * @return      <code>true</code> if this data is consistent with the reference, otherwise <code>false</code>.
      */
     public boolean isConsistentWith(D reference) {
         if(reference == null) return true;

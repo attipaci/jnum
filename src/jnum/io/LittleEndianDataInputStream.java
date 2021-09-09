@@ -106,10 +106,7 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 		return Integer.reverseBytes(in.readInt());
 	}
 
-	
-	public final long readUnsignedInt() throws IOException {
-		return Util.unsigned(readInt());
-	}
+
 
 	@Override
 	@Deprecated
@@ -141,7 +138,19 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 	public final int readUnsignedShort() throws IOException {
 		return Util.unsigned(readShort());
 	}
-
+	    
+	/**
+     * Reads an unsigned 32-bit integer value from the input, returning it as a Java <code>long</code>
+     * 
+     * @return      a Java <code>long</code> containing the unsigned 32-bit value.
+     * @throws IOException      if there was an IO error.
+     * 
+     * @see Util#unsigned(int)
+     */
+    public final long readUnsignedInt() throws IOException {
+        return Util.unsigned(readInt());
+    }
+	
 	@Override
 	public final int skipBytes(int arg0) throws IOException {
 		return in.skipBytes(arg0);
