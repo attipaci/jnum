@@ -51,63 +51,94 @@ import nom.tam.util.Cursor;
 public class Coordinate3D implements Coordinates<Double>, RealComponents, Serializable, Cloneable, Copiable<Coordinate3D>, 
 ViewableAsDoubles, Parser, NumberFormating, Inversion {
     /** */
-	private static final long serialVersionUID = 4670218761839380720L;
+    private static final long serialVersionUID = 4670218761839380720L;
 
-	private double x;
-	private double y;
-	private double z;
+    private double x;
+    private double y;
+    private double z;
 
-	public Coordinate3D() {}
-	
-	public Coordinate3D(double x, double y, double z) {
-	    this();
-	    set(x, y, z);
-	}
-	
-	public Coordinate3D(Coordinates<Double> v) {
-	    this(v.x(), v.y(), v.z());
-	}
-	
+    public Coordinate3D() {}
+
+    public Coordinate3D(double x, double y, double z) {
+        this();
+        set(x, y, z);
+    }
+
+    public Coordinate3D(Coordinates<Double> v) {
+        this(v.x(), v.y(), v.z());
+    }
+
+    @Override
+    public int hashCode() {
+        return Double.hashCode(x) ^ Double.hashCode(y) ^ Double.hashCode(z);
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(o == null) return false;
+        if(!(o instanceof Coordinate3D)) return false;
+
+        Coordinate3D coords = (Coordinate3D) o;
+        if(coords.x != x) return false;
+        if(coords.y != y) return false;
+        if(coords.z != z) return false;
+        
+        return true;
+    }
+    
+    @Override
+    public boolean equals(Coordinates<Double> coords, double precision) {
+        if(coords == null) return false;
+        
+        if(coords.dimension() != dimension()) return false;
+        if(!Util.equals(coords.x(), x, precision)) return false;
+        if(!Util.equals(coords.y(), y, precision)) return false;
+        if(!Util.equals(coords.z(), z, precision)) return false;
+        
+        return true;
+    }
+
     @Override
     public final Class<Double> getComponentType() {
         return Double.class;
     }
-    
 
-	@Override
+
+    @Override
     public Coordinate3D clone() {
-	    try { return (Coordinate3D) super.clone(); }
-	    catch(CloneNotSupportedException e) { return null; }
-	}
-	
-	@Override
+        try { return (Coordinate3D) super.clone(); }
+        catch(CloneNotSupportedException e) { return null; }
+    }
+
+    @Override
     public Coordinate3D copy() {
-	    return clone();
-	}
-	
-	@Override
+        return clone();
+    }
+
+    @Override
     public void copy(Coordinates<? extends Double> other) {
-	    set(other.x(), other.y(), other.z());
-	}
-	
-	/**
+        set(other.x(), other.y(), other.z());
+    }
+
+    /**
      * Flips the sign of the <i>x</i>-type coordinate.
      * 
      */
     public void flipX() { x = -x; }
-    
+
     /**
      * Flips the sign of the <i>y</i>-type coordinate.
      * 
      */
     public void flipY() { y = -y; }
-    
+
     /**
      * Flips the sign of the <i>z</i>-type coordinate.
      * 
      */
     public void flipZ() { z = -z; }
-    
+
 
     @Override
     public void flip() {
@@ -115,57 +146,57 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         y = -y;
         z = -z;
     }
-    
-	
-	public void zero() {
-	    x = y = z = 0.0;
-	}
-	
-	public boolean isNull() {
-	    if(x != 0.0) return false;
-	    if(y != 0.0) return false;
-	    if(z != 0.0) return false;
-	    return true;
-	}
-	
-	@Override
+
+
+    public void zero() {
+        x = y = z = 0.0;
+    }
+
+    public boolean isNull() {
+        if(x != 0.0) return false;
+        if(y != 0.0) return false;
+        if(z != 0.0) return false;
+        return true;
+    }
+
+    @Override
     public final Double x() { return x; }
 
-	@Override
+    @Override
     public final Double y() { return y; }
 
-	@Override
+    @Override
     public final Double z() { return z; }
 
-	/**
+    /**
      * Sets the <i>x</i>-type coordinate to the specified value.
      * 
      * @param value    the new <i>x</i>-type coordinate value.
      */
-	public final void setX(final double value) { this.x = value; }
+    public final void setX(final double value) { this.x = value; }
 
-	/**
+    /**
      * Sets the <i>y</i>-type coordinate to the specified value.
      * 
      * @param value    the new <i>y</i>-type coordinate value.
      */
-	public final void setY(final double value) { this.y = value; }
+    public final void setY(final double value) { this.y = value; }
 
-	/**
+    /**
      * Sets the <i>z</i>-type coordinate to the specified value.
      * 
      * @param value    the new <i>z</i>-type coordinate value.
      */
-	public final void setZ(final double value) { this.z = value; }
-	
-	/**
+    public final void setZ(final double value) { this.z = value; }
+
+    /**
      * Increments the <i>x</i>-type coordinate by the specified value.
      * 
      * @param value    the <i>x</i>-type coordinate increment.
      */
-	public final void addX(final double value) { this.x += value; }
+    public final void addX(final double value) { this.x += value; }
 
-	/**
+    /**
      * Increments the <i>y</i>-type coordinate by the specified value.
      * 
      * @param value    the <i>y</i>-type coordinate increment.
@@ -178,7 +209,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
      * @param value    the <i>z</i>-type coordinate increment.
      */
     public final void addZ(final double value) { this.z += value; }
-    
+
     /**
      * Decrements the <i>x</i>-type coordinate by the specified value.
      * 
@@ -199,29 +230,29 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
      * @param value    the <i>z</i>-type coordinate decrement.
      */
     public final void subtractZ(final double value) { this.z -= value; }
-    
+
     /**
      * Scales the <i>x</i>-type coordinate by the specified value.
      * 
      * @param factor    the scalar factor to apply to the <i>x</i>-type coordinate.
      */
     public final void scaleX(double factor) { x *= factor; }
-    
+
     /**
      * Scales the <i>y</i>-type coordinate by the specified value.
      * 
      * @param factor    the scalar factor to apply to the <i>y</i>-type coordinate.
      */
     public final void scaleY(double factor) { y *= factor; }
-    
+
     /**
      * Scales the <i>z</i>-type coordinate by the specified value.
      * 
      * @param factor    the scalar factor to apply to the <i>z</i>-type coordinate.
      */
     public final void scaleZ(double factor) { z *= factor; }
-	
-    
+
+
     @Override
     public void set(double... v) {
         setX(v[0]);
@@ -235,7 +266,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         if(v.length > 1) setY(v[1]);
         if(v.length > 2) setZ(v[2]);
     }
-    
+
     @Override
     public void add(double... v) {
         addX(v[0]);
@@ -277,8 +308,8 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         if(v.length > 1) addY(-v[1]);
         if(v.length > 2) addZ(-v[2]);
     }
-    
-    
+
+
     @Override
     public String toString(NumberFormat nf) {
         return "(" + nf.format(x) + "," + nf.format(y) + "," + nf.format(z) + ")";
@@ -288,18 +319,18 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     public String toString() { 
         return "(" + x + "," + y + "," + z + ")";
     }
-    
-    
+
+
     public final void parse(String spec) {
         parse(spec, new ParsePosition(0));
     }
 
-   
+
     @Override
     public final void parse(String text, ParsePosition pos) throws IllegalArgumentException {
         parse(new StringParser(text, pos));
     }
-    
+
     /**
      * Parses text x,y,z 3D coordinate representations that are in the format(s) of:
      * 
@@ -327,15 +358,15 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
      */
     public void parse(StringParser parser) throws NumberFormatException {
         boolean isBracketed = false;
-        
+
         parser.skipWhiteSpaces();
-           
+
         if(parser.peek() == '(') {
             isBracketed = true;
             parser.skip(1);
             parser.skipWhiteSpaces();
         }
-            
+
         parseX(parser.nextToken(Util.getWhiteSpaceChars() + ","));
         parseY(parser.nextToken(Util.getWhiteSpaceChars() + ","));
         parseZ(parser.nextToken(Util.getWhiteSpaceChars() + "," + (isBracketed ? "" : ")")));
@@ -344,11 +375,11 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     protected void parseX(String token) throws NumberFormatException {
         setX(Double.parseDouble(token));
     }
-    
+
     protected void parseY(String token) throws NumberFormatException {
         setY(Double.parseDouble(token));
     }
-    
+
     protected void parseZ(String token) throws NumberFormatException {
         setY(Double.parseDouble(token));
     }
@@ -361,7 +392,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         set(components[0], components[1], components[2]);
     }
 
-  
+
     @Override
     public final void viewAsDoubles(Object view) throws IllegalArgumentException {
         if(!(view instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
@@ -371,15 +402,15 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         components[1] = y;
         components[3] = z;
     }
-    
-  
+
+
     @Override
     public final double[] viewAsDoubles() {
         return new double[] { x, y, z };       
     }
-    
-    
-   
+
+
+
     public double getValue(int field) throws NoSuchFieldException {
         switch(field) {
         case X: return x;
@@ -388,8 +419,8 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
         }
     }
-    
-  
+
+
     public void setValue(int field, double value) throws NoSuchFieldException {
         switch(field) {
         case X: x = value; break;
@@ -398,22 +429,22 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
         }
     }
-    
-    
+
+
     public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         c.add(new HeaderCard(keyStem + "1" + alt, x, "The reference x coordinate in SI units."));
         c.add(new HeaderCard(keyStem + "2" + alt, y, "The reference y coordinate in SI units."));
         c.add(new HeaderCard(keyStem + "3" + alt, z, "The reference z coordinate in SI units."));
     }
-    
+
 
     public void parseHeader(Header header, String keyStem, String alt, Coordinate3D defaultValue) {
         x = header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x());
         y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());
         z = header.getDoubleValue(keyStem + "3" + alt, defaultValue == null ? 0.0 : defaultValue.z());
     }
-    
+
 
     @Override
     public final int size() {
@@ -438,6 +469,11 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         return size;
     }
 
+    @Override
+    public int getSize(int i) {
+        if(i != 0) throw new IllegalArgumentException("there is no dimension " + i);
+        return 3;
+    }
 
     @Override
     public final Double get(Index1D index) {
@@ -478,7 +514,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     @Override
     public final String getSizeString() {
         return "[3]";
-     }
+    }
 
 
     @Override
@@ -489,8 +525,8 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         return false;
     }
 
-    
-    
+
+
     @Override
     public final Double getComponent(final int index) {
         switch(index) {
@@ -510,21 +546,21 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         default: throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no component " + index);
         }
     }
-    
+
     public static Coordinate3D[] copyOf(Coordinate3D[] array) {
         Coordinate3D[] copy = new Coordinate3D[array.length];
         IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
-    
+
     private static final Index1D size = new Index1D(2);
-    
+
     /** the index of the <i>x</i>-type (first) coordinate */
     public static final int X = 0;    
-    
+
     /** the index of the <i>y</i>-type (second) coordinate */
     public static final int Y = 1;
-    
+
     /** the index of the <i>z</i>-type (third) coordinate */
     public static final int Z = 2;    
 

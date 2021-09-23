@@ -27,7 +27,6 @@ import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
-import jnum.CopiableContent;
 import jnum.Unit;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
@@ -45,7 +44,7 @@ import nom.tam.util.Cursor;
 * @author Attila Kovacs
 *
 */
-public abstract class Samples1D extends Data1D implements Serializable, Resizable1D, CopiableContent<Samples1D> {
+public abstract class Samples1D extends Data1D implements Serializable, Resizable1D {
     /**
      * 
      */
@@ -89,6 +88,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         clearHistory();
         addHistory("new size " + getSizeString());
     }
+    
     
     public synchronized void destroy() { 
         setSize(0); 
@@ -192,7 +192,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
     protected synchronized void crop(int imin, int imax) {
         addHistory("cropped " + imin + " : " + imax);
-        silentNextNewData();
+        preserveHistory();
         setData(getCropped(imin, imax).getCore());
     }
 
@@ -266,7 +266,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
     
     public static Samples1D createFrom(final Values1D values, final Number blankingValue, Class<? extends Number> elementType) {
         final Samples1D samples = createType(elementType);
-        samples.setBlankingValue(blankingValue);
+        samples.setInvalidValue(blankingValue);
         samples.setData(values);
         return samples;
     }

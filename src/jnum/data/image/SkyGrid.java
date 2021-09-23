@@ -18,9 +18,9 @@ public class SkyGrid extends SphericalGrid {
     }
     
     /**
-     * Sky mpas are generally as we see looking out, not in, so it's mirrored w.r.t. the usual globe-like
+     * Sky mas are generally as we see looking out, not in, so it's mirrored w.r.t. the usual globe-like
      * spherical projection.
      */
-    @Override
-    public boolean isReverseX() { return !super.isReverseX(); }
+    //@Override
+    //public boolean isReverseX() { return !super.isReverseX(); }
 }

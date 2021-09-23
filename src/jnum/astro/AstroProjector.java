@@ -30,9 +30,19 @@ import jnum.projection.Projector2D;
 
 
 /**
+ * <p>
  * A class for facilitating computationally efficient projection of spherical coordinates onto a 2D plane, and vice versa.
  * The class avoids the need to create on-the-fly objects for the conversion. However, for best performance each projector
  * instance should be used with only one thread to avoid concurrent blocking. 
+ * </p>
+ * <p>
+ * The convention of this class is to orient projections in the conventional direction of the coordinates
+ * it uses by default. So unlike the {@link jnum.projection.SphericalProjection} classes, which define directions looking
+ * from outside in to the sphere with the pole pointing up, this class may be looking out rather than in (say
+ * for {@link HorizontalCoordinates}), or with the pole pointing downward (e.g. if projecting
+ * zenith angles instead of elevation), but always with offset increasing in the direction of coordinate 
+ * values themselves.
+ * </p>
  * 
  * @author Attila Kovacs
  *
@@ -53,17 +63,23 @@ public class AstroProjector extends Projector2D<SphericalCoordinates> {
 	public AstroProjector(Projection2D<SphericalCoordinates> projection) {
 		super(projection);
 
+		SphericalCoordinates coords = getCoordinates();
+		
 		// The equatorial is the same as coords if that is itself equatorial
 		// otherwise it's used for converting to and from equatorial...
-		if(getCoordinates() instanceof EquatorialCoordinates) 
+		if(coords instanceof EquatorialCoordinates) 
 			equatorial = (EquatorialCoordinates) getCoordinates();
 		
 		// celestial is the same as coords if coords itself is celestial
 		// otherwise celestial is null, indicating horizontal projection...
-		else if(getCoordinates() instanceof CelestialCoordinates) {
+		else if(coords instanceof CelestialCoordinates) {
 			equatorial = new EquatorialCoordinates();
 		}
 
+		// Always orient the projection along the conventional directions
+		// of the coordinates used.
+		setMirrored(coords.isReverseLongitude());
+		setUpsideDown(coords.isReverseLatitude());		
 	}
 	
 	@Override

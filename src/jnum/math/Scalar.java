@@ -251,7 +251,7 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	}
 
 	@Override
-	public final boolean isNaN() {
+	public final boolean isInvalidValue() {
 		return Double.isNaN(value);
 	}
 
@@ -322,7 +322,7 @@ public class Scalar extends Number implements Serializable, LinearAlgebra<Scalar
 	}
 
 	@Override
-	public double absSquared() {
+	public double squareNorm() {
 		return value * value;
 	}
 	

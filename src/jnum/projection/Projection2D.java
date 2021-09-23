@@ -97,14 +97,14 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 	}
 	
 
-	public Coordinate2D getProjected(CoordinateType coords) {
+	public final Coordinate2D getProjected(CoordinateType coords) {
 		Coordinate2D offset = new Coordinate2D();
 		project(coords, offset);
 		return offset;		
 	}
 	
 
-	public CoordinateType getDeprojected(Vector2D projected) {
+	public final CoordinateType getDeprojected(Vector2D projected) {
 		CoordinateType coords = getCoordinateInstance();
 		deproject(projected, coords);
 		return coords;		

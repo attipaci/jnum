@@ -35,6 +35,7 @@ import jnum.math.Coordinates;
 import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;
 import jnum.math.RealComponents;
+import jnum.util.HashCode;
 
 
 
@@ -57,6 +58,35 @@ implements MathVector<Double>, RealComponents, IndexedValues<Index1D, Double>, V
 
     public RealVector(double... data) { setData(data); }
 
+    @Override
+    public int hashCode() {
+        return HashCode.from(component);
+    }
+
+    
+    @Override
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(o == null) return false;
+        if(!(o instanceof RealVector)) return false;
+
+        RealVector coords = (RealVector) o;
+        for(int i=component.length; --i >= 0; ) if(coords.getComponent(i) != component[i]) return false;
+        
+        return true;
+    }
+    
+    @Override
+    public boolean equals(Coordinates<Double> coords, double precision) {
+        if(coords == null) return false;
+        
+        if(coords.dimension() != dimension()) return false;
+        for(int i=component.length; --i >= 0; ) if(!Util.equals(coords.getComponent(i), component[i], precision)) return false;
+        
+        return true;
+    }
+
+   
     
     @Override
     public RealVector clone() {
@@ -228,7 +258,7 @@ implements MathVector<Double>, RealComponents, IndexedValues<Index1D, Double>, V
 
 
     @Override
-    public double absSquared() {
+    public double squareNorm() {
         return dot(this);
     }
 

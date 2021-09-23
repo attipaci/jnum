@@ -76,7 +76,7 @@ public abstract class GaussInverter<T> implements MatrixInverter<T>, MatrixSolve
         
         // Get the basis vectors from the irreducible columns of the original matrix
         for(int i=0, col=0; i<size; i++) {
-            for(int j=col; j<size; j++) if(e.from(i, j).absSquared() > tiny2) {
+            for(int j=col; j<size; j++) if(e.from(i, j).squareNorm() > tiny2) {
                 rank++;
                 col = j+1;
                 break;
@@ -88,7 +88,7 @@ public abstract class GaussInverter<T> implements MatrixInverter<T>, MatrixSolve
         // Get the inverse as the second half of columns in this matrix...
         // Elements that are zero within rounding errors are set to zero.
         for(int i=size; --i >= 0; ) for(int j=size; --j >= 0; ) {
-            if(e.from(i, j).absSquared() > tiny2) inverse.set(i, j, combo.get(i, size + j));
+            if(e.from(i, j).squareNorm() > tiny2) inverse.set(i, j, combo.get(i, size + j));
             else inverse.clear(i, j);
         }
        

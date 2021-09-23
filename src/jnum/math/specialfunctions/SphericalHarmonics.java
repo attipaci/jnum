@@ -160,7 +160,7 @@ public class SphericalHarmonics implements Function<SphericalCoordinates, Comple
     private static void evaluateAt(int l, int m, double theta, double phi, double K, Complex result) {
         if(m < 0) {
             evaluateAt(l, -m, theta, phi, result);
-            if((m & 1) != 0) result.scale(-1.0);
+            if((m & 1) != 0) result.flip();
             result.conjugate();
             return;
         }
@@ -197,7 +197,7 @@ public class SphericalHarmonics implements Function<SphericalCoordinates, Comple
     private static void evaluateAt(int l, int m, SphericalCoordinates coords, double K, Complex result) {
         if(m < 0) {
             evaluateAt(l, -m, coords, result);
-            if((m & 1) != 0) result.scale(-1.0);
+            if((m & 1) != 0) result.flip();
             result.conjugate();
             return;
         }

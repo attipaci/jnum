@@ -93,7 +93,7 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
 
 	@Override
 	public double abs() {
-		return Math.sqrt(absSquared());
+		return Math.sqrt(squareNorm());
 	}
 
 	@Override
@@ -144,6 +144,12 @@ public abstract class AbstractVector<T> implements MathVector<T>, Serializable, 
         return new Index1D(size());
     }
 
+
+    @Override
+    public int getSize(int i) {
+        if(i != 0) throw new IllegalArgumentException("there is no dimension " + i);
+        return size();
+    }
 
     @Override
     public final T get(Index1D index) {

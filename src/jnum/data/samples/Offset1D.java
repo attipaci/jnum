@@ -23,6 +23,7 @@
 
 package jnum.data.samples;
 
+import jnum.Util;
 import jnum.data.index.Index1D;
 import jnum.data.index.IndexedValues;
 import jnum.math.Coordinates;
@@ -45,12 +46,13 @@ public class Offset1D implements MathVector<Double> {
     
     @Override
     public int hashCode() {
-        return super.hashCode() ^ HashCode.from(x);
+        return HashCode.from(x);
     }
     
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
+        if(o == this) return true;
+        if(o == null) return false;
         if(!(o instanceof Offset1D)) return false;
         
         Offset1D r = (Offset1D) o;
@@ -58,6 +60,17 @@ public class Offset1D implements MathVector<Double> {
         
         return true;
     }
+    
+    @Override
+    public boolean equals(Coordinates<Double> coords, double precision) {
+        if(coords == null) return false;
+        
+        if(coords.dimension() != dimension()) return false;
+        if(!Util.equals(coords.x(), x, precision)) return false;
+        
+        return true;
+    }
+   
     
     public double value() { return x; }
     
@@ -93,7 +106,7 @@ public class Offset1D implements MathVector<Double> {
     public final double abs() { return Math.abs(x); }
 
     @Override
-    public final double absSquared() { return x*x; }
+    public final double squareNorm() { return x*x; }
 
     @Override
     public double normalize() { 
@@ -197,6 +210,12 @@ public class Offset1D implements MathVector<Double> {
     public Index1D getSize() {
         size.set(1);
         return size;
+    }
+    
+    @Override
+    public int getSize(int i) {
+        if(i != 0) throw new IllegalArgumentException("there is no dimension " + i);
+        return 1;
     }
 
     @Override

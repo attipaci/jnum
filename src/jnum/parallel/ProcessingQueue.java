@@ -167,7 +167,7 @@ public class ProcessingQueue extends Thread {
 	
 	/**
      * Adds a new triggered point to the end of this queue. When the trigger point is reached in the
-     * queue all processing will halt until some process calls {@link Trigger#generate()} on the 
+     * queue all processing will halt until some process calls {@link Trigger#activate()} on the 
      * returned trigger object.
      * 
      * @return  the object to use for generating the trigger event that will resume processing
@@ -176,7 +176,7 @@ public class ProcessingQueue extends Thread {
      * @throws IllegalStateException   if the queue has reached its capacity and is unable to take new
      *                                 submittions.
      * 
-     * @see Trigger#generate()
+     * @see Trigger#activate()
      */
 	public Trigger addTrigger() throws IllegalStateException {
 	    synchronized(Trigger.class) { 
@@ -290,54 +290,82 @@ public class ProcessingQueue extends Thread {
 	}
 
 	
+	/**
+	 * A generic event that can be placed on the processing queue to provide notification when 
+	 * all prior entries in the queue have been fully processed (without having been interrupted).
+	 * 
+	 * @author Attila Kovacs
+	 *
+	 */
 	public class Event extends Entry implements Runnable {
 
 		private boolean isActivated = false;
+		private Collection<Process> processes;
+		
 		
 		private Event() {}
 		
-		public boolean isActivated() {
+		/** 
+		 * Checks if this event has been activated, that is if all prior entries to this even 
+		 * on the queue have been processed already. 
+		 * 
+		 * @return    <code>true</code> if all entries prior to this event on the queue have finished
+		 *            processing. Otherwise <code>false</code>.
+		 */
+		public synchronized boolean isActivated() {
 			return isActivated;
 		}
 
 		@Override
-		void process() {
+		void process() {  
+		    processes = activeProcesses.values();
 			new Thread(this).start();		
 		} 
 
 		@Override
 		public void run() {
-			try { waitCompleteCurrent(); }
-			catch(InterruptedException e) {}
-			generate();
+	        for(Process p : processes) {
+	            try { p.waitComplete(); }
+	            catch(InterruptedException e) { return; }
+	        }
+			activate();
 		}
 		
-
-		synchronized void generate() {
+		synchronized void activate() {
 			isActivated = true;
 			notifyAll();
 		}
 		
-
-		public void waitFor() throws InterruptedException {
+		/**
+		 * Waits until all tasks on the queue prior to this event have finished processing
+		 * 
+		 * @throws InterruptedException       the the wait was interrupted.
+		 */
+		public synchronized void waitFor() throws InterruptedException {
 			while(!isActivated) wait();
 		}
 	}
 	
 
-	// Generates an AWT ProcessingEvent...
+	/**
+	 * Generates an {@link ProcessingEvent}, when all tasks on the queue prior to this trigger have
+	 * finished processing.
+	 * 
+	 * @author Attila Kovacs
+	 *
+	 * @see ProcessingEvent
+	 */
 	public class Trigger extends Event {
 
 		private int eventID;
 		
-
 		private Trigger(int eventID) {
 			this.eventID = eventID;
 		}
 
 		@Override
-		void generate() {
-			super.generate();
+		void activate() {
+			super.activate();
 			new ProcessingEvent(ProcessingQueue.this, eventID);
 		}
 	}

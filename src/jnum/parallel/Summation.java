@@ -48,15 +48,21 @@ package jnum.parallel;
 import jnum.data.WeightedPoint;
 import jnum.math.Additive;
 
-
-public class Summation<ReturnType extends Additive<ReturnType>> extends ParallelReduction<ReturnType> {
+/**
+ * A reduction class for calculating sums in a parallel task.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <Type>      the generic type of object to be summed by this reduction.
+ */
+public class Summation<Type extends Additive<Type>> extends ParallelReduction<Type> {
 
 
 	@Override
-	public ReturnType getResult() {
-		ReturnType sum = null;
-		for(ParallelTask<ReturnType> task : getParallel().getWorkers()) {
-			ReturnType local = task.getLocalResult();
+	public Type getResult() {
+		Type sum = null;
+		for(ParallelTask<Type> task : getParallel().getWorkers()) {
+			Type local = task.getLocalResult();
 			if(sum == null) sum = local;
 			else sum.add(local);
 		}

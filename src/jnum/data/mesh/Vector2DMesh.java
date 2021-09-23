@@ -153,7 +153,7 @@ public class Vector2DMesh<T extends Vector2D> extends LinearMesh<T> implements C
         MeshCrawler<T> i = iterator();
         MeshCrawler<Double> ai = A2.iterator();
         
-        while(i.hasNext()) ai.setNext(i.next().absSquared());
+        while(i.hasNext()) ai.setNext(i.next().squareNorm());
         
         return A2;  
     }

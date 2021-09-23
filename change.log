@@ -1,4 +1,4 @@
-0.40-a1 (devel.14)
+0.40-a1 (devel.16)
 
 
 	Overview
@@ -107,6 +107,9 @@
 	[RENAME] {jnum.math.matrix} A lot of renaming, both classes and
 	funtions.
 
+	[CHANGE] {jnum.data} Some refactoring an simplification of the base
+	data classes.
+
 	[CHANGE] {Configurator} Simlify API.
 
 	[CHANGE] {AstroTime} Remane method to be simpler. For example getTAI()
@@ -151,6 +154,10 @@
 	[RENAME] TrueVector renamed MathVector. It really is just a class
 	representing a vector in the mathematical sense (vs the Java Vector
 	class that represents a dynamically sized array).
+
+	[FIX] {AstroProjector} Project offsets in the conventional direction
+	of axes. (Previously projections used native directions, which at
+	times ran counter to the grid on which they were used.
 
 	[FIX] {AstroTime} A bunch of fixes for various small slips.
 

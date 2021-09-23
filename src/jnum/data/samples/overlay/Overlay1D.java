@@ -1,8 +1,11 @@
 package jnum.data.samples.overlay;
 
+import jnum.Copiable;
+import jnum.CopiableContent;
 import jnum.Util;
 import jnum.data.Data;
 import jnum.data.samples.Data1D;
+import jnum.data.samples.Samples1D;
 import jnum.data.samples.Values1D;
 import jnum.parallel.Parallelizable;
 
@@ -54,6 +57,26 @@ public class Overlay1D extends Data1D {
         
         return super.equals(o);
     }
+    
+    @Override
+    public Overlay1D copy() {
+        return copy(true);
+    }
+    
+    @Override
+    public Overlay1D copy(boolean withContent) {
+        Overlay1D copy = (Overlay1D) clone();
+        if(values != null) {
+            if(values instanceof CopiableContent) copy.values = (Values1D) ((CopiableContent<?>) values).copy(withContent);
+            else if(withContent) {
+                if(values instanceof Copiable) copy.values = (Values1D) ((Copiable<?>) values).copy();
+                else copy.values = Samples1D.createType(values.getElementType(), values.size());
+            }
+            else copy.values = new Overlay1D(values).getSamples();
+        }
+        return copy;
+    }
+   
    
    
     public Values1D getBasis() { return values; }

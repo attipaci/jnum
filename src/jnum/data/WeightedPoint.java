@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -53,7 +53,7 @@ import jnum.util.HashCode;
  * @author Attila Kovacs
  *
  */
-public class WeightedPoint extends RealValue implements CopyCat<WeightedPoint>, Multiplicative<WeightedPoint>, Division<WeightedPoint>, 
+public class WeightedPoint extends RealValue implements Weighting, CopyCat<WeightedPoint>, Multiplicative<WeightedPoint>, Division<WeightedPoint>, 
     Ratio<WeightedPoint, WeightedPoint>, LinearAlgebra<WeightedPoint>, Accumulating<WeightedPoint>, 
     PowFunctions, TrigonometricFunctions, TrigonometricInverseFunctions, HyperbolicFunctions, HyperbolicInverseFunctions {
 
@@ -114,41 +114,24 @@ public class WeightedPoint extends RealValue implements CopyCat<WeightedPoint>, 
         return super.hashCode() ^ HashCode.from(weight);
     }
 
-    /**
-     * Gets the weight associated with this value
-     * 
-     * @return  the associated weight (arbitrary units).
-     */
+
+    @Override
     public final double weight() { return weight; }	
 
-    /**
-     * Sets a new weight to be associated with this value.
-     * 
-     * @param w the new weight (arbitrary units) to associate with the value.
-     */
+
+    @Override
     public final void setWeight(final double w) { this.weight = w; }
 
     
-    /**
-     * Increments the weight of this value, e.g. to account for aggregating 
-     * new measurements into this value.
-     * 
-     * @param dw    the weight increment.
-     */
+    @Override
     public final void addWeight(double dw) { weight += dw; }
 
-    /**
-     * Scales the value by the specified factor while leaving the weight as is.
-     * 
-     * @param factor    the scaling factor for the value only.
-     */
+
+    @Override
     public final void scaleValue(double factor) { super.scale(factor); }
 
-    /**
-     * Scales the weight by the specified factor while leaving the value as is.
-     * 
-     * @param factor    the scaling factor for the weight only.
-     */
+
+    @Override
     public final void scaleWeight(double factor) { weight *= factor; }
 
 
@@ -165,17 +148,12 @@ public class WeightedPoint extends RealValue implements CopyCat<WeightedPoint>, 
      */
     public final boolean isNaN() { return Double.isNaN(value()) || weight == 0.0; }
 
-    /**
-     * Makes this an exact value, that is a value with infinite weight.
-     * 
-     */
+
+    @Override
     public final void exact() { weight = Double.POSITIVE_INFINITY; }
 
-    /**
-     * Checks if the value is an exact value, i.e. one that has infinite weight.
-     * 
-     * @return  <code>true</code> if the value is exact. Otherwise <code>false</code>.
-     */
+
+    @Override
     public final boolean isExact() { return Double.isInfinite(weight); }
 
 
@@ -391,7 +369,7 @@ public class WeightedPoint extends RealValue implements CopyCat<WeightedPoint>, 
     }
     
     @Override
-    public double absSquared() {
+    public double squareNorm() {
         return value() * value();
     }
 
@@ -544,17 +522,57 @@ public class WeightedPoint extends RealValue implements CopyCat<WeightedPoint>, 
         return toString(" +- ", ""); 
     }
 
-
+    /**
+     * Returns a string representation of this weighted value, assuming that the weight is a 
+     * 1/&sigma;<sup>2</sup> noise weight. The string is composed as the sequence &lt;value&gt;
+     * &lt;before&gt; &lt;&sigma;&gt &lt;after&gt;.
+     * 
+     * 
+     * 
+     * @param before        the string literal to insert before the 1-%sigma; noise value (and after the
+     *                      number value of this point).
+     * @param after         the string literal to add after the 1-%sigma; noise value.
+     * @return              the string composed of &lt;value&gt; &lt;before&gt; &lt;&sigma;&gt &lt;after&gt;
+     * 
+     * @see #toString(NumberFormat, String, String)
+     * @see #toString()
+     * @see #toString(NumberFormat)
+     */
     public String toString(String before, String after) {
         return value() + before + Math.sqrt(1.0 / weight) + after; 
     }
 
-
-    public String toString(final NumberFormat df) {
-        return toString(df, " +- ", "");
+    /**
+     * Returns a default string representation of this weighted value using the specified number
+     * formatting, and assuming that the weight is a 1/&sigma;<sup>2</sup> noise weight.
+     * 
+     * @param nf            the number formating to use.
+     * @return              the string as &lt;value&gt; +- &lt;&sigma;&gt, such as "1.8 +- 0.1".
+     * 
+     * @see #toString(NumberFormat, String, String)
+     * @see #toString()
+     */
+    public String toString(final NumberFormat nf) {
+        return toString(nf, " +- ", "");
     }
 
-
+    /**
+     * Returns a string representation of this weighted value using the specified number
+     * formatting, and assuming that the weight is a 
+     * 1/&sigma;<sup>2</sup> noise weight. The string is composed as the sequence &lt;value&gt;
+     * &lt;before&gt; &lt;&sigma;&gt &lt;after&gt;.
+     * 
+     * 
+     * @param nf            the number formating to use.
+     * @param before        the string literal to insert before the 1-%sigma; noise value (and after the
+     *                      number value of this point).
+     * @param after         the string literal to add after the 1-%sigma; noise value.
+     * @return              the string composed of &lt;value&gt; &lt;before&gt; &lt;&sigma;&gt &lt;after&gt;
+     * 
+     * @see #toString(String, String)
+     * @see #toString(NumberFormat)
+     * @see #toString()
+     */
     public String toString(final NumberFormat nf, String before, String after) {
         return nf.format(value()) + before + nf.format(Math.sqrt(1.0 / weight)) + after; 
     }

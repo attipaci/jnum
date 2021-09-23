@@ -40,7 +40,6 @@ import jnum.fits.FitsToolkit;
 import jnum.text.NumberFormating;
 import jnum.text.Parser;
 import jnum.text.StringParser;
-import jnum.util.HashCode;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -131,7 +130,37 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         setX(other.x());
         setY(other.y());
     }
+    
+    @Override
+    public int hashCode() {
+        return Double.hashCode(x) ^ Double.hashCode(y);
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(o == null) return false;
+        if(!(o instanceof Coordinate2D)) return false;
+        
+        Coordinate2D coords = (Coordinate2D) o;
+        if(coords.x != x) return false;
+        if(coords.y != y) return false;
+        
+        return true;
+    }
+    
+    @Override
+    public boolean equals(Coordinates<Double> coords, double precision) {
+        if(coords == null) return false;
+        
+        if(coords.dimension() != dimension()) return false;
+        if(!Util.equals(coords.x(), x, precision)) return false;
+        if(!Util.equals(coords.y(), y, precision)) return false;
+        
+        return true;
+    }
+   
+    
     @Override
     public final Double x() { return x; }
 
@@ -251,11 +280,6 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         if(v.length > 1) addY(-v[1]);
     }
 
-
-    @Override
-    public int hashCode() {
-        return HashCode.from(x) ^ ~HashCode.from(y);
-    }
 
     @Override
     public Coordinate2D clone() {
@@ -527,6 +551,11 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         return size;
     }
 
+    @Override
+    public int getSize(int i) {
+        if(i != 0) throw new IllegalArgumentException("there is no dimension " + i);
+        return 2;
+    }
 
     @Override
     public final Double get(Index1D index) {

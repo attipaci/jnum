@@ -269,7 +269,7 @@ public class AstroSystem implements Serializable {
      * @see #fromFitsHeader(Header, String)
      */
 	public static AstroSystem fromFitsHeader(Header header, String alt) {
-	    Class<? extends SphericalCoordinates> cl = SphericalCoordinates.getFITSClass("CTYPE1" + alt);     
+	    Class<? extends SphericalCoordinates> cl = SphericalCoordinates.getFITSClass(header.getStringValue("CTYPE1" + alt));     
 	    if(EquatorialCoordinates.class.isAssignableFrom(cl)) return new Equatorial(EquatorialSystem.fromHeader(header, alt));
 	    if(EclipticCoordinates.class.isAssignableFrom(cl)) return new Equatorial(EquatorialSystem.fromHeader(header, alt));
 	    return new AstroSystem(cl);

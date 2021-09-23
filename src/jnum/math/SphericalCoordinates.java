@@ -614,8 +614,8 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
      */
 	public void getOffsetFrom(final SphericalCoordinates reference, final Vector2D toOffset) {
 		getNativeOffsetFrom(reference, toOffset);
-		if(isReverseLongitude()) toOffset.scaleX(-1.0);
-		if(isReverseLatitude()) toOffset.scaleY(-1.0);
+		if(isReverseLongitude()) toOffset.flipX();
+		if(isReverseLatitude()) toOffset.flipY();
 	}
 		
 	/**

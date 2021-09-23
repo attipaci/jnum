@@ -240,10 +240,17 @@ public class EllipticalSource extends GaussianSource {
       
                     if(v.length() < minr) return;
 
-                    double theta = 2.0 * v.angle();
-                    double c = Math.cos(theta);
-                    double s = Math.sin(theta);
+                    //double theta = 2.0 * v.angle();
+                    //double c = Math.cos(theta);
+                    //double s = Math.sin(theta);
 
+                    // More computationally efficient way to get sin/cos 2*angle:
+                    double C = v.cosAngle();
+                    double S = v.sinAngle();
+                    
+                    double c = C * C - S * S;
+                    double s = 2.0 * S * C;
+                    
                     m2c += w * c;
                     m2s += w * s;
                     sumw += Math.abs(w);

@@ -1259,7 +1259,7 @@ public final class ArrayUtil {
         if(data instanceof InvalidValue[]) {
             InvalidValue[] array = (InvalidValue[]) data;
             double[] weight = new double[array.length];
-            IntStream.range(0, array.length).parallel().forEach(i -> weight[i] = array[i].isNaN() ? 0.0 : 1.0);
+            IntStream.range(0, array.length).parallel().forEach(i -> weight[i] = array[i].isInvalidValue() ? 0.0 : 1.0);
             return weight;
         }
         else if(data instanceof Object[]) {

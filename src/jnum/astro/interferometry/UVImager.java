@@ -638,7 +638,7 @@ public class UVImager {
      */
     public int despike(double level) {
         final double L2 = level * level;
-        return parallelStreamValid().filter(z -> z.weight() * z.absSquared() > L2).mapToInt(z -> {
+        return parallelStreamValid().filter(z -> z.weight() * z.squareNorm() > L2).mapToInt(z -> {
             z.setWeight(0.0);
             return 1;
         }).sum();

@@ -28,7 +28,6 @@ import java.util.List;
 
 
 import jnum.PointOp;
-import jnum.Util;
 import jnum.data.CubicSpline;
 import jnum.data.DataCrawler;
 import jnum.data.RegularData;
@@ -66,7 +65,7 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     }
 
     public Cube3D getCube() {
-        return getCube(getElementType(), getBlankingValue());
+        return getCube(getElementType(), getInvalidValue());
     }
 
     public final Cube3D getCube(Number blankingValue) {
@@ -74,7 +73,7 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     }
 
     public final Cube3D getCube(Class<? extends Number> elementType) {
-        return getCube(elementType, getBlankingValue());
+        return getCube(elementType, getInvalidValue());
     }
 
     public Cube3D getCube(Class<? extends Number> elementType, Number blankingValue) {
@@ -101,6 +100,16 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     public final Index3D getSize() { return new Index3D(sizeX(), sizeY(), sizeZ()); }
 
     @Override
+    public int getSize(int i) {
+        switch(i) {
+        case 0: return sizeX();
+        case 1: return sizeY();
+        case 2: return sizeZ();
+        default: throw new IllegalArgumentException("there is no dimension " + i);
+        }
+    }
+    
+    @Override
     public final Index3D copyOfIndex(Index3D index) { return new Index3D(index.i(), index.j(), index.k()); }
 
     @Override
@@ -110,17 +119,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     public final int capacity() {  
         return sizeX() * sizeY() * sizeZ(); 
     }
-
-    @Override
-    public final String toString(Index3D index) {
-        return toString(index.i(), index.j(), index.k());
-    }
-
-    public String toString(int i, int j, int k) {
-        return "[" + i + ", " + j + "," + k + "]=" + Util.S3.format(get(i,j, k));
-    }
-
-
 
     public boolean conformsTo(int sizeX, int sizeY, int sizeZ) {
         if(sizeX() != sizeX) return false;
@@ -171,7 +169,7 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
 
     @Override
     public void discard(int i, int j, int k) {
-        set(i, j, k, getBlankingValue());
+        set(i, j, k, getInvalidValue());
     }
 
     public void clear(int i, int j, int k) { set(i, j, k, 0); }
@@ -215,10 +213,10 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         if(i == ic) if(j == jc) if(k == kc) return get(i, j, k).doubleValue();
 
         switch(getInterpolationType()) {
-        case NEAREST : return get(i, j, k).doubleValue();
-        case LINEAR : return linearAtIndex(ic, jc, kc);
-        case QUADRATIC : return quadraticAtIndex(ic, jc, kc);
-        case SPLINE : return splines == null ? splineAtIndex(ic, jc, kc) : splineAtIndex(ic, jc, kc, splines);
+        case INTERPOLATE_NEAREST : return get(i, j, k).doubleValue();
+        case INTERPOLATE_LINEAR : return linearAtIndex(ic, jc, kc);
+        case INTERPOLATE_PIECEWISE_QUADRATIC : return quadraticAtIndex(ic, jc, kc);
+        case INTERPOLATE_SPLINE : return splines == null ? splineAtIndex(ic, jc, kc) : splineAtIndex(ic, jc, kc, splines);
         }
 
         return Double.NaN;
@@ -338,10 +336,10 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     @Override
     protected int getInterpolationOps(int type) {
         switch(type) {
-        case NEAREST : return 15;
-        case LINEAR : return 90;
-        case QUADRATIC : return 100;
-        case SPLINE : return 800;
+        case INTERPOLATE_NEAREST : return 15;
+        case INTERPOLATE_LINEAR : return 90;
+        case INTERPOLATE_PIECEWISE_QUADRATIC : return 100;
+        case INTERPOLATE_SPLINE : return 800;
         }
         return 1;
     }

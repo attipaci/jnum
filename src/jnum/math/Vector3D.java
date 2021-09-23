@@ -148,7 +148,7 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
     public final double abs() { return length(); }
     
     @Override
-    public final double absSquared() { return x() * x() + y() * y() + z() * z(); }
+    public final double squareNorm() { return x() * x() + y() * y() + z() * z(); }
     
     public double theta() {
         return Math.atan2(z(), ExtraMath.hypot(x(),  y()));

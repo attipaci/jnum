@@ -88,7 +88,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     }
 
     public Samples1D getSamples() {
-        return getSamples(getElementType(), getBlankingValue());
+        return getSamples(getElementType(), getInvalidValue());
     }
 
     public final Samples1D getSamples(Number blankingValue) {
@@ -96,7 +96,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     }
 
     public final Samples1D getImage(Class<? extends Number> elementType) {
-        return getSamples(elementType, getBlankingValue());
+        return getSamples(elementType, getInvalidValue());
     }
 
     public Samples1D getSamples(Class<? extends Number> elementType, Number blankingValue) {
@@ -121,18 +121,13 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     public final Index1D getSize() { return new Index1D(size()); }
     
     @Override
-    public final int capacity() { return size(); }
-
+    public int getSize(int i) {
+        if(i != 0) throw new IllegalArgumentException("there is no dimension " + i);
+        return size();
+    }
     
     @Override
-    public final String toString(Index1D index) {
-        return toString(index.i());
-    }
-    
-    public String toString(int i) {
-        return "[" + i + "]=" + Util.S3.format(get(i));
-    }
-  
+    public final int capacity() { return size(); }
     
     public final boolean conformsTo(int size) {
         return size() == size;
@@ -183,7 +178,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     
     @Override
     public void discard(int i) {
-        set(i, getBlankingValue());
+        set(i, getInvalidValue());
     }
     
     @Override
@@ -245,10 +240,10 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         if(i == ic) return get(i).doubleValue();
 
         switch(getInterpolationType()) {
-        case NEAREST : return get(i).doubleValue();
-        case LINEAR : return linearAtIndex(ic);
-        case QUADRATIC : return quadraticAtIndex(ic);
-        case SPLINE : return spline == null ? splineAtIndex(ic) : splineAtIndex(ic, spline);
+        case INTERPOLATE_NEAREST : return get(i).doubleValue();
+        case INTERPOLATE_LINEAR : return linearAtIndex(ic);
+        case INTERPOLATE_PIECEWISE_QUADRATIC : return quadraticAtIndex(ic);
+        case INTERPOLATE_SPLINE : return spline == null ? splineAtIndex(ic) : splineAtIndex(ic, spline);
         }
 
         return Double.NaN;
@@ -357,10 +352,10 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     @Override
     protected int getInterpolationOps(int type) {
         switch(type) {
-        case NEAREST : return 5;
-        case LINEAR : return 25;
-        case QUADRATIC : return 30;
-        case SPLINE : return 50;
+        case INTERPOLATE_NEAREST : return 5;
+        case INTERPOLATE_LINEAR : return 25;
+        case INTERPOLATE_PIECEWISE_QUADRATIC : return 30;
+        case INTERPOLATE_SPLINE : return 50;
         }
         return 1;
     }

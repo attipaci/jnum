@@ -249,6 +249,14 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     @Override
     public final Index2D getSize() { return new Index2D(rows(), cols()); }
     
+    @Override
+    public int getSize(int i) {
+        switch(i) {
+        case 0: return rows();
+        case 1: return cols();
+        default: throw new IllegalArgumentException("there is no dimension " + i);
+        }
+    }
 
     @Override
     public final boolean isSize(int rows, int cols) {
@@ -969,7 +977,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 	        
 	        for(int ll=rows(); --ll >= 0; ) if(ll != icol) {
 	            e.copy(ll, icol);
-	            e.scale(-1.0);
+	            e.flip();
 	            
 	            for(int j=cols(); --j >= 0; ) {
 	                product.setProduct(e.value(), get(icol, j));
@@ -1026,7 +1034,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         
         int rank = 0;
         for(int i=rows(); --i >= 0; ) 
-            for(int j=cols(); --j >= 0; ) if(e.from(i, j).absSquared() > tiny2) {
+            for(int j=cols(); --j >= 0; ) if(e.from(i, j).squareNorm() > tiny2) {
                 rank++;
                 break;
             }
@@ -1040,7 +1048,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         tiny2 *= tiny2;
         
         MatrixElement<T> e = getElementInstance();
-        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) if(e.from(i, j).absSquared() < tiny2) clear(i, j);
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) if(e.from(i, j).squareNorm() < tiny2) clear(i, j);
     }
     
     /**
@@ -1061,7 +1069,7 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
         
         int col = 0;
         for(int i=0; i<rows(); i++)
-            for(int j=col; j<cols(); j++) if(e.from(i, j).absSquared() > tiny2) {
+            for(int j=col; j<cols(); j++) if(e.from(i, j).squareNorm() > tiny2) {
                 AbstractVector<T> v = basis.getVectorInstance();
                 copyColumnTo(j, v);
                 basis.add(v);

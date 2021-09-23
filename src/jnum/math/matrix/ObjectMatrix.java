@@ -243,7 +243,7 @@ extends AbstractMatrix<T> {
         double mag2 = 0.0;
         
         for(int i=toi; --i >= fromi; ) for(int j=toj; --j >= toj; ) {
-            double a2 = data[i][j].absSquared();
+            double a2 = data[i][j].squareNorm();
             if(a2 > mag2) mag2 = a2;
         }
         
@@ -264,11 +264,11 @@ extends AbstractMatrix<T> {
         for(int i=rows(); --i >= 0; ) {
             T v = data[i][i];
             sum.add(v);
-            double a2 = v.absSquared();
+            double a2 = v.squareNorm();
             if(a2 > mag2) mag2 = a2;
         }
             
-        return sum.absSquared() <= 1e-24 * mag2;
+        return sum.squareNorm() <= 1e-24 * mag2;
     }
     
     @Override
@@ -476,7 +476,7 @@ extends AbstractMatrix<T> {
             double d2 = 0.0;
             for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
                 v.setDifference(get(i, j), (T) o.get(i, j));
-                d2 += v.absSquared();
+                d2 += v.squareNorm();
             }
             return Math.sqrt(d2);
         }
@@ -487,7 +487,7 @@ extends AbstractMatrix<T> {
                 v.setIdentity();
                 v.scale(((Number) o.get(i, j)).doubleValue());
                 v.subtract(get(i, j));
-                d2 += v.absSquared();
+                d2 += v.squareNorm();
             }
             return Math.sqrt(d2);
         }
@@ -690,6 +690,11 @@ extends AbstractMatrix<T> {
         public boolean isNull() {
             return value.isNull();
         }
+        
+        @Override
+        public void flip() {
+            scale(-1.0);
+        }
 
         @Override
         public void scale(double factor) {
@@ -752,8 +757,8 @@ extends AbstractMatrix<T> {
         }
 
         @Override
-        public double absSquared() {
-            return value.absSquared();
+        public double squareNorm() {
+            return value.squareNorm();
         }
 
         @Override

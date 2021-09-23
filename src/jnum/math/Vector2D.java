@@ -65,7 +65,7 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
 
     public final double length() { return ExtraMath.hypot(x(), y()); }
 
-    public final double lengthSquared() { return absSquared(); }
+    public final double lengthSquared() { return squareNorm(); }
     
     /**
      * Absolute value (radius) of the complex number. Same as {@link #length()}.
@@ -78,7 +78,7 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
     public final double abs() { return length(); }
 
     @Override
-    public final double absSquared() { return x() * x() + y() * y(); }
+    public final double squareNorm() { return x() * x() + y() * y(); }
 
 
     public final double angle() {
@@ -212,7 +212,7 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
     public double getValue(int field) throws NoSuchFieldException {
         switch(field) {
         case LENGTH: return length();
-        case NORM: return absSquared();
+        case NORM: return squareNorm();
         case ANGLE: return angle();
         default: return super.getValue(field);
         }
@@ -222,7 +222,7 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
     public void setValue(int field, double value) throws NoSuchFieldException {
         switch(field) {
         case LENGTH: scale(value/length()); break;
-        case NORM: scale(Math.sqrt(value/absSquared())); break;
+        case NORM: scale(Math.sqrt(value/squareNorm())); break;
         case ANGLE: rotate(value - angle()); break;
         default: super.setValue(field, value);
         }

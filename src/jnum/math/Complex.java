@@ -155,7 +155,7 @@ public class Complex extends Vector2D implements
 
 
 	@Override
-	public final void conjugate() { scaleY(-1.0); }
+	public final void conjugate() { flipY(); }
 
 	
 	/**
@@ -167,7 +167,7 @@ public class Complex extends Vector2D implements
 	@Override
 	public void inverse() { 
 		conjugate();
-		scale(1.0 / absSquared());
+		scale(1.0 / squareNorm());
 	}
 	
 
@@ -198,7 +198,7 @@ public class Complex extends Vector2D implements
 
 	@Override
 	public final void setRatio(final Complex a, final Complex b) {
-		final double A = 1.0 / b.absSquared();
+		final double A = 1.0 / b.squareNorm();
 		set(
 				a.x() * b.x() + a.y() * b.y(),
 				a.y() * b.x() - a.x() * b.y()
@@ -301,7 +301,7 @@ public class Complex extends Vector2D implements
 	 * 
 	 */
 	public final void cbrt() { 
-		setPolar(Math.cbrt(length()), 0.33333333333333 * angle());
+		setPolar(Math.cbrt(length()), 0.33333333333333333 * angle());
 	}
 	
 	/**

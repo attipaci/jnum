@@ -121,11 +121,6 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
                 (noiseRescale == 1.0 ? "" : 
                     "Noise Re-scaling: " + Util.f2.format(noiseRescale) + "x (from image variance).\n"); 
     }
-
-    @Override
-    public String toString(int i, int j) {
-        return super.toString(i, j) + " weight=" + Util.S3.format(weightAt(i, j)) + " exp=" + Util.S3.format(exposureAt(i, j));
-    }
     
     @Override
     public boolean isValid(int i, int j) {

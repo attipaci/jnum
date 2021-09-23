@@ -218,11 +218,6 @@ public class Flagged2D extends Overlay2D {
         getFlags().destroy();
     }
     
-    @Override
-    public String toString(int i, int j) {
-        return super.toString(i,j) + " flag=0x" + Long.toHexString(getFlags().get(i,j));
-    }
-    
     public static final FlagSpace.Long flagSpace = new FlagSpace.Long(Flagged2D.class.getSimpleName());
     public static final FlagBlock<Long> flags = flagSpace.getDefaultFlagBlock(); 
 

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import jnum.CopiableContent;
 import jnum.ExtraMath;
 import jnum.PointOp;
 import jnum.Unit;
@@ -41,6 +42,7 @@ import jnum.Verbosity;
 import jnum.data.index.Index;
 import jnum.data.index.IndexedValues;
 import jnum.fits.FitsToolkit;
+import jnum.math.LinearAlgebra;
 import jnum.math.Range;
 import jnum.parallel.ParallelObject;
 import jnum.parallel.ParallelPointOp;
@@ -66,41 +68,43 @@ import nom.tam.util.Cursor;
  */
 public abstract class Data<IndexType extends Index<IndexType>>
 extends ParallelObject 
-implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableFormatter.Entries {
+implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, LinearAlgebra<Data<IndexType>>, TableFormatter.Entries {
 
     static {
         Locale.setDefault(Locale.US);
     }
 
-    
+    /** The value to use to mark invalid or blanked data */
     private Number invalidValue;
 
+    /** If this object provides verbose messages. */
     private boolean isVerbose;
 
-    private int interpolationType;    
-
+    /** The physical unit in which data is represented */
     private Unit unit;  
 
+    /** The history of operations performed on this data */
     private ArrayList<String> history;
 
+    /** Physical units that are defined locally for this data */
     private Hashtable<String, Unit> localUnits;
 
+    private boolean preserveHistory;
 
-
-    private boolean logNewData;
-
-
-    public Data() { 
+    /** 
+     * Instantiates a new data object. It should be called by all subclass contructors.
+     */
+    protected Data() { 
         setVerbose(false);
-        setBlankingValue(Double.NaN);
+        setInvalidValue(Double.NaN);
         history = new ArrayList<>();
+        preserveHistory = false;
         setDefaultUnit();
-        logNewData = true;
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode() ^ getInterpolationType() ^ getBlankingValue().hashCode(); 
+        int hash = super.hashCode() ^ getInvalidValue().hashCode(); 
         if(getUnit() != null) hash ^= getUnit().hashCode();
         return hash;
     }
@@ -114,16 +118,24 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         @SuppressWarnings("unchecked")
         Data<IndexType> data = (Data<IndexType>) o;
 
-        if(getInterpolationType() != data.getInterpolationType()) return false;
-        if(!Util.equals(getBlankingValue(), data.getBlankingValue())) return false;
+        if(!Util.equals(getInvalidValue(), data.getInvalidValue())) return false;
         if(!Util.equals(getUnit(), data.getUnit())) return false;
 
         return contentEquals(data);
     }
 
-
+    /**
+     * Checks if this data object has the same content as another data object of the same index type.
+     * 
+     * @param data  the other data object with the same type of index.
+     * @return      <code>true</code>if the two data objects contain the same data, or <code>false</code> otherwise.
+     *              The two data objects must match in size, and their elements must be the same with
+     *              {@link Number#equals(Object)}.
+     *              
+     * @see #getSize()
+     */
     public boolean contentEquals(final Data<IndexType> data) {   
-        if(!getSizeString().equals(data.getSizeString())) return false;
+        if(!getSize().equals(data.getSize())) return false;
 
         PointOp.Simple<IndexType> comparison = new PointOp.Simple<IndexType>() {
             @Override
@@ -151,8 +163,6 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
             clone.localUnits.putAll(localUnits);
         }
 
-        clone.logNewData = true;
-
         return clone;
     }
 
@@ -164,38 +174,103 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
     @Override
     public void setVerbose(boolean value) { isVerbose = value; }
 
-
+    /** 
+     * Returns the list of history entries for this data object, as a list of strings.
+     * 
+     * @return  the ordered list of history (of operations performed) on this data.
+     * 
+     * @see #addHistory(String)
+     * @see #addHistory(Header)
+     * @see #setHistory(List)
+     * @see #clearHistory()
+     */
     public List<String> getHistory() { return history; }
 
-    public void keepHistory(boolean value) {
-        if(!value) history = null;
-        else if(history == null) history = new ArrayList<>();
-
-    }
-
+    /**
+     * Wipes the prior history of operations on this data clean, as if starting a new
+     * pristine data object.
+     * 
+     * @see #getHistory()
+     */
     public void clearHistory() {
         if(history != null) history.clear();
     }
 
+    /**
+     * Adds a new enty to the end of the history of operations performed to this data.
+     * 
+     * @param entry     a human-readable string describing the last operation on this data object.
+     * 
+     * @see #getHistory()
+     * @see #addHistory(String)
+     * @see #clearHistory()
+     */
     public void addHistory(String entry) {
         if(history == null) return;
         history.add(entry); 
         if(isVerbose()) Util.info(this, entry);
     }
 
+    /**
+     * Sets the history record (of operations performed on this data object) to the
+     * specified list of strings. Any prior history dereferenced, and a new history
+     * list is started with the specified values.
+     * 
+     * @param entries   the list of human-readable operations performed on this data object
+     * 
+     * @see #getHistory()
+     * @see #addHistory(String)
+     * @see #clearHistory()
+     */
     public void setHistory(List<String> entries) {
-        history = new ArrayList<>(entries.size());
-        history.addAll(entries);
+        history = new ArrayList<>(entries);
     }
 
 
-
-
+    /**
+     * <p>
+     * Adds a new non-standard physical unit for used with this data object locally, using the
+     * canonical name of the unit only. The local units of
+     * this data may be applied to the data with {@link #setUnit(String)}, or can 
+     * be retrieved with all other locally defined units via {@link #getLocalUnits()}.
+     * </p>
+     * 
+     * <p>
+     * Standard units, that is those returned by {@link Unit#get(String)}, specify just
+     * about all commonly (and also rarely) used units, assuming that the underlying data
+     * is numerically represented as standard S.I. values. However, a data object may diverge
+     * from S.I. internally, and store values in some other (non-SI) units that are
+     * more natural for the partiucular data object (e.g. "Jy/beam", where "beam" is a 
+     * dynamically defined quantity of the data object itself). In such cases, the
+     * user of the data object may want to define the relevant physical units for use
+     * locally with the data object. (The standard physical units will remain available
+     * also, so be aware!)
+     * </p>
+     * 
+     * @param u     a custom (non-standard) physical unit for use with this data object.
+     * 
+     * @see #addLocalUnit(Unit, String)
+     * @see #setUnit(String)
+     * @see #getLocalUnits() 
+     */
     public void addLocalUnit(Unit u) {
         if(localUnits == null) localUnits = new Hashtable<>();
         u.registerTo(localUnits);
     }
 
+    /**
+     * Like {@link #addLocalUnit(Unit)}, but the custom (non-standard) unit is registered
+     * also with the list of the supplied name alternatives, all of which can be used to
+     * retrieve the specified unit e.g. with {@link #setUnit(String)}.
+     * 
+     * @param u         a custom (non-standard) physical unit for use with this data object.
+     * @param altNames  a comma-separated alternative (case-sensitive) names by which the 
+     *                  specified custom unit may be referred to as.
+     * 
+     * @see #addLocalUnit(Unit)
+     * @see #setUnit(String)
+     * @see #getLocalUnits()
+     */
     public void addLocalUnit(Unit u, String altNames) {
         if(localUnits == null) localUnits = new Hashtable<>();
         u.registerTo(localUnits, altNames);
@@ -203,17 +278,40 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
     }
 
 
+    /**
+     * Returns the list of locally defined custom (non-stndard) physical units for this
+     * data object.
+     * 
+     * @return  the list of lically defined custom (non-standard) physical units for this object.
+     * 
+     * @see #addLocalUnit(Unit)
+     * @see #setUnit(String)
+     */
     public Hashtable<String, Unit> getLocalUnits() { return localUnits; }
 
 
-
-
-    public final Number getBlankingValue() {
+    /**
+     * Returns the number value that is used by this data object to mark invalid data, such 
+     * as {@link Double#NaN} or -1, or -999.0.
+     * 
+     * @return  the number value that this data object uses to mark invalid data.
+     * 
+     * @see #setInvalidValue(Number)
+     */
+    public final Number getInvalidValue() {
         return invalidValue;
     }
 
-
-    public final void setBlankingValue(final Number value) {
+    /**
+     * Changes the number value used by this data object to mark invalid data. All data
+     * marked invalid previously will be changed to the new ionvalid value.
+     * 
+     * @param value     the new number value that this data object will use from now on to mark invalid data.
+     * 
+     * @see #getInvalidValue()
+     * @see #discard(Index)
+     */
+    public final void setInvalidValue(final Number value) {
 
 
         // Replace old blanking values in image with the new value, as needed...
@@ -238,84 +336,281 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         return a.doubleValue() < b.doubleValue() ? -1 : 1;
     }
 
-
-
-
+    /**
+     * Checks if a number value is considered valid by this data object.
+     * 
+     * @param value     a number value to check.
+     * @return          <code>true</code> if the specified number is a valid value for this object, or <code>false</code>
+     *                  if it is invalid.
+     * 
+     * @see #getInvalidValue()
+     * @see #setInvalidValue(Number)
+     */
     public boolean isValid(Number value) {
         return !value.equals(invalidValue);
     }
 
 
-    public int getInterpolationType() { return interpolationType; }
-
-    public void setInterpolationType(int value) { this.interpolationType = value; }
-
-
-
+    /** 
+     * Set the data unit to the default physical unit of this data object.
+     * 
+     * @see #setUnit(Unit)
+     */
     protected void setDefaultUnit() { setUnit(Unit.unity); }
 
+    /**
+     * Returns the physical unit in which the data of this object is represented.
+     * 
+     * @return      the physical unit used for representing values in this data object.
+     * 
+     * @see #setUnit(String)
+     * @see #setUnit(Unit)
+     * @see #setUnit(String, Map)
+     * @see #setDefaultUnit()
+     */
     public Unit getUnit() {
         return unit;
     }
 
+    /**
+     * Sets a new physical unit for this data object. Values stored in this data are assumed
+     * to be represented in the new unit.
+     * 
+     * @param u     the new physical unit used for representing values in this data object.
+     * 
+     * @see #setUnit(String)
+     * @see #setDefaultUnit()
+     * @see #getUnit()
+     * 
+     */
     public void setUnit(Unit u) { this.unit = u; }
 
-
+    /**
+     * Sets a new physical unit for this data object. Values stored in this data are assumed
+     * to be represented in the new unit.
+     * 
+     * @param spec  the string specification for the new physical unit used for representing values in this data object.
+     * 
+     * @see #setUnit(String, Map)
+     * @see #setUnit(Unit)
+     * @see #setDefaultUnit()
+     * @see #getUnit()
+     */
     public void setUnit(String spec) {
         setUnit(spec, getLocalUnits());
     }
 
+    /**
+     * Sets a new physical unit for this data object, including custom physical base units defined
+     * in by the caller. Values stored in this data are assumed to be represented in the new unit.
+     * The specification can rfefer to any compount unit that is composed of standard and the specified
+     * non-standard base units, e.g. "W / m**2 / Hz**{0.5}", where "W" is redefined as a non-stamndard
+     * custom base unit in the second argument, and "m" and "Hz" are the standard S.I. units.
+     * 
+     * @param spec              the string specification for the new physical unit used for representing values in this data object.
+     * @param extraBaseUnits    the lookup table for custom (non-standard) base units that may be used also.
+     * 
+     * @see #setUnit(String)
+     * @see #setUnit(Unit)
+     * @see #setDefaultUnit()
+     * @see #getUnit()
+     */
     public void setUnit(String spec, Map<String, Unit> extraBaseUnits) {
         CompoundUnit u = new CompoundUnit();
         u.parse(spec, extraBaseUnits);
         setUnit(u); 
     }
 
-
-    protected void silentNextNewData() {
-        logNewData = false;
+    /**
+     * Preserve prior history when recording the next new data, for example because the new data this object is
+     * being set to is a logical continuation of the old data. The preservation affect only the next call to
+     * {@link #recordNewData(String)}.
+     * 
+     * @see #recordNewData(String)
+     */
+    public void preserveHistory() {
+        preserveHistory = true;
     }
 
-    protected void recordNewData(String detail) {
-        if(!logNewData) logNewData = false;
+    /**
+     * Starts a new history for this data, with the specified data description (if any).
+     * 
+     * @param description       the description of the new data, or <code>null</code> to leave it nondescript.
+     * 
+     * @see #preserveHistory()
+     * @see #clearHistory()
+     */
+    protected void recordNewData(String description) {
+        if(preserveHistory) preserveHistory = false;
         else {
             clearHistory();
-            addHistory("set new image " + getSizeString() + (detail == null ? "" : " " + detail));
+            addHistory("set new image " + getSizeString() + (description == null ? "" : " " + description));
         }
     }
 
     @Override
     public abstract DataCrawler<Number> iterator();
 
+    /**
+     * Loops over all data elements, performing the specified point operation on each.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp, Index, Index)
+     * @see #loopValid(PointOp)
+     * @see #fork(ParallelPointOp)
+     */
     public final <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op) {
         return loop(op, getIndexInstance(), getSize());
     }
 
+    /**
+     * Loops over all valid data elements, performing the specified point operation on each.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loopValid(PointOp, Index, Index)
+     * @see #loop(PointOp)
+     * @see #forkValid(ParallelPointOp)
+     */
     public final <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op) {
         return loopValid(op, getIndexInstance(), getSize());
     }
 
+    /**
+     * Loops over a block of data elements in the specified index range, 
+     * performing the specified point operation on each.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the point operation to perform on each data element
+     * @param from          the starting index for the loop.
+     * @param to            the ecxlusive ending index for the loop.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp)
+     * @see #loopValid(PointOp, Index, Index)
+     * @see #fork(ParallelPointOp, Index, Index)
+     */
     public abstract <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
 
+    /**
+     * Loops over a block of valid data elements in the specified index range, 
+     * performing the specified point operation on each.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the point operation to perform on each data element
+     * @param from          the starting index for the loop.
+     * @param to            the ecxlusive ending index for the loop.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loopValid(PointOp)
+     * @see #loop(PointOp, Index, Index)
+     * @see #forkValid(ParallelPointOp, Index, Index)
+     */
     public abstract <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op, IndexType from, IndexType to);
 
-
+    /**
+     * Process elements (points) in this data object in parallel with the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #smartFork(ParallelPointOp)
+     * @see #forkValid(ParallelPointOp)
+     * @see #fork(ParallelPointOp, Index, Index)
+     * @see #loop(PointOp)
+     */
     public final <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op) {
         return fork(op, getIndexInstance(), getSize());
     }
 
+    /**
+     * Process only valid elements (points) in this data object in parallel with the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #smartForkValid(ParallelPointOp)
+     * @see #fork(ParallelPointOp)
+     * @see #forkValid(ParallelPointOp, Index, Index)
+     * @see #loopValid(PointOp)
+     */
     public final <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
         return forkValid(op, getIndexInstance(), getSize());
     }
 
+    /**
+     * Process a block of elements (points), in the specified range of indices, in this data object in parallel 
+     * with the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param from          the starting index for the block of data to process.
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #smartFork(ParallelPointOp, Index, Index)
+     * @see #forkValid(ParallelPointOp, Index, Index)
+     * @see #fork(ParallelPointOp)
+     * @see #loop(PointOp, Index, Index)
+     */
     public abstract <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
 
+    /**
+     * Process a block of valid elements (points) only, in the specified range of indices, in this data object in parallel 
+     * with the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param from          the starting index for the block of data to process.
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #smartForkValid(ParallelPointOp, Index, Index)
+     * @see #fork(ParallelPointOp, Index, Index)
+     * @see #forkValid(ParallelPointOp)
+     * @see #loopValid(PointOp, Index, Index)
+     */
     public abstract <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to);
 
+    /**
+     * Process elements (points) in this data object efficiently, using parallel or sequential processing, whichever
+     * is deemed fastest for the data size and the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp)
+     * @see #fork(ParallelPointOp)
+     * @see #smartFork(ParallelPointOp, Index, Index)
+     * @see #smartForkValid(ParallelPointOp)
+     */
     public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op) {
         return smartFork(op, getIndexInstance(), getSize());
     }
 
+    /**
+     * Process a block of elements (points), in the specified range of indices, in this data object efficiently, 
+     * using parallel or sequential processing, whichever is deemed fastest for the data size and the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param from          the starting index for the block of data to process.
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp, Index, Index)
+     * @see #fork(ParallelPointOp, Index, Index)
+     * @see #smartForkValid(ParallelPointOp, Index, Index)
+     * @see #smartFork(ParallelPointOp)
+     */
     public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to) {
         if(getParallel() < 2) return loop(op, from, to);
         IndexType span = getIndexInstance();
@@ -324,10 +619,38 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         return fork(op, from, to);
     }
 
+    /**
+     * Process valid elements (points) only in this data object efficiently, using parallel or sequential processing, whichever
+     * is deemed fastest for the data size and the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loopValid(PointOp)
+     * @see #forkValid(ParallelPointOp)
+     * @see #smartFork(ParallelPointOp)
+     * @see #smartForkValid(ParallelPointOp, Index, Index)
+     */
     public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op) {
         return smartForkValid(op, getIndexInstance(), getSize());
     }
 
+    /**
+     * Process a block of valid elements (points) only, in the specified range of indices, in this data object efficiently, 
+     * using parallel or sequential processing, whichever is deemed fastest for the data size and the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param from          the starting index for the block of data to process.
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loopValid(PointOp, Index, Index)
+     * @see #forkValid(ParallelPointOp, Index, Index)
+     * @see #smartFork(ParallelPointOp, Index, Index)
+     * @see #smartForkValid(ParallelPointOp)
+     */
     public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to) {
         if(getParallel() < 2) return loopValid(op, from, to);
         IndexType span = getIndexInstance();
@@ -337,11 +660,6 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
     }
 
 
-    /**
-     * 
-     * @return a instance of the index type, initialized to zeroes.
-     */
-
     @Override
     public final boolean conformsTo(IndexedValues<IndexType, ?> data) { return conformsTo(data.getSize()); }
 
@@ -350,16 +668,52 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         return getSize().equals(size);
     }
 
+    /**
+     * Returns the number value at the specified data index (if valid), or the the specified default value if
+     * there is no valid datum at the specified index.
+     * 
+     * @param index         the data index
+     * @param defaultValue  the default value to return if the data at the specified index is invalid.
+     * @return              the valid datum at the specified index, or else the specified default value if
+     *                      the datum at the index is invalid.
+     *                      
+     * @see #isValid(Index)
+     * @see #getInvalidValue()
+     * @see #setInvalidValue(Number)
+     */
     public abstract Number getValid(final IndexType index, final Number defaultValue);
 
+    /**
+     * Checks if the datum at the specified index is valid.
+     * 
+     * @param index     the data index
+     * @return          <code>true</code> if this data object contains valid number value at the specified index,
+     *                  otherwise <code>false</code>.
+     * 
+     * @see #isValid(Number)
+     * @see #setInvalidValue(Number)
+     * @see #discard(Index)
+     */
     public abstract boolean isValid(IndexType index);
 
+    /**
+     * Discards the datum at the specified index setting, marking it as invalid.
+     * 
+     * @param index     the data index          
+     * 
+     * @see #isValid(Index)
+     * @see #discardRange(Range)
+     * @see #setInvalidValue(Number)
+     */
     public abstract void discard(IndexType index);
 
-    public abstract String toString(IndexType index);
-
-
-
+    /**
+     * Clears all values inthis data object, by calling {@link #clear(Object)} on every element. It also
+     * starts a new hostory for this data object.
+     * 
+     * @see #clearHistory()
+     * @see #clear(Object)
+     */
     public final void clear() {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -369,6 +723,15 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         addHistory("clear " + getSizeString());
     }
 
+    /**
+     * Fills this data object with the specified number value, setting every element in this object to that
+     * value.
+     * 
+     * @param value     the value that all elements of this data object are to be set to.
+     * 
+     * @see #clear()
+     * @see #add(Number)
+     */
     public final void fill(final Number value) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -378,22 +741,42 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         addHistory("fill " + getSizeString() + " with " + value);
     }
 
+    /**
+     * Adds a value to every valid element of this data object.
+     * 
+     * @param value     the increment to add to all valid data elements.
+     * 
+     * @see #add(Object, Number)
+     */
     public final void add(final Number value) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
-            public void process(IndexType index) { add(index, value); }
+            public void process(IndexType index) { if(isValid(index)) add(index, value); }
         });
         addHistory("add " + value);
     }
 
+
+    @Override
     public void scale(final double factor) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
-            public void process(IndexType index) { scale(index, factor); }
+            public void process(IndexType index) { if(isValid(index)) scale(index, factor); }
         });
         addHistory("scale by " + factor);
     }
 
+    /**
+     * Validates this data object, by checking through all elements, and calling {@link #discard(Index)}
+     * on those values for which {@link #isValid(Index)} returns <code>false</code>. This is
+     * especially useful for data objects which have compound validation, e.g. because they implement
+     * explicit flagging, beside simply having invalid number values as markers for bad or missing
+     * data.
+     * 
+     * @see #isValid(Index)
+     * @see #discard(Index)
+     * @see #validate(Validating)
+     */
     public final void validate() {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -402,7 +785,17 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         addHistory("validate");
     }
 
-
+    /**
+     * Validates this data object, using the specified data validator on all elements, and calling {@link #discard(Index)}
+     * on any data deemed invalid by the validator. This call provides external validation of the data
+     * that is independent of the built-in validation method.
+     * 
+     * @param validator     the external validator the checks if data at specific indices is valid or not.
+     * 
+     * @see Validating#isValid(Object)
+     * @see #discard(Index)
+     * @see #validate()
+     */
     public void validate(final Validating<IndexType> validator) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -411,24 +804,54 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         addHistory("validate via " + validator);
     }
 
-    public final void discardRange(final Range discard) {
+    /**
+     * Discards all data elements that have values inside the specified range, by calling {@link #discard(Index)} on
+     * the affected points.
+     * 
+     * @param range     The range of number values to discard. All data elements in this range will be
+     *                  discarded via {@link #discard(Index)}.
+     *                  
+     * @see #discard(Index)
+     * @see #restrictRange(Range)
+     */
+    public final void discardRange(final Range range) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
             public void process(IndexType index) { 
-                if(discard.contains(get(index).doubleValue())) discard(index);
+                if(range.contains(get(index).doubleValue())) discard(index);
             }
         });
     }
 
-    public final void restrictRange(final Range keep) {
+    /**
+     * Restricts all data elements to the specified range, by calling {@link #discard(Index)} on
+     * the outliers.
+     * 
+     * @param range     The range of number values to discard. All data elements in this range will be
+     *                  discarded via {@link #discard(Index)}.
+     *                  
+     * @see #discard(Index)
+     * @see #discardRange(Range)
+     */
+    public final void restrictRange(final Range range) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
             public void process(IndexType index) { 
-                if(!keep.contains(get(index).doubleValue())) discard(index);
+                if(!range.contains(get(index).doubleValue())) discard(index);
             }
         });
     }
 
+
+    /**
+     * Copies data content from another data object of the same index type, but possibly of different
+     * (smaller size).
+     * 
+     * @param source    the data object that specifies the new elements for this one
+     * @param report    <code>true</code> if a new history entry should be added, otherwise <code>false</code>.
+     * 
+     * 
+     */
     public final void paste(final Data<IndexType> source, boolean report) {
         if(source == this) return;
 
@@ -443,27 +866,104 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         if(report) addHistory("pasted new content: " + source.getSizeString());
     }
 
+    /**
+     * Discards outliers above the specified deviation level (from zero), by calling {@link #discard(Index)} on
+     * any point that is deemed to be an outlier at the specified level. The default implementation is to 
+     * call {@link #despikeAbsolute(double, IndexedValues)} with <code>null</code> for the <code>noiseWeight</code>
+     * argument.
+     * 
+     * @param threshold     the despike threshold level. All data elements with absolute values larger than this
+     *                      threshold will be discarded.
+     *                      
+     * @see #despikeAbsolute(double, IndexedValues)
+     */
+    public void despike(double threshold) {
+        despikeAbsolute(threshold, null);
+    }
 
+    /**
+     * Discards outliers above the specified deviation level (from zero), by calling {@link #discard(Index)} on
+     * any point that is deemed to be an outlier at the specified level. The second optional argument can
+     * be used to specify noise weights data (<i>w</i> = 1/%sigma;<sup>2</sup>), in which case the threshold is
+     * interpreted as a signal-to-noise threshold, s.t. data <i>x</i><sub>i</sub> for which |<i>x</i><sub>i</sub>| 
+     * &gt; <code>significance</code> * %sigma;<sub>i</sub> is removed. Leaving the second argument <code>null</code>
+     * is equivalent to all data weight being 1.
+     * 
+     * @param significance   the despike threshold level. All data elements with absolute values or standardized
+     *                       deviations (if noise weights are given) larger than this threshold will be discarded.
+     * @param noiseWeight    (optional) Noise weights (<i>w</i> = 1/%sigma;<sup>2</sup>) to use with the data,
+     *                       or <code>null</code> to use uniform weights of 1.
+     *                      
+     * @see #despikeAbsolute(double, IndexedValues)
+     */
+    public synchronized void despikeAbsolute(final double significance, final IndexedValues<IndexType, ?> noiseWeight) {
 
-    public abstract void despike(double level);
+        final double s2 = significance * significance;
 
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType idx) {
+                double w = noiseWeight == null ? 1.0 : noiseWeight.get(idx).doubleValue();
+                double x = get(idx).doubleValue();
+                if(w * x * x > s2) discard(idx);
+            }
+        });
+
+        addHistory("despiked (absolute) at " + Util.S3.format(significance));
+    }
+
+    /**
+     * Returns a humant-readable string (typically multiple lines) describing this data object. Its purpose
+     * s to report metadata for this data object, not the actual data content.
+     * 
+     * @return  a comprehensive human-readable description of what a user might want to know about this
+     *          data object or its state.
+     */
     public abstract String getInfo();
 
+    /**
+     * Checks if this data object is empty, i.e. if it contains no valid elements.
+     * 
+     * @return  <code>true</code> if this data object is empty, containing no valid data elements, otherwise
+     *          <code>false</code>.
+     *         
+     * @see #isValid(Index)        
+     * @see #countPoints()
+     */
     public boolean isEmpty() {
         return countPoints() == 0;
     }
 
+    /**
+     * Counts the number of valid data points in this data object.
+     * 
+     * @return  the number of valid data points in this data object.
+     * 
+     * @see #isValid(Index)
+     * @see #isEmpty()
+     */
     public int countPoints() {
         return smartForkValid(new ParallelPointOp.ElementCount<Number>()).intValue();
     }
 
+    /**
+     * Returns the minimum valid value contained in this data object.
+     * 
+     * @return      the minimum valid value contained in this data object or {@link Double#POSITIVE_INFINITY}
+     *              if the data contains no valid values at all.
+     *              
+     * @see #getMax()
+     * @see #getRange()
+     * @see #isEmpty()
+     * @see #indexOfMin()
+     */
     public Number getMin() {
         return smartForkValid(new ParallelPointOp<Number, Number>() {
             Number min;
 
             @Override
             protected void init() {
-                min = Double.MAX_VALUE;
+                min = Double.POSITIVE_INFINITY;
             }
 
             @Override
@@ -483,13 +983,24 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });
     }
 
+    /**
+     * Returns the maximum valid value contained in this data object.
+     * 
+     * @return      the maximum valid value contained in this data object or {@link Double#NEGATIVE_INFINITY}
+     *              if the data contains no valid values at all.
+     *              
+     * @see #getMin()
+     * @see #getRange()
+     * @see #isEmpty()
+     * @see #indexOfMax()
+     */
     public Number getMax() {
         return smartForkValid(new ParallelPointOp<Number, Number>() {
             Number max;
 
             @Override
             protected void init() {
-                max = Double.MIN_VALUE;
+                max = Double.NEGATIVE_INFINITY;
             }
 
             @Override
@@ -509,6 +1020,17 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });
     }
 
+    /**
+     * Returns the range of valid values contained in this data object.
+     * 
+     * @return      the range of values contained in this data object. (it may be an empty range
+     *              if this data object is empty.
+     *              
+     * @see #getMin()
+     * @see #getMax()
+     * @see #isEmpty()
+     * @see #indexOfMaxDev()
+     */
     public Range getRange() {
         return smartForkValid(new ParallelPointOp<Number, Range>() {
             Range range;
@@ -536,14 +1058,16 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
     }
 
 
-
     /**
-     * Return the index of the highest value.
+     * Returns the index of the highest value.
      * If there are multiple points with the same maximum value, it is undefined (and possibly random) whose 
-     * index is returned.
-     * 
+     * index is returned. 
      * 
      * @return the index corresponding to the highest value.
+     * 
+     * @see #indexOfMax()
+     * @see #indexOfMaxDev()
+     * @see #getMin()
      */
     public final IndexType indexOfMin() { 
         return smartFork(new ParallelPointOp<IndexType, IndexType>() {
@@ -581,12 +1105,15 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
 
 
     /**
-     * Return the index of the lowest value.
+     * Returns the index of the lowest value.
      * If there are multiple points with the same minimum value, it is undefined (and possibly random) whose 
      * index is returned.
      * 
-     * 
      * @return the index corresponding to the lowest value.
+     * 
+     * @see #indexOfMin()
+     * @see #indexOfMaxDev()
+     * @see #getMax()
      */
     public final IndexType indexOfMax() { 
         return smartFork(new ParallelPointOp<IndexType, IndexType>() {
@@ -624,12 +1151,15 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
 
 
     /**
-     * Return the index of the datum with the largest absolute deviation from zero.
+     * Returns the index of the datum with the largest absolute deviation from zero.
      * Uses cast to double, so may not work perfectly on long types. If there are multiple points with the
      * same maximum value, it is undefined (and possibly random) whose index is returned.
      * 
-     * 
      * @return the index corresponding to the largest absolute deviation from zero.
+     * 
+     * @see #indexOfMin()
+     * @see #indexOfMax()
+     * @see #getRange()
      */
     public final IndexType indexOfMaxDev() { 
         return smartFork(new ParallelPointOp<IndexType, IndexType>() {
@@ -665,12 +1195,35 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });
     }
 
+    /**
+     * Levels this data, by removing its mean or median data value from all valid elements.
+     * 
+     * @param isRobust      if <code>true</code> a median will be calculated an removed, otherwise a mean
+     *                      value will be used for levelling. Note, that the calculation of a mean is
+     *                      an O(<i>N</i>) operation, whereas a median is an O(<i>N</i>log<i>N</i>)
+     *                      operation requiring an extra O(<i>N</i>) temporary storage. As such,
+     *                      medians can be very expensive computationally. Use carefully!
+     * @return  the mean or median level that was removed from the data.
+     * 
+     * @see #getMean()
+     * @see #getMedian()
+     * @see #add(Number)
+     */
     public final double level(boolean isRobust) {
         double level = isRobust ? getMedian().value() : getMean().value(); 
         add(-level);
         return level;
     }
 
+    /**
+     * Returns the mean valid data value contained in this data object.
+     * 
+     * @return      the mean valid value in this data object.
+     * 
+     * @see #getMedian()
+     * @see #getWeightedMean(IndexedValues)
+     * @see #level(boolean)
+     */
     public WeightedPoint getMean() {
         return smartForkValid(new ParallelPointOp.Average<Number>() {
             @Override
@@ -685,6 +1238,16 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });
     }
 
+    /**
+     * Returns the weighted mean valid data value contained in this data object, using the
+     * supplied external data weights.
+     * 
+     * @param weights   the external data weights to use when calculating the weighted mean.
+     * @return          the weighted mean valid value in this data object.
+     * 
+     * @see #getMean()
+     * @see #getWeightedMedian(IndexedValues)
+     */
     public final WeightedPoint getWeightedMean(final IndexedValues<IndexType, ?> weights) {
         return smartFork(new ParallelPointOp.Average<IndexType>() {
             @Override
@@ -700,18 +1263,54 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });
     }
 
+    /**
+     * Returns the median valid data value contained in this data object. Note, that the calculation
+     * of the median is an O(<i>N</i>log<i>N</i>) operation requiring an extra O(<i>N</i>) temporary 
+     * storage. As such, medians can be very expensive computationally. Use carefully!
+     * 
+     * @return      the median valid value in this data object.
+     * 
+     * @see #getMean()
+     * @see #getWeightedMedian(IndexedValues)
+     * @see #level(boolean)
+     * @see #select(double)
+     * @see Statistics.Inplace#median(double[])
+     */
     public WeightedPoint getMedian() {
         final double[] temp = getValidSortingArray();
         if(temp.length == 0) return new WeightedPoint(Double.NaN, 0.0);
         return new WeightedPoint(Statistics.Inplace.median(temp, 0, temp.length), temp.length);      
     }
 
+    /**
+     * Returns the weighted median valid data value contained in this data object, using the
+     * supplied external data weights. Note, that the calculation
+     * of the median is an O(<i>N</i>log<i>N</i>) operation requiring an extra O(<i>N</i>) temporary 
+     * storage. As such, medians can be very expensive computationally. Use carefully!
+     * 
+     * @param weights   the external data weights to use when calculating the weighted median.
+     * @return          the weighted median valid value in this data object.
+     * 
+     * @see #getMedian()
+     * @see #getWeightedMean(IndexedValues)
+     * @see Statistics.Inplace#median(WeightedPoint[], WeightedPoint)
+     */
     public final WeightedPoint getWeightedMedian(final IndexedValues<IndexType, ?> weights) {   
         final WeightedPoint[] temp = getValidSortingArray(weights);
         if(temp.length == 0) return new WeightedPoint(Double.NaN, 0.0);
         return Statistics.Inplace.median(temp, 0, temp.length);      
     }
 
+    /**
+     * Selects the specified percentile of the sorted data. The current implementation does use sorting.
+     * There are other, marginally more efficient methods for calculating selection, which we
+     * do not currently use...
+     * 
+     * @param fraction      the selection fraction [0:1] from lowest to highest.
+     * @return              the selected data value distribution. 
+     * 
+     * @see Statistics.Inplace#select(double[], double)
+     */
     public double select(double fraction) {
         if(fraction == 0.0) return getMin().doubleValue();
         else if(fraction == 1.0) return getMax().doubleValue();
@@ -767,16 +1366,81 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         return sorter;
     }
 
+    /**
+     * Returns the RMS (root-mean-square) value of the valid elements in this data object. This implementation
+     * will not compensate for a non-zero mean of the data.
+     * 
+     * @param isRobust  if <code>true</code> the mean variance will be calculated using a robust methods
+     *                  based on a median, otherwise it will use the standard arithmetic mean variance.
+     * @return          the RMS value of this data.
+     * 
+     * @see #getRMSScatter(boolean)
+     * @see #getRMS()
+     * @see #getRobustRMS()
+     * @see #getVariance(boolean)
+     * @see #level(boolean)
+     */
     public final double getRMS(boolean isRobust) {
         return isRobust ? getRobustRMS() : getRMS();
     }
 
+    /**
+     * Returns the RMS (root-mean-square) scatter of the valid elements in this data object. This implementation
+     * compensates for a non-zero mean of the data, and returns a true measure of the scatter around that mean.
+     * 
+     * @param isRobust  if <code>true</code> the scatter will be calculated using a robust methods
+     *                  based on a medians, otherwise it will use the standard arithmetic means.
+     * @return          the RMS scatter of this data around iuts mean or median.
+     * 
+     * @see #getRMS()
+     * @see #getVariance(boolean)
+     * @see #getMean()
+     * @see #getMedian()
+     */
+    public final double getRMSScatter(boolean isRobust) {
+        double mu = isRobust ? getMedian().value() : getMean().value();
+        return Math.sqrt(getVariance(isRobust) - mu * mu);
+    }
+
+    /**
+     * Returns the variance of the valid elements in this data object. This implementation
+     * will not compensate for a non-zero mean of the data.
+     * 
+     * @param isRobust  if <code>true</code> the variance will be calculated using a robust methods
+     *                  based on a median, otherwise it will use the standard arithmetic mean of the squares.
+     * @return          the RMS value of this data.
+     * 
+     * @see #getRMS()
+     * @see #getRobustRMS()
+     * @see #getVariance(boolean)
+     * @see #level(boolean)
+     */
     public final double getVariance(boolean isRobust) {
         return isRobust ? getRobustVariance() : getVariance();
     }
 
+    /**
+     * Returns the standard root-mean-square (RMS) value of this data. This implementation
+     * will not compensate for a non-zero mean of the data.
+     * 
+     * @return      the RMS value of this data.
+     * 
+     * @see #getRobustRMS()
+     * @see #getRMSScatter(boolean)
+     * @see #level(boolean)
+     */
     public double getRMS() { return Math.sqrt(getVariance()); }
 
+    /**
+     * Returns the standard variance of this data. This implementation
+     * will not compensate for a non-zero mean of the data.
+     * 
+     * @return      the variance (i.e. mean-square value) of this data.
+     * 
+     * @see #getRobustVariance()
+     * @see #getRMS()
+     * @see #level(boolean)
+     */
     public double getVariance() {
         return smartForkValid(new ParallelPointOp.Average<Number>() {
             @Override
@@ -791,9 +1455,28 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         }).value();     
     }
 
-
+    /**
+     * Returns an estimate of the root-mean-square (RMS) value of this data, using a median of squares. 
+     * This implementation will not compensate for a non-zero mean of the data.
+     * 
+     * @return      the robust RMS estimate for this data, which uses a median of squares.
+     * 
+     * @see #getRMS()
+     * @see #getRMSScatter(boolean)
+     * @see #level(boolean)
+     */
     public double getRobustRMS() { return Math.sqrt(getRobustVariance()); }
 
+    /**
+     * Returns an estimate of the variance of this data, using a median of squares. 
+     * This implementation will not compensate for a non-zero mean of the data.
+     * 
+     * @return      the robust estimate of the variance (i.e. mean square value) of this data, 
+     *              which uses a median of squares.
+     * 
+     * @see #getVariance()
+     * @see #level(boolean)
+     */
     public double getRobustVariance() {
         final double[] variance = getValidSortingArray();
         if(variance.length == 0) return Double.NaN;
@@ -802,7 +1485,15 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         return Statistics.Inplace.median(variance) / Statistics.medianNormalizedVariance;
     }
 
-
+    /**
+     * Returns the sum of all valid data points in this data object.
+     * 
+     * @return      the sum of valid data points contained.
+     * 
+     * @see #getAbsSum()
+     * @see #getSquareSum()
+     * @see #getMean()
+     */
     public double getSum() {
         return smartForkValid(new ParallelPointOp.Sum<Number>() {
             @Override
@@ -812,7 +1503,14 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });
     }
 
-
+    /**
+     * Returns the sum of absolute values of all valid data points in this data object.
+     * 
+     * @return      the sum of absolute values over all valid data points contained.
+     * 
+     * @see #getSum()
+     * @see #getSquareSum()
+     */
     public double getAbsSum() {
         return smartForkValid(new ParallelPointOp.Sum<Number>() {
             @Override
@@ -822,7 +1520,15 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });
     }
 
-
+    /**
+     * Returns the sum of squares over all valid data points in this data object.
+     * 
+     * @return      the sum of squares in this data.
+     * 
+     * @see #getSum()
+     * @see #getAbsSum()
+     * @see #getVariance()
+     */
     public double getSquareSum() {  
         return smartForkValid(new ParallelPointOp.Sum<Number>() {
             @Override
@@ -832,7 +1538,15 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });      
     }
 
-
+    /**
+     * Returns the covariance measure between this data and the specified other data, as the
+     * sum of the element-by-element cross products. 
+     * 
+     * @param data      the data to which to measure covariances
+     * @return          the covariance measure between this data and the specified other data.
+     * 
+     * @see #correlationTo(Data)
+     */
     public final double covarianceTo(final Data<IndexType> data) {
         return smartFork(new ParallelPointOp.Sum<IndexType>() {
             @Override
@@ -844,10 +1558,26 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });     
     }
 
+    /**
+     * Returns the correlation coefficient to the specified other data. The correlation coefficient
+     * is defined as the covariance to the other data, divided by the geometric mean of the
+     * autocovariances of both data objects.
+     * 
+     * @param data      the data to which to measure correlation.
+     * @return          the correlation coefficient [-1:1] to the other data.
+     * 
+     * @see #covarianceTo(Data)
+     */
     public final double correlationTo(final Data<IndexType> data) {
         return covarianceTo(data) / Math.sqrt(covarianceTo(this) * data.covarianceTo(data));   
     }
 
+    /**
+     * Performs a point-by-point multiplication of the elements of this data with the corresponding
+     * elements of the specified other data.
+     * 
+     * @param data      the point values to multiply the elements of this data with.
+     */
     public final void multiplyByComponentsOf(final Data<IndexType> data) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -857,6 +1587,8 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         });  
     }
 
+
+    @Override
     public final void add(final Data<IndexType> data) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -869,6 +1601,7 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
     }
 
 
+    @Override
     public final void addScaled(final Data<IndexType> data, final double scaling) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -880,16 +1613,69 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         addHistory("added scaled " + getClass().getSimpleName() + " (" + scaling + "x).");
     }
 
+    @Override
     public final void subtract(final Data<IndexType> data) {
         addScaled(data, -1.0);
     }
 
+    @Override
+    public void setSum(final Data<IndexType> a, final Data<IndexType> b) {
+        clear();
+        paste(a, false);
+        add(b);
+    }
+
+    @Override
+    public void setDifference(final Data<IndexType> a, final Data<IndexType> b) {
+        clear();
+        paste(a, false);
+        subtract(b);
+    }
+
+    @Override
+    public void zero() {
+        fill(0);
+    }
 
 
+    @Override
+    public boolean isNull() {
+        return smartForkValid(new ParallelPointOp<Number, Boolean>() {
+            boolean isNonZero;
 
+            @Override
+            public void mergeResult(Boolean localResult) {
+                if(localResult) isNonZero = true;
+            }
 
+            @Override
+            protected void init() {
+                isNonZero = false;
+            }
+
+            @Override
+            public void process(Number point) {
+                if(isNonZero) return;
+                if(point.doubleValue() != 0.0) isNonZero = true;
+            }
+
+            @Override
+            public Boolean getResult() {
+                return isNonZero;
+            }
+
+        });
+    }
 
     // TODO Make default method in Observations
+    /**
+     * Apply a maximum-entropy correction to this data, given some prior model and measurement noise.  
+     * 
+     * @param model     the prior model for this data
+     * @param noise     the corresponding (rms) noise for this data
+     * @param lambda    the MEM correction coefficient. The larger the coefficient, the more the data is 'pulled'
+     *                  towards the model.
+     */
     public void memCorrect(final IndexedValues<IndexType, ?> model, final IndexedValues<IndexType, ?> noise, final double lambda) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
 
@@ -904,9 +1690,24 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
             }            
         });          
     }  
-    
-    public List<Peak> findPeaks(double threshold, double... r) {
-        ArrayList<Peak> peaks = new ArrayList<>();
+
+    /**
+     * Returns a list of peaks from the data, above some specified threshold, and an exclusion radius (or radii) that
+     * sets the minimum separation between peaks returned. Each peak returned will have a data index that identifies
+     * the location of the peak, and the data value at that index. The peaks will also be masked out (discarded) from the 
+     * data object with the specified flagging radius/radii. If you wish to keep your data intact, you should call this
+     * method on an independent copy of the data, e.g. as <code>data.copy().findPeaks(threshold, r);</code>.
+     * 
+     * @param threshold     The threshold level above which to extract peaks from this data.
+     * @param r             the exclusion radius, or radii (if different along the various data dimensions).
+     * @return              a list of peak locations and corresponding peak values, each separated by the
+     *                      specified exclusion radius/radii, or more.
+     *                      
+     * @see #discardRadius(Index, double...)
+     * @see #copy()
+     */
+    public List<Point> findPeaks(double threshold, double... r) {
+        ArrayList<Point> peaks = new ArrayList<>();
 
         if(isEmpty()) return peaks;
 
@@ -915,24 +1716,34 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
             double S = get(idx).doubleValue();
             if(S < threshold) break;
 
-            peaks.add(new Peak(idx, S));
-            flagRadius(idx, r);
+            peaks.add(new Point(idx, S));
+            discardRadius(idx, r);
         }
 
         return peaks;
     }
 
 
+    /**
+     * Discards data in a circle/ellipsoid around some data index, by calling {@link #discard(Index)} on points
+     * within the specified radius/radii of the specified center index.
+     * 
+     * 
+     * @param centerIndex   the data index around which to discard data
+     * @param rPix          (ct) the radius or radii (if different along the various data dimensions) of indices
+     *                      that specifies the exclusion circle or ellipsoid.
+     *                      
+     * @see #discard(Index)
+     */
     @SuppressWarnings("cast")
-    public void flagRadius(final IndexType centerIndex, double... rPix) {
+    public void discardRadius(final IndexType centerIndex, double... rPix) {
         IndexType from = (IndexType) centerIndex.copy();
         IndexType to = (IndexType) centerIndex.copy();
-        IndexType size = getSize();
 
         for(int i=centerIndex.dimension(); --i >= 0; ) {
             int d =  (int) Math.ceil(rPix[rPix.length > i ? i : rPix.length - 1]);
             from.setValue(i, Math.max(0, from.getValue(i) - d));
-            to.setValue(i, Math.min(size.getValue(i), to.getValue(i) + d + 1));
+            to.setValue(i, Math.min(getSize(i), to.getValue(i) + d + 1));
         }
 
         PointOp<IndexType, Void> flagger = new PointOp.Simple<IndexType>() {
@@ -948,7 +1759,7 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
                     if(d2 > 1.0) return;
                 }
 
-                set(idx, invalidValue);
+                discard(idx);
             } 
         };
 
@@ -956,10 +1767,27 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
     }
 
 
-
-
+    /**
+     * Returns the underlying Java data object, such as a <code>float[]</code>, <code>double[][]</code>, or
+     * <code>int[][][]</code>, or whatever object this data uses to hold its values natively.
+     * 
+     * @return      the underlying data container object.
+     */
     public abstract Object getCore();
 
+    /**
+     * Returns a new FITS image object created from this data alone. FITS (Flexible Image Transport System) 
+     * is a commonly used image transport format in astronomy.
+     * 
+     * @param dataType      The underlying data type for the image, which may be different from the underlying type of
+     *                      this data object, e.g. <code>Float.class</code>.
+     * @return              A new FITS image object created from this data, with all the requisite image or binary
+     *                      HDUs and header keywords for describing this data as fully as possible.
+     * @throws FitsException    if there was an error creating the FITS data.
+     * 
+     * @see #writeFits(String, Class)
+     * @see #getHDUs(Class)
+     */
     public Fits createFits(Class<? extends Number> dataType) throws FitsException {
         FitsFactory.setLongStringsEnabled(standardLongFitsKeywords);
         FitsFactory.setUseHierarch(true);
@@ -971,18 +1799,40 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
         return fits;
     }
 
+    /**
+     * Writes this data into a FITS file. FITS (Flexible Image Transport System) 
+     * is a commonly used image transport format in astronomy.
+     * 
+     * @param fileName      The name/path of the (new) FITS file
+     * @param dataType      The underlying data type for the image, which may be different from the underlying type of
+     *                      this data object, e.g. <code>Float.class</code>.
+     * @throws FitsException    if there was an error creating the FITS data.
+     * @throws IOException      if there was an I/O error trying to write the file.
+     * 
+     * @see #createFits(Class)
+     */
     public void writeFits(String fileName, Class<? extends Number> dataType) throws FitsException, IOException {
         try(Fits fits = createFits(Float.class)) {
             fits.write(new File(fileName));
             fits.close();
         }
     }
-    
+
+    /**
+     * Returns the FITS header-data units (HDUs) that describe this data as completely as possible. 
+     * FITS (Flexible Image Transport System) is a commonly used image transport format in astronomy.
+     * 
+     * @param dataType      The underlying data type for the image, which may be different from the underlying type of
+     *                      this data object, e.g. <code>Float.class</code>.
+     * @return          An array of HDUs that capture this data as fully as possible in the FITS convention.
+     * @throws FitsException    if there was an error creating the FITS data.
+     */
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
         ArrayList<BasicHDU<?>> hdus = new ArrayList<>();
         hdus.add(createHDU(dataType));
         return hdus;
     }
+
 
     public final ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException {  
         ImageHDU hdu = (ImageHDU) Fits.makeHDU(getFitsData(dataType));
@@ -1041,111 +1891,166 @@ implements Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, TableF
     }
 
 
-
-    public abstract class AbstractLoop<ReturnType> {
+    /**
+     * An absract base class for implementing sequential processing in this data object.
+     * 
+     * @author Attila Kovacs
+     *
+     * @param <ReturnType>  the generic type of result returned by the processing.
+     * 
+     * @see Data.AbstractFork
+     */
+    protected abstract class AbstractLoop<ReturnType> {
         protected IndexType from, to;
 
-        public AbstractLoop() { this(getIndexInstance(), getSize()); }
+        protected AbstractLoop() { this(getIndexInstance(), getSize()); }
 
-        public AbstractLoop(IndexType from, IndexType to) { 
+        protected AbstractLoop(IndexType from, IndexType to) { 
             this.from = from;
             this.to = to;
         }
 
-        public abstract ReturnType process();
+        /**
+         * The method that sequentially processes a block of data in this object in the 
+         * specified range of indices.
+         * 
+         * @return  the result of the processing
+         */
+        protected abstract ReturnType process();
 
         protected ReturnType getResult() { return null; }
     }
 
-    public abstract class AbstractFork<ReturnType> extends Task<ReturnType> {
+    /**
+     * An absract base class for implementing parallel processing in this data object.
+     * 
+     * @author Attila Kovacs
+     *
+     * @param <ReturnType>  the generic type of result returned by the processing.
+     * 
+     * @see Data.AbstractLoop
+     */
+    protected abstract class AbstractFork<ReturnType> extends Task<ReturnType> {
         protected IndexType from, to;
 
-        public AbstractFork() { this(getIndexInstance(), getSize()); }
+        protected AbstractFork() { this(getIndexInstance(), getSize()); }
 
-        public AbstractFork(IndexType from, IndexType to) { 
+        protected AbstractFork(IndexType from, IndexType to) { 
             this.from = from;
             this.to = to;
         }
     }
 
 
-    public class Peak {
-        public IndexType index;
-        public double value;
+    /** 
+     * A point location and value in the parent data object.
+     * 
+     * @author Attila Kovacs
+     *
+     */
+    public class Point {
+        private IndexType index;
+        private double value;
 
         @SuppressWarnings("cast")
-        private Peak(IndexType index, double value) {
+        private Point(IndexType index, double value) {
             this.index = (IndexType) index.copy();
             this.value = value;
         }
+
+        /**
+         * Returns the data value for this point.
+         * 
+         * @return  the data value at the location location of this point.
+         * 
+         * @see #index()
+         */
+        public final double value() {
+            return value;
+        }
+
+        /**
+         * Returns the data index for this point.
+         * 
+         * @return  the data index of the point.
+         * 
+         * @see #value()
+         */
+        public final IndexType index() {
+            return index;
+        }
     }
 
-    
+
     /**
-    * A class for iterating over generic any-dimensional data indices. Typically, this is not the most efficient
-    * way to crawl though data. It is generally preferred to use {@link #loop(jnum.PointOp)} or 
-    * {@link #fork(jnum.parallel.ParallelPointOp)} for processing indexed data entries, 
-    * {@link #loopValid(jnum.PointOp)} or {@link #forkValid(jnum.parallel.ParallelPointOp)}, or their variants, 
-    * or even {@link #iterator()} for processing indexless entries.
-    * 
-    * However, in case when none of the above suffice, this class provides an explicit way to cycle though
-    * multidimensional indices.
-    * 
-    * @author Attila Kovacs
-    *
-    */
-   public class IndexIterator implements Iterator<IndexType> {
-       private IndexType from, to, idx, limit;
-        
-       /**
-        * Constructor.
-        */
-       public IndexIterator() {
-           this(getIndexInstance(), getSize());
-       }
-       
-       
-       /**
-        * Constructor for iterating though a sub-section of the 
-        * 
-        * @param from   The inclusive starting data index for the iterator
-        * @param to     The exclusive ending data index for the iterator
-        */
-       public IndexIterator(IndexType from, IndexType to) {
-           setRange(from, to);
-           idx = getIndexInstance();
-           this.limit = getSize();
-       }
-       
-       
-       private void setRange(IndexType from, IndexType to) {
-           this.from = from.copy();
-           this.to = to.copy();
+     * A class for iterating over generic any-dimensional data indices. Typically, this is not the most efficient
+     * way to crawl though data. It is generally preferred to use {@link #loop(jnum.PointOp)} or 
+     * {@link #fork(jnum.parallel.ParallelPointOp)} for processing indexed data entries, 
+     * {@link #loopValid(jnum.PointOp)} or {@link #forkValid(jnum.parallel.ParallelPointOp)}, or their variants, 
+     * or even {@link #iterator()} for processing indexless entries.
+     * 
+     * However, in case when none of the above suffice, this class provides an explicit way to cycle though
+     * multidimensional indices.
+     * 
+     * @author Attila Kovacs
+     *
+     */
+    public class IndexIterator implements Iterator<IndexType> {
+        private IndexType from, to, idx, limit;
 
-           for(int i=from.dimension(); --i >= 0; ) {
-               if(from.getValue(i) < 0) this.from.setValue(i, 0);
-               else if(to.getValue(i) >= limit.getValue(i)) this.to.setValue(i, limit.getValue(i)); 
-           } 
-       }
-           
-       @Override
-       public boolean hasNext() {
-           for(int i=0; i<idx.dimension(); i++) if(idx.getValue(i) < to.getValue(i)) return true;
-           return false;
-       }
+        /**
+         * Constructor.
+         */
+        public IndexIterator() {
+            this(getIndexInstance(), getSize());
+        }
 
-       @Override
-       public IndexType next() {
-           for(int i=idx.dimension(); --i >= 0; ) {
-               if(idx.increment(i) < limit.getValue(i)) break;
-               if(i > 0) idx.setValue(i,  from.getValue(i));
-           }
-           return from;
-       }
 
-   }
+        /**
+         * Constructor for iterating though a sub-section of the 
+         * 
+         * @param from   The inclusive starting data index for the iterator
+         * @param to     The exclusive ending data index for the iterator
+         */
+        public IndexIterator(IndexType from, IndexType to) {
+            setRange(from, to);
+            idx = getIndexInstance();
+            this.limit = getSize();
+        }
 
-    
+
+        private void setRange(IndexType from, IndexType to) {
+            this.from = from.copy();
+            this.to = to.copy();
+
+            for(int i=from.dimension(); --i >= 0; ) {
+                if(from.getValue(i) < 0) this.from.setValue(i, 0);
+                else if(to.getValue(i) >= limit.getValue(i)) this.to.setValue(i, limit.getValue(i)); 
+            } 
+        }
+
+        @Override
+        public boolean hasNext() {
+            for(int i=0; i<idx.dimension(); i++) if(idx.getValue(i) < to.getValue(i)) return true;
+            return false;
+        }
+
+        @Override
+        public IndexType next() {
+            for(int i=idx.dimension(); --i >= 0; ) {
+                if(idx.increment(i) < limit.getValue(i)) break;
+                if(i > 0) idx.setValue(i,  from.getValue(i));
+            }
+            return from;
+        }
+
+    }
+
+    /** 
+     * Whether data objects use the stardard OGIP convention for long FITS keys (using CONTINUE),
+     * or else (if <code>false</code>) if it uses the convention of CRUSH instead that splits long
+     * keywords into multiple standard-length FITS keys.
+     */
     public static boolean standardLongFitsKeywords = true;
 
 }

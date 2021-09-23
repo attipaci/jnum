@@ -38,7 +38,6 @@ import jnum.data.Statistics;
 import jnum.data.WeightedPoint;
 import jnum.data.cube.Data3D;
 import jnum.data.image.Data2D;
-import jnum.data.image.Image2D;
 import jnum.data.index.Index1D;
 import jnum.data.index.Index3D;
 import jnum.data.samples.Offset1D;
@@ -66,6 +65,26 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         this();
         stack.ensureCapacity(initialPlanesCapacity);
     }
+    
+    @Override
+    public Data2D1<ImageType> copy() {
+        return copy(true);
+    }
+
+    
+    @SuppressWarnings({ "cast", "unchecked" })
+    @Override
+    public Data2D1<ImageType> copy(boolean withContent) {   
+        Data2D1<ImageType> copy = (Data2D1<ImageType>) clone();
+        
+        if(template != null) copy.template = (ImageType) template.copy();
+        copy.stack = new ArrayList<>(stack.size());
+        
+        for(ImageType i : stack) copy.stack.add((ImageType) i.copy(withContent));
+        
+        return copy;
+    }
+    
     
     @SuppressWarnings("unchecked")
     @Override
@@ -252,15 +271,8 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
 
     @Override
-    public Data2D1<Image2D> getCore() {
-        Data2D1<Image2D> data = new Data2D1<Image2D>(sizeZ()) {
-            @Override
-            public Image2D newPlaneInstance() { return null; }
-        };
-
-        for(int i=0; i<sizeZ(); i++) data.addPlane(getPlane(i).getImage());
-
-        return data;
+    public ArrayList<ImageType> getCore() {
+        return stack;
     }
 
 

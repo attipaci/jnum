@@ -3,6 +3,7 @@ package jnum.math.matrix;
 import jnum.data.index.Index2D;
 import jnum.math.AbsoluteValue;
 import jnum.math.AbstractAlgebra;
+import jnum.math.Inversion;
 import jnum.math.LinearAlgebra;
 import jnum.math.Metric;
 import jnum.math.Normalizable;
@@ -17,7 +18,7 @@ import jnum.math.Normalizable;
  *
  * @param <T>       The generic type of matrix entries.
  */
-public abstract class MatrixElement<T> implements LinearAlgebra<T>, AbstractAlgebra<T>, Metric<T>, AbsoluteValue , Normalizable {
+public abstract class MatrixElement<T> implements LinearAlgebra<T>, AbstractAlgebra<T>, Metric<T>, AbsoluteValue , Normalizable, Inversion {
 
         /**
          * Sets a new, freshly initialized, underlying matrix elements to operate on.
@@ -60,7 +61,7 @@ public abstract class MatrixElement<T> implements LinearAlgebra<T>, AbstractAlge
          *   MatrixElement&lt;?&gt; e = M.getElementInstance();
          *   
          *   for(int j=M.rows(); --j &gt;= 0; ) for(int j=cols(); --j &gt;= 0; ) {
-         *      e.from(i, j).scale(-1.0);
+         *      e.from(i, j).flip();
          *      a.applyTo(i, j);
          *   }
          * </pre>

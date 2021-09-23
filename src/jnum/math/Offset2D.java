@@ -51,12 +51,18 @@ public class Offset2D extends Vector2D {
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
+        if(o == null) return false;
         if(!(o instanceof Offset2D)) return false;
         Offset2D offset = (Offset2D) o;
         if(!Util.equals(offset.getCoordinateClass(), getCoordinateClass())) return false;
         return super.equals(o);
     }
 
+    @Override
+    public Offset2D copy() {
+        return (Offset2D) super.copy();
+    }
+    
     @Override
     public int hashCode() { return super.hashCode() ^ reference.hashCode(); }
 

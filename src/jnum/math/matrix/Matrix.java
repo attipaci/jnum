@@ -1023,6 +1023,11 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         public boolean isNull() {
             return value == 0.0;
         }
+        
+        @Override
+        public void flip() {
+            value = -value;
+        }
 
         @Override
         public void scale(double factor) {
@@ -1080,7 +1085,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         }
 
         @Override
-        public double absSquared() {
+        public double squareNorm() {
             return value * value;
         }
 

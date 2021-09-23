@@ -27,7 +27,6 @@ import java.util.List;
 
 import jnum.Constant;
 import jnum.PointOp;
-import jnum.Util;
 import jnum.data.DataPoint;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
@@ -75,6 +74,15 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     public Index2D getSize() { return new Index2D(sizeX(), sizeY()); }
     
     @Override
+    public int getSize(int i) {
+        switch(i) {
+        case 0: return sizeX();
+        case 1: return sizeY();
+        default: throw new IllegalArgumentException("there is no dimension " + i);
+        }
+    }
+    
+    @Override
     public final Index2D copyOfIndex(Index2D index) { return new Index2D(index.i(), index.j()); }
     
     @Override
@@ -89,7 +97,7 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
    
 
     public Image2D getImage() {
-        return getImage(getElementType(), getBlankingValue());
+        return getImage(getElementType(), getInvalidValue());
     }
 
     public final Image2D getImage(Number blankingValue) {
@@ -97,7 +105,7 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     }
 
     public final Image2D getImage(Class<? extends Number> elementType) {
-        return getImage(elementType, getBlankingValue());
+        return getImage(elementType, getInvalidValue());
     }
 
     public Image2D getImage(Class<? extends Number> elementType, Number blankingValue) {
@@ -129,19 +137,8 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
    
     @Override
     public void discard(int i, int j) {
-        set(i, j, getBlankingValue());
+        set(i, j, getInvalidValue());
     }
-
-    @Override
-    public final String toString(Index2D index) {
-        return toString(index.i(), index.j());
-    }
-    
-    public String toString(int i, int j) {
-        return "[" + i + ", " + j + "]=" + Util.S3.format(get(i,j));
-    }
-  
-
 
     @Override
     public final Number get(Index2D index) { return get(index.i(), index.j()); }
@@ -280,7 +277,7 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
 
                 // cos term is gain-like
                 double c = Math.cos(v.angle() - angle);
-
+                
                 values.mc += p * c;
                 values.c2 += c * c;
             }
@@ -375,10 +372,10 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         if(i == ic) if(j == jc) return get(i, j).doubleValue();
 
         switch(getInterpolationType()) {
-        case NEAREST : return get(i, j).doubleValue();
-        case LINEAR : return linearAtIndex(ic, jc);
-        case QUADRATIC : return quadraticAtIndex(ic, jc);
-        case SPLINE : return splines == null ? splineAtIndex(ic, jc) : splineAtIndex(ic, jc, splines);
+        case INTERPOLATE_NEAREST : return get(i, j).doubleValue();
+        case INTERPOLATE_LINEAR : return linearAtIndex(ic, jc);
+        case INTERPOLATE_PIECEWISE_QUADRATIC : return quadraticAtIndex(ic, jc);
+        case INTERPOLATE_SPLINE : return splines == null ? splineAtIndex(ic, jc) : splineAtIndex(ic, jc, splines);
         }
 
         return Double.NaN;
@@ -524,10 +521,10 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     @Override
     protected int getInterpolationOps(int type) {
         switch(type) {
-        case NEAREST : return 10;
-        case LINEAR : return 45;
-        case QUADRATIC : return 60;
-        case SPLINE : return 200;
+        case INTERPOLATE_NEAREST : return 10;
+        case INTERPOLATE_LINEAR : return 45;
+        case INTERPOLATE_PIECEWISE_QUADRATIC : return 60;
+        case INTERPOLATE_SPLINE : return 200;
         }
         return 1;
     }

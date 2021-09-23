@@ -251,7 +251,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
     }
     
     public synchronized void transpose() {
-        silentNextNewData();
+        preserveHistory();
         setTransposedData(getCore());
         addHistory("transposed");
     }
@@ -264,7 +264,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
 
     protected synchronized void crop(Index3D from, Index3D to) {
         addHistory("cropped " + from + " : " + to);
-        silentNextNewData();
+        preserveHistory();
         setData(getCropped(from, to).getCore());
     }
 
@@ -342,7 +342,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
     
     public static Cube3D createFrom(final Values3D values, final Number blankingValue, Class<? extends Number> elementType) {
         final Cube3D image = createType(elementType);
-        image.setBlankingValue(blankingValue);
+        image.setInvalidValue(blankingValue);
         image.setData(values);
         return image;
     }

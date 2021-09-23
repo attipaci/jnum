@@ -62,10 +62,10 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     }
    
 
-    @SuppressWarnings("unchecked")
+    @Override
     public AbstractMap2D1<MapType> copy(boolean withContents) {
-        AbstractMap2D1<MapType> copy = (AbstractMap2D1<MapType>) super.clone();        
-        for(int k=sizeZ(); --k >= 0; ) copy.setPlane(k, (MapType) getPlane(k).copy(withContents));
+        AbstractMap2D1<MapType> copy = (AbstractMap2D1<MapType>) super.copy(withContents);
+        if(grid1D != null) copy.grid1D = grid1D.clone();
         return copy;
     }
     

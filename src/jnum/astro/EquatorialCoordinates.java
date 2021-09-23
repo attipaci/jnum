@@ -340,12 +340,13 @@ public class EquatorialCoordinates extends PrecessingCoordinates {
      * @see EquatorialSystem.Topocentric
      */
     public void toHorizontal(GeodeticCoordinates site, double LST, HorizontalCoordinates horizontal) { 
-        double H = LST * Unit.timeAngle - RA();  
+        double H = LST * Unit.secondAngle - RA();  
         double cosH = Math.cos(H);
-        horizontal.setLatitude(SafeMath.asin(sinLat() * site.sinLat() + cosLat() * site.cosLat() * cosH));
+        horizontal.setEL(SafeMath.asin(sinLat() * site.sinLat() + cosLat() * site.cosLat() * cosH));
+       
         double asinA = -Math.sin(H) * cosLat() * site.cosLat();
         double acosA = sinLat() - site.sinLat() * horizontal.sinLat();
-        horizontal.setLongitude(Math.atan2(asinA, acosA));
+        horizontal.setAZ(Math.atan2(asinA, acosA));
     }
  
 

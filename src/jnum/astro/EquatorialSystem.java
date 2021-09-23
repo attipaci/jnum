@@ -313,10 +313,12 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         else if(tokens.hasMoreTokens()) {
             Y = tokens.nextToken();
             if(Y.charAt(0) == 'J' || Y.charAt(0) == 'B') Y = Y.substring(1);
+        }
+        
+        if(Double.isNaN(year)) if(Y != null) {
             try { year = Double.parseDouble(Y); }
             catch(NumberFormatException e) {}
         }
-        
         
         if(s.equals("FK4")) {
             BesselianEpoch epoch = CoordinateEpoch.B1950;
@@ -683,9 +685,9 @@ public abstract class EquatorialSystem  implements FitsHeaderEditing {
         protected boolean equals(EquatorialSystem other) {
             if(!isAssignableFrom(other)) return false;
             Topocentric topo = (Topocentric) other;
-            if(!location.equals(topo.location)) return false;
-            if(!wobble.equals(topo.wobble)) return false;
-            if(!time.equals(topo.time)) return false;
+            if(!Util.equals(location, topo.location)) return false;
+            if(!Util.equals(wobble, topo.wobble)) return false;
+            if(!Util.equals(topo.time.MJD(), time.MJD())) return false;
             return true;
         }
 

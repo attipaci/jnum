@@ -42,6 +42,6 @@ public interface AbsoluteValue {
 	 *
 	 * @return the square of the absolute value of this object.
 	 */
-	public double absSquared();
+	public double squareNorm();
 	
 }

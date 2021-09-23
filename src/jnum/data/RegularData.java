@@ -24,6 +24,7 @@
 package jnum.data;
 
 
+import jnum.ExtraMath;
 import jnum.PointOp;
 import jnum.Util;
 import jnum.data.index.Index;
@@ -33,14 +34,45 @@ import jnum.math.Stretch;
 import jnum.math.CoordinateTransform;
 import jnum.parallel.ParallelPointOp;
 
+/**
+ * A base class for data sampled at regular intervals.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <IndexType>   the generic type of index for locating values in this data.
+ * @param <VectorType>  the generic type of vectors used for representing arbitrary positions in the space
+ *                      of the data.
+ */
 public abstract class RegularData<IndexType extends Index<IndexType>, VectorType extends MathVector<Double>> extends Data<IndexType> {
     protected SplineSet<VectorType> reuseIpolData;
 
+    /** The interpolation type to use to interpolate data to inbetween stored indices */
+    private int interpolationType;    
 
-    public RegularData() {
+    protected RegularData() {
         reuseIpolData = new SplineSet<>(dimension());
-        setInterpolationType(SPLINE);
+        setInterpolationType(INTERPOLATE_SPLINE);
     }
+    
+    @Override
+    public int hashCode() {
+        return super.hashCode() ^ getInterpolationType(); 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null) return false;
+        if(!getClass().isAssignableFrom(o.getClass())) return false;
+
+        @SuppressWarnings("unchecked")
+        RegularData<IndexType, VectorType> data = (RegularData<IndexType, VectorType>) o;
+
+        if(getInterpolationType() != data.getInterpolationType()) return false;
+
+        return super.equals(data);
+    }
+
     
     @SuppressWarnings("unchecked")
     @Override
@@ -60,34 +92,192 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     public final String getSizeString() {
         return getSize().toString("x");
     }
-   
-    @Override
-    public String toString(IndexType index) {
-        return "[" + index + "]=" + Util.S3.format(get(index));
-    }
     
+    /**
+     * Returns a new instance of the type of vector that can represent position in-between grid points.
+     * The returned vector is initialized to zero (origin).
+     * 
+     * @return  a new zero vector in in the space of this data.
+     */
     public abstract VectorType getVectorInstance();
 
+    /**
+     * Checks if the specified grid position is within the bounds of this data object.
+     * 
+     * @param index     a position on the data grid
+     * @return          <code>true</code> if the position is within the range of grid indices
+     *                  of this data, otherwise <code>false</code>
+     */
     public abstract boolean containsIndex(VectorType index);
 
+    /**
+     * Returns the value at the nearest grid location for a given position.
+     * 
+     * @param index     a position on the data grid
+     * @return          the nearest value on the data grid
+     * 
+     * @see #linearAtIndex(MathVector)
+     * @see #quadraticAtIndex(MathVector)
+     * @see #splineAtIndex(MathVector)
+     */
     public abstract Number nearestValueAtIndex(VectorType index);
 
+    /**
+     * Returns an interpolated value for the specified grid position, using piecewise
+     * linear segments between the neighbouring grid locations along each dimension.
+     * 
+     * @param index     a position on the data grid
+     * @return          the piecewise linear interpolated value at the specified position.
+     * 
+     * @see #nearestValueAtIndex(MathVector)
+     * @see #quadraticAtIndex(MathVector)
+     * @see #splineAtIndex(MathVector)
+     */
     public abstract double linearAtIndex(VectorType index);
 
+    /**
+     * Returns an interpolated value for the specified grid position, using piecewise
+     * quadratic segment between the neighbouring grid locations along each dimension.
+     * Quadratic interpolation is not a smooth interpolation, in the sense that it will
+     * result in abrupt discontinuities in the derivatives. For a completely smooth
+     * interpolation you should be using cubic splines instead, which are free from such
+     * artifacts.
+     * 
+     * @param index     a position on the data grid
+     * @return          the piecewise quadratic interpolated value at the specified position.
+     * 
+     * @see #nearestValueAtIndex(MathVector)
+     * @see #quadraticAtIndex(MathVector)
+     * @see #splineAtIndex(MathVector)
+     */
     public abstract double quadraticAtIndex(VectorType index);
 
+    /**
+     * <p>
+     * Returns an interpolated value for the specified grid position, using cubic
+     * splines fitted to nearby grid locations along each dimension.
+     * Splines yield completely smooth interpolation, with continuout derivatives,
+     * but they are relatively expensive computationally when compared to less perfect
+     * alternatives. 
+     * </p>
+     * 
+     * <p>
+     * This call uses hidden spline coefficients to perform the interpolation.
+     * While it is thread safe, it is not thread efficient. As such it should not
+     * be used for multi-threaded interpolation. If you want to interpolate on
+     * this dataset in multiple concurrent threads, you will want to use 
+     * {@link #splineAtIndex(MathVector, SplineSet)} instead, and separate thread-local 
+     * spline sets for each thread.
+     * </p>
+     * 
+     * @param index     a position on the data grid
+     * @return          the cubic spline interpolated value at the specified position.
+     *
+     * @see #splineAtIndex(MathVector, SplineSet)
+     * @see #nearestValueAtIndex(MathVector)
+     * @see #quadraticAtIndex(MathVector)
+     * @see #linearAtIndex(MathVector)
+     */
     public final double splineAtIndex(VectorType index) {
         synchronized(reuseIpolData) { return valueAtIndex(index, reuseIpolData); }
     }
 
+    /**
+     * <p>
+     * Returns an interpolated value for the specified grid position, using cubic
+     * splines fitted to nearby grid locations along each dimension.
+     * Splines yield completely smooth interpolation, with continuout derivatives,
+     * but they are relatively expensive computationally when compared to less perfect
+     * alternatives. 
+     * </p>
+     * 
+     * <p>
+     * This call uses the caller-supplied spline coefficients to perform the interpolation.
+     * As such it is the method of choice when multiple concurrent threads to 
+     * perform interpolation in this dataset.
+     * </p>
+     * 
+     * @param index     a position on the data grid
+     * @param splines   the set cubic splines to use (containing a spline for each data dimension).
+     * @return          the cubic spline interpolated value at the specified position.
+     *
+     * @see #splineAtIndex(MathVector)
+     * @see #nearestValueAtIndex(MathVector)
+     * @see #quadraticAtIndex(MathVector)
+     * @see #linearAtIndex(MathVector)
+     */    
     public abstract double splineAtIndex(VectorType index, SplineSet<VectorType> splines);
 
+    /**
+     * Returns the interpolated value using the default interpolation method of this
+     * dataset. When using cubic spline interpolation, this call uses hidden spline 
+     * coefficients to perform the interpolation. While it is thread safe, it is not 
+     * thread efficient. As such it should not be used for multi-threaded interpolation.
+     * If you want to interpolate using splines on this dataset in multiple concurrent threads, 
+     * you will want to use {@link #valueAtIndex(MathVector, SplineSet)} instead, and separate 
+     * thread-local spline sets for each thread.
+     * 
+     * @param index     a position on the data grid
+     * @return          the cubic interpolated value at the specified position, using the
+     *                  current default interpolation type if this dataset.
+     * 
+     * @see #valueAtIndex(MathVector, SplineSet)
+     * @see #getInterpolationType()
+     * @see #setInterpolationType(int)
+     * @see #nearestValueAtIndex(MathVector)
+     * @see #quadraticAtIndex(MathVector)
+     * @see #splineAtIndex(MathVector)
+     */
     public final double valueAtIndex(VectorType index) {
         synchronized(reuseIpolData) { return valueAtIndex(index, reuseIpolData); }
     }
 
+    /**
+     * Returns the interpolated value using the default interpolation method of this
+     * dataset. When using cubic spline interpolation, this call uses the caller-supplied 
+     * spline coefficients to perform the interpolation. As such it is the method of choice 
+     * when multiple concurrent threads to perform interpolation in this dataset.
+     *
+     * @param index     a position on the data grid
+     * @param splines   the set cubic splines to use (containing a spline for each data dimension).
+     * @return          the cubic interpolated value at the specified position, using the
+     *                  current default interpolation type if this dataset.
+     * 
+     * @see #valueAtIndex(Index, Index, SplineSet)
+     * @see #splineAtIndex(MathVector, SplineSet)
+     * @see #valueAtIndex(MathVector)
+     * @see #getInterpolationType()
+     * @see #setInterpolationType(int)
+     * @see #nearestValueAtIndex(MathVector)
+     * @see #quadraticAtIndex(MathVector)
+     */
     protected abstract double valueAtIndex(VectorType index, SplineSet<VectorType> splines);
 
+    /**
+     * Returns the interpolated value using the default interpolation method of this
+     * dataset, at a fractional grid positiob. The fractional grid position in this
+     * variant of the method defines the position as the fraction of two integers
+     * indices <i>n</i><sub>i</sub> and <i>d</i><sub>i</sub>, such that the position
+     * of interpolation is <i>x</i><sub>i</sub> = <i>n</i><sub>i</sub> / <i>d</i><sub>i</sub>.
+     * 
+     * 
+     * When using cubic spline interpolation, this call uses the caller-supplied 
+     * spline coefficients to perform the interpolation. As such it is the method of choice 
+     * when multiple concurrent threads to perform interpolation in this dataset.
+     *
+     * @param numerator     <i>n</i><sub>i</sub>.
+     * @param denominator   <i>d</i><sub>i</sub>
+     * @return          the cubic interpolated value at the specified position, 
+     *                  <i>x</i><sub>i</sub> = <i>n</i><sub>i</sub> / <i>d</i><sub>i</sub>,
+     *                  using the current default interpolation type if this dataset.
+     * 
+     * @see #splineAtIndex(MathVector, SplineSet)
+     * @see #valueAtIndex(MathVector)
+     * @see #getInterpolationType()
+     * @see #setInterpolationType(int)
+     * @see #nearestValueAtIndex(MathVector)
+     * @see #quadraticAtIndex(MathVector)
+     */
     protected abstract double valueAtIndex(IndexType numerator, IndexType denominator, SplineSet<VectorType> splines);
 
 
@@ -128,19 +318,6 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     public void getSmoothedValueAtIndex(final VectorType index, final RegularData<IndexType, VectorType> beam, final VectorType refIndex, 
             final IndexedValues<IndexType, ?> weight, final SplineSet<VectorType> splines, final WeightedPoint result) {   
 
-        final VectorType i0 = getVectorInstance();
-        i0.setDifference(index, refIndex);
-
-        final IndexType size = getSize();
-        final IndexType beamSize = beam.getSize();
-        final IndexType from = getIndexInstance();
-        final IndexType to = getIndexInstance();
-
-        for(int i=from.dimension(); --i >= 0; ) {
-            from.setValue(i, Math.max(0, (int) Math.ceil(i0.getComponent(i))));
-            to.setValue(i, Math.min(size.getValue(i), (int) Math.floor(i0.getComponent(i)) + beamSize.getValue(i)));
-        }
-
         PointOp.Simple<IndexType> op = new PointOp.Simple<IndexType>() {
             private VectorType delta = getVectorInstance();
 
@@ -148,8 +325,9 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             public void process(IndexType i1) { 
                 if(!isValid(i1)) return;
                 final double w = (weight == null ? 1.0 : weight.get(i1).doubleValue());
-
-                for(int i=dimension(); --i >= 0; ) delta.setComponent(i, i1.getValue(i) - i0.getComponent(i));
+                if(w == 0.0) return;
+                
+                for(int i=dimension(); --i >= 0; ) delta.setComponent(i, i1.getValue(i) - (index.getComponent(i) - refIndex.getComponent(i)));
 
                 final double wB = w * beam.valueAtIndex(delta, splines);
                 result.add(wB * get(i1).doubleValue());
@@ -158,7 +336,17 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         };
 
         result.noData();
-        loop(op, from, to); // Not threadsafe unless splines is recreated for all threads...
+       
+        final IndexType from = getIndexInstance();
+        final IndexType to = getIndexInstance();
+
+        for(int i=from.dimension(); --i >= 0; ) {
+            double di = index.getComponent(i) - refIndex.getComponent(i);
+            from.setValue(i, Math.max(0, (int) Math.ceil(di)));
+            to.setValue(i, Math.min(getSize(i), (int) Math.floor(di) + beam.getSize(i)));
+        }
+        
+        loop(op, from, to);
 
         result.scaleValue(1.0 / result.weight()); 
     }
@@ -196,7 +384,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             }
             @Override
             public int numberOfOperations() {
-                return 5 + getPointSmoothOps(beam.capacity(), NEAREST);
+                return 5 + getPointSmoothOps(beam.capacity(), INTERPOLATE_NEAREST);
             }
         };
 
@@ -249,7 +437,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
             @Override
             public int numberOfOperations() {
-                return 5 + getPointSmoothOps(beam.capacity() / step.getVolume(), NEAREST);
+                return 5 + getPointSmoothOps(ExtraMath.roundupRatio(beam.capacity(), step.getVolume()), INTERPOLATE_NEAREST);
             }
         };
 
@@ -350,14 +538,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
 
     public <V extends MathVector<Double>> void addPatchAt(final VectorType index, final RegularData<IndexType, V> patch, final double scaling, boolean parallel) {
-        IndexType size = getSize();
-        IndexType patchSize = patch.getSize();
         IndexType min = getIndexInstance();
         IndexType max = getIndexInstance();   
 
         for(int i=dimension(); --i >= 0; ) {
             min.setValue(i, Math.max(0, (int) Math.floor(index.getComponent(i))));
-            max.setValue(i, Math.min(size.getValue(i), (int) Math.ceil(index.getComponent(i)) + patchSize.getValue(i)));
+            max.setValue(i, Math.min(getSize(i), (int) Math.ceil(index.getComponent(i)) + patch.getSize(i)));
         }
 
         ParallelPointOp.Simple<IndexType> op = new ParallelPointOp.Simple<IndexType>() {
@@ -417,15 +603,46 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         return clean;
     }
 
-
-
-
+    /**
+     * Discards outliers above the specified deviation level (from zero), by calling {@link #discard(Index)} on
+     * any point that is deemed to be an outlier at the specified level. The default implementation is to 
+     * call {@link #despikeNeighbors(double, IndexedValues)} with <code>null</code> for the <code>noiseWeight</code>
+     * argument.
+     * 
+     * @param threshold     the despike threshold level. All data elements with absolute values larger than this
+     *                      threshold will be discarded.
+     *                      
+     * @see #despikeAbsolute(double, IndexedValues)
+     */
     @Override
     public void despike(double threshold) {
-        despike(threshold, null);
+        despikeNeighbors(threshold, null);
     }
 
-    public synchronized void despike(final double significance, final IndexedValues<IndexType, ?> noiseWeight) {
+    /**
+     * <p>
+     * Discards outliers above the specified deviation level (from zero), by calling {@link #discard(Index)} on
+     * any point that is deemed to be an outlier at the specified level. The second optional argument can
+     * be used to specify noise weights data (<i>w</i> = 1/%sigma;<sup>2</sup>), in which case the threshold is
+     * interpreted as a signal-to-noise threshold, s.t. data <i>x</i><sub>i</sub> for which |<i>x</i><sub>i</sub>| 
+     * &gt; <code>significance</code> * %sigma;<sub>i</sub> is removed. Leaving the second argument <code>null</code>
+     * is equivalent to all data weight being 1. 
+     * </p>
+     * <p>
+     * Unlike its superclass implementation, int this method <i>x</i>
+     * is NOT the stored data value, but rather the deviation of that value from (the average of) its immediate 
+     * neighbours. This is a more robust despiking method, since it allows for large amplitude smooth fluctuations,
+     * and rejecting only single-point deviations.
+     * </p>
+     * 
+     * @param significance   the despike threshold level. All data elements with absolute values or standardized
+     *                       deviations (if noise weights are given) larger than this threshold will be discarded.
+     * @param noiseWeight    (optional) Noise weights (<i>w</i> = 1/%sigma;<sup>2</sup>) to use with the data,
+     *                       or <code>null</code> to use uniform weights of 1.
+     *                      
+     * @see #despikeAbsolute(double, IndexedValues)
+     */
+    public synchronized void despikeNeighbors(final double significance, final IndexedValues<IndexType, ?> noiseWeight) {
         final Referenced<IndexType, VectorType> neighbours = getNeighbors();
 
         Interpolation op = new Interpolation() {  
@@ -456,7 +673,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
         smartFork(op);
 
-        addHistory("despiked at " + Util.S3.format(significance));
+        addHistory("despiked (neighbors) at " + Util.S3.format(significance));
     }
 
 
@@ -480,13 +697,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             public boolean isValid(IndexType index) {
                 int self = RegularData.this.isValid(index) ? 1 : 0;
 
-                final IndexType size = getSize();
                 final IndexType from = getIndexInstance();
                 final IndexType to = getIndexInstance();
                 
                 for(int i=dimension(); --i >= 0; ) {
                     from.setValue(i, Math.max(0, index.getValue(i)-1));
-                    to.setValue(i, Math.min(size.getValue(i), index.getValue(i) + 1));
+                    to.setValue(i, Math.min(getSize(i), index.getValue(i) + 1));
                 }
                 
                 return loop(op, from, to) >= minNeighbors + self;         
@@ -531,12 +747,9 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     public final void resampleFrom(final RegularData<IndexType, VectorType> image) {     
         VectorType scale = getVectorInstance();
 
-        IndexType imageSize = image.getSize();
-        IndexType size = getSize();
-
         boolean antiAlias = false;
         for(int i=dimension(); --i >= 0; ) {
-            double scalar = (double) imageSize.getValue(i) / size.getValue(i);
+            double scalar = (double) image.getSize(i) / getSize(i);
             if(scalar > 1.0) antiAlias = true;
             scale.setComponent(i, scalar);
         }
@@ -571,7 +784,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
                 index.toVector(v);
                 v.subtract(center);
                 for(int i=dimension(); --i >= 0; ) v.setComponent(i, v.getComponent(i) / pixelFWHMs.getComponent(i));
-                beam.set(index, Math.exp(-0.5 * v.absSquared()));
+                beam.set(index, Math.exp(-0.5 * v.squareNorm()));
             }
         };
 
@@ -679,7 +892,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             @Override
             public void process(IndexType index) {
                 reversed.setReverseOrderOf(index);
-                transpose.set(reversed, isValid(index) ? get(index) : getBlankingValue());
+                transpose.set(reversed, isValid(index) ? get(index) : getInvalidValue());
             }     
         };
 
@@ -691,7 +904,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     }
 
 
+    public int getInterpolationType() { return interpolationType; }
 
+    public void setInterpolationType(int value) { this.interpolationType = value; }
+
+
+    
     public abstract class Interpolation extends ParallelPointOp.Simple<IndexType> {
         private SplineSet<VectorType> splines = new SplineSet<>(dimension());
 
@@ -708,8 +926,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
 
 
-    public static final int NEAREST = 0;
-    public static final int LINEAR = 1;
-    public static final int QUADRATIC = 2;
-    public static final int SPLINE = 3;
+    public static final int INTERPOLATE_NEAREST = 0;
+    public static final int INTERPOLATE_LINEAR = 1;
+    public static final int INTERPOLATE_PIECEWISE_QUADRATIC = 2;
+    public static final int INTERPOLATE_SPLINE = 3;
 }

@@ -26,26 +26,34 @@ package jnum.data;
 import jnum.data.index.Index;
 import jnum.math.MathVector;
 
-
+/**
+ * Wraps a regularly sampled (gridded) data with a reference position (origin location) on
+ * the data grid. 
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <IndexType>
+ * @param <VectorType>
+ */
 public class ReferencedData<IndexType extends Index<IndexType>, VectorType extends MathVector<Double>>
 implements Referenced<IndexType, VectorType> {
-    public RegularData<IndexType, VectorType> data;
-    public VectorType refIndex;
+    private RegularData<IndexType, VectorType> data;
+    private VectorType refIndex;
     
-    public ReferencedData() { this(null, null); }
-    
+    /**
+     * Instantiates a new data object that referenced to some grid location or origin.
+     * 
+     * @param data      the underlying regularly sampled (gridded) data 
+     * @param refIndex  the location of the reference point (origin) on the data grid.
+     */
     public ReferencedData(RegularData<IndexType, VectorType> data, VectorType refIndex) {
-        setData(data);
+        this.data = data;
         setReferenceIndex(refIndex);
     }
     
     @Override
     public RegularData<IndexType, VectorType> getData() {
         return data;
-    }
-    
-    public void setData(RegularData<IndexType, VectorType> data) {
-        this.data = data;
     }
     
     @Override

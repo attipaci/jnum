@@ -37,10 +37,10 @@ import jnum.math.Metric;
  * @author Attila Kovacs
  *
  * @param <L>   the generic type of objects that represents a location, such as a number or a vector.
- * @param <D>       the generic type of the object that accompanies the location.
+ * @param <D>   the generic type of the object that accompanies the location.
  */
 public class LocalizedData<L extends Locality, D extends LinearAlgebra<? super D> & Copiable<? super D> & Metric<? super D>> 
-extends LocalizedObject<L, D>  {
+extends LocalizedObject<L, D> {
     /** */
     private static final long serialVersionUID = 2776764506885561864L;
         

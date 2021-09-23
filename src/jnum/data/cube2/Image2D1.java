@@ -34,6 +34,25 @@ public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializ
      */
     private static final long serialVersionUID = 7816827408682434510L;
 
+    @Override
+    public Image2D1 copy() {
+        return copy(true);
+    }
+
+    
+    @Override
+    public Image2D1 copy(boolean withContent) {   
+        Image2D1 copy = (Image2D1) clone();
+        
+        if(capacity() > 0) {
+            copy.setSize(sizeX(), sizeY(), sizeZ());
+            if(withContent) copy.paste(this, true);
+        }
+        
+        return copy;
+    }
+    
+    
     public static Image2D1 create(Class<? extends Number> type) {
         if(type.equals(Double.class)) return new Double2D1();
         if(type.equals(Float.class)) return new Float2D1();

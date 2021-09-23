@@ -514,12 +514,6 @@ implements FastGridAccess<CoordinateType, Vector2D>, Copiable<Grid2D<CoordinateT
     }
 
 
-    public void toggleNative(final Vector2D offset) {
-        if(isReverseX()) offset.scaleX(-1.0);
-        if(isReverseY()) offset.scaleY(-1.0);
-    }
-
-
     public Unit getPixelAreaUnit() { 
         return new Unit("pixel", Double.NaN) {
             private static final long serialVersionUID = -2483542207572304222L;

@@ -31,17 +31,32 @@ import jnum.math.RealAlgebra;
 import jnum.math.ZeroValue;
 import jnum.util.HashCode;
 
-
-public class RealValue implements Cloneable, Serializable, Copiable<RealValue>, Comparable<RealValue>, 
-ZeroValue, RealAlgebra {
+/**
+ * A real-value wrapped into a mutable object. Similar to {#link java.lang.Double}, but adds mutability as well well as some
+ * basic algebra etc.
+ * 
+ * @author Attila Kovacs
+ *
+ */
+public class RealValue implements Cloneable, Serializable, Copiable<RealValue>, Comparable<RealValue>, ZeroValue, RealAlgebra {
     /**
      * 
      */
     private static final long serialVersionUID = 2417425199478452966L;
+    
+    /** the actual real value wrapped in this object */
     private double value;
     
+    /**
+     * Instantiates a new real value, initialized to 0.0.
+     */
     public RealValue() {}
     
+    /**
+     * Instantiates a new real value object, with the specified primitive value.
+     * 
+     * @param x     the primitive real value that is initially wrapped by this object. 
+     */
     public RealValue(double x) { this(); setValue(x); }
     
     @Override
@@ -72,9 +87,22 @@ ZeroValue, RealAlgebra {
         return clone();
     }
     
-    
+    /**
+     * Sets a new value for this object.
+     * 
+     * @param x the new real value wrapped by this object.
+     * 
+     * @see #value()
+     */
     public void setValue(double x) { this.value = x; }
     
+    /**
+     * Returns the current real value wrapped by this object.
+     * 
+     * @return  the current double-precision value.
+     * 
+     * @see #setValue(double)
+     */
     public final double value() { return value; }
     
     @Override
@@ -86,6 +114,11 @@ ZeroValue, RealAlgebra {
     @Override
     public void scale(double x) { value *= x; }
 
+    /**
+     * Erases data from this value, (or sets it to zero).
+     * 
+     * @see #zero()
+     */
     public void noData() { zero(); }
     
     @Override

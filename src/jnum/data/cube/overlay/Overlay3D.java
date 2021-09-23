@@ -23,8 +23,11 @@
 
 package jnum.data.cube.overlay;
 
+import jnum.Copiable;
+import jnum.CopiableContent;
 import jnum.Util;
 import jnum.data.Data;
+import jnum.data.cube.Cube3D;
 import jnum.data.cube.Data3D;
 import jnum.data.cube.Values3D;
 import jnum.parallel.Parallelizable;
@@ -55,6 +58,25 @@ public class Overlay3D extends Data3D {
         if(!Util.equals(values, overlay.values)) return false;
         
         return super.equals(o);
+    }
+    
+    @Override
+    public Overlay3D copy() {
+        return copy(true);
+    }
+    
+    @Override
+    public Overlay3D copy(boolean withContent) {
+        Overlay3D copy = (Overlay3D) clone();
+        if(values != null) {
+            if(values instanceof CopiableContent) copy.values = (Values3D) ((CopiableContent<?>) values).copy(withContent);
+            else if(withContent) {
+                if(values instanceof Copiable) copy.values = (Values3D) ((Copiable<?>) values).copy();
+                else Cube3D.createType(values.getElementType(), values.sizeX(), values.sizeY(), values.sizeZ());
+            }
+            else copy.values = new Overlay3D(values).getCube();
+        }
+        return copy;
     }
    
    

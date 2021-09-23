@@ -248,7 +248,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     }
     
     public synchronized void transpose() {
-        silentNextNewData();
+        preserveHistory();
         setRowColData(getCore());
         addHistory("transposed");
     }
@@ -260,7 +260,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     @Override
     public synchronized Image2D getImage(Class<? extends Number> elementType, Number blankingValue) {
         if(elementType.equals(this.getElementType())) {
-            if(Util.equals(blankingValue, getBlankingValue())) return copy(true);
+            if(Util.equals(blankingValue, getInvalidValue())) return copy(true);
             Image2D image = copy(false);
             image.paste(this, true);
             return image;
@@ -285,7 +285,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
 
     public synchronized void crop(Index2D from, Index2D to) {
         addHistory("cropped " + from + " : " + to);
-        silentNextNewData();
+        preserveHistory();
         setData(getCropped(from, to).getCore());
     }
 
@@ -357,7 +357,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     
     public static Image2D createFrom(final Values2D values, final Number blankingValue, Class<? extends Number> elementType) {
         final Image2D image = createType(elementType);
-        image.setBlankingValue(blankingValue);
+        image.setInvalidValue(blankingValue);
         image.setData(values);
         return image;
     }

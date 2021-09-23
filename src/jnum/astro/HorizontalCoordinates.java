@@ -111,7 +111,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * @see #setAZ(double)
      * @see #EL() 
      */
-    public final double AZ() { return nativeLongitude(); }
+    public final double AZ() { return longitude(); }
 
 
     /**
@@ -123,7 +123,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * @see #setAZ(double)
      * @see #EL() 
      */
-    public final double azimuth() { return nativeLongitude(); }
+    public final double azimuth() { return longitude(); }
 
     /**
      * Returns the elevation coordinate.
@@ -134,7 +134,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * @see #setZA(double)
      * @see #AZ() 
      */
-    public final double EL() { return nativeLatitude(); }
+    public final double EL() { return latitude(); }
 
     /**
      * Returns the elevation coordinate. Same as {@link #EL()} but with a more expressive name.
@@ -147,7 +147,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * @see #setZA(double)
      * @see #AZ() 
      */
-    public final double elevation() { return nativeLatitude(); }
+    public final double elevation() { return latitude(); }
 
     /**
      * Returns the zenith angle.
@@ -158,7 +158,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * @see #setZA(double)
      * @see #setEL(double)
      */
-    public final double ZA() { return Constant.rightAngle - nativeLatitude(); }
+    public final double ZA() { return Constant.rightAngle - latitude(); }
 
     /**
      * Returns the zenith angle. Same as {@link #ZA()} but with a more expressive name.
@@ -174,7 +174,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * 
      * @see #AZ()
      */
-    public final void setAZ(double AZ) { setNativeLongitude(AZ); }
+    public final void setAZ(double AZ) { setLongitude(AZ); }
 
     /**
      * Sets a new elevation angle.
@@ -184,7 +184,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * @see #EL()
      * @see #setZA(double)
      */
-    public final void setEL(double EL) { setNativeLatitude(EL); }
+    public final void setEL(double EL) { setLatitude(EL); }
 
     /**
      * Sets a new zenith angle.
@@ -194,7 +194,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * @see #ZA()
      * @see #setEL(double)
      */
-    public final void setZA(double ZA) { setNativeLatitude(Constant.rightAngle - ZA); }
+    public final void setZA(double ZA) { setLatitude(Constant.rightAngle - ZA); }
 
     /**
      * Returns the apparent equatorial coordinates for the the location over the horizon at a given Earth
@@ -261,7 +261,7 @@ public class HorizontalCoordinates extends SphericalCoordinates {
      * @see #toEquatorialOffset(Vector2D, double)
      */
     public double getParallacticAngle(GeodeticCoordinates site) {
-        return Math.atan2(site.cosLat() * Math.sin(AZ()), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(AZ()));
+        return Math.atan2(-site.cosLat() * Math.sin(AZ()), site.sinLat() * cosLat() - site.cosLat() * sinLat() * Math.cos(AZ()));
     }
 
     /**

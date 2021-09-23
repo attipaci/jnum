@@ -461,9 +461,9 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
         final double t = 0.01 * (toEpoch - fromEpoch);
          
         final double epsAbar = EquatorialCoordinates.eps0 + T * (-46.8150 + T * (-0.00059 + T * 0.001813)) * Unit.arcsec;
-        final double omegaA = epsAbar + ((0.05127  - 0.009186 * T) - 0.007726 * t) * t * t * Unit.arcsec;
-        final double psiA = ( ((5038.7784 + T * (0.49263 - T * 0.000124))) + t * ((-1.0759 - T * 0.001106) - t * 0.001147) ) * t * Unit.arcsec;      
-        final double chiA = ( (10.5526 + T * (-1.88623 + T * 0.000096)) + t * ((-2.38074 - T * 0.000833) - t * 0.001125) ) * t * Unit.arcsec;
+        final double omegaA = epsAbar + t * t * ((0.05127 - T * 0.009186) - t * 0.007726) * Unit.arcsec;
+        final double psiA = t * ( ((5038.7784 + T * (0.49263 - T * 0.000124))) + t * ((-1.07259 - T * 0.001106) - t * 0.001147) ) * Unit.arcsec;      
+        final double chiA = t * ( (10.5526 + T * (-1.88623 + T * 0.000096)) + t * ((-2.38064 - T * 0.000833) - t * 0.001125) ) * Unit.arcsec;
        
         R1(EquatorialCoordinates.eps0);
         R3(-psiA);

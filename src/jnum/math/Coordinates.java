@@ -36,6 +36,9 @@ import jnum.data.index.IndexedEntries;
  */
 public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, IndexedEntries<Index1D, T>  {
 
+    
+    public boolean equals(Coordinates<T> coords, double precision);
+    
     /**
      * Gets the number of coordinate components in this set.
      * 

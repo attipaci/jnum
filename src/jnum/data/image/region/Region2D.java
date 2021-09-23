@@ -166,7 +166,6 @@ public abstract class Region2D implements Serializable, Cloneable {
 	    public Coordinate2D getGridCoords(Vector2D index) {
 	        Vector2D offset = new Vector2D();
             grid.indexToOffset(index, offset);
-	        
             Coordinate2D gridCoords = grid.getReference().copy();
             ((Grid2D) grid).getProjection().deproject(offset, gridCoords);
             

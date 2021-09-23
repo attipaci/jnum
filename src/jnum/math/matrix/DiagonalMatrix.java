@@ -134,6 +134,15 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     public final Index2D getSize() { return new Index2D(size(), size()); }
 
     @Override
+    public int getSize(int i) {
+        switch(i) {
+        case 0:
+        case 1: return size();
+        default: throw new IllegalArgumentException("there is no dimension " + i);
+        }
+    }
+    
+    @Override
     public final T get(Index2D index) { return get(index.i(), index.j()); }
 
     @Override
@@ -827,11 +836,11 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             for(int i=rows(); --i >= 0; ) {
                 T v = data[i];
                 sum.add(v);
-                double a2 = v.absSquared();
+                double a2 = v.squareNorm();
                 if(a2 > mag2) mag2 = a2;
             }
                 
-            return sum.absSquared() <= 1e-24 * mag2;
+            return sum.squareNorm() <= 1e-24 * mag2;
         }
 
         @Override
@@ -859,7 +868,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             
             int rank = 0;
             for(int i=rows(); --i >= 0; ) 
-                for(int j=cols(); --j >= 0; ) if(data[i].absSquared() > tiny2) {
+                for(int j=cols(); --j >= 0; ) if(data[i].squareNorm() > tiny2) {
                     rank++;
                     break;
                 }
@@ -871,7 +880,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         public void sanitize() {
             double tiny2 = 1e-12 * getMagnitude();
             tiny2 *= tiny2;
-            for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) if(data[i].absSquared() < tiny2) data[i].zero();
+            for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) if(data[i].squareNorm() < tiny2) data[i].zero();
         }
         
         @Override
@@ -1055,7 +1064,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
                 double sum2 = 0.0;
                 for(int i=size(); --i >= 0; ) {
                     e.setDifference(data[i], (T) o.get(i, i));
-                    sum2 += e.absSquared();
+                    sum2 += e.squareNorm();
                 }
                 return Math.sqrt(sum2);
             }
@@ -1067,7 +1076,7 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
                     e.setIdentity();
                     e.scale(((Number) o.get(i, i)).doubleValue());
                     e.subtract(getDiagonal(i));
-                    sum2 += e.absSquared();
+                    sum2 += e.squareNorm();
                 }
                 return Math.sqrt(sum2);
             }
@@ -1090,8 +1099,8 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
                 double sum2 = 0.0;
                 for(int i=size(); --i >= 0; ) {
                     e.setDifference(data[i], (T) o.get(i, i));
-                    sum2 += e.absSquared();
-                    for(int j=size(); --j >= 0; ) if(j != i) sum2 += ((T) o.get(i, j)).absSquared();
+                    sum2 += e.squareNorm();
+                    for(int j=size(); --j >= 0; ) if(j != i) sum2 += ((T) o.get(i, j)).squareNorm();
                 }
                 return Math.sqrt(sum2);
             }
@@ -1102,8 +1111,8 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
                     e.setIdentity();
                     e.scale(((Number) o.get(i, i)).doubleValue());
                     e.subtract(getDiagonal(i));
-                    sum2 += e.absSquared();
-                    for(int j=size(); --j >= 0; ) if(j != i) sum2 += ((T) o.get(i, j)).absSquared();
+                    sum2 += e.squareNorm();
+                    for(int j=size(); --j >= 0; ) if(j != i) sum2 += ((T) o.get(i, j)).squareNorm();
                 }
                 return Math.sqrt(sum2);
             }

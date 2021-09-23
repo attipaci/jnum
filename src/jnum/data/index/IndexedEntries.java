@@ -59,10 +59,20 @@ public interface IndexedEntries<IndexType, DataType> {
      * 
      * @return  the number of data elements along each dimension.
      * 
+     * @see #getSize(int)
      * @see #copyOfIndex(Object)
      * @see jnum.Copiable#copy()
      */
     public IndexType getSize();
+    
+    /**
+     * REturns the size along the <i>i</i><sup>th</sup> dimension.
+     * 
+     * @param i     the index of the data dimension along which to query the size.
+     * @return      the size along the specified dimension
+     * @throws IllegalArgumentException     if the index is not within the dimensionality of the data.
+     */
+    public int getSize(int i) throws IllegalArgumentException;
     
     /**
      * Gets the data stored at the specified index.

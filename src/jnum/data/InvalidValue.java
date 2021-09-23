@@ -36,6 +36,6 @@ public interface InvalidValue {
      * 
      * @return  <code>tru</code> if this object is marked as blanked, invalid, or is missing data.
      */
-	public boolean isNaN(); 
+	public boolean isInvalidValue(); 
 	
 }

@@ -32,7 +32,7 @@ import jnum.parallel.Parallelizable;
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-public class Overlay2D extends Data2D implements CopiableContent<Overlay2D> {
+public class Overlay2D extends Data2D {
     private Values2D values;
   
     public Overlay2D() {}
