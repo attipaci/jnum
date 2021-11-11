@@ -45,7 +45,7 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
     private static final long serialVersionUID = 3130499937543818368L;
 
     private EquatorialSystem from, to;
-    private int precision;          // Precision of the nutation model, e.g. {@link #PRECISE} or {@link #TRUNCATED_100UAS}...
+    private Precision precision;          // Precision of the nutation model, e.g. {@link Precsion#PRECISE} or {@link Precision#TRUNCATED_100UAS}...
     
     private int toGCRS = 0;         // > 0 if therev is a ICRS->GCRS tranform involved (possibly intermediate), or < 0 for reverse.
     private Vector3D dvEarth;       // Relative Earth velocity between frames (for aberration)
@@ -60,10 +60,11 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
      * 
      * @param from          Equatorial system for input coordinates/vectors
      * @param to            Equatorial system for output coordinates/vectors.
-     * @param precision     Nutation precision constant (0 for default, oe else {@link #PRECISE} or {@link #TRUNCATED_100UAS} etc...)
+     * @param precision     Nutation precision constant (0 for default, or else {@link Precision#PRECISE} or {@link Precision#TRUNCATED_100UAS} etc...)
      */
-    public EquatorialTransform(EquatorialSystem from, EquatorialSystem to, int precision) {
+    public EquatorialTransform(EquatorialSystem from, EquatorialSystem to, Precision precision) {
         this.from = from;
+        this.precision = precision;
         
         dvEarth = new Vector3D();
         dpEarth = new Vector3D();
@@ -72,14 +73,14 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
     }
     
     /**
-     * Creates a new tranform between two equatorial systems, with the {@link #TRUNCATED_100UAS} precision 
+     * Creates a new tranform between two equatorial systems, with the {@link Precision#TRUNCATED_100UAS} precision 
      * IAU2000AR06 nutation model. (I.e. nutation terms with amplitude smaller than 100uas omitted).
      * 
      * @param from          Equatorial system for input coordinates/vectors
      * @param to            Equatorial system for output coordinates/vectors.
      */
     public EquatorialTransform(EquatorialSystem from, EquatorialSystem to) {
-        this(from, to, TRUNCATED_100UAS);
+        this(from, to, Precision.TRUNCATED_100UAS);
     }
     
     /**
@@ -585,32 +586,7 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
     final private static double fk5Y = -9.1 * Unit.mas;      ///< Tilt of FK5 vs ICRS(Hipparcos) around y
     final private static double fk5Z = 22.9 * Unit.mas;      ///< Tilt of FK5 vs ICRS(Hipparcos) around z
  
-    /**
-     * Default nutation accuracy constant, with nutation terms smaller than 100 uas omitted. A good compromise
-     * between speed and precision. as it requires ~15 times fewer calculations than the full-precison model, while
-     * still maintaining ~milliarcsec accuracy until 2050...
-     */
-    public static final int TRUNCATED_100UAS = 0;
-    
-    /**
-     * Constant denoting the full-precision nutation calculation (requiring ~1400 terms in both directions).
-     * It is is precise but computationally intensive. (Not an issue if you don't need to call it over
-     * and over for different observation dates).
-     */
-    public static final int PRECISE = 1;
-    
-    /**
-     * Constant denoting a lesser precision but ~35 times faster nutation calculation than the full-precision
-     * model.  
-     */
-    public static final int TRUNCATED_1MAS = 2;
-    
-    /**
-     * Constant denoting the fastest but least precise nutation model. The approximate nutation is calculated 
-     * around 100x faster than the full-precision model, and yield sub-arcsecon precision until 2050.
-     */
-    public static final int TRUNCATED_10MAS = 3;
-    
+   
     // Heliocentric gravitational constant in meters^3 / second^2, from DE-405.
     // Borrowed from NOVAS 3.1
     private static final double GS = 1.32712440017987e+20;
@@ -626,5 +602,43 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
     private static final double[] RMASS = {328900.561400, 6023600.0, 408523.71,
        332946.050895, 3098708.0, 1047.3486, 3497.898, 22902.98,
        19412.24, 135200000.0, 1.0, 27068700.387534};
+    
+    public static enum Precision {
+        /**
+         * Constant denoting the full-precision nutation calculation (requiring ~1400 terms in both directions).
+         * It is is precise but computationally intensive. (Not an issue if you don't need to call it over
+         * and over for different observation dates).
+         */
+        PRECISE(0.0),
+        
+        /**
+         * Default nutation accuracy constant, with nutation terms smaller than 100 uas omitted. A good compromise
+         * between speed and precision. as it requires ~15 times fewer calculations than the full-precison model, while
+         * still maintaining ~milliarcsec accuracy until 2050...
+         */
+        TRUNCATED_100UAS(100.0 * Unit.uas),
+        
+        /**
+         * Constant denoting a lesser precision but ~35 times faster nutation calculation than the full-precision
+         * model.  
+         */
+        TRUNCATED_1MAS(1.0 * Unit.mas),
+        
+        /**
+         * Constant denoting the fastest but least precise nutation model. The approximate nutation is calculated 
+         * around 100x faster than the full-precision model, and yield sub-arcsecon precision until 2050.
+         */
+        TRUNCATED_10MAS(10.0 * Unit.mas);
+        
+        double cutoff;
+        
+        Precision(double cutoff) {
+            this.cutoff = cutoff;
+        }
+        
+        public final double cutoff() {
+            return cutoff;
+        }
+    }
     
 }

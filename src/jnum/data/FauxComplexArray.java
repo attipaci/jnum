@@ -488,7 +488,7 @@ Scalable, ComplexConjugate {
 		
 		@Override
 		public int hashCode() {
-			return super.hashCode() ^ HashCode.sampleFrom(data);
+			return HashCode.sampleFrom(data);
 		}
 
 		@Override
@@ -580,7 +580,7 @@ Scalable, ComplexConjugate {
 
 		@Override
 		public int hashCode() {
-			return super.hashCode() ^ HashCode.sampleFrom(data);
+			return HashCode.sampleFrom(data);
 		}
 
 		@Override

@@ -28,6 +28,7 @@ import java.util.Hashtable;
 
 import jnum.Unit;
 import jnum.Util;
+import jnum.data.FlagCompanion;
 import jnum.data.Referenced;
 import jnum.data.RegularData;
 import jnum.data.image.Gaussian2D;
@@ -49,12 +50,12 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
 
 
     private Class<? extends Number> dataType;
-    private int flagType;
+    private FlagCompanion.Type flagType;
 
     private Grid1D grid1D;
 
 
-    public AbstractMap2D1(Class<? extends Number> dataType, int flagType) {
+    public AbstractMap2D1(Class<? extends Number> dataType, FlagCompanion.Type flagType) {
         this.dataType = dataType;
         this.flagType = flagType;
         grid1D = new Grid1D(3);
@@ -73,7 +74,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     @Override
     public final Class<? extends Number> getElementType() { return dataType; }
 
-    public final int getFlagType() { return flagType; }
+    public final FlagCompanion.Type getFlagType() { return flagType; }
 
 
     public void flag(int i, int j, int k, long value) { getPlane(k).flag(i, j, value); }
@@ -281,7 +282,7 @@ public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1
     
     
     @Override
-    protected void editHeader(Header header) throws HeaderCardException {   
+    public void editHeader(Header header) throws HeaderCardException {   
         grid1D.editHeader(header);
         MapType representative = sizeZ() > 0 ? getPlane(0) : getPlaneTemplate();
         representative.editHeader(header);    

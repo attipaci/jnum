@@ -78,7 +78,7 @@ public class Stokes implements LinearAlgebra<Stokes>, Cloneable, Copiable<Stokes
     private double N, Q, U, V;
     
     @Override
-    public int hashCode() { return super.hashCode() ^ HashCode.from(N) ^ HashCode.from(Q) ^ HashCode.from(U) ^ HashCode.from(V); } 
+    public int hashCode() { return HashCode.from(N) ^ HashCode.from(Q) ^ HashCode.from(U) ^ HashCode.from(V); } 
     
     @Override
     public boolean equals(Object o) {

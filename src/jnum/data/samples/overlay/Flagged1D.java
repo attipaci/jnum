@@ -26,6 +26,7 @@ package jnum.data.samples.overlay;
 import java.util.concurrent.ExecutorService;
 
 import jnum.Util;
+import jnum.data.FlagCompanion;
 import jnum.data.samples.Flag1D;
 import jnum.data.samples.Values1D;
 import jnum.util.HashCode;
@@ -151,7 +152,7 @@ public class Flagged1D extends Overlay1D {
     
     
     
-    protected void createFlags(int flagType) {
+    protected void createFlags(FlagCompanion.Type flagType) {
         Flag1D flags = new Flag1D(flagType);
         flags.setSize(getSize());
         setFlags(flags);

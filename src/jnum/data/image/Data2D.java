@@ -28,6 +28,7 @@ import java.util.List;
 import jnum.Constant;
 import jnum.PointOp;
 import jnum.data.DataPoint;
+import jnum.data.Interpolator;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
 import jnum.data.DataCrawler;
@@ -113,7 +114,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
 
         image.copyParallel(this);
         image.setInterpolationType(getInterpolationType());
-        image.setVerbose(isVerbose());
         image.setUnit(getUnit());
 
         List<String> imageHistory = image.getHistory();
@@ -372,10 +372,10 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         if(i == ic) if(j == jc) return get(i, j).doubleValue();
 
         switch(getInterpolationType()) {
-        case INTERPOLATE_NEAREST : return get(i, j).doubleValue();
-        case INTERPOLATE_LINEAR : return linearAtIndex(ic, jc);
-        case INTERPOLATE_PIECEWISE_QUADRATIC : return quadraticAtIndex(ic, jc);
-        case INTERPOLATE_SPLINE : return splines == null ? splineAtIndex(ic, jc) : splineAtIndex(ic, jc, splines);
+        case NEAREST : return get(i, j).doubleValue();
+        case LINEAR : return linearAtIndex(ic, jc);
+        case PIECEWISE_QUADRATIC : return quadraticAtIndex(ic, jc);
+        case CUBIC_SPLINE : return splines == null ? splineAtIndex(ic, jc) : splineAtIndex(ic, jc, splines);
         }
 
         return Double.NaN;
@@ -519,12 +519,12 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
 
  
     @Override
-    protected int getInterpolationOps(int type) {
+    protected int getInterpolationOps(Interpolator.Type type) {
         switch(type) {
-        case INTERPOLATE_NEAREST : return 10;
-        case INTERPOLATE_LINEAR : return 45;
-        case INTERPOLATE_PIECEWISE_QUADRATIC : return 60;
-        case INTERPOLATE_SPLINE : return 200;
+        case NEAREST : return 10;
+        case LINEAR : return 45;
+        case PIECEWISE_QUADRATIC : return 60;
+        case CUBIC_SPLINE : return 200;
         }
         return 1;
     }
@@ -533,7 +533,7 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     
     
     @Override
-    public int getPointSmoothOps(int beamPoints, int interpolationType) {
+    public int getPointSmoothOps(int beamPoints, Interpolator.Type interpolationType) {
         return 25 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
 

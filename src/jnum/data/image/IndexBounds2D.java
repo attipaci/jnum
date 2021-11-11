@@ -47,7 +47,7 @@ public class IndexBounds2D implements Serializable {
 	
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ fromi ^ toi ^ fromj ^ toj;
+		return fromi ^ toi ^ fromj ^ toj;
 	}
 
 	@Override

@@ -28,7 +28,7 @@ import java.io.*;
  * a floating point format that was quite different from the IEEE 754 type floats used on most platforms
  * today. More than just byte order differences, the VAX floating point formats have designated bits entirely
  * differently. It is however possible to construct IEEE 754 floating point types from the equivalent
- * 32-bit and 64-bit vax floats, by doing a set of bitwise operations And that exactly is the purpose of
+ * 32-bit and 64-bit vax floats, by doing a set of bitwise operations. And that exactly is the purpose of
  * this class, which makes binary data, written in VAX format available to Java applications.
  * 
  * @author Attila Kovacs
@@ -55,14 +55,14 @@ public class VAXDataInputStream extends LittleEndianDataInputStream {
 		
 		// Now paste in the remaining fraction bits. The fraction bits must shift down by 3 bits for 
 		// proper alignment...
-		int i = read4Bytes();		
+		int i = read();		
 		l |= (((i >>> 8 & 0x00FF00FF) | (i & 0x00FF00FF) << 8) >>> 3) & 0x2FFFFFFF;
 		return Double.longBitsToDouble(l);	
 	}
 
 	@Override
 	public final float readFloat() throws IOException {
-		int i = read4Bytes();
+		int i = read();
 		return 0.25F * Float.intBitsToFloat((i >>> 8 & 0x00FF00FF) | (i & 0x00FF00FF) << 8);
 	}
 

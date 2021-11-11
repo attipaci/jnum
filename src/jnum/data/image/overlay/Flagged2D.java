@@ -26,6 +26,7 @@ package jnum.data.image.overlay;
 import java.util.concurrent.ExecutorService;
 
 import jnum.Util;
+import jnum.data.FlagCompanion;
 import jnum.data.image.Flag2D;
 import jnum.data.image.Values2D;
 import jnum.data.index.Index2D;
@@ -190,7 +191,7 @@ public class Flagged2D extends Overlay2D {
     public final boolean isUnflagged(int i, int j, long pattern) { return flag.isClear(i, j, pattern); }
 
 
-    protected void createFlags(int flagType) {
+    protected void createFlags(FlagCompanion.Type flagType) {
         Flag2D flags = new Flag2D(flagType);
         flags.setSize(sizeX(), sizeY());
         setFlags(flags);

@@ -50,10 +50,12 @@ import nom.tam.util.Cursor;
  * A base class for 2D coordinates of all types. That is basically anything with a pair of real values.
  * 
  * @author Attila Kovacs
+ * 
+ * @see Coordinate3D
  *
  */
 public class Coordinate2D implements Coordinates<Double>, RealComponents, Serializable, Cloneable, Copiable<Coordinate2D>, 
-ViewableAsDoubles, Parser, NumberFormating, Inversion {
+ViewableAsDoubles, Parser, NumberFormating, Inversion, ZeroValue {
     /** */
     private static final long serialVersionUID = -3978373428597134906L;
 
@@ -290,15 +292,36 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     @Override
     public Coordinate2D copy() { return clone(); }
 
+    /**
+     * Converts these coordinates to and AWT {@link Point2D} object with the same components.
+     * 
+     * @return  the equivalent new AWT <code>Point2D</code> object.
+     * 
+     * @see #toPoint2D(Point2D)
+     */
     public Point2D getPoint2D() {
         return new Point2D.Double(x, y);
     }
 
+    /**
+     * Converts these coordinates to and AWT {@link Point2D} object with the same components.
+     * 
+     * @param point     the AWT <code>Point2D</code> object to set to the location of these coordinates.
+     * 
+     * @see #fromPoint2D(Point2D)
+     * @see #getPoint2D()
+     */
     public void toPoint2D(Point2D point) {
         point.setLocation(x, y);
     }
 
-
+    /**
+     * Sets these coordinates to the location of an AWT {@link Point2D} object.
+     * 
+     * @param point     the AWT <code>Point2D</code> object providing the location for these coordinates.
+     * 
+     * @see #toPoint2D(Point2D)
+     */
     public void fromPoint2D(Point2D point) {
         set(point.getX(), point.getY());
     }
@@ -322,17 +345,11 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         y = -y;
     }
 
-    /**
-     * Resets both coordinate components to 0 values.
-     * 
-     */
+    @Override
     public void zero() { x = y = 0.0; }
 
-    /**
-     * Checks if both coordinates are zero.
-     * 
-     * @return <code>true</code> if both coordinates are zero. Otherwise <code>false</code>.
-     */
+
+    @Override
     public boolean isNull() { 
         if(x != 0.0) return false;
         if(y != 0.0) return false; 
@@ -367,7 +384,14 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         return false;
     }
 
-
+    /**
+     * Sets the coordinates to the weighted average of the current value of these coordinates
+     * and the specified other coordinates.
+     * 
+     * @param w1        the weight to use for these coordinates
+     * @param coord     the other coordinates
+     * @param w2        the weight to use for the other coordinates
+     */
     public final void weightedAverageWith(double w1, final Coordinate2D coord, double w2) {
         final double isumw = 1.0 / (w1 + w2);
         w1 *= isumw; w2 *= isumw;
@@ -375,13 +399,26 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         y = w1 * y + w2 * coord.y;
     }
 
-    public final void parse(String spec) {
+    /**
+     * Parses the coordinates from a string representation of these.
+     * 
+     * @param spec      The string beginnign with a 2D coordinate description (normally
+     *                  a pair of comma or space separated values, possibly enclosed in brackets.
+     *                  (See {@link #parse(StringParser)} for more details on the accepted
+     *                  string formats).
+     * @throws NumberFormatException    if the string does not seem to begin with what could
+     *                                  be used as coordinate components.
+     * 
+     * @see #parse(String, ParsePosition)
+     * @see #parse(StringParser)
+     */
+    public final void parse(String spec) throws NumberFormatException {
         parse(spec, new ParsePosition(0));
     }
 
 
     @Override
-    public final void parse(String text, ParsePosition pos) throws IllegalArgumentException {
+    public final void parse(String text, ParsePosition pos) throws NumberFormatException {
         parse(new StringParser(text, pos));
     }
 
@@ -413,8 +450,12 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
      * }
      * </pre>
      * 
-     * @param parser  The string parsing helper object.
-     * @throws NumberFormatException
+     * @param parser                    The string parsing helper object.
+     * @throws NumberFormatException    if the string does not seem to begin with what could
+     *                                  be used as coordinate components.
+     * 
+     * @see #parse(String)
+     * @see #parse(String, ParsePosition)
      */
     public void parse(StringParser parser) throws NumberFormatException {
         boolean isBracketed = false;
@@ -433,10 +474,30 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         parseY(parser.nextToken(Util.getWhiteSpaceChars() + "," + (isBracketed ? "" : ")")));
     }
 
+    /**
+     * Parses the <i>x</i> coordinates from the spefified string token.
+     * 
+     * @param token     the string description of the <i>x</i> coordinate.
+     * @throws NumberFormatException    if the string does not seem to contain a suitable
+     *                                  representation for the <i>x</i> coordinate.
+     *                                  
+     * @see #parseY(String)
+     * @see #parse(StringParser)
+     */
     protected void parseX(String token) throws NumberFormatException {
         setX(Double.parseDouble(token));
     }
 
+    /**
+     * Parses the <i>y</i> coordinates from the spefified string token.
+     * 
+     * @param token     the string description of the <i>y</i> coordinate.
+     * @throws NumberFormatException    if the string does not seem to contain a suitable
+     *                                  representation for the <i>y</i> coordinate.
+     *                                  
+     * @see #parseX(String)
+     * @see #parse(StringParser)
+     */
     protected void parseY(String token) throws NumberFormatException {
         setY(Double.parseDouble(token));
     }
@@ -477,24 +538,6 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     }
 
 
-    public double getValue(int field) throws NoSuchFieldException {
-        switch(field) {
-        case X: return x;
-        case Y: return y;
-        default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
-        }
-    }
-
-
-    public void setValue(int field, double value) throws NoSuchFieldException {
-        switch(field) {
-        case X: x = value; break;
-        case Y: y = value; break; 
-        default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
-        }
-    }
-
-
     public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         c.add(new HeaderCard(keyStem + "1" + alt, x, "The reference x coordinate in SI units."));
@@ -507,17 +550,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());
     }
 
-
-    public static String toString(Coordinate2D coords, Unit unit) {
-        return toString(coords, unit, 3);
-    }
-
-
-    public static String toString(Coordinate2D coords, Unit unit, int decimals) {
-        return Util.f[decimals].format(coords.x / unit.value()) +  ", " 
-                + Util.f[decimals].format(coords.y / unit.value()) + " " + unit.name();
-    }
-
+    
     public void convertFrom(Coordinate2D coords) throws IncompatibleTypesException {
         if(getClass().isAssignableFrom(coords.getClass())) copy(coords);
         else throw new IncompatibleTypesException(coords, this);
@@ -625,11 +658,63 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         }
     }
 
+    /**
+     * Creates an array of 2D coordinates, with each element initialized to a default (zero) coordinate
+     * intance.
+     * 
+     * @param size  the array size
+     * @return      a new array of the desired size with all elements initialized to 2D coordinates
+     *              with zero components.
+     */
+    public static Coordinate2D[] createArray(int size) {
+        Coordinate2D[] array = new Coordinate2D[size];
+        IntStream.range(0, size).parallel().forEach(i -> array[i] = new Coordinate2D());
+        return array;
+    }
+    
+    /**
+     * Return a fully independent copy of an array of coordinate pairs. Modifications to either
+     * the original or the copy will be guaranteed to not impact the other.
+     * 
+     * @param array     the array of 2D coordinates to copy
+     * @return          an independent copy of the input array, in which all elements are themselves
+     *                  copies of the original elements.
+     */
     public static Coordinate2D[] copyOf(Coordinate2D[] array) {
         Coordinate2D[] copy = new Coordinate2D[array.length];
         IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
     }
+    
+    /**
+     * Returns a string representation of 2D coordinates in the specified physical units.
+     * 
+     * @param coords    the 2D coordinates
+     * @param unit      the physical unit in which to represent
+     * @return          a string representation of the coordinates, including the physical unit name.
+     * 
+     * @see #toString(Coordinate2D, Unit, int)
+     */
+    public static String toString(Coordinate2D coords, Unit unit) {
+        return toString(coords, unit, 3);
+    }
+
+    /**
+     * Returns a string representation of 2D coordinates in the specified physical units.
+     * 
+     * @param coords    the 2D coordinates
+     * @param unit      the physical unit in which to represent
+     * @param decimals  the decimal places to show.
+     * 
+     * @return          a string representation of the coordinates, including the physical unit name.
+     * 
+     * @see #toString(Coordinate2D, Unit)
+     */
+    public static String toString(Coordinate2D coords, Unit unit, int decimals) {
+        return Util.s[decimals].format(coords.x / unit.value()) +  ", " 
+                + Util.s[decimals].format(coords.y / unit.value()) + " " + unit.name();
+    }
+    
 
     /**
      * The default size object for 2D coordinates.

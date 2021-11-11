@@ -94,7 +94,7 @@ NumberFormating {
 
     @Override
     public int hashCode() {
-        return super.hashCode() ^ HashCode.from(majorFWHM) ^ HashCode.from(minorFWHM) ^ HashCode.from(positionAngle);
+        return HashCode.from(majorFWHM) ^ HashCode.from(minorFWHM) ^ HashCode.from(positionAngle);
     }
 
     @Override

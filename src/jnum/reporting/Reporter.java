@@ -95,7 +95,8 @@ public abstract class Reporter {
     
     /**
      * Processes a warning message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is 
+     * typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
@@ -114,7 +115,8 @@ public abstract class Reporter {
     
     /**
      * Processes an error message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is 
+     * typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
@@ -134,7 +136,8 @@ public abstract class Reporter {
 
     /**
      * Processes a trace that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is 
+     * typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
@@ -175,7 +178,8 @@ public abstract class Reporter {
      * Same as {@link #error(Object, Throwable, boolean)}, but with the trace reporting enabled by default.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
-     * @param e         The {@link Throwable} object, such as an {@link Exception} or {@link Error}, that contains the relevant information about the error.
+     * @param e         The {@link Throwable} object, such as an {@link Exception} or {@link Error}, that contains the 
+     *                  relevant information about the error.
      *
      * @see #error(Object, Throwable, boolean)
      * @see #error(Object, String)
@@ -204,7 +208,8 @@ public abstract class Reporter {
      * <code>warning(owner, e, true)</code>.
      * 
      * @param owner     The {@link Object} or {@link Class} to which this message belongs
-     * @param e         The {@link Throwable} object, such as an {@link Exception} or {@link Error}, that contains the relevant information about the error.
+     * @param e         The {@link Throwable} object, such as an {@link Exception} or {@link Error}, that contains the 
+     *                  relevant information about the error.
      *
      * @see #warning(Object, Exception, boolean)
      * @see #warning(Object, String)
@@ -215,7 +220,8 @@ public abstract class Reporter {
 
     /**
      * Processes a status message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is 
+     * typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
@@ -229,7 +235,8 @@ public abstract class Reporter {
     
     /**
      * Processes a result that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is 
+     * typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
@@ -244,7 +251,8 @@ public abstract class Reporter {
     
     /**
      * Processes a detail message that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
+     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is 
+     * typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
@@ -260,8 +268,9 @@ public abstract class Reporter {
     
     
     /**
-     * Processes a value or values that were generated that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
+     * Processes a value or values that were generated that is associated with the given object instance or class. 
+     * (I.e. owner may be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The 
+     * owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.
@@ -275,8 +284,8 @@ public abstract class Reporter {
     public abstract void values(Object owner, String message); 
     
     /**
-     * Processes a suggestion that is associated with the given object instance or class. (I.e. owner may
-     * be an instance of <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
+     * Processes a suggestion that is associated with the given object instance or class. (I.e. owner may be an instance of 
+     * <code>Foo</code>, or it may be a class such as <code>Foo.class</code>). The owner is typically the object or class that
      * generated the message, but it does not have to be so. Sometimes you may want to assign a message to a particular
      * object or class that has something to do with the given message, even if they did not themselves produce that
      * message.

@@ -64,7 +64,7 @@ public abstract class FlagSpace<Type extends Number> implements Serializable, Fi
     protected abstract Flag<Type> createFlag(long value, char letterCode, String name);
 
     @Override
-    public int hashCode() { return super.hashCode() ^ name.hashCode(); }
+    public int hashCode() { return name.hashCode(); }
 
     @Override
     public boolean equals(Object o) {

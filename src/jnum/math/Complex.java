@@ -206,23 +206,6 @@ public class Complex extends Vector2D implements
 		scale(A);
 	}
 	
-	/**
-	 * Sets this complex number to be the result of the specified operation between the two complex arguments.
-	 *
-	 * @param a the first complex argument.
-	 * @param op the operation: '+', '-', '*', '/' or '^'.
-	 * @param b the second complex argument.
-	 */
-	public void set(final Complex a, final char op, final Complex b) {
-		switch(op) {
-		case '*' : setProduct(a, b); break;
-		case '/' : setRatio(a, b); break;
-		case '^' : copy(a); pow(b); break;
-		default: super.set(a, op, b);
-		}
-	}
-	
-	
 	@Override
 	public final void multiplyByI() {
 		set(-y(), x());
@@ -530,76 +513,6 @@ public class Complex extends Vector2D implements
 		return c;
 	}
 
-
-	/**
-	 * Performs the requested mathematical operation on this complex number object.
-	 *
-	 * The operation can be '+' or '-' ({@link Vector2D#math(char, MathVector)}) and '*', '/', or '^' (for
-	 * raising power).
-	 *
-	 * @param op the operator ('+', '-', '*', '/', '^').
-	 * @param z the complex argument.
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public final void math(final char op, final Complex z) throws IllegalArgumentException {
-		switch(op) {
-		case '*': 
-			multiplyBy(z);
-			break;
-		case '/': 
-			divideBy(z);
-			break;
-		case '^':
-			pow(z);
-			break;
-		default: 
-			super.math(op, z);
-		}
-	}
-
-
-	/**
-	 * Calculates the requested mathematical operation between the two complex arguments.
-	 *
-	 * @param a the a
-	 * @param op the operator, same as for {@link #math(char, Complex)}.
-	 * @param b the b
-	 * @return the complex result.
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public static Complex math(Complex a, char op, Complex b) throws IllegalArgumentException {
-		final Complex result = (Complex) a.clone();
-		result.math(op, b);
-		return result;
-	}
-
-
-	@Override
-	public final void math(char op, double b) throws IllegalArgumentException {
-		switch(op) {
-		case '+': addX(b); break;
-		case '-': subtractX(b); break;
-		case '^': pow(b); break;	    
-		default: super.math(op, b);
-		}
-	}
-
-	/**
-	 * Calculates the requested mathematical operation between a complex and a real argument.
-	 *
-	 * @param a the complex argument
-	 * @param op the operator, e.g. '+', '-', '*', '/'
-	 * @param b the real argument
-	 * @return the complex result
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
-	public static Complex math(Complex a, char op, double b) throws IllegalArgumentException {
-		Complex result = (Complex) a.clone();
-		result.math(op, b);
-		return result;
-	}
-
-
 	/**
 	 * Converts the complex number to a string in the format 'a + bi' Using the provied decimal format. E.g. '1.123+0.451i'.
 	 *
@@ -674,5 +587,20 @@ public class Complex extends Vector2D implements
         return copy;
     }
 	
-	
+    /**
+     * the complex zero.
+     */
+    @SuppressWarnings("hiding")
+    public static final Complex ZERO = new Complex();
+    
+    /**
+     * The complex representation of the real number 1.
+     */
+    public static final Complex ONE = new Complex(1.0, 0.0);
+    
+    /**
+     * The imaginary unit, that is <i>i</i>.
+     */
+    public static final Complex I = new Complex(0.0, 1.0);
+
 }

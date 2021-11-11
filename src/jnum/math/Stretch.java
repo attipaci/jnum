@@ -87,7 +87,7 @@ public class Stretch<T extends Coordinates<Double>> implements CoordinateTransfo
     }
      
     @Override
-    public int hashCode() { return super.hashCode() ^ HashCode.from(scaling); }
+    public int hashCode() { return HashCode.from(scaling); }
     
     @Override
     public boolean equals(Object o) {

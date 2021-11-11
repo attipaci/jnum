@@ -24,6 +24,8 @@
 package jnum.data;
 
 
+import java.util.ArrayList;
+
 import jnum.ExtraMath;
 import jnum.PointOp;
 import jnum.Util;
@@ -33,6 +35,10 @@ import jnum.math.MathVector;
 import jnum.math.Stretch;
 import jnum.math.CoordinateTransform;
 import jnum.parallel.ParallelPointOp;
+import nom.tam.fits.BasicHDU;
+import nom.tam.fits.Fits;
+import nom.tam.fits.FitsException;
+import nom.tam.fits.ImageHDU;
 
 /**
  * A base class for data sampled at regular intervals.
@@ -47,16 +53,16 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     protected SplineSet<VectorType> reuseIpolData;
 
     /** The interpolation type to use to interpolate data to inbetween stored indices */
-    private int interpolationType;    
+    private Interpolator.Type interpolationType;    
 
     protected RegularData() {
         reuseIpolData = new SplineSet<>(dimension());
-        setInterpolationType(INTERPOLATE_SPLINE);
+        setInterpolationType(Interpolator.Type.CUBIC_SPLINE);
     }
     
     @Override
     public int hashCode() {
-        return super.hashCode() ^ getInterpolationType(); 
+        return super.hashCode() ^ interpolationType.hashCode(); 
     }
 
     @Override
@@ -223,7 +229,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * 
      * @see #valueAtIndex(MathVector, SplineSet)
      * @see #getInterpolationType()
-     * @see #setInterpolationType(int)
+     * @see #setInterpolationType(Interpolator.Type)
      * @see #nearestValueAtIndex(MathVector)
      * @see #quadraticAtIndex(MathVector)
      * @see #splineAtIndex(MathVector)
@@ -247,7 +253,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @see #splineAtIndex(MathVector, SplineSet)
      * @see #valueAtIndex(MathVector)
      * @see #getInterpolationType()
-     * @see #setInterpolationType(int)
+     * @see #setInterpolationType(Interpolator.Type)
      * @see #nearestValueAtIndex(MathVector)
      * @see #quadraticAtIndex(MathVector)
      */
@@ -274,50 +280,191 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @see #splineAtIndex(MathVector, SplineSet)
      * @see #valueAtIndex(MathVector)
      * @see #getInterpolationType()
-     * @see #setInterpolationType(int)
+     * @see #setInterpolationType(Interpolator.Type)
      * @see #nearestValueAtIndex(MathVector)
      * @see #quadraticAtIndex(MathVector)
      */
     protected abstract double valueAtIndex(IndexType numerator, IndexType denominator, SplineSet<VectorType> splines);
 
-
+    /**
+     * Returns the number of elementary operations (e.g. addition, multiplication, assignment) that is 
+     * expected per point with the current default interpolation method. This is useful for optimizing
+     * multi-threaded performance of operations that use interpolation, such as smoothing and regridding.
+     * 
+     * @return      the (approximate) number of elementary operations per point interpolatiion.
+     * 
+     * @see #getInterpolationOps(Interpolator.Type)
+     * @see #setInterpolationType(Interpolator.Type)
+     */
     protected final int getInterpolationOps() { return getInterpolationOps(getInterpolationType()); }
 
-    protected abstract int getInterpolationOps(int type);
+    /**
+     * Returns the number of elementary operations (e.g. addition, multiplication, assignment) that is 
+     * expected per point with the specified interpolation method. This is useful for optimizing
+     * multi-threaded performance of operations that use interpolation, such as smoothing and regridding.
+     * 
+     * @return      the (approximate) number of elementary operations per point interpolatiion.
+     * 
+     * @see #getInterpolationOps()
+     * @see #getInterpolationType()
+     */
+    protected abstract int getInterpolationOps(Interpolator.Type type);
 
-
+    /**
+     * Returns a new empty (zeroed) regularly sampled data object of the same type and size as this object.
+     * 
+     * @return      a new data object of the same type and size as this one.
+     * 
+     * @see #newImage(Index, Class)
+     */
     public RegularData<IndexType, VectorType> newImage() { return newImage(getSize(), getElementType()); }
 
+    /**
+     * Returns a new empty (zeroed) regularly sampled data object of the same class as this one byt with
+     * the specified size and element type.
+     * 
+     * @param size          the size of the new data.
+     * @param elementType   the type of elements in the new data, such as <code>Float.class</code>.
+     * @return              a new data object of the same class as this one, but with the specified size and element type.
+     * 
+     * @see #newImage()
+     */
     public abstract RegularData<IndexType, VectorType> newImage(IndexType size, Class<? extends Number> elementType);
 
+    /**
+     * Smoothes (convolves) this data with the specified image. The convolution is performed meticulously and precisely,
+     * calculating the smoothed value at every grid position, which can be quite slow for large images and/or smoothing
+     * kernels.
+     * 
+     * @param beam      the smoothing (convolving) kernel image, with a reference (origin) position.
+     * 
+     * @see #smooth(RegularData, MathVector)
+     * @see #fastSmooth(Referenced, Index)
+     * @see #getSmoothed(Referenced, IndexedValues, IndexedValues)
+     * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
+     */
     public final synchronized void smooth(Referenced<IndexType, VectorType> beam) {
         smooth(beam.getData(), beam.getReferenceIndex());
     }
 
+    /**
+     * Smoothes (convolves) this data with the specified image, provided the reference (origin) coordinate
+     * position in that image. The convolution is performed meticulously and precisely,
+     * calculating the smoothed value at every grid position, which can be quite slow for large images and/or smoothing
+     * kernels.
+     * 
+     * @param beam      the smoothing (convolving) kernel image, with a reference (origin) coordinate position.
+     * @param refIndex  the place on the smoothing kernel that is its nominal reference (origin).
+     * 
+     * @see #smooth(Referenced)
+     * @see #fastSmooth(RegularData, MathVector, Index)
+     * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
+     * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
+     */
     public synchronized void smooth(RegularData<IndexType, VectorType> beam, VectorType refIndex) {
         paste(getSmoothed(beam, refIndex, null, null), false);
         addHistory("smoothed");
     }
 
-
+    /**
+     * Smoothes (convolves) this data with the specified image using an approximate (and faster!) method. 
+     * The convolution is performed on a select subset of the grid positions and is interpolated in-between. Depending
+     * on the step size chosen, the user may choose the desired trade-off between accuracy and speed for their
+     * application.
+     * 
+     * @param beam      the smoothing (convolving) kernel image, with a reference (origin) position.
+     * @param step      the index distance on the data grid between points for which the convolution is
+     *                  performed properly. Points in-between will be interpolated using the default
+     *                  method of interpolation for this data object.
+     * 
+     * @see #fastSmooth(RegularData, MathVector, Index)
+     * @see #smooth(Referenced)
+     * @see #getFastSmoothed(Referenced, Index, IndexedValues, IndexedValues)
+     * @see #setInterpolationType(Interpolator.Type)
+     * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
+     */
     public final synchronized void fastSmooth(Referenced<IndexType, VectorType> beam, IndexType step) {
         fastSmooth(beam.getData(), beam.getReferenceIndex(), step);
     }
 
 
+    /**
+     * Smoothes (convolves) this data with the specified image, provided the reference (origin) coordinate
+     * position in that image, using an approximate (and faster!) method. 
+     * The convolution is performed on a select subset of the grid positions and is interpolated in-between. Depending
+     * on the step size chosen, the user may choose the desired trade-off between accuracy and speed for their
+     * application.
+     * 
+     * @param beam      the smoothing (convolving) kernel image, with a reference (origin) coordinate position.
+     * @param refIndex  the place on the smoothing kernel that is its nominal reference (origin).
+     * @param step      the index distance on the data grid between points for which the convolution is
+     *                  performed properly. Points in-between will be interpolated using the default
+     *                  method of interpolation for this data object.
+     * 
+     * @see #fastSmooth(Referenced, Index)
+     * @see #smooth(RegularData, MathVector)
+     * @see #getFastSmoothed(RegularData, MathVector, Index, IndexedValues, IndexedValues)
+     * @see #setInterpolationType(Interpolator.Type)
+     * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
+     * 
+     */
     public synchronized void fastSmooth(RegularData<IndexType, VectorType> beam, VectorType refIndex, IndexType step) {
         paste(getFastSmoothed(beam, refIndex, step, null, null), false);
         addHistory("smoothed (fast method)");
     }
 
 
-    // Beam fitting: I' = C * sum(wBI) / sum(wB2)
-    // I(x) = I -> I' = I -> C = sum(wB2) / sum(wB)
-    // I' = sum(wBI)/sum(wB)
-    // rms = Math.sqrt(1 / sum(wB))
+    /**
+     * <p>
+     * Calculates a single point smoothed (convolved) value for a specific grid position of this data, and
+     * a smoothing (convolving) kernel, its reference position (origin), and optionally externally defined
+     * weights. This method is at the base of all smoothing/convolution (and some other) operations.
+     * </p>
+     * 
+     * <p>
+     * Given the data <b>X</b> a smoothing kernel (beam) <b>B</b>, data weights <b>w</b>, the smoothed
+     * value<i>S</i><sub>i</sub>, at index <i>i</i>, is defined as: 
+     * </p>
+     * <i>S</i><sub>i</sub> =  (&sum;<sub>k</sub> <i>w</i><sub>k</sub> <i>B</i><sub>i-k</sub> <i>X</i><sub>k</sub>) /
+     * (&sum;<sub>k</sub> <i>w</i><sub>k</sub> <i>B</i><sub>i-k</sub><sup>2</sup>)
+     * </p>
+     * <p>
+     * with the corresponding smoothed weight of:
+     * </p>
+     * <p>
+     * <i>w</i>(<i>S</i><sub>i</sub>) = &sum;<sub>k</sub> <i>w</i><sub>k</sub> <i>B</i><sub>i-k</sub><sup>2</sup>.
+     * </p>
+     * 
+     * @param index         the position on this data grid at which we want to calculate the convolution product.
+     * @param beam          the smoothing (convolving) kernel image, with a reference (origin) coordinate position.
+     * @param refIndex      the place on the smoothing kernel that is its nominal reference (origin).
+     * @param weight        (optional) weights to use for this data, such as 1/&sigma;<sup>2</sup> noise weights,
+     *                      or <code>null</code> if to use uniform weights for all data points. If specified,
+     *                      the weights should conform to this data in size. For every index position in this
+     *                      data, the corresponding data weight is expected at the same index position in the
+     *                      supplied weights.
+     * @param splines       A set of splines to use when interpolating the smoothing/convolution kernel to
+     *                      the gridding of this data (if and when cubic spline interpolation is default for
+     *                      this data). When calling this routine in multiple concurrent threads, each
+     *                      thread should supply its own set of spline coefficients to avoid race conditions.
+     * @param result        the object in which to deposit the result, both the calculated convolution
+     *                      product and the correspoinding weight, propagated from the weights supplied
+     *                      or assumed.
+     *                      
+     * @see #setInterpolationType(Interpolator.Type)
+     * @see #smooth(Referenced)
+     * @see #smooth(RegularData, MathVector)
+     * @see #getSmoothed(Referenced, IndexedValues, IndexedValues)
+     * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
+     */
     public void getSmoothedValueAtIndex(final VectorType index, final RegularData<IndexType, VectorType> beam, final VectorType refIndex, 
             final IndexedValues<IndexType, ?> weight, final SplineSet<VectorType> splines, final WeightedPoint result) {   
 
+        // Beam fitting: I' = C * sum(wBI) / sum(wB2)
+        // I(x) = I -> I' = I -> C = sum(wB2) / sum(wB)
+        // I' = sum(wBI)/sum(wB)
+        // rms = Math.sqrt(1 / sum(wB))
+        
         PointOp.Simple<IndexType> op = new PointOp.Simple<IndexType>() {
             private VectorType delta = getVectorInstance();
 
@@ -351,8 +498,21 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         result.scaleValue(1.0 / result.weight()); 
     }
 
-
-    public abstract int getPointSmoothOps(int beamPoints, int interpolationType);
+    /**
+     * Returns the (approximate) number of elementary operations (e.g. addition, multiplication, assignment) that are
+     * typically necessary to calculate a smoothed/convolved value at a specific positon on this data's grid, 
+     * given the 'volume' of the smoothing kernel. This is useful for eatimating the cost of the calculation and
+     * to optimize parallelization accordingly (when that is desired).
+     * 
+     * @param beamPoints            The smoothing/convolving kernel's volume as a number of (non-zero) data points
+     *                              in that kernel.
+     * @param interpolationType     the type of interpolation for which to estimate the cost of calculation.
+     * @return  the (approximate) number of elementary operations for smoothing/convolving this data at a single
+     *          grid position.
+     *          
+     * @see #setInterpolationType(Interpolator.Type)
+     */
+    public abstract int getPointSmoothOps(int beamPoints, Interpolator.Type interpolationType);
 
     public final RegularData<IndexType, VectorType> getSmoothed(final Referenced<IndexType, VectorType> beam, 
             final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
@@ -384,7 +544,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             }
             @Override
             public int numberOfOperations() {
-                return 5 + getPointSmoothOps(beam.capacity(), INTERPOLATE_NEAREST);
+                return 5 + getPointSmoothOps(beam.capacity(), Interpolator.Type.NEAREST);
             }
         };
 
@@ -437,7 +597,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
             @Override
             public int numberOfOperations() {
-                return 5 + getPointSmoothOps(ExtraMath.roundupRatio(beam.capacity(), step.getVolume()), INTERPOLATE_NEAREST);
+                return 5 + getPointSmoothOps(ExtraMath.roundupRatio(beam.capacity(), step.getVolume()), Interpolator.Type.NEAREST);
             }
         };
 
@@ -871,10 +1031,20 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         return op.getResult().centroid;
     }
     
-
-
     @Override
-    public Object getFitsData(Class<? extends Number> dataType) {  
+    public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
+        ArrayList<BasicHDU<?>> hdus = new ArrayList<>();
+        hdus.add(createPrimaryHDU(dataType));
+        return hdus;
+    }
+ 
+    public final ImageHDU createPrimaryHDU(Class<? extends Number> dataType) throws FitsException {  
+        ImageHDU hdu = (ImageHDU) Fits.makeHDU(getPrimaryFitsImage(dataType));
+        editHeader(hdu.getHeader());
+        return hdu;
+    }
+
+    public Object getPrimaryFitsImage(Class<? extends Number> dataType) {  
         IndexType tSize = getIndexInstance();
         tSize.setReverseOrderOf(getSize());
 
@@ -903,13 +1073,34 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         return transpose.getCore();
     }
 
-
-    public int getInterpolationType() { return interpolationType; }
-
-    public void setInterpolationType(int value) { this.interpolationType = value; }
-
+    /**
+     * Returns the default interpolation type to use on this data in-between grid positions.
+     * 
+     * @return       the currently set interpolation constant, to use by default.
+     * 
+     * @see #setInterpolationType(Interpolator.Type)
+     */
+    public Interpolator.Type getInterpolationType() { return interpolationType; }
 
     
+    /**
+     * Sets the default interpolation type to use on this data in-between grid positions.
+     * 
+     * @param value     the new interpolation constant to use, unless specified
+     *                  otherwise in the call itself.
+     * 
+     * @see #getInterpolationType()
+     */
+    public void setInterpolationType(Interpolator.Type value) { this.interpolationType = value; }
+
+
+    /**
+     * An abstract base class for operations that implement interpolation on this regularly sampled data,
+     * possibly in a parallel processing environment.
+     * 
+     * @author Attila Kovacs
+     *
+     */
     public abstract class Interpolation extends ParallelPointOp.Simple<IndexType> {
         private SplineSet<VectorType> splines = new SplineSet<>(dimension());
 
@@ -920,14 +1111,14 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             return clone;
         }
 
+        /**
+         * Returns a dedicated set of splines to use specifically for this instance of the parallel operation.
+         * When the operation is executed in parallel, each thread will have its own clone of this
+         * operation, with its own dedicated set of splines, to avoid race conditions and/or blocking while
+         * interpolating in parallel.
+         * 
+         * @return  a dedicate set of splines to use with this instance of the operation only.
+         */
         public final SplineSet<VectorType> getSplines() { return splines; }
     }   
-
-
-
-
-    public static final int INTERPOLATE_NEAREST = 0;
-    public static final int INTERPOLATE_LINEAR = 1;
-    public static final int INTERPOLATE_PIECEWISE_QUADRATIC = 2;
-    public static final int INTERPOLATE_SPLINE = 3;
 }

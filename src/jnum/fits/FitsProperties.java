@@ -69,7 +69,7 @@ FitsHeaderEditing, FitsHeaderParsing {
     
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
+        int hash = 0;
         if(creator != null) hash ^= creator.hashCode();
         if(copyright != null) hash ^= copyright.hashCode();
         if(fileName != null) hash ^= fileName.hashCode();

@@ -34,18 +34,18 @@ public class Flag1D extends FlagCompanion<Index1D> implements Resizable1D {
     private Samples1D data;
     
 
-    public Flag1D(int type) {
+    public Flag1D(Type type) {
         super(type);
         switch(type) {
-        case TYPE_BYTE: data = Samples1D.createType(Byte.class); break;
-        case TYPE_SHORT: data = Samples1D.createType(Short.class); break;
-        case TYPE_INT: data = Samples1D.createType(Integer.class); break;
-        case TYPE_LONG: data = Samples1D.createType(Long.class); break;
+        case BYTE: data = Samples1D.createType(Byte.class); break;
+        case SHORT: data = Samples1D.createType(Short.class); break;
+        case INT: data = Samples1D.createType(Integer.class); break;
+        case LONG: data = Samples1D.createType(Long.class); break;
         default: throw new IllegalArgumentException("Unknown type: " + type);
         }
     }
     
-    public Flag1D(int type, int size) {
+    public Flag1D(Type type, int size) {
         this(type);
         setSize(size);
     }

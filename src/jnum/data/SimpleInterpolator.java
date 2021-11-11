@@ -71,9 +71,7 @@ public class SimpleInterpolator extends Interpolator {
             @Override
             protected boolean parse(String line) throws Exception {
                 SmartTokenizer tokens = new SmartTokenizer(line, " \t\r,;:");
-                Interpolator.Data point = new Interpolator.Data();
-                point.ordinate = tokens.nextDouble();
-                point.value = tokens.nextDouble();
+                Interpolator.Point point = new Interpolator.Point(tokens.nextDouble(), tokens.nextDouble());
                 add(point);
                 return true;
             }

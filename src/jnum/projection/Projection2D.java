@@ -61,7 +61,7 @@ public abstract class Projection2D<CoordinateType extends Coordinate2D> implemen
 
 	@Override
 	public int hashCode() {
-		int hash = super.hashCode();
+		int hash = 0;
 		if(reference != null) hash ^= reference.hashCode();
 		return hash;
 	}

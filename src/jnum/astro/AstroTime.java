@@ -98,7 +98,7 @@ public class AstroTime implements Serializable, Comparable<AstroTime>, Cloneable
     
     @Override
     public int hashCode() {
-        return super.hashCode() ^ HashCode.from(MJD);
+        return HashCode.from(MJD);
     }
 
     @Override

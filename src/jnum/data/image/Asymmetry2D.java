@@ -37,7 +37,7 @@ public class Asymmetry2D implements Serializable {
 	DataPoint x, y;
 	
 	@Override
-	public int hashCode() { return super.hashCode() ^ x.hashCode() ^ y.hashCode(); }
+	public int hashCode() { return x.hashCode() ^ y.hashCode(); }
 
 	@Override
 	public boolean equals(Object o) {

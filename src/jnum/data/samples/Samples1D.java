@@ -28,9 +28,12 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import jnum.Unit;
+import jnum.data.Image;
+import jnum.data.index.Index1D;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
 import nom.tam.fits.Fits;
+import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -44,7 +47,7 @@ import nom.tam.util.Cursor;
 * @author Attila Kovacs
 *
 */
-public abstract class Samples1D extends Data1D implements Serializable, Resizable1D {
+public abstract class Samples1D extends Data1D implements Image<Index1D>, Serializable, Resizable1D {
     /**
      * 
      */
@@ -89,7 +92,11 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
         addHistory("new size " + getSizeString());
     }
     
-    
+    @Override
+    public void setSize(Index1D size) {
+        setSize(size.i());
+    }
+
     public synchronized void destroy() { 
         setSize(0); 
         clearHistory();
@@ -203,10 +210,14 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
 
         this.crop((int) r.lower(), (int) r.upper());
     }
-
     
     @Override
-    protected void editHeader(Header header) throws HeaderCardException {          
+    public ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException {
+        return createPrimaryHDU(dataType);
+    }
+    
+    @Override
+    public void editHeader(Header header) throws HeaderCardException {          
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         if(getID() != null) c.add(new HeaderCard("EXTNAME", getID(), "Content identifier.")); 
         
@@ -215,7 +226,7 @@ public abstract class Samples1D extends Data1D implements Serializable, Resizabl
    
 
     @Override
-    protected void parseHeader(Header header) {
+    public void parseHeader(Header header) {
         super.parseHeader(header);
         setID(header.containsKey("EXTNAME") ? header.getStringValue("EXTNAME") : null);
     }

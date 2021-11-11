@@ -98,7 +98,7 @@ public class IntRange implements Serializable, Scalable, Cloneable, Copiable<Int
     
     @Override
     public int hashCode() {
-        return super.hashCode() ^ HashCode.from(from) ^ HashCode.from(to);
+        return HashCode.from(from) ^ HashCode.from(to);
     }
     
     /**

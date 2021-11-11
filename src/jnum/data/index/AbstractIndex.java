@@ -44,7 +44,7 @@ public abstract class AbstractIndex<T extends AbstractIndex<T>> implements Index
     
     @Override
     public int hashCode() {
-        int hash = super.hashCode() ^ HashCode.from(dimension());
+        int hash = HashCode.from(dimension());
         for(int i=dimension(); --i >= 0; ) hash ^= HashCode.from(getValue(i));
         return hash;
     }

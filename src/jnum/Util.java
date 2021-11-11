@@ -56,7 +56,7 @@ public final class Util {
     public static final String version = "0.40-a1";
     
     /** The jnum package sub-version, if any */
-    public static final String revision = "devel.16";
+    public static final String revision = "devel.17";
     
     /** Copyright string for the jnum package */
     public static final String copyright = "(c)2021 Attila Kovacs"; 
@@ -346,8 +346,8 @@ public final class Util {
         throw new NumberFormatException(" ERROR! Illegal Boolean value: " + value);
     }
 
-    // implement with Properties...
     public static void printContents(Object object) {
+        // TODO implement with Properties...
         System.out.println("Contents of " + object.getClass().getName() + ":");
         System.out.println("-------------------------------------------------------------");
 

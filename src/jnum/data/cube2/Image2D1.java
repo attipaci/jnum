@@ -24,9 +24,14 @@
 package jnum.data.cube2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import jnum.data.image.Image2D;
 import jnum.data.index.Index2D;
+import nom.tam.fits.BasicHDU;
+import nom.tam.fits.Fits;
+import nom.tam.fits.FitsException;
+import nom.tam.fits.ImageHDU;
 
 public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializable {
     /**
@@ -68,7 +73,6 @@ public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializ
         image.setSize(sizeX, sizeY, sizeZ);
         return image;
     }
-    
     
     @Override
     public void cropXY(Index2D from, Index2D to) {

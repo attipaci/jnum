@@ -27,6 +27,7 @@ package jnum.data.cube2;
 import java.util.ArrayList;
 
 import jnum.Unit;
+import jnum.data.FlagCompanion;
 import jnum.data.Observations;
 import jnum.data.Statistics;
 import jnum.data.WeightedPoint;
@@ -49,7 +50,7 @@ implements Observations<Data3D>, IndexedExposures<Index3D>, IndexedUncertainties
     private Class<? extends Number> weightType;
 
 
-    public Observation2D1(Class<? extends Number> dataType, Class<? extends Number> weightType, int flagType) {
+    public Observation2D1(Class<? extends Number> dataType, Class<? extends Number> weightType, FlagCompanion.Type flagType) {
         super(dataType, flagType);
         this.weightType = weightType;
     }
@@ -292,7 +293,7 @@ implements Observations<Data3D>, IndexedExposures<Index3D>, IndexedUncertainties
                     sumt += plane.exposureAt(i, j);
                 }
                 if(m > 0) {
-                    WeightedPoint medianValue = Statistics.Inplace.median(sorter, 0, m);
+                    WeightedPoint medianValue = Statistics.Destructive.median(sorter, 0, m);
                     median.set(i, j, medianValue.value());
                     median.setWeightAt(i, j, medianValue.weight());
                     median.setExposureAt(i, j, sumt);
@@ -323,17 +324,17 @@ implements Observations<Data3D>, IndexedExposures<Index3D>, IndexedUncertainties
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {   
         ArrayList<BasicHDU<?>> hdus = super.getHDUs(dataType);
 
-        BasicHDU<?> hdu = getExposures().createHDU(dataType);
+        BasicHDU<?> hdu = getExposures().createPrimaryHDU(dataType);
         FitsToolkit.setName(hdu, "Exposure");
         editHeader(hdu.getHeader());
         hdus.add(hdu);
 
-        hdu = getNoise().createHDU(dataType);
+        hdu = getNoise().createPrimaryHDU(dataType);
         editHeader(hdu.getHeader());
         FitsToolkit.setName(hdu, "Noise");
         hdus.add(hdu);
 
-        hdu = getSignificance().createHDU(dataType);
+        hdu = getSignificance().createPrimaryHDU(dataType);
         FitsToolkit.setName(hdu, "S/N");
         editHeader(hdu.getHeader());
         hdus.add(hdu);

@@ -60,7 +60,7 @@ NumberFormating {
 
     @Override
     public int hashCode() {
-        return super.hashCode() ^ HashCode.from(FWHM);
+        return HashCode.from(FWHM);
     }
 
 

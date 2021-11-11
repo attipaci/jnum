@@ -25,94 +25,140 @@ package jnum.math;
 
 import java.util.Vector;
 
+import jnum.CopyCat;
+
 /**
  * A coordinate system as a collection of coordinate axes.
  * 
  * @author Attila Kovacs
  *
  */
-public class CoordinateSystem extends Vector<CoordinateAxis> {
+public class CoordinateSystem extends Vector<CoordinateAxis> implements CopyCat<CoordinateSystem>{
     /** */
-	private static final long serialVersionUID = 7965280172336615563L;
+    private static final long serialVersionUID = 7965280172336615563L;
 
-	private String name = "Default Coordinate System";
+    /** the name of the coordinate system */
+    private String name = "Default Coordinate System";
 
-	public CoordinateSystem() {}
-	
+    /** Instanbtiates a new coordinate system with the default name */
+    public CoordinateSystem() {}
 
-	public CoordinateSystem(String text) { name = text; }
-	
-	
-	public CoordinateSystem(int dimension) {
-		for(int i=0; i<dimension; i++)
-			add(new CoordinateAxis(defaultLabel[i%defaultLabel.length] 
-			        + (dimension > defaultLabel.length ? i/defaultLabel.length + "" : "")));
-	}
+    /** 
+     * Instantiates a new coordinate system with the specified name.
+     * 
+     * @param name     the name of the new coordinate system
+     */
+    public CoordinateSystem(String name) { this.name = name; }
 
-	@Override
-	public boolean add(CoordinateAxis axis) {
-	    if(contains(axis.getShortLabel()) || contains(axis.getLabel()) || contains(axis.getFancyLabel()))
-	        throw new IllegalArgumentException(getClass().getName() + " already has axis '" + axis.getShortLabel());
-		return super.add(axis);
-	}
+    /**
+     * Instantiates a new coordinate system with a set of default axes with the
+     * specified dimension.
+     * 
+     * @param dimension    the dimension of the new coordinate system
+     */
+    public CoordinateSystem(int dimension) {
+        for(int i=0; i<dimension; i++)
+            add(new CoordinateAxis(defaultLabel[i%defaultLabel.length] 
+                    + (dimension > defaultLabel.length ? i/defaultLabel.length + "" : "")));
+    }
 
-	@Override
-	public void add(int index, CoordinateAxis axis) {
-		if(contains(axis.getShortLabel()) || contains(axis.getLabel()) || contains(axis.getFancyLabel()))
-		    throw new IllegalArgumentException(getClass().getName() + " already has axis '" + axis.getShortLabel());
-		super.add(index, axis);
-	}
-
-	@Override
-	public void insertElementAt(CoordinateAxis axis, int index) {
-		add(index, axis);
-	}
-
-	
-	public CoordinateSystem(String text, int dimension) {
-		this(dimension);
-		name = text;
-	}
-	
-	
-	public CoordinateSystem(CoordinateSystem template) {
-		copy(template);
-	}
-	
-
-	public void copy(CoordinateSystem template) {
-		setName(template.getName());
-		for(CoordinateAxis axis : template) add(axis.clone());
-	}
-	
-
-	public void setName(String text) { name = text; }
+    public CoordinateSystem(String text, int dimension) {
+        this(dimension);
+        name = text;
+    }
 
 
-	public String getName() { return name; }
+    public CoordinateSystem(CoordinateSystem template) {
+        copy(template);
+    }
 
 
-	public boolean contains(String name) {
-		for(CoordinateAxis axis : this) {
-		    if(axis.getLabel().equals(name)) return true;
-		    if(axis.getFancyLabel().equals(name)) return true;
-		    if(axis.getShortLabel().equals(name)) return true;
-		}
-		return false;
-	}
-	
-	
-	public CoordinateAxis getAxis(String name) {
-		for(int i=size(); --i >= 0; ) {
-		    if(get(i).getShortLabel().equals(name)) return get(i);
-		    if(get(i).getLabel().equals(name)) return get(i);
-		    if(get(i).getFancyLabel().equals(name)) return get(i);
-		}
-		return null;
-	}
-	
+    @Override
+    public boolean add(CoordinateAxis axis) {
+        if(containsAxis(axis.getShortLabel()) || containsAxis(axis.getLabel()) || containsAxis(axis.getFancyLabel()))
+            throw new IllegalArgumentException(getClass().getName() + " already has axis '" + axis.getShortLabel());
+        return super.add(axis);
+    }
 
-	protected static String[] defaultLabel = { "x", "y", "z", "u", "v", "w" };
+    @Override
+    public void add(int index, CoordinateAxis axis) {
+        if(containsAxis(axis.getShortLabel()) || containsAxis(axis.getLabel()) || containsAxis(axis.getFancyLabel()))
+            throw new IllegalArgumentException(getClass().getName() + " already has axis '" + axis.getShortLabel());
+        super.add(index, axis);
+    }
+
+    @Override
+    public void insertElementAt(CoordinateAxis axis, int index) {
+        add(index, axis);
+    }
+
+    
+    @Override
+    public void copy(CoordinateSystem template) {
+        setName(template.getName());
+        for(CoordinateAxis axis : template) add(axis.clone());
+    }
+
+    /**
+     * Sets a new name for this coordinate system.
+     * 
+     * @param name      the new name for the coordinate system.
+     * 
+     * @see #getName()
+     */
+    public void setName(String name) { this.name = name; }
+
+    /**
+     * Returns the name of this coordinate system.
+     * 
+     * @return      the name of this coordinate system.
+     * 
+     * @see #setName(String)
+     */
+    public String getName() { return name; }
+
+    /**
+     * Checks if this coordinate system contains an axis by the specified name.
+     * 
+     * @param name      the axis name to check.
+     * @return          <code>true</code> if this coordinate system has an axis by the specified name (case-sensitive),
+     *                  or else <code>false</code>.
+     *                  
+     * @see #getAxis(String)
+     * @see #add(CoordinateAxis)
+     * @see #add(int, CoordinateAxis)
+     */
+    public boolean containsAxis(String name) {
+        for(CoordinateAxis axis : this) {
+            if(axis.getLabel().equals(name)) return true;
+            if(axis.getFancyLabel().equals(name)) return true;
+            if(axis.getShortLabel().equals(name)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the coordinate axis by the specified name.
+     * 
+     * @param name      the axis name.
+     * @return          the coordinate axis by that name, or <code>null</code> if this coordinate system
+     *                  contains no axis by the specified name.
+     *                  
+     * @see #containsAxis(String)
+     * @see #add(CoordinateAxis)
+     * @see #add(int, CoordinateAxis)
+     */
+    public CoordinateAxis getAxis(String name) {
+        for(int i=size(); --i >= 0; ) {
+            if(get(i).getShortLabel().equals(name)) return get(i);
+            if(get(i).getLabel().equals(name)) return get(i);
+            if(get(i).getFancyLabel().equals(name)) return get(i);
+        }
+        return null;
+    }
+
+
+    protected static String[] defaultLabel = { "x", "y", "z", "u", "v", "w" };
 
 
 }

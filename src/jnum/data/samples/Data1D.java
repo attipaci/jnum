@@ -36,6 +36,7 @@ import jnum.PointOp;
 import jnum.Util;
 import jnum.data.CubicSpline;
 import jnum.data.DataCrawler;
+import jnum.data.Interpolator;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
 import jnum.data.WeightedPoint;
@@ -104,7 +105,6 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
 
         samples.copyParallel(this);
         samples.setInterpolationType(getInterpolationType());
-        samples.setVerbose(isVerbose());
         samples.setUnit(getUnit());
 
         List<String> imageHistory = samples.getHistory();
@@ -240,10 +240,10 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
         if(i == ic) return get(i).doubleValue();
 
         switch(getInterpolationType()) {
-        case INTERPOLATE_NEAREST : return get(i).doubleValue();
-        case INTERPOLATE_LINEAR : return linearAtIndex(ic);
-        case INTERPOLATE_PIECEWISE_QUADRATIC : return quadraticAtIndex(ic);
-        case INTERPOLATE_SPLINE : return spline == null ? splineAtIndex(ic) : splineAtIndex(ic, spline);
+        case NEAREST : return get(i).doubleValue();
+        case LINEAR : return linearAtIndex(ic);
+        case PIECEWISE_QUADRATIC : return quadraticAtIndex(ic);
+        case CUBIC_SPLINE : return spline == null ? splineAtIndex(ic) : splineAtIndex(ic, spline);
         }
 
         return Double.NaN;
@@ -350,12 +350,12 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     
 
     @Override
-    protected int getInterpolationOps(int type) {
+    protected int getInterpolationOps(Interpolator.Type type) {
         switch(type) {
-        case INTERPOLATE_NEAREST : return 5;
-        case INTERPOLATE_LINEAR : return 25;
-        case INTERPOLATE_PIECEWISE_QUADRATIC : return 30;
-        case INTERPOLATE_SPLINE : return 50;
+        case NEAREST : return 5;
+        case LINEAR : return 25;
+        case PIECEWISE_QUADRATIC : return 30;
+        case CUBIC_SPLINE : return 50;
         }
         return 1;
     }
@@ -385,7 +385,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
   
   
     @Override
-    public int getPointSmoothOps(int beamPoints, int interpolationType) {
+    public int getPointSmoothOps(int beamPoints, Interpolator.Type interpolationType) {
         return 16 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
     

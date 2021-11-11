@@ -34,6 +34,7 @@ import jnum.data.index.Index3D;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
 import nom.tam.fits.Fits;
+import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -282,10 +283,13 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         this.crop(new Index3D((int)x.lower(), (int)y.lower(), (int)z.lower()), new Index3D((int)x.upper(), (int)y.upper(), (int)z.upper()));
     }
 
-       
-
     @Override
-    protected void editHeader(Header header) throws HeaderCardException {          
+    public ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException {
+        return createPrimaryHDU(dataType);
+    }
+    
+    @Override
+    public void editHeader(Header header) throws HeaderCardException {          
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         if(getID() != null) c.add(new HeaderCard("EXTNAME", getID(), "Content identifier.")); 
         
@@ -293,7 +297,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
     }
 
     @Override
-    protected final void parseHeader(Header header) {
+    public final void parseHeader(Header header) {
         parseHeader(header, null);
     }
 

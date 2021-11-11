@@ -402,7 +402,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
                     final Data2D plane = getPlane(k);
                     if(plane.isValid(i, j)) sorter[n++] = plane.get(i, j).doubleValue();
                 }
-                if(n > 0) sum.set(i,  j, Statistics.Inplace.median(sorter, 0, n));
+                if(n > 0) sum.set(i,  j, Statistics.Destructive.median(sorter, 0, n));
             }
         }.process();
 

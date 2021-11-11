@@ -36,7 +36,16 @@ import jnum.data.index.IndexedEntries;
  */
 public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, IndexedEntries<Index1D, T>  {
 
-    
+    /**
+     * Checks if two coordinate instances are equal to one-another within some relative
+     * precision. The two coordinates are only equals if they both have the same dimension
+     * and all their components match within the specified precision.
+     * 
+     * @param coords        the coordinate instance to check equality to
+     * @param precision     the relative precision, e.g. 1e-6 for 1 part per million.
+     * @return              <code>true</code> if the two coordinates are the same within the
+     *                      specified relative precision, or <code>false</code> if they differ.
+     */
     public boolean equals(Coordinates<T> coords, double precision);
     
     /**

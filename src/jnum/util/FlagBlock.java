@@ -86,7 +86,7 @@ public class FlagBlock<Type extends Number> implements Serializable {
 
     @Override
     public int hashCode() { 
-        return super.hashCode() ^ space.hashCode() ^ HashCode.from(mask) ^ HashCode.from(nextBit);  
+        return space.hashCode() ^ HashCode.from(mask) ^ HashCode.from(nextBit);  
     }
 
     @Override

@@ -38,9 +38,10 @@ import jnum.ExtraMath;
 import jnum.PointOp;
 import jnum.Unit;
 import jnum.Util;
-import jnum.Verbosity;
 import jnum.data.index.Index;
 import jnum.data.index.IndexedValues;
+import jnum.fits.FitsHeaderEditing;
+import jnum.fits.FitsHeaderParsing;
 import jnum.fits.FitsToolkit;
 import jnum.math.LinearAlgebra;
 import jnum.math.Range;
@@ -56,7 +57,6 @@ import nom.tam.fits.FitsFactory;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.fits.ImageHDU;
 import nom.tam.util.Cursor;
 
 /**
@@ -66,9 +66,9 @@ import nom.tam.util.Cursor;
  *
  * @param <IndexType>       the generic type of index by which elements are located, and iterated over, in this dataset.
  */
-public abstract class Data<IndexType extends Index<IndexType>>
-extends ParallelObject 
-implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType, Number>, Iterable<Number>, LinearAlgebra<Data<IndexType>>, TableFormatter.Entries {
+public abstract class Data<IndexType extends Index<IndexType>> extends ParallelObject implements 
+    CopiableContent<Data<IndexType>>, IndexedValues<IndexType, Number>, Iterable<Number>, LinearAlgebra<Data<IndexType>>, TableFormatter.Entries,
+    FitsHeaderEditing, FitsHeaderParsing {
 
     static {
         Locale.setDefault(Locale.US);
@@ -76,9 +76,6 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
 
     /** The value to use to mark invalid or blanked data */
     private Number invalidValue;
-
-    /** If this object provides verbose messages. */
-    private boolean isVerbose;
 
     /** The physical unit in which data is represented */
     private Unit unit;  
@@ -95,7 +92,6 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
      * Instantiates a new data object. It should be called by all subclass contructors.
      */
     protected Data() { 
-        setVerbose(false);
         setInvalidValue(Double.NaN);
         history = new ArrayList<>();
         preserveHistory = false;
@@ -166,14 +162,6 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
         return clone;
     }
 
-
-
-    @Override
-    public final boolean isVerbose() { return isVerbose; }
-
-    @Override
-    public void setVerbose(boolean value) { isVerbose = value; }
-
     /** 
      * Returns the list of history entries for this data object, as a list of strings.
      * 
@@ -208,7 +196,8 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
     public void addHistory(String entry) {
         if(history == null) return;
         history.add(entry); 
-        if(isVerbose()) Util.info(this, entry);
+        // TODO verbose history?
+        //Util.detail(this, entry);
     }
 
     /**
@@ -1274,12 +1263,12 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
      * @see #getWeightedMedian(IndexedValues)
      * @see #level(boolean)
      * @see #select(double)
-     * @see Statistics.Inplace#median(double[])
+     * @see Statistics.Destructive#median(double[])
      */
     public WeightedPoint getMedian() {
         final double[] temp = getValidSortingArray();
         if(temp.length == 0) return new WeightedPoint(Double.NaN, 0.0);
-        return new WeightedPoint(Statistics.Inplace.median(temp, 0, temp.length), temp.length);      
+        return new WeightedPoint(Statistics.Destructive.median(temp, 0, temp.length), temp.length);      
     }
 
     /**
@@ -1293,12 +1282,12 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
      * 
      * @see #getMedian()
      * @see #getWeightedMean(IndexedValues)
-     * @see Statistics.Inplace#median(WeightedPoint[], WeightedPoint)
+     * @see Statistics.Destructive#median(WeightedPoint[], WeightedPoint)
      */
     public final WeightedPoint getWeightedMedian(final IndexedValues<IndexType, ?> weights) {   
         final WeightedPoint[] temp = getValidSortingArray(weights);
         if(temp.length == 0) return new WeightedPoint(Double.NaN, 0.0);
-        return Statistics.Inplace.median(temp, 0, temp.length);      
+        return Statistics.Destructive.median(temp, 0, temp.length);      
     }
 
     /**
@@ -1309,7 +1298,7 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
      * @param fraction      the selection fraction [0:1] from lowest to highest.
      * @return              the selected data value distribution. 
      * 
-     * @see Statistics.Inplace#select(double[], double)
+     * @see Statistics.Destructive#select(double[], double)
      */
     public double select(double fraction) {
         if(fraction == 0.0) return getMin().doubleValue();
@@ -1317,7 +1306,7 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
 
         final double[] temp = getValidSortingArray();
         if(temp.length == 0) return Double.NaN;
-        return Statistics.Inplace.select(temp, fraction, 0, temp.length);
+        return Statistics.Destructive.select(temp, fraction, 0, temp.length);
     }
 
 
@@ -1482,7 +1471,7 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
         if(variance.length == 0) return Double.NaN;
 
         for(int i=variance.length; --i >= 0; ) variance[i] *= variance[i];
-        return Statistics.Inplace.median(variance) / Statistics.medianNormalizedVariance;
+        return Statistics.Destructive.median(variance) / Statistics.medianNormalizedVariance;
     }
 
     /**
@@ -1827,24 +1816,11 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
      * @return          An array of HDUs that capture this data as fully as possible in the FITS convention.
      * @throws FitsException    if there was an error creating the FITS data.
      */
-    public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {
-        ArrayList<BasicHDU<?>> hdus = new ArrayList<>();
-        hdus.add(createHDU(dataType));
-        return hdus;
-    }
+    public abstract ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException;
 
 
-    public final ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException {  
-        ImageHDU hdu = (ImageHDU) Fits.makeHDU(getFitsData(dataType));
-        editHeader(hdu.getHeader());
-        return hdu;
-    }
-
-
-    public abstract Object getFitsData(Class<? extends Number> dataType);
-
-
-    protected void editHeader(Header header) throws HeaderCardException {
+    @Override
+    public void editHeader(Header header) throws HeaderCardException {
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         Range range = getRange();
 
@@ -1863,7 +1839,8 @@ implements CopiableContent<Data<IndexType>>, Verbosity, IndexedValues<IndexType,
     }
 
 
-    protected void parseHeader(Header header) {
+    @Override
+    public void parseHeader(Header header) {
         setUnit(header.containsKey("BUNIT") ? new Unit(header.getStringValue("BUNIT")) : Unit.unity);
     }
 

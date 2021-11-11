@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import jnum.NonConformingException;
 import jnum.Unit;
 import jnum.Util;
+import jnum.data.FlagCompanion;
 import jnum.data.Observations;
 import jnum.data.RegularData;
 import jnum.data.WeightedPoint;
@@ -61,11 +62,11 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public boolean isZeroWeightValid = false;
     
     
-    public Observation2D(Class<? extends Number> dataType, int flagType) {
+    public Observation2D(Class<? extends Number> dataType, FlagCompanion.Type flagType) {
         this(dataType, dataType, flagType);
     }
    
-    public Observation2D(Class<? extends Number> dataType, Class<? extends Number> weightType, int flagType) {
+    public Observation2D(Class<? extends Number> dataType, Class<? extends Number> weightType, FlagCompanion.Type flagType) {
         super(dataType, flagType); 
         setWeightImage(Image2D.createType(weightType));
         setExposureImage(Image2D.createType(weightType));
@@ -555,17 +556,17 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public ArrayList<BasicHDU<?>> getHDUs(Class<? extends Number> dataType) throws FitsException {   
         ArrayList<BasicHDU<?>> hdus = super.getHDUs(dataType);
   
-        BasicHDU<?> hdu = getExposures().createHDU(dataType);
+        BasicHDU<?> hdu = getExposures().createPrimaryHDU(dataType);
         FitsToolkit.setName(hdu, "Exposure");
         editHeader(hdu.getHeader());
         hdus.add(hdu);
         
-        hdu = getNoise().createHDU(dataType);
+        hdu = getNoise().createPrimaryHDU(dataType);
         editHeader(hdu.getHeader());
         FitsToolkit.setName(hdu, "Noise");
         hdus.add(hdu);
 
-        hdu = getSignificance().createHDU(dataType);
+        hdu = getSignificance().createPrimaryHDU(dataType);
         FitsToolkit.setName(hdu, "S/N");
         editHeader(hdu.getHeader());
         hdus.add(hdu);

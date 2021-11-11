@@ -37,28 +37,24 @@ import jnum.Util;
  * @author Attila Kovacs
  *
  */
-public abstract class Interpolator extends ArrayList<Interpolator.Data> {
+public abstract class Interpolator extends ArrayList<Interpolator.Point> {
 
     /** */
 	private static final long serialVersionUID = -7962217110619389946L;
-	
-	public boolean verbose = false;
 
-	public String fileName = "";
-
+	private String fileName = "";
 	
-	public Interpolator() {}
+	protected Interpolator() {}
 
 	
-	public Interpolator(String fileName) throws IOException {
+	protected Interpolator(String fileName) throws IOException {
 	    this();
 		read(fileName);
-		if(verbose) Util.info(this, getClass().getSimpleName() + "> " + size() + " records parsed.");	
-		validate();
+		Util.detail(this, getClass().getSimpleName() + "> " + size() + " records parsed.");	
 	}
 	
 	@Override
-	public int hashCode() { return super.hashCode() ^ fileName.hashCode() ^ (verbose ? 1 : 0); }
+	public int hashCode() { return fileName.hashCode(); }
 	
 
 	@Override
@@ -67,31 +63,67 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		if(!(o instanceof Interpolator)) return false;
 		if(!super.equals(o)) return false;
 		Interpolator i = (Interpolator) o;
-		if(verbose != i.verbose) return false;
 		if(!fileName.equals(i.fileName)) return false;
 		return true;
 	}
 	
-
+	/**
+	 * Sorts the interpolation data so it can be used. This is automatically done after reading in
+	 * new data from a file, but the user may want to call it if adding data programatically in
+	 * non-specific order to the table.
+	 * 
+	 */
 	public void validate() {
 	    Collections.sort(this);
 	}
 	
-
+	/**
+	 * Reads data from a file, and then validates it in preparation to interpolating.
+	 * If the file name is the same as the prior one read, then it will return
+	 * early, leaving the existing interpolation data untouched.
+	 * 
+	 * @param fileName
+	 * @throws IOException
+	 * 
+	 * @see #readData(String)
+	 * @see #validate()
+	 */
 	public void read(String fileName) throws IOException {
 		if(fileName.equals(this.fileName)) return;
 		readData(fileName);
 		this.fileName = fileName;
+		validate();
 	}
 	
-
+	/**
+	 * The actual reading of the interpolation data, which concrete subclasses must implement.
+	 * 
+	 * @param fileName
+	 * @throws IOException
+	 */
 	protected abstract void readData(String fileName) throws IOException; 
 	
-
+	/**
+	 * Returns the interpolated value at the specified location.
+	 * 
+	 * @param ordinate     the location of the point at which we want to interpolate
+	 * @return             the interpolated value at the specified ordinate location.
+	 */
 	public double getValue(double ordinate) { return getTrapesoidValue(ordinate); }
 	
-	// Linear interpolation.
-	// Throws Exception if MJD is outside of the interpolator range.
+	
+	/**
+	 * Returns the linearly interpolated value (trapesoid method) between the two nearest 
+	 * known data surrounding the loication of the interpolation.
+	 * 
+	 * @param ordinate     the location of the point at which we want to interpolate
+	 * @return             the linearly interpolated value (trapesoid method) at the specified ordinate location.
+	 * @throws ArrayIndexOutOfBoundsException
+	 *                     if the ordinate it outside the range covered by data points in this table 
+	 *                     
+	 * @see #getSmoothValue(double, double)
+	 * @see #getTrapesoidValue(double)
+	 */
 	public double getTrapesoidValue(double ordinate) throws ArrayIndexOutOfBoundsException {
 		int upper = getIndexAbove(ordinate);
 		
@@ -101,7 +133,17 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		return (dt2 * get(upper-1).value + dt1 * get(upper).value) / (dt1 + dt2);	
 	}	
 	
-
+	/**
+	 * Returns the index of the known data point whose location is nearest above the specified
+	 * ordinate location.
+	 * 
+	 * @param ordinate     the location of the point at which we want to interpolate
+	 * @return             the data index that bracket the specified location from above.
+	 * @throws ArrayIndexOutOfBoundsException
+	 *                     if the ordinate it outside the range covered by data points in this table
+	 *                     
+	 * @see #getTrapesoidValue(double)
+	 */
 	public int getIndexAbove(double ordinate) throws ArrayIndexOutOfBoundsException {
 		int lower = 0, upper = size()-1;
 		
@@ -118,13 +160,22 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 		return upper;
 	}
 	
-
-
+	/**
+	 * Returns a smoothed interpolated value at some location, using a Gaussian kernel to combine information
+	 * from nearby data above and below the requested location.
+	 * 
+	 * @param ordinate     the location of the point at which we want to interpolate
+	 * @param fwhm         the full-width half maximum (FWHM) of the Gaussian smoothing kernel.
+	 * @return             the smoothed interpolated value at the requested location.
+	 * @throws ArrayIndexOutOfBoundsException
+	 * 
+	 * @see #getTrapesoidValue(double)
+	 */
 	public double getSmoothValue(double ordinate, double fwhm) throws ArrayIndexOutOfBoundsException {
 		int i0 = getIndexAbove(ordinate); 
 		
 		double sum = 0.0, sumw = 0.0;
-		Data last = get(i0);
+		Point last = get(i0);
 		
 		double sigma = fwhm / Constant.sigmasInFWHM;
 		double A = -0.5 / (sigma * sigma);
@@ -175,20 +226,88 @@ public abstract class Interpolator extends ArrayList<Interpolator.Data> {
 	}   
     */
 	
+	/**
+	 * A measured or otherwise known point value, which can be used for interpolation around it.
+	 * 
+	 * @author Attila Kovacs
+	 *
+	 */
+	public static class Point implements Comparable<Interpolator.Point> {
+	    
+		private double ordinate, value;
 
-	public static class Data implements Comparable<Interpolator.Data> {
+		/**
+		 * Instantiates a new fixed-defined point to use by the interpolated.
+		 * 
+		 * @param ordinate    the 1D location of the point
+		 * @param value       the known value at that point
+		 */
+		public Point(double ordinate, double value) {
+		    this.ordinate = ordinate;
+		    this.value = value;
+		}
 
-		public double ordinate, value;
-
-		public Data() {}
+		/**
+		 * Returns the location of the known fixed point.
+		 * 
+		 * @return        the ordinate location of this point.
+		 */
+		public final double ordinate() {
+		    return ordinate();
+		}
+		
+		/**
+		 * Returns the value of this know fixed point.
+		 * 
+		 * @return        the known value at this point.
+		 */
+		public final double value() {
+		    return value;
+		}
 		
 		@Override
-		public int compareTo(Data other) {
+		public int compareTo(Point other) {
 			return Double.compare(ordinate, other.ordinate);
 		}
 		
 	}
 
+	
+	/**
+	 * An enumeration of the interpolator types, with varying polynomial orders.
+	 * 
+	 * @author Attila Kovacs
+	 *
+	 */
+	public static enum Type {
+	    /** use the nearest value */
+	    NEAREST(0),
+	    
+	    /** linear interpolation between the surrounding dat (trapesoid method) */
+	    LINEAR(1),
+	    
+	    /** piecewise quadratic interpolation using 3 point that bracket the data */
+	    PIECEWISE_QUADRATIC(2),
+	    
+	    /** cubic spline interpolation, using the 2 nearest data points on each side of the interpolated location */ 
+	    CUBIC_SPLINE(3);
+	    
+	    /** the polynomial order of the interpolation type. */
+	    private int order;
+	    
+	    Type(int order) {
+	        this.order = order;
+	    }
+	    
+	    /**
+	     * Returns the polynomial order for this interpolation type.
+	     * 
+	     * @return     the polynomial order for this type of interpolator.
+	     */
+	    public int order() {
+	        return order;
+	    }
+	}
 	
 }
 

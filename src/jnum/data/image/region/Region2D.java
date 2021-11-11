@@ -62,7 +62,7 @@ public abstract class Region2D implements Serializable, Cloneable {
 	
 	@Override
 	public int hashCode() {
-		int hash = super.hashCode();
+		int hash = 0;
 		if(comment != null) hash ^= comment.hashCode();
 		if(id != null) hash ^= id.hashCode();
 		return hash;

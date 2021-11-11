@@ -66,7 +66,7 @@ public class RealValue implements Cloneable, Serializable, Copiable<RealValue>, 
     }
     
     @Override
-    public int hashCode() { return super.hashCode() ^ HashCode.from(value); }
+    public int hashCode() { return HashCode.from(value); }
     
     @Override
     public boolean equals(Object o) {

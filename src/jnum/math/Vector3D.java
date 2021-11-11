@@ -42,33 +42,90 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
      */
     private static final long serialVersionUID = -6867315174438035749L;
 
+    /**
+     * Instantiates a new 3D vector with zero coordinate components.
+     */
     public Vector3D() {}
     
+    /**
+     * Instantiates a new 3D vector with the specified coorinate components
+     * 
+     * @param x     the <i>x</i>-type coordinate.
+     * @param y     the <i>y</i>-type coordinate.
+     * @param z     the <i>z</i>-type coordinate.
+     */
     public Vector3D(double x, double y, double z) { super(x, y, z); }
     
+    /**
+     * Instantiates a new 3D vector, of unit length, in the direction speficied
+     * by spherical coordinates. 
+     * 
+     * @param coords    the spherical coordinates that define the direction of the new 3D unit vector.
+     */
     public Vector3D(SphericalCoordinates coords) {
         this();
         coords.toCartesian(this);
     }
     
+    /**
+     * Instantiates a new 2D vector with the components of the specified coordinates. The
+     * spplied coordinates need not have be 3-dimensional, and may reside in a space with
+     * lower or higher dimensionality. Only up to the first three components of the input 
+     * vector are used to define the new 3D vector.
+     * 
+     * @param v     the coordinates that define the components the new vector.
+     */
     public Vector3D(Coordinates<Double> v) { super(v); } 
     
     
     @Override
     public Vector3D copy() { return (Vector3D) super.copy(); }
     
+    /**
+     * Rotates this vector around the <i>x</i> axis with the specified angle, counter-clockwise
+     * when looking in towards the origin from the direction of the rotation axis. 
+     * 
+     * @param angle     (rad) the counter-clockwise rotation angle when looking in towards the origin.
+     * 
+     * @see #rotateX(Angle)
+     * @see #rotateY(double)
+     * @see #rotateZ(double)
+     * @see #smallRotate3D(double[])
+     */
     public void rotateX(double angle) {
         final double s = Math.sin(angle);
         final double c = Math.cos(angle);
         set(x(), c * y() - s * z(), s * y() + c * z());
     }
     
+    /**
+     * Rotates this vector around the <i>y</i> axis with the specified angle, counter-clockwise
+     * when looking in towards the origin from the direction of the rotation axis. 
+     * 
+     * @param angle     (rad) the counter-clockwise rotation angle when looking in towards the origin.
+     * 
+     * @see #rotateY(Angle)
+     * @see #rotateX(double)
+     * @see #rotateZ(double)
+     * @see #smallRotate3D(double[])
+     */
     public void rotateY(double angle) {
         final double s = Math.sin(angle);
         final double c = Math.cos(angle);
         set(s * z() + c * x(), y(), c * z() - s * x());   
     }
     
+    /**
+     * Rotates this vector around the <i>z</i> axis with the specified angle, counter-clockwise
+     * when looking in towards the origin from the direction of the rotation axis. 
+     * 
+     * @param angle     (rad) the counter-clockwise rotation angle when looking in towards the origin.
+     * 
+     * @see #rotateZ(Angle)
+     * @see #rotateX(double)
+     * @see #rotateY(double)
+     * @see #smallRotate3D(double[])
+     */
     public void rotateZ(double angle) {
         final double s = Math.sin(angle);
         final double c = Math.cos(angle);

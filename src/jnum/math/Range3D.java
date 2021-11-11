@@ -104,7 +104,7 @@ public class Range3D implements Cloneable, Copiable<Range3D>, Serializable, Numb
 
     @Override
     public int hashCode() {
-        return super.hashCode() ^ xRange.hashCode() ^ yRange.hashCode() ^ zRange.hashCode();
+        return xRange.hashCode() ^ yRange.hashCode() ^ zRange.hashCode();
     }
     
 

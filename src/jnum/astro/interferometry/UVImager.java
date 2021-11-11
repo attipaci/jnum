@@ -39,9 +39,9 @@ import jnum.Unit;
 import jnum.Util;
 import jnum.astro.EquatorialCoordinates;
 import jnum.data.DataPoint;
+import jnum.data.FlagCompanion;
 import jnum.data.WeightedComplex;
 import jnum.data.WeightedPoint;
-import jnum.data.image.Flag2D;
 import jnum.data.image.Gaussian2D;
 import jnum.data.image.Grid2D;
 import jnum.data.image.Image2D;
@@ -579,7 +579,7 @@ public class UVImager {
      * @return      The multiplane image set fully representing the uv-plane of this interferometric imaging set. 
      */
     public UVImage2D getUVImage() {
-        UVImage2D uv = new UVImage2D(Float.class, Flag2D.TYPE_BYTE);
+        UVImage2D uv = new UVImage2D(Float.class, FlagCompanion.Type.BYTE);
         uv.setSize(sizeU(), sizeV());
         uv.setUnderlyingBeam(1.0);
         uv.setUnit(new Unit("abu", 1.0));
@@ -804,7 +804,7 @@ public class UVImager {
         fft.setTwiddleErrorBits(8);
         fft.complexBack(data);
 
-        SynthesizedImage2D im = new SynthesizedImage2D(Double.class, Flag2D.TYPE_BYTE);
+        SynthesizedImage2D im = new SynthesizedImage2D(Double.class, FlagCompanion.Type.BYTE);
         im.setSize(sizeU(), sizeV());
 
         Grid2D<SphericalCoordinates> grid = new SkyGrid();
@@ -1142,7 +1142,7 @@ public class UVImager {
         private static final long serialVersionUID = -4724586925113901519L;
 
 
-        private UVImage2D(Class<? extends Number> dataType, int flagType) {
+        private UVImage2D(Class<? extends Number> dataType, FlagCompanion.Type flagType) {
             super(dataType, flagType);
             setFitsProperties(fitsProperties);
         }
@@ -1199,7 +1199,7 @@ public class UVImager {
         private static final long serialVersionUID = -8797542965286863668L;
 
 
-        private SynthesizedImage2D(Class<? extends Number> dataType, int flagType) {
+        private SynthesizedImage2D(Class<? extends Number> dataType, FlagCompanion.Type flagType) {
             super(dataType, flagType);
             setFitsProperties(fitsProperties);
         }

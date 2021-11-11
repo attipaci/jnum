@@ -31,16 +31,43 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
+/**
+ * Provides a set of static methods for calculating statistical measures of data, such as means, medians, or
+ * ordered selection, with or without weights, and more... All methods defined in this class are guaranteed non-destructive.
+ * That is they will leave the data themselves intact. However, that guarantee comes at the price of a certain level of 
+ * performance compromise for medians and ordered selections, which require sorting. Therefore, and and when one just 
+ * requires a fast answer only, without the need for preserving the data themselves, the methods of 
+ * {@link Statistics.Destructive} may provide superior performance.
+ * 
+ * 
+ * @author Attila Kovacs
+ * 
+ * @see Statistics.Destructive
+ *
+ */
 public final class Statistics {
-    
+   
+    /** private constructor because we don't want to instantiate this class. */
+    private Statistics() {}
   
+    /**
+     * Calculates the median value of an array, leaving the input array intact.
+     * 
+     * @param data      an array of values
+     * @return          the median value.
+     * 
+     * @see #median(double[], int, int)
+     * @see #median(float[])
+     * @see #median(Collection)
+     * @see #mean(WeightedPoint[])
+     * @see Statistics.Destructive#median(double[])
+     */
     public static double median(double[] data) {
         return median(data, 0, data.length);
     }
     
     public static double median(double[] data, int fromIndex, int toIndex) {
-        return Inplace.median(getSorter(data, fromIndex, toIndex));
+        return Destructive.median(getSorter(data, fromIndex, toIndex));
     }
     
     public static float median(float[] data) {
@@ -50,21 +77,21 @@ public final class Statistics {
     public static float median(float[] data, int fromIndex, int toIndex) {
         float[] sorter = new float[toIndex - fromIndex];
         System.arraycopy(data, fromIndex, sorter, 0, sorter.length);
-        return Inplace.median(sorter);
+        return Destructive.median(sorter);
     }
     
     public double median(List<? extends Number> data, int fromIndex, int toIndex) {
         double[] values = new double[toIndex - fromIndex];
         int i=values.length;
         for(Number x : data) if(x != null) if(!Double.isNaN(x.doubleValue())) values[--i] = x.doubleValue();
-        return Inplace.median(values, i, values.length);
+        return Destructive.median(values, i, values.length);
     }
     
     public double median(Collection<? extends Number> data) {
         double[] values = new double[data.size()];
         int i=values.length;
         for(Number x : data) if(x != null) values[--i] = x.doubleValue();
-        return Inplace.median(values, i, values.length);
+        return Destructive.median(values, i, values.length);
     }
     
     public static WeightedPoint median(WeightedPoint[] data) {
@@ -72,7 +99,7 @@ public final class Statistics {
     }
     
     public static WeightedPoint median(WeightedPoint[] data, int fromIndex, int toIndex) {
-        return Inplace.median(getSorter(data, fromIndex, toIndex));
+        return Destructive.median(getSorter(data, fromIndex, toIndex));
     }
     
     
@@ -82,7 +109,7 @@ public final class Statistics {
     }
     
     public static WeightedPoint median(double[] data, double[] weight, int fromIndex, int toIndex) {
-        return Inplace.median(getSorter(data, weight, fromIndex, toIndex));
+        return Destructive.median(getSorter(data, weight, fromIndex, toIndex));
     }
     
     
@@ -92,7 +119,7 @@ public final class Statistics {
     }
     
     public static WeightedPoint median(float[] data, float[] weight, int fromIndex, int toIndex) {
-        return Inplace.median(getSorter(data, weight, fromIndex, toIndex));
+        return Destructive.median(getSorter(data, weight, fromIndex, toIndex));
     }
 
    
@@ -387,7 +414,7 @@ public final class Statistics {
     }
     
     public static float select(float[] data, double fraction, int fromIndex, int toIndex) {
-        return Inplace.select(getSorter(data, fromIndex, toIndex), fraction);
+        return Destructive.select(getSorter(data, fromIndex, toIndex), fraction);
     }
     
     public static double select(double[] data, double fraction) {
@@ -395,7 +422,7 @@ public final class Statistics {
     }
    
     public static double select(double[] data, double fraction, int fromIndex, int toIndex) {
-        return Inplace.select(getSorter(data, fromIndex, toIndex), fraction);
+        return Destructive.select(getSorter(data, fromIndex, toIndex), fraction);
     }
     
     public static <T extends Comparable<? super T>> T select(List<T> data, double fraction) {
@@ -405,13 +432,13 @@ public final class Statistics {
     public static <T extends Comparable<? super T>> T select(List<T> data, double fraction, int fromIndex, int toIndex) {
         ArrayList<T> sorter = new ArrayList<>(toIndex - fromIndex);
         while(fromIndex < toIndex) sorter.add(data.get(fromIndex++));
-        return Inplace.select(sorter, fraction);
+        return Destructive.select(sorter, fraction);
     }
     
     public static <T> T select(List<T> data, double fraction, int fromIndex, int toIndex, Comparator<? super T> comparator) {
         ArrayList<T> sorter = new ArrayList<>(toIndex - fromIndex);
         while(fromIndex < toIndex) sorter.add(data.get(fromIndex++));
-        return Inplace.select(sorter, fraction, comparator);
+        return Destructive.select(sorter, fraction, comparator);
     }
     
     
@@ -448,9 +475,23 @@ public final class Statistics {
     
  
  
+    /**
+     * Provides a set of static methods for calculating destructive statistical measures of data, such as means, medians, or
+     * ordered selection, with or without weights, and more... The methods defined in this class are likely destructive
+     * of the data themselves, which are quite possibly reordered in place. When that is acceptable, this class
+     * provides the fastest performance. Otherwise, if data must be preserved, the non-destructive methods of the 
+     * {@link Statistics} provide safer, albeit a bit slower, implementations with additional overheads.
+     * 
+     * 
+     * @author Attila Kovacs
+     * 
+     * @see Statistics
+     *
+     */
+    public static final class Destructive {
 
-    public static final class Inplace {
-
+        /** private constructor because we don't want to instantiate this class */
+        private Destructive() {}
 
         public static double median(final double[] data) { return median(data, 0, data.length); }
 

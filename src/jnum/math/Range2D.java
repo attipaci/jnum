@@ -101,7 +101,7 @@ public class Range2D implements Cloneable, Copiable<Range2D>, Serializable, Scal
 
     @Override
     public int hashCode() {
-        return super.hashCode() ^ xRange.hashCode() ^ yRange.hashCode();
+        return xRange.hashCode() ^ yRange.hashCode();
     }
     
 

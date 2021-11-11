@@ -64,7 +64,7 @@ public class AstroSystem implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = super.hashCode();
+		int hash = 0;
 		if(system != null) hash ^= system.hashCode();
 		return hash;
 	}

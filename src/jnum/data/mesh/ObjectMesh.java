@@ -26,8 +26,6 @@ package jnum.data.mesh;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParsePosition;
 
-import com.sun.jdi.InvocationException;
-
 import jnum.Copiable;
 import jnum.text.Parser;
 
@@ -70,7 +68,7 @@ public class ObjectMesh<T> extends Mesh<T> {
 	}
 
 	@Override
-	public T parseElement(String text) throws InstantiationException, InvocationException, InvocationTargetException, NoSuchMethodException, IllegalAccessException  {
+	public T parseElement(String text) throws InstantiationException, InvocationTargetException, NoSuchMethodException, IllegalAccessException  {
 		T value = elementClass.getDeclaredConstructor().newInstance();
 		((Parser) value).parse(text, new ParsePosition(0));
 		return value;

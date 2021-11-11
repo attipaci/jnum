@@ -40,23 +40,23 @@ public class Flag2D extends FlagCompanion<Index2D> implements Resizable<Index2D>
     private static final long serialVersionUID = 4967521177601467424L;
 
     private Image2D data;
-    private int type;
+    private Type type;
 
 
-    public Flag2D(int type) {
+    public Flag2D(Type type) {
         super(type);
         switch(type) {
-        case TYPE_BYTE: data = Image2D.createType(Byte.class); break;
-        case TYPE_SHORT: data = Image2D.createType(Short.class); break;
-        case TYPE_INT: data = Image2D.createType(Integer.class); break;
-        case TYPE_LONG: data = Image2D.createType(Long.class); break;
+        case BYTE: data = Image2D.createType(Byte.class); break;
+        case SHORT: data = Image2D.createType(Short.class); break;
+        case INT: data = Image2D.createType(Integer.class); break;
+        case LONG: data = Image2D.createType(Long.class); break;
         default: throw new IllegalArgumentException("Unknown type: " + type);
         }
         this.type = type;
     }
     
     
-    public Flag2D(int type, int sizeX, int sizeY) {
+    public Flag2D(Type type, int sizeX, int sizeY) {
         this(type);
         setSize(sizeX, sizeY);
     }
@@ -75,7 +75,7 @@ public class Flag2D extends FlagCompanion<Index2D> implements Resizable<Index2D>
     @Override
     public Image2D getData() { return data; }
       
-    public final int getType() { return type; }
+    public final Type getType() { return type; }
     
     @Override
     public final void setSize(Index2D size) {

@@ -119,7 +119,7 @@ public abstract class Flag<Type extends Number> implements Serializable {
     }
 
     @Override
-    public int hashCode() { return super.hashCode() ^ HashCode.from(value().longValue()) ^ HashCode.from(letterCode); }
+    public int hashCode() { return HashCode.from(value().longValue()) ^ HashCode.from(letterCode); }
     
     /**
      * Gets the flag space to which this flag belongs to.

@@ -23,9 +23,24 @@
 
 package jnum.data;
 
+/**
+ * Data that includes associated uncertainties and exposure information.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <DataType>    the generic type of the data which with uncertainties and exposures.
+ * 
+ * @see Accumulating
+ */
 public interface Observations<DataType> extends Uncertainties<DataType>, Exposures<DataType> {
  
-    
+    /**
+     * Ends an accumulation (summation) in this object, and converts sums into averages by 
+     * renormalizing the summed values with the summed weights. The caller might implement 
+     * the summing in any way they see fit prior to calling this method once (and only once!) 
+     * per accumulation cycle.
+     * 
+     */
     public void endAccumulation();
     
     

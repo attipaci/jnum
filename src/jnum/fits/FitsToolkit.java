@@ -42,8 +42,8 @@ import nom.tam.fits.FitsFactory;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
-import nom.tam.util.BufferedDataOutputStream;
 import nom.tam.util.Cursor;
+import nom.tam.util.FitsOutputStream;
 
 
 public final class FitsToolkit {
@@ -226,7 +226,7 @@ public final class FitsToolkit {
             os = new FileOutputStream(fileName);
         }
             
-        try(BufferedDataOutputStream stream = new BufferedDataOutputStream(os)) { 
+        try(FitsOutputStream stream = new FitsOutputStream(os)) { 
             fits.write(stream); 
             Util.notify(fits, "Written " + fileName);
         }
@@ -244,7 +244,7 @@ public final class FitsToolkit {
 
     public static void addHistory(Cursor<String, HeaderCard> cursor, String history) throws HeaderCardException {
         // manually wrap long history entries into multiple lines... 
-        if(history.length() <= MAX_HISTORY_LENGTH) cursor.add(new HeaderCard("HISTORY", history, false));
+        if(history.length() <= MAX_HISTORY_LENGTH) cursor.add(HeaderCard.createHistoryCard(history));
         else {
             TextWrapper wrapper = new TextWrapper(MAX_HISTORY_LENGTH);
             wrapper.setWrapAfterChars(wrapper.getWrapAfterChars() + extraHistoryBreaksAfter);
@@ -284,7 +284,9 @@ public final class FitsToolkit {
    
     
     public static Cursor<String, HeaderCard> endOf(Header h) {
-        return h.iterator(h.getNumberOfCards());
+        Cursor<String, HeaderCard> c = h.iterator();
+        c.end();
+        return c;
     }
     
     public static void add(Cursor<String, HeaderCard> c, String name, String value, String comment) throws HeaderCardException {

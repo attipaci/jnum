@@ -38,7 +38,7 @@ public class CartesianGridTransform2D implements CoordinateTransform<Vector2D> {
     
     @Override
     public int hashCode() {
-        return super.hashCode() ^ fromGrid.hashCode() ^ toGrid.hashCode();
+        return fromGrid.hashCode() ^ toGrid.hashCode();
     }
     
     @Override

@@ -39,7 +39,7 @@ public abstract class DataStore<Type extends Number> implements Serializable {
 	}
 
 	@Override
-	public int hashCode() { return super.hashCode() ^ name.hashCode(); }
+	public int hashCode() { return name.hashCode(); }
 
 	@Override
 	public boolean equals(Object o) {

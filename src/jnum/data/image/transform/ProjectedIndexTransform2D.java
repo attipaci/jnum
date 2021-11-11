@@ -46,7 +46,7 @@ public class ProjectedIndexTransform2D<CoordinateType extends Coordinate2D> impl
     }
     
     @Override
-    public int hashCode() { return super.hashCode() ^ fromGrid.hashCode() ^ toGrid.hashCode(); }
+    public int hashCode() { return fromGrid.hashCode() ^ toGrid.hashCode(); }
     
     @Override
     public boolean equals(Object o) {

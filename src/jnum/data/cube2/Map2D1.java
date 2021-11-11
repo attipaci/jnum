@@ -24,13 +24,14 @@
 package jnum.data.cube2;
 
 
+import jnum.data.FlagCompanion;
 import jnum.data.image.Map2D;
 
 
 public class Map2D1 extends AbstractMap2D1<Map2D> {
 
       
-    public Map2D1(Class<? extends Number> dataType, int flagType) {
+    public Map2D1(Class<? extends Number> dataType, FlagCompanion.Type flagType) {
         super(dataType, flagType);
     }
     

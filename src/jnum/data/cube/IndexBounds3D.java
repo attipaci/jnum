@@ -49,7 +49,7 @@ public class IndexBounds3D implements Serializable {
 	
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ fromi ^ toi ^ fromj ^ toj ^ fromk ^ tok;
+		return fromi ^ toi ^ fromj ^ toj ^ fromk ^ tok;
 	}
 	
 	@Override

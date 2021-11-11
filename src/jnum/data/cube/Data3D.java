@@ -30,6 +30,7 @@ import java.util.List;
 import jnum.PointOp;
 import jnum.data.CubicSpline;
 import jnum.data.DataCrawler;
+import jnum.data.Interpolator;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
 import jnum.data.WeightedPoint;
@@ -81,7 +82,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
 
         image.copyParallel(this);
         image.setInterpolationType(getInterpolationType());
-        image.setVerbose(isVerbose());
         image.setUnit(getUnit());
 
         List<String> imageHistory = image.getHistory();
@@ -213,10 +213,10 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         if(i == ic) if(j == jc) if(k == kc) return get(i, j, k).doubleValue();
 
         switch(getInterpolationType()) {
-        case INTERPOLATE_NEAREST : return get(i, j, k).doubleValue();
-        case INTERPOLATE_LINEAR : return linearAtIndex(ic, jc, kc);
-        case INTERPOLATE_PIECEWISE_QUADRATIC : return quadraticAtIndex(ic, jc, kc);
-        case INTERPOLATE_SPLINE : return splines == null ? splineAtIndex(ic, jc, kc) : splineAtIndex(ic, jc, kc, splines);
+        case NEAREST : return get(i, j, k).doubleValue();
+        case LINEAR : return linearAtIndex(ic, jc, kc);
+        case PIECEWISE_QUADRATIC : return quadraticAtIndex(ic, jc, kc);
+        case CUBIC_SPLINE : return splines == null ? splineAtIndex(ic, jc, kc) : splineAtIndex(ic, jc, kc, splines);
         }
 
         return Double.NaN;
@@ -328,18 +328,18 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     }
 
     @Override
-    public int getPointSmoothOps(int beamPoints, int interpolationType) {
+    public int getPointSmoothOps(int beamPoints, Interpolator.Type interpolationType) {
         return 36 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
 
 
     @Override
-    protected int getInterpolationOps(int type) {
+    protected int getInterpolationOps(Interpolator.Type type) {
         switch(type) {
-        case INTERPOLATE_NEAREST : return 15;
-        case INTERPOLATE_LINEAR : return 90;
-        case INTERPOLATE_PIECEWISE_QUADRATIC : return 100;
-        case INTERPOLATE_SPLINE : return 800;
+        case NEAREST : return 15;
+        case LINEAR : return 90;
+        case PIECEWISE_QUADRATIC : return 100;
+        case CUBIC_SPLINE : return 800;
         }
         return 1;
     }

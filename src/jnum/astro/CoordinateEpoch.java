@@ -78,7 +78,7 @@ public abstract class CoordinateEpoch implements Serializable, Comparable<Coordi
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.from(year);
+		return HashCode.from(year);
 	}
 	
 

@@ -39,19 +39,35 @@ import jnum.util.HashCode;
  */
 public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>, NumberFormating {
 
+    /** */
 	private static final long serialVersionUID = 7215369530550677188L;
 
 	private double min, max;
-	
 
+	/**
+	 * Instantoates a new empty range of real-values, which does not include an ynumbers initially.
+	 * 
+	 * @see #empty()
+	 */
 	public Range() { empty(); }
 	
-
+	/**
+	 * Instantiates a new range of real values, containing only the specified single point value initially.
+	 * 
+	 * @param pointValue   the single real value that is in this range initially.
+	 */
 	public Range(double pointValue) {
 	    this(pointValue, pointValue);
 	}
 	
-
+	/**
+	 * Instantiates a new range of real values, containing all real number between an inclusive
+	 * lower limit and an exclisive upper limit.
+	 * 
+	 * @param minValue     the lowest real value that is in the range 
+	 * @param maxValue     the upper end of the range, that is the lowest real value that is
+	 *                     larger than any value in the range but itself is not included in the range.
+	 */
 	public Range(double minValue, double maxValue) {
 		setRange(minValue, maxValue);
 	}
@@ -81,7 +97,7 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.from(min) ^ HashCode.from(max);
+		return HashCode.from(min) ^ HashCode.from(max);
 	}
 	
 
@@ -92,12 +108,36 @@ public class Range implements Serializable, Scalable, Cloneable, Copiable<Range>
 		max = temp;
 	}
 	
-
+	/**
+	 * Returns the lowest real value that is included in the range.
+	 * 
+	 * @return the lower inclusive limit of this range.
+	 * 
+	 * @see #max()
+	 * @see #setMin(double)
+	 * @see #include(double)
+	 * @see #include(Range)
+	 */
 	public final double min() { return min; }
 	
-
+	/**
+     * Returns the upper limit of this range, that is the lowest real value that is
+     * larger than any value included in this range, but is itself not part of the range.
+     * 
+     * @return the upper exclusive limit of this range.
+     * 
+     * @see #min()
+     * @see #setMax(double)
+     * @see #include(double)
+     * @see #include(Range)
+     */
 	public final double max() { return max; }
 	
+	/**
+	 * Returns the arithmetic center of this range.
+	 *     
+	 * @return     the arimetic mid point of this range.
+	 */
 	public final double midPoint() { return 0.5 * (min + max); }
 	
 

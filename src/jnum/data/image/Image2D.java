@@ -36,6 +36,7 @@ import jnum.data.index.Index2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
 import nom.tam.fits.Fits;
+import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
 import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
@@ -299,10 +300,14 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
 
         this.crop(new Index2D((int)x.lower(), (int)y.lower()), new Index2D((int)x.upper(), (int)y.upper()));
     }
-  
+    
+    @Override
+    public ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException {
+        return createPrimaryHDU(dataType);
+    }
 
     @Override
-    protected void editHeader(Header header) throws HeaderCardException {          
+    public void editHeader(Header header) throws HeaderCardException {          
         Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
         if(getID() != null) c.add(new HeaderCard("EXTNAME", getID(), "Content identifier.")); 
         
@@ -310,7 +315,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     }
 
     @Override
-    protected final void parseHeader(Header header) {
+    public final void parseHeader(Header header) {
         parseHeader(header, null);
     }
 

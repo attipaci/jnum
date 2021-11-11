@@ -29,6 +29,7 @@ import java.text.ParsePosition;
 import java.util.stream.IntStream;
 
 import jnum.Copiable;
+import jnum.Unit;
 import jnum.Util;
 import jnum.ViewableAsDoubles;
 import jnum.data.index.Index1D;
@@ -49,7 +50,7 @@ import nom.tam.util.Cursor;
  *
  */
 public class Coordinate3D implements Coordinates<Double>, RealComponents, Serializable, Cloneable, Copiable<Coordinate3D>, 
-ViewableAsDoubles, Parser, NumberFormating, Inversion {
+ViewableAsDoubles, Parser, NumberFormating, Inversion, ZeroValue {
     /** */
     private static final long serialVersionUID = 4670218761839380720L;
 
@@ -57,13 +58,31 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     private double y;
     private double z;
 
+    /**
+     * Constructs new 3D coordinates initialized to zeroes.
+     * 
+     */
     public Coordinate3D() {}
 
+    /**
+     * Constructs new 3D coordinates with the specified component values.
+     * 
+     * @param x    the first (x-type) coordinate value
+     * @param y    the second (y-type) coordinate value
+     * @param z    the third (z-type) coordinate value
+     */
     public Coordinate3D(double x, double y, double z) {
         this();
         set(x, y, z);
     }
 
+    /**
+     * Constructs new 3D coordinates based on some other coordinates. The argument
+     * may represent coordinates of any type or dimension. Only up to the first three coordinate 
+     * components of the argument are used for initializing the new 3D coordinate instance.
+     * 
+     * @param v     Coordinates whose first 1 to 3 components will define the new 3D coordinates.
+     */
     public Coordinate3D(Coordinates<Double> v) {
         this(v.x(), v.y(), v.z());
     }
@@ -147,11 +166,12 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         z = -z;
     }
 
-
+    @Override
     public void zero() {
         x = y = z = 0.0;
     }
 
+    @Override
     public boolean isNull() {
         if(x != 0.0) return false;
         if(y != 0.0) return false;
@@ -321,6 +341,19 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     }
 
 
+    /**
+     * Parses the coordinates from a string representation of these.
+     * 
+     * @param spec      The string beginnign with a 3D coordinate description (normally
+     *                  three comma or space separated values, possibly enclosed in brackets.
+     *                  (See {@link #parse(StringParser)} for more details on the accepted
+     *                  string formats).
+     * @throws NumberFormatException    if the string does not seem to begin with what could
+     *                                  be used as coordinate components.
+     * 
+     * @see #parse(String, ParsePosition)
+     * @see #parse(StringParser)
+     */
     public final void parse(String spec) {
         parse(spec, new ParsePosition(0));
     }
@@ -407,27 +440,6 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
     @Override
     public final double[] viewAsDoubles() {
         return new double[] { x, y, z };       
-    }
-
-
-
-    public double getValue(int field) throws NoSuchFieldException {
-        switch(field) {
-        case X: return x;
-        case Y: return y;
-        case Z: return z;
-        default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
-        }
-    }
-
-
-    public void setValue(int field, double value) throws NoSuchFieldException {
-        switch(field) {
-        case X: x = value; break;
-        case Y: y = value; break;
-        case Z: z = value; break; 
-        default: throw new NoSuchFieldException(getClass().getSimpleName() + " has no field for " + field);
-        }
     }
 
 
@@ -547,10 +559,62 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion {
         }
     }
 
+    /**
+     * Creates an array of 3D coordinates, with each element initialized to a default (zero) coordinate
+     * intance.
+     * 
+     * @param size  the array size
+     * @return      a new array of the desired size with all elements initialized to 3D coordinates
+     *              with zero components.
+     */
+    public static Coordinate3D[] createArray(int size) {
+        Coordinate3D[] array = new Coordinate3D[size];
+        IntStream.range(0, size).parallel().forEach(i -> array[i] = new Coordinate3D());
+        return array;
+    }
+    
+    /**
+     * Return a fully independent copy of an array of 3D coordinates. Modifications to either
+     * the original or the copy will be guaranteed to not impact the other.
+     * 
+     * @param array     the array of 3D coordinates to copy
+     * @return          an independent copy of the input array, in which all elements are themselves
+     *                  copies of the original elements.
+     */
     public static Coordinate3D[] copyOf(Coordinate3D[] array) {
         Coordinate3D[] copy = new Coordinate3D[array.length];
         IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
         return copy;
+    }
+    
+    /**
+     * Returns a string representation of 3D coordinates in the specified physical units.
+     * 
+     * @param coords    the 3D coordinates
+     * @param unit      the physical unit in which to represent
+     * @return          a string representation of the coordinates, including the physical unit name.
+     * 
+     * @see #toString(Coordinate3D, Unit, int)
+     */
+    public static String toString(Coordinate3D coords, Unit unit) {
+        return toString(coords, unit, 3);
+    }
+
+    /**
+     * Returns a string representation of 3D coordinates in the specified physical units.
+     * 
+     * @param coords    the 3D coordinates
+     * @param unit      the physical unit in which to represent
+     * @param decimals  the decimal places to show.
+     * 
+     * @return          a string representation of the coordinates, including the physical unit name.
+     * 
+     * @see #toString(Coordinate3D, Unit)
+     */
+    public static String toString(Coordinate3D coords, Unit unit, int decimals) {
+        return Util.s[decimals].format(coords.x / unit.value()) +  ", " 
+                + Util.s[decimals].format(coords.y / unit.value()) + ", "
+                + Util.s[decimals].format(coords.z / unit.value()) + " " + unit.name();
     }
 
     private static final Index1D size = new Index1D(2);

@@ -244,7 +244,7 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
 
     @Override
     public int hashCode() {
-        return super.hashCode() ^ HashCode.sampleFrom(data);
+        return HashCode.sampleFrom(data);
     }
 
 

@@ -92,7 +92,7 @@ public class CubicSpline implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ HashCode.from(centerIndex);
+		return HashCode.from(centerIndex);
 	}
 	
 

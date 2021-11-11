@@ -39,9 +39,6 @@ import jnum.Util;
  */
 public class LittleEndianDataInputStream extends InputStream implements DataInput {
 
-    /** The underlying input stream */
-	private InputStream stream;
-	
 	/** The underlying (big-endian) data input stream */
 	private DataInputStream in;
 
@@ -52,18 +49,17 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 	 * @param stream the stream
 	 */
 	public LittleEndianDataInputStream(InputStream stream) {
-		this.stream = stream;
 		in = new DataInputStream(stream);
 	}
 
 	@Override
     public void close() throws IOException {
-	    if(stream != null) stream.close();
+	    in.close();
 	}
 
 	@Override
 	public final int read() throws IOException {
-		return stream.read();
+		return in.read();
 	}
 
 	@Override
@@ -106,8 +102,6 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 		return Integer.reverseBytes(in.readInt());
 	}
 
-
-
 	@Override
 	@Deprecated
 	public final String readLine() throws IOException {
@@ -131,12 +125,17 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 
 	@Override
 	public final int readUnsignedByte() throws IOException {
-		return in.readUnsignedByte();
+		return in.read();
 	}
 
 	@Override
 	public final int readUnsignedShort() throws IOException {
-		return Util.unsigned(readShort());
+	    int l = in.read();
+        int h = in.read();
+        if (h < 0 || l < 0) {
+            throw new EOFException();
+        }
+        return (h << 8) | l;
 	}
 	    
 	/**
@@ -155,43 +154,6 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 	public final int skipBytes(int arg0) throws IOException {
 		return in.skipBytes(arg0);
 	}
-	
-	/** 
-	 * Reads 2 bytes from the input, returning the bits as a <code>short</code>.
-	 * 
-	 * @return     the 2 bytes represented as a <code>short</code>
-	 * 
-	 * @throws IOException     if there was an IO error.
-	 * 
-	 * @see #read4Bytes()
-	 * @see #read8Bytes()
-	 */
-	protected final short read2Bytes() throws IOException { return in.readShort(); }
-	
-	/** 
-     * Reads 4 bytes from the input, returning the bits as a <code>int</code>.
-     * 
-     * @return     the 4 bytes represented as a <code>int</code>
-     * 
-     * @throws IOException     if there was an IO error.
-     * 
-     * @see #read2Bytes()
-     * @see #read8Bytes()
-     */
-	protected final int read4Bytes() throws IOException { return in.readInt(); }
-	
-
-	/** 
-     * Reads 8 bytes from the input, returning the bits as a <code>long</code>.
-     * 
-     * @return     the 8 bytes represented as a <code>long</code>
-     * 
-     * @throws IOException     if there was an IO error.
-     * 
-     * @see #read2Bytes()
-     * @see #read4Bytes()
-     */
-	protected final long read8Bytes() throws IOException { return in.readLong(); }
 	
 	
 }

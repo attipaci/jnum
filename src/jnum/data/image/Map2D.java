@@ -32,6 +32,7 @@ import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.DataPoint;
+import jnum.data.FlagCompanion;
 import jnum.data.Referenced;
 import jnum.data.RegularData;
 import jnum.data.Resizable;
@@ -115,13 +116,13 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         super.setDefaultUnit();
     }
 
-    public Map2D(Image2D data, int flagType) {
+    public Map2D(Image2D data, FlagCompanion.Type flagType) {
         this();
         setImage(data);
         createFlags(flagType);
     }
 
-    public Map2D(Class<? extends Number> dataType, int flagType) {
+    public Map2D(Class<? extends Number> dataType, FlagCompanion.Type flagType) {
         this(Image2D.createType(dataType), flagType);
     }
 
@@ -679,7 +680,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         
         Vector2D d = Vector2D.differenceOf(to, from);
 
-        if(isVerbose()) Util.info(this, "Will crop to " + d.x()/sizeUnit.value() + "x" + d.y()/sizeUnit.value() + " " + sizeUnit.name() + ".");
+        Util.detail(this, "Will crop to " + d.x()/sizeUnit.value() + "x" + d.y()/sizeUnit.value() + " " + sizeUnit.name() + ".");
 
         Index2D c1 = getIndexOfOffset(from);
         Index2D c2 = getIndexOfOffset(to);
@@ -695,7 +696,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         IntRange y = getYIndexRange();
         if(y == null) return;
 
-        if(isVerbose()) Util.info(this, "Auto-cropping: " + (x.span() + 1) + "x" + (y.span() + 1));
+        Util.detail(this, "Auto-cropping: " + (x.span() + 1) + "x" + (y.span() + 1));
         this.crop(new Index2D((int) x.lower(), (int) y.lower()), new Index2D((int) x.upper(), (int) y.upper()));
     }
 
@@ -1064,14 +1065,14 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
     }
 
     public static Map2D read(Fits fits, int hduIndex) throws Exception {
-        return read(fits, hduIndex, Flag2D.TYPE_INT);
+        return read(fits, hduIndex, FlagCompanion.Type.INT);
     }
 
-    public static Map2D read(Fits fits, int hduIndex, int flagType) throws Exception {
+    public static Map2D read(Fits fits, int hduIndex, FlagCompanion.Type flagType) throws Exception {
         return read(fits, hduIndex, null, flagType);
     }
 
-    public static Map2D read(Fits fits, int hduIndex, Hashtable<String, Unit> extraUnits, int flagType) throws Exception {
+    public static Map2D read(Fits fits, int hduIndex, Hashtable<String, Unit> extraUnits, FlagCompanion.Type flagType) throws Exception {
         Image2D image = Image2D.read(fits, hduIndex, extraUnits);
         Map2D map = new Map2D(image, flagType);
         map.parseHeader(fits.getHDU(hduIndex).getHeader());
