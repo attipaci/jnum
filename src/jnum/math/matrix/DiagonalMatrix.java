@@ -64,11 +64,6 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
     }
 
     @Override
-    public DiagonalMatrix<T> copy() {
-        return copy(true);
-    }
-    
-    @Override
     public abstract AbstractVector<T> getVectorInstance(int size);
     
     /**

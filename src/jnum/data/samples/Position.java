@@ -24,20 +24,24 @@
 package jnum.data.samples;
 
 import jnum.Util;
+import jnum.data.RealValue;
 import jnum.data.index.Index1D;
-import jnum.data.index.IndexedValues;
 import jnum.math.Coordinates;
 import jnum.math.MathVector;
 import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 import jnum.util.HashCode;
 
-public class Offset1D implements MathVector<Double> {
-    private double x;
+public class Position extends RealValue implements MathVector<Double> {
 
-    public Offset1D() { this (0.0); }
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7988260864770770923L;
+
+    public Position() { this (0.0); }
     
-    public Offset1D(double value) { this.x = value; }
+    public Position(double value) { super(value); }
     
     @Override
     public Class<Double> getComponentType() {
@@ -46,19 +50,15 @@ public class Offset1D implements MathVector<Double> {
     
     @Override
     public int hashCode() {
-        return HashCode.from(x);
+        return HashCode.from(value());
     }
     
     @Override
     public boolean equals(Object o) {
         if(o == this) return true;
         if(o == null) return false;
-        if(!(o instanceof Offset1D)) return false;
-        
-        Offset1D r = (Offset1D) o;
-        if(x != r.x) return false;
-        
-        return true;
+        if(!(o instanceof Position)) return false;
+        return super.equals(o);
     }
     
     @Override
@@ -66,32 +66,27 @@ public class Offset1D implements MathVector<Double> {
         if(coords == null) return false;
         
         if(coords.dimension() != dimension()) return false;
-        if(!Util.equals(coords.x(), x, precision)) return false;
+        if(!Util.equals(coords.x(), value(), precision)) return false;
         
         return true;
     }
-   
-    
-    public double value() { return x; }
-    
-    public void setValue(double value) { this.x = value; } 
     
     @Override
     public final int size() { return 1; }
     
     @Override
     public final Double getComponent(int index) {
-        if(index == 0) return x;
+        if(index == 0) return value();
         return null;
     }
 
     @Override
     public void setComponent(int index, Double value) {
-        if(index == 0) x = value;
+        if(index == 0) setValue(value);
     }
 
     @Override
-    public final Double x() { return x; }
+    public final Double x() { return value(); }
 
     @Override
     public final Double y() { return null; }
@@ -100,77 +95,65 @@ public class Offset1D implements MathVector<Double> {
     public final Double z() { return null; }
 
     @Override
-    public final void copy(Coordinates<? extends Double> template) { x = template.x(); }
-
-    @Override
-    public final double abs() { return Math.abs(x); }
-
-    @Override
-    public final double squareNorm() { return x*x; }
+    public final void copy(Coordinates<? extends Double> template) { 
+        setValue(template.x()); 
+    }
 
     @Override
     public double normalize() { 
-        double old = x;
-        x = 1.0; 
+        double old = value();
+        setValue(1.0); 
         return Math.abs(old);
     }
 
     @Override
-    public void flip() { x = -x; }
+    public void flip() { setValue(-value()); }
 
     @Override
     public final double distanceTo(MathVector<? extends Double> point) {
-        return Math.abs(point.x() - x);
+        return Math.abs(point.x() - value());
     }
 
     @Override
     public final void addScaled(MathVector<? extends Double> o, double factor) {
-        x += factor * o.x();
+        add(factor * o.x());
     }
 
-    @Override
-    public void zero() { x = 0.0; }
 
     @Override
-    public final boolean isNull() { return x == 0.0; }
+    public void add(MathVector<? extends Double> o) { add(o.x()); }
 
     @Override
-    public void scale(double factor) { x *= factor; }
+    public void subtract(MathVector<? extends Double> o) { add(-o.x()); }
 
     @Override
-    public void add(MathVector<? extends Double> o) { x += o.x(); }
+    public void setSum(MathVector<? extends Double> a, MathVector<? extends Double> b) { setValue(a.x() + b.x()); }
 
     @Override
-    public void subtract(MathVector<? extends Double> o) { x -= o.x(); }
-
-    @Override
-    public void setSum(MathVector<? extends Double> a, MathVector<? extends Double> b) { x = a.x() + b.x(); }
-
-    @Override
-    public void setDifference(MathVector<? extends Double> a, MathVector<? extends Double> b) { x = a.x() + b.x(); }
+    public void setDifference(MathVector<? extends Double> a, MathVector<? extends Double> b) { setValue(a.x() - b.x()); }
 
     @Override
     public void multiplyByComponentsOf(Coordinates<? extends Double> v) {
-        x *= v.x();
+        scale(v.x());
     }
     
     @Override
-    public Double dot(MathVector<? extends Double> v) { return x * v.x(); }
+    public Double dot(MathVector<? extends Double> v) { return value() * v.x(); }
     
     @Override
-    public Double dot(Double[] v) { return x * v[0]; }
+    public Double dot(Double[] v) { return value() * v[0]; }
     
     @Override
-    public Double dot(double... v) { return x * v[0]; }
+    public Double dot(double... v) { return value() * v[0]; }
     
     @Override
-    public Double dot(float... v) { return x * v[0]; }
+    public Double dot(float... v) { return value() * v[0]; }
 
     @Override
-    public void orthogonalizeTo(MathVector<? extends Double> v) { x = 0.0; }
+    public void orthogonalizeTo(MathVector<? extends Double> v) { if(v.x() != 0.0) zero(); }
 
     @Override
-    public void projectOn(MathVector<? extends Double> v) { if(v.getComponent(0) == 0.0) x = 0.0; }
+    public void projectOn(MathVector<? extends Double> v) { if(v.getComponent(0) == 0.0) zero(); }
 
     @Override
     public void reflectOn(MathVector<? extends Double> v) {}
@@ -188,18 +171,14 @@ public class Offset1D implements MathVector<Double> {
     
     @Override
     public AbstractMatrix<Double> asRowVector() {
-        return new Matrix(new double[][] {{ x }});
+        return new Matrix(new double[][] {{ value() }});
     }
 
     @Override
     public void incrementValue(int idx, Double increment) {
-        if(idx == 0) x += increment;
+        if(idx == 0) add(increment);
     }
 
-    @Override
-    public int capacity() {
-        return 1;
-    }
 
     @Override
     public int dimension() {
@@ -218,52 +197,15 @@ public class Offset1D implements MathVector<Double> {
         return 1;
     }
 
-    @Override
-    public Double get(Index1D index) {
-       if(index.i() == 0) return x;
-       return 0.0;
-    }
-
-    @Override
-    public void set(Index1D index, Double value) {
-        if(index.i() == 0) x = value;
-    }
-
-    @Override
-    public Index1D getIndexInstance() {
-        return new Index1D();
-    }
-
-    @Override
-    public Index1D copyOfIndex(Index1D index) {
-        return index.copy();
-    }
-
-    @Override
-    public boolean conformsTo(Index1D size) {
-        if(size.i() == 1) return true;
-        return false;
-    }
-
-    @Override
-    public boolean conformsTo(IndexedValues<Index1D, ?> data) {
-        return conformsTo(data.getSize());
-    }
-
-    @Override
-    public String getSizeString() {
-        return "[1]";
-    }
-
-    @Override
-    public boolean containsIndex(Index1D index) {
-        if(index.i() == 0) return true;
-        return false;
-    }
-
     /**
      * The default size object for 2D coordinates.
      */
     private static final Index1D size = new Index1D(1);
+
+    @Override
+    public Double copyOf(int i) {
+        if(i != 0) throw new IllegalArgumentException("there is no dimension " + i);
+        return value();
+    }
 
 }

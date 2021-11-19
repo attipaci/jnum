@@ -327,6 +327,28 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         return splineAtIndex(index.i(), index.j(), index.k(), splines);
     }
 
+
+    @Override
+    public final Number get(int ... idx) {
+        return get(idx[0], idx[1], idx[2]);
+    }
+
+    @Override
+    public final void set(Number value, int ... idx) {
+        set(idx[0], idx[1], idx[2], value);
+    }
+    
+    @Override
+    public final double valueAtIndex(double ... idx) {
+        return valueAtIndex(idx[0], idx[1], idx[2]);
+    }
+    
+    @Override
+    public double splineAtIndex(SplineSet<Vector3D> splines, double ... idx) {
+        return splineAtIndex(idx[0], idx[1], idx[2], splines);
+    }
+
+    
     @Override
     public int getPointSmoothOps(int beamPoints, Interpolator.Type interpolationType) {
         return 36 + beamPoints * (16 + getInterpolationOps(interpolationType));

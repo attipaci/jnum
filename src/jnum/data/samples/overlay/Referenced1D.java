@@ -26,7 +26,7 @@ package jnum.data.samples.overlay;
 import jnum.data.Referenced;
 import jnum.data.RegularData;
 import jnum.data.index.Index1D;
-import jnum.data.samples.Offset1D;
+import jnum.data.samples.Position;
 import jnum.data.samples.Values1D;
 import jnum.fits.FitsToolkit;
 import jnum.util.HashCode;
@@ -35,14 +35,14 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 import nom.tam.util.Cursor;
 
-public class Referenced1D extends Overlay1D implements Referenced<Index1D, Offset1D> {
-    private Offset1D referenceIndex;
+public class Referenced1D extends Overlay1D implements Referenced<Index1D, Position> {
+    private Position referenceIndex;
 
     public Referenced1D() { this(null); }
 
     public Referenced1D(Values1D values) {
         super(values);
-        referenceIndex = new Offset1D();
+        referenceIndex = new Position();
     }
     
     public Referenced1D(Values1D values, double refIndex) {
@@ -50,7 +50,7 @@ public class Referenced1D extends Overlay1D implements Referenced<Index1D, Offse
         setReferenceIndex(refIndex);
     }
     
-    public Referenced1D(Values1D values, Offset1D refIndex) {
+    public Referenced1D(Values1D values, Position refIndex) {
         this(values);
         setReferenceIndex(refIndex);
     }
@@ -71,14 +71,14 @@ public class Referenced1D extends Overlay1D implements Referenced<Index1D, Offse
     }
 
     @Override
-    public Offset1D getReferenceIndex() { return referenceIndex; }
+    public Position getReferenceIndex() { return referenceIndex; }
     
     public void setReferenceIndex(double value) {
         referenceIndex.setValue(value);
     }
     
     @Override
-    public void setReferenceIndex(Offset1D index) { this.referenceIndex = index; }
+    public void setReferenceIndex(Position index) { this.referenceIndex = index; }
 
     @Override
     public void editHeader(Header header) throws HeaderCardException {
@@ -95,7 +95,7 @@ public class Referenced1D extends Overlay1D implements Referenced<Index1D, Offse
     }
 
     @Override
-    public RegularData<Index1D, Offset1D> getData() {
+    public RegularData<Index1D, Position> getData() {
         return this;
     }
     

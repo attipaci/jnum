@@ -75,9 +75,6 @@ Scalable, ComplexConjugate {
 		try { return (FauxComplexArray<Type>) super.clone(); }
 		catch(CloneNotSupportedException e) { return null; }
 	}
-
-	@Override
-	public final FauxComplexArray<Type> copy() { return copy(true); }
 	
 	@Override
 	public abstract FauxComplexArray<Type> copy(boolean fill);

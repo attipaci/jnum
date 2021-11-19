@@ -746,8 +746,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
-
-
     public void filterAbove(double FWHM) {
         filterAbove(FWHM, null);
     }

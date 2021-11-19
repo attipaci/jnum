@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 import jnum.Copiable;
 import jnum.Util;
+import jnum.math.AbsoluteValue;
 import jnum.math.RealAlgebra;
 import jnum.math.ZeroValue;
 import jnum.util.HashCode;
@@ -38,7 +39,7 @@ import jnum.util.HashCode;
  * @author Attila Kovacs
  *
  */
-public class RealValue implements Cloneable, Serializable, Copiable<RealValue>, Comparable<RealValue>, ZeroValue, RealAlgebra {
+public class RealValue implements Cloneable, Serializable, Copiable<RealValue>, Comparable<RealValue>, ZeroValue, RealAlgebra, AbsoluteValue {
     /**
      * 
      */
@@ -123,11 +124,23 @@ public class RealValue implements Cloneable, Serializable, Copiable<RealValue>, 
     
     @Override
     public void zero() { value = 0.0; }
+
+    @Override
+    public double abs() {
+        return Math.abs(value);
+    }
+    
+    @Override
+    public double squareNorm() {
+        return value * value;
+    }
     
     @Override
     public boolean isNull() { return value == 0.0; }
     
     @Override
     public String toString() { return Double.toString(value); }
+
+ 
     
 }

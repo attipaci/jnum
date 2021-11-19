@@ -23,11 +23,6 @@
 
 package jnum.data.index;
 
-import jnum.ExtraMath;
-import jnum.NonConformingException;
-import jnum.math.MathVector;
-
-
 /**
  * An index in 3D space, such as (<i>i</i>, <i>j</i>, <i>k</i>).
  * 
@@ -149,39 +144,6 @@ public class Index3D extends AbstractIndex<Index3D> {
     }
 
     @Override
-    public void multiplyBy(Index3D factor) {
-        i *= factor.i();
-        j *= factor.j();
-        k *= factor.k();
-    }
-
-    @Override
-    public void setProduct(Index3D a, Index3D b) {
-        i = a.i() * b.i();
-        j = a.j() * b.j();
-        k = a.k() * b.k();
-    }
-
-    @Override
-    public void setRatio(Index3D numerator, Index3D denominator) {
-        i = ExtraMath.roundupRatio(numerator.i(), denominator.i());
-        j = ExtraMath.roundupRatio(numerator.j(), denominator.j());
-        k = ExtraMath.roundupRatio(numerator.k(), denominator.k());
-    }
-
-    @Override
-    public void modulo(Index3D argument) {
-        i %= argument.i();
-        j %= argument.j();
-        k %= argument.k();
-    }
-
-    @Override
-    public int getVolume() {
-        return i * j * k;
-    }
-    
-    @Override
     public int dimension() {
         return 3;
     }
@@ -206,39 +168,5 @@ public class Index3D extends AbstractIndex<Index3D> {
         }
     }
 
-    @Override
-    public void add(Index3D o) {
-        i += o.i;
-        j += o.j;
-        k += o.k;
-    }
-
-    @Override
-    public void subtract(Index3D o) {
-        i -= o.i;
-        j -= o.j;
-        k -= o.k;
-    }
-
-    @Override
-    public void setSum(Index3D a, Index3D b) {
-        i = a.i + b.i;
-        j = a.j + b.j;
-        k = a.k + b.k;
-    }
-
-    @Override
-    public void setDifference(Index3D a, Index3D b) {
-        i = a.i - b.i;
-        j = a.j - b.j;
-        k = a.k - b.k;
-    }
-
-    @Override
-    public void toVector(MathVector<Double> v) throws NonConformingException {  
-        if(v.size() != dimension()) throw new NonConformingException("Size mismatch " + v.size() + " vs. " + dimension());  
-        v.setComponent(0, (double) i);
-        v.setComponent(1, (double) j);
-        v.setComponent(3, (double) k);
-    }
+  
 }

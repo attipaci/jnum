@@ -107,7 +107,7 @@ public interface IndexedEntries<IndexType, DataType> {
      * @param index The index to copy.
      * @return      A deep copy of the argument, as the same type of index object
      */
-    public abstract IndexType copyOfIndex(IndexType index);
+    public IndexType copyOfIndex(IndexType index);
     
     /**
      * Checks if this data has a matching size, along all dimensions, as the size
@@ -116,7 +116,7 @@ public interface IndexedEntries<IndexType, DataType> {
      * @param size      the expected size along each dimention
      * @return          <code>true</code> if the object has the expected size. Otherwise <code>false</code>.
      */
-    public abstract boolean conformsTo(IndexType size);
+    public boolean conformsTo(IndexType size);
          
     /**
      * Checks if this data object has a matching size, in all dimensions, as another data object
@@ -125,14 +125,19 @@ public interface IndexedEntries<IndexType, DataType> {
      * @param data      The other indexed data object.
      * @return          <code>true</code> if this object has the same size as the argument. Otherwise <code>false</code>.
      */
-    public boolean conformsTo(IndexedValues<IndexType, ?> data);
+    public default boolean conformsTo(IndexedValues<IndexType, ?> data) {
+        return conformsTo(data.getSize());
+    }
     
     /**
      * Gets a string representation of the object's size in all dimensions, usually in square brackets.
      * 
      * @return  A string representation of this object's size.
      */
-    public abstract String getSizeString();
+    public default String getSizeString() {
+        return "[" + getSize() + "]";
+     }
+
     
     /**
      * Checks if the supplied index is contained within the bounds of this object.
@@ -140,6 +145,6 @@ public interface IndexedEntries<IndexType, DataType> {
      * @param index The index of an element we may try to access.
      * @return      <code>true</code> if the index is within the supported bounds of this object. Otherwise <code>false</code>.
      */
-    public abstract boolean containsIndex(IndexType index);
+    public boolean containsIndex(IndexType index);
     
 }

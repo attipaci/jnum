@@ -539,20 +539,9 @@ public class Complex extends Vector2D implements
 	}
 
 	@Override
-	public void add(Complex x) {
-		super.add(x);
-	}
-
-	@Override
     public void add(double re, double im) {
 	    super.add(re, im);
 	}
-
-	@Override
-	public void subtract(Complex x) {
-		super.subtract(x);
-	}
-
 
 	@Override
 	public void square() {

@@ -43,6 +43,8 @@ public interface RealAddition {
 	 *
 	 * @param x the value to be subtracted.
 	 */
-	public void subtract(double x);
+	public default void subtract(double x) {
+	    add(-x);
+	}
 	
 }

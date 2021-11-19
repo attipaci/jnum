@@ -36,7 +36,8 @@ import jnum.math.matrix.AbstractMatrix;
  * @param <T>   The generic type of the vector object itself.
  */
 public interface MathVector<T> extends Coordinates<T>, AbsoluteValue, Normalizable, Inversion, Metric<MathVector<? extends T>>, LinearAlgebra<MathVector<? extends T>> {
-     
+    
+    
     /**
      * Multiplies each component of this vector by the components of the argument as if
      * the argument were a diagonal matrix. 
@@ -146,8 +147,20 @@ public interface MathVector<T> extends Coordinates<T>, AbsoluteValue, Normalizab
      * 
      * @param values    The list of values to set.
      */
-    public void setValues(@SuppressWarnings("unchecked") T ... values);  
+    public void setValues(@SuppressWarnings("unchecked") T ... values);      
+
+    @Override
+    public default double normalize() {
+        double l = abs();
+        scale(1.0/l);
+        return l;
+    }
     
+    @Override
+    public default void flip() {
+        scale(-1.0);
+    }
+
     /**
      * The summing collector for classes that implement this interface, for use
      * with streams.

@@ -56,7 +56,7 @@ public final class Util {
     public static final String version = "0.40-a1";
     
     /** The jnum package sub-version, if any */
-    public static final String revision = "devel.17";
+    public static final String revision = "devel.18";
     
     /** Copyright string for the jnum package */
     public static final String copyright = "(c)2021 Attila Kovacs"; 

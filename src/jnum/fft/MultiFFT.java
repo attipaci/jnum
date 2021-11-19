@@ -208,7 +208,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         final int threads = getParallel(data);
         final int split = Math.min(data.length, getParallel(data));
 
-        child.setParallel(ExtraMath.roundupRatio(threads, split));
+        child.setParallel(ExtraMath.roundedRatio(threads, split));
 
 
         new PointFork(data, 1<<addressBits) {
@@ -602,7 +602,7 @@ public class MultiFFT extends FFT<Object[]> implements RealFFT<Object[]> {
         // Perform FFT of each element
         final FFT<?> child = getChildFor(data[0]);
         child.setTwiddleErrorBits(getTwiddleErrorBits());
-        child.setParallel(ExtraMath.roundupRatio(getParallel(), split));
+        child.setParallel(ExtraMath.roundedRatio(getParallel(), split));
 
         if(!isForward) super.parallelComplexTransform(data, addressBits, FFT.BACK);
 

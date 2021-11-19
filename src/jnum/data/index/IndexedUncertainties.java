@@ -38,7 +38,9 @@ public interface IndexedUncertainties<IndexType> {
      * @param index     the index location
      * @return          the noise/uncertainty value at the specified location.
      */
-    public double noiseAt(IndexType index);
+    public default double noiseAt(IndexType index) {
+        return 1.0 / Math.sqrt(weightAt(index));
+    }
     
     /**
      * Returns the noise weight (<i>w</i> = 1/&sigma;<sup>2</sup>) at the specified index location.
@@ -62,7 +64,9 @@ public interface IndexedUncertainties<IndexType> {
      * @param index     the index location
      * @param value     the new noise/uncertainty value (rms, or 1&sigma;, or equivalent).
      */
-    public void setNoiseAt(IndexType index, double value);
+    public default void setNoiseAt(IndexType index, double value) {
+        setWeightAt(index, 1.0 / (value * value));
+    }
     
     /**
      * Sets a new noise weight that the specified index location. Same as setting {@link #setNoiseAt(Object, double)}

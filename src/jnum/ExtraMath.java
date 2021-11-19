@@ -361,24 +361,26 @@ public final class ExtraMath {
 
 
 	/**
-	 * Gets the integer that equals to the fraction a/b, or is just above it.
-	 * For example for 2/3, it returns 1.
+	 * Gets the integer that equals to the rounded fraction a/b. It's as if the fraction
+	 * were calculated using real algebra (not integer math), and the result then were
+	 * rounded to the nearest integer value as usual. For example for 2/3, it returns 1.
 	 * 
 	 * @param a    numerator in fraction
 	 * @param b    denominator in fraction
 	 * @return     the integer equal to, or just above the fraction a/b.
 	 */
-	public static final int roundupRatio(int a, int b) { return (a + b - 1) / b; }
+	public static final int roundedRatio(int a, int b) { return (a + b - 1) / b; }
 	
 	/**
-     * Gets the integer that equals to the fraction a/b, or is just above it.
-     * For example for 2/3, it returns 1.
+     * Gets the integer that equals to the rounded fraction a/b. It's as if the fraction
+     * were calculated using real algebra (not integer math), and the result then were
+     * rounded to the nearest integer value as usual. For example for 2/3, it returns 1.
      * 
      * @param a    numerator in fraction
      * @param b    denominator in fraction
      * @return     the integer equal to, or just above the fraction a/b.
      */
-	public static final long roundupRatio(long a, long b) { return (a + b - 1L) / b; }
+	public static final long roundedRatio(long a, long b) { return (a + b - 1L) / b; }
 	
 	/**
 	 * Standardizes an input angle (in radians) to the caninical [-Pi:Pi] range.

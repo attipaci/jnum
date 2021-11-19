@@ -76,14 +76,6 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         return super.equals(o);
     }
     
-    
-
-    @Override
-    public Cube3D copy() {
-        return copy(true);
-    }
-
-    
     @Override
     public Cube3D copy(boolean withContent) {   
         Cube3D copy = (Cube3D) clone();
@@ -219,7 +211,6 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         }.process();
         recordNewData("byte[][][]");
     }
-
     
     public void setTransposedData(Object data) {
         Cube3D cube = null;

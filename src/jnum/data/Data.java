@@ -47,7 +47,6 @@ import jnum.math.LinearAlgebra;
 import jnum.math.Range;
 import jnum.parallel.ParallelObject;
 import jnum.parallel.ParallelPointOp;
-import jnum.parallel.ParallelTask;
 import jnum.text.TableFormatter;
 import jnum.util.CompoundUnit;
 import nom.tam.fits.BasicHDU;
@@ -447,14 +446,10 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
      * @param op            the point operation to perform on each data element
      * @return              the return value of the operation (if any).
      * 
-     * @see #loop(PointOp, Index, Index)
      * @see #loopValid(PointOp)
      * @see #fork(ParallelPointOp)
      */
-    public final <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op) {
-        return loop(op, getIndexInstance(), getSize());
-    }
-
+    public abstract <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op);
     /**
      * Loops over all valid data elements, performing the specified point operation on each.
      * 
@@ -462,46 +457,11 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
      * @param op            the point operation to perform on each data element
      * @return              the return value of the operation (if any).
      * 
-     * @see #loopValid(PointOp, Index, Index)
      * @see #loop(PointOp)
      * @see #forkValid(ParallelPointOp)
      */
-    public final <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op) {
-        return loopValid(op, getIndexInstance(), getSize());
-    }
-
-    /**
-     * Loops over a block of data elements in the specified index range, 
-     * performing the specified point operation on each.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the point operation to perform on each data element
-     * @param from          the starting index for the loop.
-     * @param to            the ecxlusive ending index for the loop.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loop(PointOp)
-     * @see #loopValid(PointOp, Index, Index)
-     * @see #fork(ParallelPointOp, Index, Index)
-     */
-    public abstract <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
-
-    /**
-     * Loops over a block of valid data elements in the specified index range, 
-     * performing the specified point operation on each.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the point operation to perform on each data element
-     * @param from          the starting index for the loop.
-     * @param to            the ecxlusive ending index for the loop.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loopValid(PointOp)
-     * @see #loop(PointOp, Index, Index)
-     * @see #forkValid(ParallelPointOp, Index, Index)
-     */
-    public abstract <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op, IndexType from, IndexType to);
-
+    public abstract <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op);
+   
     /**
      * Process elements (points) in this data object in parallel with the specified point operation.
      * 
@@ -511,12 +471,9 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
      * 
      * @see #smartFork(ParallelPointOp)
      * @see #forkValid(ParallelPointOp)
-     * @see #fork(ParallelPointOp, Index, Index)
      * @see #loop(PointOp)
      */
-    public final <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op) {
-        return fork(op, getIndexInstance(), getSize());
-    }
+    public abstract <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op);
 
     /**
      * Process only valid elements (points) in this data object in parallel with the specified point operation.
@@ -527,47 +484,11 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
      * 
      * @see #smartForkValid(ParallelPointOp)
      * @see #fork(ParallelPointOp)
-     * @see #forkValid(ParallelPointOp, Index, Index)
      * @see #loopValid(PointOp)
      */
-    public final <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
-        return forkValid(op, getIndexInstance(), getSize());
-    }
+    public abstract <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op);
 
-    /**
-     * Process a block of elements (points), in the specified range of indices, in this data object in parallel 
-     * with the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @param from          the starting index for the block of data to process.
-     * @param to            the ecxlusive ending index for the block of data to process.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #smartFork(ParallelPointOp, Index, Index)
-     * @see #forkValid(ParallelPointOp, Index, Index)
-     * @see #fork(ParallelPointOp)
-     * @see #loop(PointOp, Index, Index)
-     */
-    public abstract <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
-
-    /**
-     * Process a block of valid elements (points) only, in the specified range of indices, in this data object in parallel 
-     * with the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @param from          the starting index for the block of data to process.
-     * @param to            the ecxlusive ending index for the block of data to process.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #smartForkValid(ParallelPointOp, Index, Index)
-     * @see #fork(ParallelPointOp, Index, Index)
-     * @see #forkValid(ParallelPointOp)
-     * @see #loopValid(PointOp, Index, Index)
-     */
-    public abstract <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to);
-
+    
     /**
      * Process elements (points) in this data object efficiently, using parallel or sequential processing, whichever
      * is deemed fastest for the data size and the specified point operation.
@@ -578,35 +499,10 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
      * 
      * @see #loop(PointOp)
      * @see #fork(ParallelPointOp)
-     * @see #smartFork(ParallelPointOp, Index, Index)
      * @see #smartForkValid(ParallelPointOp)
      */
-    public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op) {
-        return smartFork(op, getIndexInstance(), getSize());
-    }
+    public abstract <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op);
 
-    /**
-     * Process a block of elements (points), in the specified range of indices, in this data object efficiently, 
-     * using parallel or sequential processing, whichever is deemed fastest for the data size and the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @param from          the starting index for the block of data to process.
-     * @param to            the ecxlusive ending index for the block of data to process.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loop(PointOp, Index, Index)
-     * @see #fork(ParallelPointOp, Index, Index)
-     * @see #smartForkValid(ParallelPointOp, Index, Index)
-     * @see #smartFork(ParallelPointOp)
-     */
-    public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to) {
-        if(getParallel() < 2) return loop(op, from, to);
-        IndexType span = getIndexInstance();
-        span.setDifference(to, from);
-        if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loop(op, from, to);
-        return fork(op, from, to);
-    }
 
     /**
      * Process valid elements (points) only in this data object efficiently, using parallel or sequential processing, whichever
@@ -619,34 +515,10 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
      * @see #loopValid(PointOp)
      * @see #forkValid(ParallelPointOp)
      * @see #smartFork(ParallelPointOp)
-     * @see #smartForkValid(ParallelPointOp, Index, Index)
      */
-    public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op) {
-        return smartForkValid(op, getIndexInstance(), getSize());
-    }
+    public abstract <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op);
 
-    /**
-     * Process a block of valid elements (points) only, in the specified range of indices, in this data object efficiently, 
-     * using parallel or sequential processing, whichever is deemed fastest for the data size and the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @param from          the starting index for the block of data to process.
-     * @param to            the ecxlusive ending index for the block of data to process.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loopValid(PointOp, Index, Index)
-     * @see #forkValid(ParallelPointOp, Index, Index)
-     * @see #smartFork(ParallelPointOp, Index, Index)
-     * @see #smartForkValid(ParallelPointOp)
-     */
-    public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to) {
-        if(getParallel() < 2) return loopValid(op, from, to);
-        IndexType span = getIndexInstance();
-        span.setDifference(to, from);
-        if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loopValid(op, from, to);
-        return forkValid(op, from, to);  
-    }
+    
 
 
     @Override
@@ -1680,80 +1552,8 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         });          
     }  
 
-    /**
-     * Returns a list of peaks from the data, above some specified threshold, and an exclusion radius (or radii) that
-     * sets the minimum separation between peaks returned. Each peak returned will have a data index that identifies
-     * the location of the peak, and the data value at that index. The peaks will also be masked out (discarded) from the 
-     * data object with the specified flagging radius/radii. If you wish to keep your data intact, you should call this
-     * method on an independent copy of the data, e.g. as <code>data.copy().findPeaks(threshold, r);</code>.
-     * 
-     * @param threshold     The threshold level above which to extract peaks from this data.
-     * @param r             the exclusion radius, or radii (if different along the various data dimensions).
-     * @return              a list of peak locations and corresponding peak values, each separated by the
-     *                      specified exclusion radius/radii, or more.
-     *                      
-     * @see #discardRadius(Index, double...)
-     * @see #copy()
-     */
-    public List<Point> findPeaks(double threshold, double... r) {
-        ArrayList<Point> peaks = new ArrayList<>();
+   
 
-        if(isEmpty()) return peaks;
-
-        while(true) {
-            IndexType idx = indexOfMax();
-            double S = get(idx).doubleValue();
-            if(S < threshold) break;
-
-            peaks.add(new Point(idx, S));
-            discardRadius(idx, r);
-        }
-
-        return peaks;
-    }
-
-
-    /**
-     * Discards data in a circle/ellipsoid around some data index, by calling {@link #discard(Index)} on points
-     * within the specified radius/radii of the specified center index.
-     * 
-     * 
-     * @param centerIndex   the data index around which to discard data
-     * @param rPix          (ct) the radius or radii (if different along the various data dimensions) of indices
-     *                      that specifies the exclusion circle or ellipsoid.
-     *                      
-     * @see #discard(Index)
-     */
-    @SuppressWarnings("cast")
-    public void discardRadius(final IndexType centerIndex, double... rPix) {
-        IndexType from = (IndexType) centerIndex.copy();
-        IndexType to = (IndexType) centerIndex.copy();
-
-        for(int i=centerIndex.dimension(); --i >= 0; ) {
-            int d =  (int) Math.ceil(rPix[rPix.length > i ? i : rPix.length - 1]);
-            from.setValue(i, Math.max(0, from.getValue(i) - d));
-            to.setValue(i, Math.min(getSize(i), to.getValue(i) + d + 1));
-        }
-
-        PointOp<IndexType, Void> flagger = new PointOp.Simple<IndexType>() {
-            @Override
-            public void process(IndexType idx) {
-                if(!isValid(idx)) return;
-
-                double d2 = 0.0;
-
-                for(int i=centerIndex.dimension(); --i >= 0; ) {
-                    double d = (idx.getValue(i) - centerIndex.getValue(i)) / rPix[rPix.length > i ? i : rPix.length - 1];
-                    d2 += d * d;
-                    if(d2 > 1.0) return;
-                }
-
-                discard(idx);
-            } 
-        };
-
-        loop(flagger, from, to);
-    }
 
 
     /**
@@ -1930,7 +1730,7 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         private double value;
 
         @SuppressWarnings("cast")
-        private Point(IndexType index, double value) {
+        protected Point(IndexType index, double value) {
             this.index = (IndexType) index.copy();
             this.value = value;
         }

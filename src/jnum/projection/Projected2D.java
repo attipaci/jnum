@@ -25,8 +25,6 @@ package jnum.projection;
 
 import jnum.Util;
 import jnum.math.Coordinate2D;
-import jnum.math.Offset2D;
-
 
 public class Projected2D<CoordinateType extends Coordinate2D> extends Offset2D {
 

@@ -40,7 +40,9 @@ public interface IndexedValues<IndexType, NumberType extends Number> extends Val
      * 
      * @param index     the location index.
      */
-    public abstract void clear(IndexType index);
+    public default void clear(IndexType index) {
+        set(index, 0);
+    }
     
     /**
      * Scales the value at the specified index location with the supplied scaling factor.
@@ -48,7 +50,9 @@ public interface IndexedValues<IndexType, NumberType extends Number> extends Val
      * @param index     the location index.
      * @param factor    the scaling factor.
      */
-    public abstract void scale(IndexType index, double factor);
+    public default void scale(IndexType index, double factor) {
+        set(index, factor * get(index).doubleValue());
+    }
     
     /**
      * Sets a new value at the specified index location
@@ -65,5 +69,5 @@ public interface IndexedValues<IndexType, NumberType extends Number> extends Val
      * @param value     the increment.
      */
     public void add(IndexType index, Number value);
-      
+ 
 }

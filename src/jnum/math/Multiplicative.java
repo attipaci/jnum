@@ -29,6 +29,5 @@ package jnum.math;
  * @param <DataType> the generic type
  */
 public interface Multiplicative<DataType> extends Multiplication<DataType>, Product<DataType, DataType> {
-	
-	
+
 }

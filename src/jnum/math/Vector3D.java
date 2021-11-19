@@ -81,6 +81,11 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
     @Override
     public Vector3D copy() { return (Vector3D) super.copy(); }
     
+    @Override
+    public final void flip() {
+       super.flip();
+    }
+    
     /**
      * Rotates this vector around the <i>x</i> axis with the specified angle, counter-clockwise
      * when looking in towards the origin from the direction of the rotation axis. 
@@ -200,9 +205,6 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
     public double length() {
         return ExtraMath.hypot(x(), y(), z());
     }
-    
-    @Override
-    public final double abs() { return length(); }
     
     @Override
     public final double squareNorm() { return x() * x() + y() * y() + z() * z(); }
@@ -356,9 +358,7 @@ public class Vector3D extends Coordinate3D implements MathVector<Double> {
 
     @Override
     public void fill(Double value) {
-        setX(value);
-        setY(value);
-        setZ(value);
+        fill(value.doubleValue());
     }
 
     @Override

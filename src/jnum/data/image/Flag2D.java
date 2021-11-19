@@ -70,9 +70,6 @@ public class Flag2D extends FlagCompanion<Index2D> implements Resizable<Index2D>
     }
 
     @Override
-    public Flag2D copy() { return copy(true); }
-  
-    @Override
     public Image2D getData() { return data; }
       
     public final Type getType() { return type; }

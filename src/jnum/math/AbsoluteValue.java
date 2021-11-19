@@ -35,7 +35,9 @@ public interface AbsoluteValue {
 	 *
 	 * @return the absolute value of this object.
 	 */
-	public double abs();
+	public default double abs() {
+	    return Math.abs(squareNorm());
+	}
 	
 	/**
 	 * The absolute square value.

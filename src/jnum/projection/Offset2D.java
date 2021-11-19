@@ -21,11 +21,12 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.math;
+package jnum.projection;
 
-import java.util.stream.IntStream;
 
 import jnum.Util;
+import jnum.math.Coordinate2D;
+import jnum.math.Vector2D;
 
 /**
  * A vector class for 2D offsets from some reference coordinate.
@@ -71,11 +72,5 @@ public class Offset2D extends Vector2D {
 
     public Coordinate2D getReference() { return reference; }
 
-
-    public static Vector2D[] copyOf(Vector2D[] array) {
-        Vector2D[] copy = new Vector2D[array.length];
-        IntStream.range(0, array.length).parallel().filter(i -> array[i] != null).forEach(i -> copy[i] = array[i].copy());
-        return copy;
-    }
 
 }

@@ -139,6 +139,26 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     public void discard(int i, int j) {
         set(i, j, getInvalidValue());
     }
+    
+    @Override
+    public final Number get(int ... idx) {
+        return get(idx[0], idx[1]);
+    }
+
+    @Override
+    public final void set(Number value, int ... idx) {
+        set(idx[0], idx[1], value);
+    }
+    
+    @Override
+    public final double valueAtIndex(double ... idx) {
+        return valueAtIndex(idx[0], idx[1]);
+    }
+    
+    @Override
+    public double splineAtIndex(SplineSet<Vector2D> splines, double ... idx) {
+        return splineAtIndex(idx[0], idx[1], splines);
+    }
 
     @Override
     public final Number get(Index2D index) { return get(index.i(), index.j()); }
@@ -528,8 +548,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         }
         return 1;
     }
-
-
     
     
     @Override

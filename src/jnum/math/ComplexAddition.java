@@ -33,14 +33,18 @@ public interface ComplexAddition {
 	 *
 	 * @param x    the complex value to be added.
 	 */
-	public void add(Complex x);
+	public default void add(Complex x) {
+	    add(x.re(), x.im());
+	}
 	
 	/**
 	 * Subtracts a complex value from this object.
 	 *
 	 * @param x    the complex value to be subtracted.
 	 */
-	public void subtract(Complex x);
+	public default void subtract(Complex x) {
+	    add(-x.lengthSquared(), -x.im());
+	}
 	
 	
 	/**

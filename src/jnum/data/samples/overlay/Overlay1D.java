@@ -57,12 +57,7 @@ public class Overlay1D extends Data1D {
         
         return super.equals(o);
     }
-    
-    @Override
-    public Overlay1D copy() {
-        return copy(true);
-    }
-    
+
     @Override
     public Overlay1D copy(boolean withContent) {
         Overlay1D copy = (Overlay1D) clone();

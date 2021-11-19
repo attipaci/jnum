@@ -431,7 +431,7 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
     public int getAutoParallel(Type data) {
         return Math.min(
                 getOptimalThreads(),
-                ExtraMath.roundupRatio(getPoints(data) * getPointSize(data), MIN_PARALLEL_SIZE)
+                ExtraMath.roundedRatio(getPoints(data) * getPointSize(data), MIN_PARALLEL_SIZE)
         );
     }
     
@@ -488,8 +488,8 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
          */
         protected int getBlockSize(int split) {
             return Math.min(
-                    ExtraMath.roundupRatio(getPoints(), split), 
-                    ExtraMath.roundupRatio(MAX_BLOCK_BYTES, getPointSize(data))
+                    ExtraMath.roundedRatio(getPoints(), split), 
+                    ExtraMath.roundedRatio(MAX_BLOCK_BYTES, getPointSize(data))
             );
         }
         
@@ -685,8 +685,6 @@ public abstract class FFT<Type> extends ParallelObject implements Serializable {
      * </pre>
      */
     public static final boolean BACK = false;
-
- 
 
 }
 

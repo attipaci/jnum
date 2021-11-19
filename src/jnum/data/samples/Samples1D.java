@@ -64,12 +64,6 @@ public abstract class Samples1D extends Data1D implements Image<Index1D>, Serial
     public void setID(String id) { this.id = id; }
    
     @Override
-    public Samples1D copy() {
-        return copy(true);
-    }
-
-    
-    @Override
     public Samples1D copy(boolean withContent) {   
         Samples1D copy = (Samples1D) clone();
         

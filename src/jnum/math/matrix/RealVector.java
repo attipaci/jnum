@@ -28,20 +28,18 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 
 import jnum.Util;
-import jnum.ViewableAsDoubles;
 import jnum.data.index.Index1D;
-import jnum.data.index.IndexedValues;
 import jnum.math.Coordinates;
 import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;
-import jnum.math.RealComponents;
+import jnum.math.RealCoordinates;
 import jnum.util.HashCode;
 
 
 
 
 public class RealVector extends AbstractVector<Double> 
-implements MathVector<Double>, RealComponents, IndexedValues<Index1D, Double>, ViewableAsDoubles {
+implements MathVector<Double>, RealCoordinates {
     /** */
     private static final long serialVersionUID = 1042626482476049050L;
 
@@ -112,6 +110,10 @@ implements MathVector<Double>, RealComponents, IndexedValues<Index1D, Double>, V
         return new RealVector(size);
     }
 
+    @Override
+    public void flip() {
+        super.flip();
+    }
     
     @Override
     public final Double x() { return component[0]; }
@@ -227,17 +229,6 @@ implements MathVector<Double>, RealComponents, IndexedValues<Index1D, Double>, V
         for(int i=size(); --i >= 0; ) component[i] += o.getComponent(i) * factor;		
     }
 
-    @Override
-    public boolean isNull() {
-        for(int i=size(); --i >= 0; ) if(component[i] != 0.0) return false;
-        return true;
-    }
-
-    @Override
-    public void zero() {
-        for(int i=size(); --i >= 0; ) component[i] = 0.0;
-    }
-
 
     @Override
     public void subtract(MathVector<? extends Double> o) {
@@ -261,7 +252,6 @@ implements MathVector<Double>, RealComponents, IndexedValues<Index1D, Double>, V
     public double squareNorm() {
         return dot(this);
     }
-
 
     @Override
     public double distanceTo(MathVector<? extends Double> v) {
@@ -314,32 +304,6 @@ implements MathVector<Double>, RealComponents, IndexedValues<Index1D, Double>, V
         for(int i=values.length; --i >= 0; ) component[i] = values[i];
     }
 
-
-    @Override
-    public Object viewAsDoubles() {
-        return component;
-    }
-
-
-    @Override
-    public void viewAsDoubles(Object view) throws IllegalArgumentException {
-        if(!(view instanceof double[])) throw new IllegalArgumentException("Argument is class " + view.getClass().getSimpleName() + " instead of double[].");
-        double[] d = (double[]) view;
-        if(d.length != size()) throw new ShapeException("Size mismatch. " + d.length + " instead of expected " + size() + ".");
-        
-        System.arraycopy(component, 0, d, 0, size());
-    }
-
-
-    @Override
-    public void createFromDoubles(Object array) throws IllegalArgumentException {
-        if(!(array instanceof double[])) throw new IllegalArgumentException("Argument is class " + array.getClass().getSimpleName() + " instead of double[].");
-     
-        double[] d = (double[]) array;
-        if(d.length != size()) throw new ShapeException("Size mismatch. " + d.length + " instead of expected " + size() + ".");
-        
-        System.arraycopy(d, 0, component, 0, size());
-    }
 
     @Override
     public String toString(int i, NumberFormat nf) {

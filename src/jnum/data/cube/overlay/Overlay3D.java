@@ -61,11 +61,6 @@ public class Overlay3D extends Data3D {
     }
     
     @Override
-    public Overlay3D copy() {
-        return copy(true);
-    }
-    
-    @Override
     public Overlay3D copy(boolean withContent) {
         Overlay3D copy = (Overlay3D) clone();
         if(values != null) {

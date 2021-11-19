@@ -23,9 +23,6 @@
 
 package jnum.data.index;
 
-import jnum.ExtraMath;
-import jnum.NonConformingException;
-import jnum.math.MathVector;
 
 /**
  * An index in 1D space. Essentially a wrapped integer.
@@ -77,51 +74,6 @@ public class Index1D extends AbstractIndex<Index1D> {
     
 
     @Override
-    public void multiplyBy(Index1D factor) {
-        i *= factor.i();
-    }
-
-    @Override
-    public void setProduct(Index1D a, Index1D b) {
-        i = a.i() * b.i();
-    }
-
-    @Override
-    public void setRatio(Index1D numerator, Index1D denominator) {
-        i = ExtraMath.roundupRatio(numerator.i(), denominator.i());
-    }
-
-    @Override
-    public void modulo(Index1D argument) {
-        i %= argument.i();
-    }
-
-    @Override
-    public int getVolume() {
-        return i;
-    }
-
-    @Override
-    public void add(Index1D o) {
-        i += o.i;
-    }
-
-    @Override
-    public void subtract(Index1D o) {
-        i -= o.i;
-    }
-
-    @Override
-    public void setSum(Index1D a, Index1D b) {
-        i = a.i + b.i;
-    }
-
-    @Override
-    public void setDifference(Index1D a, Index1D b) {
-        i = a.i - b.i;
-    }
-
-    @Override
     public int dimension() {
         return 1;
     }
@@ -137,12 +89,5 @@ public class Index1D extends AbstractIndex<Index1D> {
         if(dim == 0) i = value;
         else throw new IndexOutOfBoundsException(Integer.toString(dim));
     }
-
-    @Override
-    public void toVector(MathVector<Double> v) throws NonConformingException {
-        if(v.size() != dimension()) throw new NonConformingException("Size mismatch " + v.size() + " vs. " + dimension());
-        v.setComponent(0, (double) i);
-    }
-
 
 }

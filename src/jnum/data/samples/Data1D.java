@@ -50,7 +50,7 @@ import jnum.parallel.ParallelTask;
 import jnum.text.TableFormatter;
 import jnum.util.HashCode;
 
-public abstract class Data1D extends RegularData<Index1D, Offset1D> implements Values1D, TableFormatter.Entries {
+public abstract class Data1D extends RegularData<Index1D, Position> implements Values1D, TableFormatter.Entries {
 
     private CubicSpline reuseSpline;
     
@@ -72,7 +72,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     public Index1D getIndexInstance() { return new Index1D(); }
     
     @Override
-    public Offset1D getVectorInstance() { return new Offset1D(); }
+    public Position getVectorInstance() { return new Position(); }
      
     @Override
     public final Index1D copyOfIndex(Index1D index) { return index.copy(); }
@@ -139,7 +139,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     }
     
     @Override
-    public final boolean containsIndex(Offset1D index) {
+    public final boolean containsIndex(Position index) {
         return containsIndex((int) Math.round(index.x()));
     }
     
@@ -217,10 +217,10 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
 
     
     @Override
-    public double valueAtIndex(Offset1D ic, SplineSet<Offset1D> splines) { return valueAtIndex(ic.x(), splines.getSpline(0)); }
+    public double valueAtIndex(Position ic, SplineSet<Position> splines) { return valueAtIndex(ic.x(), splines.getSpline(0)); }
     
     @Override
-    public double valueAtIndex(Index1D numerator, Index1D denominator, SplineSet<Offset1D> splines) { 
+    public double valueAtIndex(Index1D numerator, Index1D denominator, SplineSet<Position> splines) { 
         return valueAtIndex((double) numerator.i() / denominator.i(), splines.getSpline(0)); 
     }
     
@@ -251,7 +251,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     }
     
     @Override
-    public final Number nearestValueAtIndex(Offset1D ic) { return nearestValueAtIndex(ic.x()); }
+    public final Number nearestValueAtIndex(Position ic) { return nearestValueAtIndex(ic.x()); }
 
     
     public Number nearestValueAtIndex(double ic) {
@@ -262,7 +262,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     
     // Bilinear interpolation
     @Override
-    public final double linearAtIndex(Offset1D ic) {
+    public final double linearAtIndex(Position ic) {
         return linearAtIndex(ic.x());
     }
     
@@ -290,7 +290,7 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     
 
     @Override
-    public final double quadraticAtIndex(Offset1D ic) {
+    public final double quadraticAtIndex(Position ic) {
         return quadraticAtIndex(ic.x());
     }
     
@@ -317,10 +317,10 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
 
     
     @Override
-    public final double splineAtIndex(final Offset1D ic, SplineSet<Offset1D> splines) {
+    public final double splineAtIndex(final Position ic, SplineSet<Position> splines) {
         return splineAtIndex(ic.x(), splines.getSpline(0));
     }
-    
+
     public final double splineAtIndex(final double ic) {
         synchronized(reuseSpline) { return splineAtIndex(ic, reuseSpline); }
     }
@@ -383,7 +383,25 @@ public abstract class Data1D extends RegularData<Index1D, Offset1D> implements V
     }   
     
   
-  
+    @Override
+    public final Number get(int ... idx) {
+        return get(idx[0]);
+    }
+
+    @Override
+    public final void set(Number value, int ... idx) {
+        set(idx[0], value);
+    }
+    
+    @Override
+    public final double valueAtIndex(double ... idx) {
+        return valueAtIndex(idx[0]);
+    }
+    
+    @Override
+    public double splineAtIndex(SplineSet<Position> splines, double ... idx) {
+        return splineAtIndex(idx[0], splines.getSpline(0));
+    }
     @Override
     public int getPointSmoothOps(int beamPoints, Interpolator.Type interpolationType) {
         return 16 + beamPoints * (16 + getInterpolationOps(interpolationType));

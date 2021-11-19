@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import jnum.NonConformingException;
 import jnum.Unit;
 import jnum.Util;
+import jnum.data.ComponentType;
 import jnum.data.FlagCompanion;
 import jnum.data.Observations;
 import jnum.data.RegularData;
@@ -46,6 +47,7 @@ import jnum.math.Vector2D;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
+
 
 public class Observation2D extends Map2D implements Observations<Data2D>, IndexedExposures<Index2D>, IndexedUncertainties<Index2D> {
     /**
@@ -462,11 +464,9 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         setImage((Image2D) getFastSmoothed(beam, refIndex, step, weight, smoothWeights));
         setExposureImage((Image2D) getExposures().getFastSmoothed(beam, refIndex, step, weight, null));
         setWeightImage(smoothWeights);
-      
+        
         addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
-
-   
     
     @Override
     public void filterCorrect(double underlyingFWHM) {
@@ -590,7 +590,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     @Override
     public boolean read(BasicHDU<?>[] hdu) throws Exception {
         int hasTypes = 0;
-        int completeTypes = TYPE_SIGNAL | TYPE_WEIGHT | TYPE_EXPOSURE;
+        int completeTypes = ComponentType.SIGNAL.mask() | ComponentType.WEIGHT.mask() | ComponentType.EXPOSURE.mask();
 
         Map<String, Unit> localUnits = null;
 
@@ -600,25 +600,25 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
             // Set the data to the first image HDU...
             if(hasTypes == 0) {
                 readData((ImageHDU) hdu[i]);
-                Util.detail(this, "Assuming HDU[" + i + "] provides: " + typeNames[TYPE_SIGNAL]);
-                hasTypes |= TYPE_SIGNAL;
+                Util.detail(this, "Assuming HDU[" + i + "] provides: " + ComponentType.SIGNAL.description());
+                hasTypes |= ComponentType.SIGNAL.mask();
                 continue;
             }
 
             // Try to set the weight & exposure
-            int hduType = guessType(hdu[i].getHeader().getStringValue("EXTNAME"));
+            ComponentType hduType = ComponentType.guessType(hdu[i].getHeader().getStringValue("EXTNAME"));
            
-            if(hduType == TYPE_UNKNOWN) continue;
+            if(hduType == ComponentType.UNKNOWN) continue;
             
             // If we already found a HDU of that type, then do nothing...
-            if((hasTypes & hduType) != 0) continue;
+            if((hasTypes & hduType.mask()) != 0) continue;
             
-            Util.detail(this, "Assuming HDU[" + i + "] provides: " + typeNames[hduType]);
+            Util.detail(this, "Assuming HDU[" + i + "] provides: " + hduType.description());
             
             Image2D image = Image2D.createType(Double.class);
             image.read((ImageHDU) hdu[i], localUnits); 
 
-            hasTypes |= setImage(image, hduType);
+            hasTypes |= setImage(image, hduType).mask();
 
             if(hasTypes == completeTypes) return true;
         }  
@@ -627,18 +627,14 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     }
 
 
-    public int setImage(final Image2D image, int type) {
-        if(type == TYPE_SIGNAL) {
-            setImage(image);
-            return TYPE_SIGNAL;
-        }
-
+    public ComponentType setImage(final Image2D image, ComponentType type) {
         if(!conformsTo(image.sizeX(), image.sizeY())) throw new NonConformingException("Image size mismatch");
 
         switch(type) {
-        case TYPE_WEIGHT: setWeightImage(image); return TYPE_WEIGHT;
-        case TYPE_EXPOSURE: setExposureImage(image); return TYPE_EXPOSURE;
-        case TYPE_NOISE: 
+        case SIGNAL: setImage(image); return ComponentType.SIGNAL;
+        case WEIGHT: setWeightImage(image); return ComponentType.WEIGHT;
+        case EXPOSURE: setExposureImage(image); return ComponentType.EXPOSURE;
+        case NOISE: 
             if(!weight.conformsTo(sizeX(), sizeY())) getWeightImage().setSize(sizeX(), sizeY());
             weight.new Fork<Void>() {
                 @Override
@@ -647,8 +643,8 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
                     weight.set(i, j, 1.0 / (noise * noise));
                 }      
             }.process();
-            return TYPE_WEIGHT;
-        case TYPE_VARIANCE: 
+            return ComponentType.WEIGHT;
+        case VARIANCE: 
             if(!weight.conformsTo(sizeX(), sizeY())) getWeightImage().setSize(sizeX(), sizeY());
             weight.new Fork<Void>() {
                 @Override
@@ -656,8 +652,8 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
                     weight.set(i, j, 1.0 / image.get(i,j).doubleValue());
                 }      
             }.process();
-            return TYPE_WEIGHT;
-        case TYPE_S2N: 
+            return ComponentType.WEIGHT;
+        case S2N: 
             if(!weight.conformsTo(sizeX(), sizeY())) getWeightImage().setSize(sizeX(), sizeY());
             weight.new Fork<Void>() {
                 @Override
@@ -666,63 +662,13 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
                     weight.set(i, j, 1.0 / (noise * noise));
                 }      
             }.process();
-            return TYPE_WEIGHT;
+            return ComponentType.WEIGHT;
+        case UNKNOWN: 
+            return type;
         }
 
-        return TYPE_UNKNOWN;
+        return ComponentType.UNKNOWN;
     }
 
-
-    public static int guessType(String name) {
-        name = name.toLowerCase();     
-
-        if(name.contains("weight")) return TYPE_WEIGHT;
-      
-        // "Signal-to-noise" and variants...
-        if(name.contains("to-noise")) return TYPE_S2N;
-        if(name.contains("to noise")) return TYPE_S2N;
-        if(name.contains("/noise")) return TYPE_S2N;
-        if(name.contains("/ noise")) return TYPE_S2N;
-       
-        if(name.contains("noise")) return TYPE_NOISE;               // noise weight -> weight
-        if(name.contains("rms")) return TYPE_NOISE;
-        if(name.contains("error")) return TYPE_NOISE;
-        if(name.contains("uncertainty")) return TYPE_NOISE;
-        if(name.contains("sensitivity")) return TYPE_NOISE;
-        if(name.contains("depth")) return TYPE_NOISE;
-        if(name.contains("scatter")) return TYPE_NOISE;
-        if(name.contains("sigma")) return TYPE_NOISE;
-
-        if(name.contains("variance")) return TYPE_VARIANCE;
-        if(name.equals("var")) return TYPE_VARIANCE;
-        
-        if(name.contains("s/n")) return TYPE_S2N;
-        if(name.contains("s2n")) return TYPE_S2N;
-        
-        if(name.contains("coverage")) return TYPE_EXPOSURE;         // depth coverage -> noise
-        if(name.contains("time")) return TYPE_EXPOSURE;
-        if(name.contains("exposure")) return TYPE_EXPOSURE;
-
-        if(name.contains("signal")) return TYPE_SIGNAL;
-        if(name.contains("flux")) return TYPE_SIGNAL;
-        if(name.contains("intensity")) return TYPE_SIGNAL;
-        if(name.contains("brightness")) return TYPE_SIGNAL; 
-
-        return TYPE_UNKNOWN;
-    }
-
-   
-    public static final int TYPE_UNKNOWN = 0;
-    public static final int TYPE_SIGNAL = 1<<1;
-    public static final int TYPE_WEIGHT = 1<<2;
-    public static final int TYPE_EXPOSURE = 1<<3;
-    public static final int TYPE_NOISE = 1<<4;
-    public static final int TYPE_VARIANCE = 1<<5;
-    public static final int TYPE_S2N = 1<<6;
-    
-    public static String[] typeNames = { "Unknown", "Signal", "Weight", "Exposure", "Noise", "Variance", "S/N" };
-
-
-   
 
 }

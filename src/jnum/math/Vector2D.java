@@ -89,6 +89,11 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
     }
     
 
+    @Override
+    public final void flip() {
+        super.flip();
+    }
+    
     /**
      * The length of the vector. Same as {@link #abs()}.
      * 
@@ -110,15 +115,6 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
      */
     public final double lengthSquared() { return squareNorm(); }
     
-    /**
-     * Absolute value (radius) of the complex number. Same as {@link #length()}.
-     *
-     * @return the absolute value (i.e. length) of the vector.
-     * 
-     * @see #length()
-     */
-    @Override
-    public final double abs() { return Math.sqrt(squareNorm()); }
 
     @Override
     public final double squareNorm() { return x() * x() + y() * y(); }
@@ -402,8 +398,7 @@ public class Vector2D extends Coordinate2D implements MathVector<Double> {
 
     @Override
     public void fill(Double value) {
-        setX(value);
-        setY(value);
+        fill(value.doubleValue());
     }
 
     @Override

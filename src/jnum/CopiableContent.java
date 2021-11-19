@@ -53,4 +53,9 @@ public interface CopiableContent<Type> extends Copiable<Type> {
      */
 	public Type copy(boolean withContent);
 	
+	@Override
+    public default Type copy() {
+	    return copy(true);
+	}
+	
 }

@@ -207,9 +207,6 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     @Override
     public Matrix copy() { return (Matrix) super.copy(); }
 
-
-    
-
     @Override
     public Double newEntry() { 
         throw new UnsupportedOperationException("Cannot create matrix element object for matrix of double type.");

@@ -24,26 +24,15 @@
 package jnum.data.cube2;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import jnum.data.image.Image2D;
 import jnum.data.index.Index2D;
-import nom.tam.fits.BasicHDU;
-import nom.tam.fits.Fits;
-import nom.tam.fits.FitsException;
-import nom.tam.fits.ImageHDU;
 
 public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializable {
     /**
      * 
      */
     private static final long serialVersionUID = 7816827408682434510L;
-
-    @Override
-    public Image2D1 copy() {
-        return copy(true);
-    }
-
     
     @Override
     public Image2D1 copy(boolean withContent) {   

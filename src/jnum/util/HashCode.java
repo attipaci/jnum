@@ -340,7 +340,7 @@ public final class HashCode {
         
         // Evenly sampled between first and last...
         for(int k=maxSamples; --k >= 0; ) {
-            int m = ExtraMath.roundupRatio(k * (n-1), maxSamples);
+            int m = ExtraMath.roundedRatio(k * (n-1), maxSamples);
             hash ^= values.get(m / values.sizeY(), m % values.sizeY()).hashCode();
         }
        

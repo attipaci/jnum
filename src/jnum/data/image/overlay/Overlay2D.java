@@ -57,12 +57,7 @@ public class Overlay2D extends Data2D {
         
         return super.equals(o);
     }
-   
-    @Override
-    public Overlay2D copy() {
-        return copy(true);
-    }
-    
+
     @Override
     public Overlay2D copy(boolean withContent) {
         Overlay2D copy = (Overlay2D) clone();

@@ -510,7 +510,7 @@ NumberFormating {
      
         int sizeX = 2 * (int)Math.ceil(sigmas * Math.abs(v.x())/grid.pixelSizeX()) + 1;
         int sizeY = 2 * (int)Math.ceil(sigmas * Math.abs(v.y())/grid.pixelSizeY()) + 1;
-
+        
         final Image2D image = Image2D.createType(Double.class, sizeX, sizeY);
         final double sigma1 = majorFWHM / Constant.sigmasInFWHM;
         final double sigma2 = minorFWHM / Constant.sigmasInFWHM;

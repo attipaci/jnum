@@ -48,7 +48,9 @@ public interface Accumulating<T> {
      * 
      * @param x     The value to accumulate into this one.
      */
-    public void accumulate(T x);
+    public default void accumulate(T x) {
+        accumulate(x, 1.0, 1.0);
+    }
     
     /**
      * Accumulates an object of the supported generic type into this one with the specified
@@ -59,7 +61,9 @@ public interface Accumulating<T> {
      * @param w     the external multiplicative weight (in addition to any weight that the
      *              value might carry by itself).
      */
-    public void accumulate(T x, double w);
+    public default void accumulate(T x, double w) {
+        accumulate(x, w, 1.0);
+    }
 
     /**
      * Accumulates an object of the supported generic type into this one with the specified
@@ -79,7 +83,9 @@ public interface Accumulating<T> {
      * successive new accumulation.
      * 
      */
-    public void startAccumulation();
+    public default void startAccumulation() {
+        noData();
+    }
 
     /**
      * Ends the current accumulation, and normalizes the data in this object as appropriate

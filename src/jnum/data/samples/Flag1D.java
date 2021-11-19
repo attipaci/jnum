@@ -57,12 +57,6 @@ public class Flag1D extends FlagCompanion<Index1D> implements Resizable1D {
         copy.data = data.copy(withContent);
         return copy;
     }
-
-    @Override
-    public Flag1D copy() { return copy(true); }
-    
-    
-   
     
     public void destroy() { data.destroy(); }
     

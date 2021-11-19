@@ -78,12 +78,6 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
 
         return super.equals(o);
     }
-
-    @Override
-    public Image2D copy() {
-        return copy(true);
-    }
-
     
     @Override
     public Image2D copy(boolean withContent) {   

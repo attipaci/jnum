@@ -257,7 +257,7 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
     
     protected int getRevisedChunks(int chunks, int minBlockSize) {
         int ops = getTotalOps();
-        return ops <= 0 ? chunks : Math.min(chunks, ExtraMath.roundupRatio(3 + ops, minBlockSize));
+        return ops <= 0 ? chunks : Math.min(chunks, ExtraMath.roundedRatio(3 + ops, minBlockSize));
     }
 
     

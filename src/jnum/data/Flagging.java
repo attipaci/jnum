@@ -60,7 +60,9 @@ public interface Flagging {
      * @see #unflag(long)
      * @see #isUnflagged()
      */
-	public boolean isUnflagged(long pattern);
+	public default boolean isUnflagged(long pattern) {
+	    return !isFlagged(pattern);
+	}
 
     /**
      * Checks if the implementing object has any of the flags set.
@@ -87,7 +89,9 @@ public interface Flagging {
      * @see #unflag(long)
      * @see #isUnflagged(long)
      */
-	public boolean isUnflagged();
+	public default boolean isUnflagged() {
+	    return !isFlagged();
+	}
 	
 	/**
 	 * Sets the specified bit-wise flags on the implementing object.
@@ -122,7 +126,9 @@ public interface Flagging {
 	 * @see #isFlagged()
 	 * 
 	 */
-	public void unflag();
+	public default void unflag() {
+	    unflag(~0L);
+	}
 	
 	/**
 	 * Return all the bitwise flags

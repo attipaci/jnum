@@ -45,6 +45,8 @@ public interface Values {
      * @param b     The second number
      * @return      0 if a == b, -1 if a is smaller, and +1 if a is bigger than b.
      */
-    public int compare(Number a, Number b);
+    public default int compare(Number a, Number b) {
+        return Double.compare(a.doubleValue(), b.doubleValue());
+    }
     
 }

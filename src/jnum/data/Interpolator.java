@@ -253,7 +253,7 @@ public abstract class Interpolator extends ArrayList<Interpolator.Point> {
 		 * @return        the ordinate location of this point.
 		 */
 		public final double ordinate() {
-		    return ordinate();
+		    return ordinate;
 		}
 		
 		/**

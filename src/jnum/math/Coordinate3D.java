@@ -24,24 +24,12 @@
 package jnum.math;
 
 import java.io.Serializable;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.util.stream.IntStream;
 
 import jnum.Copiable;
 import jnum.Unit;
 import jnum.Util;
-import jnum.ViewableAsDoubles;
 import jnum.data.index.Index1D;
-import jnum.data.index.IndexedValues;
-import jnum.fits.FitsToolkit;
-import jnum.text.NumberFormating;
-import jnum.text.Parser;
-import jnum.text.StringParser;
-import nom.tam.fits.Header;
-import nom.tam.fits.HeaderCard;
-import nom.tam.fits.HeaderCardException;
-import nom.tam.util.Cursor;
 
 /**
  * A base class for 3D coordinates of all types. That is basically anything with a triplet of real values.
@@ -49,8 +37,7 @@ import nom.tam.util.Cursor;
  * @author Attila Kovacs
  *
  */
-public class Coordinate3D implements Coordinates<Double>, RealComponents, Serializable, Cloneable, Copiable<Coordinate3D>, 
-ViewableAsDoubles, Parser, NumberFormating, Inversion, ZeroValue {
+public class Coordinate3D implements RealCoordinates, Serializable, Cloneable, Copiable<Coordinate3D> {
     /** */
     private static final long serialVersionUID = 4670218761839380720L;
 
@@ -160,26 +147,6 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion, ZeroValue {
 
 
     @Override
-    public void flip() {
-        x = -x;
-        y = -y;
-        z = -z;
-    }
-
-    @Override
-    public void zero() {
-        x = y = z = 0.0;
-    }
-
-    @Override
-    public boolean isNull() {
-        if(x != 0.0) return false;
-        if(y != 0.0) return false;
-        if(z != 0.0) return false;
-        return true;
-    }
-
-    @Override
     public final Double x() { return x; }
 
     @Override
@@ -274,135 +241,13 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion, ZeroValue {
 
 
     @Override
-    public void set(double... v) {
-        setX(v[0]);
-        if(v.length > 1) setY(v[1]);
-        if(v.length > 2) setY(v[2]);
-    }
-
-    @Override
-    public void set(float... v) {
-        setX(v[0]);
-        if(v.length > 1) setY(v[1]);
-        if(v.length > 2) setZ(v[2]);
-    }
-
-    @Override
-    public void add(double... v) {
-        addX(v[0]);
-        if(v.length > 1) addY(v[1]);
-        if(v.length > 2) addY(v[2]);
-    }
-
-    @Override
-    public void add(float... v) {
-        addX(v[0]);
-        if(v.length > 1) addY(v[1]);
-        if(v.length > 2) addZ(v[2]);
-    }
-
-    @Override
-    public void addScaled(double factor, double... v) {
-        addX(factor * v[0]);
-        if(v.length > 1) addY(factor * v[1]);
-        if(v.length > 2) addZ(factor * v[2]);
-    }
-
-    @Override
-    public void addScaled(double factor, float... v) {
-        addX(factor * v[0]);
-        if(v.length > 1) addY(factor * v[1]);
-        if(v.length > 2) addZ(factor * v[2]);
-    }
-
-    @Override
-    public void subtract(double... v) {
-        addX(-v[0]);
-        if(v.length > 1) addY(-v[1]);
-        if(v.length > 2) addZ(-v[2]);
-    }
-
-    @Override
-    public void subtract(float... v) {
-        addX(-v[0]);
-        if(v.length > 1) addY(-v[1]);
-        if(v.length > 2) addZ(-v[2]);
-    }
-
-
-    @Override
-    public String toString(NumberFormat nf) {
-        return "(" + nf.format(x) + "," + nf.format(y) + "," + nf.format(z) + ")";
-    }
-
-    @Override
-    public String toString() { 
-        return "(" + x + "," + y + "," + z + ")";
-    }
-
-
-    /**
-     * Parses the coordinates from a string representation of these.
-     * 
-     * @param spec      The string beginnign with a 3D coordinate description (normally
-     *                  three comma or space separated values, possibly enclosed in brackets.
-     *                  (See {@link #parse(StringParser)} for more details on the accepted
-     *                  string formats).
-     * @throws NumberFormatException    if the string does not seem to begin with what could
-     *                                  be used as coordinate components.
-     * 
-     * @see #parse(String, ParsePosition)
-     * @see #parse(StringParser)
-     */
-    public final void parse(String spec) {
-        parse(spec, new ParsePosition(0));
-    }
-
-
-    @Override
-    public final void parse(String text, ParsePosition pos) throws IllegalArgumentException {
-        parse(new StringParser(text, pos));
-    }
-
-    /**
-     * Parses text x,y,z 3D coordinate representations that are in the format(s) of:
-     * 
-     * <pre>
-     *     x,y,z / x y z
-     * </pre>
-     * 
-     * or
-     * 
-     * <pre>
-     *     (x,y,z) / (x y z)
-     * </pre>
-     * 
-     * More specifically, the x, y, and z values may be separated either by comma(s) or white space(s) (including 
-     * tabs line breaks, carriage returns), or a combination of both. The pair of values may be bracketed (or 
-     * not). Any number of white spaces may exists between the elements (brackets and pair of values), or 
-     * precede the text element. Thus, the following will parse as a proper x,y,z (1.0,-2.0,3.0) pair:
-     * 
-     * <pre>
-     *     (  \t\n 1.0 ,,, \r , \t -2.0 3.0   \n  )
-     * </pre>
-     * 
-     * @param parser  The string parsing helper object.
-     * @throws NumberFormatException
-     */
-    public void parse(StringParser parser) throws NumberFormatException {
-        boolean isBracketed = false;
-
-        parser.skipWhiteSpaces();
-
-        if(parser.peek() == '(') {
-            isBracketed = true;
-            parser.skip(1);
-            parser.skipWhiteSpaces();
+    public void parseComponent(int index, String text) throws NumberFormatException {
+        switch(index) {
+        case X: parseX(text); break;
+        case Y: parseY(text); break;
+        case Z: parseZ(text); break;
+        default: throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no component " + index);
         }
-
-        parseX(parser.nextToken(Util.getWhiteSpaceChars() + ","));
-        parseY(parser.nextToken(Util.getWhiteSpaceChars() + ","));
-        parseZ(parser.nextToken(Util.getWhiteSpaceChars() + "," + (isBracketed ? "" : ")")));
     }
 
     protected void parseX(String token) throws NumberFormatException {
@@ -417,61 +262,10 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion, ZeroValue {
         setY(Double.parseDouble(token));
     }
 
-    @Override
-    public final void createFromDoubles(Object array) throws IllegalArgumentException {
-        if(!(array instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
-        double[] components = (double[]) array;
-        if(components.length != 3) throw new IllegalArgumentException("argument double[] array is to small.");
-        set(components[0], components[1], components[2]);
-    }
-
-
-    @Override
-    public final void viewAsDoubles(Object view) throws IllegalArgumentException {
-        if(!(view instanceof double[])) throw new IllegalArgumentException("argument is not a double[].");
-        double[] components = (double[]) view;
-        if(components.length != 3) throw new IllegalArgumentException("argument double[] array is to small.");
-        components[0] = x;
-        components[1] = y;
-        components[3] = z;
-    }
-
-
-    @Override
-    public final double[] viewAsDoubles() {
-        return new double[] { x, y, z };       
-    }
-
-
-    public void editHeader(Header header, String keyStem, String alt) throws HeaderCardException {
-        Cursor<String, HeaderCard> c = FitsToolkit.endOf(header);
-        c.add(new HeaderCard(keyStem + "1" + alt, x, "The reference x coordinate in SI units."));
-        c.add(new HeaderCard(keyStem + "2" + alt, y, "The reference y coordinate in SI units."));
-        c.add(new HeaderCard(keyStem + "3" + alt, z, "The reference z coordinate in SI units."));
-    }
-
-
-    public void parseHeader(Header header, String keyStem, String alt, Coordinate3D defaultValue) {
-        x = header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x());
-        y = header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.y());
-        z = header.getDoubleValue(keyStem + "3" + alt, defaultValue == null ? 0.0 : defaultValue.z());
-    }
-
 
     @Override
     public final int size() {
         return 3;
-    }
-
-    @Override
-    public final int capacity() {
-        return 3;
-    }
-
-
-    @Override
-    public final int dimension() {
-        return 1;
     }
 
 
@@ -480,64 +274,6 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion, ZeroValue {
         size.set(3);
         return size;
     }
-
-    @Override
-    public int getSize(int i) {
-        if(i != 0) throw new IllegalArgumentException("there is no dimension " + i);
-        return 3;
-    }
-
-    @Override
-    public final Double get(Index1D index) {
-        return getComponent(index.i());
-    }
-
-
-    @Override
-    public void set(Index1D index, Double value) {
-        setComponent(index.i(), value);
-    }
-
-
-    @Override
-    public final Index1D getIndexInstance() {
-        return new Index1D();
-    }
-
-
-    @Override
-    public final Index1D copyOfIndex(Index1D index) {
-        return index.copy();
-    }
-
-
-    @Override
-    public final boolean conformsTo(Index1D size) {
-        return size.i() == 3;
-    }
-
-
-    @Override
-    public final boolean conformsTo(IndexedValues<Index1D, ?> data) {
-        return data.getSize().i() == 3;
-    }
-
-
-    @Override
-    public final String getSizeString() {
-        return "[3]";
-    }
-
-
-    @Override
-    public final boolean containsIndex(Index1D index) {
-        int i = index.getValue(0);
-        if(i == X) return true;
-        if(i == Y) return true;
-        return false;
-    }
-
-
 
     @Override
     public final Double getComponent(final int index) {
@@ -558,7 +294,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion, ZeroValue {
         default: throw new IndexOutOfBoundsException(getClass().getSimpleName() + " has no component " + index);
         }
     }
-
+    
     /**
      * Creates an array of 3D coordinates, with each element initialized to a default (zero) coordinate
      * intance.
@@ -617,7 +353,7 @@ ViewableAsDoubles, Parser, NumberFormating, Inversion, ZeroValue {
                 + Util.s[decimals].format(coords.z / unit.value()) + " " + unit.name();
     }
 
-    private static final Index1D size = new Index1D(2);
+    private static final Index1D size = new Index1D(3);
 
     /** the index of the <i>x</i>-type (first) coordinate */
     public static final int X = 0;    

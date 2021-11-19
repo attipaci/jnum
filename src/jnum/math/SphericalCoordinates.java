@@ -747,12 +747,11 @@ public class SphericalCoordinates extends Coordinate2D implements Metric<Spheric
 		if(alt.length() == 0) c.add(new HeaderCard("WCSAXES", 2, "Number of celestial coordinate axes."));
 	}
 
-	@Override
+
 	public void parseHeader(Header header, String keyStem, String alt, Coordinate2D defaultValue) {
 		setLongitude(header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.x()) * Unit.deg);
 		setLatitude(header.getDoubleValue(keyStem + "2" + alt, defaultValue == null ? 0.0 : defaultValue.x()) * Unit.deg);
-		
-		
+	
 		//String name = header.getStringValue("WCSNAME");
 		//if(name != null) getCoordinateSystem().name = name;
 	}

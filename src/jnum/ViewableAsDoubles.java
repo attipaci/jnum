@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2014 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -26,7 +26,7 @@ package jnum;
 
 /**
  * A simple interface for objects that can be represented as an array, of 1 or more dimensions, of primitive 
- * double-precission values.
+ * double-precision values.
  * 
  * @author Attila Kovacs
  *
