@@ -26,6 +26,8 @@ package jnum.math;
 import java.util.stream.Collector;
 
 import jnum.NonConformingException;
+import jnum.PointOp;
+import jnum.data.index.Index1D;
 import jnum.math.matrix.AbstractMatrix;
 
 /**
@@ -161,6 +163,26 @@ public interface MathVector<T> extends Coordinates<T>, AbsoluteValue, Normalizab
         scale(-1.0);
     }
 
+    @Override
+    public default int getParallel() {
+        return 1;
+    }
+    
+    @Override
+    public default boolean isValid(Index1D index) {
+        return true;
+    }
+
+    @Override
+    public default <ReturnType> ReturnType loop(PointOp<Index1D, ReturnType> op, Index1D from, Index1D to) { 
+        Index1D index = new Index1D();
+        for(int i=dimension(); --i >= 0; ) {
+            index.set(i);
+            op.process(index);
+        }
+        return op.getResult();
+    }
+    
     /**
      * The summing collector for classes that implement this interface, for use
      * with streams.

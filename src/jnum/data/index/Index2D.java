@@ -24,7 +24,10 @@
 
 package jnum.data.index;
 
+import jnum.ExtraMath;
+import jnum.PointOp;
 import jnum.math.Vector2D;
+
 
 /**
  * An index in 2D space, such as (<i>i</i>, <i>j</i>).
@@ -32,7 +35,7 @@ import jnum.math.Vector2D;
  * @author Attila Kovacs
  *
  */
-public class Index2D extends AbstractIndex<Index2D> {
+public class Index2D extends Index<Index2D> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -364862939591997831L;
@@ -138,5 +141,87 @@ public class Index2D extends AbstractIndex<Index2D> {
         else if(dim == 1) j = value;
         else throw new IndexOutOfBoundsException(Integer.toString(dim));        
     }
+    
+    
+    @Override
+    public <ReturnType> ReturnType loop(final PointOp<Index2D, ReturnType> op, Index2D to) {
+        final Index2D index = new Index2D();
+        for(int i1=to.i; --i1 >= i; ) {
+            for(int j1=to.j; --j1 >= j; ) {
+                index.set(i1, j1);
+                op.process(index);
+                if(op.exception != null) return null;
+            }
+        }
+        return op.getResult();
+    }
+    
+    // --------------------------------------------------------------------------------------
+    // Below are more efficient specific implementations
+    // --------------------------------------------------------------------------------------
+    
+    @Override
+    public void fill(int value) {
+        i = j = value;
+    }
+    
+    @Override
+    public void setReverseOrderOf(Index2D other) {
+        i = other.j;
+        j = other.i;
+    }
+    
+    @Override
+    public void setSum(Index2D a, Index2D b) {
+        i = a.i + b.i;
+        j = a.j + b.j;
+    }
+    
+    @Override
+    public void setDifference(Index2D a, Index2D b) {
+        i = a.i - b.i;
+        j = a.j - b.j;
+    }
+    
+    @Override
+    public void setProduct(Index2D a, Index2D b) {
+        i = a.i * b.i;
+        j = a.j * b.j;
+    }
+    
+    @Override
+    public void setRatio(Index2D a, Index2D b) {
+        i = a.i / b.i;
+        j = a.j / b.j;
+    }
+    
+    @Override
+    public void setRoundedRatio(Index2D a, Index2D b) {
+        i = ExtraMath.roundedRatio(a.i, b.i);
+        j = ExtraMath.roundedRatio(a.j, b.j);
+    }
+    
+    @Override
+    public void modulo(Index2D argument) {
+        i = i % argument.i;
+        j = j % argument.j;
+    }
+    
+    @Override
+    public void limit(Index2D max) {  
+        i = Math.min(i, max.i);
+        j = Math.min(j, max.j);
+    }
 
+    @Override
+    public void ensure(Index2D min) {
+        i = Math.max(i, min.i);
+        j = Math.max(j, min.j);        
+    }
+    
+    @Override
+    public int getVolume() {
+        return i * j;
+    }
+ 
 }

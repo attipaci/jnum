@@ -29,6 +29,7 @@ import jnum.data.FlagCompanion;
 import jnum.data.Resizable;
 import jnum.data.index.Index2D;
 import jnum.math.Coordinate2D;
+import jnum.parallel.ParallelPointOp;
 
 
 
@@ -123,23 +124,24 @@ public class Flag2D extends FlagCompanion<Index2D> implements Resizable<Index2D>
     }
 
  
-    public void grow(final int pattern, final Coordinate2D indexRadius) {   
-        data.new Fork<Void>() {
+    public void grow(final int pattern, final Coordinate2D indexRadius) { 
+       
+        data.smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                if(!isClear(i, j, pattern)) return;
+            public void process(Index2D point) {
+                if(isClear(point, pattern)) return;
                 
-                final int fromi1 = Math.max(0, (int) Math.floor(i - indexRadius.x()));
-                final int fromj1 = Math.max(0, (int) Math.floor(j - indexRadius.y()));
-                final int toi1 = Math.max(sizeX(), (int) Math.ceil(i + indexRadius.x()));
-                final int toj1 = Math.max(sizeY(), (int) Math.ceil(j + indexRadius.y()));
+                final int fromi1 = Math.max(0, (int) Math.floor(point.i() - indexRadius.x()));
+                final int fromj1 = Math.max(0, (int) Math.floor(point.j() - indexRadius.y()));
+                final int toi1 = Math.max(sizeX(), (int) Math.ceil(point.i() + indexRadius.x()));
+                final int toj1 = Math.max(sizeY(), (int) Math.ceil(point.j() + indexRadius.y()));
                     
                 // TODO for sheared grids...
                 for(int i1 = toi1; --i1 >= fromi1; ) for(int j1 = toj1; --j1 >= fromj1; ) 
-                    if(ExtraMath.hypot((i-i1) / indexRadius.x(), (j-j1) / indexRadius.y()) <= 1) 
+                    if(ExtraMath.hypot((point.i()-i1) / indexRadius.x(), (point.j()-j1) / indexRadius.y()) <= 1) 
                         setBits(i1, j1, pattern);
             }
-        }.process();
+        });
     }
     
 

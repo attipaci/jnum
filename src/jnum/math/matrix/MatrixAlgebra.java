@@ -23,6 +23,7 @@
 
 package jnum.math.matrix;
 
+import jnum.PointOp;
 import jnum.data.index.Index2D;
 import jnum.data.index.IndexedEntries;
 import jnum.math.DotProduct;
@@ -297,5 +298,15 @@ public interface MatrixAlgebra<MatrixType, ElementType> extends IndexedEntries<I
      */
     public AbstractVector<ElementType> dot(RealVector v) throws ShapeException;
        
+ 
+    @Override
+    public default <ReturnType> ReturnType loop(PointOp<Index2D, ReturnType> op, Index2D from, Index2D to) { 
+        Index2D index = new Index2D();
+        for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) {
+            index.set(i, j);
+            op.process(index);
+        }
+        return op.getResult();
+    }
     
 }

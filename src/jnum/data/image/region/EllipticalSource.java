@@ -26,6 +26,7 @@ package jnum.data.image.region;
 import jnum.Constant;
 import jnum.ExtraMath;
 import jnum.IncompatibleTypesException;
+import jnum.PointOp;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.DataPoint;
@@ -35,6 +36,7 @@ import jnum.data.image.IndexBounds2D;
 import jnum.data.image.Map2D;
 import jnum.data.image.Values2D;
 import jnum.data.image.overlay.Viewport2D;
+import jnum.data.index.Index2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
@@ -223,18 +225,24 @@ public class EllipticalSource extends GaussianSource {
             
             final Viewport2D view = getViewer(image);
    
-            view.new Loop<Void>() {
+            view.loop(new PointOp<Index2D, Void>() {
 
-                private double m2c = 0.0, m2s = 0.0, sumw = 0.0;
-                private Vector2D v = new Vector2D();
+                private double m2c, m2s, sumw;
+                private Vector2D v;
 
                 @Override
-                public void process(int i, int j) {     
-                    if(!view.isValid(i, j)) return;
+                protected void init() {
+                    m2c = m2s = sumw = 0.0;
+                    v = new Vector2D();
+                }
+                
+                @Override
+                public void process(Index2D index) {     
+                    if(!view.isValid(index)) return;
                        
-                    double w = view.get(i,j).doubleValue();
+                    double w = view.get(index).doubleValue();
                      
-                    v.set(i + view.fromi(), j + view.fromj());
+                    v.set(index.i() + view.fromi(), index.j() + view.fromj());
                     getGrid().toOffset(v);
                     v.subtract(center);
       
@@ -257,7 +265,7 @@ public class EllipticalSource extends GaussianSource {
                 }      
                 
                 @Override
-                protected Void getResult() {  
+                public Void getResult() {  
                     if(sumw > 0.0) {              
                         m2c *= 1.0 / sumw;
                         m2s *= 1.0 / sumw;
@@ -274,8 +282,10 @@ public class EllipticalSource extends GaussianSource {
                     }
                     return null;
                 }
+
                 
-            }.process();
+                
+            });
             
             getFWHM().scale(1.0 / maxRScale);
             

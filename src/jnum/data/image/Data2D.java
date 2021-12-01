@@ -33,13 +33,11 @@ import jnum.data.RegularData;
 import jnum.data.SplineSet;
 import jnum.data.DataCrawler;
 import jnum.data.CubicSpline;
-import jnum.data.WeightedPoint;
 import jnum.data.index.Index2D;
 import jnum.math.IntRange;
 import jnum.math.Range;
 import jnum.math.Vector2D;
 import jnum.parallel.ParallelPointOp;
-import jnum.parallel.ParallelTask;
 import jnum.util.HashCode;
 
 
@@ -82,9 +80,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         default: throw new IllegalArgumentException("there is no dimension " + i);
         }
     }
-    
-    @Override
-    public final Index2D copyOfIndex(Index2D index) { return new Index2D(index.i(), index.j()); }
     
     @Override
     public Image2D newImage() {
@@ -265,23 +260,29 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         class Moments {
             double m0 = 0.0, mc = 0.0, c2 = 0.0;
         }
-
-        Fork<Moments> moments = new Fork<Moments>() {
+        
+        ParallelPointOp<Index2D, Moments> op = new ParallelPointOp<Index2D, Moments>() {
             private Moments values;
             private Vector2D v;
-
+            
             @Override
-            public void init() {
-                super.init();
-                values = new Moments();
-                v = new Vector2D();
+            public void mergeResult(Moments localResult) {
+                values.m0 += localResult.m0;
+                values.mc += localResult.mc;
+                values.c2 += localResult.c2;
             }
 
             @Override
-            protected void process(int i, int j) {
-                if(!isValid(i, j)) return;
+            protected void init() { 
+                values = new Moments();
+                v = new Vector2D();
+             }
 
-                v.set(i,  j);
+            @Override
+            public void process(Index2D point) { 
+                if(!isValid(point)) return;
+
+                v.set(point.i(), point.j());
                 grid.toOffset(v);
                 v.subtract(centerOffset);
 
@@ -289,7 +290,7 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
 
                 if(r > radialRange.max()) return;
 
-                double p = get(i,j).doubleValue();
+                double p = get(point).doubleValue();
 
                 values.m0 += Math.abs(p);
 
@@ -303,23 +304,18 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
             }
 
             @Override
-            public Moments getLocalResult() { return values; }
-
+            public Moments getResult() { 
+                return values;
+            }
+            
             @Override
-            public Moments getResult() {
-                Moments global = new Moments();
-                for(ParallelTask<Moments> worker : getWorkers()) {
-                    Moments local = worker.getLocalResult();
-                    global.m0 += local.m0;
-                    global.mc += local.mc;
-                    global.c2 += local.c2;
-                }
-                return global;
-            }  
+            public int numberOfOperations() {
+                return 42;  // more or less...
+            }
+            
         };
-
-        moments.process();
-        Moments values = moments.getResult();
+        
+        Moments values = smartFork(op);
 
         if(values.m0 > 0.0) return new DataPoint(values.mc / values.m0, Math.sqrt(values.c2) / values.m0);
         return new DataPoint(); 
@@ -646,157 +642,8 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     }
     
     
-    @Override
-    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, Index2D from, Index2D to) {
-        
-        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
-            private ParallelPointOp<Number, ReturnType> localOp;
-            
-            @Override
-            public void init() {
-                super.init();
-                localOp = op.newInstance();
-            }
-            
-            @Override
-            protected void process(int i, int j) {
-                if(isValid(i, j)) localOp.process(get(i, j));
-            }
-              
-            @Override
-            public ReturnType getLocalResult() { return localOp.getResult(); }
-            
-
-            @Override
-            public ReturnType getResult() { 
-                ParallelPointOp<Number, ReturnType> globalOp = op.newInstance();
-                
-                for(ParallelTask<ReturnType> worker : getWorkers()) {
-                    globalOp.mergeResult(worker.getLocalResult());
-                }
-                return globalOp.getResult();
-            }
-            
-        };
-        
-        fork.process();
-        return fork.getResult();
-    }
-    
-
-    @Override
-    public <ReturnType> ReturnType fork(final ParallelPointOp<Index2D, ReturnType> op, Index2D from, Index2D to) {
-      
-        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
-            private ParallelPointOp<Index2D, ReturnType> localOp;
-            private Index2D index;
-            
-            @Override
-            public void init() {
-                super.init();
-                index = new Index2D();
-                localOp = op.newInstance();
-            }
-            
-            @Override
-            protected void process(int i, int j) {
-                index.set(i, j); 
-                localOp.process(index);
-            }
-          
-            @Override
-            public ReturnType getLocalResult() { return localOp.getResult(); }
-            
-
-            @Override
-            public ReturnType getResult() { 
-                ParallelPointOp<Index2D, ReturnType> globalOp = op.newInstance();
-                
-                for(ParallelTask<ReturnType> worker : getWorkers()) {
-                    globalOp.mergeResult(worker.getLocalResult());
-                }
-                return globalOp.getResult();
-            }
-            
-        };
-        
-        fork.process();
-        return fork.getResult();
-    }
+   
 
     
-
-
-
-    public abstract class Fork<ReturnType> extends AbstractFork<ReturnType> {                   
-        public Fork() {}
-        
-        public Fork(Index2D from, Index2D to) { super(from, to); }
-        
-        @Override
-        protected void processChunk(int index, int threadCount) {
-            for(int i=from.i() + index; i < to.i(); i += threadCount) {
-                processX(i);
-            }
-        }
-
-        protected void processX(int i) {
-            for(int j=to.j(); --j >= from.j(); ) process(i, j);
-        }
-
-        @Override
-        protected int getRevisedChunks(int chunks, int minBlockSize) {
-            return super.getRevisedChunks(getPointOps(), minBlockSize);
-        }
-
-        @Override
-        protected int getTotalOps() {
-            return 3 + capacity() * getPointOps();
-        }
-
-        protected int getPointOps() {
-            return 10;
-        }  
-
-        protected abstract void process(int i, int j);
-    } 
-
-
-
-
-    public abstract class Loop<ReturnType> extends AbstractLoop<ReturnType> {     
-        public Loop() {}
-        
-        public Loop(Index2D from, Index2D to) { super(from, to); }
-
-        @Override
-        public ReturnType process() {
-            for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) process(i, j);
-            return getResult();
-        }
-
-        protected abstract void process(int i, int j);
-
-        @Override
-        protected ReturnType getResult() { return null; }
-    }
-
-
-    public abstract class AveragingFork extends Fork<WeightedPoint> {
-        public AveragingFork() {}
-        
-        public AveragingFork(Index2D from, Index2D to) { super(from, to); }
-        
-        @Override
-        public WeightedPoint getResult() {
-            WeightedPoint ave = new WeightedPoint();      
-            for(ParallelTask<WeightedPoint> task : getWorkers()) ave.accumulate(task.getLocalResult(), 1.0);
-            if(ave.weight() > 0.0) ave.endAccumulation();
-            return ave;
-        }
-    }
-
-
-
 
 }

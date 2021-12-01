@@ -35,6 +35,7 @@ import jnum.data.image.overlay.Transposed2D;
 import jnum.data.index.Index2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
+import jnum.parallel.ParallelPointOp;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
@@ -85,7 +86,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         
         if(capacity() > 0) {
             copy.setSize(sizeX(), sizeY());
-            if(withContent) copy.paste(this, true);
+            if(withContent) copy.copyOf(this, true);
         }
         
         return copy;
@@ -122,13 +123,14 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
 
     public void setData(final Values2D values) {
         setSize(values.sizeX(), values.sizeY());
-        new Fork<Void>() {
+        
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                if(values.isValid(i, j)) set(i, j, values.get(i, j));
-                else discard(i, j);
+            public void process(Index2D point) {
+                if(values.isValid(point)) set(point, values.get(point));
+                else discard(point);        
             }
-        }.process();
+        });
     }
     
     
@@ -147,69 +149,69 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     
     public synchronized void setData(final double[][] data) { 
         setSize(data.length, data[0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                set(i, j, data[i][j]);
-            }
-        }.process();
+            public void process(Index2D point) {
+                set(point, data[point.i()][point.j()]);
+            } 
+        });
         recordNewData("double[][]");
     }
 
 
     public synchronized void setData(final float[][] data) {
         setSize(data.length, data[0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                set(i, j, data[i][j]);
-            }
-        }.process();
+            public void process(Index2D point) {
+                set(point, data[point.i()][point.j()]);
+            } 
+        });
         recordNewData("float[][]");
     }
 
     public synchronized void setData(final long[][] data) {
         setSize(data.length, data[0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                set(i, j, data[i][j]);
-            }
-        }.process();
+            public void process(Index2D point) {
+                set(point, data[point.i()][point.j()]);
+            } 
+        });
         recordNewData("long[][]");
     }
 
 
     public synchronized void setData(final int[][] data) {
         setSize(data.length, data[0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                set(i, j, data[i][j]);
-            }
-        }.process();
+            public void process(Index2D point) {
+                set(point, data[point.i()][point.j()]);
+            } 
+        });
         recordNewData("int[][]");
     }
 
     public synchronized void setData(final short[][] data) {
         setSize(data.length, data[0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                set(i, j, data[i][j]);
-            }
-        }.process();
+            public void process(Index2D point) {
+                set(point, data[point.i()][point.j()]);
+            } 
+        });
         recordNewData("short[][]");
     }
 
     public synchronized void setData(final byte[][] data) {
         setSize(data.length, data[0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                set(i, j, data[i][j]);
-            }
-        }.process();
+            public void process(Index2D point) {
+                set(point, data[point.i()][point.j()]);
+            } 
+        });
         recordNewData("byte[][]");
     }
 
@@ -235,7 +237,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     
     public void setRowColData(Values2D image) {
         setSize(image.sizeY(), image.sizeX());
-        paste(new Transposed2D(image), true);
+        copyOf(new Transposed2D(image), true);
     }
     
     public Transposed2D getTransposed() {
@@ -257,7 +259,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         if(elementType.equals(this.getElementType())) {
             if(Util.equals(blankingValue, getInvalidValue())) return copy(true);
             Image2D image = copy(false);
-            image.paste(this, true);
+            image.copyOf(this, true);
             return image;
         }
         
@@ -456,6 +458,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         DoubleStream stream() {
             return Stream.of(data).flatMapToDouble(DoubleStream::of);
         }
+
         
     }
     

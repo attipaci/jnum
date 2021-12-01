@@ -141,12 +141,12 @@ public class Flagged2D extends Overlay2D {
 
 
     public void flag(final long pattern) {
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                flag(i, j, pattern);
+            public void process(Index2D index) {
+                flag(index, pattern);
             }
-        }.process();
+        });
     }
 
     public void flag() {
@@ -154,12 +154,12 @@ public class Flagged2D extends Overlay2D {
     }
 
     public void unflag(final long pattern) {
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                unflag(i, j, pattern);
+            public void process(Index2D index) {
+                unflag(index, pattern);
             }
-        }.process();
+        });
     }
 
     public void unflag() {

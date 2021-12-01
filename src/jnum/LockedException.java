@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2018 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -31,7 +31,7 @@ package jnum;
  * @author Attila Kovacs
  *
  */
-public class LockedException extends Exception {
+public class LockedException extends IllegalStateException {
 
 	private static final long serialVersionUID = 5645978500509374376L;
 

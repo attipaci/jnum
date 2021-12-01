@@ -37,6 +37,7 @@ import jnum.math.LinearAlgebra;
 import jnum.math.MathVector;
 import jnum.math.Metric;
 import jnum.math.Scalable;
+import jnum.parallel.ParallelObject;
 
 
 /**
@@ -53,14 +54,13 @@ import jnum.math.Scalable;
  *
  * @param <T>   The generic type of the matrix elements in this diagonal matrix.
  */
-public abstract class DiagonalMatrix<T> implements SquareMatrixAlgebra<DiagonalMatrix<? extends T>, T>,
+public abstract class DiagonalMatrix<T> extends ParallelObject implements SquareMatrixAlgebra<DiagonalMatrix<? extends T>, T>,
 Cloneable, CopiableContent<DiagonalMatrix<T>> {
 
     @Override
     @SuppressWarnings("unchecked")
     public DiagonalMatrix<T> clone() {
-        try { return (DiagonalMatrix<T>) super.clone(); }
-        catch(CloneNotSupportedException e) { return null; }
+        return (DiagonalMatrix<T>) super.clone();
     }
 
     @Override
@@ -145,9 +145,6 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
 
     @Override
     public final Index2D getIndexInstance() { return new Index2D(); }
-  
-    @Override
-    public final Index2D copyOfIndex(Index2D index) { return index.copy(); }
 
     @Override
     public final boolean conformsTo(Index2D size) { return isSize(size.i(), size.j()); }
@@ -281,7 +278,6 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         return true;
     }
     
-
     @Override
     public void scale(double factor) {
         for(int i=size(); --i >= 0; ) if(!isNullDiagonal(i)) scaleDiagonal(i, factor);
@@ -641,6 +637,11 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         @Override
         public final Double get(int i, int j) {
             return (i == j) ? getDiagonal(i) : 0.0;
+        }
+        
+        @Override
+        public boolean isValid(Index2D index) {
+            return true;
         }
    
         @Override
@@ -1120,7 +1121,11 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
             return (i == j) ? getDiagonal(i) : null;
         }
    
-
+        @Override
+        public boolean isValid(Index2D index) {
+            return get(index) != null;
+        }
+        
         @Override
         public final T getDiagonal(int i) { return data[i]; }
 

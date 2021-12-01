@@ -23,13 +23,16 @@
 
 package jnum.data.index;
 
+import jnum.ExtraMath;
+import jnum.PointOp;
+
 /**
  * An index in 3D space, such as (<i>i</i>, <i>j</i>, <i>k</i>).
  * 
  * @author Attila Kovacs
  *
  */
-public class Index3D extends AbstractIndex<Index3D> {
+public class Index3D extends Index<Index3D> {
     /**
      * 
      */
@@ -168,5 +171,96 @@ public class Index3D extends AbstractIndex<Index3D> {
         }
     }
 
+
+    @Override
+    public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op, Index3D to) {
+        final Index3D index = new Index3D();
+        for(int i1=to.i; --i1 >= i; ) {
+            for(int j1=to.j; --j1 >= j; ) for(int k1=to.k; --k1 >= k; ) {
+                index.set(i1,  j1,  k1);
+                op.process(index);
+                if(op.exception != null) return null;
+            }
+        }
+        return op.getResult();
+    }
+    
+    
+ // --------------------------------------------------------------------------------------
+    // Below are more efficient specific implementations
+    // --------------------------------------------------------------------------------------
+    
+    @Override
+    public void fill(int value) {
+        i = j = k = value;
+    }
+    
+    @Override
+    public void setReverseOrderOf(Index3D other) {
+        i = other.k;
+        j = other.j;
+        k = other.i;
+    }
+    
+    @Override
+    public void setSum(Index3D a, Index3D b) {
+        i = a.i + b.i;
+        j = a.j + b.j;
+        k = a.k + b.k;
+    }
+    
+    @Override
+    public void setDifference(Index3D a, Index3D b) {
+        i = a.i - b.i;
+        j = a.j - b.j;
+        k = a.k - b.k;
+    }
+    
+    @Override
+    public void setProduct(Index3D a, Index3D b) {
+        i = a.i * b.i;
+        j = a.j * b.j;
+        k = a.k * b.k;
+    }
+    
+    @Override
+    public void setRatio(Index3D a, Index3D b) {
+        i = a.i / b.i;
+        j = a.j / b.j;
+        k = a.k / b.k;
+    }
+    
+    @Override
+    public void setRoundedRatio(Index3D a, Index3D b) {
+        i = ExtraMath.roundedRatio(a.i, b.i);
+        j = ExtraMath.roundedRatio(a.j, b.j);
+        k = ExtraMath.roundedRatio(a.k, b.k);
+    }
+    
+    @Override
+    public void modulo(Index3D argument) {
+        i = i % argument.i;
+        j = j % argument.j;
+        k = k % argument.k;
+    }
+    
+    @Override
+    public void limit(Index3D max) {  
+        i = Math.min(i, max.i);
+        j = Math.min(j, max.j);
+        k = Math.min(j, max.k);
+    }
+
+    @Override
+    public void ensure(Index3D min) {
+        i = Math.max(i, min.i);
+        j = Math.max(j, min.j);
+        k = Math.max(k, min.k);
+    }
+    
+    @Override
+    public int getVolume() {
+        return i * j * k;
+    }
   
 }

@@ -157,6 +157,9 @@
 	algebra. The prior behavior, equivalent to calculating a real ratio, 
 	and rounding it for the result, is now renamed setRoundedRatio().
 	
+	[CHANGE] {LockedException} Changed to a runtime exception, so it need
+	no be caught (unless of course you care to)
+
 	[DEPRECATE] {SimpleMatrix} {Precession} {Precessing} These classes
 	and interfaces are no longer necessary and better implementations
 	are available to perform the functions they were meant to.

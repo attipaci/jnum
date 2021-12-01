@@ -23,6 +23,11 @@
 
 package jnum.data.index;
 
+import jnum.ExtraMath;
+import jnum.PointOp;
+import jnum.parallel.ParallelPointOp;
+
+
 
 /**
  * An index in 1D space. Essentially a wrapped integer.
@@ -30,7 +35,7 @@ package jnum.data.index;
  * @author Attila Kovacs
  *
  */
-public class Index1D extends AbstractIndex<Index1D> {
+public class Index1D extends Index<Index1D> {
     /**
      * 
      */
@@ -89,5 +94,132 @@ public class Index1D extends AbstractIndex<Index1D> {
         if(dim == 0) i = value;
         else throw new IndexOutOfBoundsException(Integer.toString(dim));
     }
+    
+    @Override  
+    public <ReturnType> ReturnType loop(final PointOp<Index1D, ReturnType> op, Index1D to) {
+        final Index1D index = new Index1D();
+        for(int i1=to.i; --i1 >= i; ) {
+            index.set(i1);
+            op.process(index);
+            if(op.exception != null) return null;
+        }
+        return op.getResult();
+    }
+    
+    @Override
+    public <ReturnType> ReturnType fork(final ParallelPointOp<Index1D, ReturnType> op, Index1D to) {
+        Fork<ReturnType> f = new Fork<>(op, to);
+        f.process();
+        return f.getResult();
+    }
+    
+    // --------------------------------------------------------------------------------------
+    // Below are more efficient specific implementations
+    // --------------------------------------------------------------------------------------
+    
+    @Override
+    public void fill(int value) {
+        i = value;
+    }
+    
+    @Override
+    public void setReverseOrderOf(Index1D other) {
+        i = other.i;
+    }
+    
+    @Override
+    public void setSum(Index1D a, Index1D b) {
+        i = a.i + b.i;
+    }
+    
+    @Override
+    public void setDifference(Index1D a, Index1D b) {
+        i = a.i - b.i;
+    }
+    
+    @Override
+    public void setProduct(Index1D a, Index1D b) {
+        i = a.i * b.i;
+    }
+    
+    @Override
+    public void setRatio(Index1D a, Index1D b) {
+        i = a.i / b.i;
+    }
+    
+    @Override
+    public void setRoundedRatio(Index1D a, Index1D b) {
+        i = ExtraMath.roundedRatio(a.i, b.i);
+    }
+    
+    @Override
+    public void modulo(Index1D argument) {
+        i = i % argument.i;
+    }
+    
+    @Override
+    public void limit(Index1D max) {  
+        i = Math.min(i, max.i);
+    }
+
+    @Override
+    public void ensure(Index1D min) {
+        i = Math.max(i, min.i);       
+    }
+    
+    @Override
+    public int getVolume() {
+        return i;
+    }
+    
+    public class Fork<ReturnType> extends Task<ReturnType> { 
+        private Index1D point; 
+        private int to;
+        private ParallelPointOp<Index1D, ReturnType> op;
+        
+        public Fork(ParallelPointOp<Index1D, ReturnType> op, Index1D to) { 
+            this(op, to.i);
+        }
+        
+        public Fork(ParallelPointOp<Index1D, ReturnType> op, int to) { 
+            this.op = op;
+            this.to = to;    
+        }
+        
+        @Override
+        public void init() {
+            super.init();
+            point = new Index1D();
+        }
+        
+        @Override
+        protected void processChunk(int index, int threadCount) {
+            for(int i=i() + index; i<to; i += threadCount) {
+                point.set(i);
+                op.process(point);
+            }
+        }
+
+        @Override
+        protected int getRevisedChunks(int chunks, int minBlockSize) {
+            return super.getRevisedChunks(getPointOps(), minBlockSize);
+        }
+
+        @Override
+        protected int getTotalOps() {
+            return 3 + (to - i()) * getPointOps();
+        }
+
+        protected int getPointOps() {
+            return 10;
+        }
+        
+        @Override
+        public ReturnType getResult() {
+            return op.getResult();
+        }
+    } 
+    
+
 
 }

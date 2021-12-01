@@ -28,29 +28,82 @@ import java.io.Serializable;
 import jnum.Copiable;
 import jnum.ExtraMath;
 import jnum.NonConformingException;
+import jnum.PointOp;
 import jnum.math.Additive;
 import jnum.math.Metric;
 import jnum.math.Modulus;
 import jnum.math.Multiplicative;
 import jnum.math.Ratio;
+import jnum.parallel.ParallelPointOp;
+import jnum.parallel.ParallelTask;
+import jnum.parallel.ParallelObject;
+import jnum.util.HashCode;
 import jnum.math.MathVector;
 
 /**
- * Interface for integer indices in any dimensional space/grid.
+ * A base class for multi-dimensional integer data/array indices.
  * 
  * @author Attila Kovacs
  *
  * @param <T>   the generic type of the implementing object itself.
  */
-public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copiable<T> ,
+public abstract class Index<T extends Index<T>> extends ParallelObject implements Serializable, Cloneable, Copiable<T>,
     Additive<T>, Multiplicative<T>, Ratio<T, T>, Modulus<T>, Metric<T> {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2297049649014238073L;
+
+
+    @Override
+    public int hashCode() {
+        int hash = HashCode.from(dimension());
+        for(int i=dimension(); --i >= 0; ) hash ^= HashCode.from(getValue(i));
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof Index)) return false;
+        
+        Index<?> index = (Index<?>) o;
+        if(index.dimension() != dimension()) return false;
+        
+        for(int i=dimension(); --i >= 0; ) if(index.getValue(i) != getValue(i)) return false;
+        
+        return true;        
+    }
+   
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public T clone() {
+        return (T) super.clone();
+    }
+    
+    @Override
+    public T copy() {
+        return clone();
+    }
+
+   
+    @Override
+    public String toString() {
+       return toString(",");
+    }
+    
+   
+
+    
     
     /**
      * Returns the number of dimensions, or integer components, in this index. 
      * 
      * @return  the dimensionality of the index, that is the number of integer index components it contains.
      */
-    public int dimension();
+    public abstract int dimension();
     
     /**
      * Returns the integer index value in the specified dimension.
@@ -61,7 +114,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * 
      * @see #dimension()
      */
-    public int getValue(int dim) throws IndexOutOfBoundsException;
+    public abstract int getValue(int dim) throws IndexOutOfBoundsException;
     
     /**
      * Sets a new integer index value in the specified dimension.
@@ -72,7 +125,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * 
      * @see #dimension()
      */
-    public void setValue(int dim, int value) throws IndexOutOfBoundsException;
+    public abstract void setValue(int dim, int value) throws IndexOutOfBoundsException;
 
 
     
@@ -83,7 +136,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * 
      * @see #toTruncatedFFTSize()
      */
-    public default void toPaddedFFTSize() {
+    public void toPaddedFFTSize() {
         for(int i=dimension(); --i >= 0; ) setValue(i, ExtraMath.pow2ceil(getValue(i)));
     }
     
@@ -94,7 +147,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * 
      * @see #toPaddedFFTSize()
      */
-    public default void toTruncatedFFTSize() {
+    public void toTruncatedFFTSize() {
         for(int i=dimension(); --i >= 0; ) setValue(i, ExtraMath.pow2floor(getValue(i)));
     }
     
@@ -105,41 +158,73 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * @return      the volume under the index cube with one corner at the origin and the farthest
      *              other corner at the specified index location.
      */
-    public default int getVolume() {
+    public int getVolume() {
         int vol = 1;
         for(int i=dimension(); --i >= 0; ) vol *= getValue(i);
-        return vol;
+        return Math.abs(vol);
     }
     
-    
-    public default void limit(T max) {     
+    /**
+     * Ensure that no component of this index exceeds the specified limit, by setting any components
+     * larger to the limiting value. 
+     * 
+     * @param max       the limiting values for each component.
+     * 
+     * @see #ensure(Index)
+     */
+    public void limit(T max) {     
         for(int i=dimension(); --i >= 0; ) if(getValue(i) > max.getValue(i)) setValue(i, max.getValue(i));
     }
     
-    public default void wrap(T size) {
+    /**
+     * Ensure that no component of this index is below the specified lower bound, by setting any components
+     * smaller to the bounding value. 
+     * 
+     * @param min       the lower bound for each component.
+     * 
+     * @see #limit(Index)
+     */
+    public void ensure(T min) {     
+        for(int i=dimension(); --i >= 0; ) if(getValue(i) < min.getValue(i)) setValue(i, min.getValue(i));
+    }
+
+    
+    /**
+     * Wraps this index over the specified range. It is similar to
+     * {@link #modulo(Index)}, except that in case where <code>modulo</code> would set a negative,
+     * value, this method will set <code>size</code> + <code>modulo</code>. For example,
+     * the index -1 with size 10, will be changed to 9.
+     * 
+     * @param size      the limiting range for each component. The corresponding component will
+     *                  be strictly in the range of 0 to <code>abs(size)</code>.
+     */
+    public void wrap(T size) {
         for(int i=dimension(); --i >= 0; ) {
-            setValue(i, getValue(i) % getValue(i));
-            if(getValue(i) < 0) setValue(i, getValue(i) + size.getValue(i));
+            int wrapped = getValue(i) % size.getValue(i);
+            if(wrapped < 0) wrapped += size.getValue(i);
+            setValue(i, wrapped);
         }
     }
     
+    @SuppressWarnings("unchecked")
     @Override
-    public default void add(T o) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, getValue(i) + o.getValue(i));
+    public void add(T o) {
+        setSum((T) this, o);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void subtract(T o) {
+        setDifference((T) this, o);
     }
 
     @Override
-    public default void subtract(T o) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, getValue(i) - o.getValue(i));
-    }
-
-    @Override
-    public default void setSum(T a, T b) {
+    public void setSum(T a, T b) {
         for(int i=dimension(); --i >= 0; ) setValue(i, a.getValue(i) + b.getValue(i));
     }
 
     @Override
-    public default void setDifference(T a, T b) {
+    public void setDifference(T a, T b) {
         for(int i=dimension(); --i >= 0; ) setValue(i, a.getValue(i) - b.getValue(i));
     }
 
@@ -149,29 +234,30 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * @param v         the vector to set to the index components
      * @throws NonConformingException       if the vector has a different size (dimensionality) from this index.
      */
-    public default void toVector(MathVector<Double> v) throws NonConformingException {  
+    public void toVector(MathVector<Double> v) throws NonConformingException {  
         if(v.size() != dimension()) throw new NonConformingException("Size mismatch " + v.size() + " vs. " + dimension()); 
         for(int i=dimension(); --i >= 0; ) v.setComponent(i, (double) getValue(i));
     }
     
 
+    @SuppressWarnings("unchecked")
     @Override
-    public default void multiplyBy(T factor) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, getValue(i) * factor.getValue(i));
+    public void multiplyBy(T factor) {
+       setProduct((T) this, factor);
     }
 
     @Override
-    public default void modulo(T argument) {
+    public void modulo(T argument) {
         for(int i=dimension(); --i >= 0; ) setValue(i, getValue(i) % argument.getValue(i));
     }
     
     @Override
-    public default void setProduct(T a, T b) {
+    public void setProduct(T a, T b) {
         for(int i=dimension(); --i >= 0; ) setValue(i, a.getValue(i) * b.getValue(i));
     }
 
     @Override
-    public default void setRatio(T numerator, T denominator) {
+    public void setRatio(T numerator, T denominator) {
         for(int i=dimension(); --i >= 0; ) setValue(i, numerator.getValue(i) / denominator.getValue(i));
     }
     
@@ -185,7 +271,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * 
      * @see jnum.ExtraMath#roundedRatio(int, int)
      */
-    public default void setRoundedRatio(T numerator, T denominator) {
+    public void setRoundedRatio(T numerator, T denominator) {
         for(int i=dimension(); --i >= 0; ) setValue(i, ExtraMath.roundedRatio(numerator.getValue(i), denominator.getValue(i)));
     }
 
@@ -195,13 +281,13 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * 
      * @param other     the index whose componentas are used in reverse order
      */
-    public default void setReverseOrderOf(T other) {
+    public void setReverseOrderOf(T other) {
         int last = dimension()-1;
         for(int i=last; i >= 0; i--) setValue(i, other.getValue(last-i));
     }
     
     @Override
-    public default double distanceTo(T index) {
+    public double distanceTo(T index) {
         long sum = 0;
         
         for(int i=dimension(); --i >= 0; ) {
@@ -217,7 +303,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * 
      * @param value     the new index valie for all components.
      */
-    public default void fill(int value) {
+    public void fill(int value) {
         for(int i=dimension(); --i >= 0; ) setValue(i, value);
     }
     
@@ -228,7 +314,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * @param dim   the dimension (counted from 0).
      * @return      the incremented index component in the selected dimension.
      */
-    public default int increment(int dim) {
+    public int increment(int dim) {
         int i = getValue(dim);
         setValue(dim, ++i);
         return i;
@@ -243,7 +329,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * @param dim the component dimension.
      * @return the decremented index component in the selected dimension.
      */
-    public default int decrement(int dim) {
+    public int decrement(int dim) {
         int i = getValue(dim);
         setValue(dim, --i);
         return i;
@@ -255,7 +341,7 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * @see #fill(int)
      * 
      */
-    public default void zero() { fill(0); }
+    public void zero() { fill(0); }
 
     
     
@@ -266,9 +352,108 @@ public interface Index<T extends Index<T>> extends Serializable, Cloneable, Copi
      * @param separator     the string that separates component in the representation, e.g. ", ", or "][".
      * @return              the string representation of this index with the specified separator.
      */
-    public default String toString(String separator) {
+    public String toString(String separator) {
         StringBuffer buf = new StringBuffer();
         for(int i=0; i<dimension(); i++) buf.append((i > 0 ? separator : "") + getValue(i));
         return new String(buf);
     }
+    
+    /**
+     * Loops over a block of indices atarting from this index to the specified end index, 
+     * performing the specified point operation on each.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the point operation to perform on each data element
+     * @param to            the ecxlusive ending index for the loop.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #fork(ParallelPointOp, Index)
+     */
+    public abstract <ReturnType> ReturnType loop(PointOp<T, ReturnType> op, T to);
+    
+    
+    /**
+     * Processees a block of indexes (points), starting from this index and up to the specified ending
+     * index, in this data object in parallel with the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp, Index)
+     */
+    public <ReturnType> ReturnType fork(final ParallelPointOp<T, ReturnType> op, T to) {
+        Fork<ReturnType> f = new Fork<>(op, to);
+        f.process();
+        return f.getResult();
+    }
+    
+    /**
+     * Process a block of elements (points) efficiently, starting from this index and up to the specified 
+     * ending index, using parallel or sequential processing, whichever is deemed fastest for the block size
+     * and the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp, Index)
+     * @see #fork(ParallelPointOp, Index)
+     */
+    public <ReturnType> ReturnType smartFork(final ParallelPointOp<T, ReturnType> op, T to) {
+        if(getParallel() < 2) return loop(op, to);
+        T span = copy();
+        span.subtract(to);
+
+        if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loop(op, to);
+        return fork(op, to);
+    }
+    
+    
+    public class Fork<ReturnType> extends Task<ReturnType> {  
+        private T to;
+        private ParallelPointOp<T, ReturnType> op;
+
+        public Fork(ParallelPointOp<T, ReturnType> op, T to) { 
+            this.to = to;
+            this.op = op;
+        }
+        
+        @Override
+        protected void processChunk(int index, int threadCount) {
+            T blockFrom = copy();
+            T blockTo = to.copy();
+            for(int i=getValue(0) + index; i < to.getValue(0); i += threadCount) {
+                blockFrom.setValue(0, i);
+                blockTo.setValue(0, i + 1);
+                blockFrom.loop(op, blockTo);
+            }
+        }
+        
+        @Override
+        protected int getRevisedChunks(int chunks, int minBlockSize) {
+            return super.getRevisedChunks(getPointOps(), minBlockSize);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected int getTotalOps() {
+            T block = to.copy();
+            block.subtract((T) Index.this);
+            return 3 + block.getVolume() * getPointOps();
+        }
+
+        protected int getPointOps() {
+            return 10;
+        }  
+        
+        @Override
+        public ReturnType getResult() {
+            return op.getResult();
+        }
+
+    } 
+
 }

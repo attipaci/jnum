@@ -26,6 +26,7 @@ package jnum.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import jnum.ExtraMath;
 import jnum.PointOp;
 import jnum.Util;
 import jnum.data.index.Index;
@@ -35,10 +36,8 @@ import jnum.fft.FloatFFT;
 import jnum.fft.MultiFFT;
 import jnum.math.MathVector;
 import jnum.math.Stretch;
-import jnum.math.Complex;
 import jnum.math.CoordinateTransform;
 import jnum.parallel.ParallelPointOp;
-import jnum.parallel.ParallelTask;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
@@ -58,6 +57,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
     /** The interpolation type to use to interpolate data to inbetween stored indices */
     private Interpolator.Type interpolationType;    
+
+    private SmoothingPolicy smoothingPolicy = DEFAULT_SMOOTHING_POLICY;
 
     protected RegularData() {
         reuseIpolData = new SplineSet<>(dimension());
@@ -91,6 +92,14 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         clone.reuseIpolData = new SplineSet<>(dimension());  
         return clone;
     }
+    
+    public void setSmoothingPolicy(SmoothingPolicy pol) {
+        this.smoothingPolicy = pol;
+    }
+    
+    public final SmoothingPolicy isAllowFFTSmooth() {
+        return smoothingPolicy;
+    }
 
     /**
      * <p>
@@ -100,7 +109,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * a 2D data object, only the first two index components will be used.
      * </p>
      * <p>
-     * It is generally safe to access data via the {@link IndexedValues} interface with the {@link #get(Object)}
+     * It is generally safe to access data via the {@link IndexedValues} interface with the {@link #get(Index)}
      * method. However, at times it is more convenient to pass an array or a comma-separated list of values.
      * It is for these special situations that this method is designed for.
      * </p>
@@ -108,7 +117,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @param idx   the array or list of index values
      * @return      the value contained at the specified index
      * 
-     * @see #get(Object)
+     * @see #get(Index)
      */
     public abstract Number get(int ... idx);
 
@@ -120,7 +129,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * a 2D data object, only the first two index components will be used.
      * </p>
      * <p>
-     * It is generally safe to access data via the {@link IndexedValues} interface with the {@link #set(Object, Number)}
+     * It is generally safe to access data via the {@link IndexedValues} interface with the {@link #set(Index, Number)}
      * method. However, at times it is more convenient to pass an array or a comma-separated list of values.
      * It is for these special situations that this method is designed for.
      * </p>
@@ -128,7 +137,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @param value the new point value to set.
      * @param idx   the array or list of index values
      * 
-     * @see #set(Object, Number)
+     * @see #set(Index, Number)
      */
     public abstract void set(Number value, int ... idx);
     
@@ -180,154 +189,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         return "Data Size: " + getSizeString() + " points.";
     }
     
-    @Override
-    public final String getSizeString() {
-        return getSize().toString("x");
-    }
-    
-    /**
-     * Loops over a block of data elements in the specified index range, 
-     * performing the specified point operation on each.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the point operation to perform on each data element
-     * @param from          the starting index for the loop.
-     * @param to            the ecxlusive ending index for the loop.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loop(PointOp)
-     * @see #loopValid(PointOp, Index, Index)
-     * @see #fork(ParallelPointOp, Index, Index)
-     */
-    public abstract <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
 
-    /**
-     * Loops over a block of valid data elements in the specified index range, 
-     * performing the specified point operation on each.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the point operation to perform on each data element
-     * @param from          the starting index for the loop.
-     * @param to            the ecxlusive ending index for the loop.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loopValid(PointOp)
-     * @see #loop(PointOp, Index, Index)
-     * @see #forkValid(ParallelPointOp, Index, Index)
-     */
-    public abstract <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op, IndexType from, IndexType to);
-
-    /**
-     * Process a block of elements (points), in the specified range of indices, in this data object in parallel 
-     * with the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @param from          the starting index for the block of data to process.
-     * @param to            the ecxlusive ending index for the block of data to process.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #smartFork(ParallelPointOp, Index, Index)
-     * @see #forkValid(ParallelPointOp, Index, Index)
-     * @see #fork(ParallelPointOp)
-     * @see #loop(PointOp, Index, Index)
-     */
-    public abstract <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
-
-    /**
-     * Process a block of valid elements (points) only, in the specified range of indices, in this data object in parallel 
-     * with the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @param from          the starting index for the block of data to process.
-     * @param to            the ecxlusive ending index for the block of data to process.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #smartForkValid(ParallelPointOp, Index, Index)
-     * @see #fork(ParallelPointOp, Index, Index)
-     * @see #forkValid(ParallelPointOp)
-     * @see #loopValid(PointOp, Index, Index)
-     */
-    public abstract <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to);
-
-    /**
-     * Process a block of elements (points), in the specified range of indices, in this data object efficiently, 
-     * using parallel or sequential processing, whichever is deemed fastest for the data size and the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @param from          the starting index for the block of data to process.
-     * @param to            the ecxlusive ending index for the block of data to process.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loop(PointOp, Index, Index)
-     * @see #fork(ParallelPointOp, Index, Index)
-     * @see #smartForkValid(ParallelPointOp, Index, Index)
-     * @see #smartFork(ParallelPointOp)
-     */
-    public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to) {
-        if(getParallel() < 2) return loop(op, from, to);
-        IndexType span = getIndexInstance();
-        span.setDifference(to, from);
-        if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loop(op, from, to);
-        return fork(op, from, to);
-    }
-    
-    /**
-     * Process a block of valid elements (points) only, in the specified range of indices, in this data object efficiently, 
-     * using parallel or sequential processing, whichever is deemed fastest for the data size and the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @param from          the starting index for the block of data to process.
-     * @param to            the ecxlusive ending index for the block of data to process.
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loopValid(PointOp, Index, Index)
-     * @see #forkValid(ParallelPointOp, Index, Index)
-     * @see #smartFork(ParallelPointOp, Index, Index)
-     * @see #smartForkValid(ParallelPointOp)
-     */
-    public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op, IndexType from, IndexType to) {
-        if(getParallel() < 2) return loopValid(op, from, to);
-        IndexType span = getIndexInstance();
-        span.setDifference(to, from);
-        if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loopValid(op, from, to);
-        return forkValid(op, from, to);  
-    }
-    
-
-    @Override
-    public final <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op) {
-        return loop(op, getIndexInstance(), getSize());
-    }
-
-    @Override
-    public final <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op) {
-        return loopValid(op, getIndexInstance(), getSize());
-    }
-
-    @Override
-    public final <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op) {
-        return fork(op, getIndexInstance(), getSize());
-    }
-    
-    @Override
-    public final <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op) {
-        return forkValid(op, getIndexInstance(), getSize());
-    }
-
-    @Override
-    public final <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op) {
-        return smartFork(op, getIndexInstance(), getSize());
-    }
-
-    @Override
-    public final <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op) {
-        return smartForkValid(op, getIndexInstance(), getSize());
-    }
-
+  
     
     
     /**
@@ -541,26 +404,19 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      */
     protected abstract int getInterpolationOps(Interpolator.Type type);
 
-    /**
-     * Returns a new empty (zeroed) regularly sampled data object of the same type and size as this object.
-     * 
-     * @return      a new data object of the same type and size as this one.
-     * 
-     * @see #newImage(Index, Class)
-     */
-    public RegularData<IndexType, VectorType> newImage() { return newImage(getSize(), getElementType()); }
 
-    /**
-     * Returns a new empty (zeroed) regularly sampled data object of the same class as this one byt with
-     * the specified size and element type.
-     * 
-     * @param size          the size of the new data.
-     * @param elementType   the type of elements in the new data, such as <code>Float.class</code>.
-     * @return              a new data object of the same class as this one, but with the specified size and element type.
-     * 
-     * @see #newImage()
-     */
-    public abstract RegularData<IndexType, VectorType> newImage(IndexType size, Class<? extends Number> elementType);
+    @SuppressWarnings("cast")
+    @Override
+    public RegularData<IndexType, VectorType> newImage() { 
+        return (RegularData<IndexType, VectorType>) newImage(); 
+    }
+
+
+    @SuppressWarnings("cast")
+    @Override
+    public RegularData<IndexType, VectorType> newImage(IndexType size, Class<? extends Number> elementType) {
+        return (RegularData<IndexType, VectorType>) newImage(getSize(), elementType); 
+    }
 
     /**
      * Smoothes (convolves) this data with the specified image. The convolution is performed meticulously and precisely,
@@ -570,7 +426,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @param beam      the smoothing (convolving) kernel image, with a reference (origin) position.
      * 
      * @see #smooth(RegularData, MathVector)
-     * @see #fastSmooth(Referenced, Index)
+     * @see #coarseSmooth(Referenced, Index)
      * @see #getSmoothed(Referenced, IndexedValues, IndexedValues)
      * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
      */
@@ -588,12 +444,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @param refIndex  the place on the smoothing kernel that is its nominal reference (origin).
      * 
      * @see #smooth(Referenced)
-     * @see #fastSmooth(RegularData, MathVector, Index)
+     * @see #coarseSmooth(RegularData, MathVector, Index)
      * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
      * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
      */
     public synchronized void smooth(RegularData<IndexType, VectorType> beam, VectorType refIndex) {
-        paste(getSmoothed(beam, refIndex, null, null), false);
+        copyOf(getSmoothed(beam, refIndex, null, null), false);
         addHistory("smoothed");
     }
 
@@ -608,14 +464,14 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      *                  performed properly. Points in-between will be interpolated using the default
      *                  method of interpolation for this data object.
      * 
-     * @see #fastSmooth(RegularData, MathVector, Index)
+     * @see #coarseSmooth(RegularData, MathVector, Index)
      * @see #smooth(Referenced)
-     * @see #getFastSmoothed(Referenced, Index, IndexedValues, IndexedValues)
+     * @see #getSmoothedCoarse(Referenced, Index, IndexedValues, IndexedValues)
      * @see #setInterpolationType(Interpolator.Type)
      * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
      */
-    public final synchronized void fastSmooth(Referenced<IndexType, VectorType> beam, IndexType step) {
-        fastSmooth(beam.getData(), beam.getReferenceIndex(), step);
+    public final synchronized void coarseSmooth(Referenced<IndexType, VectorType> beam, IndexType step) {
+        coarseSmooth(beam.getData(), beam.getReferenceIndex(), step);
     }
 
 
@@ -632,15 +488,15 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      *                  performed properly. Points in-between will be interpolated using the default
      *                  method of interpolation for this data object.
      * 
-     * @see #fastSmooth(Referenced, Index)
+     * @see #coarseSmooth(Referenced, Index)
      * @see #smooth(RegularData, MathVector)
-     * @see #getFastSmoothed(RegularData, MathVector, Index, IndexedValues, IndexedValues)
+     * @see #getSmoothedCoarse(RegularData, MathVector, Index, IndexedValues, IndexedValues)
      * @see #setInterpolationType(Interpolator.Type)
      * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
      * 
      */
-    public synchronized void fastSmooth(RegularData<IndexType, VectorType> beam, VectorType refIndex, IndexType step) {
-        paste(getFastSmoothed(beam, refIndex, step, null, null), false);
+    public synchronized void coarseSmooth(RegularData<IndexType, VectorType> beam, VectorType refIndex, IndexType step) {
+        copyOf(getSmoothedCoarse(beam, refIndex, step, null, null), false);
         addHistory("smoothed (fast method)");
     }
 
@@ -787,16 +643,19 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
                 
                 final double w = (weight == null ? 1.0 : weight.get(i1).doubleValue());
                 if(w == 0.0) return;
-                if(Double.isNaN(w)) return;      
-                
+    
                 iB.setDifference(i1, iR);
 
                 final double wB = w * beam.get(iB).doubleValue();
+                if(wB == 0.0) return;
+                
                 result.add(wB * get(i1).doubleValue());
                 result.addWeight(Math.abs(wB));
             }
         };
-       
+
+        result.noData();
+        
         final IndexType from = getIndexInstance();
         final IndexType to = getIndexInstance();
 
@@ -806,8 +665,6 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             from.setValue(i, Math.max(0, imin));
             to.setValue(i, Math.min(getSize(i), imin + beam.getSize(i)));
         }
-
-        result.noData();
         
         loop(op, from, to);
 
@@ -844,7 +701,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @return          a new regularly gridded data derived from this one, but containing the smoothed data values.
      * 
      * @see #smooth(Referenced)
-     * @see #fastSmooth(RegularData, MathVector, Index)
+     * @see #coarseSmooth(RegularData, MathVector, Index)
      * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
      * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
      */
@@ -868,7 +725,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * 
      * @see #getSmoothed(RegularData, Index, IndexedValues, IndexedValues)
      * @see #smooth(Referenced)
-     * @see #fastSmooth(RegularData, MathVector, Index)
+     * @see #coarseSmooth(RegularData, MathVector, Index)
      * @see #getSmoothed(Referenced, IndexedValues, IndexedValues)
      * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
      */    
@@ -887,8 +744,6 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         
         return getSmoothed(beam, iRefIndex, weight, smoothedWeights);        
     }
-
-    boolean useFFT = true;
     
     /**
      * Returns a smoothes (convolved) version of this data with the specified kernel, provided the reference (origin) coordinate
@@ -905,13 +760,41 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * 
      * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
      * @see #smooth(Referenced)
-     * @see #fastSmooth(RegularData, MathVector, Index)
+     * @see #coarseSmooth(RegularData, MathVector, Index)
      * @see #getSmoothed(Referenced, IndexedValues, IndexedValues)
      * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
      */
     public final RegularData<IndexType, VectorType> getSmoothed(RegularData<IndexType, VectorType> beam, final IndexType refIndex, 
             final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
-      
+        return getSmoothedMethod(smoothingPolicy, beam, refIndex, weight, smoothedWeights);
+    }
+    
+    public final RegularData<IndexType, VectorType> getSmoothedMethod(SmoothingPolicy method, RegularData<IndexType, VectorType> beam, final IndexType refIndex, 
+            final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {    
+        switch(method) {
+        case ALWAYS_FFT: return getSmoothedFFT(beam, refIndex, weight, smoothedWeights);
+        case FASTEST:
+        case BALANCED:
+            // Rough estimate on the number of operations required for FFT vs direct convolution
+            int nb = beam.getSize().getVolume();
+            double fftOps = (150 * ExtraMath.log2ceil(nb + getSize().getVolume()) + 20) * dimension();
+            double ops = 12 * nb * dimension();
+            
+            // If FFT is at least an order of magnitude faster, then use it...
+            if(smoothingPolicy == SmoothingPolicy.FASTEST) {
+                if(fftOps < ops) return getSmoothedFFT(beam, refIndex, weight, smoothedWeights);
+            }
+            else if(10 * fftOps < ops) return getSmoothedFFT(beam, refIndex, weight, smoothedWeights);
+            break;
+        default:    
+        }
+        
+        return getSmoothedPrecise(beam, refIndex, weight, smoothedWeights);
+    }
+    
+    public final RegularData<IndexType, VectorType> getSmoothedPrecise(RegularData<IndexType, VectorType> beam, final IndexType refIndex, 
+            final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
+        
         final RegularData<IndexType, VectorType> convolved = newImage();
 
         ParallelPointOp.Simple<IndexType> op = new ParallelPointOp.Simple<IndexType>() {
@@ -941,70 +824,45 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         return convolved;
     }
     
-    public final RegularData<IndexType, VectorType> getFFTSmoothed(RegularData<IndexType, VectorType> beam, final IndexType refIndex, 
+    static int cnt = 0;
+    
+    public final RegularData<IndexType, VectorType> getSmoothedFFT(RegularData<IndexType, VectorType> beam, final IndexType refIndex, 
             final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
     
         IndexType size = getIndexInstance();
         size.setSum(getSize(), beam.getSize());
-        
-        RegularData<IndexType, VectorType> B = beam.getFFT(size, true, refIndex, null);
-        RegularData<IndexType, VectorType> S = getFFT(size, true, null, weight);
-        RegularData<IndexType, VectorType> W = smoothedWeights == null ? null : getFFT(size, true, null, null);
-        
-        ParallelPointOp.Simple<IndexType> complexMultiply = new ParallelPointOp.Simple<IndexType>() {
-            Complex b, s, w;
-            
+
+        // FFT -> 50 * N log2(N)
+        ComplexView<IndexType> B = beam.getForwardFFT(size, refIndex, null);
+        ComplexView<IndexType> S = getForwardFFT(size, null, weight);
+ 
+        // Integral normalize the beam...
+        B.scale(1.0 / B.get(getIndexInstance()).re());
+        S.multiplyBy(B);
+
+        if(smoothedWeights != null) {           
+            ComplexView<IndexType> W = getForwardFFT(weight, size, null, null);
+            W.multiplyByNormsOf(B);
+            W.getBackFFT(getSize(), false).copyTruncatedTo(smoothedWeights);
+        }
+
+        RegularData<IndexType, VectorType> smoothed = newImage();
+        S.getBackFFT(getSize(), false, null, smoothedWeights).copyTruncatedTo(smoothed);
+
+        smoothed.validate(new Validating<IndexType>() {
             @Override
-            protected void init() {
-                super.init();
-                b = new Complex();
-                s = new Complex();
-                w = new Complex();
+            public boolean isValid(IndexType index) {
+                return RegularData.this.isValid(index);
             }
 
             @Override
-            public void process(IndexType index) {
-                // If starting index is not pointing to the real part, then skip.
-                // (we process pairwise below)
-                if((index.getValue(dimension() + 1) & 1) != 0) return;
-                
-                // Get the real parts
-                b.setRealPart(B.get(index).doubleValue());
-                s.setRealPart(S.get(index).doubleValue());
-                if(W != null) w.setRealPart(W.get(index).doubleValue());
-                
-                // Change index to the imaginaty part
-                index.increment(dimension() - 1);
-                
-                // Get the imaginary parts
-                b.setImaginaryPart(B.get(index).doubleValue());
-                s.setImaginaryPart(S.get(index).doubleValue());
-                if(W != null) w.setImaginaryPart(W.get(index).doubleValue());
-             
-                // Perform the multiplication, and set the imaginary part(s)
-                s.multiplyBy(b);
-                S.set(index, s.im());
-                
-                if(W != null) {
-                    w.multiplyBy(b);
-                    W.set(index, w.im());
-                }
-                // Change index back to the real part
-                index.decrement(dimension() - 1);
-                
-                // Set the real part(s)
-                S.set(index, s.re());
-                if(W != null) W.set(index, w.re());
-            }
-            
-        };
+            public void discard(IndexType index) {
+                smoothed.set(index, 0.0);
+                if(smoothedWeights != null) smoothedWeights.set(index, 0.0);
+            }    
+        });
         
-        smartFork(complexMultiply);
-        
-        RegularData<IndexType, VectorType> smoothed = newImage();
-        S.getFFT(S.getSize(), false, null, weight).copyTo(smoothed);
-        
-        if(W != null) W.getFFT(S.getSize(), false, null, null).copyTo(smoothedWeights);
+        smoothed.addHistory("FFT smoothed copy");
         
         return smoothed;
     }
@@ -1027,14 +885,14 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @return          a new regularly gridded data derived from this one, but containing the smoothed data values.
      * 
      * @see #smooth(Referenced)
-     * @see #fastSmooth(RegularData, MathVector, Index)
+     * @see #coarseSmooth(RegularData, MathVector, Index)
      * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
-     * @see #getFastSmoothed(RegularData, MathVector, Index, IndexedValues, IndexedValues)
+     * @see #getSmoothedCoarse(RegularData, MathVector, Index, IndexedValues, IndexedValues)
      * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
      */
-    public final RegularData<IndexType, VectorType> getFastSmoothed(final Referenced<IndexType, VectorType> beam,
+    public final RegularData<IndexType, VectorType> getSmoothedCoarse(final Referenced<IndexType, VectorType> beam,
             final IndexType step, final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
-        return getFastSmoothed(beam.getData(), beam.getReferenceIndex(), step, weight, smoothedWeights);
+        return getSmoothedCoarse(beam.getData(), beam.getReferenceIndex(), step, weight, smoothedWeights);
     }
     
     /**
@@ -1055,18 +913,24 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @return          a new regularly gridded data derived from this one, but containing the smoothed data values.
      * 
      * @see #smooth(Referenced)
-     * @see #fastSmooth(RegularData, MathVector, Index)
+     * @see #coarseSmooth(RegularData, MathVector, Index)
      * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
-     * @see #getFastSmoothed(Referenced, Index, IndexedValues, IndexedValues)
+     * @see #getSmoothedCoarse(Referenced, Index, IndexedValues, IndexedValues)
      * @see #getSmoothedValueAtIndex(MathVector, RegularData, MathVector, IndexedValues, SplineSet, WeightedPoint)
      */
-    public RegularData<IndexType, VectorType> getFastSmoothed(final RegularData<IndexType, VectorType> beam, final VectorType refIndex,
+    public RegularData<IndexType, VectorType> getSmoothedCoarse(final RegularData<IndexType, VectorType> beam, final VectorType refIndex,
             final IndexType step, final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
+        
+        switch(smoothingPolicy) {
+        case ALWAYS_FFT:
+        case METICULOUS:
+            return getSmoothed(beam, refIndex, weight, smoothedWeights);
+        default:
+        }
         
         int vol = step.getVolume();
         if(vol == 1) return getSmoothed(beam, refIndex, weight, smoothedWeights);
         if(vol == 0) throw new IllegalArgumentException("coarse smoothing step with 0 volume.");
-        
         
         final WeightedSet<RegularData<IndexType, VectorType>> coarse = createDownAveraged(weight, step);
         RegularData<IndexType, VectorType> coarseBeam = createDownSampledFrom(beam, step);
@@ -1166,27 +1030,57 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         clearHistory();
         addHistory("resampled " + getSizeString() + " from " + image.getSizeString());
     }
+
+    public ComplexView<IndexType> getForwardFFT() {
+        return getForwardFFT(getSize());
+    }
     
-    public RegularData<IndexType, VectorType> getFFT(final boolean isForward) {
-        return getFFT(getSize(), isForward, null, null);
+    public ComplexView<IndexType> getForwardFFT(IndexType transformSize) {
+        return getForwardFFT(transformSize, null, null);
     }
-        
-    public RegularData<IndexType, VectorType> getFFT(final boolean isForward, final IndexType refIndex) {
-        return getFFT(getSize(), isForward, refIndex, null);
+    
+    /**
+     * Returns the forward FFT of this data, as a packed data of similar kind populated with complex values pairs of the
+     * resulting amplitudes.
+     * 
+     * 
+     * @param transformSize The minimum size of the image for the FFT, including padding, but need not be a power of 2. (The FFT will
+     *                      calculate the required powers of 2 for the actual transform).
+     * @param refIndex      The data index, which corresponds to the origin location, or <code>null</code> to assume the first
+     *                      (0 index) point as the origin.
+     * @param weight        An optional image of weights (such as 1/&sigma;<sup>2</sup> noise weights) that accompany the data or 
+     *                      <code>null</code> to assume uniform weights. If a weight image is specified, it must be at least the same
+     *                      size as this data instance, and the weight value at a given index corresponfing to the weight of
+     *                      the datum at the same index.
+     * @return              The forward FFT of this data, with complex pairs packed into a real-valued data objedct of a similar
+     *                      type as this data instance. Values at even last index components correspond to the real parts, while
+     *                      values at odd last indices are the imaginary parts of the complex pairs in the resulting spectrum. The
+     *                      Nyquist channel is unrolled to the end of the last index components. For example, if you transform a
+     *                      data of size 3x4, it will perform an FFT on a padded image of 4x4, and return a 4x6 array of values,
+     *                      corresponding to 4x3 complex amplitudes. The 3rd complex amplitude is the amplitude of the Nyquist
+     *                      component.
+     *                      
+     * @see ComplexView#getBackFFT(Index, boolean, Index, IndexedValues)
+     * @see #getSmoothedFFT(RegularData, Index, IndexedValues, IndexedValues)
+     */
+    public ComplexView<IndexType> getForwardFFT(IndexType transformSize, final IndexType refIndex, final IndexedValues<IndexType, ?> weight) {
+        return getForwardFFT(this, transformSize, refIndex, weight);
     }
-
-    public RegularData<IndexType, VectorType> getFFT(final IndexType size, final boolean isForward, final IndexType refIndex, final IndexedValues<IndexType, ?> weight) {
-        size.toPaddedFFTSize();
+    
+    public ComplexView<IndexType> getForwardFFT(IndexedValues<IndexType, ?> data, IndexType transformSize, final IndexType refIndex, final IndexedValues<IndexType, ?> weight) {
+        final IndexType fftSize = transformSize.copy();
+        fftSize.toPaddedFFTSize();
         
-        IndexType unrolledSize = size.copy();
+        IndexType unrolledSize = fftSize.copy();
+        
+        // The last dimension must be a multiple of 2 (complex pairs)
+        if(fftSize.getValue(dimension() - 1) < 2) fftSize.setValue(dimension() - 1, 2);
+        
         unrolledSize.setValue(dimension() - 1, unrolledSize.getValue(dimension() - 1) + 2);
-        
-        Class<? extends Number> type = Double.class.isAssignableFrom(getElementType()) || Long.class.isAssignableFrom(getElementType()) 
-                ? Double.class : Float.class;
-        
-        RegularData<IndexType, VectorType> spectrum = newImage(unrolledSize, type);
 
-        ParallelPointOp.Simple<IndexType> op = new ParallelPointOp.Simple<IndexType>() {
+        RegularData<IndexType, VectorType> spectrum = newImage(unrolledSize, Double.class);
+
+        ParallelPointOp.Simple<IndexType> loader = new ParallelPointOp.Simple<IndexType>() {
             IndexType packed;
             
             @Override
@@ -1196,21 +1090,18 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
             @Override
             public void process(IndexType index) {
+                if(!isValid(index)) return;
+                
                 if(refIndex != null) {
                     packed.setDifference(index, refIndex);
-                    packed.wrap(size);
+                    packed.wrap(fftSize);
                 }
                 else packed = index;
-                
-                if (isForward) {
-                    if(!isValid(index)) spectrum.discard(packed);
-                    else if(weight == null) spectrum.set(packed, get(index));
-                    else spectrum.set(packed, get(index).doubleValue() * weight.get(index).doubleValue());
-                }
+        
+                if(weight == null) spectrum.set(packed, data.get(index));
                 else {
-                    if(!isValid(packed)) spectrum.discard(index);
-                    else if(weight == null) spectrum.set(index, get(packed));
-                    else spectrum.set(index, get(packed).doubleValue() / weight.get(packed).doubleValue());   
+                    double w = weight.get(index).doubleValue();
+                    if(w > 0.0) spectrum.set(packed, data.get(index).doubleValue() * w);   
                 }
             }
             
@@ -1220,18 +1111,20 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
             }
         };
         
-        size.limit(getSize());
-        smartFork(op, getIndexInstance(), size);    
-
+        data.smartFork(loader); 
+        
         Object core = spectrum.getCore();
 
-        if (core instanceof float[]) new FloatFFT.NyquistUnrolled(getExecutor()).realTransform((float[]) core, isForward);
-        else if (core instanceof double[]) new DoubleFFT.NyquistUnrolled(getExecutor()).realTransform((double[]) core, isForward);
-        else new MultiFFT(getExecutor()).realTransform((Object[]) core, isForward);
+        if (core instanceof float[]) new FloatFFT.NyquistUnrolled(getExecutor()).realTransform((float[]) core, true);
+        else if (core instanceof double[]) new DoubleFFT.NyquistUnrolled(getExecutor()).realTransform((double[]) core, true);
+        else new MultiFFT(getExecutor()).realTransform((Object[]) core, true);
         
-        return spectrum;
+        return new ComplexView<>(spectrum);
     }
-
+    
+    
+    
+    
     public <V extends MathVector<Double>> void addPatchAt(final VectorType index, final RegularData<IndexType, V> patch, final double scaling) {
         addPatchAt(index, patch, scaling, false);
     }
@@ -1743,7 +1636,10 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         smartFork(op);
     }
     
-    public void copyTo(final IndexedValues<IndexType, ?> v) {
+    public void copyTruncatedTo(final IndexedValues<IndexType, ?> v) {
+        IndexType to = getSize().copy();
+        to.limit(v.getSize());
+        
         ParallelPointOp.Simple<IndexType> op = new ParallelPointOp.Simple<IndexType>() {
             @Override
             public void process(IndexType index) {
@@ -1754,8 +1650,9 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
                 return 2 * dimension();
             }
         };
-        smartFork(op);
+        smartFork(op, getIndexInstance(), to);
     }
+    
     
     /**
      * Returns a coarse version of this data and corresponding weights, in which every point corresponds to 
@@ -1904,7 +1801,6 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         return shifted;
     }
     
-
     
     /**
      * An abstract base class for operations that implement interpolation on this regularly sampled data,
@@ -1933,5 +1829,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
          */
         public final SplineSet<VectorType> getSplines() { return splines; }
     }  
-    
+ 
+    /** The default policy for trading speed and accuracy when smoothing */
+    public static final SmoothingPolicy DEFAULT_SMOOTHING_POLICY = SmoothingPolicy.FASTEST;
 }

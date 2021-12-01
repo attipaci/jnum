@@ -332,8 +332,7 @@ public class Coordinate2D implements RealCoordinates, Serializable, Cloneable, C
 
     @Override
     public final Index1D getSize() {
-        size.set(2);
-        return size;
+        return new Index1D(2);
     }
     
     @Override
@@ -427,12 +426,6 @@ public class Coordinate2D implements RealCoordinates, Serializable, Cloneable, C
                 + Util.s[decimals].format(coords.y / unit.value()) + " " + unit.name();
     }
     
-    
-
-    /**
-     * The default size object for 2D coordinates.
-     */
-    private static final Index1D size = new Index1D(2);
 
     /** the index of the <i>x</i>-type (first) coordinate */
     public static final int X = 0;

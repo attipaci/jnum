@@ -33,6 +33,7 @@ import jnum.data.cube.overlay.Transposed3D;
 import jnum.data.index.Index3D;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
+import jnum.parallel.ParallelPointOp;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
@@ -82,7 +83,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         
         if(capacity() > 0) {
             copy.setSize(sizeX(), sizeY(), sizeZ());
-            if(withContent) copy.paste(this, true);
+            if(withContent) copy.copyOf(this, true);
         }
         
         return copy;
@@ -121,13 +122,14 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
 
     public void setData(final Values3D values) {
         setSize(values.sizeX(), values.sizeY(), values.sizeZ());
-        new Fork<Void>() {
+        
+        smartFork(new ParallelPointOp.Simple<Index3D>() {
             @Override
-            protected void process(int i, int j, int k) {
-                if(values.isValid(i, j, k)) set(i, j, k, values.get(i, j, k));
-                else discard(i, j, k);
+            public void process(Index3D index) {
+                if(values.isValid(index)) set(index, values.get(index));
+                else discard(index);
             }
-        }.process();
+        });
     }
     
     
@@ -146,69 +148,69 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
     
     public synchronized void setData(final double[][][] data) { 
         setSize(data.length, data[0].length, data[0][0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index3D>() {
             @Override
-            protected void process(int i, int j, int k) {
-                set(i, j, k, data[i][j][k]);
+            public void process(Index3D index) {
+                set(index, data[index.i()][index.j()][index.k()]);
             }
-        }.process();
+        });
         recordNewData("double[][][]");
     }
 
 
     public synchronized void setData(final float[][][] data) {
         setSize(data.length, data[0].length, data[0][0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index3D>() {
             @Override
-            protected void process(int i, int j, int k) {
-                set(i, j, k, data[i][j][k]);
+            public void process(Index3D index) {
+                set(index, data[index.i()][index.j()][index.k()]);
             }
-        }.process();
+        });
         recordNewData("float[][][]");
     }
 
     public synchronized void setData(final long[][][] data) {
         setSize(data.length, data[0].length, data[0][0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index3D>() {
             @Override
-            protected void process(int i, int j, int k) {
-                set(i, j, k, data[i][j][k]);
+            public void process(Index3D index) {
+                set(index, data[index.i()][index.j()][index.k()]);
             }
-        }.process();
+        });
         recordNewData("long[][][]");
     }
 
 
     public synchronized void setData(final int[][][] data) {
         setSize(data.length, data[0].length, data[0][0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index3D>() {
             @Override
-            protected void process(int i, int j, int k) {
-                set(i, j, k, data[i][j][k]);
+            public void process(Index3D index) {
+                set(index, data[index.i()][index.j()][index.k()]);
             }
-        }.process();
+        });
         recordNewData("int[][][]");
     }
 
     public synchronized void setData(final short[][][] data) {
         setSize(data.length, data[0].length, data[0][0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index3D>() {
             @Override
-            protected void process(int i, int j, int k) {
-                set(i, j, k, data[i][j][k]);
+            public void process(Index3D index) {
+                set(index, data[index.i()][index.j()][index.k()]);
             }
-        }.process();
+        });
         recordNewData("short[][][]");
     }
 
     public synchronized void setData(final byte[][][] data) {
         setSize(data.length, data[0].length, data[0][0].length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index3D>() {
             @Override
-            protected void process(int i, int j, int k) {
-                set(i, j, k, data[i][j][k]);
+            public void process(Index3D index) {
+                set(index, data[index.i()][index.j()][index.k()]);
             }
-        }.process();
+        });
         recordNewData("byte[][][]");
     }
     
@@ -234,7 +236,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
     
     public void setTransposedData(Values3D image) {
         setSize(image.sizeZ(), image.sizeY(), image.sizeX());
-        paste(new Transposed3D(image), true);
+        copyOf(new Transposed3D(image), true);
     }
 
     

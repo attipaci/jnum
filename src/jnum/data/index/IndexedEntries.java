@@ -23,6 +23,10 @@
 
 package jnum.data.index;
 
+import jnum.PointOp;
+import jnum.parallel.ParallelPointOp;
+import jnum.parallel.ParallelTask;
+
 /**
  * Access to data entries using an index.
  * 
@@ -31,7 +35,7 @@ package jnum.data.index;
  * @param <IndexType>
  * @param <DataType>
  */
-public interface IndexedEntries<IndexType, DataType> {
+public interface IndexedEntries<IndexType extends Index<IndexType>, DataType> {
     
     /**
      * Gets the number of data elements being held in this object (populated or not).
@@ -53,15 +57,12 @@ public interface IndexedEntries<IndexType, DataType> {
      * Gets the size of this data, returning the number of elements contained
      * along each dimension. The retuned value should be treated as read-only, such that
      * implementation may return a static object. If you do need to operate on the
-     * returned index, you should make a copy using either {@link #copyOfIndex(Object)},
-     * or the {@link jnum.Copiable#copy()} implementation of the index itself provided
-     * it has support for it.
+     * returned index, you should make a copy using {@link Index#copy()}.
      * 
      * @return  the number of data elements along each dimension.
      * 
      * @see #getSize(int)
-     * @see #copyOfIndex(Object)
-     * @see jnum.Copiable#copy()
+     * @see Index#copy()
      */
     public IndexType getSize();
     
@@ -75,14 +76,25 @@ public interface IndexedEntries<IndexType, DataType> {
     public int getSize(int i) throws IllegalArgumentException;
     
     /**
+     * Checks if the datum at the specified index is valid.
+     * 
+     * @param index     the data index
+     * @return          <code>true</code> if this data object contains valid number value at the specified index,
+     *                  otherwise <code>false</code>.
+     *                  
+     * @throws IndexOutOfBoundsException   if the index it outside the range of this data.
+     */
+    public boolean isValid(IndexType index) throws IndexOutOfBoundsException;
+    
+    /**
      * Gets the data stored at the specified index.
      * 
      * @param index     the index of the data
      * @return          the data element at that index. It is a reference to an object, or a
      *                  primitive value.
-     * @throws ArrayIndexOutOfBoundsException   if the index it outside the range of this data.
+     * @throws IndexOutOfBoundsException   if the index it outside the range of this data.
      */
-    public DataType get(IndexType index) throws ArrayIndexOutOfBoundsException;
+    public DataType get(IndexType index) throws IndexOutOfBoundsException;
     
     /**
      * Sets a new data element at the specified data index.
@@ -90,9 +102,9 @@ public interface IndexedEntries<IndexType, DataType> {
      * @param index     the index of the data
      * @param value     the new elements to set. The data object will reference that value
      *                  or set a primitive type equal to the supplieed value.
-     * @throws ArrayIndexOutOfBoundsException   if the index it outside the range of this data.
+     * @throws IndexOutOfBoundsException   if the index it outside the range of this data.
      */
-    public void set(IndexType index, DataType value) throws ArrayIndexOutOfBoundsException;
+    public void set(IndexType index, DataType value) throws IndexOutOfBoundsException;
     
     /**
      * Gets a new generic type index instance for this data object.
@@ -100,14 +112,6 @@ public interface IndexedEntries<IndexType, DataType> {
      * @return      A new index object for this data.
      */
     public IndexType getIndexInstance();
-    
-    /**
-     * Gets a deep copy of the specified data index.
-     * 
-     * @param index The index to copy.
-     * @return      A deep copy of the argument, as the same type of index object
-     */
-    public IndexType copyOfIndex(IndexType index);
     
     /**
      * Checks if this data has a matching size, along all dimensions, as the size
@@ -135,9 +139,8 @@ public interface IndexedEntries<IndexType, DataType> {
      * @return  A string representation of this object's size.
      */
     public default String getSizeString() {
-        return "[" + getSize() + "]";
-     }
-
+        return getSize().toString("x");
+    }
     
     /**
      * Checks if the supplied index is contained within the bounds of this object.
@@ -146,5 +149,256 @@ public interface IndexedEntries<IndexType, DataType> {
      * @return      <code>true</code> if the index is within the supported bounds of this object. Otherwise <code>false</code>.
      */
     public boolean containsIndex(IndexType index);
+    
+    public int getParallel();
+    
+    /**
+     * Loops over a block of data elements in the specified index range, 
+     * performing the specified point operation on each.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the point operation to perform on each data element
+     * @param from          the starting index for the loop.
+     * @param to            the ecxlusive ending index for the loop.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp)
+     * @see #loopValid(PointOp, Index, Index)
+     * @see #fork(ParallelPointOp, Index, Index)
+     */
+    public <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op, IndexType from, IndexType to);
+
+    /**
+     * Loops over a block of valid data elements in the specified index range, 
+     * performing the specified point operation on each.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the point operation to perform on each data element
+     * @param from          the starting index for the loop.
+     * @param to            the ecxlusive ending index for the loop.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loopValid(PointOp)
+     * @see #loop(PointOp, Index, Index)
+     * @see #forkValid(ParallelPointOp, Index, Index)
+     */
+    public default <ReturnType> ReturnType loopValid(PointOp<DataType, ReturnType> op, IndexType from, IndexType to) {
+        return loop(new PointOp<IndexType, ReturnType>() {
+
+            @Override
+            protected void init() {}
+        
+            @Override
+            public void process(IndexType index) {
+                if (isValid(index)) op.process(get(index));
+            }
+
+            @Override
+            public ReturnType getResult() {
+                return op.getResult();
+            }
+        }, from, to);
+    }
+
+    /**
+     * Process a block of elements (points), in the specified range of indices, in this data object in parallel 
+     * with the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param from          the starting index for the block of data to process.
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #smartFork(ParallelPointOp, Index, Index)
+     * @see #forkValid(ParallelPointOp, Index, Index)
+     * @see #fork(ParallelPointOp)
+     * @see #loop(PointOp, Index, Index)
+     */
+    public default <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to) {
+        return from.fork(op, to);
+    }
+
+    /**
+     * Process a block of valid elements (points) only, in the specified range of indices, in this data object in parallel 
+     * with the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param from          the starting index for the block of data to process.
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #smartForkValid(ParallelPointOp, Index, Index)
+     * @see #fork(ParallelPointOp, Index, Index)
+     * @see #forkValid(ParallelPointOp)
+     * @see #loopValid(PointOp, Index, Index)
+     */
+    public default <ReturnType> ReturnType forkValid(final ParallelPointOp<DataType, ReturnType> op, IndexType from, IndexType to) {
+        return from.fork(new ParallelPointOp<IndexType, ReturnType>() {
+            ParallelPointOp<DataType, ReturnType> localOp;
+
+            @Override
+            public void mergeResult(ReturnType localResult) {
+                localOp.mergeResult(localResult);
+            }
+
+            @Override
+            protected void init() {
+                localOp = op.newInstance();
+                localOp.reset();
+            }
+
+            @Override
+            public void process(IndexType index) {
+                if(isValid(index)) localOp.process(get(index));
+            }
+            
+            @Override
+            public ReturnType getResult() {
+                return localOp.getResult();
+            }
+            
+        }, to);
+    }
+    
+    /**
+     * Process a block of elements (points), in the specified range of indices, in this data object efficiently, 
+     * using parallel or sequential processing, whichever is deemed fastest for the data size and the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param from          the starting index for the block of data to process.
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp, Index, Index)
+     * @see #fork(ParallelPointOp, Index, Index)
+     * @see #smartForkValid(ParallelPointOp, Index, Index)
+     * @see #smartFork(ParallelPointOp)
+     */
+    public default <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op, IndexType from, IndexType to) {
+        if(getParallel() < 2) return loop(op, from, to);
+        IndexType span = getIndexInstance();
+        span.setDifference(to, from);
+        if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loop(op, from, to);
+        return fork(op, from, to);
+    }
+    
+    /**
+     * Process a block of valid elements (points) only, in the specified range of indices, in this data object efficiently, 
+     * using parallel or sequential processing, whichever is deemed fastest for the data size and the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @param from          the starting index for the block of data to process.
+     * @param to            the ecxlusive ending index for the block of data to process.
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loopValid(PointOp, Index, Index)
+     * @see #forkValid(ParallelPointOp, Index, Index)
+     * @see #smartFork(ParallelPointOp, Index, Index)
+     * @see #smartForkValid(ParallelPointOp)
+     */
+    public default <ReturnType> ReturnType smartForkValid(final ParallelPointOp<DataType, ReturnType> op, IndexType from, IndexType to) {
+        if(getParallel() < 2) return loopValid(op, from, to);
+        IndexType span = getIndexInstance();
+        span.setDifference(to, from);
+        if(span.getVolume() * (2 + op.numberOfOperations()) < 2 * ParallelTask.minExecutorBlockSize) return loopValid(op, from, to);
+        return forkValid(op, from, to);  
+    }
+    
+    /**
+     * Loops over all data elements, performing the specified point operation on each.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loopValid(PointOp)
+     * @see #fork(ParallelPointOp)
+     */
+    public default <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op) {
+        return loop(op, getIndexInstance(), getSize());
+    }
+
+    /**
+     * Loops over all valid data elements, performing the specified point operation on each.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp)
+     * @see #forkValid(ParallelPointOp)
+     */
+    public default <ReturnType> ReturnType loopValid(PointOp<DataType, ReturnType> op) {
+        return loopValid(op, getIndexInstance(), getSize());
+    }
+
+    /**
+     * Process elements (points) in this data object in parallel with the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #smartFork(ParallelPointOp)
+     * @see #forkValid(ParallelPointOp)
+     * @see #loop(PointOp)
+     */
+    public default <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op) {
+        return fork(op, getIndexInstance(), getSize());
+    }
+    
+    /**
+     * Process only valid elements (points) in this data object in parallel with the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #smartForkValid(ParallelPointOp)
+     * @see #fork(ParallelPointOp)
+     * @see #loopValid(PointOp)
+     */
+    public default <ReturnType> ReturnType forkValid(final ParallelPointOp<DataType, ReturnType> op) {
+        return forkValid(op, getIndexInstance(), getSize());
+    }
+
+    /**
+     * Process elements (points) in this data object efficiently, using parallel or sequential processing, whichever
+     * is deemed fastest for the data size and the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loop(PointOp)
+     * @see #fork(ParallelPointOp)
+     * @see #smartForkValid(ParallelPointOp)
+     */
+    public default <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op) {
+        return smartFork(op, getIndexInstance(), getSize());
+    }
+
+    /**
+     * Process valid elements (points) only in this data object efficiently, using parallel or sequential processing, whichever
+     * is deemed fastest for the data size and the specified point operation.
+     * 
+     * @param <ReturnType>  the generic return value type for the operation.
+     * @param op            the (parallel) point operation to perform on each data element
+     * @return              the return value of the operation (if any).
+     * 
+     * @see #loopValid(PointOp)
+     * @see #forkValid(ParallelPointOp)
+     * @see #smartFork(ParallelPointOp)
+     */
+    public default <ReturnType> ReturnType smartForkValid(final ParallelPointOp<DataType, ReturnType> op) {
+        return smartForkValid(op, getIndexInstance(), getSize());
+    }
+    
+
+
     
 }

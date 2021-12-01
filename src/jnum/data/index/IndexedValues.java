@@ -33,7 +33,7 @@ import jnum.data.Values;
  * @param <IndexType>
  * @param <NumberType>
  */
-public interface IndexedValues<IndexType, NumberType extends Number> extends Values, IndexedEntries<IndexType, NumberType> {
+public interface IndexedValues<IndexType extends Index<IndexType>, NumberType extends Number> extends Values, IndexedEntries<IndexType, NumberType> {
 
     /**
      * Clears (zeroes) the value at the specified index location

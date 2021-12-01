@@ -35,16 +35,19 @@ import java.util.Map;
 
 import jnum.CopiableContent;
 import jnum.ExtraMath;
+import jnum.Function;
 import jnum.PointOp;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.index.Index;
+import jnum.data.index.IndexedEntries;
 import jnum.data.index.IndexedValues;
 import jnum.fits.FitsHeaderEditing;
 import jnum.fits.FitsHeaderParsing;
 import jnum.fits.FitsToolkit;
 import jnum.math.LinearAlgebra;
 import jnum.math.Range;
+import jnum.math.RealAlgebra;
 import jnum.parallel.ParallelObject;
 import jnum.parallel.ParallelPointOp;
 import jnum.text.TableFormatter;
@@ -66,8 +69,8 @@ import nom.tam.util.Cursor;
  * @param <IndexType>       the generic type of index by which elements are located, and iterated over, in this dataset.
  */
 public abstract class Data<IndexType extends Index<IndexType>> extends ParallelObject implements 
-    CopiableContent<Data<IndexType>>, IndexedValues<IndexType, Number>, Iterable<Number>, LinearAlgebra<Data<IndexType>>, TableFormatter.Entries,
-    FitsHeaderEditing, FitsHeaderParsing {
+    CopiableContent<Data<IndexType>>, IndexedValues<IndexType, Number>, Iterable<Number>, RealAlgebra, LinearAlgebra<Data<IndexType>>, 
+    TableFormatter.Entries, FitsHeaderEditing, FitsHeaderParsing {
 
     static {
         Locale.setDefault(Locale.US);
@@ -97,6 +100,27 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         setDefaultUnit();
     }
 
+    /**
+     * Returns a new empty (zeroed) regularly sampled data object of the same type and size as this object.
+     * 
+     * @return      a new data object of the same type and size as this one.
+     * 
+     * @see #newImage(Index, Class)
+     */
+    public Data<IndexType> newImage() { return newImage(getSize(), getElementType()); }
+
+    /**
+     * Returns a new empty (zeroed) regularly sampled data object of the same class as this one byt with
+     * the specified size and element type.
+     * 
+     * @param size          the size of the new data.
+     * @param elementType   the type of elements in the new data, such as <code>Float.class</code>.
+     * @return              a new data object of the same class as this one, but with the specified size and element type.
+     * 
+     * @see #newImage()
+     */
+    public abstract Data<IndexType> newImage(IndexType size, Class<? extends Number> elementType);
+    
     @Override
     public int hashCode() {
         int hash = super.hashCode() ^ getInvalidValue().hashCode(); 
@@ -290,6 +314,7 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         return invalidValue;
     }
 
+    
     /**
      * Changes the number value used by this data object to mark invalid data. All data
      * marked invalid previously will be changed to the new ionvalid value.
@@ -439,86 +464,7 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
     @Override
     public abstract DataCrawler<Number> iterator();
 
-    /**
-     * Loops over all data elements, performing the specified point operation on each.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the point operation to perform on each data element
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loopValid(PointOp)
-     * @see #fork(ParallelPointOp)
-     */
-    public abstract <ReturnType> ReturnType loop(PointOp<IndexType, ReturnType> op);
-    /**
-     * Loops over all valid data elements, performing the specified point operation on each.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the point operation to perform on each data element
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loop(PointOp)
-     * @see #forkValid(ParallelPointOp)
-     */
-    public abstract <ReturnType> ReturnType loopValid(PointOp<Number, ReturnType> op);
-   
-    /**
-     * Process elements (points) in this data object in parallel with the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #smartFork(ParallelPointOp)
-     * @see #forkValid(ParallelPointOp)
-     * @see #loop(PointOp)
-     */
-    public abstract <ReturnType> ReturnType fork(final ParallelPointOp<IndexType, ReturnType> op);
 
-    /**
-     * Process only valid elements (points) in this data object in parallel with the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #smartForkValid(ParallelPointOp)
-     * @see #fork(ParallelPointOp)
-     * @see #loopValid(PointOp)
-     */
-    public abstract <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op);
-
-    
-    /**
-     * Process elements (points) in this data object efficiently, using parallel or sequential processing, whichever
-     * is deemed fastest for the data size and the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loop(PointOp)
-     * @see #fork(ParallelPointOp)
-     * @see #smartForkValid(ParallelPointOp)
-     */
-    public abstract <ReturnType> ReturnType smartFork(final ParallelPointOp<IndexType, ReturnType> op);
-
-
-    /**
-     * Process valid elements (points) only in this data object efficiently, using parallel or sequential processing, whichever
-     * is deemed fastest for the data size and the specified point operation.
-     * 
-     * @param <ReturnType>  the generic return value type for the operation.
-     * @param op            the (parallel) point operation to perform on each data element
-     * @return              the return value of the operation (if any).
-     * 
-     * @see #loopValid(PointOp)
-     * @see #forkValid(ParallelPointOp)
-     * @see #smartFork(ParallelPointOp)
-     */
-    public abstract <ReturnType> ReturnType smartForkValid(final ParallelPointOp<Number, ReturnType> op);
-
-    
 
 
     @Override
@@ -529,6 +475,25 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         return getSize().equals(size);
     }
 
+    /**
+     * Copies content from the another object into this data.
+     * 
+     * @param source    The indexed number values to copy into this data. 
+     * @param report    Whether to report this operation in the data history log.
+     */
+    public void copyOf(final IndexedEntries<IndexType, ? extends Number> source, boolean report) {
+        if(source == this) return;
+
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType index) {
+                if(source.isValid(index)) set(index, source.get(index));
+            }
+        });
+
+        if(report) addHistory("pasted new content: " + source.getSizeString());
+    }
+    
     /**
      * Returns the number value at the specified data index (if valid), or the the specified default value if
      * there is no valid datum at the specified index.
@@ -545,19 +510,6 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
     public abstract Number getValid(final IndexType index, final Number defaultValue);
 
     /**
-     * Checks if the datum at the specified index is valid.
-     * 
-     * @param index     the data index
-     * @return          <code>true</code> if this data object contains valid number value at the specified index,
-     *                  otherwise <code>false</code>.
-     * 
-     * @see #isValid(Number)
-     * @see #setInvalidValue(Number)
-     * @see #discard(Index)
-     */
-    public abstract boolean isValid(IndexType index);
-
-    /**
      * Discards the datum at the specified index setting, marking it as invalid.
      * 
      * @param index     the data index          
@@ -569,11 +521,11 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
     public abstract void discard(IndexType index);
 
     /**
-     * Clears all values inthis data object, by calling {@link #clear(Object)} on every element. It also
+     * Clears all values inthis data object, by calling {@link #clear(Index)} on every element. It also
      * starts a new hostory for this data object.
      * 
      * @see #clearHistory()
-     * @see #clear(Object)
+     * @see #clear(Index)
      */
     public final void clear() {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
@@ -607,7 +559,7 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
      * 
      * @param value     the increment to add to all valid data elements.
      * 
-     * @see #add(Object, Number)
+     * @see #add(Index, Number)
      */
     public final void add(final Number value) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
@@ -617,6 +569,11 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         addHistory("add " + value);
     }
 
+
+    @Override
+    public final void add(double x) {
+        add(new Double(x));
+    }
 
     @Override
     public void scale(final double factor) {
@@ -665,6 +622,20 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         addHistory("validate via " + validator);
     }
 
+    public void validateTo(IndexedEntries<IndexType, ?> data) {
+        validate(new Validating<IndexType>() {
+            @Override
+            public boolean isValid(IndexType index) {
+                return data.isValid(index);
+            }
+
+            @Override
+            public void discard(IndexType index) {
+                Data.this.discard(index);
+            }    
+        });
+    }
+    
     /**
      * Discards all data elements that have values inside the specified range, by calling {@link #discard(Index)} on
      * the affected points.
@@ -703,29 +674,6 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         });
     }
 
-
-    /**
-     * Copies data content from another data object of the same index type, but possibly of different
-     * (smaller size).
-     * 
-     * @param source    the data object that specifies the new elements for this one
-     * @param report    <code>true</code> if a new history entry should be added, otherwise <code>false</code>.
-     * 
-     * 
-     */
-    public final void paste(final Data<IndexType> source, boolean report) {
-        if(source == this) return;
-
-        source.smartFork(new ParallelPointOp.Simple<IndexType>() {
-            @Override
-            public void process(IndexType index) {
-                if(source.isValid(index)) set(index, source.get(index));
-                else discard(index); 
-            }     
-        });
-
-        if(report) addHistory("pasted new content: " + source.getSizeString());
-    }
 
     /**
      * Discards outliers above the specified deviation level (from zero), by calling {@link #discard(Index)} on
@@ -946,7 +894,7 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
                 if(!isValid(index)) return;
                 if(compare(get(index), min) >= 0) return;
                 min = get(index);
-                minIndex = copyOfIndex(index);
+                minIndex = index.copy();
 
             }
 
@@ -992,7 +940,7 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
                 if(!isValid(index)) return;
                 if(compare(get(index), max) <= 0) return;
                 max = get(index);
-                maxIndex = copyOfIndex(index);
+                maxIndex = index.copy();
 
             }
 
@@ -1038,7 +986,7 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
                 if(!isValid(index)) return;
                 if(compare(get(index), max) <= 0) return;
                 max = Math.abs(get(index).doubleValue());
-                maxIndex = copyOfIndex(index);
+                maxIndex = index.copy();
 
             }
 
@@ -1433,6 +1381,28 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         return covarianceTo(data) / Math.sqrt(covarianceTo(this) * data.covarianceTo(data));   
     }
 
+    public Data<IndexType> getMapped(final Function<Number, Number> f) {
+        Data<IndexType> data = newImage(getSize(), getElementType());
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType point) {
+                if(isValid(point)) data.set(point, f.valueAt(get(point)));
+                else data.discard(point);
+            }
+        });
+        
+        return data;
+    }
+    
+    public void apply(final Function<Number, Number> f) {
+        smartFork(new ParallelPointOp.Simple<IndexType>() {
+            @Override
+            public void process(IndexType point) {
+                if(isValid(point)) set(point, f.valueAt(get(point)));
+            }
+        });
+    }
+    
     /**
      * Performs a point-by-point multiplication of the elements of this data with the corresponding
      * elements of the specified other data.
@@ -1443,7 +1413,7 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
             public void process(IndexType point) {
-                set(point, get(point).doubleValue() * data.get(point).doubleValue());
+                if(data.isValid(point)) set(point, get(point).doubleValue() * data.get(point).doubleValue());
             }
         });  
     }
@@ -1482,14 +1452,14 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
     @Override
     public void setSum(final Data<IndexType> a, final Data<IndexType> b) {
         clear();
-        paste(a, false);
+        copyOf(a, false);
         add(b);
     }
 
     @Override
     public void setDifference(final Data<IndexType> a, final Data<IndexType> b) {
         clear();
-        paste(a, false);
+        copyOf(a, false);
         subtract(b);
     }
 
@@ -1578,7 +1548,7 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
      * @see #getHDUs(Class)
      */
     public Fits createFits(Class<? extends Number> dataType) throws FitsException {
-        FitsFactory.setLongStringsEnabled(standardLongFitsKeywords);
+        FitsFactory.setLongStringsEnabled(FitsToolkit.isUseOGIPLongStrings());
         FitsFactory.setUseHierarch(true);
         Fits fits = new Fits(); 
 
@@ -1668,57 +1638,6 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
     }
 
 
-    /**
-     * An absract base class for implementing sequential processing in this data object.
-     * 
-     * @author Attila Kovacs
-     *
-     * @param <ReturnType>  the generic type of result returned by the processing.
-     * 
-     * @see Data.AbstractFork
-     */
-    protected abstract class AbstractLoop<ReturnType> {
-        protected IndexType from, to;
-
-        protected AbstractLoop() { this(getIndexInstance(), getSize()); }
-
-        protected AbstractLoop(IndexType from, IndexType to) { 
-            this.from = from;
-            this.to = to;
-        }
-
-        /**
-         * The method that sequentially processes a block of data in this object in the 
-         * specified range of indices.
-         * 
-         * @return  the result of the processing
-         */
-        protected abstract ReturnType process();
-
-        protected ReturnType getResult() { return null; }
-    }
-
-    /**
-     * An absract base class for implementing parallel processing in this data object.
-     * 
-     * @author Attila Kovacs
-     *
-     * @param <ReturnType>  the generic type of result returned by the processing.
-     * 
-     * @see Data.AbstractLoop
-     */
-    protected abstract class AbstractFork<ReturnType> extends Task<ReturnType> {
-        protected IndexType from, to;
-
-        protected AbstractFork() { this(getIndexInstance(), getSize()); }
-
-        protected AbstractFork(IndexType from, IndexType to) { 
-            this.from = from;
-            this.to = to;
-        }
-    }
-
-
     /** 
      * A point location and value in the parent data object.
      * 
@@ -1782,7 +1701,6 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
             this(getIndexInstance(), getSize());
         }
 
-
         /**
          * Constructor for iterating though a sub-section of the 
          * 
@@ -1823,11 +1741,6 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
 
     }
 
-    /** 
-     * Whether data objects use the stardard OGIP convention for long FITS keys (using CONTINUE),
-     * or else (if <code>false</code>) if it uses the convention of CRUSH instead that splits long
-     * keywords into multiple standard-length FITS keys.
-     */
-    public static boolean standardLongFitsKeywords = true;
+
 
 }

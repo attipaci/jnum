@@ -44,6 +44,7 @@ import jnum.data.index.IndexedUncertainties;
 import jnum.fits.FitsToolkit;
 import jnum.math.CoordinateTransform;
 import jnum.math.Vector2D;
+import jnum.parallel.ParallelPointOp;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
@@ -277,7 +278,7 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     
     @Override
     public final double weightAt(Index2D index) {
-        return noiseAt(index.i(), index.j());
+        return weightAt(index.i(), index.j());
     }
 
     public final double weightAt(int i, int j) {
@@ -302,6 +303,10 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         return exposure.get(i, j).doubleValue();
     }
 
+    public void setExposureAt(Index2D index, double value) {
+        exposure.set(index.i(), index.j(), value);
+    }
+    
     public void setExposureAt(int i, int j, double value) {
         exposure.set(i, j, value);
     }
@@ -360,25 +365,28 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     
     
     public void accumulate(final Observation2D image, final double gain, final double weight) {
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                if(image.isValid(i, j)) accumulateAt(i, j, image.get(i, j).doubleValue(), gain, weight * image.weightAt(i, j), image.exposureAt(i, j));
+            public void process(Index2D index) {
+                if(image.isValid(index)) accumulateAt(index, image.get(index).doubleValue(), gain, weight * image.weightAt(index), image.exposureAt(index));
             }
-        }.process();
+        });
     }
     
     @Override
     public void endAccumulation() {
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) { endAccumulation(i, j); }
-        }.process();
+            public void process(Index2D index) { endAccumulation(index); }
+        });
     }
 
+    public final void endAccumulation(Index2D index) {
+        endAccumulation(index.i(), index.j());
+    }
 
     public void endAccumulation(int i, int j) {
-        super.scale(i, j, 1.0 / weight.get(i,j).doubleValue());
+        super.scale(i, j, 1.0 / weight.get(i, j).doubleValue());
     }
 
     public final void mergeAccumulate(final Observation2D image) {
@@ -458,11 +466,11 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     }
 
     @Override
-    public void fastSmooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex, Index2D step) {
+    public void coarseSmooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex, Index2D step) {
         Image2D smoothWeights = getWeightImage().copy(false);
         
-        setImage((Image2D) getFastSmoothed(beam, refIndex, step, weight, smoothWeights));
-        setExposureImage((Image2D) getExposures().getFastSmoothed(beam, refIndex, step, weight, null));
+        setImage((Image2D) getSmoothedCoarse(beam, refIndex, step, weight, smoothWeights));
+        setExposureImage((Image2D) getExposures().getSmoothedCoarse(beam, refIndex, step, weight, null));
         setWeightImage(smoothWeights);
         
         addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
@@ -527,14 +535,14 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         // Smooth to replacementResolution;
         cleanS2N.smooth(replacementPSF.getBeam(getGrid()));
 
-        cleanS2N.new Fork<Void>() {
+        cleanS2N.smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                if(isValid(i,j)) {
-                    set(i, j, weightAt(i, j) * (cleanS2N.get(i, j).doubleValue() + s2n.get(i, j).doubleValue()));
+            public void process(Index2D index) {
+                if(isValid(index)) {
+                    set(index, weightAt(index) * (cleanS2N.get(index).doubleValue() + s2n.get(index).doubleValue()));
                 }
             }
-        }.process();
+        });
 
         getWeightImage().scale(1.0 + getSmoothingBeam().getArea() / replacementPSF.getArea());
 
@@ -636,32 +644,32 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         case EXPOSURE: setExposureImage(image); return ComponentType.EXPOSURE;
         case NOISE: 
             if(!weight.conformsTo(sizeX(), sizeY())) getWeightImage().setSize(sizeX(), sizeY());
-            weight.new Fork<Void>() {
+            weight.smartFork(new ParallelPointOp.Simple<Index2D>() {
                 @Override
-                protected void process(int i, int j) {
-                    double noise = image.get(i,j).doubleValue();
-                    weight.set(i, j, 1.0 / (noise * noise));
+                public void process(Index2D index) {
+                    double noise = image.get(index).doubleValue();
+                    weight.set(index, 1.0 / (noise * noise));
                 }      
-            }.process();
+            });
             return ComponentType.WEIGHT;
         case VARIANCE: 
             if(!weight.conformsTo(sizeX(), sizeY())) getWeightImage().setSize(sizeX(), sizeY());
-            weight.new Fork<Void>() {
+            weight.smartFork(new ParallelPointOp.Simple<Index2D>() {
                 @Override
-                protected void process(int i, int j) {
-                    weight.set(i, j, 1.0 / image.get(i,j).doubleValue());
+                public void process(Index2D index) {
+                    weight.set(index, 1.0 / image.get(index).doubleValue());
                 }      
-            }.process();
+            });
             return ComponentType.WEIGHT;
         case S2N: 
             if(!weight.conformsTo(sizeX(), sizeY())) getWeightImage().setSize(sizeX(), sizeY());
-            weight.new Fork<Void>() {
+            weight.smartFork(new ParallelPointOp.Simple<Index2D>() {
                 @Override
-                protected void process(int i, int j) {
-                    double noise = get(i, j).doubleValue() / image.get(i,j).doubleValue();
-                    weight.set(i, j, 1.0 / (noise * noise));
+                public void process(Index2D index) {
+                    double noise = get(index).doubleValue() / image.get(index).doubleValue();
+                    weight.set(index, 1.0 / (noise * noise));
                 }      
-            }.process();
+            });
             return ComponentType.WEIGHT;
         case UNKNOWN: 
             return type;

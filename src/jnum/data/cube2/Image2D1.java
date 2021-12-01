@@ -40,7 +40,7 @@ public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializ
         
         if(capacity() > 0) {
             copy.setSize(sizeX(), sizeY(), sizeZ());
-            if(withContent) copy.paste(this, true);
+            if(withContent) copy.copyOf(this, true);
         }
         
         return copy;

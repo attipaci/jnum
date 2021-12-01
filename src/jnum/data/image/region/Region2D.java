@@ -36,6 +36,7 @@ import jnum.data.image.overlay.Viewport2D;
 import jnum.data.index.Index2D;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
+import jnum.parallel.ParallelPointOp;
 import jnum.text.StringParser;
 
 
@@ -191,23 +192,23 @@ public abstract class Region2D implements Serializable, Cloneable {
 	    
 	    public void flag(Flag2D flag, final long pattern) {
 	        final Viewport2D viewer = getViewer(flag.getData());
-	        viewer.new Fork<Void>() {
+	        viewer.smartFork(new ParallelPointOp.Simple<Index2D>() {
                 @Override
-                protected void process(int i, int j) {
-                    if(!viewer.isValid(i, j)) viewer.set(i, j, viewer.get(i, j).longValue() | pattern);
+                public void process(Index2D index) {
+                    if(!viewer.isValid(index)) viewer.set(index, viewer.get(index).longValue() | pattern);
                 }
-	        }.process();
+	        });
 	    }
 	    
 	    public void unflag(Flag2D flag, final long pattern) {
             final Viewport2D viewer = getViewer(flag.getData());
             final long clearPattern = ~pattern;
-            viewer.new Fork<Void>() {
+            viewer.smartFork(new ParallelPointOp.Simple<Index2D>() {
                 @Override
-                protected void process(int i, int j) {
-                    if(!viewer.isValid(i, j)) viewer.set(i, j, viewer.get(i, j).longValue() & clearPattern);
+                public void process(Index2D index) {
+                    if(!viewer.isValid(index)) viewer.set(index, viewer.get(index).longValue() & clearPattern);
                 }
-            }.process();   
+            });   
         }
 	        
 	    

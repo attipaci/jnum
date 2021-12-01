@@ -36,11 +36,13 @@ import jnum.data.cube.Values3D;
 import jnum.data.cube.overlay.Overlay3D;
 import jnum.data.image.Data2D;
 import jnum.data.image.Observation2D;
+import jnum.data.index.Index2D;
 import jnum.data.index.Index3D;
 import jnum.data.index.IndexedExposures;
 import jnum.data.index.IndexedUncertainties;
 import jnum.fits.FitsToolkit;
 import jnum.math.Vector3D;
+import jnum.parallel.ParallelPointOp;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.FitsException;
 
@@ -273,11 +275,11 @@ implements Observations<Data3D>, IndexedExposures<Index3D>, IndexedUncertainties
 
         final Observation2D median = getPlaneTemplate().copy(false);
 
-        median.new Fork<Void>() {
+        median.smartFork(new ParallelPointOp.Simple<Index2D>() {
             private WeightedPoint[] sorter;
 
             @Override
-            protected void process(int i, int j) {
+            public void process(Index2D index) {
                 int m=0;
                 double sumt = 0.0;
 
@@ -285,21 +287,21 @@ implements Observations<Data3D>, IndexedExposures<Index3D>, IndexedUncertainties
 
                 for(int k=fromk; k < tok; k++) {
                     final Observation2D plane = getPlane(k);
-                    if(!plane.isValid(i, j)) continue;
+                    if(!plane.isValid(index)) continue;
 
                     final WeightedPoint p = sorter[m++];
-                    p.setValue(plane.get(i, j).doubleValue());
-                    p.setWeight(plane.weightAt(i, j));
-                    sumt += plane.exposureAt(i, j);
+                    p.setValue(plane.get(index).doubleValue());
+                    p.setWeight(plane.weightAt(index));
+                    sumt += plane.exposureAt(index);
                 }
                 if(m > 0) {
                     WeightedPoint medianValue = Statistics.Destructive.median(sorter, 0, m);
-                    median.set(i, j, medianValue.value());
-                    median.setWeightAt(i, j, medianValue.weight());
-                    median.setExposureAt(i, j, sumt);
+                    median.set(index, medianValue.value());
+                    median.setWeightAt(index, medianValue.weight());
+                    median.setExposureAt(index, sumt);
                 }
             }
-        }.process();
+        });
 
         return median;   
     }

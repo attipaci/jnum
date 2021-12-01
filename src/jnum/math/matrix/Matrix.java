@@ -938,6 +938,11 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         data[i][j] *= factor;
     }
 
+    @Override
+    public boolean isValid(Index2D index) {
+        return true;
+    }
+   
     
     @Override
     public boolean isNull(int i, int j) {

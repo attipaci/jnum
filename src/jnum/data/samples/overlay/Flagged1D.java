@@ -27,8 +27,10 @@ import java.util.concurrent.ExecutorService;
 
 import jnum.Util;
 import jnum.data.FlagCompanion;
+import jnum.data.index.Index1D;
 import jnum.data.samples.Flag1D;
 import jnum.data.samples.Values1D;
+import jnum.parallel.ParallelPointOp;
 import jnum.util.HashCode;
 
 public class Flagged1D extends Overlay1D {
@@ -112,12 +114,12 @@ public class Flagged1D extends Overlay1D {
     
     
     public void flag(final long pattern) {
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index1D>() {
             @Override
-            protected void processElementAt(int i) {
-                flag(i, pattern);
+            public void process(Index1D index) {
+                flag(index.i(), pattern);
             }
-        }.process();
+        });
     }
     
     public void flag() {
@@ -125,12 +127,12 @@ public class Flagged1D extends Overlay1D {
     }
     
     public void unflag(final long pattern) {
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index1D>() {
             @Override
-            protected void processElementAt(int i) {
-                unflag(i, pattern);
+            public void process(Index1D index) {
+                unflag(index.i(), pattern);
             }
-        }.process();
+        });
     }
     
     public void unflag() {

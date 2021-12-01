@@ -306,6 +306,22 @@ public final class FitsToolkit {
         c.add(new HeaderCard(name, value, comment));
     }
     
+    public static void setUseOGIPLongStrings(boolean value) {
+        ogipLongStrings = value;
+    }
+    
+    public static boolean isUseOGIPLongStrings() {
+        return ogipLongStrings;
+    }
+    
+    
+    
+    /** 
+     * Whether data objects use the stardard OGIP convention for long FITS keys (using CONTINUE),
+     * or else (if <code>false</code>) if it uses the convention of CRUSH instead that splits long
+     * keywords into multiple standard-length FITS keys.
+     */
+    private static boolean ogipLongStrings = true;
 
     public static String extraHistoryBreaksAfter = "/\\:;_=";
 

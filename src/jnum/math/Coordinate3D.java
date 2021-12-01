@@ -271,8 +271,7 @@ public class Coordinate3D implements RealCoordinates, Serializable, Cloneable, C
 
     @Override
     public final Index1D getSize() {
-        size.set(3);
-        return size;
+        return new Index1D(3);
     }
 
     @Override
@@ -352,8 +351,6 @@ public class Coordinate3D implements RealCoordinates, Serializable, Cloneable, C
                 + Util.s[decimals].format(coords.y / unit.value()) + ", "
                 + Util.s[decimals].format(coords.z / unit.value()) + " " + unit.name();
     }
-
-    private static final Index1D size = new Index1D(3);
 
     /** the index of the <i>x</i>-type (first) coordinate */
     public static final int X = 0;    

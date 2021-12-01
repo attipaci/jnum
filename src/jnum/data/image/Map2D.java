@@ -36,7 +36,6 @@ import jnum.data.FlagCompanion;
 import jnum.data.Referenced;
 import jnum.data.RegularData;
 import jnum.data.Resizable;
-import jnum.data.WeightedPoint;
 import jnum.data.image.overlay.Flagged2D;
 import jnum.data.image.overlay.RangeRestricted2D;
 import jnum.data.image.overlay.Referenced2D;
@@ -51,6 +50,7 @@ import jnum.math.IntRange;
 import jnum.math.Range;
 import jnum.math.CoordinateTransform;
 import jnum.math.Vector2D;
+import jnum.parallel.ParallelPointOp;
 import jnum.projection.DefaultProjection2D;
 import jnum.projection.Projection2D;
 import jnum.util.HashCode;
@@ -611,10 +611,10 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
 
 
     public void noData() {
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) { discard(i, j); }
-        }.process();    
+            public void process(Index2D index) { discard(index); }
+        });    
     }
 
 
@@ -730,7 +730,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
                 (int)Math.ceil(psf.extentInY()/(5.0 * getGrid().pixelSizeY()))
         );
 
-        fastSmooth(psf.getBeam(getGrid()), step);
+        coarseSmooth(psf.getBeam(getGrid()), step);
     }
 
 
@@ -741,8 +741,8 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
     }
 
     @Override
-    public void fastSmooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex, Index2D step) {
-        super.fastSmooth(beam, refIndex, step);
+    public void coarseSmooth(RegularData<Index2D, Vector2D> beam, Vector2D refIndex, Index2D step) {
+        super.coarseSmooth(beam, refIndex, step);
         addSmoothing(Gaussian2D.getEquivalent(beam, getGrid().getResolution()));
     }
 
@@ -754,35 +754,34 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
     public void filterAbove(double FWHM, final Validating2D validator) {
         final Map2D extended = copy(true);
         
-        
         if(extended instanceof Observation2D) {
             extended.validate();    // Make sure zero weights are flagged...
             ((Observation2D) extended).isZeroWeightValid = true;
         }
         
         // Null out the points that are to be skipped over by the validator...
-        if(validator != null) extended.new Fork<Void>() {
+        if(validator != null) extended.smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                if(!isValid(i, j)) return;
-                if(!validator.isValid(i, j)) {
-                    extended.clear(i, j);
-                    extended.unflag(i, j);
+            public void process(Index2D index) {
+                if(!isValid(index)) return;
+                if(!validator.isValid(index)) {
+                    extended.clear(index);
+                    extended.unflag(index);
                 }
             }
-        }.process();
+        });
            
         extended.smoothTo(FWHM);
       
         final Image2D image = getImage();
         
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                if(!extended.isValid(i, j)) return;
-                image.add(i, j, -extended.get(i, j).doubleValue());   // Subtract from the image directly without affecting flagging...
+            public void process(Index2D index) {
+                if(!extended.isValid(index)) return;
+                image.add(index, -extended.get(index).doubleValue());   // Subtract from the image directly without affecting flagging...
             }
-        }.process();
+        });
 
         updateFiltering(FWHM);
     }
@@ -799,33 +798,38 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         fftFilterAbove(FWHM, validator, null);
     }
 
-    public final void fftFilterAbove(double FWHM, final Validating2D validator, final Values2D weight) {
+    public final void fftFilterAbove(double FWHM, final Validating2D validator, final Values2D weight) {  
         // Oversized transformer to reduce wrapping effects by copious padding...
         final int nx = ExtraMath.pow2ceil(sizeX()<<1);
         final int ny = ExtraMath.pow2ceil(sizeY()<<1);
  
         final double[][] transformer = new double[nx][ny+2];
 
-        AveragingFork weightedCalc = new AveragingFork() {
-            private double sumw = 0.0;
-            private int n = 0;
+        final double rmsw = smartFork(new ParallelPointOp.Average<Index2D>() {
+            private double w;
+            
             @Override
-            protected void process(final int i, final int j) {
-                if(!isValid(i, j)) return;  
-                if(validator != null) if(!validator.isValid(i, j)) return;
-
-                final double w = (weight == null) ? 1.0 : weight.get(i,  j).doubleValue();
-          
-                transformer[i][j] = w * get(i, j).doubleValue();
-                sumw += w*w;    // Normalize like window functions, by square sum, in line with Parseval's theorem...
-                n++;
+            public final void process(Index2D index) {
+                if(!isValid(index)) return;
+                if(validator != null) if(!validator.isValid(index)) return;
+                
+                w = (weight == null) ? 1.0 : weight.get(index).doubleValue();
+                transformer[index.i()][index.j()] = w * get(index).doubleValue();
+ 
+                super.process(index);
             }
+            
             @Override
-            public WeightedPoint getLocalResult() { return new WeightedPoint(sumw, n); }
-        };
-        weightedCalc.process();
+            public double getValue(Index2D index) { 
+                return w;
+            }
 
-        final double rmsw = Math.sqrt(weightedCalc.getResult().value());
+            @Override
+            public double getWeight(Index2D index) { 
+                return 1.0;
+            }
+        }).value();
+        
         if(rmsw <= 0.0) return;
 
         final MultiFFT fft = new MultiFFT(this);
@@ -864,13 +868,13 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         final double norm = -1.0 / rmsw;
         final Image2D image = getImage();
         
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            public void process(int i, int j) {
+            public void process(Index2D index) {
                 // Subtract from the image directly without affecting flagging...
-                image.add(i, j, norm * transformer[i][j]);
+                image.add(index, norm * transformer[index.i()][index.j()]);
             }
-        }.process();
+        });
 
         updateFiltering(FWHM);
     }
@@ -1026,12 +1030,12 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         }
         final double filterC =getFilterCorrectionFactor(underlyingFWHM);
      
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                if(validator.isValid(i, j)) scale(i, j, filterC);
+            public void process(Index2D index) {
+                if(validator.isValid(index)) scale(index, filterC);
             }
-        }.process();
+        });
 
         setCorrectingFWHM(underlyingFWHM);
     }
@@ -1052,12 +1056,12 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
 
         final double iFilterC = 1.0 / getFilterCorrectionFactor(getCorrectingFWHM());
 
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
-                if(validator.isValid(i,  j)) scale(i, j, iFilterC);
+            public void process(Index2D index) {
+                if(validator.isValid(index)) scale(index, iFilterC);
             }
-        }.process();
+        });
 
         setCorrectingFWHM(Double.NaN);
     }

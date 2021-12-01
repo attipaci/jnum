@@ -32,6 +32,7 @@ import jnum.data.Image;
 import jnum.data.index.Index1D;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
+import jnum.parallel.ParallelPointOp;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.Header;
@@ -98,13 +99,13 @@ public abstract class Samples1D extends Data1D implements Image<Index1D>, Serial
 
     public void setData(final Values1D values) {
         setSize(values.size());
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index1D>() {
             @Override
-            protected void processElementAt(int i) {
+            public void process(Index1D i) {
                 if(values.isValid(i)) set(i, values.get(i));
                 else discard(i);
             }
-        }.process();
+        });
     }
     
     
@@ -123,69 +124,69 @@ public abstract class Samples1D extends Data1D implements Image<Index1D>, Serial
     
     public synchronized void setData(final double[] data) { 
         setSize(data.length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index1D>() {
             @Override
-            protected void processElementAt(int i) {
-                set(i, data[i]);
+            public void process(Index1D index) {
+                set(index, data[index.i()]);
             }
-        }.process();
+        });
         recordNewData("double[]");
     }
 
 
     public synchronized void setData(final float[] data) {
         setSize(data.length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index1D>() {
             @Override
-            protected void processElementAt(int i) {
-                set(i, data[i]);
+            public void process(Index1D index) {
+                set(index, data[index.i()]);
             }
-        }.process();
+        });
         recordNewData("float[]");
     }
 
     public synchronized void setData(final long[] data) {
         setSize(data.length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index1D>() {
             @Override
-            protected void processElementAt(int i) {
-                set(i, data[i]);
+            public void process(Index1D index) {
+                set(index, data[index.i()]);
             }
-        }.process();
+        });
         recordNewData("long[]");
     }
 
 
     public synchronized void setData(final int[] data) {
         setSize(data.length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index1D>() {
             @Override
-            protected void processElementAt(int i) {
-                set(i, data[i]);
+            public void process(Index1D index) {
+                set(index, data[index.i()]);
             }
-        }.process();
+        });
         recordNewData("int[]");
     }
 
     public synchronized void setData(final short[] data) {
         setSize(data.length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index1D>() {
             @Override
-            protected void processElementAt(int i) {
-                set(i, data[i]);
+            public void process(Index1D index) {
+                set(index, data[index.i()]);
             }
-        }.process();
+        });
         recordNewData("short[]");
     }
 
     public synchronized void setData(final byte[] data) {
         setSize(data.length);
-        new Fork<Void>() {
+        smartFork(new ParallelPointOp.Simple<Index1D>() {
             @Override
-            protected void processElementAt(int i) {
-                set(i, data[i]);
+            public void process(Index1D index) {
+                set(index, data[index.i()]);
             }
-        }.process();
+        });
         recordNewData("byte[]");
     }
     

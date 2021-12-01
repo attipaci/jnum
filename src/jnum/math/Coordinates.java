@@ -27,6 +27,7 @@ import java.text.NumberFormat;
 import java.util.stream.IntStream;
 
 import jnum.CopyCat;
+import jnum.PointOp;
 import jnum.Util;
 import jnum.data.index.Index1D;
 import jnum.data.index.IndexedEntries;
@@ -148,13 +149,6 @@ public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, Index
         return new Index1D();
     }
 
-
-    @Override
-    public default Index1D copyOfIndex(Index1D index) {
-        return index.copy();
-    }
-
-
     @Override
     public default boolean conformsTo(Index1D size) {
         return size.i() == size();
@@ -248,5 +242,27 @@ public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, Index
     public default void assertSize(int size) { 
         if(size() != size) throw new ShapeException(getClass().getSimpleName() + " has wrong size " + size() + ". Expected " + size + ".");    
     }
+    
+    @Override
+    public default int getParallel() {
+        return 1;
+    }
+    
+    @Override
+    public default boolean isValid(Index1D index) {
+        return true;
+    }
    
+
+    @Override
+    public default <ReturnType> ReturnType loop(PointOp<Index1D, ReturnType> op, Index1D from, Index1D to) { 
+        Index1D index = new Index1D();
+        for(int i=dimension(); --i >= 0; ) {
+            index.set(i);
+            op.process(index);
+        }
+        return op.getResult();
+    }
+    
+
 }

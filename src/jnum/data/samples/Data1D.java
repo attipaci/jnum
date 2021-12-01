@@ -39,14 +39,12 @@ import jnum.data.DataCrawler;
 import jnum.data.Interpolator;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
-import jnum.data.WeightedPoint;
 import jnum.data.index.Index1D;
 import jnum.data.samples.overlay.Overlay1D;
 import jnum.math.CoordinateAxis;
 import jnum.math.IntRange;
+import jnum.math.Position;
 import jnum.math.Range;
-import jnum.parallel.ParallelPointOp;
-import jnum.parallel.ParallelTask;
 import jnum.text.TableFormatter;
 import jnum.util.HashCode;
 
@@ -73,10 +71,6 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
     
     @Override
     public Position getVectorInstance() { return new Position(); }
-     
-    @Override
-    public final Index1D copyOfIndex(Index1D index) { return index.copy(); }
-
     
     @Override
     public Samples1D newImage() {
@@ -200,19 +194,7 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         paste(new Overlay1D(source), report);
     }
 
-    public void paste(final Data1D source, boolean report) {
-        if(source == this) return;
-
-        source.new Fork<Void>() {
-            @Override
-            protected void processElementAt(int i) {
-                if(source.isValid(i)) set(i, source.get(i));
-                else discard(i);
-            }
-        }.process();
-
-        if(report) addHistory("pasted new content: " + source.getSizeString());
-    }
+    
     
 
     
@@ -648,163 +630,5 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         }
         return op.getResult();
     }
-    
-    @Override
-    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, Index1D from, Index1D to) {
-      
-        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
-            private ParallelPointOp<Number, ReturnType> localOp;
-            
-            @Override
-            public void init() {
-                super.init();
-                localOp = op.newInstance();
-            }
-            
-            @Override
-            protected void processElementAt(int i) {
-                if(isValid(i)) localOp.process(get(i));
-            }
-            
-            @Override
-            public ReturnType getLocalResult() { return localOp.getResult(); }
-            
-
-            @Override
-            public ReturnType getResult() { 
-                ParallelPointOp<Number, ReturnType> globalOp = op.newInstance();
-                
-                for(ParallelTask<ReturnType> worker : getWorkers()) {
-                    globalOp.mergeResult(worker.getLocalResult());
-                }
-                return globalOp.getResult();
-            }
-            
-        };
-        
-        fork.process();
-        return fork.getResult();
-    }
-    
-    @Override
-    public <ReturnType> ReturnType fork(final ParallelPointOp<Index1D, ReturnType> op, Index1D from, Index1D to) {
-      
-        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
-            private ParallelPointOp<Index1D, ReturnType> localOp;
-            private Index1D index;
-            
-            @Override
-            public void init() {
-                super.init();
-                index = new Index1D();
-                localOp = op.newInstance();
-            }
-            
-            @Override
-            protected void processElementAt(int i) {
-                index.set(i); 
-                localOp.process(index);
-            }
-          
-            @Override
-            public ReturnType getLocalResult() { return localOp.getResult(); }
-            
-
-            @Override
-            public ReturnType getResult() { 
-                ParallelPointOp<Index1D, ReturnType> globalOp = op.newInstance();
-                
-                for(ParallelTask<ReturnType> worker : getWorkers()) {
-                    globalOp.mergeResult(worker.getLocalResult());
-                }
-                return globalOp.getResult();
-            }
-            
-        };
-        
-        fork.process();
-        return fork.getResult();
-    }
-
-    
-    
-    
-    
-    
-    
-    
-
-    public abstract class Loop<ReturnType> extends AbstractLoop<ReturnType> {
-        public Loop() {}
-        
-        public Loop(Index1D from, Index1D to) { super(from, to); }
-        
-        @Override
-        public ReturnType process() {
-            for(int i=to.i(); --i >= from.i(); ) process(i);
-            return getResult();
-        }
-
-        protected abstract void process(int i);
-
-        @Override
-        protected ReturnType getResult() { return null; }
-    }
-
-    
-
-    public abstract class Fork<ReturnType> extends AbstractFork<ReturnType> {           
-        
-        public Fork() { }
-        
-        public Fork(Index1D from, Index1D to) { super(from, to); }
-        
-        public Fork(int from, int to) { super(new Index1D(from), new Index1D(to)); }
-        
-        @Override
-        protected void processChunk(int index, int threadCount) {
-            for(int i=from.i() + index; i<to.i(); i += threadCount) processElementAt(i);
-        }
-
-
-        @Override
-        protected int getRevisedChunks(int chunks, int minBlockSize) {
-            return super.getRevisedChunks(getPointOps(), minBlockSize);
-        }
-
-        @Override
-        protected int getTotalOps() {
-            return 3 + size() * getPointOps();
-        }
-
-        protected int getPointOps() {
-            return 10;
-        }  
-
-        protected abstract void processElementAt(int i);
-    } 
-
-
-
-
-
-    public abstract class AveragingFork extends Fork<WeightedPoint> {
-        public AveragingFork() {}
-        
-        public AveragingFork(int from, int to) { super(from, to); }
-        
-        @Override
-        public WeightedPoint getResult() {
-            WeightedPoint ave = new WeightedPoint();      
-            for(ParallelTask<WeightedPoint> task : getWorkers()) ave.accumulate(task.getLocalResult(), 1.0);
-            if(ave.weight() > 0.0) ave.endAccumulation();
-            return ave;
-        }
-    }
-
-
-   
-
-
     
 }

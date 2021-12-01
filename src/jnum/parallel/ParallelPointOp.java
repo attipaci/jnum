@@ -219,7 +219,7 @@ public abstract class ParallelPointOp<PointType, ReturnType> extends PointOp<Poi
         public abstract double getWeight(PointType point);
         
         @Override
-        public final void process(PointType point) {
+        public void process(PointType point) {
             final double w = getWeight(point);
             sum += w * getValue(point);
             sumw += w;

@@ -26,19 +26,15 @@ package jnum.data.cube;
 
 import java.util.List;
 
-
 import jnum.PointOp;
 import jnum.data.CubicSpline;
 import jnum.data.DataCrawler;
 import jnum.data.Interpolator;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
-import jnum.data.WeightedPoint;
 import jnum.data.index.Index3D;
 import jnum.math.IntRange;
 import jnum.math.Vector3D;
-import jnum.parallel.ParallelPointOp;
-import jnum.parallel.ParallelTask;
 
 
 
@@ -109,9 +105,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         }
     }
     
-    @Override
-    public final Index3D copyOfIndex(Index3D index) { return new Index3D(index.i(), index.j(), index.k()); }
-
     @Override
     public final int dimension() { return 3; }
 
@@ -453,6 +446,21 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         else return super.getTableEntry(name);
     }
 
+    @Override
+    public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op, Index3D from, Index3D to) {
+        final Index3D index = new Index3D();
+        for(int i=to.i(); --i >= from.i(); ) {
+            for(int j=to.j(); --j >= from.j(); ) {
+                for(int k=to.k(); --k >= from.k(); ) {
+                    index.set(i, j, k);
+                    op.process(index);
+                    if(op.exception != null) return null;
+                }
+            }
+        }
+   
+        return op.getResult();
+    }
 
     @Override
     public DataCrawler<Number> iterator() {
@@ -506,191 +514,5 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         };
 
     }
-
-
-
-    @Override
-    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index3D from, Index3D to) {
-        for(int i=to.i(); --i >= from.i(); ) {
-            for(int j=to.j(); --j >= from.j(); ) for(int k=to.k(); --k >= from.k(); )
-                if(isValid(i, j, k)) op.process(get(i, j, k));
-        }
-
-        return op.getResult();
-    }
-
-    @Override
-    public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op, Index3D from, Index3D to) {
-        final Index3D index = new Index3D();
-        for(int i=to.i(); --i >= from.i(); ) {
-            for(int j=to.j(); --j >= from.j(); ) for(int k=to.k(); --k >= from.k(); ) {
-                index.set(i,  j,  k);
-                op.process(index);
-                if(op.exception != null) return null;
-            }
-        }
-        return op.getResult();
-    }
-
-    @Override
-    public <ReturnType> ReturnType forkValid(final ParallelPointOp<Number, ReturnType> op, Index3D from, Index3D to) {
-
-        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
-            private ParallelPointOp<Number, ReturnType> localOp;
-
-            @Override
-            public void init() {
-                super.init();
-                localOp = op.newInstance();
-            }
-
-            @Override
-            protected void process(int i, int j, int k) {
-                if(isValid(i, j, k)) localOp.process(get(i, j, k));
-            }
-
-            @Override
-            public ReturnType getLocalResult() { return localOp.getResult(); }
-
-
-            @Override
-            public ReturnType getResult() { 
-                ParallelPointOp<Number, ReturnType> globalOp = op.newInstance();
-
-                for(ParallelTask<ReturnType> worker : getWorkers()) {
-                    globalOp.mergeResult(worker.getLocalResult());
-                }
-                return globalOp.getResult();
-            }
-
-        };
-
-        fork.process();
-        return fork.getResult();
-    }
-
-    @Override
-    public <ReturnType> ReturnType fork(final ParallelPointOp<Index3D, ReturnType> op, Index3D from, Index3D to) {
-
-        Fork<ReturnType> fork = new Fork<ReturnType>(from, to) {
-            private ParallelPointOp<Index3D, ReturnType> localOp;
-            private Index3D index;
-
-            @Override
-            public void init() {
-                super.init();
-                index = new Index3D();
-                localOp = op.newInstance();
-            }
-
-            @Override
-            protected void process(int i, int j, int k) {
-                index.set(i, j, k);
-                localOp.process(index);
-            }
-
-            @Override
-            public ReturnType getLocalResult() { return localOp.getResult(); }
-
-
-            @Override
-            public ReturnType getResult() { 
-                ParallelPointOp<Index3D, ReturnType> globalOp = op.newInstance();
-
-                for(ParallelTask<ReturnType> worker : getWorkers()) {
-                    globalOp.mergeResult(worker.getLocalResult());
-                }
-                return globalOp.getResult();
-            }
-
-        };
-
-        fork.process();
-        return fork.getResult();
-    }
-
-
-
-
-
-    public abstract class Loop<ReturnType> extends AbstractLoop<ReturnType> {
-
-        public Loop() {}
-
-        public Loop(Index3D from, Index3D to) { super(from, to); }
-
-
-        @Override
-        public ReturnType process() {
-            for(int i=to.i(); --i >= from.i(); ) for(int j=to.j(); --j >= from.j(); ) for(int k=to.k(); --k >= from.k(); ) 
-                process(i, j, k);
-            return getResult();
-        }
-
-        protected abstract void process(int i, int j, int k);
-
-        @Override
-        protected ReturnType getResult() { return null; }
-    }
-
-
-
-    public abstract class Fork<ReturnType> extends AbstractFork<ReturnType> {
-
-        public Fork() {}
-
-        public Fork(Index3D from, Index3D to) { super(from, to); }
-
-        @Override
-        protected void processChunk(int index, int threadCount) {
-            for(int i=from.i() + index; i<to.i(); i += threadCount) {
-                processX(i);
-            }
-        }
-
-        protected void processX(int i) {
-            for(int j=to.j(); --j >= from.j(); ) process(i, j);
-        }
-
-        protected void process(int i, int j) {
-            for(int k=to.k(); --k >= from.k(); ) process(i, j, k);
-        }
-
-
-        protected abstract void process(int i, int j, int k);
-
-        @Override
-        protected int getRevisedChunks(int chunks, int minBlockSize) {
-            return super.getRevisedChunks(getPointOps(), minBlockSize);
-        }
-
-        @Override
-        protected int getTotalOps() {
-            return 3 + sizeX() * sizeY() * sizeZ() * getPointOps();
-        }
-
-        protected int getPointOps() {
-            return 10;
-        }  
-
-
-    }
-
-
-    public abstract class AveragingFork extends Fork<WeightedPoint> {
-        public AveragingFork() {}
-
-        public AveragingFork(Index3D from, Index3D to) { super(from, to); }
-
-        @Override
-        public WeightedPoint getResult() {
-            WeightedPoint ave = new WeightedPoint();      
-            for(ParallelTask<WeightedPoint> task : getWorkers()) ave.accumulate(task.getLocalResult(), 1.0);
-            if(ave.weight() > 0.0) ave.endAccumulation();
-            return ave;
-        }
-    }
-
-
 
 }

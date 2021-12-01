@@ -34,7 +34,7 @@ public interface InvalidValue {
     /**
      * Checks if this object is invalid, and should be skipped over during operations.
      * 
-     * @return  <code>tru</code> if this object is marked as blanked, invalid, or is missing data.
+     * @return  <code>true</code> if this object is marked as blanked, invalid, or is missing data.
      */
 	public boolean isInvalidValue(); 
 	

@@ -27,6 +27,7 @@ package jnum.data.image.region;
 
 import jnum.Constant;
 import jnum.IncompatibleTypesException;
+import jnum.PointOp;
 import jnum.Symbol;
 import jnum.Unit;
 import jnum.Util;
@@ -37,6 +38,7 @@ import jnum.data.image.Map2D;
 import jnum.data.image.Observation2D;
 import jnum.data.image.Values2D;
 import jnum.data.image.overlay.Viewport2D;
+import jnum.data.index.Index2D;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
 import jnum.math.Vector2D;
@@ -292,18 +294,17 @@ public class GaussianSource extends CircularRegion {
            
             getGrid().toOffset(center);
             
-            view.new Loop<Void>() {
+            view.loop(new PointOp.Simple<Index2D>() {
                 private Vector2D v = new Vector2D();
                 
                 @Override
-                protected void process(int i, int j) {
-                    v.set(i + view.fromi(), j + view.fromj());
+                public void process(Index2D index) {
+                    v.set(index.i() + view.fromi(), index.j() + view.fromj());
                     getGrid().toOffset(v);
                     v.subtract(center);
-                    view.add(i, j, factor * shape.valueAt(v));
-                }
-                
-            }.process();
+                    view.add(index, factor * shape.valueAt(v));
+                }      
+            });
         }
         
         

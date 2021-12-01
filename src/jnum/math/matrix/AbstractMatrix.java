@@ -34,6 +34,7 @@ import jnum.CopyCat;
 import jnum.data.index.Index2D;
 import jnum.data.index.IndexedValues;
 import jnum.math.MathVector;
+import jnum.parallel.ParallelObject;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
 import jnum.util.ArrayUtil;
@@ -51,8 +52,9 @@ import jnum.util.ArrayUtil;
  *
  * @param <T>       The generic type of the elements in this matrix.
  */
-public abstract class AbstractMatrix<T> implements SquareMatrixAlgebra<MatrixAlgebra<?, ? extends T>, T>, Serializable, 
-Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, NumberFormating, DecimalFormating {
+public abstract class AbstractMatrix<T> extends ParallelObject 
+implements SquareMatrixAlgebra<MatrixAlgebra<?, ? extends T>, T>, Serializable, Cloneable, CopiableContent<AbstractMatrix<T>>, 
+    CopyCat<AbstractMatrix<T>>, NumberFormating, DecimalFormating {
 
     /** */
 	private static final long serialVersionUID = 8165960625207147822L;
@@ -75,12 +77,10 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
 		setData(ArrayUtil.createArray(type, rows, cols));
 	}
 
-	
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @Override
     public AbstractMatrix<T> clone() {
-        try { return (AbstractMatrix<T>) super.clone(); } 
-        catch(CloneNotSupportedException e) { return null; }
+        return (AbstractMatrix<T>) super.clone();
     }
 	
 
@@ -201,11 +201,6 @@ Cloneable, CopiableContent<AbstractMatrix<T>>, CopyCat<AbstractMatrix<T>>, Numbe
     @Override
     public final Index2D getIndexInstance() {
         return new Index2D();
-    }
-
-    @Override
-    public final Index2D copyOfIndex(Index2D index) {
-         return index.copy();
     }
 
     @Override

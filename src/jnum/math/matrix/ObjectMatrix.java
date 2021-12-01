@@ -174,9 +174,13 @@ extends AbstractMatrix<T> {
     @Override
     public T[][] getData() { return data; }
 
-
     @Override
     public final T get(int row, int col) { return data[row][col]; }
+
+    @Override
+    public boolean isValid(Index2D index) {
+        return get(index) != null;
+    }
     
     @Override
     public final T copyOf(int row, int col) { return (T) get(row, col).copy(); }

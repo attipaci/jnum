@@ -21,13 +21,11 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.samples;
+package jnum.math;
 
 import jnum.Util;
 import jnum.data.RealValue;
 import jnum.data.index.Index1D;
-import jnum.math.Coordinates;
-import jnum.math.MathVector;
 import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 import jnum.util.HashCode;
@@ -187,8 +185,7 @@ public class Position extends RealValue implements MathVector<Double> {
 
     @Override
     public Index1D getSize() {
-        size.set(1);
-        return size;
+        return new Index1D(1);
     }
     
     @Override
@@ -196,11 +193,6 @@ public class Position extends RealValue implements MathVector<Double> {
         if(i != 0) throw new IllegalArgumentException("there is no dimension " + i);
         return 1;
     }
-
-    /**
-     * The default size object for 2D coordinates.
-     */
-    private static final Index1D size = new Index1D(1);
 
     @Override
     public Double copyOf(int i) {

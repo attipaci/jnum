@@ -39,11 +39,13 @@ import jnum.data.WeightedPoint;
 import jnum.data.cube.Data3D;
 import jnum.data.image.Data2D;
 import jnum.data.index.Index1D;
+import jnum.data.index.Index2D;
 import jnum.data.index.Index3D;
-import jnum.data.samples.Position;
 import jnum.data.samples.Samples1D;
 import jnum.math.IntRange;
+import jnum.math.Position;
 import jnum.math.Vector3D;
+import jnum.parallel.ParallelPointOp;
 
 public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
@@ -324,16 +326,16 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
         final ImageType sum = newPlaneInstance();
 
-        sum.new Fork<Void>() {
+        sum.smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
+            public void process(Index2D index) {
                 for(int k=fromk; k < tok; k++) {
                     final Data2D plane = getPlane(k);
-                    if(plane.isValid(i, j)) sum.add(i, j, plane.get(i, j));
+                    if(plane.isValid(index)) sum.add(index, plane.get(index));
                 }
             }
-        }.process();
-
+        });
+        
         return sum;
     }
 
@@ -350,19 +352,19 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
         final ImageType sum = newPlaneInstance();
 
-        sum.new Fork<Void>() {
+        sum.smartFork(new ParallelPointOp.Simple<Index2D>() {
             @Override
-            protected void process(int i, int j) {
+            public void process(Index2D index) {
                 int n = 0;
                 for(int k=tok; --k >= fromk; ) {
                     final Data2D plane = getPlane(k);
-                    if(!plane.isValid(i, j)) return;
-                    sum.add(i, j, plane.get(i, j));
+                    if(!plane.isValid(index)) return;
+                    sum.add(index, plane.get(index));
                     n++;
                 }
-                sum.scale(i, j, 1.0 / n);
+                sum.scale(index, 1.0 / n);
             }
-        }.process();
+        });
 
         return sum;   
     }
@@ -380,7 +382,7 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
 
         final ImageType sum = newPlaneInstance();
 
-        sum.new Fork<Void>() {
+        sum.smartFork(new ParallelPointOp.Simple<Index2D>() {
             private double[] sorter;
 
             @Override
@@ -390,15 +392,15 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
             }
 
             @Override
-            protected void process(int i, int j) {
+            public void process(Index2D index) {
                 int n = 0;
                 for(int k=tok; --k >= fromk; ) {
                     final Data2D plane = getPlane(k);
-                    if(plane.isValid(i, j)) sorter[n++] = plane.get(i, j).doubleValue();
+                    if(plane.isValid(index)) sorter[n++] = plane.get(index).doubleValue();
                 }
-                if(n > 0) sum.set(i,  j, Statistics.Destructive.median(sorter, 0, n));
+                if(n > 0) sum.set(index, Statistics.Destructive.median(sorter, 0, n));
             }
-        }.process();
+        });
 
         return sum;   
     }
