@@ -31,6 +31,7 @@ import jnum.NonConformingException;
 import jnum.Unit;
 import jnum.Util;
 import jnum.data.ComponentType;
+import jnum.data.Data;
 import jnum.data.FlagCompanion;
 import jnum.data.Observations;
 import jnum.data.RegularData;
@@ -73,6 +74,15 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         super(dataType, flagType); 
         setWeightImage(Image2D.createType(weightType));
         setExposureImage(Image2D.createType(weightType));
+    }
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof Observation2D) {
+            Observation2D obs = (Observation2D) other;
+            isZeroWeightValid = obs.isZeroWeightValid;
+        }
     }
      
     @Override
@@ -485,17 +495,6 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     public void undoFilterCorrect() {
         undoFilterCorrect(getSignificance());
     }
-
-    @Override
-    public void fftFilterAbove(double FWHM) {
-        super.fftFilterAbove(FWHM, weight);
-    }
-
-    @Override
-    public void fftFilterAbove(double FWHM, final Validating2D skip) {
-        super.fftFilterAbove(FWHM, skip, weight);
-    }
-
 
     public void resampleFrom(Observation2D map) {
         Referenced2D beam = getAntialiasingBeamImageFor(map);

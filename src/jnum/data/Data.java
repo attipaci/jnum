@@ -100,6 +100,15 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         setDefaultUnit();
     }
 
+    @SuppressWarnings("unchecked")
+    public void copyPoliciesFrom(Data<?> other) {
+        copyParallel(other);
+        setUnit(other.getUnit());
+        setInvalidValue(other.getInvalidValue());
+        preserveHistory = other.preserveHistory;
+        if(other.localUnits != null) localUnits = (Hashtable<String, Unit>) other.localUnits.clone();
+    }
+    
     /**
      * Returns a new empty (zeroed) regularly sampled data object of the same type and size as this object.
      * 

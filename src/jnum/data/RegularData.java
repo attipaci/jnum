@@ -58,11 +58,22 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     /** The interpolation type to use to interpolate data to inbetween stored indices */
     private Interpolator.Type interpolationType;    
 
-    private SmoothingPolicy smoothingPolicy = DEFAULT_SMOOTHING_POLICY;
+    private SmoothingPolicy smoothingPolicy;
 
     protected RegularData() {
         reuseIpolData = new SplineSet<>(dimension());
         setInterpolationType(Interpolator.Type.CUBIC_SPLINE);
+    }
+    
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof RegularData) {
+            RegularData<?, ?> data = (RegularData<?, ?>) other;
+            interpolationType = data.interpolationType;
+            smoothingPolicy = data.smoothingPolicy;
+        }
     }
     
     @Override
@@ -97,8 +108,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         this.smoothingPolicy = pol;
     }
     
-    public final SmoothingPolicy isAllowFFTSmooth() {
-        return smoothingPolicy;
+    public final SmoothingPolicy getSmoothingPolicy() {
+        return smoothingPolicy == null ? DEFAULT_SMOOTHING_POLICY : smoothingPolicy;
     }
 
     /**
@@ -408,7 +419,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     @SuppressWarnings("cast")
     @Override
     public RegularData<IndexType, VectorType> newImage() { 
-        return (RegularData<IndexType, VectorType>) newImage(); 
+        return (RegularData<IndexType, VectorType>) newImage(getSize(), getElementType()); 
     }
 
 
@@ -766,11 +777,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      */
     public final RegularData<IndexType, VectorType> getSmoothed(RegularData<IndexType, VectorType> beam, final IndexType refIndex, 
             final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
-        return getSmoothedMethod(smoothingPolicy, beam, refIndex, weight, smoothedWeights);
+        return getSmoothedMethod(getSmoothingPolicy(), beam, refIndex, weight, smoothedWeights);
     }
     
     public final RegularData<IndexType, VectorType> getSmoothedMethod(SmoothingPolicy method, RegularData<IndexType, VectorType> beam, final IndexType refIndex, 
-            final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {    
+            final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {  
+
         switch(method) {
         case ALWAYS_FFT: return getSmoothedFFT(beam, refIndex, weight, smoothedWeights);
         case FASTEST:
@@ -921,7 +933,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     public RegularData<IndexType, VectorType> getSmoothedCoarse(final RegularData<IndexType, VectorType> beam, final VectorType refIndex,
             final IndexType step, final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {
         
-        switch(smoothingPolicy) {
+        switch(getSmoothingPolicy()) {
         case ALWAYS_FFT:
         case METICULOUS:
             return getSmoothed(beam, refIndex, weight, smoothedWeights);
@@ -1831,5 +1843,5 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
     }  
  
     /** The default policy for trading speed and accuracy when smoothing */
-    public static final SmoothingPolicy DEFAULT_SMOOTHING_POLICY = SmoothingPolicy.FASTEST;
+    public static SmoothingPolicy DEFAULT_SMOOTHING_POLICY = SmoothingPolicy.FASTEST;
 }

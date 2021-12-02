@@ -31,6 +31,7 @@ import jnum.Constant;
 import jnum.ExtraMath;
 import jnum.Unit;
 import jnum.Util;
+import jnum.data.Data;
 import jnum.data.DataPoint;
 import jnum.data.FlagCompanion;
 import jnum.data.Referenced;
@@ -79,8 +80,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
 
     private transient Vector2D reuseIndex = new Vector2D();
 
-
-
     private FitsProperties fitsProperties;
     
     
@@ -98,11 +97,8 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
   
     private double correctingFWHM = Double.NaN; 
     
-    
     private double filterBlanking = Double.POSITIVE_INFINITY;
     
-    
-
 
     private Map2D() {
         reuseIndex = new Vector2D();
@@ -216,14 +212,14 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
   
         return copy;
     }
-
+    
+    
     public void copyProcessingFrom(Map2D other) {
         underlyingBeam = other.underlyingBeam == null ? null : other.underlyingBeam.copy();
         smoothingBeam = other.smoothingBeam == null ? null : other.smoothingBeam.copy();
           
         filterFWHM = other.filterFWHM;
-        filterBlanking = other.filterBlanking;
-        
+        filterBlanking = other.filterBlanking;  
         correctingFWHM = other.correctingFWHM;
     }
     
@@ -231,10 +227,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         fitsProperties = template.fitsProperties == null ? null : template.fitsProperties.copy();
     
         copyProcessingFrom(template);
-        
-        filterFWHM = template.filterFWHM;
-        correctingFWHM = template.correctingFWHM;
-        filterBlanking = template.filterBlanking;
         
         if(template.grid != null) grid = template.grid.copy();
         if(template.displayGridUnit != null) displayGridUnit = template.displayGridUnit.copy();
@@ -713,7 +705,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
     public final void smoothTo(double FWHM) {
         smoothTo(new Gaussian2D(FWHM));
     }
-
+    
     public final void smoothTo(Gaussian2D psf) {
         if(getSmoothingBeam().isEncompassing(psf)) return;
         psf.deconvolveWith(getSmoothingBeam());
@@ -785,101 +777,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
 
         updateFiltering(FWHM);
     }
-
-    public void fftFilterAbove(double FWHM) {
-        fftFilterAbove(FWHM, null);
-    }
-
-    public void fftFilterAbove(double FWHM, final Values2D weight) {
-        fftFilterAbove(FWHM, null, weight);
-    }
-
-    public void fftFilterAbove(double FWHM, final Validating2D validator) {
-        fftFilterAbove(FWHM, validator, null);
-    }
-
-    public final void fftFilterAbove(double FWHM, final Validating2D validator, final Values2D weight) {  
-        // Oversized transformer to reduce wrapping effects by copious padding...
-        final int nx = ExtraMath.pow2ceil(sizeX()<<1);
-        final int ny = ExtraMath.pow2ceil(sizeY()<<1);
- 
-        final double[][] transformer = new double[nx][ny+2];
-
-        final double rmsw = smartFork(new ParallelPointOp.Average<Index2D>() {
-            private double w;
-            
-            @Override
-            public final void process(Index2D index) {
-                if(!isValid(index)) return;
-                if(validator != null) if(!validator.isValid(index)) return;
-                
-                w = (weight == null) ? 1.0 : weight.get(index).doubleValue();
-                transformer[index.i()][index.j()] = w * get(index).doubleValue();
- 
-                super.process(index);
-            }
-            
-            @Override
-            public double getValue(Index2D index) { 
-                return w;
-            }
-
-            @Override
-            public double getWeight(Index2D index) { 
-                return 1.0;
-            }
-        }).value();
-        
-        if(rmsw <= 0.0) return;
-
-        final MultiFFT fft = new MultiFFT(this);
-        fft.setParallel(getParallel());
-        fft.real2Amplitude(transformer);
-
-        // sigma_x sigma_w = 1
-        // FWHM_x sigma_w = 2.35
-        // FWHM_x * 2Pi sigma_f = 2.35
-        // sigma_f = 2.35/2Pi * 1.0/FWHM_x
-        // delta_f = 1.0/(Nx * delta_x);
-        // sigma_nf = sigma_f / delta_x = 2.35 * Nx * delta_x / (2Pi * FWHM_x)
-
-        final double sigmax = Constant.sigmasInFWHM * nx * getGrid().pixelSizeX() / (Constant.twoPi * FWHM);
-        final double sigmay = Constant.sigmasInFWHM * ny * getGrid().pixelSizeY() / (Constant.twoPi * FWHM);
-
-        final double ax = -0.5/(sigmax*sigmax);
-        final double ay = -0.5/(sigmay*sigmay);
-   
-        for(int fx=nx; --fx >= 0; ) {
-            final double axfx2 = ax*fx*fx;
-            final double[] r = transformer[fx];            // The positive frequencies
-        
-            // The unrolled real spectrum...
-            for(int fy=0; fy <= ny; fy += 2) {
-                // The transfer function (Gaussian taper)
-                final double A = Math.exp(axfx2 + ay*fy*fy);
-
-                r[fy] *= A;
-                r[fy+1] *= A;
-            }
-        }
-
-        fft.amplitude2Real(transformer);
-        
-        final double norm = -1.0 / rmsw;
-        final Image2D image = getImage();
-        
-        smartFork(new ParallelPointOp.Simple<Index2D>() {
-            @Override
-            public void process(Index2D index) {
-                // Subtract from the image directly without affecting flagging...
-                image.add(index, norm * transformer[index.i()][index.j()]);
-            }
-        });
-
-        updateFiltering(FWHM);
-    }
-
-
 
     public CoordinateTransform<Vector2D> getIndexTransformTo(Map2D map) {
         // See if we can use a faster/simpler Cartesian transform for re-mapping...

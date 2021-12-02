@@ -37,18 +37,18 @@ public enum SmoothingPolicy {
      * quite as well as methods based in configuration space, which can compensate for localized holes or
      * coverage variations.
      */
-    ALWAYS_FFT(),
+    ALWAYS_FFT("fft"),
     
     /**
      * Use whatevewr is deemed the fastest, be it FFT based or configuration space based method.
      */
-    FASTEST(),
+    FASTEST("fastest"),
     
     /**
      * Like {@link #FASTEST}, but with a slight bias towards the more accurate configuration-space based method.
      * It switches to FFT only if it's at least an order of magnitude faster than the configuration space based method.
      */
-    BALANCED(),
+    BALANCED("balanced"),
     
     /**
      * Always use a configuration-space based method, never FFT. This may be slower but more accurate when the
@@ -56,7 +56,7 @@ public enum SmoothingPolicy {
      * type of smoothing kernel, it might use a coarse smoothing, and interpolate on the finer scales.
      * 
      */
-    IN_CONFIGURATION_SPACE,
+    IN_CONFIGURATION_SPACE("integral"),
     
     /**
      * Smooth strictly in configuration space, calculating a precised smoothed value at every data point.
@@ -64,7 +64,34 @@ public enum SmoothingPolicy {
      * computationally very expensive for large data and/or large kernels.
      * 
      */
-    METICULOUS;
+    METICULOUS("precise");
    
+    private String name;
+    
+    SmoothingPolicy(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+    
+    public static SmoothingPolicy forName(String name, SmoothingPolicy defaultPolicy) {
+        name = name.toLowerCase();
+        
+        if(name.equals("fft")) return ALWAYS_FFT;
+        if(name.equals("fastest")) return FASTEST;
+        if(name.equals("balanced")) return BALANCED;
+        if(name.equals("integral")) return IN_CONFIGURATION_SPACE;
+        if(name.equals("precise")) return METICULOUS;
+        
+        if(name.equals("fast")) return FASTEST;
+        if(name.equals("in-space")) return IN_CONFIGURATION_SPACE;
+        if(name.equals("meticulous")) return METICULOUS;   
+    
+        // Default policy
+        return defaultPolicy;
+    }
+    
     
 }

@@ -57,7 +57,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
      */
     private static final long serialVersionUID = 3932177524565875808L;
     private String id;
- 
+    
     @Override
     public int hashCode() {
         int hash = super.hashCode();

@@ -110,15 +110,26 @@
 	[NEW] {Interpolator} Added Type enum for defining a fixed set of 
 	interpolation types.
 
+	[NEW] {ComplexView} Added new class to allow treating pairwise values
+	in a RegularData object as complex values, e.g. for FFTs.
+
+	[NEW] {SmoothingPolicy} Added new enum to control the tradeoff between
+	speed and accuracy when smoothing data/ 
+
+	[NEW] {RegularData} Added FFT support for regularly sampled data.
+
 	[RENAME] {jnum.math.matrix} A lot of renaming, both classes and
 	funtions.
 
-	[CHANGE] {jnum.data} Some refactoring an simplification of the base
-	data classes.
+	[CHANGE] Making some good use of default methods to move functionality
+	further upstream, and reduce unnecessary duplication.
+
+	[CHANGE] {jnum.data} Complete overghaul of data package, to offer
+	more consistent and generic functionality.
 
 	[CHANGE] {Configurator} Simlify API.
 
-	[CHANGE] {AstroTime} Remane method to be simpler. For example getTAI()
+	[CHANGE] {AstroTime} Rename methods to be simpler. For example getTAI()
 	to simply TAI().
 
 	[CHANGE] {LocalizedData} A complete overhaul of LocalizedData and
@@ -158,11 +169,13 @@
 	and rounding it for the result, is now renamed setRoundedRatio().
 	
 	[CHANGE] {LockedException} Changed to a runtime exception, so it need
-	no be caught (unless of course you care to)
+	no be caught (unless of course you care to).
 
 	[DEPRECATE] {SimpleMatrix} {Precession} {Precessing} These classes
 	and interfaces are no longer necessary and better implementations
 	are available to perform the functions they were meant to.
+
+	[DEPRECATE] Removed fftFilterAbove() methods from Map2D/Observation2D.
 
 	[RENAME] TrueVector renamed MathVector. It really is just a class
 	representing a vector in the mathematical sense (vs the Java Vector
@@ -222,6 +235,9 @@
 	beam re-centering to avoid excessive need for interpolation.
 
 	[TWEAK] Consilidated some code by using default methods in interfaces.
+
+	[SPEED] {Data?D} Significantly faster configuration-space smoothing 
+	with specific implementations for the overlap integrals.
 
 	[DOC] Fixed existing Javadoc errors.
 

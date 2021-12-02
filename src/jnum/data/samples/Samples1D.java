@@ -56,7 +56,6 @@ public abstract class Samples1D extends Data1D implements Image<Index1D>, Serial
 
     private String id;
     
-    
     protected abstract void setDataSize(int size);
    
     

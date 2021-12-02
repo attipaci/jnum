@@ -31,10 +31,11 @@ import jnum.data.DataPoint;
 import jnum.data.Interpolator;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
+import jnum.data.WeightedPoint;
 import jnum.data.DataCrawler;
 import jnum.data.CubicSpline;
 import jnum.data.index.Index2D;
-import jnum.math.IntRange;
+import jnum.data.index.IndexedValues;
 import jnum.math.Range;
 import jnum.math.Vector2D;
 import jnum.parallel.ParallelPointOp;
@@ -57,38 +58,15 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         hash ^= HashCode.sampleFrom(this);
         return hash;
     }
-
-    
-    @Override
-    public Index2D getIndexInstance() { return new Index2D(); }
     
     @Override
     public Vector2D getVectorInstance() { return new Vector2D(); }
-    
 
     @Override
-    public final int dimension() { return 2; }
-    
-    @Override
-    public Index2D getSize() { return new Index2D(sizeX(), sizeY()); }
-    
-    @Override
-    public int getSize(int i) {
-        switch(i) {
-        case 0: return sizeX();
-        case 1: return sizeY();
-        default: throw new IllegalArgumentException("there is no dimension " + i);
-        }
-    }
-    
-    @Override
-    public Image2D newImage() {
-        return Image2D.createType(getElementType(), sizeX(), sizeY());
-    }
-    
-    @Override
     public Image2D newImage(Index2D size, Class<? extends Number> elementType) {
-        return Image2D.createType(getElementType(), size.i(), size.j());
+        Image2D im = Image2D.createType(getElementType(), size.i(), size.j());
+        im.copyPoliciesFrom(this);
+        return im;
     }
    
 
@@ -104,12 +82,11 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         return getImage(elementType, getInvalidValue());
     }
 
-    public Image2D getImage(Class<? extends Number> elementType, Number blankingValue) {
-        Image2D image = Image2D.createFrom(this, blankingValue, elementType);
-
-        image.copyParallel(this);
-        image.setInterpolationType(getInterpolationType());
-        image.setUnit(getUnit());
+    public Image2D getImage(Class<? extends Number> elementType, Number invalidValue) {
+        Image2D image = newImage(getSize(), elementType);
+         
+        image.setInvalidValue(invalidValue);
+        image.setData(this);
 
         List<String> imageHistory = image.getHistory();
         if(getHistory() != null) imageHistory.addAll(getHistory());
@@ -155,9 +132,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         return splineAtIndex(idx[0], idx[1], splines);
     }
 
-    @Override
-    public final Number get(Index2D index) { return get(index.i(), index.j()); }
-
     public final Number getValid(final int i, final int j, final Number defaultValue) {
         if(!isValid(i, j)) return defaultValue;
         return get(i, j);
@@ -166,72 +140,10 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     @Override
     public final Number getValid(final Index2D index, final Number defaultValue) { return getValid(index.i(), index.j(), defaultValue); }
 
-
-    @Override
-    public final void set(Index2D index, Number value) { set(index.i(), index.j(), value); }
-
-
-    @Override
-    public final void add(Index2D index, Number value) { add(index.i(), index.j(), value); }
-
-
-    public void scale(int i, int j, double factor) {
-        set(i, j, get(i, j).doubleValue() * factor);
-    }
-
-    @Override
-    public final void scale(Index2D index, double factor) { scale(index.i(), index.j(), factor); }
-
     @Override
     public final void discard(Index2D index) { discard(index.i(), index.j()); }
 
-    @Override
-    public int capacity() {
-        return sizeX() * sizeY();
-    }
-
-  
-    public boolean conformsTo(int sizeX, int sizeY) {
-        if(sizeX() != sizeX) return false;
-        if(sizeY() != sizeY) return false;
-        return true;
-    }
-
-
-    public IntRange getXIndexRange() {
-        int min = sizeX(), max = -1;
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) if(isValid(i, j)) {
-            if(i < min) min = i;
-            if(i > max) max = i;
-            break;
-        }
-        return max > min ? new IntRange(min, max) : null;
-    }
-
-    public IntRange getYIndexRange() {
-        int min = sizeY(), max = -1;
-        for(int j=sizeY(); --j >= 0; ) for(int i=sizeX(); --i >= 0; ) if(isValid(i, j)) {
-            if(j < min) min = j;
-            if(j > max) max = j;
-            break;
-        }
-        return max > min ? new IntRange(min, max) : null;
-    }
-
-    
-    @Override
-    public final boolean containsIndex(Index2D index) {
-        return containsIndex(index.i(), index.j());        
-    }
-
-    public boolean containsIndex(final int i, final int j) {
-        if(i < 0) return false;
-        if(j < 0) return false;
-        if(i >= sizeX()) return false;
-        if(j >= sizeY()) return false;
-        return true;
-    }
-
+ 
     @Override
     public final boolean containsIndex(Vector2D index) {
         return containsIndex(index.x(), index.y());
@@ -244,12 +156,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         if(j >= sizeY()-0.5) return false;
         return true;
     }
-
-   
-    @Override
-    public final void clear(Index2D index) { clear(index.i(), index.j()); }
-    
-    public void clear(int i, int j) { set(i, j, 0); }
 
 
     public DataPoint getAsymmetry(final Grid2D<?> grid, final Vector2D centerIndex, final double angle, final Range radialRange) {    
@@ -445,8 +351,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         // ~ 45 ops...
     }
 
-    
-    
     @Override
     public final double quadraticAtIndex(Vector2D index) { return quadraticAtIndex(index.x(), index.y()); }
 
@@ -551,7 +455,45 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         return 25 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
 
+    @SuppressWarnings("null")
+    @Override
+    public void getSmoothedValueAtIndex(final Index2D index, final RegularData<Index2D, Vector2D> beam, final Index2D refIndex, 
+            final IndexedValues<Index2D, ?> weight, final WeightedPoint result) {   
+        // More efficient than generic implementation...
+        
+        final int iR = index.i() - refIndex.i();
+        final int jR = index.j() - refIndex.j();
 
+        final int fromi = Math.max(0, iR);
+        final int fromj = Math.max(0, jR);
+        
+        final int toi = Math.min(sizeX(), iR + beam.getSize(0));
+        final int toj = Math.min(sizeY(), jR + beam.getSize(1));
+
+        Index2D idx = (weight == null) ? null : new Index2D();
+        
+        double sum = 0.0, sumw = 0.0;
+        
+        for(int i=fromi; i<toi; i++) for(int j=fromj; j<toj; j++) if(isValid(i, j)) {
+            final double w;
+            
+            if(weight == null) w = 1.0;
+            else {
+                idx.set(i, j);
+                w = weight.get(idx).doubleValue();
+                if(w == 0.0) continue;
+            }
+            
+            final double wB = w * beam.get(i - iR, j - jR).doubleValue();
+            if(wB == 0.0) return;
+            
+            sum += wB * get(i, j).doubleValue();
+            sumw += Math.abs(wB);    
+        }
+
+        result.setValue(sum / sumw);
+        result.setWeight(sumw); 
+    }  
 
 
     @Override
@@ -614,8 +556,7 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
             
         };
         
-    }
-    
+    }    
 
     @Override
     public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index2D from, Index2D to) {
@@ -628,22 +569,4 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         return op.getResult();
     }
     
-    @Override
-    public <ReturnType> ReturnType loop(final PointOp<Index2D, ReturnType> op, Index2D from, Index2D to) {
-        final Index2D index = new Index2D();
-        for(int i=to.i(); --i >= from.i(); ) {
-            for(int j=to.j(); --j >= from.j(); ) {
-                index.set(i, j);
-                op.process(index);
-                if(op.exception != null) return null;
-            }
-        }
-        return op.getResult();
-    }
-    
-    
-   
-
-    
-
 }

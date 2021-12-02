@@ -26,14 +26,14 @@ package jnum.data.cube;
 
 import java.util.List;
 
-import jnum.PointOp;
 import jnum.data.CubicSpline;
 import jnum.data.DataCrawler;
 import jnum.data.Interpolator;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
+import jnum.data.WeightedPoint;
 import jnum.data.index.Index3D;
-import jnum.math.IntRange;
+import jnum.data.index.IndexedValues;
 import jnum.math.Vector3D;
 
 
@@ -52,13 +52,10 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
      */
 
     @Override
-    public Cube3D newImage() {
-        return Cube3D.createType(getElementType(), sizeX(), sizeY(), sizeZ());
-    }
-
-    @Override
     public Cube3D newImage(Index3D size, Class<? extends Number> elementType) {
-        return Cube3D.createType(getElementType(), size.i(), size.j(), size.k());
+        Cube3D c = Cube3D.createType(getElementType(), size.i(), size.j(), size.k());
+        c.copyPoliciesFrom(this);
+        return c;
     }
 
     public Cube3D getCube() {
@@ -73,56 +70,20 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         return getCube(elementType, getInvalidValue());
     }
 
-    public Cube3D getCube(Class<? extends Number> elementType, Number blankingValue) {
-        Cube3D image = Cube3D.createFrom(this, blankingValue, elementType);
+    public Cube3D getCube(Class<? extends Number> elementType, Number invalidValue) {
+        Cube3D cube = newImage(getSize(), elementType);
 
-        image.copyParallel(this);
-        image.setInterpolationType(getInterpolationType());
-        image.setUnit(getUnit());
+        cube.setInvalidValue(invalidValue);
+        cube.setData(this);
 
-        List<String> imageHistory = image.getHistory();
+        List<String> imageHistory = cube.getHistory();
         if(getHistory() != null) imageHistory.addAll(getHistory());
 
-        return image;
+        return cube;
     }
-
-    @Override
-    public final Index3D getIndexInstance() { return new Index3D(); }
 
     @Override
     public final Vector3D getVectorInstance() { return new Vector3D(); }
-
-    @Override
-    public final Index3D getSize() { return new Index3D(sizeX(), sizeY(), sizeZ()); }
-
-    @Override
-    public int getSize(int i) {
-        switch(i) {
-        case 0: return sizeX();
-        case 1: return sizeY();
-        case 2: return sizeZ();
-        default: throw new IllegalArgumentException("there is no dimension " + i);
-        }
-    }
-    
-    @Override
-    public final int dimension() { return 3; }
-
-    @Override
-    public final int capacity() {  
-        return sizeX() * sizeY() * sizeZ(); 
-    }
-
-    public boolean conformsTo(int sizeX, int sizeY, int sizeZ) {
-        if(sizeX() != sizeX) return false;
-        if(sizeY() != sizeY) return false;
-        if(sizeZ() != sizeZ) return false;
-        return true;
-    }
-
-
-    @Override
-    public final Number get(Index3D index) { return get(index.i(), index.j(), index.k()); }
 
     public final Number getValid(final int i, final int j, final int k, final Number defaultValue) {
         if(!isValid(i, j, k)) return defaultValue;
@@ -134,10 +95,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         return getValid(index.i(), index.j(), index.k(), defaultValue); 
     }
 
-
-    @Override
-    public final void set(Index3D index, Number value) { set(index.i(), index.j(), index.k(), value); }
-
     @Override
     public final boolean isValid(Index3D index) { return isValid(index.i(), index.j(), index.k()); }
 
@@ -145,30 +102,13 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     public final void discard(Index3D index) { discard(index.i(), index.j(), index.k()); }
 
     @Override
-    public final void clear(Index3D index) { clear(index.i(), index.j(), index.k()); }
-
-    @Override
-    public final void add(Index3D index, Number value) { add(index.i(), index.j(), index.k(), value); }
-
-    @Override
-    public final void scale(Index3D index, double factor) { scale(index.i(), index.j(), index.k(), factor); }
-
-
-    @Override
     public boolean isValid(int i, int j, int k) {
         return isValid(get(i, j, k));
     }
 
-
     @Override
     public void discard(int i, int j, int k) {
         set(i, j, k, getInvalidValue());
-    }
-
-    public void clear(int i, int j, int k) { set(i, j, k, 0); }
-
-    public void scale(int i, int j, int k, double factor) {
-        set(i, j, k, get(i, j, k).doubleValue() * factor);
     }
 
     @Override
@@ -341,13 +281,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         return splineAtIndex(idx[0], idx[1], idx[2], splines);
     }
 
-    
-    @Override
-    public int getPointSmoothOps(int beamPoints, Interpolator.Type interpolationType) {
-        return 36 + beamPoints * (16 + getInterpolationOps(interpolationType));
-    }
-
-
     @Override
     protected int getInterpolationOps(Interpolator.Type type) {
         switch(type) {
@@ -359,26 +292,59 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         return 1;
     }
 
+    
+    @Override
+    public int getPointSmoothOps(int beamPoints, Interpolator.Type interpolationType) {
+        return 36 + beamPoints * (16 + getInterpolationOps(interpolationType));
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public void getSmoothedValueAtIndex(final Index3D index, final RegularData<Index3D, Vector3D> beam, final Index3D refIndex, 
+            final IndexedValues<Index3D, ?> weight, final WeightedPoint result) {   
+        // More efficient than generic implementation
+
+        final int iR = index.i() - refIndex.i();
+        final int jR = index.j() - refIndex.j();
+        final int kR = index.k() - refIndex.k();
+
+        final int fromi = Math.max(0, iR);
+        final int fromj = Math.max(0, jR);
+        final int fromk = Math.max(0, kR);
+        
+        final int toi = Math.min(sizeX(), iR + beam.getSize(0));
+        final int toj = Math.min(sizeY(), jR + beam.getSize(1));
+        final int tok = Math.min(sizeZ(), kR + beam.getSize(1));
+        
+        Index3D idx = (weight == null) ? null : new Index3D();
+        
+        double sum = 0.0, sumw = 0.0;
+        
+        for(int i=fromi; i<toi; i++) for(int j=fromj; j<toj; j++) for(int k=fromk; k<tok; k++) if(isValid(i, j, k)) {
+            final double w;
+            
+            if(weight == null) w = 1.0;
+            else {
+                idx.set(i, j, k);
+                w = weight.get(idx).doubleValue();
+                if(w == 0.0) continue;
+            }
+            
+            final double wB = w * beam.get(i - iR, j - jR, k - kR).doubleValue();
+            if(wB == 0.0) return;
+            
+            sum += wB * get(i, j, k).doubleValue();
+            sumw += Math.abs(wB);    
+        }
+
+        result.setValue(sum / sumw);
+        result.setWeight(sumw); 
+    }  
+    
     @Override
     public final boolean containsIndex(Vector3D index) {
         return containsIndex(index.x(), index.y(), index.z());        
     }
-
-    @Override
-    public final boolean containsIndex(Index3D index) {
-        return containsIndex(index.i(), index.j(), index.k());        
-    }
-
-    public boolean containsIndex(final int i, final int j, final int k) {
-        if(i < 0) return false;
-        if(j < 0) return false;
-        if(k < 0) return false;
-        if(i >= sizeX()) return false;
-        if(j >= sizeY()) return false;
-        if(k >= sizeZ()) return false;
-        return true;
-    }
-
 
     public boolean containsIndex(final double i, final double j, final double k) {
         if(i < 0) return false;
@@ -390,35 +356,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         return true;
     }
 
-    public IntRange getXIndexRange() {
-        int min = sizeX(), max = -1;
-        for(int i=sizeX(); --i >= 0; ) for(int j=sizeY(); --j >= 0; ) for(int k=sizeZ(); --k >= 0; ) if(isValid(i, j, k)) {
-            if(i < min) min = i;
-            if(i > max) max = i;
-            break;
-        }
-        return max > min ? new IntRange(min, max) : null;
-    }
-
-    public IntRange getYIndexRange() {
-        int min = sizeY(), max = -1;
-        for(int j=sizeY(); --j >= 0; ) for(int i=sizeX(); --i >= 0; ) for(int k=sizeZ(); --k >= 0; ) if(isValid(i, j, k)) {
-            if(j < min) min = j;
-            if(j > max) max = j;
-            break;
-        }
-        return max > min ? new IntRange(min, max) : null;
-    }
-
-    public IntRange getZIndexRange() {
-        int min = sizeY(), max = -1;
-        for(int j=sizeY(); --j >= 0; ) for(int i=sizeX(); --i >= 0; ) for(int k=sizeZ(); --k >= 0; ) if(isValid(i, j, k)) {
-            if(j < min) min = j;
-            if(j > max) max = j;
-            break;
-        }
-        return max > min ? new IntRange(min, max) : null;
-    }
 
     @SuppressWarnings("cast")
     @Override
@@ -444,22 +381,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         else if(name.equals("sizeY")) return sizeY();
         else if(name.equals("sizeZ")) return sizeZ();
         else return super.getTableEntry(name);
-    }
-
-    @Override
-    public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op, Index3D from, Index3D to) {
-        final Index3D index = new Index3D();
-        for(int i=to.i(); --i >= from.i(); ) {
-            for(int j=to.j(); --j >= from.j(); ) {
-                for(int k=to.k(); --k >= from.k(); ) {
-                    index.set(i, j, k);
-                    op.process(index);
-                    if(op.exception != null) return null;
-                }
-            }
-        }
-   
-        return op.getResult();
     }
 
     @Override

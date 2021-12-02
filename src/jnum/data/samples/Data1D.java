@@ -39,10 +39,11 @@ import jnum.data.DataCrawler;
 import jnum.data.Interpolator;
 import jnum.data.RegularData;
 import jnum.data.SplineSet;
+import jnum.data.WeightedPoint;
 import jnum.data.index.Index1D;
+import jnum.data.index.IndexedValues;
 import jnum.data.samples.overlay.Overlay1D;
 import jnum.math.CoordinateAxis;
-import jnum.math.IntRange;
 import jnum.math.Position;
 import jnum.math.Range;
 import jnum.text.TableFormatter;
@@ -65,21 +66,15 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         hash ^= HashCode.sampleFrom(this);
         return hash;
     }
-
-    @Override
-    public Index1D getIndexInstance() { return new Index1D(); }
     
     @Override
     public Position getVectorInstance() { return new Position(); }
     
     @Override
-    public Samples1D newImage() {
-        return Samples1D.createType(getElementType(), size());
-    }
-    
-    @Override
     public Samples1D newImage(Index1D size, Class<? extends Number> elementType) {
-        return Samples1D.createType(getElementType(), size.i());
+        Samples1D s = Samples1D.createType(getElementType(), size.i());
+        s.copyPoliciesFrom(this);
+        return s;
     }
 
     public Samples1D getSamples() {
@@ -90,57 +85,22 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         return getSamples(getElementType(), blankingValue);
     }
 
-    public final Samples1D getImage(Class<? extends Number> elementType) {
-        return getSamples(elementType, getInvalidValue());
-    }
-
-    public Samples1D getSamples(Class<? extends Number> elementType, Number blankingValue) {
-        Samples1D samples = Samples1D.createFrom(this, blankingValue, elementType);
-
-        samples.copyParallel(this);
-        samples.setInterpolationType(getInterpolationType());
-        samples.setUnit(getUnit());
-
+    public Samples1D getSamples(Class<? extends Number> elementType, Number invalidValue) {
+        Samples1D samples = newImage(getSize(), elementType);
+        
+        samples.setInvalidValue(invalidValue);
+        samples.setData(this);
+        
         List<String> imageHistory = samples.getHistory();
         if(getHistory() != null) imageHistory.addAll(getHistory());
 
         return samples;
     }
 
-    
-    @Override
-    public final int dimension() { return 1; }
-    
-    @Override
-    public final Index1D getSize() { return new Index1D(size()); }
-    
-    @Override
-    public int getSize(int i) {
-        if(i != 0) throw new IllegalArgumentException("there is no dimension " + i);
-        return size();
-    }
-    
-    @Override
-    public final int capacity() { return size(); }
-    
-    public final boolean conformsTo(int size) {
-        return size() == size;
-    }
-    
-    @Override
-    public final boolean containsIndex(Index1D index) {
-        return containsIndex(index.i());
-    }
-    
+ 
     @Override
     public final boolean containsIndex(Position index) {
         return containsIndex((int) Math.round(index.x()));
-    }
-    
-    public boolean containsIndex(int i) {
-        if(i < 0) return false;
-        if(i >= size()) return false;
-        return true;
     }
     
     @Override
@@ -152,20 +112,6 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         if(!isValid(i)) return defaultValue;
         return get(i);
     }
-
-    @Override
-    public final void set(Index1D index, Number value) { set(index.i(), value); }
-    
-    @Override
-    public final void add(Index1D index, Number value) { add(index.i(), value); }
-    
-    @Override
-    public final Number get(Index1D index) { return get(index.i()); }
-    
-    @Override
-    public final void clear(Index1D index) { clear(index.i()); }
-    
-    public void clear(int i) { set(i, 0); }
 
     @Override
     public final void discard(Index1D index) { discard(index.i()); }
@@ -182,22 +128,13 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
     public boolean isValid(int i) {
         return isValid(get(i));
     }
-    
-    @Override
-    public void scale(Index1D index, double factor) { scale(index.i(), factor); }
-    
-    public void scale(int i, double factor) {
-        set(i, get(i).doubleValue() * factor);
-    }
+
     
     public final void paste(final Values1D source, boolean report) {
         paste(new Overlay1D(source), report);
     }
 
-    
-    
-
-    
+        
     @Override
     public double valueAtIndex(Position ic, SplineSet<Position> splines) { return valueAtIndex(ic.x(), splines.getSpline(0)); }
     
@@ -343,17 +280,6 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
     }
 
     
-    public IntRange getIndexRange() {
-        int min = size(), max = -1;
-        for(int i=size(); --i >= 0; ) if(isValid(i)) {
-            if(i < min) min = i;
-            if(i > max) max = i;
-            break;
-        }
-        return max > min ? new IntRange(min, max) : null;
-    }
-
-    
     @SuppressWarnings("cast")
     @Override
     public final Samples1D getCropped(Index1D imin, Index1D imax) {
@@ -384,10 +310,47 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
     public double splineAtIndex(SplineSet<Position> splines, double ... idx) {
         return splineAtIndex(idx[0], splines.getSpline(0));
     }
+    
     @Override
     public int getPointSmoothOps(int beamPoints, Interpolator.Type interpolationType) {
         return 16 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
+    
+
+    @SuppressWarnings("null")
+    @Override
+    public void getSmoothedValueAtIndex(final Index1D index, final RegularData<Index1D, Position> beam, final Index1D refIndex, 
+            final IndexedValues<Index1D, ?> weight, final WeightedPoint result) {   
+        // More efficient than generic implementation...
+
+        final int iR = index.i() - refIndex.i();
+        final int fromi = Math.max(0, iR);
+        final int toi = Math.min(size(), iR + beam.getSize(0));
+
+        Index1D idx = (weight == null) ? null : new Index1D();
+        
+        double sum = 0.0, sumw = 0.0;
+        
+        for(int i=fromi; i<toi; i++) if(isValid(i)) {
+            final double w;
+            
+            if(weight == null) w = 1.0;
+            else {
+                idx.set(i);
+                w = weight.get(idx).doubleValue();
+                if(w == 0.0) continue;
+            }
+            
+            final double wB = w * beam.get(i - iR).doubleValue();
+            if(wB == 0.0) return;
+            
+            sum += wB * get(i).doubleValue();
+            sumw += Math.abs(wB);    
+        }
+
+        result.setValue(sum / sumw);
+        result.setWeight(sumw); 
+    }  
     
   
     @Override
@@ -564,7 +527,6 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         Util.notify(this, "Written " + coreName + ".png");
     }
     
-   
     
     @Override
     public DataCrawler<Number> iterator() {
@@ -606,12 +568,9 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
             @Override
             public final void reset() {
                 i = 0;
-            }
-            
+            }    
         };
-        
     }
-    
     
     
     @Override
@@ -619,16 +578,4 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         for(int i=to.i(); --i >= from.i(); ) if(isValid(i)) op.process(get(i));
         return op.getResult();
     }
-    
-    @Override  
-    public <ReturnType> ReturnType loop(final PointOp<Index1D, ReturnType> op, Index1D from, Index1D to) {
-        final Index1D index = new Index1D();
-        for(int i=to.i(); --i >= from.i(); ) {
-            index.set(i);
-            op.process(index);
-            if(op.exception != null) return null;
-        }
-        return op.getResult();
-    }
-    
 }

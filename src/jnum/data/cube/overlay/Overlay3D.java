@@ -118,7 +118,6 @@ public class Overlay3D extends Data3D {
     public int sizeZ() {
        return values == null ? 0 : values.sizeZ();
     }
-
     
     @Override
     public Number get(int i, int j, int k) {
