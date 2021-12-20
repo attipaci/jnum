@@ -36,15 +36,31 @@ public class DiagonalMatrixException extends SquareMatrixException {
      */
     private static final long serialVersionUID = -8024324298675264092L;
     
-    
+    /**
+     * If an unsupported off-diagonal access was attempted on a diagonal matrix, using the
+     * default message.
+     * 
+     * @see #DiagonalMatrixException(String)
+     * @see DiagonalMatrixException#defaultMessage 
+     */
     public DiagonalMatrixException() {
         super(defaultMessage);
     }
 
+    /**
+     * If an unsupported off-diagonal access was attempted on a diagonal matrix. 
+     * 
+     * @param s     The message that describes the exception.
+     *  
+     */
     public DiagonalMatrixException(String s) {
         super(s);
     }
 
-    public static String defaultMessage = "diagonal matrix operation on a non-diagonal matrix.";
-        
+    /**
+     * The standard message to use for default diagonal matrix exceptions.
+     * 
+     */
+    public static String defaultMessage = "off-diagonal matrix operation on a diagonal matrix.";
+    
 }

@@ -27,11 +27,9 @@ package jnum.data.image;
 import java.io.Serializable;
 import java.util.Hashtable;
 
-import jnum.Constant;
-import jnum.ExtraMath;
+
 import jnum.Unit;
 import jnum.Util;
-import jnum.data.Data;
 import jnum.data.DataPoint;
 import jnum.data.FlagCompanion;
 import jnum.data.Referenced;
@@ -43,7 +41,6 @@ import jnum.data.image.overlay.Referenced2D;
 import jnum.data.image.transform.CartesianGridTransform2D;
 import jnum.data.image.transform.ProjectedIndexTransform2D;
 import jnum.data.index.Index2D;
-import jnum.fft.MultiFFT;
 import jnum.fits.FitsProperties;
 import jnum.fits.FitsToolkit;
 import jnum.math.Coordinate2D;
@@ -101,6 +98,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
     
 
     private Map2D() {
+        super(null, null);
         reuseIndex = new Vector2D();
         fitsProperties = new FitsProperties();
         setGrid(new FlatGrid2D());        
@@ -212,7 +210,6 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
   
         return copy;
     }
-    
     
     public void copyProcessingFrom(Map2D other) {
         underlyingBeam = other.underlyingBeam == null ? null : other.underlyingBeam.copy();
@@ -578,17 +575,10 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
     public final Image2D getImage() { return (Image2D) getBasis(); } 
 
     public void setImage(Image2D image) {
-        if(image == null) image = Image2D.createType(getElementType());
+        if(image == null) image = newImage();
+        else image.copyPoliciesFrom(this);
         setBasis(image); 
-        claim(image);
     } 
-
-    protected void claim(Data2D image) {
-        image.setUnit(getUnit());
-        image.setParallel(getParallel());
-        image.setExecutor(getExecutor());
-    }
-
 
     @Override
     public final void setSize(Index2D size) {
@@ -609,9 +599,7 @@ public class Map2D extends Flagged2D implements Resizable<Index2D>, Serializable
         });    
     }
 
-
     public double countBeams() { return getArea() / getImageBeamArea(); }
-
 
     public double getArea() { return countPoints() * getGrid().getPixelArea(); }
 

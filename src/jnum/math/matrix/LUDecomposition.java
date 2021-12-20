@@ -88,11 +88,12 @@ public abstract class LUDecomposition<T> implements MatrixInverter<T>, MatrixSol
     /**
      * Gets the determinant of the parent matrix, easily calculated from its decomposition.
      * 
-     * @return  The determinant of the parent matrix.
+     * @return          the determinant of the parent matrix.
+     * @throws SingularMatrixException      if the matrix is singular (degenerate).
      */
     public abstract T getDeterminant();
     
-    private void decompose(double tinyValue) {
+    private void decompose(double tinyValue) throws SingularMatrixException {
         final int n = size();
         
         MatrixElement<T> e = LU.getElementInstance();

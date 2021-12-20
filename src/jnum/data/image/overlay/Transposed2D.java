@@ -27,8 +27,6 @@ import jnum.data.image.Values2D;
 
 public class Transposed2D extends Overlay2D {
 
-    public Transposed2D() {}
-    
     public Transposed2D(Values2D values) {
         super(values);
     }

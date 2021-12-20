@@ -807,6 +807,11 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         }
 
         @SuppressWarnings("cast")
+        /**
+         * Returns a new element instance of this matrix, which can be used as an entry in the matrix.
+         * 
+         * @return      a new instance of an entry type object for this matrix.
+         */
         public T newEntry() {
             try { return (T) type.getConstructor().newInstance(); } 
             catch (Exception e) { Util.error(this, e); }
@@ -1049,6 +1054,17 @@ Cloneable, CopiableContent<DiagonalMatrix<T>> {
         
         
         @SuppressWarnings("unchecked")
+        /**
+         * Returns the topological distance to another diagonal matrix. The other matrix must 
+         * have elements that are sub-types of this matrix's elements, or else have elements
+         * of type {@link Number}.
+         * 
+         * @param o     the other diagonal matrix.
+         * @return      the topoligical distance to the other diagonal matrix, or {@link Double#isNaN()}
+         *              if the other matrix is of an incompatible type (with a different or unknown topology).
+         *              
+         * @see #distanceTo(MatrixAlgebra)
+         */
         public double distanceTo(DiagonalMatrix<?> o) {
             if(o.getElementType().isAssignableFrom(type)) return o.distanceTo(this);
             

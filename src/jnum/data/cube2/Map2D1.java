@@ -26,6 +26,7 @@ package jnum.data.cube2;
 
 import jnum.data.FlagCompanion;
 import jnum.data.image.Map2D;
+import jnum.data.index.Index3D;
 
 
 public class Map2D1 extends AbstractMap2D1<Map2D> {
@@ -38,6 +39,18 @@ public class Map2D1 extends AbstractMap2D1<Map2D> {
     @Override
     public Map2D newPlaneInstance() { 
         return new Map2D(getElementType(), getFlagType()); 
+    }
+    
+    @Override
+    public Map2D1 newInstance() {
+        return newInstance(getSize());
+    }
+
+    @Override
+    public Map2D1 newInstance(Index3D size) {
+        Map2D1 map = new Map2D1(getElementType(), getFlagType());
+        map.copyPoliciesFrom(this);
+        return map;
     }
  
 }

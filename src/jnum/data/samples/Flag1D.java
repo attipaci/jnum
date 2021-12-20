@@ -26,7 +26,7 @@ package jnum.data.samples;
 import jnum.data.FlagCompanion;
 import jnum.data.index.Index1D;
 
-public class Flag1D extends FlagCompanion<Index1D> implements Resizable1D {   
+public class Flag1D extends FlagCompanion<Index1D> {   
     /**
      * 
      */
@@ -47,9 +47,8 @@ public class Flag1D extends FlagCompanion<Index1D> implements Resizable1D {
     
     public Flag1D(Type type, int size) {
         this(type);
-        setSize(size);
+        data.setSize(size);
     }
-
   
     @Override
     public Flag1D copy(boolean withContent) {
@@ -63,17 +62,6 @@ public class Flag1D extends FlagCompanion<Index1D> implements Resizable1D {
   
     @Override
     public final Samples1D getData() { return data; }
-    
-    
-    public final void setSize(Index1D size) {
-        setSize(size.i());
-    }
-    
-    @Override
-    public void setSize(int size) {
-        data.setSize(size);
-    }
-    
 
 
     public final long get(int i) { return data.get(i).longValue(); }

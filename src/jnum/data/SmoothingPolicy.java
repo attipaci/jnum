@@ -72,10 +72,26 @@ public enum SmoothingPolicy {
         this.name = name;
     }
 
+    /**
+     * Returns the human readable identification or name of this particular smoothing policy.
+     * 
+     * @return      the concise identifier or name of this policy.
+     * 
+     * @see #forName(String, SmoothingPolicy)
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * Returns the smoothing policy corresponding to the specified identifier or name; or the 
+     * specified default policy if no policy is known by the specified name.
+     * 
+     * @param name              the name or identifier of the policy we seek
+     * @param defaultPolicy     the default policy to return in case no policy can be matched to the specified name
+     * @return                  the policy corresponding to the name identifier, or the default policy if
+     *                          no policy is matched to the name.
+     */
     public static SmoothingPolicy forName(String name, SmoothingPolicy defaultPolicy) {
         name = name.toLowerCase();
         

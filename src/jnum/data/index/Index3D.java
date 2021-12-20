@@ -23,7 +23,6 @@
 
 package jnum.data.index;
 
-import jnum.ExtraMath;
 import jnum.PointOp;
 
 /**
@@ -38,19 +37,10 @@ public class Index3D extends Index<Index3D> {
      */
     private static final long serialVersionUID = -2705961475758088763L;
     
-    /** the first index value */
-    private int i;
-    
-    /** the second index value */
-    private int j;
-    
-    /** the third index value */
-    private int k;
-    
     /**
      * Instantiates a new 3D index with the default zero components.
      */
-    public Index3D() { this(0, 0, 0); }
+    public Index3D() { super(3); }
     
     /**
      * Instantiates a new 3D index with the specified initial components.
@@ -60,6 +50,7 @@ public class Index3D extends Index<Index3D> {
      * @param k     the initial value for the index in the third dimension.
      */
     public Index3D(int i, int j, int k) {
+        this();
         set(i, j, k);
     }
     
@@ -70,10 +61,10 @@ public class Index3D extends Index<Index3D> {
      * 
      * @see #j()
      * @see #k()
-     * @see #set(int, int, int)
+     * @see #set(int...)
      * @see #setI(int)
      */
-    public final int i() { return i; }
+    public final int i() { return getComponent(0); }
     
     /**
      * Returns the index component in the second dimension.
@@ -82,10 +73,10 @@ public class Index3D extends Index<Index3D> {
      * 
      * @see #i()
      * @see #k()
-     * @see #set(int, int, int)
+     * @see #set(int...)
      * @see #setJ(int)
      */
-    public final int j() { return j; }
+    public final int j() { return getComponent(1); }
     
     /**
      * Returns the index component in the third dimension.
@@ -94,30 +85,10 @@ public class Index3D extends Index<Index3D> {
      * 
      * @see #i()
      * @see #j()
-     * @see #set(int, int, int)
+     * @see #set(int...)
      * @see #setK(int)
      */
-    public final int k() { return k; }
-    
-    /**
-     * Sets a new index location.
-     * 
-     * @param i     the new index location in the first dimension.
-     * @param j     the new index location in the second dimension.
-     * @param k     the new index location in the third dimension.
-     * 
-     * @see #i()
-     * @see #j()
-     * @see #k()
-     * @see #setI(int)
-     * @see #setJ(int)
-     * @see #setK(int)
-     */
-    public final void set(final int i, final int j, final int k) {
-        this.i = i;
-        this.j = j;
-        this.k = k;
-    }
+    public final int k() { return getComponent(2); }
     
     /**
      * Sets a new value for the first component only, leaving the other two components unchanged.
@@ -125,7 +96,7 @@ public class Index3D extends Index<Index3D> {
      * @param value     the new value for the first index component.
      */
     public final void setI(final int value) {
-        i = value;
+        setComponent(0, value);
     }
     
     /**
@@ -134,7 +105,7 @@ public class Index3D extends Index<Index3D> {
      * @param value     the new value for the second index component.
      */
     public final void setJ(final int value) {
-        j = value;
+        setComponent(1, value);
     }
     
     /**
@@ -143,124 +114,22 @@ public class Index3D extends Index<Index3D> {
      * @param value     the new value for the third index component.
      */
     public final void setK(final int value) {
-        k = value;
+        setComponent(2, value);
     }
-
-    @Override
-    public int dimension() {
-        return 3;
-    }
-
-    @Override
-    public int getValue(int dim) throws IndexOutOfBoundsException {
-        switch(dim) {
-        case 0 : return i;
-        case 1 : return j;
-        case 2 : return k;
-        }
-        throw new IndexOutOfBoundsException(Integer.toString(dim));
-    }
-
-    @Override
-    public void setValue(int dim, int value) throws IndexOutOfBoundsException {
-        switch(dim) {
-        case 0 : i = value; break;
-        case 1 : j = value; break;
-        case 2 : k = value; break;        
-        default: throw new IndexOutOfBoundsException(Integer.toString(dim));
-        }
-    }
-
 
     @Override
     public <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op, Index3D to) {
+        final int i = i();
+        final int j = j();
+        final int k = k();
+        
         final Index3D index = new Index3D();
-        for(int i1=to.i; --i1 >= i; ) {
-            for(int j1=to.j; --j1 >= j; ) for(int k1=to.k; --k1 >= k; ) {
-                index.set(i1,  j1,  k1);
-                op.process(index);
-                if(op.exception != null) return null;
-            }
+        for(int i1=to.i(); --i1 >= i; ) for(int j1=to.j(); --j1 >= j; ) for(int k1=to.k(); --k1 >= k; ) {
+            index.set(i1,  j1,  k1);
+            op.process(index);
+            if(op.exception != null) return null;
         }
         return op.getResult();
     }
     
-    
- // --------------------------------------------------------------------------------------
-    // Below are more efficient specific implementations
-    // --------------------------------------------------------------------------------------
-    
-    @Override
-    public void fill(int value) {
-        i = j = k = value;
-    }
-    
-    @Override
-    public void setReverseOrderOf(Index3D other) {
-        i = other.k;
-        j = other.j;
-        k = other.i;
-    }
-    
-    @Override
-    public void setSum(Index3D a, Index3D b) {
-        i = a.i + b.i;
-        j = a.j + b.j;
-        k = a.k + b.k;
-    }
-    
-    @Override
-    public void setDifference(Index3D a, Index3D b) {
-        i = a.i - b.i;
-        j = a.j - b.j;
-        k = a.k - b.k;
-    }
-    
-    @Override
-    public void setProduct(Index3D a, Index3D b) {
-        i = a.i * b.i;
-        j = a.j * b.j;
-        k = a.k * b.k;
-    }
-    
-    @Override
-    public void setRatio(Index3D a, Index3D b) {
-        i = a.i / b.i;
-        j = a.j / b.j;
-        k = a.k / b.k;
-    }
-    
-    @Override
-    public void setRoundedRatio(Index3D a, Index3D b) {
-        i = ExtraMath.roundedRatio(a.i, b.i);
-        j = ExtraMath.roundedRatio(a.j, b.j);
-        k = ExtraMath.roundedRatio(a.k, b.k);
-    }
-    
-    @Override
-    public void modulo(Index3D argument) {
-        i = i % argument.i;
-        j = j % argument.j;
-        k = k % argument.k;
-    }
-    
-    @Override
-    public void limit(Index3D max) {  
-        i = Math.min(i, max.i);
-        j = Math.min(j, max.j);
-        k = Math.min(j, max.k);
-    }
-
-    @Override
-    public void ensure(Index3D min) {
-        i = Math.max(i, min.i);
-        j = Math.max(j, min.j);
-        k = Math.max(k, min.k);
-    }
-    
-    @Override
-    public int getVolume() {
-        return i * j * k;
-    }
-  
 }

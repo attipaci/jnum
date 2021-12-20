@@ -23,19 +23,21 @@
 
 package jnum.data.image;
 
+import jnum.NonConformingException;
 import jnum.PointOp;
+import jnum.data.DataCrawler;
 import jnum.data.index.Index2D;
 import jnum.data.index.IndexedValues;
 import jnum.math.IntRange;
 import jnum.math.Vector2D;
 
-public interface Values2D extends IndexedValues<Index2D, Number>, Validating2D {
+public interface Values2D extends IndexedValues<Index2D, Number>, Validating2D, Iterable<Number> {
     
     public int sizeX();
     
     public int sizeY();
   
-    public Number get(int i, int j);   
+    public Number get(int i, int j);
  
     public void add(int i, int j, Number value);
        
@@ -56,6 +58,12 @@ public interface Values2D extends IndexedValues<Index2D, Number>, Validating2D {
     @Override
     public default void set(Index2D index, Number value) {
         set(index.i(), index.j(), value);
+    }
+    
+    @Override
+    default Number get(int ... idx) throws NonConformingException {
+        if(idx.length != 2) throw new NonConformingException(idx.length + "D index used instead of 2D.");
+        return get(idx[0], idx[1]);
     }
     
     @Override
@@ -146,6 +154,17 @@ public interface Values2D extends IndexedValues<Index2D, Number>, Validating2D {
     }
     
     @Override
+    default Image2D newImage() {
+        return newImage(getSize(), getElementType());
+    }
+    
+    @Override
+    default Image2D newImage(Index2D size, Class<? extends Number> elementType) {
+        Image2D im = Image2D.createType(getElementType(), size.i(), size.j());
+        return im;
+    }
+    
+    @Override
     public default <ReturnType> ReturnType loop(final PointOp<Index2D, ReturnType> op, Index2D from, Index2D to) {
         final Index2D index = new Index2D();
         for(int i=to.i(); --i >= from.i(); ) {
@@ -158,5 +177,63 @@ public interface Values2D extends IndexedValues<Index2D, Number>, Validating2D {
         return op.getResult();
     }
     
+
+    @Override
+    public default <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index2D from, Index2D to) {
+        for(int i=to.i(); --i >= from.i(); ) {
+            for(int j=to.j(); --j >= from.j(); ) if(isValid(i, j)) {
+                op.process(get(i, j));
+                if(op.exception != null) return null;
+            }
+        }
+        return op.getResult();
+    }
+    
+
+    @Override
+    default DataCrawler<Number> iterator() {
+        return new DataCrawler<Number>() {
+            int i = 0, j = 0;
+            
+            @Override
+            public final boolean hasNext() {
+                if(i < sizeX()) return true;
+                return j < (sizeY()-1);
+            }
+
+            @Override
+            public final Number next() {
+                if(i >= sizeX()) return null;
+                j++;
+                if(j == sizeY()) { j = 0; i++; }
+                return i < sizeX() ? get(i, j) : null;
+            }
+
+            @Override
+            public final void remove() {
+                discard(i, j);
+            }
+
+            @Override
+            public final Object getData() {
+                return Values2D.this;
+            }
+
+            @Override
+            public final void setCurrent(Number value) {
+                set(i, j, value);
+            }
+
+            @Override
+            public final boolean isValid() {
+                return Values2D.this.isValid(i, j);
+            }
+            
+            @Override
+            public final void reset() {
+                i = j = 0;
+            }
+        };
+    }
     
 }

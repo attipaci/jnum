@@ -6,6 +6,7 @@ import java.util.stream.IntStream;
 import jnum.ViewableAsDoubles;
 import jnum.data.index.Index1D;
 import jnum.data.index.IndexedValues;
+import jnum.data.samples.Samples1D;
 import jnum.fits.FitsToolkit;
 import jnum.text.Parser;
 import jnum.text.StringParser;
@@ -16,7 +17,6 @@ import nom.tam.util.Cursor;
 
 public interface RealCoordinates extends Coordinates<Double>, IndexedValues<Index1D, Double>, RealComponents, ViewableAsDoubles, Parser, Inversion, ZeroValue {
 
-    
     @Override
     public default void set(double... v) {
         IntStream.range(0, Math.min(size(), v.length)).forEach(i -> setComponent(i, v[i]));
@@ -90,7 +90,7 @@ public interface RealCoordinates extends Coordinates<Double>, IndexedValues<Inde
     }
 
     /**
-     * Checks if either coordinate is NaN (invalid).
+     * Checks if any component is NaN (invalid).
      * 
      * @return <code>true</code> if either coordinate is NaN (invalid). Otherwise <code>false</code>.
      */
@@ -100,16 +100,26 @@ public interface RealCoordinates extends Coordinates<Double>, IndexedValues<Inde
     }
 
     /**
-     * Checks if either coordinate is infinite.
+     * Checks if any component is infinite.
      * 
-     * @return <code>true</code> if either coordinate is infinite. Otherwise <code>false</code>.
+     * @return <code>true</code> if any component is infinite. Otherwise <code>false</code>.
+     * 
+     * @see #isFinite()
+     * @see #isNaN()
      */
     public default boolean isInfinite() { 
         for(int i=size(); --i >= 0; ) if(Double.isInfinite(getComponent(i))) return true;
         return false;
     }
     
-    
+    /**
+     * Checks if all components are finite, that is none of them are NaN or infinite.
+     * 
+     * @return      <code>true</code> if all components are finite, or else <code>false</code>.
+     * 
+     * @see #isInfinite()
+     * @see #isNaN()
+     */
     public default boolean isFinite() {
         if(isNaN()) return false;
         if(isInfinite()) return false;
@@ -123,10 +133,13 @@ public interface RealCoordinates extends Coordinates<Double>, IndexedValues<Inde
     }
     
     
-    
-   
-
-
+    /**
+     * Returns the default string representation of this coordinates. In practice that means
+     * a comma-separated list of the components enclosed in curved brackets, for example as
+     * "(1.0,2.0)". 
+     * 
+     * @return      a string representation of these coordinates.
+     */
     public default String toDefaultString() {
         StringBuffer buf = new StringBuffer();
         buf.append('(');
@@ -260,6 +273,16 @@ public interface RealCoordinates extends Coordinates<Double>, IndexedValues<Inde
         }
     }
     
+    /**
+     * Parses a specific component of these coordinates from the specified string input. Implementations
+     * may allow for different specific string formatting rules for each component, such as a HMS right-ascention (R.A.)
+     * angle as the first coordinate and a DMS declination angle as the second coordinate.
+     * 
+     * @param index     the component index (from 0)
+     * @param text      the string representation of that component.
+     * @throws NumberFormatException        if the string does not seem to be a number in the anticiparted format for
+     *                                      the specific vector component.
+     */
     public default void parseComponent(int index, String text) throws NumberFormatException {
         setComponent(index, Double.parseDouble(text));
     }
@@ -302,7 +325,17 @@ public interface RealCoordinates extends Coordinates<Double>, IndexedValues<Inde
         for(int i=0; i<size(); i++)
             setComponent(i, header.getDoubleValue(keyStem + "1" + alt, defaultValue == null ? 0.0 : defaultValue.getComponent(i)));    
     }
-
+    
+    @Override
+    default Samples1D newImage() {
+        return newImage(getSize(), getElementType());
+    }
+    
+    @Override
+    default Samples1D newImage(Index1D size, Class<? extends Number> elementType) {
+        Samples1D s = Samples1D.createType(getElementType(), size.i());
+        return s;
+    }
     
     
 }

@@ -28,8 +28,18 @@ import jnum.data.image.Data2D;
 import jnum.data.index.Index2D;
 import jnum.data.index.Index3D;
 
-public abstract class Resizable2D1<ImageType extends Data2D & Resizable<Index2D>> extends Data2D1<ImageType> {
+public abstract class Flex2D1<ImageType extends Data2D & Resizable<Index2D>> extends Data2D1<ImageType> {
 
+    public Flex2D1() {}
+    
+    public Flex2D1(Index3D size) {
+        this(size.i(), size.j(), size.k());
+    }
+    
+    public Flex2D1(int sizeX, int sizeY, int sizeZ) {
+        this();
+        setSize(sizeX, sizeY, sizeZ);
+    }
     
     @Override
     protected void applyTemplateTo(ImageType image) {

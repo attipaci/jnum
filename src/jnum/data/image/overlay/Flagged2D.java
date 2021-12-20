@@ -26,6 +26,7 @@ package jnum.data.image.overlay;
 import java.util.concurrent.ExecutorService;
 
 import jnum.Util;
+import jnum.data.Data;
 import jnum.data.FlagCompanion;
 import jnum.data.image.Flag2D;
 import jnum.data.image.Values2D;
@@ -38,19 +39,30 @@ import jnum.util.HashCode;
 public class Flagged2D extends Overlay2D {
     private Flag2D flag;
     private long validatingFlags;
-
-    public Flagged2D() {}
-
-    public Flagged2D(Flag2D flag) {
-        this();
-        setFlags(flag);
-    }
     
     public Flagged2D(Values2D base, Flag2D flag) {
         super(base);
         setFlags(flag);
     }
     
+    @Override
+    public Flagged2D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Flagged2D newInstance(Index2D size) {
+        Flagged2D f = (Flagged2D) super.newInstance(size);
+        f.flag = new Flag2D(flag.type(), size.i(), size.j());
+        f.validatingFlags = validatingFlags;
+        return f;
+    }
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof Flagged2D) validatingFlags = ((Flagged2D) other).validatingFlags;
+    }
     
     @Override
     public int hashCode() {
@@ -97,6 +109,7 @@ public class Flagged2D extends Overlay2D {
 
     public void setFlags(Flag2D flag) {
         this.flag = flag; 
+        if(flag == null) return;
         this.flag.setParallel(getParallel());
         this.flag.setExecutor(getExecutor());
     }

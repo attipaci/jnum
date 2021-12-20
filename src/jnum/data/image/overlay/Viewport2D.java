@@ -23,42 +23,63 @@
 
 package jnum.data.image.overlay;
 
-import jnum.data.Resizable;
+import jnum.Util;
+import jnum.data.Data;
+import jnum.data.Windowed;
 import jnum.data.image.IndexBounds2D;
 import jnum.data.image.Values2D;
 import jnum.data.index.Index2D;
 
-public class Viewport2D extends Overlay2D implements Resizable<Index2D> { 
-    private int i0;
-    private int j0;
-    
-    private int sizeX;
-    private int sizeY;
+public class Viewport2D extends Overlay2D implements Windowed<Index2D> { 
+    private Index2D origin;
+    private Index2D size;
     
     public Viewport2D() {
         this(null);
     }
     
     public Viewport2D(Values2D base) {
-        this(base, 0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        this(base, new Index2D(), new Index2D(Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
     
     public Viewport2D(Values2D base, IndexBounds2D bounds) {
-        this(base, bounds.fromi, bounds.fromj, bounds.toi, bounds.toj);
+        this(base, new Index2D(bounds.fromi, bounds.fromj), new Index2D(bounds.toi, bounds.toj));
+    }
+
+    public Viewport2D(Values2D base, Index2D from, Index2D to) {
+        super(base);
+        origin = new Index2D();
+        size = new Index2D();
+        setBounds(from, to);
+    }
+
+
+    @Override
+    public Viewport2D newInstance() {
+        return newInstance(getSize());
     }
     
-    public Viewport2D(Values2D base, Index2D from, Index2D to) {
-        this(base, from.i(), from.j(), to.i(), to.j());
+    @Override
+    public Viewport2D newInstance(Index2D size) {
+        Viewport2D r = (Viewport2D) super.newInstance();
+        r.origin = origin.copy();
+        r.size = size.copy();
+        return r;
     }
-   
-    public Viewport2D(Values2D base, int fromi, int fromj, int toi, int toj) {
-        setBasis(base);
-        setBounds(fromi, fromj, toi, toj);
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof Viewport2D) {
+            Viewport2D view = (Viewport2D) other;
+            origin = view.origin.copy();
+            size = view.size.copy();
+        }
     }
     
     @Override
     public int hashCode() {
-        return super.hashCode() ^ i0 ^ j0 ^ sizeX ^ sizeY;
+        return super.hashCode() ^ origin.hashCode() ^ size.hashCode();
     }
     
     @Override
@@ -67,96 +88,82 @@ public class Viewport2D extends Overlay2D implements Resizable<Index2D> {
         if(!(o instanceof Viewport2D)) return false;
         
         Viewport2D v = (Viewport2D) o;
-        if(sizeX != v.sizeX) return false;
-        if(sizeY != v.sizeY) return false;
-        if(i0 != v.i0) return false;
-        if(j0 != v.j0) return false;
+        if(!Util.equals(origin, v.origin)) return false;
+        if(!Util.equals(size, v.size)) return false;
         
         return super.equals(o);
     }
     
-    
-    public final int fromi() { return i0; }
-    
-    public final int fromj() { return j0; }
+    @Override
+    public final Index2D getOrigin() {
+        return origin;
+    }
  
+    @Override
+    public final Index2D getSize() {
+        return new Index2D(sizeX(), sizeY());
+    }
     
     public void setBounds(IndexBounds2D bounds) {
         setBounds(bounds.fromi, bounds.fromj, bounds.toi, bounds.toj);
     }
     
+    @Override
     public void setBounds(Index2D from, Index2D to) {
         setBounds(from.i(), from.j(), to.i(), to.j());
     }
     
     public void setBounds(int fromi, int fromj, int toi, int toj) {
-         
-        i0 = Math.max(0, fromi);
-        j0 = Math.max(0, fromj);
-         
-        setSize(toi - i0, toj - j0);
+        origin.set(Math.max(0, fromi), Math.max(0, fromj));
+        size.set(toi - origin.i(), toj - origin.j());
     }
     
- 
+    @Override
+    public void move(Index2D delta) {
+        move(delta.i(), delta.j());
+    }
     
     public void move(int di, int dj) {
-        i0 += di;
-        j0 += dj;
+        origin.set(origin.i() + di, origin.j() + dj);
     }
-    
-    @Override
-    public final void setSize(Index2D size) {
-        setSize(size.i(), size.j());
-    }
-    
-    public void setSize(int sizeX, int sizeY) {
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
-    }
-    
-    
-    
+
     @Override
     public boolean isValid(int i, int j) {
-        return super.isValid(i + i0, j + j0);
+        return super.isValid(i + origin.i(), j + origin.j());
     }
 
     @Override
     public void discard(int i, int j) {
-        super.discard(i + i0, j + j0);
+        super.discard(i + origin.i(), j + origin.j());
     }
-
-
+    
     /**
      * Safe even if underlying object is resized...
      */
     @Override
     public final int sizeX() {
-        return Math.max(0, Math.min(sizeX, super.sizeX() - i0));
+        return Math.max(0, Math.min(size.i(), super.sizeX() - origin.i()));
     }
 
     @Override
     public final int sizeY() {
-       return Math.max(0, Math.min(sizeY, super.sizeY() - j0));
+       return Math.max(0, Math.min(size.j(), super.sizeY() - origin.j()));
     }
 
     @Override
     public final Number get(int i, int j) {
-        return super.get(i + i0, j + j0);
+        return super.get(i + origin.i(), j + origin.j());
     }
 
     @Override
     public final void set(int i, int j, Number value) {
-        super.set(i + i0, j + j0, value);
+        super.set(i + origin.i(), j + origin.j(), value);
     }
     
     @Override
     public final void add(int i, int j, Number value) {
-        super.add(i + i0, j + j0, value);
+        super.add(i + origin.i(), j + origin.j(), value);
     }
 
-   
-    
- 
 }
 

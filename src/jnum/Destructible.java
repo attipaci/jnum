@@ -21,43 +21,19 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.math.matrix;
+package jnum;
 
 /**
- * An exception thrown when a singularity (degeneracy) in the matrix prevents
- * performing an operation, such as a matrix inversion.. 
+ * An object whose data and resources can be released or destroyed.
  * 
  * @author Attila Kovacs
  *
  */
-public class SingularMatrixException extends ArithmeticException {
+public interface Destructible {
 
     /**
+     * Destroys or releases the data and/or resources associated with the implementing class.
      * 
      */
-    private static final long serialVersionUID = 5112498399596176163L;
-    
-    /** 
-     * Instatiates a new exception when the requested matrix operation fails because the matrix is singular (degenerate).
-     * The exception is created with the default message.
-     */
-    public SingularMatrixException() {
-        super(defaultMessage);
-    }
-
-    /** 
-     * Instatiates a new exception when the requested matrix operation fails because the matrix is singular (degenerate).
-     * The exception is created with the user-specified message.
-     * 
-     * @param s     the message string.
-     */
-    public SingularMatrixException(String s) {
-        super(s);
-    }
-
-    /**
-     * The default message string, to use with the default constructor.
-     * 
-     */
-    private static String defaultMessage = "Cannot perform operation: singular input matrix.";
+    void destroy();
 }

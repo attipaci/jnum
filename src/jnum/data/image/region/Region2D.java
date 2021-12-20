@@ -179,7 +179,7 @@ public abstract class Region2D implements Serializable, Cloneable {
 	            @Override
                 public boolean isValid(int i, int j) {
 	                if(!super.isValid(i, j)) return false;
-	                return isInside(i + fromi(), j + fromj());
+	                return isInside(i + getOrigin().i(), j + getOrigin().j());
 	            }
 	        };
 	    }

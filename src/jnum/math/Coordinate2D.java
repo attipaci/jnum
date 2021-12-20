@@ -312,8 +312,6 @@ public class Coordinate2D implements RealCoordinates, Serializable, Cloneable, C
         setY(Double.parseDouble(token));
     }
 
-
-    
     public void convertFrom(Coordinate2D coords) throws IncompatibleTypesException {
         if(getClass().isAssignableFrom(coords.getClass())) copy(coords);
         else throw new IncompatibleTypesException(coords, this);

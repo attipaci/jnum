@@ -40,19 +40,41 @@ public class ShapeException extends NonConformingException {
      */
     private static final long serialVersionUID = -4097408545266016198L;
 
-    
+    /**
+     * Instantiates a new exception when an object has an unexpected or incompatible size or shape.
+     * 
+     */
     public ShapeException() {
         super();
     }
 
+    /**
+     * Instantiates a new exception when an object has an unexpected or incompatible size or shape.
+     * 
+     * @param message       the message string
+     * @param cause         the original cause that was thrown to trigger this exception. 
+     * 
+     */
     public ShapeException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Instantiates a new exception when an object has an unexpected or incompatible size or shape.
+     * 
+     * @param s             the message string 
+     * 
+     */
     public ShapeException(String s) {
         super(s);
     }
 
+    /**
+     * Instantiates a new exception when an object has an unexpected or incompatible size or shape.
+     * 
+     * @param cause         the original cause that was thrown to trigger this exception. 
+     * 
+     */
     public ShapeException(Throwable cause) {
         super(cause);
     }

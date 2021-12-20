@@ -27,8 +27,6 @@ import jnum.data.cube.Values3D;
 
 public class Transposed3D extends Overlay3D {
 
-    public Transposed3D() {}
-    
     public Transposed3D(Values3D values) {
         super(values);
     }

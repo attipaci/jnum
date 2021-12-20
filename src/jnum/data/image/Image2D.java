@@ -61,6 +61,18 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
     private String id;
  
     @Override
+    public Image2D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Image2D newInstance(Index2D size) {
+        Image2D im = Image2D.createType(getElementType(), size.i(), size.j());
+        im.copyPoliciesFrom(this);
+        return im;
+    }
+    
+    @Override
     public int hashCode() {
         int hash = super.hashCode();
         if(id != null) hash ^= id.hashCode();
@@ -114,6 +126,7 @@ public abstract class Image2D extends Data2D implements Image<Index2D> {
         addHistory("new size " + getSizeString());
     }
     
+    @Override
     public synchronized void destroy() {
         setDataSize(0, 0);
         clearHistory();

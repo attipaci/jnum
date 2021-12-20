@@ -180,8 +180,11 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
     }
 
     public void setWeightImage(Image2D image) { 
-        weight = (image == null) ? Image2D.createType(getElementType()) : image;
-        claim(weight);
+        if(image == null) weight = newImage();
+        else {
+            weight = image;
+            weight.copyPoliciesFrom(this);
+        }
     }
 
     @Override
@@ -198,9 +201,12 @@ public class Observation2D extends Map2D implements Observations<Data2D>, Indexe
         return exposure;
     }
 
-    public void setExposureImage(Image2D image) {  
-        exposure = (image == null) ? Image2D.createType(getElementType()) : image; 
-        claim(exposure);
+    public void setExposureImage(Image2D image) {
+        if(image == null) exposure = newImage();
+        else {
+            exposure = image;
+            image.copyPoliciesFrom(this);
+        }
     }
 
     @Override

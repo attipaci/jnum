@@ -603,6 +603,12 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
        332946.050895, 3098708.0, 1047.3486, 3497.898, 22902.98,
        19412.24, 135200000.0, 1.0, 27068700.387534};
     
+    /**
+     * Type safe enumeration of the available astrometric precisions for coordinate transformations.
+     * 
+     * @author Attila Kovacs
+     *
+     */
     public static enum Precision {
         /**
          * Constant denoting the full-precision nutation calculation (requiring ~1400 terms in both directions).
@@ -630,12 +636,18 @@ public class EquatorialTransform extends Transform3D<EquatorialCoordinates> {
          */
         TRUNCATED_10MAS(10.0 * Unit.mas);
         
-        double cutoff;
+        private double cutoff;
         
         Precision(double cutoff) {
             this.cutoff = cutoff;
         }
         
+        /**
+         * Returns the magnitude of the nutation term, at which the nutation series is truncated for this
+         * precision instance.
+         * 
+         * @return  (rad/centrury) The magnitude of the term at which the nutation series is truncated.
+         */
         public final double cutoff() {
             return cutoff;
         }

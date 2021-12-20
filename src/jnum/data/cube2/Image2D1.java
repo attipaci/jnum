@@ -27,12 +27,25 @@ import java.io.Serializable;
 
 import jnum.data.image.Image2D;
 import jnum.data.index.Index2D;
+import jnum.data.index.Index3D;
 
-public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializable {
+public abstract class Image2D1 extends Flex2D1<Image2D> implements Serializable {
     /**
      * 
      */
     private static final long serialVersionUID = 7816827408682434510L;
+    
+    @Override
+    public Image2D1 newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Image2D1 newInstance(Index3D size) {
+        Image2D1 im = create(getElementType(), sizeX(), sizeY(), sizeZ());
+        im.copyPoliciesFrom(this);
+        return im;
+    }
     
     @Override
     public Image2D1 copy(boolean withContent) {   
@@ -68,6 +81,7 @@ public abstract class Image2D1 extends Resizable2D1<Image2D> implements Serializ
         for(Image2D plane : getPlanes()) plane.crop(from, to);
     }
     
+
     
     public static class Double2D1 extends Image2D1 {
         /**

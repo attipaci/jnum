@@ -23,14 +23,16 @@
 
 package jnum.data.samples;
 
+import jnum.NonConformingException;
 import jnum.PointOp;
+import jnum.data.DataCrawler;
 import jnum.data.index.Index1D;
 import jnum.data.index.IndexedValues;
 import jnum.math.IntRange;
 import jnum.math.Position;
 
 
-public interface Values1D extends IndexedValues<Index1D, Number>, Validating1D {
+public interface Values1D extends IndexedValues<Index1D, Number>, Validating1D, Iterable<Number> {
   
     public int size();
     
@@ -40,7 +42,7 @@ public interface Values1D extends IndexedValues<Index1D, Number>, Validating1D {
     
     public void set(int i, Number value);
     
-    public double valueAtIndex(double ic); 
+    public double valueAtIndex(double ic);
     
     @Override
     public default Number get(Index1D index) {
@@ -56,6 +58,12 @@ public interface Values1D extends IndexedValues<Index1D, Number>, Validating1D {
     @Override
     public default void set(Index1D index, Number value) {
         set(index.i(), value);
+    }
+    
+    @Override
+    default Number get(int ... idx) throws NonConformingException {
+        if(idx.length != 1) throw new NonConformingException(idx.length + "D index used instead of 1D.");
+        return get(idx[0]);
     }
     
     @Override
@@ -127,6 +135,17 @@ public interface Values1D extends IndexedValues<Index1D, Number>, Validating1D {
         return true;
     }
     
+    @Override
+    default Samples1D newImage() {
+        return newImage(getSize(), getElementType());
+    }
+    
+    @Override
+    default Samples1D newImage(Index1D size, Class<? extends Number> elementType) {
+        Samples1D s = Samples1D.createType(getElementType(), size.i());
+        return s;
+    }
+    
     @Override  
     public default <ReturnType> ReturnType loop(final PointOp<Index1D, ReturnType> op, Index1D from, Index1D to) {
         final Index1D index = new Index1D();
@@ -136,5 +155,58 @@ public interface Values1D extends IndexedValues<Index1D, Number>, Validating1D {
             if(op.exception != null) return null;
         }
         return op.getResult();
-    }   
+    }
+    
+    @Override
+    default <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index1D from, Index1D to) {
+        for(int i=to.i(); --i >= from.i(); ) if(isValid(i)) op.process(get(i));
+        return op.getResult();
+    }
+    
+    @Override
+    default DataCrawler<Number> iterator() {
+        return new DataCrawler<Number>() {
+            int i = 0;
+            
+            @Override
+            public final boolean hasNext() {
+                return i < (size() - 1);
+            }
+
+            @Override
+            public final Number next() {
+                if(i >= size()) return null;
+                i++;
+                return i < size() ? get(i) : null;
+            }
+
+            @Override
+            public final void remove() {
+                discard(i);
+            }
+
+            @Override
+            public final Object getData() {
+                return Values1D.this;
+            }
+
+            @Override
+            public final void setCurrent(Number value) {
+                set(i, value);
+            }
+            
+            @Override
+            public final boolean isValid() {
+                return Values1D.this.isValid(i);
+            }
+
+            @Override
+            public final void reset() {
+                i = 0;
+            }    
+        };
+    }
+    
+    
+
 }

@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,10 +21,33 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.samples;
+package jnum.data;
 
-public interface Resizable1D {
+/**
+ * An object that is based on another object of the given generic type.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <BaseType>    the generic type of object on which this overlay is based.
+ */
+public interface Overlayed<BaseType> {
 
-    public void setSize(int size);
+    /**
+     * Returns the underlying object on which this overlay instance is based.
+     * 
+     * @return  the underlying object
+     * 
+     * @see #setBasis(Object)
+     */
+    BaseType getBasis();
     
+    /**
+     * Sets a new underlying object for this overlay.
+     * 
+     * @param basis     the new underlying object on which this overlay is to be based on.
+     * 
+     * @see #getBasis()
+     */
+    void setBasis(BaseType basis);
+
 }

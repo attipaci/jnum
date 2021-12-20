@@ -46,7 +46,7 @@ import nom.tam.fits.HeaderCard;
 import nom.tam.fits.HeaderCardException;
 
 
-public abstract class AbstractMap2D1<MapType extends Map2D> extends Resizable2D1<MapType> implements Referenced<Index3D, Vector3D> {
+public abstract class AbstractMap2D1<MapType extends Map2D> extends Flex2D1<MapType> implements Referenced<Index3D, Vector3D> {
 
 
     private Class<? extends Number> dataType;

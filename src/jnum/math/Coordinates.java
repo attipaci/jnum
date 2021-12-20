@@ -27,11 +27,11 @@ import java.text.NumberFormat;
 import java.util.stream.IntStream;
 
 import jnum.CopyCat;
+import jnum.NonConformingException;
 import jnum.PointOp;
 import jnum.Util;
 import jnum.data.index.Index1D;
 import jnum.data.index.IndexedEntries;
-import jnum.data.index.IndexedValues;
 import jnum.math.matrix.ShapeException;
 import jnum.text.DecimalFormating;
 import jnum.text.NumberFormating;
@@ -88,6 +88,12 @@ public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, Index
      */
     public void setComponent(int index, T value);
     
+    @Override
+    default T get(int... index) throws NonConformingException {
+        if(index.length != 1) throw new NonConformingException(index.length + "D index used instead of 1D.");
+        return getComponent(index[0]);
+    }
+    
     /**
      * Gets the 'x' coordinate (index 0) from a usual set of x,y,z coordinates. 
      * 
@@ -142,6 +148,17 @@ public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, Index
     public default void set(Index1D index, T value) {
         setComponent(index.i(), value);
     }
+    
+    @Override
+    public default boolean isValid(Index1D index) {
+        return isValid(index.i());
+    }
+    
+    default boolean isValid(int idx) {
+        if(idx < 0) return false;
+        if(idx >= size()) return false;
+        return true;
+    }
 
 
     @Override
@@ -153,24 +170,6 @@ public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, Index
     public default boolean conformsTo(Index1D size) {
         return size.i() == size();
     }
-
-
-    @Override
-    public default boolean conformsTo(IndexedValues<Index1D, ?> data) {
-        return data.getSize().i() == size();
-    }
-
-    
-
-
-    @Override
-    public default boolean containsIndex(Index1D index) {
-        int i = index.getValue(0);
-        if(i < 0) return false;
-        if(i >= size()) return false;
-        return true;
-    }
-    
     
     /**
      * Gets an independent copy of a component in this vector.
@@ -247,12 +246,6 @@ public interface Coordinates<T> extends CopyCat<Coordinates<? extends T>>, Index
     public default int getParallel() {
         return 1;
     }
-    
-    @Override
-    public default boolean isValid(Index1D index) {
-        return true;
-    }
-   
 
     @Override
     public default <ReturnType> ReturnType loop(PointOp<Index1D, ReturnType> op, Index1D from, Index1D to) { 

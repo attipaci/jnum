@@ -24,10 +24,14 @@
 package jnum.data.image.overlay;
 
 
+import jnum.Util;
+import jnum.data.Data;
+import jnum.data.RangeRestricted;
 import jnum.data.image.Values2D;
+import jnum.data.index.Index2D;
 import jnum.math.Range;
 
-public class RangeRestricted2D extends Overlay2D {
+public class RangeRestricted2D extends Overlay2D implements RangeRestricted {
     private Range validRange;
     
     
@@ -36,10 +40,44 @@ public class RangeRestricted2D extends Overlay2D {
         setValidRange(restriction);
     }
     
+    @Override
+    public RangeRestricted2D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public RangeRestricted2D newInstance(Index2D size) {
+        RangeRestricted2D r = (RangeRestricted2D) super.newInstance(size);
+        r.validRange = validRange.copy();
+        return r;
+    }
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof RangeRestricted) validRange = ((RangeRestricted) other).getValidRange().copy();
+    }
+    
+    @Override
+    public int hashCode() {
+        return super.hashCode() ^ validRange.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(!(o instanceof RangeRestricted2D)) return false;
+        RangeRestricted2D r = (RangeRestricted2D) o;
+        if(!Util.equals(validRange, r.validRange)) return false;
+        return true;
+    }
+    
+    @Override
     public void setValidRange(Range r) { 
         validRange = r; 
     }
     
+    @Override
     public Range getValidRange() { return validRange; }
     
     

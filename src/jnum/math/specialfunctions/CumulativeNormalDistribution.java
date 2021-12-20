@@ -198,7 +198,10 @@ public final class CumulativeNormalDistribution {
 
 	private static double TAIL = 3.0;
 	
-
+	/**
+	 * Whether to use a refining algorithm on the result.
+	 * 
+	 */
 	public static boolean highPrecision = true;
 	
 

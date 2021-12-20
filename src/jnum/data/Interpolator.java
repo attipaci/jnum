@@ -32,7 +32,7 @@ import jnum.Util;
 
 
 /**
- * A base class for interpolating between data points.
+ * A base class for interpolating between data pointsin one dimension.
  * 
  * @author Attila Kovacs
  *

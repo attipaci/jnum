@@ -23,13 +23,15 @@
 
 package jnum.data.cube;
 
+import jnum.NonConformingException;
 import jnum.PointOp;
+import jnum.data.DataCrawler;
 import jnum.data.index.Index3D;
 import jnum.data.index.IndexedValues;
 import jnum.math.IntRange;
 import jnum.math.Vector3D;
 
-public interface Values3D extends IndexedValues<Index3D, Number>, Validating3D {
+public interface Values3D extends IndexedValues<Index3D, Number>, Validating3D, Iterable<Number> {
    
     public int sizeX();
     
@@ -60,6 +62,15 @@ public interface Values3D extends IndexedValues<Index3D, Number>, Validating3D {
     public default void set(Index3D index, Number value) {
         set(index.i(), index.j(), index.k(), value);
     }
+    
+
+
+    @Override
+    default Number get(int ... idx) throws NonConformingException {
+        if(idx.length != 3) throw new NonConformingException(idx.length + "D index used instead of 3D.");
+        return get(idx[0], idx[1], idx[2]);
+    }
+
     
     @Override
     public default void clear(Index3D index) { clear(index.i(), index.j(), index.k()); }
@@ -163,7 +174,18 @@ public interface Values3D extends IndexedValues<Index3D, Number>, Validating3D {
     }
     
     @Override
-    public default <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op, Index3D from, Index3D to) {
+    default Cube3D newImage() {
+        return newImage(getSize(), getElementType());
+    }
+
+    @Override
+    default Cube3D newImage(Index3D size, Class<? extends Number> elementType) {
+        Cube3D c = Cube3D.createType(getElementType(), size.i(), size.j(), size.k());
+        return c;
+    }
+    
+    @Override
+    default <ReturnType> ReturnType loop(final PointOp<Index3D, ReturnType> op, Index3D from, Index3D to) {
         final Index3D index = new Index3D();
         for(int i=to.i(); --i >= from.i(); ) {
             for(int j=to.j(); --j >= from.j(); ) {
@@ -176,6 +198,71 @@ public interface Values3D extends IndexedValues<Index3D, Number>, Validating3D {
         }
    
         return op.getResult();
+    }
+    
+    @Override
+    default <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index3D from, Index3D to) {
+        for(int i=to.i(); --i >= from.i(); ) {
+            for(int j=to.j(); --j >= from.j(); ) 
+                for(int k=to.k(); --k >= from.k(); ) if(isValid(i, j, k)) {
+                op.process(get(i, j, k));
+                if(op.exception != null) return null;
+            }
+        }
+        return op.getResult();
+    }
+
+    @Override
+    default DataCrawler<Number> iterator() {
+        return new DataCrawler<Number>() {
+            int i = 0, j = 0, k = 0;
+
+            @Override
+            public final boolean hasNext() {
+                if(i < sizeX()) return true;
+                return k < (sizeZ()-1);
+            }
+
+            @Override
+            public final Number next() {
+                if(i >= sizeX()) return null;
+
+                k++;
+                if(k == sizeZ()) {
+                    k = 0; j++; 
+                    if(j == sizeY()) { j = 0; i++; }
+                }
+
+                return i < sizeX() ? get(i, j, k) : null;
+            }
+
+            @Override
+            public final void remove() {
+                discard(i, j, k);
+            }
+
+            @Override
+            public final Object getData() {
+                return Values3D.this;
+            }
+
+            @Override
+            public final void setCurrent(Number value) {
+                set(i, j, k, value);
+            }
+
+            @Override
+            public final boolean isValid() {
+                return Values3D.this.isValid(i, j, k);
+            }
+
+            @Override
+            public final void reset() {
+                i = j = k = 0;
+            }
+
+        };
+
     }
  
 }

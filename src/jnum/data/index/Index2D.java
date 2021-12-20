@@ -24,7 +24,6 @@
 
 package jnum.data.index;
 
-import jnum.ExtraMath;
 import jnum.PointOp;
 import jnum.math.Vector2D;
 
@@ -40,16 +39,12 @@ public class Index2D extends Index<Index2D> {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -364862939591997831L;
 
-    /** the first index value */
-    private int i;
-    
-    /** the second index value */
-    private int j;
-
     /**
      * Instantiates a new 2D index with the default zero components.
      */
-    public Index2D() { this(0, 0); }
+    public Index2D() { 
+        super(2);
+    }
 
     /**
      * Instantiates a new 2D index with the specified initial components.
@@ -58,6 +53,7 @@ public class Index2D extends Index<Index2D> {
      * @param j     the initial value for the index in the second dimension.
      */
     public Index2D(int i, int j) {
+        this();
         set(i, j);
     }
 
@@ -71,28 +67,15 @@ public class Index2D extends Index<Index2D> {
     }
 
     /**
-     * Sets a new index location.
-     * 
-     * @param i     the new index location in the first dimension.
-     * @param j     the new index location in the second dimension.
-     * 
-     * @see #i()
-     * @see #j()
-     * @see #setI(int)
-     * @see #setJ(int)
-     */
-    public void set(int i, int j) { this.i = i; this.j = j; }
-
-    /**
      * Returns the index component in the first dimension.
      * 
      * @return      the index component in the first dimension.
      * 
      * @see #j()
-     * @see #set(int, int)
+     * @see #set(int...)
      * @see #setI(int)
      */
-    public final int i() { return i; }
+    public final int i() { return getComponent(0); }
 
     /**
      * Returns the index component in the second dimension.
@@ -100,10 +83,10 @@ public class Index2D extends Index<Index2D> {
      * @return      the index component in the second dimension.
      * 
      * @see #i()
-     * @see #set(int, int)
+     * @see #set(int...)
      * @see #setJ(int)
      */
-    public final int j() { return j; }
+    public final int j() { return getComponent(1); }
 
     /**
      * Sets a new value for the first component only, leaving the other two components unchanged.
@@ -111,7 +94,7 @@ public class Index2D extends Index<Index2D> {
      * @param value     the new value for the first index component.
      */
     public final void setI(final int value) {
-        i = value;
+        setComponent(0, value);
     }
     
     /**
@@ -120,108 +103,22 @@ public class Index2D extends Index<Index2D> {
      * @param value     the new value for the second index component.
      */
     public final void setJ(final int value) {
-        j = value;
-    }
-
-    @Override
-    public int dimension() {
-        return 2;
-    }
-
-    @Override
-    public int getValue(int dim) throws IndexOutOfBoundsException {
-        if(dim == 0) return i;
-        else if(dim == 1) return j;
-        else throw new IndexOutOfBoundsException(Integer.toString(dim));     
-    }
-
-    @Override
-    public void setValue(int dim, int value) throws IndexOutOfBoundsException {
-        if(dim == 0) i = value;
-        else if(dim == 1) j = value;
-        else throw new IndexOutOfBoundsException(Integer.toString(dim));        
+        setComponent(1, value);
     }
     
     
     @Override
     public <ReturnType> ReturnType loop(final PointOp<Index2D, ReturnType> op, Index2D to) {
+        final int i = i();
+        final int j = j();
         final Index2D index = new Index2D();
-        for(int i1=to.i; --i1 >= i; ) {
-            for(int j1=to.j; --j1 >= j; ) {
-                index.set(i1, j1);
-                op.process(index);
-                if(op.exception != null) return null;
-            }
+        for(int i1=to.i(); --i1 >= i; ) for(int j1=to.j(); --j1 >= j; ) {
+            index.set(i1, j1);
+            op.process(index);
+            if(op.exception != null) return null;
         }
         return op.getResult();
     }
-    
-    // --------------------------------------------------------------------------------------
-    // Below are more efficient specific implementations
-    // --------------------------------------------------------------------------------------
-    
-    @Override
-    public void fill(int value) {
-        i = j = value;
-    }
-    
-    @Override
-    public void setReverseOrderOf(Index2D other) {
-        i = other.j;
-        j = other.i;
-    }
-    
-    @Override
-    public void setSum(Index2D a, Index2D b) {
-        i = a.i + b.i;
-        j = a.j + b.j;
-    }
-    
-    @Override
-    public void setDifference(Index2D a, Index2D b) {
-        i = a.i - b.i;
-        j = a.j - b.j;
-    }
-    
-    @Override
-    public void setProduct(Index2D a, Index2D b) {
-        i = a.i * b.i;
-        j = a.j * b.j;
-    }
-    
-    @Override
-    public void setRatio(Index2D a, Index2D b) {
-        i = a.i / b.i;
-        j = a.j / b.j;
-    }
-    
-    @Override
-    public void setRoundedRatio(Index2D a, Index2D b) {
-        i = ExtraMath.roundedRatio(a.i, b.i);
-        j = ExtraMath.roundedRatio(a.j, b.j);
-    }
-    
-    @Override
-    public void modulo(Index2D argument) {
-        i = i % argument.i;
-        j = j % argument.j;
-    }
-    
-    @Override
-    public void limit(Index2D max) {  
-        i = Math.min(i, max.i);
-        j = Math.min(j, max.j);
-    }
 
-    @Override
-    public void ensure(Index2D min) {
-        i = Math.max(i, min.i);
-        j = Math.max(j, min.j);        
-    }
-    
-    @Override
-    public int getVolume() {
-        return i * j;
-    }
  
 }

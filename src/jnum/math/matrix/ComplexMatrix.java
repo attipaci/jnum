@@ -353,21 +353,61 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         else throw new IllegalArgumentException(" Cannot convert " + data.getClass().getSimpleName() + " into double[][] format.");   
     }
 
+    /**
+     * Returns the real parts of this complex matrix in the specified 2D array of numbers.
+     * 
+     * @param dst               the array in which to return the real parts
+     * @throws ShapeException   if the specified array's shape does not match the shape of this matrix.
+     * 
+     * @see #getRealPart(float[][])
+     * @see #getImaginaryPart(double[][])
+     * @see #getRealPart()
+     */
     public void getRealPart(double[][] dst) throws ShapeException {
         assertSize(dst.length, dst[0].length);
         for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) dst[i][j] = get(i, j).re();
     }
 
+    /**
+     * Returns the real parts of this complex matrix in the specified 2D array of numbers.
+     * 
+     * @param dst               the array in which to return the real parts
+     * @throws ShapeException   if the specified array's shape does not match the shape of this matrix.
+     * 
+     * @see #getRealPart(double[][])
+     * @see #getImaginaryPart(float[][])
+     * @see #getRealPart()
+     */
     public void getRealPart(float[][] dst) throws ShapeException {
         assertSize(dst.length, dst[0].length);
         for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) dst[i][j] = (float) get(i, j).re();
     }
 
+    /**
+     * Returns the imaginary parts of this complex matrix in the specified 2D array of numbers.
+     * 
+     * @param dst               the array in which to return the imaginary parts
+     * @throws ShapeException   if the specified array's shape does not match the shape of this matrix.
+     * 
+     * @see #getImaginaryPart(float[][])
+     * @see #getRealPart(double[][])
+     * @see #getImaginaryPart()
+     */
     public void getImaginaryPart(double[][] dst) throws ShapeException {
         assertSize(dst.length, dst[0].length);
         for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) dst[i][j] = get(i, j).im();
     }
 
+    /**
+     * Returns the imaginary parts of this complex matrix in the specified 2D array of numbers.
+     * 
+     * @param dst               the array in which to return the imaginary parts
+     * @throws ShapeException   if the specified array's shape does not match the shape of this matrix.
+     * 
+     * @see #getImaginaryPart(double[][])
+     * @see #getRealPart(float[][])
+     * @see #getImaginaryPart()
+     */
     public void getImaginaryPart(float[][] dst) throws ShapeException {
         assertSize(dst.length, dst[0].length);
         for(int i=rows(); --i >= 0; ) for(int j = cols(); --j >= 0; ) dst[i][j] = (float) get(i, j).im();
@@ -488,26 +528,84 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
         for(int i=rows(); --i >= 0; ) for(int j=cols(); --j >= 0; ) get(i, j).add(re, im);
     }
     
-    
+    /**
+     * Returns a new complex matrix instance constructed composed of only the specified real values. 
+     * That is, the imaginary part of each complex element in the returned matrix will be zero.
+     * 
+     * @param data      the values to use for initializing the real parts of the complex elements.
+     * @return          a new complex matrix with the specified real-parts.
+     * 
+     * @see #fromReal(float[][])
+     * @see #fromReal(ViewableAsDoubles)
+     * @see #fromParts(Object, Object)
+     */
     public static ComplexMatrix fromReal(double[][] data) {
         ComplexMatrix M = new ComplexMatrix(data.length, data[0].length);
         M.setRealPart(data);
         return M;
     }
     
+    /**
+     * Returns a new complex matrix instance constructed composed of only the specified real values. 
+     * That is, the imaginary part of each complex element in the returned matrix will be zero.
+     * 
+     * @param data      the values to use for initializing the real parts of the complex elements.
+     * @return          a new complex matrix with the specified real-parts.
+     * 
+     * @see #fromReal(double[][])
+     * @see #fromReal(ViewableAsDoubles)
+     * @see #fromParts(Object, Object)
+     */
     public static ComplexMatrix fromReal(float[][] data) {
         ComplexMatrix M = new ComplexMatrix(data.length, data[0].length);
         M.setRealPart(data);
         return M;
     }
-
-    public static ComplexMatrix fromReal(Object data) {
-       if(data instanceof double[][]) return fromReal((double[][]) data);
-       if(data instanceof float[][]) return fromReal((float[][]) data);
-       if(data instanceof ViewableAsDoubles) return fromReal(((ViewableAsDoubles) data).viewAsDoubles());
-       throw new IllegalArgumentException(" Cannot convert " + data.getClass().getSimpleName() + " into double[][] format.");    
+    
+    /**
+     * Returns a new complex matrix instance constructed composed of only the specified real values. 
+     * That is, the imaginary part of each complex element in the returned matrix will be zero.
+     * 
+     * @param data      the values to use for initializing the real parts of the complex elements.
+     * @return          a new complex matrix with the specified real-parts.
+     * 
+     * @see #fromReal(double[][])
+     * @see #fromReal(float[][])
+     * @see #fromParts(Object, Object)
+     */
+    public static ComplexMatrix fromReal(ViewableAsDoubles data) {
+        return fromReal((double[][]) data.viewAsDoubles());
     }
     
+    /**
+     * Returns a new complex matrix instance constructed composed with the specified real and imaginary values. 
+     * 
+     * @param re        the values to use for initializing the real parts of the complex elements. Cannot be <code>null</code>
+     * @param im        the values to use for initializing the imaginary parts of the complex elements. Cannot be <code>null</code>
+     * @return          a new complex matrix with the specified real and imaginary parts.
+     * @throws IllegalArgumentException     if either the real an imaginary parts are not supported objects.
+     *                                      currently only <code>float[][]</code>, <code>double[][]</code> and
+     *                                      objects implementing <code>VieableAsDoubles</code> are supported.
+     * @throws ShapeException               if the real an imaginary parts are not of the same size or shape.
+     * 
+     * @see #fromReal(float[][])
+     * @see #fromReal(double[][])
+     * @see #fromReal(ViewableAsDoubles)
+     */
+    public static ComplexMatrix fromParts(Object re, Object im) throws IllegalArgumentException, ShapeException {
+        ComplexMatrix M = null;
+        
+        if(re instanceof double[][]) M = fromReal((double[][]) re);
+        else if(re instanceof float[][]) M = fromReal((float[][]) re);
+        else if(re instanceof ViewableAsDoubles) M = fromReal((ViewableAsDoubles) re);
+        else throw new IllegalArgumentException(" Cannot convert real parts of " + im.getClass().getSimpleName() + " into double[][] format.");
+        
+        if(im instanceof double[][]) M.setImaginaryPart((double[][]) im);
+        else if(im instanceof float[][]) M.setImaginaryPart((float[][]) im);
+        else if(im instanceof ViewableAsDoubles) M.setImaginaryPart(((ViewableAsDoubles) im).viewAsDoubles());
+        else throw new IllegalArgumentException(" Cannot convert imaginary parts of " + im.getClass().getSimpleName() + " into double[][] format.");
+        return M;
+    }
     
     
     
@@ -693,6 +791,13 @@ public class ComplexMatrix extends ObjectMatrix<Complex> implements ComplexScali
             return new DiagonalMatrix.Real(Arrays.copyOf(eigenValues.getData(), eigenValues.size()));
         }
         
+        /**
+         * Returns the reconstructed (original) matrix from this Jacobi transform. The reconstructed
+         * matrix is approximately equal to the matrix from which the Jacobi transform was derived
+         * within the algebraic numerical precision.
+         * 
+         * @return  the reconstructed original matrix whose Jacobi transform is represented by this instance.
+         */
         public ComplexMatrix getReconstructedMatrix() {
             if(iB == null) iB = B.getInverse();
             return B.dot(new DiagonalMatrix.Real(eigenValues.getData())).dot(iB);

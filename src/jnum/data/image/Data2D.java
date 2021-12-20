@@ -26,7 +26,6 @@ package jnum.data.image;
 import java.util.List;
 
 import jnum.Constant;
-import jnum.PointOp;
 import jnum.data.DataPoint;
 import jnum.data.Interpolator;
 import jnum.data.RegularData;
@@ -51,7 +50,6 @@ import jnum.util.HashCode;
  */
 public abstract class Data2D extends RegularData<Index2D, Vector2D> implements Values2D {
 
-
     @Override
     public int hashCode() {
         int hash = super.hashCode() ^ sizeX() ^ sizeY(); 
@@ -63,12 +61,24 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     public Vector2D getVectorInstance() { return new Vector2D(); }
 
     @Override
+    public Image2D newImage() {
+        return (Image2D) super.newImage();
+    }
+    
+    @Override
     public Image2D newImage(Index2D size, Class<? extends Number> elementType) {
         Image2D im = Image2D.createType(getElementType(), size.i(), size.j());
         im.copyPoliciesFrom(this);
         return im;
     }
-   
+
+    @Override
+    public Data2D newInstance() {
+        return (Data2D) super.newInstance();
+    }
+    
+    @Override
+    public abstract Data2D newInstance(Index2D size);
 
     public Image2D getImage() {
         return getImage(getElementType(), getInvalidValue());
@@ -113,16 +123,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     }
     
     @Override
-    public final Number get(int ... idx) {
-        return get(idx[0], idx[1]);
-    }
-
-    @Override
-    public final void set(Number value, int ... idx) {
-        set(idx[0], idx[1], value);
-    }
-    
-    @Override
     public final double valueAtIndex(double ... idx) {
         return valueAtIndex(idx[0], idx[1]);
     }
@@ -138,7 +138,9 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     }
 
     @Override
-    public final Number getValid(final Index2D index, final Number defaultValue) { return getValid(index.i(), index.j(), defaultValue); }
+    public final Number getValid(final Index2D index, final Number defaultValue) {
+        return getValid(index.i(), index.j(), defaultValue); 
+    }
 
     @Override
     public final void discard(Index2D index) { discard(index.i(), index.j()); }
@@ -455,7 +457,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         return 25 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
 
-    @SuppressWarnings("null")
     @Override
     public void getSmoothedValueAtIndex(final Index2D index, final RegularData<Index2D, Vector2D> beam, final Index2D refIndex, 
             final IndexedValues<Index2D, ?> weight, final WeightedPoint result) {   
@@ -469,8 +470,6 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
         
         final int toi = Math.min(sizeX(), iR + beam.getSize(0));
         final int toj = Math.min(sizeY(), jR + beam.getSize(1));
-
-        Index2D idx = (weight == null) ? null : new Index2D();
         
         double sum = 0.0, sumw = 0.0;
         
@@ -479,8 +478,7 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
             
             if(weight == null) w = 1.0;
             else {
-                idx.set(i, j);
-                w = weight.get(idx).doubleValue();
+                w = weight.get(i, j).doubleValue();
                 if(w == 0.0) continue;
             }
             
@@ -507,66 +505,9 @@ public abstract class Data2D extends RegularData<Index2D, Vector2D> implements V
     public String getInfo() {
         return "Image Size: " + getSizeString() + " pixels.";
     }
-    
-    
-    // TODO generalize....
+
     @Override
     public DataCrawler<Number> iterator() {
-        return new DataCrawler<Number>() {
-            int i = 0, j = 0;
-            
-            @Override
-            public final boolean hasNext() {
-                if(i < sizeX()) return true;
-                return j < (sizeY()-1);
-            }
-
-            @Override
-            public final Number next() {
-                if(i >= sizeX()) return null;
-                j++;
-                if(j == sizeY()) { j = 0; i++; }
-                return i < sizeX() ? get(i, j) : null;
-            }
-
-            @Override
-            public final void remove() {
-                discard(i, j);
-            }
-
-            @Override
-            public final Object getData() {
-                return Data2D.this;
-            }
-
-            @Override
-            public final void setCurrent(Number value) {
-                set(i, j, value);
-            }
-
-            @Override
-            public final boolean isValid() {
-                return Data2D.this.isValid(i, j);
-            }
-            
-            @Override
-            public final void reset() {
-                i = j = 0;
-            }
-            
-        };
-        
-    }    
-
-    @Override
-    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index2D from, Index2D to) {
-        for(int i=to.i(); --i >= from.i(); ) {
-            for(int j=to.j(); --j >= from.j(); ) if(isValid(i, j)) {
-                op.process(get(i, j));
-                if(op.exception != null) return null;
-            }
-        }
-        return op.getResult();
+        return Values2D.super.iterator();
     }
-    
 }

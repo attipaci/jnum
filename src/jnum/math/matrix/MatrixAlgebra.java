@@ -23,6 +23,7 @@
 
 package jnum.math.matrix;
 
+import jnum.NonConformingException;
 import jnum.PointOp;
 import jnum.data.index.Index2D;
 import jnum.data.index.IndexedEntries;
@@ -123,6 +124,12 @@ public interface MatrixAlgebra<MatrixType, ElementType> extends IndexedEntries<I
      */
     public void set(int i, int j, ElementType value);
  
+    @Override
+    default ElementType get(int ... idx) throws NonConformingException {
+        if(idx.length != 2) throw new NonConformingException(idx.length + "D index used instead of 2D.");
+        return get(idx[0], idx[1]);
+    }
+    
     /**
      * Checks if this matrix is a diagonal matrix, with all off-diagonal elements being zeroes.
      * 

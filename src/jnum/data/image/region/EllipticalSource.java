@@ -242,7 +242,7 @@ public class EllipticalSource extends GaussianSource {
                        
                     double w = view.get(index).doubleValue();
                      
-                    v.set(index.i() + view.fromi(), index.j() + view.fromj());
+                    v.set(index.i() + view.getOrigin().i(), index.j() + view.getOrigin().j());
                     getGrid().toOffset(v);
                     v.subtract(center);
       

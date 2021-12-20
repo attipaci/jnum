@@ -23,12 +23,15 @@
 
 package jnum.data.samples.overlay;
 
-import jnum.data.samples.Resizable1D;
+import jnum.Util;
+import jnum.data.Data;
+import jnum.data.Windowed;
+import jnum.data.index.Index1D;
 import jnum.data.samples.Values1D;
 
-public class Viewport1D extends Overlay1D implements Resizable1D { 
-    private int i0;
-    private int size;
+public class Viewport1D extends Overlay1D implements Windowed<Index1D> { 
+    private Index1D origin;
+    private Index1D size;
 
     
     public Viewport1D() {
@@ -41,13 +44,38 @@ public class Viewport1D extends Overlay1D implements Resizable1D {
  
    
     public Viewport1D(Values1D base, int from, int to) {
-        setBasis(base);
+        super(base);
+        origin = new Index1D();
+        size = new Index1D();
         setBounds(from, to);
     }
     
     @Override
+    public Viewport1D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Viewport1D newInstance(Index1D size) {
+        Viewport1D r = (Viewport1D) super.newInstance();
+        if(origin != null) r.origin = origin.copy();
+        if(size != null) r.size = size.copy();
+        return r;
+    }
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof Viewport1D) {
+            Viewport1D view = (Viewport1D) other;
+            origin = view.origin;
+            size = view.size;
+        }
+    }
+    
+    @Override
     public int hashCode() {
-        return super.hashCode() ^ i0 ^ size;
+        return super.hashCode() ^ origin.hashCode() ^ size.hashCode();
     }
     
     @Override
@@ -56,72 +84,69 @@ public class Viewport1D extends Overlay1D implements Resizable1D {
         if(!(o instanceof Viewport1D)) return false;
         
         Viewport1D v = (Viewport1D) o;
-        if(size != v.size) return false;
-        if(i0 != v.i0) return false;
+        if(!Util.equals(origin, v.origin)) return false;
+        if(!Util.equals(size, v.size)) return false;
         
         return super.equals(o);
     }
     
+    @Override
+    public final Index1D getOrigin() { return origin; }
     
-    public final int from() { return i0; }
-     
+    @Override
+    public final Index1D getSize() { return new Index1D(size()); }
  
-    public void setBounds(int from, int to) {
-         
-        i0 = Math.max(0, from);
-          
-        setSize(to - i0);
+    @Override
+    public void setBounds(Index1D from, Index1D to) {
+        setBounds(from.i(), to.i());
     }
-    
+        
+    public void setBounds(int from, int to) {
+        origin.set(Math.max(0, from));
+        size.set(to - origin.i());
+    }
  
+    @Override
+    public final void move(Index1D delta) {
+        move(delta.i());
+    }
     
     public void move(int di) {
-        i0 += di;
+        origin.set(origin.i() + di);
     }
-    
-    @Override
-    public void setSize(int size) {
-        this.size = size;
-    }
-    
-    
-    
+   
     @Override
     public boolean isValid(int i) {
-        return super.isValid(i + i0);
+        return super.isValid(i + origin.i());
     }
 
     @Override
     public void discard(int i) {
-        super.discard(i + i0);
+        super.discard(i + origin.i());
     }
-
 
     /**
      * Safe even if underlying object is resized...
      */
     @Override
     public final int size() {
-        return Math.max(0, Math.min(size, super.size() - i0));
+        return Math.max(0, Math.min(size.i(), super.size() - origin.i()));
     }
-
 
     @Override
     public final Number get(int i) {
-        return super.get(i + i0);
+        return super.get(i + origin.i());
     }
 
     @Override
     public final void set(int i, Number value) {
-        super.set(i + i0, value);
+        super.set(i + origin.i(), value);
     }
     
     @Override
     public final void add(int i, Number value) {
-        super.add(i + i0, value);
+        super.add(i + origin.i(), value);
     }
-
     
- 
 }
 

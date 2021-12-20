@@ -27,7 +27,9 @@ package jnum.math.matrix;
 import java.util.*;
 
 import jnum.Copiable;
+import jnum.PointOp;
 import jnum.ViewableAsDoubles;
+import jnum.data.image.Image2D;
 import jnum.data.index.Index2D;
 import jnum.data.index.IndexedValues;
 import jnum.math.AbsoluteValue;
@@ -507,7 +509,17 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         return (RealVector) super.dot(v);
     }
     
-
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) on the right-hand
+     * side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the specified second
+     * vector argument.
+     * 
+     * @param v         Real-valued vector to operate on.
+     * @param result    The vector in which to return the result.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */
     public void dot(double[] v, double[] result) {
         if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
         if(result.length != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
@@ -565,7 +577,17 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         }
     }
 
-    
+    /**
+     * Gets the dot product of this matrix (<b>M</b>) applied to the real-valued vector (<b>v</b>) on the right-hand
+     * side. The result of <b>M</b> <i>dot</i> <b>v</b> is returned into the specified second
+     * vector argument.
+     * 
+     * @param v         Real-valued vector to operate on.
+     * @param result    The vector in which to return the result.
+     * @throws ShapeException   If the input vector's size does not match the number of rows in this
+     *                          matrix, or if the result vector's size does not match the number of 
+     *                          columns in this matrix.
+     */    
     public void dot(float[] v, float[] result) {
         if(v.length != cols()) throw new ShapeException("Mismatched matrix/input-vector sizes.");
         if(result.length != rows()) throw new ShapeException("Mismatched matrix/output-vector sizes.");
@@ -833,8 +855,16 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         return (Matrix) super.getLUInverse();
     }
 
-
-    public Matrix getSVDInverse() {
+    /**
+     * Returns the inverse of this matrix via singular value decomposition (SVD).
+     * 
+     * @return  the inverse of this matrix, calculated via singular value decomposition (SVD)
+     * @throws ConvergenceException     if the decomposition did not converge.
+     * 
+     * @see #getLUInverse()
+     * @see #getSVD()
+     */
+    public Matrix getSVDInverse() throws ConvergenceException {
         return new SVD(this).getInverseMatrix();
     }
     
@@ -851,10 +881,32 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         for(int i=rows(); --i >= 0; ) data[i][i] += scaling;
     }
     
+    /**
+     * Returns the Jacobi transform of this matrix. Jacobi transforms provide a practical way to get the eigen system of a matrix.
+     * 
+     * @return  the Jacobi transform of this matrix.
+     * 
+     * @throws SquareMatrixException    If the input matrix is not a square matrix
+     * @throws SymmetryException        If the input matrix is not a symmetric matrix
+     * @throws ConvergenceException     If the transformation is not complete within the set ceiling for iterations.
+     * 
+     * @see #getEigenSystem()
+     */
     public JacobiTransform getJacobiTransform() throws SquareMatrixException, SymmetryException, ConvergenceException {
         return new JacobiTransform();
     }
     
+    /**
+     * Returns the eigen system (wigenvalues and vectors) of this matrix.
+     * 
+     * @return      the eigen system of this matrix (eigenvalues and vectors), for example via Jacobi transformations.
+     * 
+     * @throws SquareMatrixException    If the input matrix is not a square matrix
+     * @throws SymmetryException        If the input matrix is not a symmetric matrix
+     * @throws ConvergenceException     If the transformation is not complete within the set ceiling for iterations.
+     * 
+     * @see #getJacobiTransform()
+     */
     public EigenSystem<Double, ?> getEigenSystem() throws SquareMatrixException, SymmetryException, ConvergenceException {
         return new JacobiTransform();
     }
@@ -869,7 +921,13 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         return new Gauss();
     }
 
-    public SVD getSVD() {
+    /**
+     * Returns the singular value decomposition (SVD) of this matrix. 
+     * 
+     * @return      the singular value decomposition of this matrix.
+     * @throws ConvergenceException     if the decomposition did not converge.
+     */
+    public SVD getSVD() throws ConvergenceException {
         return new SVD(this);
     }
 
@@ -949,17 +1007,33 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         return data[i][j] == 0.0;
     }
    
-
+    /**
+     * Returns the identity matrix of the specified size / dimension.
+     * 
+     * @param size      the size (dimension) of the requested identity matrix
+     * @return          a new matrix, with diagonal elements set to 1, and all other elements set to 0.
+     */
     public static final Matrix identity(int size) {
         Matrix I = new Matrix(size);
         I.addIdentity(1.0);
         return I;
-    }    
+    }
     
 
+    /**
+     * An wrapped object represnetation of a matrix element in this matrix, useful for generalized processing.
+     * 
+     * @author Attila Kovacs
+     *
+     */
     public class Element extends MatrixElement<Double> {
-        double value;
+        private double value;
 
+        /** 
+         * Instantiates a new matrix element with the specified value.
+         * 
+         * @param value     the value of the matrix element.
+         */
         public Element(double value) {
             this.value =  value;
         }
@@ -1114,6 +1188,9 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
     public class VectorBasis extends AbstractVectorBasis<Double> {
         private static final long serialVersionUID = 2039401048091817380L;
 
+        /**
+         * Instantiates a new vector basis for the parent matrix.
+         */
         public VectorBasis() {
             super(Matrix.this.rows());
         }
@@ -1256,6 +1333,14 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
             solveFor(y.getData(), x.getData());
         }
 
+        /**
+         * Returns the 3D vector x given y, in y = M * x for some matrix M.
+         * 
+         * @param y     The 3D vector y.
+         * @return      The 3D vector x.
+         * 
+         * @see #solveFor(RealVector)
+         */
         public Vector3D solveFor(Vector3D y) {
             LU.assertSize(3, 3);
             Vector3D x = new Vector3D();
@@ -1263,6 +1348,14 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
             return x;
         }
 
+        /**
+         * Returns the 2D vector x given y, in y = M * x for some matrix M.
+         * 
+         * @param y     The 2D vector y.
+         * @return      The 2D vector x.
+         * 
+         * @see #solveFor(RealVector)
+         */
         public Vector2D solveFor(Vector2D y) {
             LU.assertSize(2, 2);
             Vector2D x = new Vector2D();
@@ -1367,10 +1460,26 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
         private Matrix B, iB;
         private double[] eigenValues;
         
+        /**
+         * Instantiates a new Jacobi transform of this matrix, diagonalizing it via a series of Jacobi rotations. 
+         * 
+         * @throws SquareMatrixException    If the input matrix is not a square matrix
+         * @throws SymmetryException        If the input matrix is not a symmetric matrix
+         * @throws ConvergenceException     If the transformation is not complete within the set ceiling for iterations.
+         */
         public JacobiTransform() throws SquareMatrixException, SymmetryException, ConvergenceException {          
             this(100);   
         }
         
+        /**
+         * Instantiates a new Jacobi transform of this matrix, diagonalizing it via a series of Jacobi rotations. 
+         * 
+         * @param maxIterations             the maximum number of iterations allowed before a ConvergenceException is thrown.
+         * 
+         * @throws SquareMatrixException    If the input matrix is not a square matrix
+         * @throws SymmetryException        If the input matrix is not a symmetric matrix
+         * @throws ConvergenceException     If the transformation is not complete within the set ceiling for iterations.
+         */
         public JacobiTransform(int maxIterations) throws SquareMatrixException, SymmetryException, ConvergenceException {          
             transform(Matrix.this, 100);   
         }
@@ -1429,7 +1538,13 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
             return new DiagonalMatrix.Real(Arrays.copyOf(eigenValues, eigenValues.length));
         }
         
-        
+        /**
+         * Returns the reconstructed original matrix from the eigen system represented by this Jacobi tranform.
+         * The returned matrix equals the one from which the transform was derived within the alorithmic numerical
+         * precision.
+         * 
+         * @return      the (approximate) reconstructed matrix from which the jacobi transform was derived
+         */
         public Matrix getReconstructedMatrix() {
             if(iB == null) iB = B.getInverse();
             return B.dot(new DiagonalMatrix.Real(eigenValues)).dot(iB);
@@ -1537,6 +1652,22 @@ public class Matrix extends AbstractMatrix<Double> implements ViewableAsDoubles,
                 M.add(k,  l, s * (g - h * tau));
             }
         }
+    }
+
+    @Override
+    public <ReturnType> ReturnType loop(PointOp<Index2D, ReturnType> op, Index2D from, Index2D to) { // TODO Auto-generated method stub
+    return null; }
+
+
+    @Override
+    public Image2D newImage() {
+        return newImage(getSize(), getElementType());
+    }
+    
+    @Override
+    public Image2D newImage(Index2D size, Class<? extends Number> elementType) {
+        Image2D im = Image2D.createType(getElementType(), size.i(), size.j());
+        return im;
     }
 
     

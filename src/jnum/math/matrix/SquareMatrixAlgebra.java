@@ -26,7 +26,14 @@ package jnum.math.matrix;
 import jnum.math.IdentityValue;
 import jnum.math.Inversion;
 
-
+/**
+ * Algebra and operations specific to square matrices.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <M>
+ * @param <T>
+ */
 public interface SquareMatrixAlgebra<M, T> extends MatrixAlgebra<M, T>, Inversion, IdentityValue {
 	
     /**
@@ -148,7 +155,7 @@ public interface SquareMatrixAlgebra<M, T> extends MatrixAlgebra<M, T>, Inversio
 	public void addIdentity();
 	
 	/**
-     * Subtracys the identity matrix from this matrix.
+     * Subtracts the identity matrix from this matrix.
      */
 	public void subtractIdentity();
 

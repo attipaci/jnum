@@ -29,6 +29,7 @@ import java.util.Map;
 
 import jnum.Unit;
 import jnum.data.Image;
+import jnum.data.Resizable;
 import jnum.data.index.Index1D;
 import jnum.fits.FitsToolkit;
 import jnum.math.IntRange;
@@ -48,13 +49,26 @@ import nom.tam.util.Cursor;
 * @author Attila Kovacs
 *
 */
-public abstract class Samples1D extends Data1D implements Image<Index1D>, Serializable, Resizable1D {
+public abstract class Samples1D extends Data1D implements Image<Index1D>, Serializable, Resizable<Index1D> {
     /**
      * 
      */
     private static final long serialVersionUID = -150948566995935566L;
 
     private String id;
+    
+    @Override
+    public Samples1D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Samples1D newInstance(Index1D size) {
+        Samples1D s = Samples1D.createType(getElementType(), size.i());
+        s.copyPoliciesFrom(this);
+        return s;
+    }
+    
     
     protected abstract void setDataSize(int size);
    
@@ -78,8 +92,6 @@ public abstract class Samples1D extends Data1D implements Image<Index1D>, Serial
     @Override
     public Samples1D newImage() { return copy(false); }
     
-    
-    @Override
     public synchronized void setSize(int size) {
         setDataSize(size);
         clearHistory();
@@ -91,6 +103,7 @@ public abstract class Samples1D extends Data1D implements Image<Index1D>, Serial
         setSize(size.i());
     }
 
+    @Override
     public synchronized void destroy() { 
         setSize(0); 
         clearHistory();

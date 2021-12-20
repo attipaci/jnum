@@ -58,6 +58,18 @@ implements Observations<Data3D>, IndexedExposures<Index3D>, IndexedUncertainties
     }
 
     @Override
+    public Observation2D1 newInstance() {
+        return newInstance(getSize());
+    }
+
+    @Override
+    public Observation2D1 newInstance(Index3D size) {
+        Observation2D1 obs = new Observation2D1(getElementType(), weightType, getFlagType());
+        obs.copyPoliciesFrom(this);
+        return obs;
+    }
+    
+    @Override
     public Observation2D1 copy(boolean withContents) {
         return (Observation2D1) super.copy(withContents);
     }
@@ -72,7 +84,9 @@ implements Observations<Data3D>, IndexedExposures<Index3D>, IndexedUncertainties
     public Data2D1<Data2D> getWeights() {
         Data2D1<Data2D> weight = new Data2D1<Data2D>(sizeZ()) {
             @Override
-            public Data2D newPlaneInstance() { return null; }
+            public Data2D1<Data2D> newInstance(Index3D size) { throw new UnsupportedOperationException("not implemented for this instance"); } 
+            @Override
+            public Data2D newPlaneInstance() { throw new UnsupportedOperationException("not implemented for this instance"); }
         };
 
         for(int i=0; i<sizeZ(); i++) weight.addPlane(getPlane(i).getWeights());
@@ -84,7 +98,9 @@ implements Observations<Data3D>, IndexedExposures<Index3D>, IndexedUncertainties
     public Data2D1<Data2D> getExposures() {
         Data2D1<Data2D> exposure = new Data2D1<Data2D>(sizeZ()) {
             @Override
-            public Data2D newPlaneInstance() { return null; }
+            public Data2D1<Data2D> newInstance(Index3D size) { throw new UnsupportedOperationException("not implemented for this instance"); } 
+            @Override
+            public Data2D newPlaneInstance() { throw new UnsupportedOperationException("not implemented for this instance"); }
         };
 
         for(int i=0; i<sizeZ(); i++) exposure.addPlane(getPlane(i).getExposures());

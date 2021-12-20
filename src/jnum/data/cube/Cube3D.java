@@ -59,6 +59,18 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
     private String id;
     
     @Override
+    public Cube3D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Cube3D newInstance(Index3D size) {
+        Cube3D c = Cube3D.createType(getElementType(), size.i(), size.j(), size.k());
+        c.copyPoliciesFrom(this);
+        return c;
+    }
+    
+    @Override
     public int hashCode() {
         int hash = super.hashCode();
         if(id != null) hash ^= id.hashCode();
@@ -112,6 +124,7 @@ public abstract class Cube3D extends Data3D implements Image<Index3D> {
         addHistory("new size " + getSizeString());
     }
     
+    @Override
     public synchronized void destroy() {
         setDataSize(0, 0, 0);
         clearHistory();

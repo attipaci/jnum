@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import jnum.Configurator;
-import jnum.PointOp;
 import jnum.Util;
 import jnum.data.CubicSpline;
 import jnum.data.DataCrawler;
@@ -71,12 +70,25 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
     public Position getVectorInstance() { return new Position(); }
     
     @Override
+    public Samples1D newImage() {
+        return (Samples1D) super.newImage();
+    }
+    
+    @Override
     public Samples1D newImage(Index1D size, Class<? extends Number> elementType) {
         Samples1D s = Samples1D.createType(getElementType(), size.i());
         s.copyPoliciesFrom(this);
         return s;
     }
 
+    @Override
+    public Data1D newInstance() {
+        return (Data1D) super.newInstance();
+    }
+    
+    @Override
+    public abstract Data1D newInstance(Index1D size);
+    
     public Samples1D getSamples() {
         return getSamples(getElementType(), getInvalidValue());
     }
@@ -290,17 +302,6 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         return getCropped(new Index1D(imin), new Index1D(imax));
     }   
     
-  
-    @Override
-    public final Number get(int ... idx) {
-        return get(idx[0]);
-    }
-
-    @Override
-    public final void set(Number value, int ... idx) {
-        set(idx[0], value);
-    }
-    
     @Override
     public final double valueAtIndex(double ... idx) {
         return valueAtIndex(idx[0]);
@@ -316,8 +317,6 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         return 16 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
     
-
-    @SuppressWarnings("null")
     @Override
     public void getSmoothedValueAtIndex(final Index1D index, final RegularData<Index1D, Position> beam, final Index1D refIndex, 
             final IndexedValues<Index1D, ?> weight, final WeightedPoint result) {   
@@ -326,8 +325,6 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         final int iR = index.i() - refIndex.i();
         final int fromi = Math.max(0, iR);
         final int toi = Math.min(size(), iR + beam.getSize(0));
-
-        Index1D idx = (weight == null) ? null : new Index1D();
         
         double sum = 0.0, sumw = 0.0;
         
@@ -336,8 +333,7 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
             
             if(weight == null) w = 1.0;
             else {
-                idx.set(i);
-                w = weight.get(idx).doubleValue();
+                w = weight.get(i).doubleValue();
                 if(w == 0.0) continue;
             }
             
@@ -527,55 +523,8 @@ public abstract class Data1D extends RegularData<Index1D, Position> implements V
         Util.notify(this, "Written " + coreName + ".png");
     }
     
-    
     @Override
     public DataCrawler<Number> iterator() {
-        return new DataCrawler<Number>() {
-            int i = 0;
-            
-            @Override
-            public final boolean hasNext() {
-                return i < (size() - 1);
-            }
-
-            @Override
-            public final Number next() {
-                if(i >= size()) return null;
-                i++;
-                return i < size() ? get(i) : null;
-            }
-
-            @Override
-            public final void remove() {
-                discard(i);
-            }
-
-            @Override
-            public final Object getData() {
-                return Data1D.this;
-            }
-
-            @Override
-            public final void setCurrent(Number value) {
-                set(i, value);
-            }
-            
-            @Override
-            public final boolean isValid() {
-                return Data1D.this.isValid(i);
-            }
-
-            @Override
-            public final void reset() {
-                i = 0;
-            }    
-        };
-    }
-    
-    
-    @Override
-    public <ReturnType> ReturnType loopValid(final PointOp<Number, ReturnType> op, Index1D from, Index1D to) {
-        for(int i=to.i(); --i >= from.i(); ) if(isValid(i)) op.process(get(i));
-        return op.getResult();
+        return Values1D.super.iterator();
     }
 }

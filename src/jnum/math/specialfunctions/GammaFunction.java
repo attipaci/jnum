@@ -203,7 +203,7 @@ public final class GammaFunction {
 			++ap;
 			del *= x/ap;
 			sum += del;
-			if (Math.abs(del) < Math.abs(sum)*EPS) return sum*Math.exp(-x+s*Math.log(x)-lnGs);
+			if (Math.abs(del) < Math.abs(sum)*precision) return sum*Math.exp(-x+s*Math.log(x)-lnGs);
 		}
 		throw new ConvergenceException("Gamma P convergence not achieved: 'a' is too large, or need to iterate longer.");
 
@@ -233,8 +233,8 @@ public final class GammaFunction {
      */
 	public static double Q(final double s, final double x, final double lnGs) {
 		double b = x + 1.0 - s;
-		double c = 1.0 / FPMIN;
-		double d = 1.0/b;
+		double c = BIG;
+		double d = 1.0 / b;
 		double h = d;
 
 		for(int i=1; i <= MAX_ITERATIONS; i++) {
@@ -247,7 +247,7 @@ public final class GammaFunction {
 			d = 1.0 / d;
 			double del = d * c;
 			h *= del;
-			if(Math.abs(del-1.0) < EPS) return Math.exp(- x + s * Math.log(x) - lnGs) * h;
+			if(Math.abs(del-1.0) < precision) return Math.exp(- x + s * Math.log(x) - lnGs) * h;
 		}
 		throw new ConvergenceException("Gamma Q convergence not achieved: 'a' is too large, or need to iterate longer.");
 	}
@@ -258,10 +258,18 @@ public final class GammaFunction {
 	 */
 	public static int MAX_ITERATIONS = 300;
 
-	public static double EPS = 3.0e-7;
+	/**
+	 * The numerical precision to which to evaluate.
+	 * 
+	 */
+	public static double precision = 3.0e-7;
 
-	public static double FPMIN = 1.0e-300;
+	/** A very small floating point value to use instead of 0 */
+	private static double FPMIN = 1.0e-300;
 
+	/** A very large floating point value to use instead of 1/0 */
+	private static double BIG = 1.0 / FPMIN;
+	
 	/** Coefficients for Lanczos approximation, same as used by the GNU Scientific Library. */
 	private static double[] p = {
 		0.99999999999980993, 676.5203681218851, -1259.1392167224028,

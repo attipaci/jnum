@@ -34,6 +34,36 @@ dealing with FITS files, also on GitHub
 Here is some more detail on the different parts of the package, by the 
 current level of functionality they offer.
 
+### Mutable object classes
+
+__jnum__ is meant to be at once simple to use, powerful, and fast. These 
+goals are sometimes at odds with one another, but trying to reconcile them 
+as best as possible determines some of the particular choices that are made
+throughout the library.
+
+One such choice is the use of __mutable data__ classes nearly everywhere 
+in the library. Why? It is because object instantiation is a well-known 
+bottleneck of Java (and other high-level languages). Even with the significant 
+improvements Java has made over the years to mitigate the cost of object
+creation, the creation of object classes don't come close to the speed of 
+using primitives as transient objects. Therefore, __jnum__ is designed to re-use 
+objects whenever possible, and hence opt for mutable data types, in general. 
+
+The choice of mutable data types goes against the current trend of functional 
+programming and preference immutable data classes, but it is a choice made 
+for providing vastly superior performance consistently. The downside is that 
+mutable objects allow for more programming mistakes than immutable ones, since 
+the state of an object used in one part of the code might be affected by 
+operations performed in entirely different parts of the code. Thus, the price
+of performance is some burden on the programmer, who needs to be a little
+more careful as a result.
+
+One common pattern in __jnum__ is for functions to return their result in
+a caller supplied mutable object, rather than a return value. Such constructs
+are common in low-level languages, like C, but foreign to Java. Nevertheless,
+__jnum__ opts for using these constructs in order to reduce creating
+transient objects.
+ 
 
 ### What's solid
 

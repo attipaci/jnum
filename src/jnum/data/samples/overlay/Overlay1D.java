@@ -4,6 +4,8 @@ import jnum.Copiable;
 import jnum.CopiableContent;
 import jnum.Util;
 import jnum.data.Data;
+import jnum.data.Overlayed;
+import jnum.data.index.Index1D;
 import jnum.data.samples.Data1D;
 import jnum.data.samples.Samples1D;
 import jnum.data.samples.Values1D;
@@ -32,15 +34,28 @@ import jnum.parallel.Parallelizable;
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-public class Overlay1D extends Data1D {
+public class Overlay1D extends Data1D implements Overlayed<Values1D> {
     private Values1D values;
-  
-    public Overlay1D() {}
     
     public Overlay1D(Values1D values) {
         setBasis(values);
         if(values instanceof Parallelizable) copyParallel(((Parallelizable) values));
     }
+    
+    @Override
+    public Overlay1D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Overlay1D newInstance(Index1D size) {
+        Data1D base = (values instanceof Data1D) ? ((Data1D) values).newInstance(size) 
+                : Samples1D.createType(values.getElementType(), size.i());
+        Overlay1D o = new Overlay1D(base);
+        o.copyPoliciesFrom(this);
+        return o;
+    }
+    
     
     @Override
     public int hashCode() {
@@ -73,9 +88,10 @@ public class Overlay1D extends Data1D {
     }
    
    
-   
+    @Override
     public Values1D getBasis() { return values; }
     
+    @Override
     public void setBasis(Values1D base) {
         this.values = base;
     }
@@ -138,5 +154,6 @@ public class Overlay1D extends Data1D {
         if(values instanceof Data) return ((Data<?>) values).getCore();
         return getSamples().getCore();
     }
-    
+
+
 }

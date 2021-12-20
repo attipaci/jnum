@@ -30,6 +30,12 @@ import jnum.math.matrix.AbstractMatrix;
 import jnum.math.matrix.Matrix;
 import jnum.util.HashCode;
 
+/**
+ * A position on the real number line, essentially a 1D vector type.
+ * 
+ * @author Attila Kovacs
+ *
+ */
 public class Position extends RealValue implements MathVector<Double> {
 
     /**
@@ -37,9 +43,27 @@ public class Position extends RealValue implements MathVector<Double> {
      */
     private static final long serialVersionUID = -7988260864770770923L;
 
+    /**
+     * Instantiates a new position on the real number line at the origin.
+     */
     public Position() { this (0.0); }
     
+    /**
+     * Instantiates a new position at the specified location on the real number line.
+     * 
+     * @param value     the location of this position.
+     */
     public Position(double value) { super(value); }
+    
+    @Override
+    public Position clone() {
+        return (Position) super.clone();
+    }
+    
+    @Override
+    public Position copy() {
+        return (Position) super.copy();
+    }
     
     @Override
     public Class<Double> getComponentType() {

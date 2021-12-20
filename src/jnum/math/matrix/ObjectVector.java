@@ -40,7 +40,13 @@ import jnum.util.ArrayUtil;
 import jnum.util.HashCode;
 import jnum.math.MathVector;
 
-
+/**
+ * A generic mathematical vector base class, in which components are algebraic Java objects.
+ * 
+ * @author Attila Kovacs
+ *
+ * @param <T>   the generic type of algebraic vector component.
+ */
 @SuppressWarnings("unchecked")
 public class ObjectVector<T extends Copiable<? super T> & LinearAlgebra<? super T> & AbstractAlgebra<? super T> & Metric<? super T> & AbsoluteValue> 
 extends AbstractVector<T> {
@@ -135,6 +141,11 @@ extends AbstractVector<T> {
         for(int i=size(); --i >= 0; ) component[i] = (T) v.getComponent(i).copy();
     }
 
+    /**
+     * Returns a new component instance for this vector.
+     * 
+     * @return      a new component instance. 
+     */
     public T newComponent() {
         try { return getComponentType().getConstructor().newInstance(); }
         catch(Exception e) { 
@@ -239,6 +250,16 @@ extends AbstractVector<T> {
         return sum;
     }
 
+    /**
+     * Gets the dot product of this vector with the argument. The two vectors might be of different
+     * size. If so, it's treated as if the shorter vector had zeroes in the extra dimensions of
+     * the larger vector.
+     * 
+     * @param v         the vector to dot this one with      
+     * @return          the dot product of this vector with the argument.
+     * 
+     * @see #dot(double...)
+     */
     public final T dot(RealVector v) {
         return dot(v.getData());
     }

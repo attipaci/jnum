@@ -24,10 +24,14 @@
 package jnum.data.cube.overlay;
 
 
+import jnum.Util;
+import jnum.data.Data;
+import jnum.data.RangeRestricted;
 import jnum.data.cube.Values3D;
+import jnum.data.index.Index3D;
 import jnum.math.Range;
 
-public class RangeRestricted3D extends Overlay3D {
+public class RangeRestricted3D extends Overlay3D implements RangeRestricted {
     private Range validRange;
     
     
@@ -36,8 +40,42 @@ public class RangeRestricted3D extends Overlay3D {
         setValidRange(restriction);
     }
     
+    @Override
+    public RangeRestricted3D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public RangeRestricted3D newInstance(Index3D size) {
+        RangeRestricted3D r = (RangeRestricted3D) super.newInstance(size);
+        r.validRange = validRange.copy();
+        return r;
+    }
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof RangeRestricted) validRange = ((RangeRestricted) other).getValidRange().copy();
+    }
+    
+    @Override
+    public int hashCode() {
+        return super.hashCode() ^ validRange.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(!(o instanceof RangeRestricted3D)) return false;
+        RangeRestricted3D r = (RangeRestricted3D) o;
+        if(!Util.equals(validRange, r.validRange)) return false;
+        return true;
+    }
+    
+    @Override
     public void setValidRange(Range r) { validRange = r; }
     
+    @Override
     public Range getValidRange() { return validRange; }
     
     

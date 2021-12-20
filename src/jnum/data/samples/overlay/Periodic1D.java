@@ -27,9 +27,6 @@ import jnum.data.samples.Values1D;
 
 public class Periodic1D extends Overlay1D {
 
-
-    public Periodic1D() {}
-    
     public Periodic1D(Values1D values) {
         super(values);
     }

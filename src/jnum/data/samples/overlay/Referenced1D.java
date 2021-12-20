@@ -23,6 +23,8 @@
 
 package jnum.data.samples.overlay;
 
+import jnum.Util;
+import jnum.data.Data;
 import jnum.data.Referenced;
 import jnum.data.RegularData;
 import jnum.data.index.Index1D;
@@ -41,18 +43,34 @@ public class Referenced1D extends Overlay1D implements Referenced<Index1D, Posit
     public Referenced1D() { this(null); }
 
     public Referenced1D(Values1D values) {
-        super(values);
-        referenceIndex = new Position();
+        this(values, 0.0);
     }
     
     public Referenced1D(Values1D values, double refIndex) {
-        this(values);
-        setReferenceIndex(refIndex);
+        this(values, new Position(refIndex));
     }
     
     public Referenced1D(Values1D values, Position refIndex) {
-        this(values);
+        super(values);
         setReferenceIndex(refIndex);
+    }
+    
+    @Override
+    public Referenced1D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Referenced1D newInstance(Index1D size) {
+        Referenced1D r = (Referenced1D) super.newInstance(size);
+        r.referenceIndex = referenceIndex.copy();
+        return r;
+    }
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof Referenced1D) referenceIndex = ((Referenced1D) other).referenceIndex.copy();
     }
 
     
@@ -65,7 +83,7 @@ public class Referenced1D extends Overlay1D implements Referenced<Index1D, Posit
         if(!(o instanceof Referenced1D)) return false;
         
         Referenced1D r = (Referenced1D) o;
-        if(referenceIndex.x().doubleValue() != r.referenceIndex.x().doubleValue()) return false;
+        if(!Util.equals(referenceIndex, r.referenceIndex)) return false;
         
         return true;
     }

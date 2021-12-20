@@ -50,6 +50,11 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
      * 
      * - level()
      */
+    
+    @Override
+    public Cube3D newImage() {
+        return (Cube3D) super.newImage();
+    }
 
     @Override
     public Cube3D newImage(Index3D size, Class<? extends Number> elementType) {
@@ -57,7 +62,15 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         c.copyPoliciesFrom(this);
         return c;
     }
-
+    
+    @Override
+    public Data3D newInstance() {
+        return (Cube3D) super.newInstance();
+    }
+    
+    @Override
+    public abstract Data3D newInstance(Index3D size);
+        
     public Cube3D getCube() {
         return getCube(getElementType(), getInvalidValue());
     }
@@ -259,17 +272,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
     public final double splineAt(Index3D index, SplineSet<Vector3D> splines) {
         return splineAtIndex(index.i(), index.j(), index.k(), splines);
     }
-
-
-    @Override
-    public final Number get(int ... idx) {
-        return get(idx[0], idx[1], idx[2]);
-    }
-
-    @Override
-    public final void set(Number value, int ... idx) {
-        set(idx[0], idx[1], idx[2], value);
-    }
     
     @Override
     public final double valueAtIndex(double ... idx) {
@@ -298,7 +300,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         return 36 + beamPoints * (16 + getInterpolationOps(interpolationType));
     }
 
-    @SuppressWarnings("null")
     @Override
     public void getSmoothedValueAtIndex(final Index3D index, final RegularData<Index3D, Vector3D> beam, final Index3D refIndex, 
             final IndexedValues<Index3D, ?> weight, final WeightedPoint result) {   
@@ -316,8 +317,6 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
         final int toj = Math.min(sizeY(), jR + beam.getSize(1));
         final int tok = Math.min(sizeZ(), kR + beam.getSize(1));
         
-        Index3D idx = (weight == null) ? null : new Index3D();
-        
         double sum = 0.0, sumw = 0.0;
         
         for(int i=fromi; i<toi; i++) for(int j=fromj; j<toj; j++) for(int k=fromk; k<tok; k++) if(isValid(i, j, k)) {
@@ -325,8 +324,7 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
             
             if(weight == null) w = 1.0;
             else {
-                idx.set(i, j, k);
-                w = weight.get(idx).doubleValue();
+                w = weight.get(i, j, k).doubleValue();
                 if(w == 0.0) continue;
             }
             
@@ -385,55 +383,7 @@ public abstract class Data3D extends RegularData<Index3D, Vector3D> implements V
 
     @Override
     public DataCrawler<Number> iterator() {
-        return new DataCrawler<Number>() {
-            int i = 0, j = 0, k = 0;
-
-            @Override
-            public final boolean hasNext() {
-                if(i < sizeX()) return true;
-                return k < (sizeZ()-1);
-            }
-
-            @Override
-            public final Number next() {
-                if(i >= sizeX()) return null;
-
-                k++;
-                if(k == sizeZ()) {
-                    k = 0; j++; 
-                    if(j == sizeY()) { j = 0; i++; }
-                }
-
-                return i < sizeX() ? get(i, j, k) : null;
-            }
-
-            @Override
-            public final void remove() {
-                discard(i, j, k);
-            }
-
-            @Override
-            public final Object getData() {
-                return Data3D.this;
-            }
-
-            @Override
-            public final void setCurrent(Number value) {
-                set(i, j, k, value);
-            }
-
-            @Override
-            public final boolean isValid() {
-                return Data3D.this.isValid(i, j, k);
-            }
-
-            @Override
-            public final void reset() {
-                i = j = k = 0;
-            }
-
-        };
-
+        return Values3D.super.iterator();
     }
 
 }

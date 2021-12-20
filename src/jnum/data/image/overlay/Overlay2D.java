@@ -1,14 +1,3 @@
-package jnum.data.image.overlay;
-
-import jnum.Copiable;
-import jnum.CopiableContent;
-import jnum.Util;
-import jnum.data.Data;
-import jnum.data.image.Data2D;
-import jnum.data.image.Image2D;
-import jnum.data.image.Values2D;
-import jnum.parallel.Parallelizable;
-
 /* *****************************************************************************
  * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
@@ -32,14 +21,41 @@ import jnum.parallel.Parallelizable;
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-public class Overlay2D extends Data2D {
+package jnum.data.image.overlay;
+
+import jnum.Copiable;
+import jnum.CopiableContent;
+import jnum.Destructible;
+import jnum.Util;
+import jnum.data.Data;
+import jnum.data.Overlayed;
+import jnum.data.image.Data2D;
+import jnum.data.image.Image2D;
+import jnum.data.image.Values2D;
+import jnum.data.index.Index2D;
+import jnum.parallel.Parallelizable;
+
+
+public class Overlay2D extends Data2D implements Overlayed<Values2D>, Destructible {
     private Values2D values;
-  
-    public Overlay2D() {}
     
     public Overlay2D(Values2D values) {
         setBasis(values);
         if(values instanceof Parallelizable) copyParallel(((Parallelizable) values));
+    }
+    
+    @Override
+    public Overlay2D newInstance() {
+        return newInstance(getSize());
+    }
+
+    @Override
+    public Overlay2D newInstance(Index2D size) {
+        Data2D base = (values instanceof Data2D) ? ((Data2D) values).newInstance(size) 
+                : Image2D.createType(values.getElementType(), size.i(), size.j());
+        Overlay2D o = new Overlay2D(base);
+        o.copyPoliciesFrom(this);
+        return o;
     }
     
     @Override
@@ -72,8 +88,10 @@ public class Overlay2D extends Data2D {
         return copy;
     }
    
+    @Override
     public Values2D getBasis() { return values; }
     
+    @Override
     public void setBasis(Values2D base) {
         this.values = base;
     }
@@ -137,8 +155,10 @@ public class Overlay2D extends Data2D {
         return getImage().getCore();
     }
     
+    @Override
     public void destroy() {
         if(getBasis() instanceof Image2D) ((Image2D) getBasis()).destroy();
     }
+
 
 }

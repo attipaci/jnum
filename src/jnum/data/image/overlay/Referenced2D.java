@@ -23,6 +23,8 @@
 
 package jnum.data.image.overlay;
 
+import jnum.Util;
+import jnum.data.Data;
 import jnum.data.Referenced;
 import jnum.data.RegularData;
 import jnum.data.image.Values2D;
@@ -35,17 +37,36 @@ import nom.tam.fits.HeaderCardException;
 public class Referenced2D extends Overlay2D implements Referenced<Index2D, Vector2D> {
     private Vector2D referenceIndex;
 
-    public Referenced2D() {}
+    public Referenced2D() {
+        this(null);
+    }
 
     public Referenced2D(Values2D values) {
-        super(values);
+        this(values, new Vector2D());
     }
     
     public Referenced2D(Values2D values, Vector2D refIndex) {
-        this(values);
+        super(values);
         setReferenceIndex(refIndex);
     }
 
+    @Override
+    public Referenced2D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Referenced2D newInstance(Index2D size) {
+        Referenced2D r = (Referenced2D) super.newInstance(size);
+        r.referenceIndex = referenceIndex.copy();
+        return r;
+    }
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof Referenced2D) referenceIndex = ((Referenced2D) other).referenceIndex.copy();
+    }
     
     @Override
     public int hashCode() { return super.hashCode() ^ referenceIndex.hashCode(); }
@@ -56,7 +77,7 @@ public class Referenced2D extends Overlay2D implements Referenced<Index2D, Vecto
         if(!(o instanceof Referenced2D)) return false;
         
         Referenced2D r = (Referenced2D) o;
-        if(!referenceIndex.equals(r.referenceIndex)) return false;
+        if(!Util.equals(referenceIndex, r.referenceIndex)) return false;
         
         return super.equals(o);
     }

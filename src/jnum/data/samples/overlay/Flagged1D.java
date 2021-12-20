@@ -26,6 +26,7 @@ package jnum.data.samples.overlay;
 import java.util.concurrent.ExecutorService;
 
 import jnum.Util;
+import jnum.data.Data;
 import jnum.data.FlagCompanion;
 import jnum.data.index.Index1D;
 import jnum.data.samples.Flag1D;
@@ -35,9 +36,7 @@ import jnum.util.HashCode;
 
 public class Flagged1D extends Overlay1D {
     private Flag1D flag;
-    private long criticalFlags = ~0L;
-    
-    public Flagged1D() {}
+    private long validatingFlags = ~0L;
     
     public Flagged1D(Values1D base, Flag1D flag) {
         super(base);
@@ -45,8 +44,27 @@ public class Flagged1D extends Overlay1D {
     }
     
     @Override
+    public Flagged1D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Flagged1D newInstance(Index1D size) {
+        Flagged1D f = (Flagged1D) super.newInstance(size);
+        f.flag = new Flag1D(flag.type(), size.i());
+        f.validatingFlags = validatingFlags;
+        return f;
+    }
+    
+    @Override
+    public void copyPoliciesFrom(Data<?> other) {
+        super.copyPoliciesFrom(other);
+        if(other instanceof Flagged1D) validatingFlags = ((Flagged1D) other).validatingFlags;
+    }
+    
+    @Override
     public int hashCode() {
-        int hash = super.hashCode() ^ flag.hashCode() ^ HashCode.from(criticalFlags);
+        int hash = super.hashCode() ^ flag.hashCode() ^ HashCode.from(validatingFlags);
         return hash;
     }
     
@@ -74,13 +92,18 @@ public class Flagged1D extends Overlay1D {
         if(flag != null) flag.setExecutor(executor);
     }
     
-    public void setFlags(Flag1D flag) { this.flag = flag; }
+    public void setFlags(Flag1D flag) { 
+        this.flag = flag; 
+        if(flag == null) return;
+        this.flag.setParallel(getParallel());
+        this.flag.setExecutor(getExecutor());
+    }
     
     public Flag1D getFlags() { return flag; }
     
-    public void setCriticalFlags(long pattern) { criticalFlags = pattern; }
+    public void setCriticalFlags(long pattern) { validatingFlags = pattern; }
     
-    public final long getCriticalFlags() { return criticalFlags; }
+    public final long getCriticalFlags() { return validatingFlags; }
     
     @Override
     public boolean isValid(int i) {
@@ -155,8 +178,7 @@ public class Flagged1D extends Overlay1D {
     
     
     protected void createFlags(FlagCompanion.Type flagType) {
-        Flag1D flags = new Flag1D(flagType);
-        flags.setSize(getSize());
+        Flag1D flags = new Flag1D(flagType, size());
         setFlags(flags);
         initFlags();
     }

@@ -88,18 +88,45 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		catch(CloneNotSupportedException e) { return null; }
 	}
 	
-
-    public final synchronized void process(int chunks) throws Exception {    
+	/**
+	 * Parallel processes this task in the specified number of chunks or parallel blocks. Each chunk is processed
+	 * in a dedicated thread, that is the processing of individual chunks themselves are not parallelized. 
+	 * 
+	 * @param chunks       the subdivision of the task into blocks that are processed in single threads.
+	 * @throws Exception   if any exception occurred while processing the task.
+	 * 
+	 * @see #process(int, ExecutorService)
+	 */
+    public final synchronized void process(int chunks) throws Exception {
         process(chunks, null);
     }
     
     
-
+    /**
+     * Processes this task in a thread pool, dividing the task into as many chunks as there are independent
+     * threads in the pool.
+     * 
+     * @param pool
+     * @throws Exception
+     * 
+     * @see #process(int, ExecutorService)
+     */
     public final void process(ThreadPoolExecutor pool) throws Exception {
         process(pool.getCorePoolSize(), pool);
     }
     
-
+    /**
+     * Parallel processes this task in the specified number of chunks or parallel blocks, with the specified
+     * executor service. Each chunk is processed in a dedicated thread, that is the processing of individual 
+     * chunks themselves are not parallelized. 
+     * 
+     * @param chunks       the subdivision of the task into blocks that are processed in single threads.
+     * @param executor     the parallel executor service in which to submit the task subdivided into the 
+     *                     specified number of chunks. 
+     * @throws Exception   if any exception occurred while processing the task.
+     * 
+     * @see #process(int, ExecutorService)
+     */
     public synchronized void process(int chunks, ExecutorService executor) throws Exception { 
         
         /*
@@ -128,8 +155,6 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
     }
    
    
-    
-
 	private Processor submit(int chunks, ExecutorService executor) {	 
 		processor = new Processor();
 		processor.submit(chunks, executor);
@@ -139,29 +164,52 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 	
 	protected void postProcess() {}
 	
-
+	/**
+	 * Returns the set of worker tasks, which are actually used for processing chunks of the parent task.
+	 * 
+	 * @return     the set of worker tasks processing the chunks of the parent task.
+	 * 
+	 * @see #getProcessor()
+	 */
 	public final Iterable<ParallelTask<ReturnType>> getWorkers() {
 		return processor.workers;
 	}
 	
-
+	/**
+	 * Returns the object that manages the parallel processing of this task.
+	 * 
+	 * @return     the parallel processor object managing this task.
+	 */
 	protected final Processor getProcessor() { return processor; }
-	
-		
-	protected void init() {}
-		
 
+	/**
+	 * Initializes a worker task, setting up all that is reqauired for independent and efficient processing
+	 * of a chunk.
+	 * 
+	 */
+	protected void init() {}
+
+	/**
+	 * Interrupts all worker tasks used for processing this task.
+	 * 
+	 */
 	public synchronized void interruptAll() {
 		processor.interruptAll();
 	}
 	
-
+	/**
+	 * Interrupts this specific worker task only.
+	 */
 	private synchronized void interrupt() {
 		isInterrupted = true;
 		notifyAll(); // Notify all blocked operations to make them aware of the interrupt.
 	}
 	
-
+	/**
+	 * Checks if this worker task has been interrupted.
+	 * 
+	 * @return     <code>true</code> if this specific worker has been interrupted, otherwise <code>false</code>.
+	 */
 	protected boolean isInterrupted() { return isInterrupted; }
 	
 
@@ -170,15 +218,35 @@ public abstract class ParallelTask<ReturnType> implements Runnable, Cloneable {
 		this.index = index;
 	}
 	
-
+	/**
+	 * Returns the index of this worker task. When parallel processing, each worker has a unique index, starting from
+	 * 0 up to the number of worker tasks (minus 1). This index is used by the worker to determine what part of the
+	 * processing it is supposed to perform.
+	 * 
+	 * @return     the index of this worker task, from 0 up to (but not including) the number of worker tasks used for
+	 *             parallel processing.
+	 */
 	public int getIndex() { return index; }
 	
-
+	/**
+	 * Returns the local result of this specific worker task. This method is called by {@link #getResult()}, which
+	 * collects the partial results from each worker task, and aggregates them into one final return value.
+	 * 
+	 * @return     the result of this specific worker task.
+	 * 
+	 * @see #getResult()
+	 */
 	public ReturnType getLocalResult() {
 		return null;
 	}
 	
-
+	/**
+	 * Returns the aggregated result from parallel processing this task.
+	 * 
+	 * @return     the aggregated result from processing this task.
+	 * 
+	 * @see #getLocalResult()
+	 */
 	public ReturnType getResult() {
 		if(reduction != null) return reduction.getResult();
 		return null;

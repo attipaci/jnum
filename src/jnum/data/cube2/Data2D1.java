@@ -68,6 +68,14 @@ public abstract class Data2D1<ImageType extends Data2D> extends Data3D {
         stack.ensureCapacity(initialPlanesCapacity);
     }
     
+    @Override
+    public Data2D1<ImageType> newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public abstract Data2D1<ImageType> newInstance(Index3D size);
+     
     @SuppressWarnings({ "cast", "unchecked" })
     @Override
     public Data2D1<ImageType> copy(boolean withContent) {   

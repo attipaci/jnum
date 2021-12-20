@@ -23,6 +23,7 @@
 
 package jnum.data.index;
 
+import jnum.NonConformingException;
 import jnum.PointOp;
 import jnum.parallel.ParallelPointOp;
 import jnum.parallel.ParallelTask;
@@ -76,15 +77,18 @@ public interface IndexedEntries<IndexType extends Index<IndexType>, DataType> {
     public int getSize(int i) throws IllegalArgumentException;
     
     /**
-     * Checks if the datum at the specified index is valid.
+     * Checks if the datum at the specified index is valid. The default implementation
+     * is to return the value of {@link #containsIndex(Index)}.
      * 
      * @param index     the data index
      * @return          <code>true</code> if this data object contains valid number value at the specified index,
      *                  otherwise <code>false</code>.
-     *                  
-     * @throws IndexOutOfBoundsException   if the index it outside the range of this data.
+     * 
+     * @see #containsIndex(Index)
      */
-    public boolean isValid(IndexType index) throws IndexOutOfBoundsException;
+    default boolean isValid(IndexType index) {
+        return containsIndex(index);
+    }
     
     /**
      * Gets the data stored at the specified index.
@@ -92,9 +96,9 @@ public interface IndexedEntries<IndexType extends Index<IndexType>, DataType> {
      * @param index     the index of the data
      * @return          the data element at that index. It is a reference to an object, or a
      *                  primitive value.
-     * @throws IndexOutOfBoundsException   if the index it outside the range of this data.
+     * @throws IndexOutOfBoundsException    if the index it outside the range of this data.
      */
-    public DataType get(IndexType index) throws IndexOutOfBoundsException;
+    DataType get(IndexType index) throws IndexOutOfBoundsException;
     
     /**
      * Sets a new data element at the specified data index.
@@ -104,7 +108,25 @@ public interface IndexedEntries<IndexType extends Index<IndexType>, DataType> {
      *                  or set a primitive type equal to the supplieed value.
      * @throws IndexOutOfBoundsException   if the index it outside the range of this data.
      */
-    public void set(IndexType index, DataType value) throws IndexOutOfBoundsException;
+    void set(IndexType index, DataType value) throws IndexOutOfBoundsException;
+    
+    /**
+     * Gets the data stored at the specified index. It is generally preferable and safer to
+     * use {@link #get(Index)} to access data, but occasionally one might want the convenience
+     * if this method to specify the index components as an array or as explicitly listed 
+     * arguments, without needing to create an intermediary index object. 
+     * 
+     * @param index     the array or argument list 
+     * @return          the data element at that index. It is a reference to an object, or a
+     *                  primitive value.
+     * @throws NonConformingException
+     *                  if the number of index components provided does not match
+     *                  the dimensionality of this data.
+     *                  
+     * @see #get(Index)
+     * @see #dimension()
+     */
+    DataType get(int... index) throws NonConformingException;
     
     /**
      * Gets a new generic type index instance for this data object.
@@ -120,8 +142,9 @@ public interface IndexedEntries<IndexType extends Index<IndexType>, DataType> {
      * @param size      the expected size along each dimention
      * @return          <code>true</code> if the object has the expected size. Otherwise <code>false</code>.
      */
-    public boolean conformsTo(IndexType size);
-         
+    default boolean conformsTo(IndexType size) {
+        return getSize().equals(size);
+    }
     /**
      * Checks if this data object has a matching size, in all dimensions, as another data object
      * with the same generic type of index.
@@ -129,7 +152,7 @@ public interface IndexedEntries<IndexType extends Index<IndexType>, DataType> {
      * @param data      The other indexed data object.
      * @return          <code>true</code> if this object has the same size as the argument. Otherwise <code>false</code>.
      */
-    public default boolean conformsTo(IndexedValues<IndexType, ?> data) {
+    default boolean conformsTo(IndexedValues<IndexType, ?> data) {
         return conformsTo(data.getSize());
     }
     
@@ -148,7 +171,14 @@ public interface IndexedEntries<IndexType extends Index<IndexType>, DataType> {
      * @param index The index of an element we may try to access.
      * @return      <code>true</code> if the index is within the supported bounds of this object. Otherwise <code>false</code>.
      */
-    public boolean containsIndex(IndexType index);
+    default boolean containsIndex(IndexType index) {
+        for(int i=index.dimension(); --i >= 0; ) {
+            int idx = index.getComponent(i);
+            if(idx < 0) return false;
+            if(idx >= getSize(i)) return false;
+        }
+        return true;
+    }
     
     public int getParallel();
     

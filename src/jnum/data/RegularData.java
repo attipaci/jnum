@@ -104,54 +104,43 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         return clone;
     }
     
+    /**
+     * Sets a new smoothing policy to use on this data object. Different numerical approaches can be used to 
+     * trade accuracy for performance to dramatic effect, especially for large data and/or smoothing kernels.
+     * Calculating the precise convolution product for data with <i>N</i> elements, with a smoothing kernel
+     * of <i>M</i> elements requires O(<i>N</i>&times;<i>M</i>) operations, but can be closely approximated
+     * with O(<i>N<i> log <i>N</i>). The approximation becomes exact if the weighting function is uniform
+     * (or, equivalently, not provided explicitly).
+     * 
+     * @param pol       the new policy for choosing a numerical method for calculating the convoilution product.
+     * 
+     * @see #getSmoothingPolicy()
+     * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
+     * @see #getSmoothedMethod(SmoothingPolicy, RegularData, Index, IndexedValues, IndexedValues)
+     */
     public void setSmoothingPolicy(SmoothingPolicy pol) {
         this.smoothingPolicy = pol;
     }
     
+    /**
+     * Returns the current smoothing policy on this data instance. Different numerical approaches can be used to 
+     * trade accuracy for performance to dramatic effect, especially for large data and/or smoothing kernels.
+     * Calculating the precise convolution product for data with <i>N</i> elements, with a smoothing kernel
+     * of <i>M</i> elements requires O(<i>N</i>&times;<i>M</i>) operations, but can be closely approximated
+     * with O(<i>N<i> log <i>N</i>). The approximation becomes exact if the weighting function is uniform
+     * (or, equivalently, not provided explicitly)
+     * 
+     * @return      the current policy for choosing a numerical method for calculating the convoilution product.
+     * 
+     * @see #setSmoothingPolicy(SmoothingPolicy)
+     * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
+     * @see #getSmoothedMethod(SmoothingPolicy, RegularData, Index, IndexedValues, IndexedValues)
+     */
     public final SmoothingPolicy getSmoothingPolicy() {
         return smoothingPolicy == null ? DEFAULT_SMOOTHING_POLICY : smoothingPolicy;
     }
 
-    /**
-     * <p>
-     * Returns the element contained at the specified index. The index argument must have at least
-     * as many components as the dimension of this data instance. If it has more elements, the ones
-     * beyond those necessary will be ignored. For example, if you pass an array of 5 integers for
-     * a 2D data object, only the first two index components will be used.
-     * </p>
-     * <p>
-     * It is generally safe to access data via the {@link IndexedValues} interface with the {@link #get(Index)}
-     * method. However, at times it is more convenient to pass an array or a comma-separated list of values.
-     * It is for these special situations that this method is designed for.
-     * </p>
-     * 
-     * @param idx   the array or list of index values
-     * @return      the value contained at the specified index
-     * 
-     * @see #get(Index)
-     */
-    public abstract Number get(int ... idx);
-
-    /**
-     * <p>
-     * Sets a new value for the the element contained at the specified index. The index argument must have at least
-     * as many components as the dimension of this data instance. If it has more elements, the ones
-     * beyond those necessary will be ignored. For example, if you pass an array of 5 integers for
-     * a 2D data object, only the first two index components will be used.
-     * </p>
-     * <p>
-     * It is generally safe to access data via the {@link IndexedValues} interface with the {@link #set(Index, Number)}
-     * method. However, at times it is more convenient to pass an array or a comma-separated list of values.
-     * It is for these special situations that this method is designed for.
-     * </p>
-     * 
-     * @param value the new point value to set.
-     * @param idx   the array or list of index values
-     * 
-     * @see #set(Index, Number)
-     */
-    public abstract void set(Number value, int ... idx);
-    
+  
     /**
      * <p>
      * Returns the interpolated value at the specified index. The index argument must have at least
@@ -566,7 +555,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
                 if(w == 0.0) return;
                 if(Double.isNaN(w)) return;
                 
-                for(int i=dimension(); --i >= 0; ) iB.setComponent(i, i1.getValue(i) - iR.getComponent(i));
+                for(int i=dimension(); --i >= 0; ) iB.setComponent(i, i1.getComponent(i) - iR.getComponent(i));
 
                 final double B = beam.valueAtIndex(iB, splines);
                 if (!Double.isNaN(B)) {
@@ -583,8 +572,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         for(int i=dimension(); --i >= 0; ) {
             double imin = iR.getComponent(i);
             // To interpolate on the beam image, we must be inside it...
-            from.setValue(i, Math.max(0, (int) Math.ceil(imin)));
-            to.setValue(i, Math.min(getSize(i), (int) Math.floor(imin) + beam.getSize(i)));
+            from.setComponent(i, Math.max(0, (int) Math.ceil(imin)));
+            to.setComponent(i, Math.min(getSize(i), (int) Math.floor(imin) + beam.getSize(i)));
         }
 
         result.noData();
@@ -671,10 +660,10 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         final IndexType to = getIndexInstance();
 
         for(int i=dimension(); --i >= 0; ) {
-            int imin = iR.getValue(i);
+            int imin = iR.getComponent(i);
             // To interpolate on the beam image, we must be inside it...
-            from.setValue(i, Math.max(0, imin));
-            to.setValue(i, Math.min(getSize(i), imin + beam.getSize(i)));
+            from.setComponent(i, Math.max(0, imin));
+            to.setComponent(i, Math.min(getSize(i), imin + beam.getSize(i)));
         }
         
         loop(op, from, to);
@@ -748,8 +737,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         
         // Shift the beam as necessary s.t. its reference is on an index position.
         for(int i=dimension(); --i >= 0; ) {
-            iRefIndex.setValue(i, (int) Math.round(refIndex.getComponent(i)));
-            shift.setComponent(i, iRefIndex.getValue(i) - refIndex.getComponent(i));
+            iRefIndex.setComponent(i, (int) Math.round(refIndex.getComponent(i)));
+            shift.setComponent(i, iRefIndex.getComponent(i) - refIndex.getComponent(i));
         }
         if (!shift.isNull()) beam = beam.getShifted(shift);
         
@@ -765,11 +754,12 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
      * @param beam      the smoothing (convolving) kernel image.
      * @param refIndex  the fractional index location of the beam center, in the beam image.
      * @param weight    the weight image to associate with the data, or <code>null</code> to assume uniform weights.
-     * @param smoothedWeights   The image in which to populate the smoothed weights, or <code>null</code> if not required.
+     * @param smoothedWeights   the image in which to populate the smoothed weights, or <code>null</code> if not required.
      * 
      * @return          a new regularly gridded data derived from this one, but containing the smoothed data values.
      * 
      * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
+     * @see #getSmoothedMethod(SmoothingPolicy, RegularData, Index, IndexedValues, IndexedValues)
      * @see #smooth(Referenced)
      * @see #coarseSmooth(RegularData, MathVector, Index)
      * @see #getSmoothed(Referenced, IndexedValues, IndexedValues)
@@ -780,6 +770,25 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         return getSmoothedMethod(getSmoothingPolicy(), beam, refIndex, weight, smoothedWeights);
     }
     
+    /**
+     * Returns a smoothes (convolved) version of this data with the specified kernel, using the specified numerical policy, and 
+     * provided the reference (origin) coordinate position in that image. The convolution is performed meticulously and precisely,
+     * calculating the smoothed value at every grid position, which can be quite slow for large images and/or smoothing
+     * kernels.
+     * 
+     * @param method            the policy that chooses the numerical approach to be usd for calculating the convolution product 
+     * @param beam              the smoothing (convolving) kernel image.
+     * @param refIndex          the fractional index location of the beam center, in the beam image.
+     * @param weight            the weight image to associate with the data, or <code>null</code> to assume uniform weights.
+     * @param smoothedWeights   the image in which to populate the smoothed weights, or <code>null</code> if not required.
+     * 
+     * @return                   a new regularly gridded data derived from this one, but containing the smoothed data values.
+     * 
+     * @see #getSmoothedPrecise(RegularData, Index, IndexedValues, IndexedValues)
+     * @see #getSmoothedCoarse(RegularData, MathVector, Index, IndexedValues, IndexedValues)
+     * @see #getSmoothedFFT(RegularData, Index, IndexedValues, IndexedValues)
+     * @see #getSmoothed(RegularData, MathVector, IndexedValues, IndexedValues)
+     */
     public final RegularData<IndexType, VectorType> getSmoothedMethod(SmoothingPolicy method, RegularData<IndexType, VectorType> beam, final IndexType refIndex, 
             final IndexedValues<IndexType, ?> weight, final IndexedValues<IndexType, ?> smoothedWeights) {  
 
@@ -954,9 +963,9 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
         // Shift beam as needed s.t. reference is at an index position.
         for(int i=dimension(); --i >= 0; ) {
-            double ci = refIndex.getComponent(i) / step.getValue(i);
-            iRefIndex.setValue(i, (int) Math.round(ci));
-            shift.setComponent(i, iRefIndex.getValue(i) - ci);
+            double ci = refIndex.getComponent(i) / step.getComponent(i);
+            iRefIndex.setComponent(i, (int) Math.round(ci));
+            shift.setComponent(i, iRefIndex.getComponent(i) - ci);
         }       
         if(!shift.isNull()) coarseBeam = coarseBeam.getShifted(shift);
 
@@ -1086,9 +1095,9 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         IndexType unrolledSize = fftSize.copy();
         
         // The last dimension must be a multiple of 2 (complex pairs)
-        if(fftSize.getValue(dimension() - 1) < 2) fftSize.setValue(dimension() - 1, 2);
+        if(fftSize.getComponent(dimension() - 1) < 2) fftSize.setComponent(dimension() - 1, 2);
         
-        unrolledSize.setValue(dimension() - 1, unrolledSize.getValue(dimension() - 1) + 2);
+        unrolledSize.setComponent(dimension() - 1, unrolledSize.getComponent(dimension() - 1) + 2);
 
         RegularData<IndexType, VectorType> spectrum = newImage(unrolledSize, Double.class);
 
@@ -1147,8 +1156,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         IndexType max = getIndexInstance();   
 
         for(int i=dimension(); --i >= 0; ) {
-            min.setValue(i, Math.max(0, (int) Math.floor(index.getComponent(i))));
-            max.setValue(i, Math.min(getSize(i), (int) Math.ceil(index.getComponent(i)) + patch.getSize(i)));
+            min.setComponent(i, Math.max(0, (int) Math.floor(index.getComponent(i))));
+            max.setComponent(i, Math.min(getSize(i), (int) Math.ceil(index.getComponent(i)) + patch.getSize(i)));
         }
 
         ParallelPointOp.Simple<IndexType> op = new ParallelPointOp.Simple<IndexType>() {
@@ -1164,7 +1173,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
             @Override
             public void process(IndexType i0) {
-                for(int i=dimension(); --i >= 0; ) d.setComponent(i, i0.getValue(i) - index.getComponent(i));
+                for(int i=dimension(); --i >= 0; ) d.setComponent(i, i0.getComponent(i) - index.getComponent(i));
                 double patchValue = patch.valueAtIndex(d, iPolData);
                 if(!Double.isNaN(patchValue)) add(i0, scaling * patchValue);
             }
@@ -1188,7 +1197,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         while(Math.abs(peakValue) > threshold && components < maxComponents) { 
             final double componentValue = gain * peakValue;
 
-            for(int i=dimension(); --i >= 0; ) offset.setComponent(i, peakIndex.getValue(i) - beamCenterIndex.getComponent(i));
+            for(int i=dimension(); --i >= 0; ) offset.setComponent(i, peakIndex.getComponent(i) - beamCenterIndex.getComponent(i));
 
             addPatchAt(offset, beam, -componentValue);
             clean.add(peakIndex, componentValue);
@@ -1331,8 +1340,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
         for(int i=centerIndex.dimension(); --i >= 0; ) {
             int d =  (int) Math.ceil(rPix[rPix.length > i ? i : rPix.length - 1]);
-            from.setValue(i, Math.max(0, from.getValue(i) - d));
-            to.setValue(i, Math.min(getSize(i), to.getValue(i) + d + 1));
+            from.setComponent(i, Math.max(0, from.getComponent(i) - d));
+            to.setComponent(i, Math.min(getSize(i), to.getComponent(i) + d + 1));
         }
 
         PointOp<IndexType, Void> flagger = new PointOp.Simple<IndexType>() {
@@ -1343,7 +1352,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
                 double d2 = 0.0;
 
                 for(int i=centerIndex.dimension(); --i >= 0; ) {
-                    double d = (idx.getValue(i) - centerIndex.getValue(i)) / rPix[rPix.length > i ? i : rPix.length - 1];
+                    double d = (idx.getComponent(i) - centerIndex.getComponent(i)) / rPix[rPix.length > i ? i : rPix.length - 1];
                     d2 += d * d;
                     if(d2 > 1.0) return;
                 }
@@ -1402,8 +1411,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
                 final IndexType to = getIndexInstance();
                 
                 for(int i=dimension(); --i >= 0; ) {
-                    from.setValue(i, Math.max(0, index.getValue(i)-1));
-                    to.setValue(i, Math.min(getSize(i), index.getValue(i) + 1));
+                    from.setComponent(i, Math.max(0, index.getComponent(i)-1));
+                    to.setComponent(i, Math.min(getSize(i), index.getComponent(i) + 1));
                 }
                 
                 return loop(op, from, to) >= minNeighbors + self;         
@@ -1464,8 +1473,8 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
         final VectorType center = getVectorInstance();
 
         for(int i=dimension(); --i >= 0; ) {
-            size.setValue(i, 1 + 2 * (int) Math.ceil(3.0 * Math.abs(pixelFWHMs.getComponent(i))));
-            center.setComponent(i, 0.5 * (size.getValue(i) - 1));
+            size.setComponent(i, 1 + 2 * (int) Math.ceil(3.0 * Math.abs(pixelFWHMs.getComponent(i))));
+            center.setComponent(i, 0.5 * (size.getComponent(i) - 1));
         }
         
         final RegularData<IndexType, VectorType> beam = newImage(size, Double.class);
@@ -1546,7 +1555,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
                 if(!isValid(index)) return; 
                 VectorType c = localResult.centroid;
                 final double w = Math.abs(get(index).doubleValue());
-                for(int i=dimension(); --i >= 0; ) c.setComponent(i, c.getComponent(i) + w * index.getValue(i));
+                for(int i=dimension(); --i >= 0; ) c.setComponent(i, c.getComponent(i) + w * index.getComponent(i));
                 localResult.sumw += w;
             }
 
@@ -1799,7 +1808,7 @@ public abstract class RegularData<IndexType extends Index<IndexType>, VectorType
 
             @Override
             public void process(IndexType index) {
-                for(int i=dimension(); --i >= 0; ) from.setComponent(i, index.getValue(i) - shift.getComponent(i));
+                for(int i=dimension(); --i >= 0; ) from.setComponent(i, index.getComponent(i) - shift.getComponent(i));
                 shifted.set(index, valueAtIndex(from, getSplines()));
             }   
 

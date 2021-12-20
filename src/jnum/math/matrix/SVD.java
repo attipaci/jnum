@@ -44,12 +44,12 @@ public class SVD implements MatrixInverter<Double>, MatrixSolver<Double>, RealMa
     
     public static int defaultMaxIterations = 100;
 
-    public SVD(Matrix M) {
+    public SVD(Matrix M) throws ConvergenceException {
         this(M, defaultMaxIterations);
     }
 
 
-    public SVD(Matrix M, int maxIterations) {
+    public SVD(Matrix M, int maxIterations) throws ConvergenceException {
         int n = M.cols();
         u = M.copy();
         v = M.getMatrixInstance(n, n, false);
@@ -175,7 +175,7 @@ public class SVD implements MatrixInverter<Double>, MatrixSolver<Double>, RealMa
     // A = U * diag(w) * V^T
     // square A --> A^-1 = V * diag(1/w) * U^T
     // Based on Numerical Recipes in C (Press et al. 1989)
-    private void decompose(int maxIterations) {
+    private void decompose(int maxIterations) throws ConvergenceException {
         final int m = u.rows();
         final int n = u.cols();
 

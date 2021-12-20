@@ -24,21 +24,34 @@
 package jnum.math.matrix;
 
 /**
- * An exception thrown when attempting a square matrix operation on a non-square matrix. 
+ * Attempting to perform a square matrix operation on a non-square matrix. 
  * 
  * @author Attila Kovacs
  *
  */
 public class SquareMatrixException extends ArithmeticException {
 
+    /** 
+     * Instatiates a new exception for when a square matrix operation is attempted on a non-square matrix.
+     */
     public SquareMatrixException() {
         super(defaultMessage);
     }
 
+    /** 
+     * Instatiates a new exception for when a square matrix operation is attempted on a non-square matrix, using
+     * the specific message.
+     * 
+     * @param s     the message string
+     */
     public SquareMatrixException(String s) {
         super(s);
     }
 
+    /**
+     * The default message string, to use with the default constructor.
+     * 
+     */
     private static String defaultMessage = "square matrix operation on a non-square matrix.";
     
     /**

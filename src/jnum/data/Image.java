@@ -25,7 +25,9 @@ package jnum.data;
 
 import java.io.Serializable;
 
+import jnum.Destructible;
 import jnum.data.index.Index;
+import jnum.data.index.IndexedValues;
 import nom.tam.fits.FitsException;
 import nom.tam.fits.ImageHDU;
 
@@ -36,7 +38,7 @@ import nom.tam.fits.ImageHDU;
  *
  * @param <IndexType>
  */
-public interface Image<IndexType extends Index<IndexType>> extends Resizable<IndexType>, Serializable {
+public interface Image<IndexType extends Index<IndexType>> extends IndexedValues<IndexType, Number>, Validating<IndexType>, Resizable<IndexType>, Destructible, Serializable {
 
     /**
      * Returns a new image HDU for a FITS representation of this image's data. FITS, the Flexible
@@ -47,4 +49,5 @@ public interface Image<IndexType extends Index<IndexType>> extends Resizable<Ind
      * @throws FitsException    if the HDU could not be created from the data or with the specified nymber class.
      */
     public ImageHDU createHDU(Class<? extends Number> dataType) throws FitsException;
+
 }

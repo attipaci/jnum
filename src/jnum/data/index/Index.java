@@ -24,6 +24,7 @@
 package jnum.data.index;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import jnum.Copiable;
 import jnum.ExtraMath;
@@ -50,17 +51,20 @@ import jnum.math.MathVector;
 public abstract class Index<T extends Index<T>> extends ParallelObject implements Serializable, Cloneable, Copiable<T>,
     Additive<T>, Multiplicative<T>, Ratio<T, T>, Modulus<T>, Metric<T> {
     
+    private int[] value;
+    
     /**
      * 
      */
     private static final long serialVersionUID = -2297049649014238073L;
 
+    protected Index(int dim) {
+        value = new int[dim];
+    }
 
     @Override
     public int hashCode() {
-        int hash = HashCode.from(dimension());
-        for(int i=dimension(); --i >= 0; ) hash ^= HashCode.from(getValue(i));
-        return hash;
+        return HashCode.from(dimension()) ^ HashCode.from(value);
     }
     
     @Override
@@ -71,16 +75,16 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
         Index<?> index = (Index<?>) o;
         if(index.dimension() != dimension()) return false;
         
-        for(int i=dimension(); --i >= 0; ) if(index.getValue(i) != getValue(i)) return false;
-        
-        return true;        
+        return Arrays.equals(index.value, value);
     }
    
     
     @SuppressWarnings("unchecked")
     @Override
     public T clone() {
-        return (T) super.clone();
+        Index<T> copy = (Index<T>) super.clone();
+        copy.value = Arrays.copyOf(value, value.length);
+        return (T) copy;
     }
     
     @Override
@@ -94,16 +98,14 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
        return toString(",");
     }
     
-   
-
-    
-    
     /**
      * Returns the number of dimensions, or integer components, in this index. 
      * 
      * @return  the dimensionality of the index, that is the number of integer index components it contains.
      */
-    public abstract int dimension();
+    public final int dimension() {
+        return value.length;
+    }
     
     /**
      * Returns the integer index value in the specified dimension.
@@ -114,7 +116,9 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * 
      * @see #dimension()
      */
-    public abstract int getValue(int dim) throws IndexOutOfBoundsException;
+    public final int getComponent(int dim) throws IndexOutOfBoundsException {
+        return value[dim];
+    }
     
     /**
      * Sets a new integer index value in the specified dimension.
@@ -125,9 +129,21 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * 
      * @see #dimension()
      */
-    public abstract void setValue(int dim, int value) throws IndexOutOfBoundsException;
+    public final void setComponent(int dim, int value) throws IndexOutOfBoundsException {
+        this.value[dim] = value; 
+    }
 
-
+    /**
+     * Sets new values for this index, along all dimensions.
+     * 
+     * @param values        the array or list of index values along the dimensions
+     * @throws NonConformingException
+     *                      if the number of values specified does not match the dimensionality of this index instance 
+     */
+    public void set(int... values) throws NonConformingException {
+        if(values.length != dimension()) throw new NonConformingException("Got " + values.length + " of " + dimension() + " components.");
+        System.arraycopy(values, 0, this.value, 0, dimension());
+    }
     
     /**
      * Changes an index (size) s.t. all components are an exact power of 2, equal or just above
@@ -137,7 +153,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * @see #toTruncatedFFTSize()
      */
     public void toPaddedFFTSize() {
-        for(int i=dimension(); --i >= 0; ) setValue(i, ExtraMath.pow2ceil(getValue(i)));
+        for(int i=dimension(); --i >= 0; ) setComponent(i, ExtraMath.pow2ceil(getComponent(i)));
     }
     
     /**
@@ -148,7 +164,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * @see #toPaddedFFTSize()
      */
     public void toTruncatedFFTSize() {
-        for(int i=dimension(); --i >= 0; ) setValue(i, ExtraMath.pow2floor(getValue(i)));
+        for(int i=dimension(); --i >= 0; ) setComponent(i, ExtraMath.pow2floor(getComponent(i)));
     }
     
     /**
@@ -160,7 +176,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      */
     public int getVolume() {
         int vol = 1;
-        for(int i=dimension(); --i >= 0; ) vol *= getValue(i);
+        for(int i=dimension(); --i >= 0; ) vol *= getComponent(i);
         return Math.abs(vol);
     }
     
@@ -173,7 +189,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * @see #ensure(Index)
      */
     public void limit(T max) {     
-        for(int i=dimension(); --i >= 0; ) if(getValue(i) > max.getValue(i)) setValue(i, max.getValue(i));
+        for(int i=dimension(); --i >= 0; ) if(getComponent(i) > max.getComponent(i)) setComponent(i, max.getComponent(i));
     }
     
     /**
@@ -185,7 +201,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * @see #limit(Index)
      */
     public void ensure(T min) {     
-        for(int i=dimension(); --i >= 0; ) if(getValue(i) < min.getValue(i)) setValue(i, min.getValue(i));
+        for(int i=dimension(); --i >= 0; ) if(getComponent(i) < min.getComponent(i)) setComponent(i, min.getComponent(i));
     }
 
     
@@ -200,9 +216,9 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      */
     public void wrap(T size) {
         for(int i=dimension(); --i >= 0; ) {
-            int wrapped = getValue(i) % size.getValue(i);
-            if(wrapped < 0) wrapped += size.getValue(i);
-            setValue(i, wrapped);
+            int wrapped = getComponent(i) % size.getComponent(i);
+            if(wrapped < 0) wrapped += size.getComponent(i);
+            setComponent(i, wrapped);
         }
     }
     
@@ -220,12 +236,12 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
 
     @Override
     public void setSum(T a, T b) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, a.getValue(i) + b.getValue(i));
+        for(int i=dimension(); --i >= 0; ) setComponent(i, a.getComponent(i) + b.getComponent(i));
     }
 
     @Override
     public void setDifference(T a, T b) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, a.getValue(i) - b.getValue(i));
+        for(int i=dimension(); --i >= 0; ) setComponent(i, a.getComponent(i) - b.getComponent(i));
     }
 
     /**
@@ -236,7 +252,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      */
     public void toVector(MathVector<Double> v) throws NonConformingException {  
         if(v.size() != dimension()) throw new NonConformingException("Size mismatch " + v.size() + " vs. " + dimension()); 
-        for(int i=dimension(); --i >= 0; ) v.setComponent(i, (double) getValue(i));
+        for(int i=dimension(); --i >= 0; ) v.setComponent(i, (double) getComponent(i));
     }
     
 
@@ -248,17 +264,17 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
 
     @Override
     public void modulo(T argument) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, getValue(i) % argument.getValue(i));
+        for(int i=dimension(); --i >= 0; ) setComponent(i, getComponent(i) % argument.getComponent(i));
     }
     
     @Override
     public void setProduct(T a, T b) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, a.getValue(i) * b.getValue(i));
+        for(int i=dimension(); --i >= 0; ) setComponent(i, a.getComponent(i) * b.getComponent(i));
     }
 
     @Override
     public void setRatio(T numerator, T denominator) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, numerator.getValue(i) / denominator.getValue(i));
+        for(int i=dimension(); --i >= 0; ) setComponent(i, numerator.getComponent(i) / denominator.getComponent(i));
     }
     
     /**
@@ -272,7 +288,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * @see jnum.ExtraMath#roundedRatio(int, int)
      */
     public void setRoundedRatio(T numerator, T denominator) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, ExtraMath.roundedRatio(numerator.getValue(i), denominator.getValue(i)));
+        for(int i=dimension(); --i >= 0; ) setComponent(i, ExtraMath.roundedRatio(numerator.getComponent(i), denominator.getComponent(i)));
     }
 
     
@@ -283,7 +299,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      */
     public void setReverseOrderOf(T other) {
         int last = dimension()-1;
-        for(int i=last; i >= 0; i--) setValue(i, other.getValue(last-i));
+        for(int i=last; i >= 0; i--) setComponent(i, other.getComponent(last-i));
     }
     
     @Override
@@ -291,7 +307,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
         long sum = 0;
         
         for(int i=dimension(); --i >= 0; ) {
-            int d = index.getValue(i) - getValue(i);
+            int d = index.getComponent(i) - value[i];
             sum += d*d;
         }
         
@@ -304,7 +320,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * @param value     the new index valie for all components.
      */
     public void fill(int value) {
-        for(int i=dimension(); --i >= 0; ) setValue(i, value);
+        Arrays.fill(this.value, value);
     }
     
     /**
@@ -314,14 +330,11 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * @param dim   the dimension (counted from 0).
      * @return      the incremented index component in the selected dimension.
      */
-    public int increment(int dim) {
-        int i = getValue(dim);
-        setValue(dim, ++i);
-        return i;
+    public int increment(int dim) {  
+        return ++value[dim];
     }
     
     
-
     /**
      * Decrements the index along one of the dimensions. Can be useful for reverse iterator
      * implementations.
@@ -330,9 +343,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      * @return the decremented index component in the selected dimension.
      */
     public int decrement(int dim) {
-        int i = getValue(dim);
-        setValue(dim, --i);
-        return i;
+        return --value[dim];
     }
     
     /**
@@ -343,7 +354,18 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      */
     public void zero() { fill(0); }
 
-    
+    /**
+     * Returns the underlying integer array data that contains the indices along each dimension.
+     * Midofications to the returned array will affect the state of this index instance and
+     * vice versa.
+     * 
+     * @return      the backing array for this index.
+     * 
+     * @see #set(int...)
+     */
+    public final int[] getBackingArray() {
+        return value;
+    }
     
     /**
      * Returns a string representation of this index using the specified string as separator
@@ -354,7 +376,7 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
      */
     public String toString(String separator) {
         StringBuffer buf = new StringBuffer();
-        for(int i=0; i<dimension(); i++) buf.append((i > 0 ? separator : "") + getValue(i));
+        for(int i=0; i<dimension(); i++) buf.append((i > 0 ? separator : "") + getComponent(i));
         return new String(buf);
     }
     
@@ -425,9 +447,9 @@ public abstract class Index<T extends Index<T>> extends ParallelObject implement
         protected void processChunk(int index, int threadCount) {
             T blockFrom = copy();
             T blockTo = to.copy();
-            for(int i=getValue(0) + index; i < to.getValue(0); i += threadCount) {
-                blockFrom.setValue(0, i);
-                blockTo.setValue(0, i + 1);
+            for(int i=getComponent(0) + index; i < to.getComponent(0); i += threadCount) {
+                blockFrom.setComponent(0, i);
+                blockTo.setComponent(0, i + 1);
                 blockFrom.loop(op, blockTo);
             }
         }

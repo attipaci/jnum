@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2017 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -21,10 +21,42 @@
  *     Attila Kovacs  - initial API and implementation
  ******************************************************************************/
 
-package jnum.data.cube;
+package jnum.data.overlay;
 
-public interface Resizable3D {
+import jnum.data.Windowed;
+import jnum.data.index.Index;
+import jnum.data.index.IndexedValues;
 
-    public void setSize(int sizeX, int sizeY, int sizeZ);
+public abstract class Viewport<IndexType extends Index<IndexType>> extends Overlay<IndexType> implements Windowed<IndexType> {
+    private IndexType origin;
+    private IndexType size;
+    
+
+    public Viewport(IndexedValues<IndexType, ?> data, IndexType from, IndexType to) { 
+        super(data);
+        setBounds(from, to);
+    }
+    
+    @Override
+    public IndexType getOrigin() {
+        return origin;
+    }
+    
+    @Override
+    public IndexType getSize() {
+        return size;
+    }
+    
+    @Override
+    public void setBounds(IndexType from, IndexType to) {
+        origin = from.copy();
+        size = to.copy();
+        size.subtract(origin);
+    }
+    
+    @Override
+    public void move(IndexType delta) {
+        origin.add(delta);
+    }
     
 }

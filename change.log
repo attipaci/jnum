@@ -1,4 +1,16 @@
-0.40-a1 (devel.18)
+>> retire FauxComplexArray in favor of ComplexView?
+>> Sort out Overlay hierarchy.
+ 
+>> Map2D / Observation2D to become views...
+	+ newInstance() to create
+	Overlays -> copyPoliciesFrom() implementations 
+			(to create matched overlays...)
+>> Add Flagged3D?...
+>> Repackage jnum -> com.sigmyne.jnum
+>> Add pom.xml
+
+
+0.40-a1 (devel.21)
 
 
 	Overview

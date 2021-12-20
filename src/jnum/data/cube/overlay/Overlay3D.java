@@ -27,22 +27,36 @@ import jnum.Copiable;
 import jnum.CopiableContent;
 import jnum.Util;
 import jnum.data.Data;
+import jnum.data.Overlayed;
 import jnum.data.cube.Cube3D;
 import jnum.data.cube.Data3D;
 import jnum.data.cube.Values3D;
+import jnum.data.index.Index3D;
 import jnum.parallel.Parallelizable;
 
 
 
-public class Overlay3D extends Data3D {
+public class Overlay3D extends Data3D implements Overlayed<Values3D> {
     private Values3D values;
-  
-    public Overlay3D() {}
     
     public Overlay3D(Values3D values) {
         setBasis(values);
         if(values instanceof Parallelizable) copyParallel(((Parallelizable) values));
     }
+    
+    @Override
+    public Overlay3D newInstance() {
+        return newInstance(getSize());
+    }
+    
+    @Override
+    public Overlay3D newInstance(Index3D size) {
+        Data3D base = (values instanceof Data3D) ? ((Data3D) values).newInstance(size) 
+                : Cube3D.createType(values.getElementType(), size.i(), size.j(), size.k());
+        Overlay3D o = new Overlay3D(base);
+        o.copyPoliciesFrom(this);
+        return o;
+    }     
     
     @Override
     public int hashCode() {
@@ -75,8 +89,10 @@ public class Overlay3D extends Data3D {
     }
    
    
+    @Override
     public Values3D getBasis() { return values; }
     
+    @Override
     public void setBasis(Values3D base) {
         this.values = base;
     }
@@ -143,6 +159,6 @@ public class Overlay3D extends Data3D {
     public Object getCore() {
         if(values instanceof Data) return ((Data<?>) values).getCore();
         return getCube().getCore();
-    }  
-    
+    }
+
 }

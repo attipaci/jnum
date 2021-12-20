@@ -97,10 +97,6 @@ public abstract class AbstractVectorBasis<T> extends Vector<AbstractVector<T>> {
 		normalize();		
 	}
 
-	public final AbstractMatrix<T> getTransposed() {
-	    return asRowVector();
-	}
-	
 	/**
 	 * Returns the basis set as a matrix, in which the basis vectors constitute the 
 	 * matrix columns.

@@ -388,8 +388,9 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
 
             Vector2D fracIndex = view.getRefinedPeakIndex(peakIndex);
             
-            fracIndex.addX(view.fromi());
-            fracIndex.addY(view.fromj());
+            
+            fracIndex.addX(view.getOrigin().i());
+            fracIndex.addY(view.getOrigin().j());
             
             setCenterIndex(fracIndex);
         }
@@ -399,8 +400,8 @@ public class CircularRegion extends Region2D implements TableFormatter.Entries {
             final Viewport2D view = getViewer(image);
             
             final Vector2D centroid = view.getCentroidIndex();
-            centroid.addX(view.fromi());
-            centroid.addY(view.fromj());
+            centroid.addX(view.getOrigin().i());
+            centroid.addY(view.getOrigin().j());
           
             setCenterIndex(centroid);
         }

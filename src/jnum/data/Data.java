@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Copyright (c) 2020 Attila Kovacs <attila[AT]sigmyne.com>.
+ * Copyright (c) 2021 Attila Kovacs <attila[AT]sigmyne.com>.
  * All rights reserved. 
  * 
  * This file is part of jnum.
@@ -100,6 +100,13 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         setDefaultUnit();
     }
 
+    /**
+     * Copy the set of policies from another data object. These policies (options) determine how data
+     * is handled by specific operations. Some examples are: parallelization environment and options,
+     * physical unit, invalid value marker, interpolation type, smoothing policies etc.
+     * 
+     * @param other     the data object to inherit policies from.
+     */
     @SuppressWarnings("unchecked")
     public void copyPoliciesFrom(Data<?> other) {
         copyParallel(other);
@@ -109,26 +116,40 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         if(other.localUnits != null) localUnits = (Hashtable<String, Unit>) other.localUnits.clone();
     }
     
+  
+    
     /**
-     * Returns a new empty (zeroed) regularly sampled data object of the same type and size as this object.
+     * Creates a new empty instance that mimics this data object. Unlike {{@link #newImage()}, which just returns
+     * a conforming shallow (single-layer) image object, this method returns a new data object of the same 
+     * type of as this one, complete with all layering.
      * 
-     * @return      a new data object of the same type and size as this one.
+     * @return  a new data object of the same type and size as this one.
      * 
-     * @see #newImage(Index, Class)
-     */
-    public Data<IndexType> newImage() { return newImage(getSize(), getElementType()); }
-
-    /**
-     * Returns a new empty (zeroed) regularly sampled data object of the same class as this one byt with
-     * the specified size and element type.
-     * 
-     * @param size          the size of the new data.
-     * @param elementType   the type of elements in the new data, such as <code>Float.class</code>.
-     * @return              a new data object of the same class as this one, but with the specified size and element type.
-     * 
+     * @see #newInstance(Index)
      * @see #newImage()
      */
-    public abstract Data<IndexType> newImage(IndexType size, Class<? extends Number> elementType);
+    public Data<IndexType> newInstance() {
+        return newInstance(getSize());
+    }
+    
+    /**
+     * Creates a new empty (zeroed) instance that mimics this data object, but with a different size. Unlike 
+     * {{@link #newImage(Index, Class)}, which returns a conforming shallow (single-layer) image object, this 
+     * method returns a new data object of the same type of as this one, complete with all layering.
+     *
+     * @param size  the size of the new object instance we need. If the object is multi-layered, the
+     *              size sets only the size of the top-level layer. The layers below will be sized the same
+     *              only if the top layer's size is tied to the layer below it. For example, a new instance
+     *              of {@link Windowed}, will create a new viewport of the specified size, but with the 
+     *              the same sized underlying layers as this one.
+     *              
+     * @return  a new data object of the same type and size as this one.
+     * 
+     * @see #newInstance()
+     * @see #newImage(Index, Class)
+     */
+    public abstract Data<IndexType> newInstance(IndexType size);
+    
     
     @Override
     public int hashCode() {
@@ -193,7 +214,8 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
 
         return clone;
     }
-
+    
+    
     /** 
      * Returns the list of history entries for this data object, as a list of strings.
      * 
@@ -358,6 +380,11 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         return a.doubleValue() < b.doubleValue() ? -1 : 1;
     }
 
+    @Override
+    public boolean isValid(IndexType index) {
+        return isValid(get(index));
+    }
+    
     /**
      * Checks if a number value is considered valid by this data object.
      * 
@@ -479,11 +506,6 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
     @Override
     public final boolean conformsTo(IndexedValues<IndexType, ?> data) { return conformsTo(data.getSize()); }
 
-    @Override
-    public final boolean conformsTo(IndexType size) {
-        return getSize().equals(size);
-    }
-
     /**
      * Copies content from the another object into this data.
      * 
@@ -526,8 +548,11 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
      * @see #isValid(Index)
      * @see #discardRange(Range)
      * @see #setInvalidValue(Number)
+     * 
+     * 
      */
     public abstract void discard(IndexType index);
+    
 
     /**
      * Clears all values inthis data object, by calling {@link #clear(Index)} on every element. It also
@@ -631,6 +656,12 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         addHistory("validate via " + validator);
     }
 
+    /**
+     * Validates this data agains another. Entries whose counterparts in the supplied data
+     * are invalid, are discarded (marked invalid) from this data too.
+     * 
+     * @param data      the data used to invalidate points in this data instance. 
+     */
     public void validateTo(IndexedEntries<IndexType, ?> data) {
         validate(new Validating<IndexType>() {
             @Override
@@ -1390,6 +1421,16 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         return covarianceTo(data) / Math.sqrt(covarianceTo(this) * data.covarianceTo(data));   
     }
 
+    /**
+     * Returns a new data object of the same type and size as this intance with 
+     * elements that are remapped from this data instance by the specified function.
+     * 
+     * @param f     the function that maps values from this instance to the new data object
+     * @return      a new data, of identical type and size to this one, but with the values
+     *              re-mapped by the specified function.
+     *              
+     * @see #apply(Function)
+     */
     public Data<IndexType> getMapped(final Function<Number, Number> f) {
         Data<IndexType> data = newImage(getSize(), getElementType());
         smartFork(new ParallelPointOp.Simple<IndexType>() {
@@ -1403,6 +1444,13 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
         return data;
     }
     
+    /**
+     * Applies a function tp every element of this data instance. 
+     * 
+     * @param f     the function to apply to each point value in this data.
+     * 
+     * @see #getMapped(Function)
+     */
     public void apply(final Function<Number, Number> f) {
         smartFork(new ParallelPointOp.Simple<IndexType>() {
             @Override
@@ -1728,22 +1776,22 @@ public abstract class Data<IndexType extends Index<IndexType>> extends ParallelO
             this.to = to.copy();
 
             for(int i=from.dimension(); --i >= 0; ) {
-                if(from.getValue(i) < 0) this.from.setValue(i, 0);
-                else if(to.getValue(i) >= limit.getValue(i)) this.to.setValue(i, limit.getValue(i)); 
+                if(from.getComponent(i) < 0) this.from.setComponent(i, 0);
+                else if(to.getComponent(i) >= limit.getComponent(i)) this.to.setComponent(i, limit.getComponent(i)); 
             } 
         }
 
         @Override
         public boolean hasNext() {
-            for(int i=0; i<idx.dimension(); i++) if(idx.getValue(i) < to.getValue(i)) return true;
+            for(int i=0; i<idx.dimension(); i++) if(idx.getComponent(i) < to.getComponent(i)) return true;
             return false;
         }
 
         @Override
         public IndexType next() {
             for(int i=idx.dimension(); --i >= 0; ) {
-                if(idx.increment(i) < limit.getValue(i)) break;
-                if(i > 0) idx.setValue(i,  from.getValue(i));
+                if(idx.increment(i) < limit.getComponent(i)) break;
+                if(i > 0) idx.setComponent(i,  from.getComponent(i));
             }
             return from;
         }

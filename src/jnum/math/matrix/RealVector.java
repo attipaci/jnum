@@ -38,8 +38,7 @@ import jnum.util.HashCode;
 
 
 
-public class RealVector extends AbstractVector<Double> 
-implements MathVector<Double>, RealCoordinates {
+public class RealVector extends AbstractVector<Double> implements MathVector<Double>, RealCoordinates {
     /** */
     private static final long serialVersionUID = 1042626482476049050L;
 
